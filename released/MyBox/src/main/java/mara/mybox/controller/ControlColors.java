@@ -931,8 +931,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
     }
 
     @Override
-    public void resetView(boolean changed
-    ) {
+    public void resetView(boolean changed) {
         super.resetView(changed);
         colorsPane.getChildren().clear();
         colorArea.clear();

@@ -430,21 +430,19 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             @Override
             protected boolean handle() {
                 try {
-                    outputColumns = data2D.makeColumns(dataColsIndices, showRowNumber());
-                    List<String> dataNames = new ArrayList<>();
-                    for (Data2DColumn c : outputColumns) {
-                        dataNames.add(c.getColumnName());
-                    }
+                    List<Integer> cols = dataColsIndices;
                     List<String> sortNames = sortNames();
                     if (sortNames != null) {
-                        for (String name : sortNames) {
-                            if (!dataNames.contains(name)) {
-                                dataNames.add(name);
+                        for (String name : sortNames()) {
+                            int col = data2D.colOrder(name);
+                            if (!cols.contains(col)) {
+                                cols.add(col);
                             }
                         }
                     }
+                    outputColumns = data2D.makeColumns(cols, showRowNumber());
                     group = groupData(DataTableGroup.TargetType.Table,
-                            dataNames, orders, maxData, scale);
+                            cols, showRowNumber(), maxData, scale);
                     if (!group.run()) {
                         return false;
                     }

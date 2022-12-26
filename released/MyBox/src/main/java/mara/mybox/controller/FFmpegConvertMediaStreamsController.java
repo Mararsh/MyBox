@@ -1,6 +1,6 @@
 package mara.mybox.controller;
 
-import com.github.kokorin.jaffree.ffmpeg.UrlInput;
+//import com.github.kokorin.jaffree.ffmpeg.UrlInput;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.Date;
@@ -154,6 +154,6 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
 
     protected void convert(String address, File targetFile, long duration)
             throws Exception {
-        convert(UrlInput.fromUrl(address), targetFile, duration);
+//        convert(UrlInput.fromUrl(address), targetFile, duration);
     }
 }

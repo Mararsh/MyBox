@@ -26,6 +26,7 @@ import mara.mybox.data2d.DataFileExcel;
 import mara.mybox.data2d.DataFilter;
 import mara.mybox.data2d.DataMatrix;
 import mara.mybox.data2d.DataTable;
+import mara.mybox.data2d.TmpTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
@@ -252,7 +253,10 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                 super.finalAction();
                 data2D.stopTask();
                 task = null;
+                Data2D s = data2D;
+                data2D = null;
                 resetView(false);
+                data2D = s;
                 if (dataController != null) {
                     dataController.loadData(data2D);   // Load data whatever
                 } else {
@@ -421,11 +425,11 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                         }
                         case DatabaseTable: {
                             String name = csvData.dataName();
-                            if (name.startsWith(Data2D.TmpTablePrefix)) {
-                                name = name.substring(Data2D.TmpTablePrefix.length());
+                            if (name.startsWith(TmpTable.TmpTablePrefix)
+                                    || name.startsWith(TmpTable.TmpTablePrefix.toLowerCase())) {
+                                name = name.substring(TmpTable.TmpTablePrefix.length());
                             }
-
-                            DataTable dataTable = csvData.toTable(task, name, true);
+                            DataTable dataTable = csvData.toTable(task, name);
                             targetData = dataTable;
                             break;
                         }

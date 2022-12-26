@@ -4,7 +4,6 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -16,6 +15,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.stage.Window;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.dev.MyBoxLog;
@@ -328,13 +328,9 @@ public class Data2DSpliceController extends BaseData2DController {
                  CSVParser parserA = CSVParser.parse(csvA.getFile(), csvA.getCharset(), csvA.cvsFormat());
                  CSVParser parserB = CSVParser.parse(csvB.getFile(), csvB.getCharset(), csvB.cvsFormat())) {
             List<String> row = new ArrayList<>();
-            Random random = new Random();
             List<String> validNames = new ArrayList<>();
             for (Data2DColumn c : columns) {
-                String name = c.getColumnName();
-                while (validNames.contains(name.toUpperCase())) {
-                    name += random.nextInt(10);
-                }
+                String name = DerbyBase.checkIdentifier(validNames, c.getColumnName(), true);
                 row.add(name);
                 validNames.add(name);
             }

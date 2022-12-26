@@ -3,10 +3,10 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
@@ -56,20 +56,11 @@ public class Data2DFrequencyController extends BaseData2DTargetsController {
             outputColumns.add(freColumn.cloneAll());
             handledNames.add(freName);
 
-            String cName = freName + "_" + message("Count");
-            Random random = new Random();
-            while (handledNames.contains(cName)) {
-                cName += random.nextInt(10);
-            }
+            String cName = DerbyBase.checkIdentifier(handledNames, freName + "_" + message("Count"), true);
             outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Long, 200));
-            handledNames.add(cName);
 
-            cName = freName + "_" + message("CountPercentage");
-            while (handledNames.contains(cName)) {
-                cName += random.nextInt(10);
-            }
+            cName = DerbyBase.checkIdentifier(handledNames, freName + "_" + message("CountPercentage"), true);
             outputColumns.add(new Data2DColumn(cName, ColumnDefinition.ColumnType.Double, 200));
-            handledNames.add(cName);
 
             frequency = caseInsensitiveCheck.isSelected()
                     ? new Frequency(String.CASE_INSENSITIVE_ORDER)

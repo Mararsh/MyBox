@@ -1,48 +1,44 @@
 package mara.mybox.controller;
 
-import com.github.kokorin.jaffree.Rational;
-import com.github.kokorin.jaffree.StreamType;
-import com.github.kokorin.jaffree.ffprobe.FFprobe;
-import com.github.kokorin.jaffree.ffprobe.Format;
-import com.github.kokorin.jaffree.ffprobe.Frame;
-import com.github.kokorin.jaffree.ffprobe.Packet;
-import com.github.kokorin.jaffree.ffprobe.PixelFormat;
-import com.github.kokorin.jaffree.ffprobe.PixelFormatComponent;
-import com.github.kokorin.jaffree.ffprobe.PixelFormatFlags;
-import com.github.kokorin.jaffree.ffprobe.Stream;
-import com.github.kokorin.jaffree.ffprobe.Subtitle;
-import com.github.kokorin.jaffree.ffprobe.Tag;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
-import javafx.scene.web.WebView;
-import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.style.HtmlStyles;
-import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.tools.DateTools;
-import mara.mybox.tools.FFmpegTools;
-import mara.mybox.tools.FileTools;
-import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.tools.SystemTools;
+import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -52,19 +48,22 @@ import mara.mybox.value.UserConfig;
  */
 public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions {
 
+    protected String media;
+
     @FXML
     protected Tab formatTab, videoTab, audioTab, streamsTab, subtitlesTab,
             framesTab, packetsTab, pixelFormatsTab;
     @FXML
-    protected WebView formatView, videoView, audioView, streamsView, subtitlesView,
-            framesView, packetsView, pixelFormatsView;
+    protected TextArea formatArea, streamsArea, queryArea;
     @FXML
-    protected TextField framesStreamsInput, framesIntervalInput,
-            packetsStreamsInput, packetsIntervalInput;
+    protected TextField queryInput;
+    @FXML
+    protected ComboBox<String> querySelector;
+    @FXML
+    protected ToggleGroup outputGroup;
 
     public FFmpegProbeMediaInformationController() {
         baseTitle = Languages.message("FFmpegProbeMediaInformation");
-
     }
 
     @Override
@@ -84,25 +83,65 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
         try {
             super.initControls();
 
-            tabPane.getTabs().clear();
+            formatArea.setStyle("-fx-font-family: monospace");
+            streamsArea.setStyle("-fx-font-family: monospace");
+            queryArea.setStyle("-fx-font-family: monospace");
+
+            boolean isChinese = Languages.isChinese();
+            querySelector.getItems().addAll(Arrays.asList(
+                    "-h      // " + (isChinese ? "显示帮助" : "show helps"),
+                    "-show_packets -select_streams v:0  -read_intervals 3:51%+15       // "
+                    + (isChinese ? "选择第一个视频流，从3分51秒起的15秒" : "15 seconds from 3:51"),
+                    "-show_packets -select_streams v:0  -read_intervals 3:51%+#8      // "
+                    + (isChinese ? "选择第一个视频流，从3分51秒起的第8个包" : "8 packets from 3:51"),
+                    "-show_packets  -select_streams v:0  -read_intervals 3:51%4:29      // "
+                    + (isChinese ? "选择第一个视频流，从3分51秒到4分29秒" : "from 3:51 to 4:29"),
+                    "-show_packets  -select_streams v:0  -read_intervals %+15      // "
+                    + (isChinese ? "选择第一个视频流，从开始起的15秒" : "15 seconds from start"),
+                    "-show_packets  -select_streams v:0  -read_intervals %+#8      // "
+                    + (isChinese ? "选择第一个视频流，从开始的第8个包" : "8 packets from start"),
+                    "-show_packets  -select_streams v:0  -read_intervals %2:30      // "
+                    + (isChinese ? "选择第一个视频流，从开始到2分30秒" : "from start to 2:30"),
+                    "-show_packets  -select_streams v:0  -read_intervals 1:36:10%      // "
+                    + (isChinese ? "选择第一个视频流，从1小时36分10秒到结束" : "from 1:36:10 to end"),
+                    "-show_packets  -select_streams v:0  -read_intervals 03:51%04:51,%+15,%02:30      // "
+                    + (isChinese ? "选择第一个视频流，多个间隔" : "multiple intervals"),
+                    "-show_packets -select_streams a:0  -read_intervals 3:51%+15      // "
+                    + (isChinese ? "选择第一个音频流，从3分51秒起的15秒" : "15 seconds from 3:51"),
+                    "-show_packets -select_streams a:0  -read_intervals 3:51%+#8      // "
+                    + (isChinese ? "选择第一个音频流，从3分51秒起的第8个包" : "8 packets from 3:51"),
+                    "-show_packets  -select_streams a:0  -read_intervals 3:51%4:29      // "
+                    + (isChinese ? "选择第一个音频流，从3分51秒到4分29秒" : "from 3:51 to 4:29"),
+                    "-show_packets  -select_streams a:0  -read_intervals %+15      // "
+                    + (isChinese ? "选择第一个音频流，从开始起的15秒" : "15 seconds from start"),
+                    "-show_packets  -select_streams a:0  -read_intervals %+#8      // "
+                    + (isChinese ? "选择第一个音频流，从开始的第8个包" : "8 packets from start"),
+                    "-show_packets  -select_streams a:0  -read_intervals %2:30      // "
+                    + (isChinese ? "选择第一个音频流，从开始到2分30秒" : "from start to 2:30"),
+                    "-show_packets  -select_streams a:0  -read_intervals 1:36:10%      // "
+                    + (isChinese ? "选择第一个音频流，从1小时36分10秒到结束" : "from 1:36:10 to end"),
+                    "-show_packets  -select_streams a:0  -read_intervals 03:51%04:51,%+15,%02:30      // "
+                    + (isChinese ? "选择第一个音频流，多个间隔" : "multiple intervals")
+            ));
+            querySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    queryInput.setText(newValue.substring(0, newValue.indexOf("      ")));
+                }
+            });
+            querySelector.getSelectionModel().select(0);
+
+            outputGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    startAction();
+                }
+            });
 
             functionBox.disableProperty().bind(executableInput.styleProperty().isEqualTo(UserConfig.badStyle()));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-            NodeStyleTools.setTooltip(framesStreamsInput, Languages.message("FFmpegStreamsSpecifierComments"));
-            NodeStyleTools.setTooltip(framesIntervalInput, Languages.message("FFmpegIntervalComments"));
-            NodeStyleTools.setTooltip(packetsStreamsInput, Languages.message("FFmpegStreamsSpecifierComments"));
-            NodeStyleTools.setTooltip(packetsIntervalInput, Languages.message("FFmpegIntervalComments"));
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -274,21 +313,15 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
             if (executable == null) {
                 return;
             }
-            final String address = sourceFileInput.getText();
-            if (address == null || address.isEmpty()) {
+            media = sourceFileInput.getText();
+            if (media == null || media.isEmpty()) {
                 sourceFileInput.setStyle(UserConfig.badStyle());
+                popError(message("InvaidParameter") + ": " + message("Media"));
                 return;
             }
-            formatView.getEngine().loadContent​("");
-            videoView.getEngine().loadContent​("");
-            audioView.getEngine().loadContent​("");
-            streamsView.getEngine().loadContent​("");
-            subtitlesView.getEngine().loadContent​("");
-            pixelFormatsView.getEngine().loadContent​("");
-            framesView.getEngine().loadContent​("");
-            packetsView.getEngine().loadContent​("");
-            probeResult = null;
-
+            formatArea.clear();
+            streamsArea.clear();
+            queryArea.clear();
             synchronized (this) {
                 if (task != null && !task.isQuit()) {
                     return;
@@ -297,13 +330,31 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
 
                     @Override
                     protected boolean handle() {
-                        error = null;
                         try {
-                            probeResult = FFprobe.atPath(executable.toPath().getParent())
-                                    .setShowFormat(true).setShowStreams(true)
-                                    .setShowPixelFormats(true)
-                                    .setInput(address)
-                                    .execute();
+                            error = null;
+                            List<String> parameters = new ArrayList<>();
+                            parameters.add("-show_format");
+                            String fs = SystemTools.run(makeCommand(parameters));
+                            Platform.runLater(() -> {
+                                formatArea.setText(fs);
+                            });
+
+                            parameters.clear();
+                            parameters.add("-v");
+                            parameters.add("panic");
+                            parameters.add("-show_streams");
+                            String ss = SystemTools.run(makeCommand(parameters));
+                            Platform.runLater(() -> {
+                                streamsArea.setText(ss);
+                            });
+
+                            parameters.clear();
+                            parameters.add("-h");
+                            String h = SystemTools.run(makeCommand(parameters));
+                            Platform.runLater(() -> {
+                                queryArea.setText(h);
+                            });
+
                         } catch (Exception e) {
                             error = e.toString();
                         }
@@ -312,10 +363,6 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
 
                     @Override
                     protected void whenSucceeded() {
-                        if (error != null) {
-                            popError(error);
-                        }
-                        showResults();
                     }
                 };
                 start(task);
@@ -326,592 +373,84 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
         }
     }
 
-    protected void showResults() {
-        tabPane.getTabs().clear();
-        if (probeResult == null) {
-            return;
-        }
-        showFormat();
-        showVideoStream();
-        showAudioStream();
-        showOtherStreams();
-        showSubtitles();
-        tabPane.getTabs().addAll(framesTab, packetsTab);
-        showPixelFormats();
-
-        if (probeResult.getError() != null) {
-            popError(probeResult.getError().getString());
-        }
-    }
-
-    protected void showFormat() {
-        if (isSettingValues || probeResult == null) {
-            return;
-        }
-        Format format = probeResult.getFormat();
-        if (format == null) {
-            popError(Languages.message("InvalidData"));
-            return;
-        }
-        tabPane.getTabs().add(formatTab);
-        StringTable table = new StringTable(null, Languages.message("Format"));
-        table.add(Arrays.asList(Languages.message("Format"), format.getFormatName()));
-        table.add(Arrays.asList(Languages.message("FormatLongName"), format.getFormatLongName()));
-        if (format.getDuration() != null) {
-            table.add(Arrays.asList(Languages.message("Duration"), DateTools.timeDuration(Math.round(format.getDuration() * 1000))));
-        }
-        if (format.getSize() != null) {
-            table.add(Arrays.asList(Languages.message("Size"), FileTools.showFileSize(format.getSize())));
-        }
-        if (format.getBitRate() != null) {
-            table.add(Arrays.asList(Languages.message("BitRate"), (format.getBitRate() / 1024) + " kb/s"));
-        }
-        table.add(Arrays.asList(Languages.message("NumberOfStreams"), format.getNbStreams() + ""));
-        table.add(Arrays.asList(Languages.message("NumberOfPrograms"), format.getNbPrograms() + ""));
-        if (format.getProbeScore() != null) {
-            table.add(Arrays.asList(Languages.message("ProbeScore"), format.getProbeScore() + ""));
-        }
-        if (format.getStartTime() != null) {
-            table.add(Arrays.asList(Languages.message("StartTime"), format.getStartTime() + ""));
-        }
-        if (format.getTag() != null) {
-            for (Tag tag : format.getTag()) {
-                table.add(Arrays.asList(tag.getKey(), tag.getValue()));
+    protected List<String> makeCommand(List<String> parameters) {
+        try {
+            List<String> command = new ArrayList<>();
+            command.add(executable.getAbsolutePath());
+            command.add("-hide_banner");
+            command.addAll(parameters);
+            String format = ((RadioButton) outputGroup.getSelectedToggle()).getText();
+            if (!message("Default").equals(format)) {
+                command.add("-print_format");
+                command.add(format);
             }
-        }
-        String html = StringTable.tableHtml(table);
-        formatView.getEngine().loadContent​(html);
-    }
-
-    protected void showVideoStream() {
-        if (isSettingValues || probeResult == null || probeResult.getStreams() == null) {
-            return;
-        }
-        List<Stream> streams = probeResult.getStreams();
-        StringBuilder s = new StringBuilder();
-        Stream videoStream = null;
-        for (int i = 0; i < streams.size(); ++i) {
-            Stream stream = streams.get(i);
-            if (stream.getCodecType() == StreamType.VIDEO) {
-                videoStream = stream;
-                break;
-            }
-        }
-        if (videoStream == null) {
-            tabPane.getTabs().remove(videoTab);
-            return;
-        }
-        if (!tabPane.getTabs().contains(videoTab)) {
-            tabPane.getTabs().add(videoTab);
-        }
-        String html = HtmlWriteTools.html(Languages.message("VideoStream"),
-                HtmlStyles.styleValue("Default"),
-                streamTable(videoStream, Languages.message("VideoStream")));
-        videoView.getEngine().loadContent​(html);
-    }
-
-    protected void showAudioStream() {
-        if (isSettingValues || probeResult == null || probeResult.getStreams() == null) {
-            return;
-        }
-        List<Stream> streams = probeResult.getStreams();
-        StringBuilder s = new StringBuilder();
-        Stream audioStream = null;
-        for (int i = 0; i < streams.size(); ++i) {
-            Stream stream = streams.get(i);
-            if (stream.getCodecType() == StreamType.AUDIO) {
-                audioStream = stream;
-                break;
-            }
-        }
-        if (audioStream == null) {
-            tabPane.getTabs().remove(audioTab);
-            return;
-        }
-        if (!tabPane.getTabs().contains(audioTab)) {
-            tabPane.getTabs().add(audioTab);
-        }
-        String html = HtmlWriteTools.html(Languages.message("AudioStream"),
-                HtmlStyles.styleValue("Default"),
-                streamTable(audioStream, Languages.message("AudioStream")));
-        audioView.getEngine().loadContent​(html);
-    }
-
-    protected void showOtherStreams() {
-        if (isSettingValues || probeResult == null || probeResult.getStreams() == null) {
-            return;
-        }
-        List<Stream> streams = probeResult.getStreams();
-        StringBuilder s = new StringBuilder();
-        List<Stream> otherStreams = new ArrayList();
-        for (int i = 0; i < streams.size(); ++i) {
-            Stream stream = streams.get(i);
-            if (stream.getCodecType() != StreamType.AUDIO
-                    && stream.getCodecType() != StreamType.VIDEO) {
-                otherStreams.add(stream);
-            }
-        }
-        if (otherStreams.isEmpty()) {
-            tabPane.getTabs().remove(streamsTab);
-            return;
-        }
-        if (!tabPane.getTabs().contains(streamsTab)) {
-            tabPane.getTabs().add(streamsTab);
-        }
-
-        for (int i = 0; i < otherStreams.size(); ++i) {
-            Stream stream = otherStreams.get(i);
-            s.append(streamTable(stream, Languages.message("Stream") + " " + stream.getIndex())).append("</hr>");
-        }
-
-        String html = HtmlWriteTools.html(null, HtmlStyles.styleValue("Default"), s.toString());
-        streamsView.getEngine().loadContent​(html);
-    }
-
-    protected String streamTable(Stream stream, String name) {
-        if (isSettingValues || stream == null) {
+            command.add(media);
+            return command;
+        } catch (Exception e) {
+            error = e.toString();
             return null;
         }
-        StringBuilder s = new StringBuilder();
-        StringTable table = new StringTable(null, name);
-        if (stream.getId() != null) {
-            table.add(Arrays.asList(Languages.message("ID"), stream.getId()));
-        }
-        if (stream.getCodecType() != null) {
-            table.add(Arrays.asList(Languages.message("CodecType"), stream.getCodecType().name()));
-        }
-        if (stream.getCodecName() != null) {
-            table.add(Arrays.asList(Languages.message("CodecName"), stream.getCodecName()));
-        }
-        if (stream.getCodecLongName() != null) {
-            table.add(Arrays.asList(Languages.message("CodecLongName"), stream.getCodecLongName()));
-        }
-        if (stream.getProfile() != null) {
-            table.add(Arrays.asList(Languages.message("Profile"), stream.getProfile()));
-        }
-        if (stream.getLevel() != null) {
-            table.add(Arrays.asList(Languages.message("Level"), stream.getLevel() + ""));
-        }
-        if (stream.getCodecTimeBase() != null) {
-            Rational r = stream.getCodecTimeBase();
-            table.add(Arrays.asList(Languages.message("CodecTimeBase"), r.denominator + "." + r.numerator));
-        }
-        if (stream.getDuration() != null) {
-            table.add(Arrays.asList(Languages.message("Duration"), DateTools.timeDuration(Math.round(stream.getDuration() * 1000))));
-        }
-        if (stream.getStartTime() != null) {
-            table.add(Arrays.asList(Languages.message("StartTime"), stream.getStartTime() + ""));
-        }
-        if (stream.getCodecTag() != null) {
-            table.add(Arrays.asList(Languages.message("CodecTag"), stream.getCodecTag() + ""));
-        }
-        if (stream.getCodecTagString() != null) {
-            table.add(Arrays.asList(Languages.message("CodecTagString"), stream.getCodecTagString() + ""));
-        }
-        if (stream.getWidth() != null) {
-            table.add(Arrays.asList(Languages.message("Width"), stream.getWidth() + ""));
-        }
-        if (stream.getHeight() != null) {
-            table.add(Arrays.asList(Languages.message("Height"), stream.getHeight() + ""));
-        }
-        if (stream.getCodedWidth() != null) {
-            table.add(Arrays.asList(Languages.message("CodedWidth"), stream.getCodedWidth() + ""));
-        }
-        if (stream.getCodedHeight() != null) {
-            table.add(Arrays.asList(Languages.message("CodedHeight"), stream.getCodedHeight() + ""));
-        }
-        if (stream.getBitRate() != null) {
-            table.add(Arrays.asList(Languages.message("BitRate"), (stream.getBitRate() / 1024) + " kb/s"));
-        }
-        if (stream.getMaxBitRate() != null) {
-            table.add(Arrays.asList(Languages.message("MaxBitRate"), (stream.getMaxBitRate() / 1024) + " kb/s"));
-        }
-        if (stream.getSampleRate() != null) {
-            table.add(Arrays.asList(Languages.message("SampleRate"), stream.getSampleRate() + ""));
-        }
-        if (stream.getSampleFmt() != null) {
-            table.add(Arrays.asList(Languages.message("SampleFmt"), stream.getSampleFmt() + ""));
-        }
-        if (stream.getSampleAspectRatio() != null) {
-            table.add(Arrays.asList(Languages.message("SampleAspectRatio"), stream.getSampleAspectRatio() + ""));
-        }
-        if (stream.getDisplayAspectRatio() != null) {
-            table.add(Arrays.asList(Languages.message("DisplayAspectRatio"), stream.getDisplayAspectRatio() + ""));
-        }
-        if (stream.getBitsPerSample() != null) {
-            table.add(Arrays.asList(Languages.message("BitsPerSample"), stream.getBitsPerSample() + ""));
-        }
-        if (stream.getBitsPerRawSample() != null) {
-            table.add(Arrays.asList(Languages.message("MaxBitRate"), stream.getBitsPerRawSample() + ""));
-        }
-        if (stream.getRFrameRate() != null) {
-            table.add(Arrays.asList(Languages.message("FrameRate"), stream.getRFrameRate() + ""));
-        }
-        if (stream.getAvgFrameRate() != null) {
-            table.add(Arrays.asList(Languages.message("AvgFrameRate"), stream.getAvgFrameRate() + ""));
-        }
-        if (stream.getNbFrames() != null) {
-            table.add(Arrays.asList(Languages.message("NumberOfFrames"), stream.getNbFrames() + ""));
-        }
-        if (stream.getNbReadFrames() != null) {
-            table.add(Arrays.asList(Languages.message("NumberOfReadFrames"), stream.getNbReadFrames() + ""));
-        }
-        if (stream.getNbReadPackets() != null) {
-            table.add(Arrays.asList(Languages.message("NumberOfReadPackets"), stream.getNbReadPackets() + ""));
-        }
-        if (stream.getChannels() != null) {
-            table.add(Arrays.asList(Languages.message("Channels"), stream.getChannels() + ""));
-        }
-        if (stream.getChannelLayout() != null) {
-            table.add(Arrays.asList(Languages.message("ChannelLayout"), stream.getChannelLayout() + ""));
-        }
-        if (stream.getPixFmt() != null) {
-            table.add(Arrays.asList(Languages.message("PixFmt"), stream.getPixFmt() + ""));
-        }
-        if (stream.getColorSpace() != null) {
-            table.add(Arrays.asList(Languages.message("ColorSpace"), stream.getColorSpace() + ""));
-        }
-        if (stream.getColorPrimaries() != null) {
-            table.add(Arrays.asList(Languages.message("ColorPrimaries"), stream.getColorPrimaries() + ""));
-        }
-        if (stream.getColorRange() != null) {
-            table.add(Arrays.asList(Languages.message("ColorRange"), stream.getColorRange() + ""));
-        }
-        if (stream.getColorTransfer() != null) {
-            table.add(Arrays.asList(Languages.message("ColorTransfer"), stream.getColorTransfer() + ""));
-        }
-        if (stream.getFieldOrder() != null) {
-            table.add(Arrays.asList(Languages.message("FieldOrder"), stream.getFieldOrder() + ""));
-        }
-        if (stream.getChromaLocation() != null) {
-            table.add(Arrays.asList(Languages.message("ChromaLocation"), stream.getChromaLocation() + ""));
-        }
-        s.append(StringTable.tableDiv(table)).append("</hr>");
-
-        return s.toString();
-    }
-
-    protected void showSubtitles() {
-        if (isSettingValues || probeResult == null) {
-            return;
-        }
-        List<Subtitle> subtitles = probeResult.getSubtitles();
-        if (subtitles == null || subtitles.isEmpty()) {
-            tabPane.getTabs().remove(subtitlesTab);
-            return;
-        }
-        if (!tabPane.getTabs().contains(subtitlesTab)) {
-            tabPane.getTabs().add(subtitlesTab);
-        }
-        StringTable table = new StringTable(null, Languages.message("Subtitles"));
-        for (Subtitle subtitle : subtitles) {
-            table.add(Arrays.asList(Languages.message("MediaType"), subtitle.getMediaType().name()));
-            table.add(Arrays.asList(Languages.message("Format"), subtitle.getFormat() + ""));
-            table.add(Arrays.asList(Languages.message("pts"), subtitle.getPts() + ""));
-            table.add(Arrays.asList(Languages.message("pts_time"), subtitle.getPtsTime() + ""));
-            table.add(Arrays.asList(Languages.message("start_display_time"), subtitle.getStartDisplayTime() + ""));
-            table.add(Arrays.asList(Languages.message("end_display_time"), subtitle.getEndDisplayTime() + ""));
-            table.add(Arrays.asList(Languages.message("num_rects"), subtitle.getNumRects() + ""));
-        }
-
-        String html = StringTable.tableHtml(table);
-        subtitlesView.getEngine().loadContent​(html);
-    }
-
-    protected void showPixelFormats() {
-        if (isSettingValues || probeResult == null) {
-            return;
-        }
-        List<PixelFormat> pixelFormats = probeResult.getPixelFormats();
-        if (pixelFormats == null || pixelFormats.isEmpty()) {
-            tabPane.getTabs().remove(pixelFormatsTab);
-            return;
-        }
-        if (!tabPane.getTabs().contains(pixelFormatsTab)) {
-            tabPane.getTabs().add(pixelFormatsTab);
-        }
-        StringBuilder s = new StringBuilder();
-        for (PixelFormat pixelFormat : pixelFormats) {
-            StringTable table = new StringTable(null, Languages.message("Format") + ": " + pixelFormat.getName());
-            table.add(Arrays.asList(Languages.message("BitsPerPixel"), pixelFormat.getBitsPerPixel() + ""));
-            table.add(Arrays.asList(Languages.message("NumberOfComponents"), pixelFormat.getNbComponents() + ""));
-            table.add(Arrays.asList(Languages.message("log2_chroma_h"), pixelFormat.getLog2ChromaH() + ""));
-            table.add(Arrays.asList(Languages.message("log2_chroma_w"), pixelFormat.getLog2ChromaW() + ""));
-            List<PixelFormatComponent> components = pixelFormat.getComponents();
-            if (components != null && !components.isEmpty()) {
-                String b = "";
-                for (PixelFormatComponent c : components) {
-                    b += c.getBitDepth() + " ";
-                }
-                table.add(Arrays.asList(Languages.message("BitDepth"), b));
-            }
-            PixelFormatFlags flags = pixelFormat.getFlags();
-            if (flags != null) {
-                table.add(Arrays.asList(Languages.message("rgb"), flags.getRgb() + ""));
-                table.add(Arrays.asList(Languages.message("alpha"), flags.getAlpha() + ""));
-                table.add(Arrays.asList(Languages.message("big_endian"), flags.getBigEndian() + ""));
-                table.add(Arrays.asList(Languages.message("palette"), flags.getPalette() + ""));
-                table.add(Arrays.asList(Languages.message("bitstream"), flags.getBitstream() + ""));
-                table.add(Arrays.asList(Languages.message("hwaccel"), flags.getHwaccel() + ""));
-                table.add(Arrays.asList(Languages.message("planar"), flags.getPlanar() + ""));
-                table.add(Arrays.asList(Languages.message("pseudopal"), flags.getPseudopal() + ""));
-            }
-            s.append(StringTable.tableDiv(table)).append("</hr>");
-        }
-        String html = HtmlWriteTools.html(Languages.message("Format"), HtmlStyles.styleValue("Default"), s.toString());
-        pixelFormatsView.getEngine().loadContent​(html);
     }
 
     @FXML
-    protected void framesAction() {
-        try {
-            framesView.getEngine().loadContent​("");
-            probeResult = null;
-            if (executable == null || sourceFile == null) {
-                return;
-            }
-            synchronized (this) {
-                if (task != null && !task.isQuit()) {
-                    return;
+    @Override
+    public void goAction() {
+        if (executable == null || media == null) {
+            return;
+        }
+        String[] args = StringTools.splitBySpace(queryInput.getText());
+        if (args.length == 0) {
+            popError(message("InvaidParameter") + ": " + message("Command"));
+            return;
+        }
+        if (queryTask != null) {
+            queryTask.cancel();
+        }
+        queryTask = new SingletonTask<Void>(this) {
+
+            private File file;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    List<String> parameters = new ArrayList<>();
+                    parameters.add("-v");
+                    parameters.add("panic");
+                    parameters.addAll(Arrays.asList(args));
+                    file = TmpFileTools.getTempFile(".txt");
+                    ProcessBuilder pb = new ProcessBuilder(makeCommand(parameters)).redirectErrorStream(true);
+                    Process process = pb.start();
+                    try ( BufferedReader inReader = process.inputReader(Charset.defaultCharset());
+                             BufferedWriter writer = new BufferedWriter(new FileWriter(file, Charset.forName("UTF-8"), false))) {
+                        String line;
+                        while ((line = inReader.readLine()) != null) {
+                            writer.write(line + "\n");
+                            if (isCancelled()) {
+                                process.destroyForcibly();
+                            }
+                        }
+                        writer.flush();
+                    }
+                    process.waitFor();
+                    return file != null && file.exists();
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
                 }
-                task = new SingletonTask<Void>(this) {
-
-                    @Override
-                    protected boolean handle() {
-                        error = null;
-                        try {
-                            probeResult = FFmpegTools.FFprobleFrames(executable, sourceFile,
-                                    framesStreamsInput.getText(), framesIntervalInput.getText());
-                        } catch (Exception e) {
-                            error = e.toString();
-                        }
-                        return true;
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        if (error != null) {
-                            popError(error);
-                        }
-                        if (probeResult == null) {
-                            return;
-                        }
-                        showFrames(probeResult.getFrames());
-                    }
-                };
-                start(task);
             }
 
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-
-    }
-
-    protected void showFrames(List<Frame> frames) {
-        if (isSettingValues) {
-            return;
-        }
-        if (frames == null || frames.isEmpty()) {
-            popInformation(Languages.message("NoData"));
-            return;
-        }
-        StringBuilder s = new StringBuilder();
-        int size = frames.size();
-        s.append(Languages.message("Found")).append(": ").append(size);
-        for (int i = 0; i < size; ++i) {
-            Frame frame = frames.get(i);
-            StringTable table = new StringTable(null, Languages.message("Frame") + " " + i);
-            if (frame.getMediaType() != null) {
-                table.add(Arrays.asList(Languages.message("MediaType"), frame.getMediaType().name()));
-            }
-            if (frame.getStreamIndex() != null) {
-                table.add(Arrays.asList(Languages.message("StreamIndex"), frame.getStreamIndex() + ""));
-            }
-            table.add(Arrays.asList(Languages.message("KeyFrame"), frame.getKeyFrame() + ""));
-            if (frame.getPktDts() != null) {
-                table.add(Arrays.asList(Languages.message("PktDts"), frame.getPktDts() + ""));
-            }
-            if (frame.getPktDtsTime() != null) {
-                table.add(Arrays.asList(Languages.message("PktDtsTime"), frame.getPktDtsTime() + ""));
-            }
-            if (frame.getPktPts() != null) {
-                table.add(Arrays.asList(Languages.message("PktPts"), frame.getPktPts() + ""));
-            }
-            if (frame.getPktPtsTime() != null) {
-                table.add(Arrays.asList(Languages.message("PktPtsTime"), frame.getPktPtsTime() + ""));
-            }
-            if (frame.getBestEffortTimestamp() != null) {
-                table.add(Arrays.asList(Languages.message("BestEffortTimestamp"), frame.getBestEffortTimestamp() + ""));
-            }
-            if (frame.getBestEffortTimestampTime() != null) {
-                table.add(Arrays.asList(Languages.message("BestEffortTimestampTime"), frame.getBestEffortTimestampTime() + ""));
-            }
-            if (frame.getPktDuration() != null) {
-                table.add(Arrays.asList(Languages.message("PktDuration"), frame.getPktDuration() + ""));
-            }
-            if (frame.getPktDurationTime() != null) {
-                table.add(Arrays.asList(Languages.message("PktDurationTime"), frame.getPktDurationTime() + ""));
-            }
-            if (frame.getPktPos() != null) {
-                table.add(Arrays.asList(Languages.message("PktPos"), frame.getPktPos() + ""));
-            }
-            if (frame.getPktSize() != null) {
-                table.add(Arrays.asList(Languages.message("PktSize"), frame.getPktSize() + ""));
-            }
-            if (frame.getPts() != null) {
-                table.add(Arrays.asList(Languages.message("Pts"), frame.getPts() + ""));
-            }
-            if (frame.getPtsTime() != null) {
-                table.add(Arrays.asList(Languages.message("PtsTime"), frame.getPtsTime() + ""));
-            }
-            if (frame.getSampleFmt() != null) {
-                table.add(Arrays.asList(Languages.message("SampleFmt"), frame.getSampleFmt() + ""));
-            }
-            if (frame.getSampleAspectRatio() != null) {
-                table.add(Arrays.asList(Languages.message("SampleAspectRatio"), frame.getSampleAspectRatio() + ""));
-            }
-            if (frame.getNbSamples() != null) {
-                table.add(Arrays.asList(Languages.message("NumberOfSamples"), frame.getNbSamples() + ""));
-            }
-            if (frame.getChannels() != null) {
-                table.add(Arrays.asList(Languages.message("Channels"), frame.getChannels() + ""));
-            }
-            if (frame.getChannelLayout() != null) {
-                table.add(Arrays.asList(Languages.message("ChannelLayout"), frame.getChannelLayout() + ""));
-            }
-            if (frame.getWidth() != null) {
-                table.add(Arrays.asList(Languages.message("Width"), frame.getWidth() + ""));
-            }
-            if (frame.getHeight() != null) {
-                table.add(Arrays.asList(Languages.message("Height"), frame.getHeight() + ""));
-            }
-            if (frame.getPictType() != null) {
-                table.add(Arrays.asList(Languages.message("PictType"), frame.getPictType() + ""));
-            }
-            if (frame.getPixFmt() != null) {
-                table.add(Arrays.asList(Languages.message("PixFmt"), frame.getPixFmt() + ""));
-            }
-            if (frame.getCodedPictureNumber() != null) {
-                table.add(Arrays.asList(Languages.message("CodedPictureNumber"), frame.getCodedPictureNumber() + ""));
-            }
-            if (frame.getDisplayPictureNumber() != null) {
-                table.add(Arrays.asList(Languages.message("DisplayPictureNumber"), frame.getDisplayPictureNumber() + ""));
-            }
-            if (frame.getRepeatPict() != null) {
-                table.add(Arrays.asList(Languages.message("RepeatPict"), frame.getRepeatPict() + ""));
-            }
-            if (frame.getInterlacedFrame() != null) {
-                table.add(Arrays.asList(Languages.message("InterlacedFrame"), frame.getInterlacedFrame() + ""));
+            @Override
+            protected void whenSucceeded() {
+                ControllerTools.openTextEditer(null, file);
             }
 
-            s.append(StringTable.tableDiv(table)).append("</hr>");
-        }
-
-        String html = HtmlWriteTools.html(Languages.message("Frames"), HtmlStyles.styleValue("Default"), s.toString());
-        framesView.getEngine().loadContent​(html);
-    }
-
-    @FXML
-    protected void packetsAction() {
-        try {
-            packetsView.getEngine().loadContent​("");
-            probeResult = null;
-            if (executable == null || sourceFile == null) {
-                return;
+            @Override
+            protected void taskQuit() {
+                super.taskQuit();
+                queryTask = null;
             }
-            synchronized (this) {
-                if (task != null && !task.isQuit()) {
-                    return;
-                }
-                task = new SingletonTask<Void>(this) {
-
-                    @Override
-                    protected boolean handle() {
-                        error = null;
-                        try {
-                            probeResult = FFmpegTools.FFproblePackets(executable, sourceFile,
-                                    framesStreamsInput.getText(), framesIntervalInput.getText());
-                        } catch (Exception e) {
-                            error = e.toString();
-                        }
-                        return true;
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        if (error != null) {
-                            popError(error);
-                        }
-                        if (probeResult == null) {
-                            return;
-                        }
-                        showPackets(probeResult.getPackets());
-                    }
-                };
-                start(task);
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-
-    }
-
-    protected void showPackets(List<Packet> packets) {
-        if (isSettingValues) {
-            return;
-        }
-        if (packets == null || packets.isEmpty()) {
-            popInformation(Languages.message("NoData"));
-            return;
-        }
-        StringBuilder s = new StringBuilder();
-        int size = packets.size();
-        s.append(Languages.message("Found")).append(": ").append(size);
-        for (int i = 0; i < size; ++i) {
-            Packet packet = packets.get(i);
-            StringTable table = new StringTable(null, Languages.message("Frame") + " " + i);
-            if (packet.getCodecType() != null) {
-                table.add(Arrays.asList(Languages.message("MediaType"), packet.getCodecType().name()));
-            }
-            table.add(Arrays.asList(Languages.message("StreamIndex"), packet.getStreamIndex() + ""));
-            if (packet.getPts() != null) {
-                table.add(Arrays.asList(Languages.message("Pts"), packet.getPts() + ""));
-            }
-            if (packet.getPtsTime() != null) {
-                table.add(Arrays.asList(Languages.message("PtsTime"), packet.getPtsTime() + ""));
-            }
-            if (packet.getDts() != null) {
-                table.add(Arrays.asList(Languages.message("Dts"), packet.getDts() + ""));
-            }
-            if (packet.getDtsTime() != null) {
-                table.add(Arrays.asList(Languages.message("DtsTime"), packet.getDtsTime() + ""));
-            }
-            if (packet.getDuration() != null) {
-                table.add(Arrays.asList(Languages.message("Duration"), packet.getDuration() + ""));
-            }
-            if (packet.getDurationTime() != null) {
-                table.add(Arrays.asList(Languages.message("DurationTime"), packet.getDurationTime() + ""));
-            }
-            if (packet.getConvergenceDuration() != null) {
-                table.add(Arrays.asList(Languages.message("ConvergenceDuration"), packet.getConvergenceDuration() + ""));
-            }
-            if (packet.getConvergenceDurationTime() != null) {
-                table.add(Arrays.asList(Languages.message("ConvergenceDurationTime"), packet.getConvergenceDurationTime() + ""));
-            }
-            table.add(Arrays.asList(Languages.message("Size"), packet.getSize() + ""));
-            if (packet.getPos() != null) {
-                table.add(Arrays.asList(Languages.message("Position"), packet.getPos() + ""));
-            }
-            if (packet.getFlags() != null) {
-                table.add(Arrays.asList(Languages.message("Flags"), packet.getFlags() + ""));
-            }
-            s.append(StringTable.tableDiv(table)).append("</hr>");
-        }
-
-        String html = HtmlWriteTools.html(Languages.message("Packets"), HtmlStyles.styleValue("Default"), s.toString());
-        packetsView.getEngine().loadContent​(html);
+        };
+        start(queryTask);
     }
 
 }

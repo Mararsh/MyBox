@@ -401,32 +401,34 @@ public class ColumnDefinition extends BaseData {
             if (results.findColumn(savedName) < 0) {
                 return null;
             }
+            Object o = results.getObject(savedName);
+            if (o == null) {
+                return null;
+            }
+            String s = o + "";
             switch (type) {
                 case String:
                 case Enumeration:
                 case Color:
                 case File:
                 case Image:
-                    return results.getString(savedName);
+                    return s;
                 case Era:
-                    Object eo = results.getObject(savedName);
-                    if (eo == null) {
-                        return null;
-                    }
+                    long lv;
                     try {
-                        long lv = Long.parseLong(eo.toString());
+                        lv = Long.parseLong(s);
                         if (lv >= 10000 || lv <= -10000) {
                             return lv;
                         }
                     } catch (Exception e) {
-                        return eo.toString();
+                        return null;
                     }
                 case Double:
                 case Longitude:
                 case Latitude:
                     double d;
                     try {
-                        d = Double.valueOf(results.getObject(savedName).toString());
+                        d = Double.valueOf(s);
                         if (DoubleTools.invalidDouble(d)) {
                             d = Double.NaN;
                         }
@@ -437,7 +439,7 @@ public class ColumnDefinition extends BaseData {
                 case Float:
                     float f;
                     try {
-                        f = Float.valueOf(results.getObject(savedName).toString());
+                        f = Float.valueOf(s);
                         if (FloatTools.invalidFloat(f)) {
                             f = Float.NaN;
                         }
@@ -448,7 +450,7 @@ public class ColumnDefinition extends BaseData {
                 case Long:
                     long l;
                     try {
-                        l = Long.valueOf(results.getObject(savedName).toString());
+                        l = Long.valueOf(s);
                     } catch (Exception e) {
                         l = AppValues.InvalidLong;
                     }
@@ -456,29 +458,29 @@ public class ColumnDefinition extends BaseData {
                 case Integer:
                     int i;
                     try {
-                        i = Integer.valueOf(results.getObject(savedName).toString());
+                        i = Integer.valueOf(s);
                     } catch (Exception e) {
                         i = AppValues.InvalidInteger;
                     }
                     return i;
                 case Short:
-                    short s;
+                    short ss;
                     try {
-                        s = Short.valueOf(results.getObject(savedName).toString());
+                        ss = Short.valueOf(s);
                     } catch (Exception e) {
-                        s = AppValues.InvalidShort;
+                        ss = AppValues.InvalidShort;
                     }
-                    return s;
+                    return ss;
                 case Boolean:
-                    return results.getBoolean(savedName);
+                    return StringTools.isTrue(s);
                 case Datetime:
-                    return results.getTimestamp(savedName);
+                    return DateTools.encodeDate(s);
                 case Date:
-                    return results.getDate(savedName);
-                case Blob:
-                    return results.getBlob(savedName);
-                case Clob:
-                    return results.getClob(savedName);
+                    return DateTools.encodeDate(s);
+//                case Blob:
+//                    return results.getBlob(savedName);
+//                case Clob:
+//                    return results.getClob(savedName);
                 default:
                     MyBoxLog.debug(savedName + " " + type);
             }
@@ -502,6 +504,10 @@ public class ColumnDefinition extends BaseData {
 
     public String toString(Object value) {
         return toString(type, value, null);
+    }
+
+    public double toDouble(String value) {
+        return toDouble(type, value);
     }
 
     public String format(String string) {
@@ -749,32 +755,6 @@ public class ColumnDefinition extends BaseData {
         return types;
     }
 
-    public static String number2String(Number n) {
-        return n != null ? n + "" : null;
-    }
-
-    public static Number string2Number(ColumnType type, String s) {
-        try {
-            if (null == type || s == null) {
-                return null;
-            }
-            switch (type) {
-                case Double:
-                    return Double.parseDouble(s.replaceAll(",", ""));
-                case Float:
-                    return Float.parseFloat(s.replaceAll(",", ""));
-                case Long:
-                    return Math.round(Double.parseDouble(s.replaceAll(",", "")));
-                case Integer:
-                    return (int) Math.round(Double.parseDouble(s.replaceAll(",", "")));
-                case Short:
-                    return (short) Math.round(Double.parseDouble(s.replaceAll(",", "")));
-            }
-        } catch (Exception e) {
-        }
-        return null;
-    }
-
     public static short onUpdate(OnUpdate type) {
         if (type == null) {
             return 0;
@@ -842,6 +822,32 @@ public class ColumnDefinition extends BaseData {
         return type == ColumnType.Datetime || type == ColumnType.Date || type == ColumnType.Era;
     }
 
+    public static String number2String(Number n) {
+        return n != null ? n + "" : null;
+    }
+
+    public static Number string2Number(ColumnType sourceType, String string) {
+        try {
+            if (null == sourceType || string == null) {
+                return null;
+            }
+            switch (sourceType) {
+                case Double:
+                    return Double.parseDouble(string.replaceAll(",", ""));
+                case Float:
+                    return Float.parseFloat(string.replaceAll(",", ""));
+                case Long:
+                    return Math.round(Double.parseDouble(string.replaceAll(",", "")));
+                case Integer:
+                    return (int) Math.round(Double.parseDouble(string.replaceAll(",", "")));
+                case Short:
+                    return (short) Math.round(Double.parseDouble(string.replaceAll(",", "")));
+            }
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
     public static Date stringToDate(String string) {
         return DateTools.encodeDate(string, 0);
     }
@@ -904,12 +910,12 @@ public class ColumnDefinition extends BaseData {
         return null;
     }
 
-    public static String toString(ColumnType type, Object value, String format) {
+    public static String toString(ColumnType sourceType, Object value, String format) {
         try {
-            if (value == null) {
+            if (sourceType == null || value == null) {
                 return null;
             }
-            switch (type) {
+            switch (sourceType) {
                 case Datetime:
                 case Date:
                     return DateTools.datetimeToString((Date) value, format);
@@ -928,6 +934,26 @@ public class ColumnDefinition extends BaseData {
             }
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    public static double toDouble(ColumnType sourceType, String string) {
+        try {
+            if (null == sourceType || string == null) {
+                return Double.NaN;
+            }
+            switch (sourceType) {
+                case Datetime:
+                case Date:
+                case Era:
+                    return DateTools.encodeDate(string).getTime() + 0d;
+                case Boolean:
+                    return StringTools.isTrue(string) ? 1 : 0;
+                default:
+                    return Double.parseDouble(string.replaceAll(",", ""));
+            }
+        } catch (Exception e) {
+            return Double.NaN;
         }
     }
 

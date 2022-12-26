@@ -13,6 +13,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import javafx.beans.property.SimpleBooleanProperty;
 import mara.mybox.controller.AlarmClockController;
+import mara.mybox.db.Database;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ImageClipboardMonitor;
 import mara.mybox.fxml.TextClipboardMonitor;
@@ -75,6 +76,12 @@ public class AppVariables {
             errorNotify = new SimpleBooleanProperty(false);
             isChinese = Languages.isChinese();
             isTesting = false;
+
+            Database.BatchSize = UserConfig.getLong("DatabaseBatchSize", 500);
+            if (Database.BatchSize <= 0) {
+                Database.BatchSize = 500;
+                UserConfig.setLong("DatabaseBatchSize", 500);
+            }
 
             ImageRenderHints.loadImageRenderHints();
 

@@ -238,7 +238,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                         pb.redirectErrorStream(true);
                         final Process process = pb.start();
 
-                        try ( BufferedReader inReader = process.inputReader(Charset.forName("UTF-8"))) {
+                        try ( BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                             String line;
                             int count = 0;
                             boolean versionEnd = false;
@@ -325,7 +325,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                         ProcessBuilder pb = new ProcessBuilder(command)
                                 .redirectErrorStream(true);
                         final Process process = pb.start();
-                        try ( BufferedReader inReader = process.inputReader(Charset.forName("UTF-8"))) {
+                        try ( BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                             String line;
                             int count = 0;
                             while ((line = inReader.readLine()) != null) {
@@ -414,7 +414,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                         pb.redirectErrorStream(true);
                         final Process process = pb.start();
 
-                        try ( BufferedReader inReader = process.inputReader(Charset.forName("UTF-8"))) {
+                        try ( BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                             String line;
                             int count = 0;
                             while ((line = inReader.readLine()) != null) {

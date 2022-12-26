@@ -315,7 +315,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             }
             bufferedImage = scaleImage(task, bufferedImage, imageInfo, targetWidth);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.debug(e.toString());
             if (task != null) {
                 task.setError(e.toString());
             }
@@ -399,7 +399,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
             }
             bufferedImage = scaleImage(task, bufferedImage, imageInfo, targetWidth);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.debug(e.toString());
             if (task != null) {
                 task.setError(e.toString());
             }
@@ -420,7 +420,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
                 imageInfo.setThumbnail(SwingFXUtils.toFXImage(bufferedImage, null));
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.debug(e.toString());
             if (task != null) {
                 task.setError(e.toString());
             }

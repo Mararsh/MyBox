@@ -355,7 +355,7 @@ public class ControlOCROptions extends BaseController {
             ));
             ProcessBuilder pb = new ProcessBuilder(parameters).redirectErrorStream(true);
             Process process = pb.start();
-            try ( BufferedReader inReader = process.inputReader(Charset.forName("UTF-8"))) {
+            try ( BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                 String line;
                 while ((line = inReader.readLine()) != null) {
                     if (line.contains("tesseract v4.") || line.contains("tesseract 4.")) {

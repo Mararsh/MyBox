@@ -464,7 +464,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
             menu = new MenuItem(message("Snapshot"), StyleTools.getIconImage("iconSnapshot.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
-                ImageViewerController.load(NodeTools.snap(tableView));
+                snapAction();
             });
             items.add(menu);
 
@@ -1171,6 +1171,11 @@ public abstract class BaseTableViewController<P> extends BaseController {
             }
         };
         start(htmlTask, false, message("LoadingTableData"));
+    }
+
+    @FXML
+    public void snapAction() {
+        ImageViewerController.load(NodeTools.snap(tableView));
     }
 
     /*

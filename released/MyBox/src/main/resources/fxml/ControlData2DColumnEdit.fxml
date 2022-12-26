@@ -33,7 +33,7 @@ License:    Apache License Version 2.0
             </ImageView>
             </children>
         </HBox>
-      <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
+      <FlowPane fx:id="typesPane" alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
          <children>
             <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                <image>

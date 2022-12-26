@@ -72,7 +72,6 @@ public class DerbyBase {
             + AppValues.AppDerbyPassword + ";create=false";
     public static DerbyStatus status;
     public static long lastRetry = 0;
-    public static long BatchSize = 500;
 
     public enum DerbyStatus {
         Embedded, Nerwork, Starting, NotConnected, EmbeddedFailed, NerworkFailed
@@ -288,7 +287,7 @@ public class DerbyBase {
                      ResultSet resultSet = statement.executeQuery(sql)) {
                 while (resultSet.next()) {
                     String savedName = resultSet.getString("TABLENAME");
-                    String referredName = referredName(savedName);
+                    String referredName = fixedIdentifier(savedName);
                     tables.add(referredName);
                 }
             } catch (Exception e) {
@@ -312,7 +311,7 @@ public class DerbyBase {
                      ResultSet resultSet = statement.executeQuery(sql)) {
                 while (resultSet.next()) {
                     String savedName = resultSet.getString("columnname");
-                    String referredName = referredName(savedName);
+                    String referredName = fixedIdentifier(savedName);
                     columns.add(referredName + ", " + resultSet.getString("columndatatype"));
                 }
             } catch (Exception e) {
@@ -337,7 +336,7 @@ public class DerbyBase {
                      ResultSet resultSet = statement.executeQuery(sql)) {
                 while (resultSet.next()) {
                     String savedName = resultSet.getString("columnname");
-                    String referredName = referredName(savedName);
+                    String referredName = fixedIdentifier(savedName);
                     columns.add(referredName);
                 }
             } catch (Exception e) {
@@ -359,7 +358,7 @@ public class DerbyBase {
                      ResultSet resultSet = statement.executeQuery(sql)) {
                 while (resultSet.next()) {
                     String savedName = resultSet.getString("CONGLOMERATENAME");
-                    String referredName = referredName(savedName);
+                    String referredName = fixedIdentifier(savedName);
                     indexes.add(referredName);
                 }
             } catch (Exception e) {
@@ -381,7 +380,7 @@ public class DerbyBase {
                      ResultSet resultSet = statement.executeQuery(sql)) {
                 while (resultSet.next()) {
                     String savedName = resultSet.getString("TABLENAME");
-                    String referredName = referredName(savedName);
+                    String referredName = fixedIdentifier(savedName);
                     tables.add(referredName);
                 }
             } catch (Exception e) {
@@ -779,6 +778,23 @@ public class DerbyBase {
         }
     }
 
+    public static int exist(Connection conn, String referredName) {
+        if (conn == null || referredName == null) {
+            return -1;
+        }
+        try ( ResultSet resultSet = conn.getMetaData().getColumns(null, "MARA",
+                DerbyBase.savedName(referredName), "%")) {
+            if (resultSet.next()) {
+                return 1;
+            } else {
+                return 0;
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e, referredName);
+            return -2;
+        }
+    }
+
     public static String stringValue(String value) {
         if (value == null) {
             return null;
@@ -842,47 +858,56 @@ public class DerbyBase {
         if (name.startsWith("\"") && name.endsWith("\"")) {
             return name;
         }
-        String s = "";
-        String sname = name.replaceAll("（|）", "_");
+        String sname = name.toLowerCase().replaceAll("（", "(").replaceAll("）", ")");
+        boolean needQuote = false;
         for (int i = 0; i < sname.length(); i++) {
             char c = sname.charAt(i);
-            if ((c > 64 && c < 91) || (c > 96 && c < 123) || c < 0 || c > 127) {
-                s += c;
-                continue;
+            if (c != '_' && !Character.isLetterOrDigit(c)) {
+                needQuote = true;
+                break;
             }
-            if (i == 0) {
-                s += "a";
-            }
-            if (c == '_' || (c > 47 && c < 58)) {
-                s += c;
-            } else {
-                s += "_";
+            if (i == 0 && Character.isDigit(c)) {
+                needQuote = true;
+                break;
             }
         }
-        return s;
+        return needQuote ? "\"" + sname + "\"" : sname;
     }
 
-    public static String referIdentifier(String name) {
+    public static String appendIdentifier(String name, String suffix) {
+        if (name == null || suffix == null || suffix.isBlank()) {
+            return null;
+        }
+        return fixedIdentifier((name + suffix).replaceAll("\"", ""));
+    }
+
+    public static String checkIdentifier(List<String> names, String name, boolean add) {
         if (name == null) {
             return null;
         }
-        return name.equals(name.toUpperCase()) ? name : "\"" + name + "\"";
+        if (names == null) {
+            names = new ArrayList<>();
+        }
+        String tname = name;
+        int index = 1;
+        while (names.contains(tname) || names.contains(tname.toUpperCase())) {
+            tname = DerbyBase.appendIdentifier(name, ++index + "");
+        }
+        if (add) {
+            names.add(tname);
+        }
+        return tname;
     }
 
     public static String savedName(String referedName) {
         if (referedName == null) {
             return null;
         }
-        return referedName.startsWith("\"") && referedName.endsWith("\"")
-                ? referedName.substring(1, referedName.length() - 1) : referedName.toUpperCase();
-    }
-
-    public static String referredName(String nameFromDB) {
-        if (nameFromDB == null) {
-            return null;
+        if (referedName.startsWith("\"") && referedName.endsWith("\"")) {
+            return referedName.substring(1, referedName.length() - 1);
+        } else {
+            return referedName.toUpperCase();
         }
-        return nameFromDB.equals(nameFromDB.toUpperCase())
-                ? nameFromDB.toLowerCase() : "\"" + nameFromDB + "\"";
     }
 
 }

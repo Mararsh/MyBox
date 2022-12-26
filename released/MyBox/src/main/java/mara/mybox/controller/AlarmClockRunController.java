@@ -5,7 +5,7 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javax.sound.sampled.Clip;
+import javafx.scene.media.AudioClip;
 import mara.mybox.db.data.AlarmClock;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.SoundTools;
@@ -20,7 +20,7 @@ import mara.mybox.value.Languages;
 public class AlarmClockRunController extends BaseController {
 
     private AlarmClock alarm;
-    private Clip player;
+    private AudioClip player;
     private Task playTask;
 
     @FXML
@@ -55,8 +55,6 @@ public class AlarmClockRunController extends BaseController {
     public void knowAction(ActionEvent event) {
         if (player != null) {
             player.stop();
-            player.drain();
-            player.close();
             player = null;
         }
         closeStage();
@@ -89,15 +87,15 @@ public class AlarmClockRunController extends BaseController {
                         File miao = FxFileTools.getInternalFile("/sound/miao4.mp3", "sound", "miao4.mp3");
                         sound = miao.getAbsolutePath();
                     }
-                    player = SoundTools.playback(sound, alarm.getVolume());
-                    if (alarm.isIsSoundLoop()) {
-                        if (alarm.isIsSoundContinully()) {
-                            player.loop(Clip.LOOP_CONTINUOUSLY);
-                        } else {
-                            player.loop(alarm.getSoundLoopTimes() - 1);
-                        }
-                    }
-                    player.start();
+                    player = SoundTools.clip(new File(sound), alarm.getVolume());
+//                    if (alarm.isIsSoundLoop()) {
+//                        if (alarm.isIsSoundContinully()) {
+//                            player.loop(Clip.LOOP_CONTINUOUSLY);
+//                        } else {
+//                            player.loop(alarm.getSoundLoopTimes() - 1);
+//                        }
+//                    }
+//                    player.start();
                 } catch (Exception e) {
                 }
                 return null;

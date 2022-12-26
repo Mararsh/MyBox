@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import mara.mybox.data.GeoCoordinateSystem;
+import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
-import static mara.mybox.db.DerbyBase.BatchSize;
 import static mara.mybox.db.DerbyBase.stringValue;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
@@ -1533,7 +1533,7 @@ public class TableGeographyCode extends BaseTable<GeographyCode> {
                     }
                     statement.setLong(1, code.getGcid());
                     statement.addBatch();
-                    if (i > 0 && (i % BatchSize == 0)) {
+                    if (i > 0 && (i % Database.BatchSize == 0)) {
                         int[] res = statement.executeBatch();
                         for (int r : res) {
                             if (r > 0) {

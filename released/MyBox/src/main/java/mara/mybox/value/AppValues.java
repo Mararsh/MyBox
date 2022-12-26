@@ -8,14 +8,13 @@ package mara.mybox.value;
 public class AppValues {
 
     public static final boolean Alpha = false;
-    public static final String AppVersion = "6.6.2";
-    public static final String AppVersionDate = "2022-11-30";
+    public static final String AppVersion = "6.6.3";
+    public static final String AppVersionDate = "2022-12-26";
     public static final String AppDerbyUser = "mara";
     public static final String AppDerbyPassword = "mybox";
 
     public static final String MyBoxSeparator = "##MyBox#";
     public static final String MyBoxStyle = "/styles/MyBox.css";
-    public static final String MyBoxInternetDataPath = "https://github.com/Mararsh/MyBox_data";
 
     public static final String FileNameSpecialChars
             = "[:<>/&%]|\\*|\\?|\\\\|\n|\"|\\s+|\\||&nbsp;|&lt;|&gt;|&amp;|&quot;";

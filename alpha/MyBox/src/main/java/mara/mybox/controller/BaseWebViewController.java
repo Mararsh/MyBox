@@ -11,6 +11,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WebViewTools;
 import static mara.mybox.value.Languages.message;
@@ -321,6 +322,11 @@ public class BaseWebViewController extends BaseController {
             return false;
         }
         return webViewController.menuAction();
+    }
+
+    @FXML
+    public void snapAction() {
+        ImageViewerController.load(NodeTools.snap(webView));
     }
 
     @Override

@@ -3,7 +3,7 @@ package mara.mybox.db.table;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import mara.mybox.db.DerbyBase;
+import mara.mybox.db.Database;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DDefinition;
@@ -115,7 +115,7 @@ public class TableData2DStyle extends BaseTable<Data2DStyle> {
                 s.setD2id(targetid);
                 if (insertData(conn, s) != null) {
                     count++;
-                    if (count % DerbyBase.BatchSize == 0) {
+                    if (count % Database.BatchSize == 0) {
                         conn.commit();
                     }
                 }

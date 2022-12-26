@@ -125,7 +125,7 @@ public abstract class PdfViewController_OCR extends BaseFileImagesViewController
                     ProcessBuilder pb = new ProcessBuilder(parameters).redirectErrorStream(true);
                     long start = new Date().getTime();
                     process = pb.start();
-                    try ( BufferedReader inReader = process.inputReader(Charset.forName("UTF-8"))) {
+                    try ( BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                         String line;
                         while ((line = inReader.readLine()) != null) {
                             outputs += line + "\n";

@@ -208,7 +208,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
                 timer = null;
             }
             boolean started = false, recording;
-            try ( BufferedReader inReader = process.inputReader(Charset.forName("UTF-8"))) {
+            try ( BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                 String line;
                 long start = new Date().getTime();
                 while ((line = inReader.readLine()) != null) {

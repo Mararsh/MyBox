@@ -1,17 +1,15 @@
 package mara.mybox.controller;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Random;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
-import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
+import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
-import mara.mybox.data2d.DataTable;
+import mara.mybox.data2d.TmpTable;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
@@ -64,17 +62,13 @@ public class Data2DTransposeController extends BaseData2DTargetsController {
             outputColumns = new ArrayList<>();
             int nameIndex = showRowNumber ? 1 : 0;
             List<String> names = new ArrayList<>();
-            Random random = new Random();
             if (firstCheck.isSelected()) {
                 for (int c = 0; c < rowsNumber; ++c) {
                     String name = outputData.get(c).get(nameIndex);
                     if (name == null || name.isBlank()) {
                         name = message("Columns") + (c + 1);
                     }
-                    while (names.contains(name)) {
-                        name += random.nextInt(10);
-                    }
-                    names.add(name);
+                    DerbyBase.checkIdentifier(names, name, true);
                 }
             } else {
                 for (int c = 1; c <= rowsNumber; c++) {
@@ -82,11 +76,7 @@ public class Data2DTransposeController extends BaseData2DTargetsController {
                 }
             }
             if (showColNames) {
-                String name = message("ColumnName");
-                while (names.contains(name)) {
-                    name += random.nextInt(10);
-                }
-                names.add(0, name);
+                DerbyBase.checkIdentifier(names, message("ColumnName"), true);
             }
             for (int c = 0; c < names.size(); c++) {
                 outputColumns.add(new Data2DColumn(names.get(c), ColumnDefinition.ColumnType.String));
@@ -126,15 +116,29 @@ public class Data2DTransposeController extends BaseData2DTargetsController {
     @Override
     public DataFileCSV generatedFile() {
         try {
-            LinkedHashMap<Integer, ColumnType> colTypes = new LinkedHashMap<>();
-            for (int c : checkedColsIndices) {
-                colTypes.put(c, ColumnType.String);
+            Data2D tmp2D = data2D.cloneAll();
+            tmp2D.startTask(task, filterController.filter);
+            if (task != null) {
+                task.setInfo(message("Filter") + "...");
             }
-            DataTable tmpTable = data2D.toTmpTable(task, colTypes, showRowNumber(), InvalidAs.Blank);
+            TmpTable tmpTable = new TmpTable()
+                    .setSourceData(tmp2D)
+                    .setTargetName(data2D.getDataName())
+                    .setSourcePickIndice(checkedColsIndices)
+                    .setImportData(true)
+                    .setForStatistic(false)
+                    .setIncludeColName(showColNames())
+                    .setIncludeRowNumber(showRowNumber())
+                    .setInvalidAs(invalidAs);
+            tmpTable.setTask(task);
+            if (!tmpTable.createTable()) {
+                tmpTable = null;
+            }
+            tmp2D.stopFilter();
             if (tmpTable == null) {
                 return null;
             }
-            DataFileCSV csvData = tmpTable.transpose(null, task, showColNames(), firstCheck.isSelected());
+            DataFileCSV csvData = tmpTable.transpose(firstCheck.isSelected());
             tmpTable.drop();
             return csvData;
         } catch (Exception e) {

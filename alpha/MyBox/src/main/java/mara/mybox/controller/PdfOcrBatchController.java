@@ -577,7 +577,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
             ProcessBuilder pb = new ProcessBuilder(parameters).redirectErrorStream(true);
             process = pb.start();
             String outputs = "", line;
-            try ( BufferedReader inReader = process.inputReader(Charset.forName("UTF-8"))) {
+            try ( BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                 while ((line = inReader.readLine()) != null) {
                     outputs += line + "\n";
                 }

@@ -475,6 +475,7 @@ public abstract class BaseController_Attributes {
     }
 
     public void popError(String text) {
+//        MyBoxLog.debug(text);
         popError(text, UserConfig.textDuration(), UserConfig.textSize());
     }
 

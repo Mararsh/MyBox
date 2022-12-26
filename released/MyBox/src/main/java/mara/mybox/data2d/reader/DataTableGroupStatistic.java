@@ -13,6 +13,7 @@ import mara.mybox.calculation.DoubleStatistic;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
+import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
@@ -71,14 +72,16 @@ public class DataTableGroupStatistic {
             init();
             String currentParameterValue;
             long currentGroupid, count = 0;
-            String mappedIdColName = groupResults.tmpColumnName(idColName);
+            String mappedIdColName = groupResults.columnName(1);
             String sql = "SELECT * FROM " + groupResults.getSheet() + " ORDER BY " + mappedIdColName;
-            String mappedParameterName = groupResults.tmpColumnName(parameterName);
+            String mappedParameterName = groupResults.columnName(2);
             if (task != null) {
                 task.setInfo(sql);
             }
             try ( ResultSet query = conn.prepareStatement(sql).executeQuery();
                      PreparedStatement insert = conn.prepareStatement(tableGroup.insertStatement());) {
+                String sIdColName = DerbyBase.savedName(mappedIdColName);
+                String sParameterName = DerbyBase.savedName(mappedParameterName);
                 while (query.next()) {
                     if (task == null || task.isCancelled()) {
                         query.close();
@@ -86,12 +89,12 @@ public class DataTableGroupStatistic {
                         conn.close();
                         return false;
                     }
-                    currentGroupid = query.getLong(mappedIdColName);
-                    currentParameterValue = query.getString(mappedParameterName);
+                    currentGroupid = query.getLong(sIdColName);
+                    currentParameterValue = query.getString(sParameterName);
                     Data2DRow data2DRow = tableGroup.newRow();
                     for (String name : calNames) {
-                        Object v = query.getObject(groupResults.tmpColumnName(name));
-                        data2DRow.setColumnValue(groupData.tmpColumnName(name), v);
+                        Object v = groupColumn(name).value(query);
+                        data2DRow.setColumnValue(groupColumnName(name), v);
                     }
                     if (groupid > 0 && groupid != currentGroupid) {
                         insert.executeBatch();
@@ -102,7 +105,7 @@ public class DataTableGroupStatistic {
                     }
                     if (tableGroup.setInsertStatement(conn, insert, data2DRow)) {
                         insert.addBatch();
-                        if (++count % DerbyBase.BatchSize == 0) {
+                        if (++count % Database.BatchSize == 0) {
                             insert.executeBatch();
                             conn.commit();
                             if (task != null) {
@@ -145,7 +148,7 @@ public class DataTableGroupStatistic {
                 valuesColumns.add(new Data2DColumn(message("Group") + "_" + message(type.name()),
                         ColumnType.Double, 150));
             }
-            String dname = groupResults.dataName() + "_" + message("Statistic");
+            String dname = DerbyBase.appendIdentifier(groupResults.dataName(), "_" + message("Statistic"));
             statisticData = DataTable.createTable(task, conn, dname, valuesColumns, null, null, null, true);
             statisticData.setDataName(dname).setScale(scale);
             tableStatistic = statisticData.getTableData2D();
@@ -177,11 +180,12 @@ public class DataTableGroupStatistic {
 
             groupColumns = new ArrayList<>();
             for (String name : calNames) {
-                Data2DColumn c = groupResults.columnByName(groupResults.tmpColumnName(name)).cloneAll();
+                Data2DColumn c = groupColumn(name).cloneAll();
                 c.setD2cid(-1).setD2id(-1).setColumnName(name);
                 groupColumns.add(c);
             }
-            groupData = DataTable.createTable(task, conn, groupColumns);
+            String gname = DerbyBase.appendIdentifier(groupResults.dataName(), "_" + message("Group"));
+            groupData = DataTable.createTable(task, conn, gname, groupColumns, null, null, null, true);
             tableGroup = groupData.getTableData2D();
 
             groupid = 0;
@@ -196,6 +200,24 @@ public class DataTableGroupStatistic {
             }
             return false;
         }
+    }
+
+    public Data2DColumn groupColumn(String sourceName) {
+        if (sourceName == null) {
+            return null;
+        }
+        for (int i = 0; i < groups.tmpData.getSourcePickIndice().size(); i++) {
+            int col = groups.tmpData.getSourcePickIndice().get(i);
+            if (sourceName.equals(groups.originalData.columnName(col))) {
+                return groupResults.column(i + 3);
+            }
+        }
+        return null;
+    }
+
+    public String groupColumnName(String sourceName) {
+        Data2DColumn column = groupColumn(sourceName);
+        return column == null ? null : column.getColumnName();
     }
 
     private void statistic() {
@@ -224,17 +246,18 @@ public class DataTableGroupStatistic {
             }
             for (int i = 0; i < colSize; i++) {
                 Data2DRow data2DRow = tableStatistic.newRow();
-                data2DRow.setColumnValue(statisticData.tmpColumnName(idColName), groupid);
-                data2DRow.setColumnValue(statisticData.tmpColumnName(parameterName), parameterValue);
-                data2DRow.setColumnValue(statisticData.tmpColumnName(message("ColumnName")), calNames.get(i));
+                data2DRow.setColumnValue(statisticData.columnName(1), groupid);
+                data2DRow.setColumnValue(statisticData.columnName(2), parameterValue);
+                data2DRow.setColumnValue(statisticData.columnName(3), calNames.get(i));
                 DoubleStatistic s = sData[i];
-                for (StatisticType type : calculation.types) {
-                    data2DRow.setColumnValue(statisticData.tmpColumnName(message("Group") + "_" + message(type.name())),
+                for (int k = 0; k < calculation.types.size(); k++) {
+                    StatisticType type = calculation.types.get(k);
+                    data2DRow.setColumnValue(statisticData.columnName(k + 4),
                             DoubleTools.scale(s.value(type), scale));
                 }
                 if (tableStatistic.setInsertStatement(conn, statisticInsert, data2DRow)) {
                     statisticInsert.addBatch();
-                    if (++statisticRowsCount % DerbyBase.BatchSize == 0) {
+                    if (++statisticRowsCount % Database.BatchSize == 0) {
                         statisticInsert.executeBatch();
                         conn.commit();
                         if (task != null) {
@@ -308,21 +331,23 @@ public class DataTableGroupStatistic {
         }
         List<List<String>> data = new ArrayList<>();
         String sql = "SELECT * FROM " + statisticData.getSheet()
-                + " WHERE " + statisticData.tmpColumnName(idColName) + "=" + groupid;
+                + " WHERE " + statisticData.columnName(1) + "=" + groupid;
+        if (task != null) {
+            task.setInfo(sql);
+        }
         try ( ResultSet query = qconn.prepareStatement(sql).executeQuery()) {
             while (query.next() && qconn != null && !qconn.isClosed()) {
                 List<String> vrow = new ArrayList<>();
                 for (int i = 3; i < statisticData.getColumns().size(); i++) {
                     Data2DColumn column = statisticData.getColumns().get(i);
-                    String name = column.getColumnName();
-                    String s = column.toString(query.getObject(name));
+                    String s = column.toString(column.value(query));
                     vrow.add(s);
                 }
                 data.add(vrow);
             }
             return data;
         } catch (Exception e) {
-            MyBoxLog.console(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

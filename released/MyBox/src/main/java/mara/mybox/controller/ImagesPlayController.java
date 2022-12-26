@@ -647,13 +647,13 @@ public class ImagesPlayController extends BaseImagesListController {
             });
 
             imageInformation.setThumbnail(null);
-            if (playController.stopped.get()) {
-                return;
-            }
-            int next = playController.nextIndex();
-            if (next >= 0 && index < imageInfos.size()) {
-                thumb(imageInfos.get(next));
-            }
+//            if (playController.stopped.get()) {
+//                return;
+//            }
+//            int next = playController.nextIndex();
+//            if (next >= 0 && index < imageInfos.size()) {
+//                thumb(imageInfos.get(next));
+//            }
 
         } catch (Exception e) {
             playController.pauseAction();

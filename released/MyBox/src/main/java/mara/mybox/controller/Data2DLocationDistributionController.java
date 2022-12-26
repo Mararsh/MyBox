@@ -145,16 +145,20 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             isSettingValues = false;
 
             String dname = data2D.getDataName();
+
             File file = null;
-            if (message("zh", "ChineseHistoricalCapitals").equals(dname)
-                    || message("en", "ChineseHistoricalCapitals").equals(dname)) {
-                file = mapController.mapOptions.chineseHistoricalCapitalsImage();
-            } else if (message("zh", "AutumnMovementPatternsOfEuropeanGadwalls").equals(dname)
-                    || message("en", "AutumnMovementPatternsOfEuropeanGadwalls").equals(dname)) {
-                file = mapController.mapOptions.europeanGadwallsImage();
-            } else if (message("zh", "SpermWhalesGulfOfMexico").equals(dname)
-                    || message("en", "SpermWhalesGulfOfMexico").equals(dname)) {
-                file = mapController.mapOptions.spermWhalesImage();
+            if (dname != null) {
+                dname = dname.replaceAll("\"", "");
+                if (message("zh", "ChineseHistoricalCapitals").equalsIgnoreCase(dname)
+                        || message("en", "ChineseHistoricalCapitals").equalsIgnoreCase(dname)) {
+                    file = mapController.mapOptions.chineseHistoricalCapitalsImage();
+                } else if (message("zh", "AutumnMovementPatternsOfEuropeanGadwalls").equalsIgnoreCase(dname)
+                        || message("en", "AutumnMovementPatternsOfEuropeanGadwalls").equalsIgnoreCase(dname)) {
+                    file = mapController.mapOptions.europeanGadwallsImage();
+                } else if (message("zh", "SpermWhalesGulfOfMexico").equalsIgnoreCase(dname)
+                        || message("en", "SpermWhalesGulfOfMexico").equalsIgnoreCase(dname)) {
+                    file = mapController.mapOptions.spermWhalesImage();
+                }
             }
             if (file != null) {
                 mapOptionsController.initImageFile(file);

@@ -290,6 +290,9 @@ public class HtmlReadTools {
 
     public static Map<String, String> requestHead(URL url) {
         try {
+            if (!url.getProtocol().startsWith("http")) {
+                return null;
+            }
             HttpURLConnection connection = getConnection(url);
             Map<String, String> head = HtmlReadTools.requestHead(connection);
             connection.disconnect();

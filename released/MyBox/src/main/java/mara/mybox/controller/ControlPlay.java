@@ -71,6 +71,7 @@ public class ControlPlay extends BaseController {
 
     public ControlPlay() {
         stopped = new SimpleBooleanProperty();
+        TipsLabelKey = "PlayerComments";
     }
 
     public void setParameters(BaseController parent, Thread targetThread, Node snapNode) {

@@ -200,7 +200,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
             audioDevice = null;
             final Process process = pb.start();
 
-            try ( BufferedReader inReader = process.inputReader(Charset.forName("UTF-8"))) {
+            try ( BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                 String line;
                 boolean audioNext = false;
                 while ((line = inReader.readLine()) != null) {
@@ -248,7 +248,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
             ).redirectErrorStream(true);
             macVideo = macAudio = -1;
             final Process process = pb.start();
-            try ( BufferedReader inReader = process.inputReader(Charset.forName("UTF-8"))) {
+            try ( BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                 String line;
                 while ((line = inReader.readLine()) != null) {
                     try {

@@ -110,44 +110,44 @@ public class Data2DStatistic extends Data2DOperator {
 
     public void handleStatisticColumnsPass1() {
         try {
-            for (int c = 0; c < colsLen; c++) {
-                int i = cols.get(c);
-                if (i < 0 || i >= sourceRow.size()) {
+            for (int i = 0; i < colsLen; i++) {
+                int col = cols.get(i);
+                if (col < 0 || col >= sourceRow.size()) {
                     continue;
                 }
-                String s = sourceRow.get(i);
+                String s = sourceRow.get(col);
                 double v = DoubleTools.toDouble(s, invalidAs);
                 if (DoubleTools.invalidDouble(v)) {
                     switch (invalidAs) {
                         case Blank:
                         case Skip:
-                            statisticData[c].invalidCount++;
+                            statisticData[i].invalidCount++;
                             continue;
                         case Zero:
                             v = 0;
                             break;
                     }
                 }
-                statisticData[c].count++;
+                statisticData[i].count++;
                 if (sumAbs) {
-                    statisticData[c].sum += Math.abs(v);
+                    statisticData[i].sum += Math.abs(v);
                 } else {
-                    statisticData[c].sum += v;
+                    statisticData[i].sum += v;
                 }
-                if (statisticCalculation.include(StatisticType.MaximumQ4) && v > statisticData[c].maximum) {
-                    statisticData[c].maximum = v;
+                if (statisticCalculation.include(StatisticType.MaximumQ4) && v > statisticData[i].maximum) {
+                    statisticData[i].maximum = v;
                 }
-                if (statisticCalculation.include(StatisticType.MinimumQ0) && v < statisticData[c].minimum) {
-                    statisticData[c].minimum = v;
+                if (statisticCalculation.include(StatisticType.MinimumQ0) && v < statisticData[i].minimum) {
+                    statisticData[i].minimum = v;
                 }
                 if (statisticCalculation.include(StatisticType.GeometricMean)) {
-                    statisticData[c].geometricMean = statisticData[c].geometricMean * v;
+                    statisticData[i].geometricMean = statisticData[i].geometricMean * v;
                 }
                 if (statisticCalculation.include(StatisticType.SumOfSquares)) {
-                    statisticData[c].sumSquares += v * v;
+                    statisticData[i].sumSquares += v * v;
                 }
                 if (statisticCalculation.include(StatisticType.Skewness)) {
-                    skewnessList.get(c).increment(v);
+                    skewnessList.get(i).increment(v);
                 }
             }
         } catch (Exception e) {

@@ -122,6 +122,13 @@ public class Data2DMenuTools {
             menu.setDisable(invalidData);
             dataMenu.getItems().add(menu);
 
+            menu = new MenuItem(message("Snapshot"), StyleTools.getIconImage("iconSnapshot.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                controller.getTableController().snapAction();
+            });
+            menu.setDisable(invalidData);
+            dataMenu.getItems().add(menu);
+
             return dataMenu;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

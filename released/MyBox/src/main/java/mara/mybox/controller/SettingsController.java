@@ -30,6 +30,7 @@ import javafx.scene.paint.Paint;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
 import mara.mybox.MyBox;
+import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.DerbyBase.DerbyStatus;
 import mara.mybox.db.table.TableImageEditHistory;
@@ -74,7 +75,7 @@ public class SettingsController extends BaseController {
             clearCurrentRootCheck, splitPaneSensitiveCheck,
             mousePassControlPanesCheck, popColorSetCheck;
     @FXML
-    protected TextField jvmInput, dataDirInput, fileRecentInput, thumbnailWidthInput,
+    protected TextField jvmInput, dataDirInput, batchInput, fileRecentInput, thumbnailWidthInput,
             tiandituWebKeyInput, gaodeWebKeyInput, gaodeServiceKeyInput,
             webConnectTimeoutInput, webReadTimeoutInput;
     @FXML
@@ -737,6 +738,28 @@ public class SettingsController extends BaseController {
                     checkDerbyMode();
                 }
             });
+
+            batchInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    try {
+                        long v = Long.valueOf(batchInput.getText());
+                        if (v > 0) {
+                            batchInput.setStyle(null);
+                            Database.BatchSize = v;
+                            UserConfig.setLong("DatabaseBatchSize", v);
+                        } else {
+                            batchInput.setStyle(UserConfig.badStyle());
+                        }
+                    } catch (Exception e) {
+                        batchInput.setStyle(UserConfig.badStyle());
+                    }
+                }
+            });
+            batchInput.setText(Database.BatchSize + "");
 
             stopAlarmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override

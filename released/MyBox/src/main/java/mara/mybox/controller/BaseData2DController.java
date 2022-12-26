@@ -22,6 +22,7 @@ import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2DExampleTools;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
+import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
@@ -366,7 +367,7 @@ public abstract class BaseData2DController extends BaseController {
                                 countryRow.setColumnValue("Recovered", value);
                                 if (tableCountry.setInsertStatement(conn, countryInsert, countryRow)) {
                                     countryInsert.addBatch();
-                                    if (++recoveryCount % DerbyBase.BatchSize == 0) {
+                                    if (++recoveryCount % Database.BatchSize == 0) {
                                         countryInsert.executeBatch();
                                         conn.commit();
                                         parseTask.setInfo(message("Inserted") + ": " + "recoveryCount " + recoveryCount);
@@ -415,7 +416,7 @@ public abstract class BaseData2DController extends BaseController {
                                     countryRow.setColumnValue("Dead", value);
                                     if (tableCountry.setInsertStatement(conn, countryInsert, countryRow)) {
                                         countryInsert.addBatch();
-                                        if (++deadCount % DerbyBase.BatchSize == 0) {
+                                        if (++deadCount % Database.BatchSize == 0) {
                                             countryInsert.executeBatch();
                                             conn.commit();
                                             parseTask.setInfo(message("Inserted") + ": " + "deadCount " + deadCount
@@ -426,7 +427,7 @@ public abstract class BaseData2DController extends BaseController {
                                     countryRow.setColumnValue("Dead", value);
                                     if (tableCountry.setUpdateStatement(conn, countryUpdate, countryRow)) {
                                         countryUpdate.addBatch();
-                                        if (++deadCount % DerbyBase.BatchSize == 0) {
+                                        if (++deadCount % Database.BatchSize == 0) {
                                             countryUpdate.executeBatch();
                                             conn.commit();
                                             parseTask.setInfo(message("Updated") + ": " + "deadCount " + deadCount
@@ -478,7 +479,7 @@ public abstract class BaseData2DController extends BaseController {
                                     countryRow.setColumnValue("Confirmed", value);
                                     if (tableCountry.setInsertStatement(conn, countryInsert, countryRow)) {
                                         countryInsert.addBatch();
-                                        if (++confirmedCount % DerbyBase.BatchSize == 0) {
+                                        if (++confirmedCount % Database.BatchSize == 0) {
                                             countryInsert.executeBatch();
                                             conn.commit();
                                             parseTask.setInfo(message("Inserted") + ": " + "confirmedCount " + confirmedCount
@@ -489,7 +490,7 @@ public abstract class BaseData2DController extends BaseController {
                                     countryRow.setColumnValue("Confirmed", value);
                                     if (tableCountry.setUpdateStatement(conn, countryUpdate, countryRow)) {
                                         countryUpdate.addBatch();
-                                        if (++confirmedCount % DerbyBase.BatchSize == 0) {
+                                        if (++confirmedCount % Database.BatchSize == 0) {
                                             countryUpdate.executeBatch();
                                             conn.commit();
                                             parseTask.setInfo(message("Updated") + ": " + "confirmedCount " + confirmedCount

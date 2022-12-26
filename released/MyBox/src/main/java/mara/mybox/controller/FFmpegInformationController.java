@@ -23,6 +23,7 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableBooleanCell;
 import mara.mybox.tools.StringTools;
+import mara.mybox.tools.SystemTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -100,12 +101,12 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                     message("Formats"), message("Muxers"), message("Demuxers"),
                     message("Codecs"), message("Decoders"), message("Encoders"),
                     message("BitStreamFilters"), message("ChannelLayouts"), message("AudioSampleFormats"),
-                    message("ColorNames"), message("HardwareAccelerationMethods")
+                    message("ColorNames"), message("PixelFormats"),
+                    message("HardwareAccelerationMethods")
             ));
             querySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue ov, String oldValue,
-                        String newValue) {
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
                     checkQuery();
                 }
             });
@@ -154,6 +155,8 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
             queryInput.setText("-sample_fmts");
         } else if (message("ColorNames").equals(selected)) {
             queryInput.setText("-colors");
+        } else if (message("PixelFormats").equals(selected)) {
+            queryInput.setText("-pix_fmts");
         } else if (message("HardwareAccelerationMethods").equals(selected)) {
             queryInput.setText("-hwaccels");
         }
@@ -235,7 +238,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                         pb.redirectErrorStream(true);
                         final Process process = pb.start();
 
-                        try ( BufferedReader inReader = process.inputReader(Charset.forName("UTF-8"))) {
+                        try ( BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                             String line;
                             int count = 0;
                             boolean versionEnd = false;
@@ -322,7 +325,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                         ProcessBuilder pb = new ProcessBuilder(command)
                                 .redirectErrorStream(true);
                         final Process process = pb.start();
-                        try ( BufferedReader inReader = process.inputReader(Charset.forName("UTF-8"))) {
+                        try ( BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                             String line;
                             int count = 0;
                             while ((line = inReader.readLine()) != null) {
@@ -411,7 +414,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                         pb.redirectErrorStream(true);
                         final Process process = pb.start();
 
-                        try ( BufferedReader inReader = process.inputReader(Charset.forName("UTF-8"))) {
+                        try ( BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                             String line;
                             int count = 0;
                             while ((line = inReader.readLine()) != null) {
@@ -482,7 +485,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                 return;
             }
             queryTask = new SingletonTask<Void>(this) {
-                private StringBuilder output;
+                private String output;
 
                 @Override
                 protected boolean handle() {
@@ -491,40 +494,18 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                         List<String> command = new ArrayList<>();
                         command.add(executable.getAbsolutePath());
                         command.add("-hide_banner");
-                        for (String arg : args) {
-                            command.add(arg);
-                        }
-                        ProcessBuilder pb = new ProcessBuilder(command)
-                                .redirectErrorStream(true);
-                        pb.redirectErrorStream(true);
-                        final Process process = pb.start();
-
-                        try ( BufferedReader inReader = process.inputReader(Charset.forName("UTF-8"))) {
-                            String line;
-                            output = new StringBuilder();
-                            while ((line = inReader.readLine()) != null) {
-                                output.append(line).append("\n");
-                            }
-                        } catch (Exception e) {
-                            error = e.toString();
-                        }
-
-                        process.waitFor();
-
+                        command.addAll(Arrays.asList(args));
+                        output = SystemTools.run(command);
+                        return output != null && !output.isBlank();
                     } catch (Exception e) {
                         error = e.toString();
+                        return false;
                     }
-                    return true;
                 }
 
                 @Override
                 protected void whenSucceeded() {
-                    if (error != null) {
-                        popError(error);
-                    }
-                    if (output != null) {
-                        queryArea.setText(output.toString());
-                    }
+                    queryArea.setText(output);
                 }
 
                 @Override

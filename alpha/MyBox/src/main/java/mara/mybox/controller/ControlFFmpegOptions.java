@@ -217,7 +217,7 @@ public class ControlFFmpegOptions extends BaseController {
                         commons = new ArrayList();
                         List<String> commonNames = new ArrayList();
                         commonNames.addAll(Arrays.asList("mp4", "mp3", "aiff", "au", "avi", "flv", "mov", "wav", "m4v", "hls", "rtsp"));
-                        try ( BufferedReader inReader = process.inputReader(Charset.forName("UTF-8"))) {
+                        try ( BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                             String line;
                             int count = 0;
                             while ((line = inReader.readLine()) != null) {
@@ -333,7 +333,7 @@ public class ControlFFmpegOptions extends BaseController {
                         videoCommons = new ArrayList();
                         List<String> commonVideoNames = new ArrayList();
                         commonVideoNames.addAll(Arrays.asList("flv", "x264", "x265", "libvpx", "h264"));
-                        try ( BufferedReader inReader = process.inputReader(Charset.forName("UTF-8"))) {
+                        try ( BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                             String line;
                             int count = 0;
                             while ((line = inReader.readLine()) != null) {

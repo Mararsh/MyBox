@@ -313,7 +313,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
             ProcessBuilder pb = new ProcessBuilder(parameters).redirectErrorStream(true);
             Process process = pb.start();
             updateLogs("PID:" + process.pid());
-            try ( BufferedReader inReader = process.inputReader(Charset.forName("UTF-8"))) {
+            try ( BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                 String line;
                 while ((line = inReader.readLine()) != null) {
                     updateLogs(line + "\n");

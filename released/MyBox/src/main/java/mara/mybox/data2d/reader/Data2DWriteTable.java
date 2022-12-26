@@ -5,7 +5,7 @@ import java.sql.PreparedStatement;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.Data2D_Edit;
 import mara.mybox.data2d.DataTable;
-import mara.mybox.db.DerbyBase;
+import mara.mybox.db.Database;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
@@ -73,16 +73,7 @@ public class Data2DWriteTable extends Data2DOperator {
     public void handleRow() {
         try {
             Data2DRow data2DRow = writerTableData2D.newRow();
-            int len = sourceRow.size();
-            int offset = includeRowNumber ? 2 : 1;
-            for (int i = 0; i < cols.size(); i++) {
-                int col = cols.get(i);
-                if (col >= 0 && col < len) {
-                    Data2DColumn targetColumn = writerTable.column(i + offset);
-                    data2DRow.setColumnValue(targetColumn.getColumnName(),
-                            targetColumn.fromString(sourceRow.get(col), invalidAs));
-                }
-            }
+            makeTableRow(data2DRow);
             if (data2DRow.isEmpty()) {
                 return;
             }
@@ -91,7 +82,7 @@ public class Data2DWriteTable extends Data2DOperator {
             }
             if (writerTableData2D.setInsertStatement(conn, insert, data2DRow)) {
                 insert.addBatch();
-                if (++count % DerbyBase.BatchSize == 0) {
+                if (++count % Database.BatchSize == 0) {
                     insert.executeBatch();
                     conn.commit();
                     if (task != null) {
@@ -104,6 +95,23 @@ public class Data2DWriteTable extends Data2DOperator {
         }
     }
 
+    public void makeTableRow(Data2DRow data2DRow) {
+        try {
+            int len = sourceRow.size();
+            int offset = includeRowNumber ? 2 : 1;
+            for (int i = 0; i < cols.size(); i++) {
+                int col = cols.get(i);
+                if (col < 0 || col >= len) {
+                    continue;
+                }
+                Data2DColumn targetColumn = writerTable.column(i + offset);
+                data2DRow.setColumnValue(targetColumn.getColumnName(),
+                        targetColumn.fromString(sourceRow.get(col), invalidAs));
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
 
     /*
         set

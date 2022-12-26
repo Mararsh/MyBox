@@ -11,7 +11,29 @@
  </head>
  <body contenteditable="false" style="width: 900px; margin:0 auto;">
   <h1>Development Logs</h1>
- <p>2022-11-30 v6.6.2</p>
+ <p>2022-12-26 v6.6.3</p>
+  <ul>
+   <li>Improve codes: 
+    <ul>
+     <li>Define temporary table as class.</li>
+     <li>When SQL identifier contains invalid characters, quote the identifier, rather than convert characters.</li>
+     <li>Parse results of ffprobe and do not depend on jaffree anymore.</li>
+     <li>Play mp3 with javafx and do not depend on javazoom anymore.</li>
+     <li>Option to set batch size of database updates.</li>
+    </ul></li>
+   <li>Solved: 
+    <ul>
+     <li>Results may be messed when sort or statistic with temporary table.</li>
+     <li>Invalid identifier should be handled when edit column of database table.</li>
+     <li>Null values of numbers should be displayed as empty for database table.</li>
+     <li>Data types should be concerned when sort results of grouping.</li>
+     <li>Wrong in some example data.</li>
+     <li>Order of languages list of OCR is not applied.</li>
+    </ul></li>
+  </ul>
+  <p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.6.3">Closed requirements/bugs in this version</a></p>
+  <p>Best wishes to China!</p>
+  <p>2022-11-30 v6.6.2</p>
   <ul>
    <li>Enhance: 
     <ul>

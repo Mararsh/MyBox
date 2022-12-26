@@ -13,6 +13,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Tab;
 import mara.mybox.data.FileInformation;
+import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.BaseTable;
@@ -21,7 +22,6 @@ import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.value.AppValues;
 import mara.mybox.value.Languages;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -78,7 +78,7 @@ public abstract class BaseImportCsvController<D> extends BaseBatchFileController
     }
 
     public void setLink() {
-        link.setText(AppValues.MyBoxInternetDataPath
+        link.setText("https://github.com/Mararsh/MyBox_data"
                 + (Languages.isChinese() ? "" : "/tree/master/md/en"));
     }
 
@@ -271,7 +271,7 @@ public abstract class BaseImportCsvController<D> extends BaseBatchFileController
                                     + dataValues(data), true);
                         }
                     }
-                    if (importCount % DerbyBase.BatchSize == 0) {
+                    if (importCount % Database.BatchSize == 0) {
                         conn.commit();
                     }
                 }

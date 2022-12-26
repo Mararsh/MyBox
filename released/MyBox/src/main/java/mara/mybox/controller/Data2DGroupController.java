@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
@@ -59,12 +58,7 @@ public class Data2DGroupController extends BaseData2DHandleController {
                     } else {
                         targetType = TargetType.Table;
                     }
-                    List<String> dataNames = new ArrayList<>();
-                    if (showRowNumber()) {
-                        dataNames.add(message("SourceRowNumber"));
-                    }
-                    dataNames.addAll(checkedColsNames);
-                    group = groupData(targetType, dataNames, orders, maxData, -1);
+                    group = groupData(targetType, checkedColsIndices, showRowNumber(), maxData, -1);
                     return group.run();
                 } catch (Exception e) {
                     error = e.toString();

@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
@@ -42,8 +43,9 @@ public abstract class Data2D_Data extends Data2D_Attributes {
             return getPathTempFile(path, name, suffix);
         }
         String pname = shortName();
-        if (pname.startsWith(Data2D.TmpTablePrefix)) {
-            pname = pname.substring(Data2D.TmpTablePrefix.length());
+        if (pname.startsWith(TmpTable.TmpTablePrefix)
+                || pname.startsWith(TmpTable.TmpTablePrefix.toLowerCase())) {
+            pname = pname.substring(TmpTable.TmpTablePrefix.length());
         }
         pname = pname + ((operation == null || operation.isBlank()) ? "" : "_" + operation);
         return getPathTempFile(path, pname, suffix);
@@ -534,16 +536,11 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         }
         List<String> validNames = new ArrayList<>();
         List<Data2DColumn> targetColumns = new ArrayList<>();
-        Random random = new Random();
         for (Data2DColumn column : inColumns) {
             Data2DColumn tcolumn = column.cloneAll();
-            String name = tcolumn.getColumnName();
-            while (validNames.contains(name)) {
-                name += random.nextInt(10);
-            }
+            String name = DerbyBase.checkIdentifier(validNames, tcolumn.getColumnName(), true);
             tcolumn.setColumnName(name);
             targetColumns.add(tcolumn);
-            validNames.add(name);
         }
         return targetColumns;
     }

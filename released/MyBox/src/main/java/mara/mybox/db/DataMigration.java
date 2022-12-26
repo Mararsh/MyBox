@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -16,7 +15,6 @@ import mara.mybox.bufferedimage.ImageConvertTools;
 import mara.mybox.data.GeoCoordinateSystem;
 import static mara.mybox.data2d.Data2D_Convert.createTable;
 import mara.mybox.data2d.DataTable;
-import static mara.mybox.db.DerbyBase.BatchSize;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorPaletteName;
 import mara.mybox.db.data.ColumnDefinition;
@@ -76,15 +74,13 @@ public class DataMigration {
     public static boolean checkUpdates() {
         SystemConfig.setString("CurrentVersion", AppValues.AppVersion);
         try ( Connection conn = DerbyBase.getConnection()) {
-            reloadInternalDoc();
-            reloadInternalData();
-
             int lastVersion = DevTools.lastVersion(conn);
             int currentVersion = DevTools.myboxVersion(AppValues.AppVersion);
             if (lastVersion == currentVersion) {
                 return true;
             }
             MyBoxLog.info("Last version: " + lastVersion + " " + "Current version: " + currentVersion);
+            reloadInternalDoc();
             if (lastVersion > 0) {
 
                 if (lastVersion < 6002001) {
@@ -232,9 +228,8 @@ public class DataMigration {
     private static void updateIn661MoveLocations(Connection conn) {
         try ( Statement statement = conn.createStatement()) {
             DataTable locations = new DataTable();
-            TableData2D tableLocations = locations.getTableData2D();
             String tableName = message("LocationData");
-            if (tableLocations.exist(conn, tableName) == 1) {
+            if (DerbyBase.exist(conn, tableName) == 1) {
                 tableName = message("LocationData") + "_" + DateTools.nowString3();
             }
             List<Data2DColumn> columns = new ArrayList<>();
@@ -255,7 +250,7 @@ public class DataMigration {
             columns.add(new Data2DColumn(message("Image"), ColumnType.String));
             columns.add(new Data2DColumn(message("Comments"), ColumnType.String));
             locations = createTable(null, conn, tableName, columns, null, null, null, false);
-            tableLocations = locations.getTableData2D();
+            TableData2D tableLocations = locations.getTableData2D();
             long count = 0;
             try ( ResultSet query = statement.executeQuery("SELECT * FROM Location_Data_View");
                      PreparedStatement insert = conn.prepareStatement(tableLocations.insertStatement())) {
@@ -280,7 +275,7 @@ public class DataMigration {
                         data2DRow.setColumnValue(message("Image"), query.getString("dataset_image"));
                         data2DRow.setColumnValue(message("Comments"), query.getString("location_comments"));
                         tableLocations.insertData(conn, insert, data2DRow);
-                        if (++count % DerbyBase.BatchSize == 0) {
+                        if (++count % Database.BatchSize == 0) {
                             conn.commit();
                         }
                     } catch (Exception e) {
@@ -304,10 +299,8 @@ public class DataMigration {
 
     private static void updateIn661MoveEpidemicReports(Connection conn) {
         try ( Statement statement = conn.createStatement()) {
-            DataTable reports = new DataTable();
-            TableData2D tableReports = reports.getTableData2D();
             String tableName = message("EpidemicReport");
-            if (tableReports.exist(conn, tableName) == 1) {
+            if (DerbyBase.exist(conn, tableName) == 1) {
                 tableName = message("EpidemicReport") + "_" + DateTools.nowString3();
             }
             List<Data2DColumn> columns = new ArrayList<>();
@@ -329,8 +322,8 @@ public class DataMigration {
             columns.add(new Data2DColumn(message("IncreasedDead"), ColumnType.Long));
             columns.add(new Data2DColumn(message("Source"), ColumnType.String)); // 1:predefined 2:added 3:filled 4:statistic others:unknown
             columns.add(new Data2DColumn(message("Comments"), ColumnType.String));
-            reports = createTable(null, conn, tableName, columns, null, null, null, false);
-            tableReports = reports.getTableData2D();
+            DataTable reports = createTable(null, conn, tableName, columns, null, null, null, false);
+            TableData2D tableReports = reports.getTableData2D();
             long count = 0;
             try ( ResultSet query = statement.executeQuery("SELECT * FROM Epidemic_Report");
                      PreparedStatement insert = conn.prepareStatement(tableReports.insertStatement())) {
@@ -380,7 +373,7 @@ public class DataMigration {
                         data2DRow.setColumnValue(message("Source"), source);
 
                         tableReports.insertData(conn, insert, data2DRow);
-                        if (++count % DerbyBase.BatchSize == 0) {
+                        if (++count % Database.BatchSize == 0) {
                             conn.commit();
                         }
                     } catch (Exception e) {
@@ -1275,7 +1268,7 @@ public class DataMigration {
                     GeographyCode code = TableGeographyCode.readResults(results);
                     TableGeographyCode.setUpdate(conn, update, code);
                     update.addBatch();
-                    if (++count % BatchSize == 0) {
+                    if (++count % Database.BatchSize == 0) {
                         update.executeBatch();
                         conn.commit();
                     }
@@ -1515,34 +1508,6 @@ public class DataMigration {
                     MyBoxLog.info("Internal doc loaded.");
                 } catch (Exception e) {
                     MyBoxLog.console(e.toString());
-                }
-            }
-        }.start();
-    }
-
-    private static void reloadInternalData() {
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    MyBoxLog.info("Reloading internal data...");
-                    List<String> names = Arrays.asList(
-                            "Notebook_Examples_en.txt", "Notebook_Examples_zh.txt",
-                            "SQL_Examples_en.txt", "SQL_Examples_zh.txt",
-                            "InformationInTree_Examples_en.txt", "InformationInTree_Examples_zh.txt",
-                            "JavaScript_Examples_en.txt", "JavaScript_Examples_zh.txt",
-                            "JShellCode_Examples_en.txt", "JShellCode_Examples_zh.txt",
-                            "JEXLCode_Examples_en.txt", "JEXLCode_Examples_zh.txt",
-                            "MathFunction_Examples_en.txt", "MathFunction_Examples_zh.txt",
-                            "RowFilter_Examples_zh.txt", "RowFilter_Examples_en.txt",
-                            "WebFavorite_Examples_en.txt", "WebFavorite_Examples_zh.txt"
-                    );
-                    for (String name : names) {
-                        FxFileTools.getInternalFile("/data/examples/" + name, "data", name, true);
-                    }
-
-                    MyBoxLog.info("Internal data loaded.");
-                } catch (Exception e) {
                 }
             }
         }.start();

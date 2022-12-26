@@ -46,6 +46,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
@@ -914,7 +915,7 @@ public class ControlWebView extends BaseController {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
 
-            int hisSize = (int) webEngine.executeScript("window.history.length;");
+//            int hisSize = (int) webEngine.executeScript("window.history.length;");
             menu = new MenuItem(message("Backward"), StyleTools.getIconImage("iconPrevious.png"));
             menu.setOnAction((ActionEvent event) -> {
                 backAction();
@@ -944,6 +945,12 @@ public class ControlWebView extends BaseController {
             menu = new MenuItem(message("Refresh"), StyleTools.getIconImage("iconRefresh.png"));
             menu.setOnAction((ActionEvent event) -> {
                 refresh();
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("Snapshot"), StyleTools.getIconImage("iconSnapshot.png"));
+            menu.setOnAction((ActionEvent event) -> {
+                snapAction();
             });
             items.add(menu);
 
@@ -1770,6 +1777,11 @@ public class ControlWebView extends BaseController {
             MyBoxLog.debug(e.toString());
         }
         return false;
+    }
+
+    @FXML
+    public void snapAction() {
+        ImageViewerController.load(NodeTools.snap(webView));
     }
 
     @Override

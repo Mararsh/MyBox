@@ -102,7 +102,7 @@ public class Data2DChartGroupBoxWhiskerController extends Data2DChartBoxWhiskerC
         if (outputData == null) {
             return;
         }
-        outputColumns = statisticData.getReferColumns().subList(2, statisticData.getReferColumns().size());
+        outputColumns = statisticData.getColumns().subList(2, statisticData.getColumns().size());
         chartMaker.setDefaultChartTitle(chartTitle());
         super.drawChartBoxWhisker();
     }

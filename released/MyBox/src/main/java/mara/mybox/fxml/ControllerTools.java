@@ -306,6 +306,9 @@ public class ControllerTools {
 
     public static HtmlTableController openHtmlTable(Stage stage, String body) {
         try {
+            if (body == null) {
+                return null;
+            }
             final HtmlTableController controller = (HtmlTableController) openScene(stage, Fxmls.HtmlTableFxml);
             controller.loadBody(body);
             controller.requestMouse();

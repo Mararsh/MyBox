@@ -21,6 +21,11 @@ License:    Apache License Version 2.0
     <children>
         <FlowPane alignment="CENTER_LEFT" hgap="5.0" layoutX="10.0" layoutY="53.0" prefWrapLength="200.0" vgap="5.0">
             <children>
+            <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../buttons/Red/iconTips.png" />
+               </image>
+            </ImageView>
                 <RadioButton fx:id="delayRadio" mnemonicParsing="false" selected="true" text="%Delay">
                     <toggleGroup>
                         <ToggleGroup fx:id="fixGroup" />

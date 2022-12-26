@@ -10,9 +10,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Random;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.Data2DTargetExportController;
 import mara.mybox.controller.DataFileCSVController;
@@ -26,15 +24,12 @@ import mara.mybox.data2d.reader.Data2DSingleColumn;
 import mara.mybox.data2d.reader.Data2DWriteTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
-import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
-import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.CsvTools;
-import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileTools;
@@ -60,16 +55,19 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 public abstract class Data2D_Convert extends Data2D_Edit {
 
-    public static String TmpTablePrefix = "MYBOXTMP__";
-
     /*
         to/from database table
      */
-    public DataTable toTable(SingletonTask task, String targetName, boolean dropExisted) {
+    public DataTable toTable(SingletonTask task, String targetName) {
         DataTable dataTable = null;
         try ( Connection conn = DerbyBase.getConnection()) {
-            dataTable = createTable(task, conn, targetName, dropExisted);
-            writeTableData(task, conn, dataTable);
+            String tableName = DerbyBase.fixedIdentifier(targetName);
+            int index = 1;
+            while (DerbyBase.exist(conn, tableName) > 0) {
+                tableName = DerbyBase.appendIdentifier(tableName, ++index + "");
+            }
+            dataTable = createTable(task, conn, tableName, false);
+            importTable(task, conn, dataTable);
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
@@ -94,7 +92,6 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             }
             dataTable.cloneDefinitionAttributes(this);
             dataTable.setDataName(targetName);
-            dataTable.setSourceData((Data2D) this);
             return dataTable;
         } catch (Exception e) {
             if (task != null) {
@@ -106,96 +103,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         }
     }
 
-    public DataTable toStatisticTable(SingletonTask task, List<Integer> cols, InvalidAs invalidAs) {
-        if (cols == null || cols.isEmpty()) {
-            return null;
-        }
-        LinkedHashMap<Integer, ColumnType> colTypes = new LinkedHashMap<>();
-        for (int c : cols) {
-            colTypes.put(c, ColumnType.Double);
-        }
-        return toTmpTable(task, colTypes, false, invalidAs);
-    }
-
-    public DataTable toTmpTable(SingletonTask task, LinkedHashMap<Integer, ColumnType> colTypes,
-            boolean includeRowNumber, InvalidAs invalidAs) {
-        try ( Connection conn = DerbyBase.getConnection()) {
-            DataTable dataTable = createTmpTable(task, conn, tmpTableName(dataName()), colTypes, includeRowNumber);
-            if (dataTable != null) {
-                dataTable.setDataName(dataName());
-                List<Integer> colIndice = new ArrayList<>();
-                for (int c : colTypes.keySet()) {
-                    colIndice.add(c);
-                }
-                writeTableData(task, conn, dataTable, colIndice, includeRowNumber, invalidAs);
-            }
-            return dataTable;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            }
-            MyBoxLog.error(e.toString());
-            return null;
-        }
-    }
-
-    public DataTable toTmpTable(SingletonTask task, LinkedHashMap<Integer, ColumnType> colTypes, List<List<String>> rows,
-            boolean includeRowNumber, InvalidAs invalidAs) {
-        try ( Connection conn = DerbyBase.getConnection()) {
-            DataTable dataTable = createTmpTable(task, conn, tmpTableName(dataName()), colTypes, includeRowNumber);
-            writeTmpData(task, conn, dataTable, rows, includeRowNumber, invalidAs);
-            return dataTable;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            } else {
-                MyBoxLog.error(e.toString());
-            }
-            return null;
-        }
-    }
-
-    // "cols" may contain duplicated values
-    public DataTable createTmpTable(SingletonTask task, Connection conn,
-            String targetName, LinkedHashMap<Integer, ColumnType> colTypes, boolean includeRowNumber) {
-        try {
-            if (conn == null || colTypes == null || colTypes.isEmpty()) {
-                return null;
-            }
-            if (columns == null || columns.isEmpty()) {
-                readColumns(conn);
-            }
-            if (columns == null || columns.isEmpty()) {
-                return null;
-            }
-            List<Data2DColumn> referColumns = new ArrayList<>();
-            if (includeRowNumber) {
-                referColumns.add(new Data2DColumn(message("SourceRowNumber"), ColumnDefinition.ColumnType.Long));
-            }
-            for (int col : colTypes.keySet()) {
-                Data2DColumn column = columns.get(col).cloneAll();
-                column.setD2cid(-1).setD2id(-1).setType(colTypes.get(col));
-                referColumns.add(column);
-            }
-            DataTable dataTable = createTable(task, conn, targetName, referColumns, null, comments, null, true);
-            if (dataTable == null) {
-                return null;
-            }
-            dataTable.cloneDefinitionAttributes(this);
-            dataTable.setDataName(targetName);
-            dataTable.setSourceData((Data2D) this);
-            return dataTable;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            } else {
-                MyBoxLog.error(e.toString());
-            }
-            return null;
-        }
-    }
-
-    public long writeTableData(SingletonTask task, Connection conn,
+    public long importTable(SingletonTask task, Connection conn,
             DataTable dataTable, List<Integer> cols, boolean includeRowNumber, InvalidAs invalidAs) {
         try {
             if (conn == null || dataTable == null) {
@@ -235,53 +143,8 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         }
     }
 
-    public long writeTableData(SingletonTask task, Connection conn, DataTable dataTable) {
-        return writeTableData(task, conn, dataTable, null, false, InvalidAs.Blank);
-    }
-
-    public long writeTmpData(SingletonTask task, Connection conn,
-            DataTable dataTable, List<List<String>> rows, boolean includeRowNumber, InvalidAs invalidAs) {
-        if (conn == null || dataTable == null) {
-            return -1;
-        }
-        TableData2D tableData2D = dataTable.getTableData2D();
-        try ( PreparedStatement insert = conn.prepareStatement(tableData2D.insertStatement())) {
-            int count = 0;
-            conn.setAutoCommit(false);
-            int clen = dataTable.columnsNumber();
-            for (List<String> row : rows) {
-                Data2DRow data2DRow = tableData2D.newRow();
-                for (int i = 1; i < clen; i++) {
-                    Data2DColumn targetColumn = dataTable.column(i);
-                    data2DRow.setColumnValue(targetColumn.getColumnName(),
-                            targetColumn.fromString(row.get(i - 1), invalidAs));
-                }
-                if (tableData2D.setInsertStatement(conn, insert, data2DRow)) {
-                    insert.addBatch();
-                    if (++count % DerbyBase.BatchSize == 0) {
-                        insert.executeBatch();
-                        conn.commit();
-                        if (task != null) {
-                            task.setInfo(message("Inserted") + ": " + count);
-                        }
-                    }
-                }
-            }
-            insert.executeBatch();
-            conn.commit();
-            if (task != null) {
-                task.setInfo(message("Inserted") + ": " + count);
-            }
-            conn.setAutoCommit(true);
-            return count;
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            } else {
-                MyBoxLog.error(e);
-            }
-            return -4;
-        }
+    public long importTable(SingletonTask task, Connection conn, DataTable dataTable) {
+        return importTable(task, conn, dataTable, null, false, InvalidAs.Blank);
     }
 
     public DataTable singleColumn(SingletonTask task, List<Integer> cols) {
@@ -294,7 +157,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             }
             List<Data2DColumn> referColumns = new ArrayList<>();
             referColumns.add(new Data2DColumn("data", ColumnDefinition.ColumnType.Double));
-            DataTable dataTable = createTable(task, conn, tmpTableName(), referColumns, null, comments, null, true);
+            DataTable dataTable = createTable(task, conn, TmpTable.tmpTableName(), referColumns, null, comments, null, true);
             dataTable.setDataName(dataName());
             dataTable.cloneDefinitionAttributes(this);
             if (cols == null || cols.isEmpty()) {
@@ -325,14 +188,6 @@ public abstract class Data2D_Convert extends Data2D_Edit {
     /* 
         static
      */
-    public static String tmpTableName() {
-        return TmpTablePrefix + DateTools.nowString3();
-    }
-
-    public static String tmpTableName(String sourceName) {
-        return TmpTablePrefix + sourceName + DateTools.nowString3();
-    }
-
     public static DataTable makeTable(SingletonTask task, String tname,
             List<Data2DColumn> referColumns, List<String> keys, String idName) {
         try {
@@ -340,7 +195,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                 return null;
             }
             if (tname == null || tname.isBlank()) {
-                tname = tmpTableName();
+                tname = TmpTable.tmpTableName();
             }
             DataTable dataTable = new DataTable();
             TableData2D tableData2D = dataTable.getTableData2D();
@@ -357,9 +212,8 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                 idcolumn.setAuto(true).setIsPrimaryKey(true).setNotNull(true).setEditable(false);
                 tableColumns.add(idcolumn);
                 tableData2D.addColumn(idcolumn);
-                validNames.add(idName.toUpperCase());
+                validNames.add(idName);
             }
-            Random random = new Random();
             for (Data2DColumn referColumn : referColumns) {
                 Data2DColumn dataColumn = new Data2DColumn();
                 dataColumn.cloneFrom(referColumn);
@@ -367,19 +221,15 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                         .setAuto(false).setIsPrimaryKey(false);
                 String referColumnName = referColumn.getColumnName();
                 String columeName = DerbyBase.fixedIdentifier(referColumnName);
-                while (validNames.contains(columeName.toUpperCase())) {
-                    columeName += random.nextInt(10);
-                }
+                columeName = DerbyBase.checkIdentifier(validNames, columeName, true);
                 dataColumn.setColumnName(columeName);
-                validNames.add(columeName.toUpperCase());
                 if (keys != null && !keys.isEmpty()) {
                     dataColumn.setIsPrimaryKey(keys.contains(referColumnName));
                 }
                 tableColumns.add(dataColumn);
                 tableData2D.addColumn(dataColumn);
             }
-            dataTable.setReferColumns(referColumns)
-                    .setColumns(tableColumns)
+            dataTable.setColumns(tableColumns)
                     .setTask(task).setSheet(tableName);
             return dataTable;
         } catch (Exception e) {
@@ -393,19 +243,18 @@ public abstract class Data2D_Convert extends Data2D_Edit {
     }
 
     public static DataTable createTable(SingletonTask task, Connection conn,
-            String name, List<Data2DColumn> referColumns, List<String> keys, String comments,
+            String targetName, List<Data2DColumn> referColumns, List<String> keys, String comments,
             String idName, boolean dropExisted) {
         try {
             if (conn == null || referColumns == null || referColumns.isEmpty()) {
                 return null;
             }
-            if (name == null || name.isBlank()) {
-                name = tmpTableName();
+            if (targetName == null || targetName.isBlank()) {
+                targetName = TmpTable.tmpTableName();
             }
             DataTable dataTable = new DataTable();
-            TableData2D tableData2D = dataTable.getTableData2D();
-            String tableName = DerbyBase.fixedIdentifier(name);
-            if (tableData2D.exist(conn, tableName) > 0) {
+            String tableName = DerbyBase.fixedIdentifier(targetName);
+            if (DerbyBase.exist(conn, tableName) > 0) {
                 if (!dropExisted) {
                     return null;
                 }
@@ -416,7 +265,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             if (dataTable == null) {
                 return null;
             }
-            tableData2D = dataTable.getTableData2D();
+            TableData2D tableData2D = dataTable.getTableData2D();
             String sql = tableData2D.createTableStatement();
             if (task != null) {
                 task.setInfo(sql);
@@ -461,7 +310,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                     List<String> row = new ArrayList<>();
                     for (int col = 0; col < tcolsNumber; col++) {
                         Data2DColumn column = dataColumns.get(col);
-                        Object v = results.getObject(column.getColumnName());
+                        Object v = column.value(results);
                         row.add(column.toString(v));
                     }
                     csvPrinter.printRecord(row);
@@ -480,7 +329,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         }
         if (file != null && file.exists()) {
             DataFileCSV targetData = new DataFileCSV();
-            targetData.setColumns(dataTable.referColumns())
+            targetData.setColumns(dataTable.getColumns())
                     .setDataName(dataTable.dataName())
                     .setFile(file).setCharset(Charset.forName("UTF-8")).setDelimiter(",")
                     .setHasHeader(true).setColsNumber(tcolsNumber).setRowsNumber(trowsNumber);
@@ -547,7 +396,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                     targetRow = targetSheet.createRow(++trowsNumber);
                     for (int col = 0; col < tcolsNumber; col++) {
                         Data2DColumn column = dataColumns.get(col);
-                        Object v = results.getObject(column.getColumnName());
+                        Object v = column.value(results);
                         Cell targetCell = targetRow.createCell(col, CellType.STRING);
                         targetCell.setCellValue(column.toString(v));
                     }
@@ -569,7 +418,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         }
         if (excelFile != null && excelFile.exists()) {
             DataFileExcel targetData = new DataFileExcel();
-            targetData.setColumns(dataTable.referColumns())
+            targetData.setColumns(dataTable.getColumns())
                     .setFile(excelFile).setSheet(targetSheetName)
                     .setDataName(dataTable.dataName())
                     .setHasHeader(true)
@@ -601,7 +450,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                     List<String> row = new ArrayList<>();
                     for (int col = 0; col < tcolsNumber; col++) {
                         Data2DColumn column = dataColumns.get(col);
-                        Object v = results.getObject(column.getColumnName());
+                        Object v = column.value(results);
                         row.add(column.toString(v));
                     }
                     rows.add(row);
@@ -698,7 +547,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                         fileRow.add(rowNumberName + count);
                     }
                     for (Data2DColumn column : db2Columns) {
-                        Object v = results.getObject(column.getColumnName());
+                        Object v = column.value(results);
                         String s = column.toString(v);
                         if (column.needScale()) {
                             s = DoubleTools.scaleString(s, invalidAs, dscale);

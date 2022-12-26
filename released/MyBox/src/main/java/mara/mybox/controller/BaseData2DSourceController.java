@@ -182,6 +182,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
             if (data2D == null) {
                 return;
             }
+            isSettingValues = true;
             if (data2D.isMutiplePages()) {
                 allPagesRadio.setDisable(false);
                 showPaginationPane(true);
@@ -193,9 +194,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                 allPagesRadio.setDisable(true);
                 showPaginationPane(false);
             }
-
             if (columnsPane != null) {
-                isSettingValues = true;
                 columnsPane.getChildren().clear();
                 List<String> names = data2D.columnNames();
                 if (names != null) {
@@ -203,11 +202,9 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                         columnsPane.getChildren().add(new CheckBox(name));
                     }
                 }
-                isSettingValues = false;
             }
 
             if (otherColumnsPane != null) {
-                isSettingValues = true;
                 otherColumnsPane.getChildren().clear();
                 List<String> names = data2D.columnNames();
                 if (names != null) {
@@ -215,12 +212,13 @@ public class BaseData2DSourceController extends ControlData2DLoad {
                         otherColumnsPane.getChildren().add(new CheckBox(name));
                     }
                 }
-                isSettingValues = false;
             }
-
+            isSettingValues = false;
             restoreSelections();
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+            isSettingValues = false;
         }
     }
 
