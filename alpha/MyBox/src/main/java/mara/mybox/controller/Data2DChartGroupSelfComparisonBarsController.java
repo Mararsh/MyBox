@@ -18,15 +18,6 @@ public class Data2DChartGroupSelfComparisonBarsController extends Data2DChartSel
     }
 
     @Override
-    public String chartTitle() {
-        if (group == null) {
-            return null;
-        }
-        return super.chartTitle() + "<BR>"
-                + group.getIdColName() + groupid + " - " + group.parameterValue(groupid - 1);
-    }
-
-    @Override
     public void drawFrame() {
         if (outputData == null) {
             return;

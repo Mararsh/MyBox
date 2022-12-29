@@ -11,11 +11,13 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.ValueRange;
 import mara.mybox.data2d.DataFilter;
 import mara.mybox.data2d.reader.DataTableGroup.GroupType;
+import mara.mybox.data2d.reader.DataTableGroup.TimeType;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
 
@@ -28,23 +30,25 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
 
     protected BaseData2DHandleController handleController;
     protected ChangeListener<Boolean> listener;
-    protected String groupName;
+    protected String groupName, timeName;
     protected List<String> groupNames, conditionVariables;
     protected List<DataFilter> groupConditions;
-    protected GroupType groupType;
 
     @FXML
     protected ControlSelection columnsController;
     @FXML
     protected ToggleGroup typeGroup;
     @FXML
-    protected RadioButton valuesRadio, valueRangeRadio, conditionsRadio, rowsRangeRadio;
+    protected RadioButton valuesRadio, valueRangeRadio, timeRadio, conditionsRadio, rowsRangeRadio,
+            centuryRadio, yearRadio, monthRadio, dayRadio, hourRadio, minuteRadio, secondRadio;
     @FXML
     protected VBox groupBox, columnsBox, valueSplitBox, rowsSplitBox, conditionsBox, labelBox;
     @FXML
     protected HBox columnBox;
     @FXML
     protected ComboBox<String> columnSelector;
+    @FXML
+    protected FlowPane timePane;
     @FXML
     protected ControlData2DSplit valueSplitController;
     @FXML
@@ -69,7 +73,9 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
             columnSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    checkGroupType();
+                    if (!isSettingValues && valueRangeRadio.isSelected()) {
+                        valueSplitController.setColumn(handleController.data2D.columnByName(columnSelector.getValue()));
+                    }
                 }
             });
 
@@ -113,18 +119,45 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
             }
             List<String> names = handleController.data2D.columnNames();
             columnsController.loadNames(names);
-            isSettingValues = true;
-            columnSelector.getItems().setAll(names);
-            columnSelector.getSelectionModel().select(0);
-            isSettingValues = false;
-
+            List<String> times = handleController.data2D.timeColumnNames();
+            if (times == null || times.isEmpty()) {
+                if (timeRadio.isSelected()) {
+                    valuesRadio.setSelected(true);
+                }
+                timeRadio.setDisable(true);
+            } else {
+                timeRadio.setDisable(false);
+            }
+            loadColumnNames();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
+    public void loadColumnNames() {
+        if (!handleController.data2D.isValid()) {
+            return;
+        }
+        List<String> names;
+        if (timeRadio.isSelected()) {
+            names = handleController.data2D.timeColumnNames();
+        } else {
+            names = handleController.data2D.columnNames();
+        }
+        isSettingValues = true;
+        columnSelector.getItems().setAll(names);
+        columnSelector.getSelectionModel().select(0);
+        if (valueRangeRadio.isSelected()) {
+            valueSplitController.setColumn(handleController.data2D.columnByName(columnSelector.getValue()));
+        }
+        isSettingValues = false;
+    }
+
     public void checkGroupType() {
         try {
+            if (isSettingValues) {
+                return;
+            }
             groupBox.getChildren().clear();
             commentsLabel.setText("");
 
@@ -135,7 +168,12 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
             } else if (valueRangeRadio.isSelected()) {
                 groupBox.getChildren().addAll(columnBox, valueSplitBox, labelBox);
                 commentsLabel.setText(message("GroupRangeComments"));
-                valueSplitController.setColumn(handleController.data2D.columnByName(columnSelector.getValue()));
+                loadColumnNames();
+
+            } else if (timeRadio.isSelected()) {
+                groupBox.getChildren().addAll(columnBox, timePane, labelBox);
+                commentsLabel.setText(message("GroupTimeComments"));
+                loadColumnNames();
 
             } else if (rowsRangeRadio.isSelected()) {
                 groupBox.getChildren().addAll(rowsSplitBox, labelBox);
@@ -158,7 +196,7 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
             groupName = null;
             groupNames = null;
             groupConditions = null;
-            groupType = groupType();
+            timeName = null;
 
             boolean valid = true;
             if (valuesRadio.isSelected()) {
@@ -176,6 +214,12 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
             } else if (valueRangeRadio.isSelected()) {
                 groupName = columnSelector.getValue();
                 if (groupName == null || groupName.isBlank() || !valueSplitController.isValid()) {
+                    valid = false;
+                }
+
+            } else if (timeRadio.isSelected()) {
+                timeName = columnSelector.getValue();
+                if (timeName == null || timeName.isBlank()) {
                     valid = false;
                 }
 
@@ -200,6 +244,10 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
 
     public boolean byEqualValues() {
         return valuesRadio.isSelected();
+    }
+
+    public boolean byValueRange() {
+        return valueRangeRadio.isSelected();
     }
 
     public boolean byValueSize() {
@@ -228,6 +276,10 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
 
     public boolean byRowsList() {
         return rowsRangeRadio.isSelected() && rowsSplitController.listRadio.isSelected();
+    }
+
+    public boolean byTime() {
+        return timeRadio.isSelected();
     }
 
     public boolean byConditions() {
@@ -259,6 +311,39 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
         } else if (byConditions()) {
             return GroupType.Conditions;
 
+        } else if (byTime()) {
+            return GroupType.Time;
+
+        } else {
+            return null;
+        }
+    }
+
+    public TimeType timeType() {
+        if (!byTime()) {
+            return null;
+        }
+        if (centuryRadio.isSelected()) {
+            return TimeType.Century;
+
+        } else if (yearRadio.isSelected()) {
+            return TimeType.Year;
+
+        } else if (monthRadio.isSelected()) {
+            return TimeType.Month;
+
+        } else if (dayRadio.isSelected()) {
+            return TimeType.Day;
+
+        } else if (hourRadio.isSelected()) {
+            return TimeType.Hour;
+
+        } else if (minuteRadio.isSelected()) {
+            return TimeType.Minute;
+
+        } else if (secondRadio.isSelected()) {
+            return TimeType.Second;
+
         } else {
             return null;
         }
@@ -274,6 +359,10 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
 
     public List<DataFilter> groupConditions() {
         return groupConditions;
+    }
+
+    public String timeName() {
+        return timeName;
     }
 
     public int splitScale() {

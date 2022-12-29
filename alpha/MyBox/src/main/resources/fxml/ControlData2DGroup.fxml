@@ -6,6 +6,7 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
@@ -31,6 +32,7 @@ License:    Apache License Version 2.0
                     </toggleGroup>
                 </RadioButton>
                 <RadioButton fx:id="valueRangeRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%ValueRange" toggleGroup="$typeGroup" />
+            <RadioButton fx:id="timeRadio" layoutX="214.0" layoutY="10.0" mnemonicParsing="false" text="%Time" toggleGroup="$typeGroup" />
                 <RadioButton fx:id="conditionsRadio" layoutX="194.0" layoutY="10.0" mnemonicParsing="false" text="%Conditions" toggleGroup="$typeGroup" />
                 <RadioButton fx:id="rowsRangeRadio" layoutX="26.0" layoutY="10.0" mnemonicParsing="false" text="%RowsRange" toggleGroup="$typeGroup" />
             </children>
@@ -39,7 +41,7 @@ License:    Apache License Version 2.0
             <children>
                 <VBox fx:id="columnsBox">
                     <children>
-                        <fx:include fx:id="columns"  minHeight="200.0"  prefHeight="300.0" source="ControlSelection.fxml" />
+                        <fx:include fx:id="columns" minHeight="200.0" prefHeight="300.0" source="ControlSelection.fxml" />
                     </children>
                 </VBox>
                 <HBox fx:id="columnBox" alignment="CENTER_LEFT" layoutX="10.0" layoutY="294.0" spacing="2.0">
@@ -53,11 +55,30 @@ License:    Apache License Version 2.0
                         <fx:include fx:id="valueSplit" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DSplit.fxml" VBox.vgrow="ALWAYS" />
                     </children>
                 </VBox>
-                <VBox fx:id="rowsSplitBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                <VBox fx:id="rowsSplitBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                     <children>
                         <fx:include fx:id="rowsSplit" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlSplit.fxml" VBox.vgrow="ALWAYS" />
                     </children>
                 </VBox>
+            <FlowPane fx:id="timePane" hgap="2.0" vgap="2.0">
+               <children>
+                  <RadioButton fx:id="centuryRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Century">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="timeGroup" />
+                     </toggleGroup>
+                  </RadioButton>
+                  <RadioButton fx:id="yearRadio" mnemonicParsing="false" selected="true" text="%Year" toggleGroup="$timeGroup">
+                     <FlowPane.margin>
+                        <Insets />
+                     </FlowPane.margin>
+                  </RadioButton>
+                  <RadioButton fx:id="monthRadio" layoutX="46.0" layoutY="10.0" mnemonicParsing="false" text="%Month" toggleGroup="$timeGroup" />
+                  <RadioButton fx:id="dayRadio" mnemonicParsing="false" text="%Day" toggleGroup="$timeGroup" />
+                  <RadioButton fx:id="hourRadio" mnemonicParsing="false" text="%Hour" toggleGroup="$timeGroup" />
+                  <RadioButton fx:id="minuteRadio" mnemonicParsing="false" text="%Minute" toggleGroup="$timeGroup" />
+                  <RadioButton fx:id="secondRadio" mnemonicParsing="false" text="%Second" toggleGroup="$timeGroup" />
+               </children>
+            </FlowPane>
                 <VBox fx:id="conditionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
                     <children>
                         <HBox alignment="CENTER_LEFT" spacing="5.0">

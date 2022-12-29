@@ -786,7 +786,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                         }
                         tableColumn.setCellFactory(TableDataColorEditCell.create(dataControl, dataColumn, tableColor));
 
-                    } else if (dataColumn.isDateType()) {
+                    } else if (dataColumn.isTimeType()) {
                         tableColumn.setCellFactory(TableDataDateEditCell.create(dataControl, dataColumn));
 
                     } else if (includeCoordinate && (type == ColumnType.Longitude || type == ColumnType.Latitude)) {

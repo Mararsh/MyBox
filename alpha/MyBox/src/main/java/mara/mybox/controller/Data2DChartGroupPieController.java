@@ -18,15 +18,6 @@ public class Data2DChartGroupPieController extends Data2DChartPieController {
     }
 
     @Override
-    public String chartTitle() {
-        if (group == null) {
-            return null;
-        }
-        return super.chartTitle() + "\n"
-                + group.getIdColName() + groupid + " - " + group.parameterValue(groupid - 1);
-    }
-
-    @Override
     public void drawPieChart() {
         drawFrame();
     }

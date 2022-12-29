@@ -6,10 +6,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import mara.mybox.data.DataSort;
 import static mara.mybox.data2d.Data2D_Convert.createTable;
 import mara.mybox.data2d.reader.Data2DWriteTmpTable;
+import mara.mybox.data2d.reader.DataTableGroup.TimeType;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
@@ -37,12 +40,13 @@ public class TmpTable extends DataTable {
     protected List<Data2DColumn> sourceReferColumns;
     protected List<Integer> sourcePickIndice, sourceReferIndice;
     protected List<String> orders, groupEqualColumnNames;
-    protected int valueIndexOffset;
-    protected String targetName, groupRangleColumnName, tmpOrderby;
+    protected int valueIndexOffset, timeIndex;
+    protected String targetName, groupRangeColumnName, groupTimeColumnName, tmpOrderby;
     protected boolean importData, forStatistic, includeRowNumber, includeColName;
-    protected ColumnType groupRangeColumnType;
+    protected TimeType groupTimeType;
     protected InvalidAs invalidAs;
     protected List<List<String>> importRows;
+    protected Calendar calendar;
 
     public TmpTable() {
         init();
@@ -54,14 +58,17 @@ public class TmpTable extends DataTable {
         sourceReferColumns = null;
         orders = null;
         groupEqualColumnNames = null;
-        groupRangleColumnName = null;
+        groupRangeColumnName = null;
+        groupTimeColumnName = null;
+        groupTimeType = null;
+        timeIndex = -1;
         importData = forStatistic = includeRowNumber = includeColName = false;
         valueIndexOffset = -1;
         invalidAs = InvalidAs.Skip;
-        groupRangeColumnType = null;
         targetName = null;
         importRows = null;
         tmpOrderby = "";
+        calendar = Calendar.getInstance();
     }
 
     public boolean createTable() {
@@ -97,7 +104,7 @@ public class TmpTable extends DataTable {
                 tableColumn.setType(forStatistic ? ColumnType.Double : ColumnType.String);
                 tmpColumns.add(tableColumn);
             }
-            groupRangeColumnType = null;
+            timeIndex = -1;
             if (groupEqualColumnNames != null && !groupEqualColumnNames.isEmpty()) {
                 for (String name : groupEqualColumnNames) {
                     Data2DColumn sourceColumn = sourceData.columnByName(name);
@@ -107,14 +114,22 @@ public class TmpTable extends DataTable {
                     tmpColumns.add(tableColumn);
                     sourceReferIndice.add(sourceData.colOrder(name));
                 }
-            } else if (groupRangleColumnName != null && !groupRangleColumnName.isBlank()) {
-                Data2DColumn sourceColumn = sourceData.columnByName(groupRangleColumnName);
-                groupRangeColumnType = sourceColumn.getType();
+            } else if (groupRangeColumnName != null && !groupRangeColumnName.isBlank()) {
+                Data2DColumn sourceColumn = sourceData.columnByName(groupRangeColumnName);
                 sourceReferColumns.add(sourceColumn);
                 Data2DColumn tableColumn = sourceColumn.cloneAll();
                 tableColumn.setD2cid(-1).setD2id(-1).setType(ColumnType.Double);
                 tmpColumns.add(tableColumn);
-                sourceReferIndice.add(sourceData.colOrder(groupRangleColumnName));
+                sourceReferIndice.add(sourceData.colOrder(groupRangeColumnName));
+            } else if (groupTimeColumnName != null && !groupTimeColumnName.isBlank()) {
+                Data2DColumn sourceColumn = sourceData.columnByName(groupTimeColumnName);
+                sourceReferColumns.add(sourceColumn);
+                Data2DColumn tableColumn = sourceColumn.cloneAll();
+                tableColumn.setD2cid(-1).setD2id(-1).setType(ColumnType.Long);
+                tmpColumns.add(tableColumn);
+                timeIndex = sourceReferIndice.size();
+                sourceReferIndice.add(sourceData.colOrder(groupTimeColumnName));
+
             }
             int sortStartIndex = -1;
             if (orders != null && !orders.isEmpty()) {
@@ -212,11 +227,72 @@ public class TmpTable extends DataTable {
                 String sourceValue = sourceRow.get(col);
                 Object tmpValue;
                 switch (targetColumn.getType()) {
+                    case String:
+                        tmpValue = sourceValue;
+                        break;
                     case Double:
                         tmpValue = ColumnDefinition.toDouble(sourceColumn.getType(), sourceValue);
                         break;
-                    case String:
-                        tmpValue = sourceValue;
+                    case Long:
+                        if (timeIndex != i) {
+                            tmpValue = targetColumn.fromString(sourceValue, invalidAs);
+                        } else {
+                            Date d = DateTools.encodeDate(sourceValue);
+                            if (d == null) {
+                                tmpValue = targetColumn.fromString(sourceValue, invalidAs);
+                            } else {
+                                calendar.setTime(d);
+                                switch (groupTimeType) {
+                                    case Century:
+                                        int year = calendar.get(Calendar.YEAR);
+                                        int cYear = (year / 100) * 100;
+                                        if (year % 100 == 0) {
+                                            calendar.set(cYear, 0, 1, 0, 0, 0);
+                                        } else {
+                                            calendar.set(cYear + 1, 0, 1, 0, 0, 0);
+                                        }
+                                        break;
+                                    case Year:
+                                        calendar.set(calendar.get(Calendar.YEAR), 0, 1, 0, 0, 0);
+                                        break;
+                                    case Month:
+                                        calendar.set(calendar.get(Calendar.YEAR),
+                                                calendar.get(Calendar.MONTH),
+                                                1, 0, 0, 0);
+                                        break;
+                                    case Day:
+                                        calendar.set(calendar.get(Calendar.YEAR),
+                                                calendar.get(Calendar.MONTH),
+                                                calendar.get(Calendar.DAY_OF_MONTH),
+                                                0, 0, 0);
+                                        break;
+                                    case Hour:
+                                        calendar.set(calendar.get(Calendar.YEAR),
+                                                calendar.get(Calendar.MONTH),
+                                                calendar.get(Calendar.DAY_OF_MONTH),
+                                                calendar.get(Calendar.HOUR_OF_DAY),
+                                                0, 0);
+                                        break;
+                                    case Minute:
+                                        calendar.set(calendar.get(Calendar.YEAR),
+                                                calendar.get(Calendar.MONTH),
+                                                calendar.get(Calendar.DAY_OF_MONTH),
+                                                calendar.get(Calendar.HOUR_OF_DAY),
+                                                calendar.get(Calendar.MINUTE),
+                                                0);
+                                        break;
+                                    case Second:
+                                        calendar.set(calendar.get(Calendar.YEAR),
+                                                calendar.get(Calendar.MONTH),
+                                                calendar.get(Calendar.DAY_OF_MONTH),
+                                                calendar.get(Calendar.HOUR_OF_DAY),
+                                                calendar.get(Calendar.MINUTE),
+                                                calendar.get(Calendar.SECOND));
+                                        break;
+                                }
+                                tmpValue = calendar.getTime().getTime();
+                            }
+                        }
                         break;
                     default:
                         tmpValue = targetColumn.fromString(sourceValue, invalidAs);
@@ -433,6 +509,14 @@ public class TmpTable extends DataTable {
         }
     }
 
+    public int parametersOffset() {
+        return sourcePickIndice.size() + valueIndexOffset;
+    }
+
+    public Data2DColumn parameterSourceColumn() {
+        return sourceReferColumns.get(sourcePickIndice.size());
+    }
+
     /* 
         static
      */
@@ -512,7 +596,17 @@ public class TmpTable extends DataTable {
     }
 
     public TmpTable setGroupRangleColumnName(String groupRangleColumnName) {
-        this.groupRangleColumnName = groupRangleColumnName;
+        this.groupRangeColumnName = groupRangleColumnName;
+        return this;
+    }
+
+    public TmpTable setGroupTimeColumnName(String groupTimeColumnName) {
+        this.groupTimeColumnName = groupTimeColumnName;
+        return this;
+    }
+
+    public TmpTable setGroupTimeType(TimeType groupTimeType) {
+        this.groupTimeType = groupTimeType;
         return this;
     }
 
@@ -565,8 +659,8 @@ public class TmpTable extends DataTable {
         return targetName;
     }
 
-    public String getGroupRangleColumnName() {
-        return groupRangleColumnName;
+    public String getGroupRangeColumnName() {
+        return groupRangeColumnName;
     }
 
     public boolean isImportData() {

@@ -89,7 +89,7 @@ public class Data2DChartPieController extends BaseData2DChartController {
     }
 
     @Override
-    public String chartTitle() {
+    public String baseChartTitle() {
         return selectedCategory + " - " + selectedValue;
     }
 

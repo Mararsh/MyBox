@@ -511,10 +511,13 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                     .setIncludeRowNumber(needRowNumber)
                     .setInvalidAs(invalidAs);
             if (groupController != null) {
-                if (groupController.groupName != null) {
-                    tmpTable.setGroupRangleColumnName(groupController.groupName);
-                } else if (groupController.groupNames != null) {
-                    tmpTable.setGroupEqualColumnNames(groupController.groupNames);
+                if (groupController.byValueRange()) {
+                    tmpTable.setGroupRangleColumnName(groupController.groupName());
+                } else if (groupController.byEqualValues()) {
+                    tmpTable.setGroupEqualColumnNames(groupController.groupNames());
+                } else if (groupController.byTime()) {
+                    tmpTable.setGroupTimeColumnName(groupController.timeName());
+                    tmpTable.setGroupTimeType(groupController.timeType());
                 }
             }
             tmpTable.setTask(task);
