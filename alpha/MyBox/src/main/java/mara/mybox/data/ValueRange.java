@@ -21,6 +21,13 @@ public class ValueRange {
         includeEnd = false;
     }
 
+    @Override
+    public String toString() {
+        return (includeStart ? "[" : "(")
+                + start + "," + end
+                + (includeEnd ? "]" : ")");
+    }
+
     /*
         get/set
      */

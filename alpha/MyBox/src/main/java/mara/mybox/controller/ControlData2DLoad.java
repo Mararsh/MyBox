@@ -206,7 +206,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             return;
         }
         if (data2D == null || data2D.getType() != def.getType()) {
-            data2D = Data2D.create(def.getType());
+            setData(Data2D.create(def.getType()));
         } else if (data2D != def) {
             data2D.resetData();
         }

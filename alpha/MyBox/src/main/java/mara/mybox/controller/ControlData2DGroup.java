@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -30,7 +31,7 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
 
     protected BaseData2DHandleController handleController;
     protected ChangeListener<Boolean> listener;
-    protected String groupName, timeName;
+    protected String groupName, timeName, expression, filledExpression;
     protected List<String> groupNames, conditionVariables;
     protected List<DataFilter> groupConditions;
 
@@ -39,10 +40,10 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
     @FXML
     protected ToggleGroup typeGroup;
     @FXML
-    protected RadioButton valuesRadio, valueRangeRadio, timeRadio, conditionsRadio, rowsRangeRadio,
+    protected RadioButton valuesRadio, valueRangeRadio, timeRadio, expressionRadio, conditionsRadio, rowsRangeRadio,
             centuryRadio, yearRadio, monthRadio, dayRadio, hourRadio, minuteRadio, secondRadio;
     @FXML
-    protected VBox groupBox, columnsBox, valueSplitBox, rowsSplitBox, conditionsBox, labelBox;
+    protected VBox groupBox, columnsBox, valueSplitBox, rowsSplitBox, expressionBox, conditionsBox, labelBox;
     @FXML
     protected HBox columnBox;
     @FXML
@@ -53,6 +54,8 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
     protected ControlData2DSplit valueSplitController;
     @FXML
     protected ControlSplit rowsSplitController;
+    @FXML
+    protected ControlData2DRowExpression expressionController;
     @FXML
     protected TableColumn<DataFilter, String> conditionColumn;
     @FXML
@@ -129,6 +132,8 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
                 timeRadio.setDisable(false);
             }
             loadColumnNames();
+
+            expressionController.setData2D(handleController.data2D);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -180,6 +185,10 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
                 commentsLabel.setText(message("GroupRowsComments"));
                 rowsSplitController.checkSplitType();
 
+            } else if (expressionRadio.isSelected()) {
+                groupBox.getChildren().addAll(expressionBox, labelBox);
+                commentsLabel.setText(message("GroupExpressionComments"));
+
             } else if (conditionsRadio.isSelected()) {
                 groupBox.getChildren().addAll(conditionsBox, labelBox);
                 commentsLabel.setText(message("GroupConditionsComments"));
@@ -197,6 +206,8 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
             groupNames = null;
             groupConditions = null;
             timeName = null;
+            expression = null;
+            filledExpression = null;
 
             boolean valid = true;
             if (valuesRadio.isSelected()) {
@@ -220,6 +231,18 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
             } else if (timeRadio.isSelected()) {
                 timeName = columnSelector.getValue();
                 if (timeName == null || timeName.isBlank()) {
+                    valid = false;
+                }
+
+            } else if (expressionRadio.isSelected()) {
+                expression = expressionController.scriptInput.getText();
+                if (expression == null || expression.isBlank()) {
+                    popError(message("Invalid") + ": " + message("RowExpression"));
+                    valid = false;
+                }
+                if (!expressionController.checkExpression(handleController.isAllPages())) {
+                    alertError(message("Invalid") + ": " + message("RowExpression") + "\n"
+                            + expressionController.error);
                     valid = false;
                 }
 
@@ -282,6 +305,10 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
         return timeRadio.isSelected();
     }
 
+    public boolean byExpression() {
+        return expressionRadio.isSelected();
+    }
+
     public boolean byConditions() {
         return conditionsRadio.isSelected();
     }
@@ -313,6 +340,9 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
 
         } else if (byTime()) {
             return GroupType.Time;
+
+        } else if (byExpression()) {
+            return GroupType.Expression;
 
         } else {
             return null;
@@ -378,26 +408,9 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
         }
     }
 
-    public double rowsSplitInterval() {
-        if (byRowsSize()) {
-            return rowsSplitController.size;
-
-        } else {
-            return Double.NaN;
-        }
-    }
-
     public int valueSplitNumber() {
         if (byValueNumber()) {
             return valueSplitController.number;
-        } else {
-            return -1;
-        }
-    }
-
-    public int rowsSplitNumber() {
-        if (byRowsNumber()) {
-            return rowsSplitController.number;
         } else {
             return -1;
         }
@@ -411,11 +424,60 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
         }
     }
 
+    public int rowsSplitInterval() {
+        if (byRowsSize()) {
+            return rowsSplitController.size;
+
+        } else {
+            return -1;
+        }
+    }
+
+    public int rowsSplitNumber() {
+        if (byRowsNumber()) {
+            return rowsSplitController.number;
+        } else {
+            return -1;
+        }
+    }
+
     public List<Integer> rowsSplitList() {
         if (byRowsList()) {
             return rowsSplitController.list;
         } else {
             return null;
+        }
+    }
+
+    public List<String> scripts() {
+        List<String> scripts = new ArrayList<>();
+        if (byConditions()) {
+            for (DataFilter filter : groupConditions) {
+                String groupScript = filter.getSourceScript();
+                if (groupScript != null && !groupScript.isBlank()) {
+                    scripts.add(groupScript);
+                }
+            }
+        } else if (byExpression()) {
+            scripts.add(expression);
+        }
+        return scripts.isEmpty() ? null : scripts;
+    }
+
+    public void fillScripts(List<String> filledScripts) {
+        if (filledScripts == null || filledScripts.isEmpty()) {
+            return;
+        }
+        if (byConditions()) {
+            int index = 0;
+            for (DataFilter filter : groupConditions) {
+                String groupScript = filter.getSourceScript();
+                if (groupScript != null && !groupScript.isBlank()) {
+                    filter.setFilledScript(filledScripts.get(index++));
+                }
+            }
+        } else if (byExpression()) {
+            filledExpression = filledScripts.get(0);
         }
     }
 

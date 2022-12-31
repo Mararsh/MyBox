@@ -19,7 +19,6 @@ import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.data2d.Data2D_Operations.ObjectType;
 import mara.mybox.data2d.DataFileCSV;
-import mara.mybox.data2d.DataFilter;
 import mara.mybox.data2d.TmpTable;
 import mara.mybox.data2d.reader.DataTableGroup;
 import mara.mybox.db.data.Data2DColumn;
@@ -343,15 +342,9 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         if (hasFilterScript) {
             scripts.add(filterScript);
         }
-        boolean hasGroupScripts = groupController != null
-                && groupController.byConditions() && groupController.groupConditions != null;
-        if (hasGroupScripts) {
-            for (DataFilter filter : groupController.groupConditions) {
-                String groupScript = filter.getSourceScript();
-                if (groupScript != null && !groupScript.isBlank()) {
-                    scripts.add(groupScript);
-                }
-            }
+        List<String> groupScripts = groupController.scripts();
+        if (groupScripts != null) {
+            scripts.addAll(groupScripts);
         }
         if (scripts.isEmpty()) {
             startOperation();
@@ -369,17 +362,14 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                 if (filledScripts == null || filledScripts.size() != scripts.size()) {
                     return true;
                 }
-                int index = 0;
                 if (hasFilterScript) {
                     data2D.filter.setFilledScript(filledScripts.get(0));
-                    index = 1;
                 }
-                if (hasGroupScripts) {
-                    for (DataFilter filter : groupController.groupConditions) {
-                        String groupScript = filter.getSourceScript();
-                        if (groupScript != null && !groupScript.isBlank()) {
-                            filter.setFilledScript(filledScripts.get(index++));
-                        }
+                if (groupScripts != null) {
+                    if (hasFilterScript) {
+                        groupController.fillScripts(filledScripts.subList(1, filledScripts.size()));
+                    } else {
+                        groupController.fillScripts(filledScripts);
                     }
                 }
                 return true;
@@ -518,6 +508,8 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                 } else if (groupController.byTime()) {
                     tmpTable.setGroupTimeColumnName(groupController.timeName());
                     tmpTable.setGroupTimeType(groupController.timeType());
+                } else if (groupController.byExpression()) {
+                    tmpTable.setGroupExpression(groupController.filledExpression);
                 }
             }
             tmpTable.setTask(task);
@@ -548,7 +540,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             if (groupController == null) {
                 return null;
             }
-            TmpTable tmpTable = tmpTable(data2D.getDataName(), colIndices, needRowNumber);
+            TmpTable tmpTable = tmpTable(data2D.getDataName(), data2D.columnIndices(), true);
             if (tmpTable == null) {
                 return null;
             }
@@ -557,6 +549,8 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             }
             DataTableGroup group = new DataTableGroup(data2D, groupController, tmpTable)
                     .setOrders(orders).setMax(max)
+                    .setSourcePickIndice(colIndices)
+                    .setIncludeRowNumber(needRowNumber)
                     .setScale((short) dscale).setInvalidAs(invalidAs).setTask(task)
                     .setTargetType(targetType);
             return group;

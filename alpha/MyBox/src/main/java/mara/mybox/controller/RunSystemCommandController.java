@@ -1,15 +1,22 @@
 package mara.mybox.controller;
 
 import java.io.BufferedWriter;
+import java.nio.charset.Charset;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.SystemTools;
+import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -22,9 +29,16 @@ public class RunSystemCommandController extends RunCommandController {
     protected TextField cmdInput;
     @FXML
     protected Button plusButton;
+    @FXML
+    protected ComboBox<String> charsetSelector;
 
     public RunSystemCommandController() {
         baseTitle = message("RunSystemCommand");
+    }
+
+    @Override
+    public void setStageStatus() {
+        setAsNormal();
     }
 
     @Override
@@ -38,18 +52,30 @@ public class RunSystemCommandController extends RunCommandController {
             if (plusButton != null) {
                 plusButton.setDisable(true);
             }
+
+            charsetSelector.getItems().addAll(TextTools.getCharsetNames());
+            Charset sc = SystemTools.ConsoleCharset();
+            try {
+                charset = Charset.forName(UserConfig.getString(baseName + "TextCharset", sc.name()));
+            } catch (Exception e) {
+                charset = sc;
+            }
+            charsetSelector.setValue(charset.name());
+            charsetSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    charset = Charset.forName(charsetSelector.getSelectionModel().getSelectedItem());
+                    UserConfig.setString(baseName + "TextCharset", charset.name());
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
 
-    @Override
-    public void setStageStatus() {
-        setAsNormal();
-    }
-
     public String example() {
-        return "ping github.com";
+        return "ping sourceforge.net";
     }
 
     @FXML

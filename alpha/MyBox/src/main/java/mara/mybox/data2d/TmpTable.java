@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import mara.mybox.data.DataSort;
+import mara.mybox.data.FindReplaceString;
 import static mara.mybox.data2d.Data2D_Convert.createTable;
 import mara.mybox.data2d.reader.Data2DWriteTmpTable;
 import mara.mybox.data2d.reader.DataTableGroup.TimeType;
@@ -21,6 +22,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DateTools;
@@ -35,18 +37,22 @@ import org.apache.commons.csv.CSVPrinter;
 public class TmpTable extends DataTable {
 
     public static String TmpTablePrefix = "MYBOXTMP__";
+    public static String ExpressionColumnName = "MYBOX_GROUP_EXPRESSION__999";
 
     protected Data2D sourceData;
     protected List<Data2DColumn> sourceReferColumns;
     protected List<Integer> sourcePickIndice, sourceReferIndice;
     protected List<String> orders, groupEqualColumnNames;
-    protected int valueIndexOffset, timeIndex;
-    protected String targetName, groupRangeColumnName, groupTimeColumnName, tmpOrderby;
+    protected int valueIndexOffset, timeIndex, expressionIndex;
+    protected String targetName, groupRangeColumnName, groupTimeColumnName,
+            groupExpression, tmpOrderby;
     protected boolean importData, forStatistic, includeRowNumber, includeColName;
     protected TimeType groupTimeType;
     protected InvalidAs invalidAs;
     protected List<List<String>> importRows;
     protected Calendar calendar;
+    protected ExpressionCalculator expressionCalculator;
+    protected FindReplaceString findReplace;
 
     public TmpTable() {
         init();
@@ -61,7 +67,10 @@ public class TmpTable extends DataTable {
         groupRangeColumnName = null;
         groupTimeColumnName = null;
         groupTimeType = null;
+        groupExpression = null;
         timeIndex = -1;
+        expressionIndex = -1;
+        expressionCalculator = null;
         importData = forStatistic = includeRowNumber = includeColName = false;
         valueIndexOffset = -1;
         invalidAs = InvalidAs.Skip;
@@ -114,6 +123,7 @@ public class TmpTable extends DataTable {
                     tmpColumns.add(tableColumn);
                     sourceReferIndice.add(sourceData.colOrder(name));
                 }
+
             } else if (groupRangeColumnName != null && !groupRangeColumnName.isBlank()) {
                 Data2DColumn sourceColumn = sourceData.columnByName(groupRangeColumnName);
                 sourceReferColumns.add(sourceColumn);
@@ -121,6 +131,7 @@ public class TmpTable extends DataTable {
                 tableColumn.setD2cid(-1).setD2id(-1).setType(ColumnType.Double);
                 tmpColumns.add(tableColumn);
                 sourceReferIndice.add(sourceData.colOrder(groupRangeColumnName));
+
             } else if (groupTimeColumnName != null && !groupTimeColumnName.isBlank()) {
                 Data2DColumn sourceColumn = sourceData.columnByName(groupTimeColumnName);
                 sourceReferColumns.add(sourceColumn);
@@ -129,6 +140,14 @@ public class TmpTable extends DataTable {
                 tmpColumns.add(tableColumn);
                 timeIndex = sourceReferIndice.size();
                 sourceReferIndice.add(sourceData.colOrder(groupTimeColumnName));
+
+            } else if (groupExpression != null && !groupExpression.isBlank()) {
+                tmpColumns.add(new Data2DColumn(ExpressionColumnName, ColumnType.String));
+                expressionIndex = sourceReferIndice.size();
+                Data2DColumn sourceColumn = sourceData.column(0);
+                sourceReferColumns.add(sourceColumn);
+                sourceReferIndice.add(0);
+                expressionCalculator = new ExpressionCalculator();
 
             }
             int sortStartIndex = -1;
@@ -214,7 +233,7 @@ public class TmpTable extends DataTable {
     }
 
     // sourceRow should include values of all source columns
-    public void makeTmpRow(Data2DRow data2DRow, List<String> sourceRow) {
+    public void makeTmpRow(Data2DRow data2DRow, List<String> sourceRow, long rowIndex) {
         try {
             int len = sourceRow.size();
             for (int i = 0; i < sourceReferIndice.size(); i++) {
@@ -222,80 +241,85 @@ public class TmpTable extends DataTable {
                 if (col < 0 || col >= len) {
                     continue;
                 }
-                Data2DColumn sourceColumn = sourceData.column(col);
                 Data2DColumn targetColumn = column(i + valueIndexOffset);
-                String sourceValue = sourceRow.get(col);
                 Object tmpValue;
-                switch (targetColumn.getType()) {
-                    case String:
-                        tmpValue = sourceValue;
-                        break;
-                    case Double:
-                        tmpValue = ColumnDefinition.toDouble(sourceColumn.getType(), sourceValue);
-                        break;
-                    case Long:
-                        if (timeIndex != i) {
-                            tmpValue = targetColumn.fromString(sourceValue, invalidAs);
-                        } else {
-                            Date d = DateTools.encodeDate(sourceValue);
-                            if (d == null) {
+                if (i == expressionIndex) {
+                    expressionCalculator.calculateDataRowExpression(sourceData, groupExpression, sourceRow, rowIndex);
+                    tmpValue = expressionCalculator.getResult();
+                } else {
+                    Data2DColumn sourceColumn = sourceData.column(col);
+                    String sourceValue = sourceRow.get(col);
+                    switch (targetColumn.getType()) {
+                        case String:
+                            tmpValue = sourceValue;
+                            break;
+                        case Double:
+                            tmpValue = ColumnDefinition.toDouble(sourceColumn.getType(), sourceValue);
+                            break;
+                        case Long:
+                            if (timeIndex != i) {
                                 tmpValue = targetColumn.fromString(sourceValue, invalidAs);
                             } else {
-                                calendar.setTime(d);
-                                switch (groupTimeType) {
-                                    case Century:
-                                        int year = calendar.get(Calendar.YEAR);
-                                        int cYear = (year / 100) * 100;
-                                        if (year % 100 == 0) {
-                                            calendar.set(cYear, 0, 1, 0, 0, 0);
-                                        } else {
-                                            calendar.set(cYear + 1, 0, 1, 0, 0, 0);
-                                        }
-                                        break;
-                                    case Year:
-                                        calendar.set(calendar.get(Calendar.YEAR), 0, 1, 0, 0, 0);
-                                        break;
-                                    case Month:
-                                        calendar.set(calendar.get(Calendar.YEAR),
-                                                calendar.get(Calendar.MONTH),
-                                                1, 0, 0, 0);
-                                        break;
-                                    case Day:
-                                        calendar.set(calendar.get(Calendar.YEAR),
-                                                calendar.get(Calendar.MONTH),
-                                                calendar.get(Calendar.DAY_OF_MONTH),
-                                                0, 0, 0);
-                                        break;
-                                    case Hour:
-                                        calendar.set(calendar.get(Calendar.YEAR),
-                                                calendar.get(Calendar.MONTH),
-                                                calendar.get(Calendar.DAY_OF_MONTH),
-                                                calendar.get(Calendar.HOUR_OF_DAY),
-                                                0, 0);
-                                        break;
-                                    case Minute:
-                                        calendar.set(calendar.get(Calendar.YEAR),
-                                                calendar.get(Calendar.MONTH),
-                                                calendar.get(Calendar.DAY_OF_MONTH),
-                                                calendar.get(Calendar.HOUR_OF_DAY),
-                                                calendar.get(Calendar.MINUTE),
-                                                0);
-                                        break;
-                                    case Second:
-                                        calendar.set(calendar.get(Calendar.YEAR),
-                                                calendar.get(Calendar.MONTH),
-                                                calendar.get(Calendar.DAY_OF_MONTH),
-                                                calendar.get(Calendar.HOUR_OF_DAY),
-                                                calendar.get(Calendar.MINUTE),
-                                                calendar.get(Calendar.SECOND));
-                                        break;
+                                Date d = DateTools.encodeDate(sourceValue);
+                                if (d == null) {
+                                    tmpValue = targetColumn.fromString(sourceValue, invalidAs);
+                                } else {
+                                    calendar.setTime(d);
+                                    switch (groupTimeType) {
+                                        case Century:
+                                            int year = calendar.get(Calendar.YEAR);
+                                            int cYear = (year / 100) * 100;
+                                            if (year % 100 == 0) {
+                                                calendar.set(cYear, 0, 1, 0, 0, 0);
+                                            } else {
+                                                calendar.set(cYear + 1, 0, 1, 0, 0, 0);
+                                            }
+                                            break;
+                                        case Year:
+                                            calendar.set(calendar.get(Calendar.YEAR), 0, 1, 0, 0, 0);
+                                            break;
+                                        case Month:
+                                            calendar.set(calendar.get(Calendar.YEAR),
+                                                    calendar.get(Calendar.MONTH),
+                                                    1, 0, 0, 0);
+                                            break;
+                                        case Day:
+                                            calendar.set(calendar.get(Calendar.YEAR),
+                                                    calendar.get(Calendar.MONTH),
+                                                    calendar.get(Calendar.DAY_OF_MONTH),
+                                                    0, 0, 0);
+                                            break;
+                                        case Hour:
+                                            calendar.set(calendar.get(Calendar.YEAR),
+                                                    calendar.get(Calendar.MONTH),
+                                                    calendar.get(Calendar.DAY_OF_MONTH),
+                                                    calendar.get(Calendar.HOUR_OF_DAY),
+                                                    0, 0);
+                                            break;
+                                        case Minute:
+                                            calendar.set(calendar.get(Calendar.YEAR),
+                                                    calendar.get(Calendar.MONTH),
+                                                    calendar.get(Calendar.DAY_OF_MONTH),
+                                                    calendar.get(Calendar.HOUR_OF_DAY),
+                                                    calendar.get(Calendar.MINUTE),
+                                                    0);
+                                            break;
+                                        case Second:
+                                            calendar.set(calendar.get(Calendar.YEAR),
+                                                    calendar.get(Calendar.MONTH),
+                                                    calendar.get(Calendar.DAY_OF_MONTH),
+                                                    calendar.get(Calendar.HOUR_OF_DAY),
+                                                    calendar.get(Calendar.MINUTE),
+                                                    calendar.get(Calendar.SECOND));
+                                            break;
+                                    }
+                                    tmpValue = calendar.getTime().getTime();
                                 }
-                                tmpValue = calendar.getTime().getTime();
                             }
-                        }
-                        break;
-                    default:
-                        tmpValue = targetColumn.fromString(sourceValue, invalidAs);
+                            break;
+                        default:
+                            tmpValue = targetColumn.fromString(sourceValue, invalidAs);
+                    }
                 }
                 data2DRow.setColumnValue(targetColumn.getColumnName(), tmpValue);
             }
@@ -314,13 +338,16 @@ public class TmpTable extends DataTable {
             for (List<String> row : importRows) {
                 Data2DRow data2DRow = tableData2D.newRow();
                 List<String> values;
+                long index;
                 if (includeRowNumber) {
-                    data2DRow.setColumnValue(column(1).getColumnName(), Long.valueOf(row.get(0)));
+                    index = Long.valueOf(row.get(0));
+                    data2DRow.setColumnValue(column(1).getColumnName(), index);
                     values = row.subList(1, row.size());
                 } else {
+                    index = -1;
                     values = row;
                 }
-                makeTmpRow(data2DRow, values);
+                makeTmpRow(data2DRow, values, index);
                 if (tableData2D.setInsertStatement(conn, insert, data2DRow)) {
                     insert.addBatch();
                     if (++count % Database.BatchSize == 0) {
@@ -517,6 +544,29 @@ public class TmpTable extends DataTable {
         return sourceReferColumns.get(sourcePickIndice.size());
     }
 
+    public FindReplaceString findReplace() {
+        if (findReplace == null) {
+            findReplace = FindReplaceString.create().
+                    setOperation(FindReplaceString.Operation.ReplaceAll)
+                    .setIsRegex(false).setCaseInsensitive(false).setMultiline(false);
+        }
+        return findReplace;
+    }
+
+    public String tmpScript(String script) {
+        if (script == null || script.isBlank()) {
+            return null;
+        }
+        String tmpScript = script;
+        for (int i = 0; i < sourcePickIndice.size(); i++) {
+            int col = sourcePickIndice.get(i);
+            String sourceName = sourceData.columnName(col);
+            String tmpName = columnName(i + valueIndexOffset);
+            tmpScript = findReplace().replace(script, "#{" + sourceName + "}", "#{" + tmpName + "}");
+        }
+        return tmpScript;
+    }
+
     /* 
         static
      */
@@ -610,6 +660,11 @@ public class TmpTable extends DataTable {
         return this;
     }
 
+    public TmpTable setGroupExpression(String groupExpression) {
+        this.groupExpression = groupExpression;
+        return this;
+    }
+
     public TmpTable setInvalidAs(InvalidAs invalidAs) {
         this.invalidAs = invalidAs;
         return this;
@@ -661,6 +716,10 @@ public class TmpTable extends DataTable {
 
     public String getGroupRangeColumnName() {
         return groupRangeColumnName;
+    }
+
+    public String getGroupExpression() {
+        return groupExpression;
     }
 
     public boolean isImportData() {
