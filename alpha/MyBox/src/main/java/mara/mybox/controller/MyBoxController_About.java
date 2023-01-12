@@ -5,9 +5,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import mara.mybox.fxml.ControllerTools;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -24,7 +23,7 @@ public abstract class MyBoxController_About extends MyBoxController_Settings {
 
         MenuItem About = new MenuItem(Languages.message("About"));
         About.setOnAction((ActionEvent event1) -> {
-            ControllerTools.about();
+            HelpTools.about();
         });
 
         MenuItem FunctionsList = new MenuItem(Languages.message("FunctionsList"));
@@ -54,9 +53,6 @@ public abstract class MyBoxController_About extends MyBoxController_Settings {
 
         showMenu(aboutBox, event);
 
-        view.setImage(new Image("img/About.png"));
-        text.setText(Languages.message("AboutImageTips"));
-        locateImage(aboutBox, true);
     }
 
 }

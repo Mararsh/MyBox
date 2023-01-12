@@ -66,7 +66,6 @@ import mara.mybox.data.IntPoint;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.converter.IntegerStringFromatConverter;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.RecentVisitMenu;
@@ -74,6 +73,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.cell.ListImageCheckBoxCell;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
+import mara.mybox.fxml.converter.IntegerStringFromatConverter;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
@@ -244,7 +244,6 @@ public class GameEliminationController extends BaseController {
                         if (!names.isEmpty()) {
                             imageNames.addAll(names);
                         }
-
                         imageNames.addAll(ImageItem.predefined().keySet());
                         defaultSelected = imageNames.get(0);
                         items = new ArrayList();

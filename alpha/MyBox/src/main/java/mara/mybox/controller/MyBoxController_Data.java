@@ -6,7 +6,6 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -245,9 +244,6 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
 
         showMenu(dataBox, event);
 
-        view.setImage(new Image("img/DataTools.png"));
-        text.setText(message("DataToolsImageTips"));
-        locateImage(dataBox, true);
     }
 
 }

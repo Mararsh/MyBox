@@ -2,7 +2,9 @@ package mara.mybox.data;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.embed.swing.SwingFXUtils;
@@ -12,6 +14,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javax.imageio.ImageIO;
+import mara.mybox.value.AppValues;
 
 /**
  * @Author Mara
@@ -91,47 +94,38 @@ public class ImageItem {
         }
     }
 
+    /*
+        static
+     */
+    public static List<Image> internalImages() {
+        List<Image> list = new ArrayList<>();
+        for (int y = AppValues.AppYear; y >= 2018; y--) {
+            for (int i = 1; i <= (y == 2018 ? 6 : 9); i++) {
+                list.add(new Image("img/cover" + y + "g" + i + ".png"));
+            }
+        }
+        list.add(new Image("img/jade.png"));
+        list.add(new Image("img/exg1.png"));
+        list.add(new Image("img/exg2.png"));
+        list.add(new Image("img/Gadwalls.png"));
+        list.add(new Image("img/SpermWhale.png"));
+        return list;
+    }
+
     public static Map<String, String> predefined() {
         if (preDefined == null) {
             preDefined = new LinkedHashMap();
-            preDefined.put("img/About.png", "AboutImageTips");
-            preDefined.put("img/DataTools.png", "DataToolsImageTips");
-            preDefined.put("img/Settings.png", "SettingsImageTips");
-            preDefined.put("img/RecentAccess.png", "RecentAccessImageTips");
-            preDefined.put("img/FileTools.png", "FileToolsImageTips");
-            preDefined.put("img/ImageTools.png", "ImageToolsImageTips");
-            preDefined.put("img/DocumentTools.png", "DocumentToolsImageTips");
-            preDefined.put("img/MediaTools.png", "MediaToolsImageTips");
-            preDefined.put("img/NetworkTools.png", "NetworkToolsImageTips");
-            preDefined.put("img/n1.png", "N1ImageTips");
-            preDefined.put("img/n2.png", "N2ImageTips");
-            preDefined.put("img/n3.png", "N3ImageTips");
-            preDefined.put("img/n4.png", "N4ImageTips");
-            preDefined.put("img/n5.png", "N5ImageTips");
-            preDefined.put("img/n6.png", "N6ImageTips");
-            preDefined.put("img/n7.png", "N7ImageTips");
-            preDefined.put("img/n8.png", "N8ImageTips");
-            preDefined.put("img/n9.png", "N9ImageTips");
-            preDefined.put("img/sn1.png", "sn1ImageTips");
-            preDefined.put("img/sn2.png", "sn2ImageTips");
-            preDefined.put("img/sn3.png", "sn3ImageTips");
-            preDefined.put("img/sn4.png", "sn4ImageTips");
-            preDefined.put("img/sn5.png", "sn5ImageTips");
-            preDefined.put("img/sn6.png", "sn6ImageTips");
-            preDefined.put("img/sn7.png", "sn7ImageTips");
-            preDefined.put("img/sn8.png", "sn8ImageTips");
-            preDefined.put("img/sn9.png", "sn9ImageTips");
-            preDefined.put("img/ww1.png", "ww1ImageTips");
-            preDefined.put("img/ww2.png", "ww2ImageTips");
-            preDefined.put("img/ww3.png", "ww3ImageTips");
-            preDefined.put("img/ww4.png", "ww4ImageTips");
-            preDefined.put("img/ww5.png", "ww5ImageTips");
-            preDefined.put("img/ww6.png", "ww6ImageTips");
-            preDefined.put("img/ww7.png", "ww7ImageTips");
-            preDefined.put("img/ww8.png", "ww8ImageTips");
-            preDefined.put("img/ww9.png", "ww9ImageTips");
+            for (int y = AppValues.AppYear; y >= 2018; y--) {
+                for (int i = 1; i <= (y == 2018 ? 6 : 9); i++) {
+                    String name = "cover" + y + "g" + i;
+                    preDefined.put("img/" + name + ".png", name);
+                }
+            }
             preDefined.put("img/jade.png", "jadeImageTips");
-            preDefined.put("img/zz1.png", "zz1ImageTips");
+            preDefined.put("img/exg1.png", "exg1ImageTips");
+            preDefined.put("img/exg2.png", "exg2ImageTips");
+            preDefined.put("img/Gadwalls.png", "");
+            preDefined.put("img/SpermWhale.png", "");
             preDefined.put("img/MyBox.png", "");
             preDefined.put("color:#ffccfd", "");
             preDefined.put("color:#fd98a2", "");

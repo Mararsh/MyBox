@@ -1,9 +1,11 @@
 package mara.mybox.fxml;
 
 import java.io.File;
+import mara.mybox.controller.WebBrowserController;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.value.AppValues;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
@@ -13,6 +15,32 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class HelpTools {
+
+    public static void about() {
+        try {
+            StringTable table = new StringTable(null, "MyBox");
+            table.newNameValueRow("Author", "Mara");
+            table.newNameValueRow("Version", AppValues.AppVersion);
+            table.newNameValueRow("Date", AppValues.AppVersionDate);
+            table.newNameValueRow("License", Languages.message("FreeOpenSource"));
+            table.newLinkRow("", "https://www.apache.org/licenses/LICENSE-2.0");
+            table.newLinkRow("MainPage", "https://github.com/Mararsh/MyBox");
+            table.newLinkRow("Mirror", "https://sourceforge.net/projects/mara-mybox/files/");
+            table.newLinkRow("LatestRelease", "https://github.com/Mararsh/MyBox/releases");
+            table.newLinkRow("KnownIssues", "https://github.com/Mararsh/MyBox/issues");
+            table.newNameValueRow("", Languages.message("WelcomePR"));
+            table.newLinkRow("CloudStorage", "https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F");
+            table.newLinkRow("MyBoxInternetDataPath", "https://github.com/Mararsh/MyBox_data");
+            File htmFile = HtmlWriteTools.writeHtml(table.html());
+            if (htmFile == null || !htmFile.exists()) {
+                return;
+            }
+            SoundTools.miao5();
+            WebBrowserController.oneOpen(htmFile);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
 
     public static File aboutColorHtml() {
         try {
@@ -131,6 +159,25 @@ public class HelpTools {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
+        }
+    }
+
+    public static void imageStories(boolean all) {
+        try {
+            StringTable table = new StringTable(null, message("StoriesOfImages"));
+            for (int i = 1; i <= 9; i++) {
+                String name = "cover" + AppValues.AppYear + "g" + i;
+                File pic = FxFileTools.getInternalFile("/img/" + name + ".png", "image", name + ".png");
+                table.newNameValueRow("<Img src='" + pic.toURI().toString() + "' width=500>",
+                        message(name).replaceAll("\n", "<BR>"));
+            }
+            File htmFile = HtmlWriteTools.writeHtml(table.html());
+            if (htmFile == null || !htmFile.exists()) {
+                return;
+            }
+            WebBrowserController.oneOpen(htmFile);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
     }
 

@@ -12,6 +12,7 @@ public class AppValues {
     public static final String AppVersionDate = "2023-1-31";
     public static final String AppDerbyUser = "mara";
     public static final String AppDerbyPassword = "mybox";
+    public static final int AppYear = 2023;
 
     public static final String MyBoxSeparator = "##MyBox#";
     public static final String MyBoxStyle = "/styles/MyBox.css";

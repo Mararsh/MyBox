@@ -11,14 +11,10 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.ConfigTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -148,9 +144,6 @@ public abstract class MyBoxController_Settings extends MyBoxController_Recent {
 
         showMenu(settingsBox, event);
 
-        view.setImage(new Image("img/Settings.png"));
-        text.setText(Languages.message("SettingsImageTips"));
-        locateImage(settingsBox, true);
     }
 
 }

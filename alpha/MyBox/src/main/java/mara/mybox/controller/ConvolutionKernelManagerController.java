@@ -652,7 +652,7 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
         }
         ImageManufactureController c
                 = (ImageManufactureController) openStage(Fxmls.ImageManufactureFxml);
-        c.loadImage(new Image("img/zz1.png"));
+        c.loadImage(new Image("img/exg2.png"));
         c.applyKernel(kernel);
     }
 
