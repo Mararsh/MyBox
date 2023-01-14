@@ -162,14 +162,35 @@ public class HelpTools {
         }
     }
 
-    public static void imageStories(boolean all) {
+    public static void coverImageStories() {
         try {
             StringTable table = new StringTable(null, message("StoriesOfImages"));
             for (int i = 1; i <= 9; i++) {
                 String name = "cover" + AppValues.AppYear + "g" + i;
                 File pic = FxFileTools.getInternalFile("/img/" + name + ".png", "image", name + ".png");
                 table.newNameValueRow("<Img src='" + pic.toURI().toString() + "' width=500>",
-                        message(name).replaceAll("\n", "<BR>"));
+                        message(name));
+            }
+            File htmFile = HtmlWriteTools.writeHtml(table.html());
+            if (htmFile == null || !htmFile.exists()) {
+                return;
+            }
+            WebBrowserController.oneOpen(htmFile);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public static void imageStories() {
+        try {
+            StringTable table = new StringTable(null, message("StoriesOfImages"));
+            for (int y = AppValues.AppYear; y >= 2019; y--) {
+                for (int i = 1; i <= 9; i++) {
+                    String name = "cover" + y + "g" + i;
+                    File pic = FxFileTools.getInternalFile("/img/" + name + ".png", "image", name + ".png");
+                    table.newNameValueRow("<Img src='" + pic.toURI().toString() + "' width=500>",
+                            message(name));
+                }
             }
             File htmFile = HtmlWriteTools.writeHtml(table.html());
             if (htmFile == null || !htmFile.exists()) {
