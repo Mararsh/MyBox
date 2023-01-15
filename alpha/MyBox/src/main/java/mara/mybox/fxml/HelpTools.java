@@ -1,6 +1,10 @@
 package mara.mybox.fxml;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import mara.mybox.controller.BaseController;
 import mara.mybox.controller.WebBrowserController;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
@@ -162,7 +166,7 @@ public class HelpTools {
         }
     }
 
-    public static void coverImageStories() {
+    public static void coverImageStories(BaseController controller) {
         try {
             StringTable table = new StringTable(null, message("StoriesOfImages"));
             for (int i = 1; i <= 9; i++) {
@@ -175,28 +179,36 @@ public class HelpTools {
             if (htmFile == null || !htmFile.exists()) {
                 return;
             }
-            WebBrowserController.oneOpen(htmFile);
+            controller.browse(htmFile);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    public static void imageStories() {
+    public static void imageStories(BaseController controller) {
         try {
             StringTable table = new StringTable(null, message("StoriesOfImages"));
+            File pic;
             for (int y = AppValues.AppYear; y >= 2019; y--) {
                 for (int i = 1; i <= 9; i++) {
                     String name = "cover" + y + "g" + i;
-                    File pic = FxFileTools.getInternalFile("/img/" + name + ".png", "image", name + ".png");
+                    pic = FxFileTools.getInternalFile("/img/" + name + ".png", "image", name + ".png");
                     table.newNameValueRow("<Img src='" + pic.toURI().toString() + "' width=500>",
                             message(name));
                 }
             }
+            List<String> icons = new ArrayList<>();
+            icons.addAll(Arrays.asList("Add"));
+            for (String name : icons) {
+                pic = FxFileTools.getInternalFile("/buttons/Red/icon" + name + "_100.png", "image", "icon" + name + "_100.png");
+                table.newNameValueRow("<Img src='" + pic.toURI().toString() + "' width=500>", message("icon" + name));
+            }
+
             File htmFile = HtmlWriteTools.writeHtml(table.html());
             if (htmFile == null || !htmFile.exists()) {
                 return;
             }
-            WebBrowserController.oneOpen(htmFile);
+            controller.browse(htmFile);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

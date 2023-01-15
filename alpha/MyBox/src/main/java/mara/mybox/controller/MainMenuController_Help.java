@@ -59,6 +59,6 @@ public abstract class MainMenuController_Help extends MainMenuController_Develop
 
     @FXML
     protected void stories(ActionEvent event) {
-        HelpTools.imageStories();
+        HelpTools.imageStories(this);
     }
 }

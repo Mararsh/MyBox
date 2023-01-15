@@ -48,7 +48,7 @@ public class MyBoxController extends MyBoxController_About {
 
     @FXML
     public void stories() {
-        HelpTools.coverImageStories();
+        HelpTools.coverImageStories(this);
     }
 
 }
