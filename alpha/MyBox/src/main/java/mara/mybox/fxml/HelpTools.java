@@ -166,25 +166,6 @@ public class HelpTools {
         }
     }
 
-    public static void coverImageStories(BaseController controller) {
-        try {
-            StringTable table = new StringTable(null, message("StoriesOfImages"));
-            for (int i = 1; i <= 9; i++) {
-                String name = "cover" + AppValues.AppYear + "g" + i;
-                File pic = FxFileTools.getInternalFile("/img/" + name + ".png", "image", name + ".png");
-                table.newNameValueRow("<Img src='" + pic.toURI().toString() + "' width=500>",
-                        message(name));
-            }
-            File htmFile = HtmlWriteTools.writeHtml(table.html());
-            if (htmFile == null || !htmFile.exists()) {
-                return;
-            }
-            controller.browse(htmFile);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
     public static void imageStories(BaseController controller) {
         try {
             StringTable table = new StringTable(null, message("StoriesOfImages"));
@@ -198,11 +179,16 @@ public class HelpTools {
                 }
             }
             List<String> icons = new ArrayList<>();
-            icons.addAll(Arrays.asList("Add"));
+            icons.addAll(Arrays.asList("Add", "Analyse", "Cancel", "Cat", "Clear", "Clipboard", "Copy",
+                    "Data", "Default", "Delete", "Delimiter", "Demo", "Edit", "Examples", "Export", "Function",
+                    "Go", "Import", "Menu", "NewItem", "OK", "Open", "Panes", "Play", "Query",
+                    "Recover", "Refresh", "Sampled", "Save", "Style", "Tips", "Undo"));
             for (String name : icons) {
                 pic = FxFileTools.getInternalFile("/buttons/Red/icon" + name + "_100.png", "image", "icon" + name + "_100.png");
-                table.newNameValueRow("<Img src='" + pic.toURI().toString() + "' width=500>", message("icon" + name));
+                table.newNameValueRow("<Img src='" + pic.toURI().toString() + "' width=100>", message("icon" + name));
             }
+            pic = FxFileTools.getInternalFile("/buttons/iconClaw.png", "image", "iconClaw.png");
+            table.newNameValueRow("<Img src='" + pic.toURI().toString() + "' width=100>", message("iconClaw"));
 
             File htmFile = HtmlWriteTools.writeHtml(table.html());
             if (htmFile == null || !htmFile.exists()) {
