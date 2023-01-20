@@ -32,8 +32,15 @@ public class RunCommandController extends HtmlPopController {
     }
 
     @Override
-    public void setStageStatus() {
-        setAsPop(baseName);
+    public void initControls() {
+        try {
+            super.initControls();
+
+            webViewController.scrollType = ControlWebView.ScrollType.Bottom;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     public boolean beforeRun() {

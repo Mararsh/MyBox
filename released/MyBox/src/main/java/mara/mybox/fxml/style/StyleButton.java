@@ -445,7 +445,7 @@ public class StyleButton {
             return new StyleData(id, message("Go"), "", "iconGo.png");
         }
         if (id.startsWith("preview")) {
-            return new StyleData(id, message("PreviewComments"), "", "iconPreview.png");
+            return new StyleData(id, message("PreviewComments"), "", "iconExamples.png");
         }
         if (id.startsWith("rotateLeft")) {
             return new StyleData(id, message("RotateLeft"), "", "iconRotateLeft.png");

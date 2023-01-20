@@ -26,6 +26,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.value.AppPaths;
+import mara.mybox.value.AppValues;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -217,7 +218,8 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                         files.add(tmpFile);
                     }
 
-                    BufferedImage outlineSource = SwingFXUtils.fromFXImage(new Image("img/ImageTools.png"), null);
+                    BufferedImage outlineSource = SwingFXUtils.fromFXImage(
+                            new Image("img/cover" + AppValues.AppYear + "g2.png"), null);
                     ImageScope scope = new ImageScope(SwingFXUtils.toFXImage(image, null));
                     scope.setScopeType(ImageScope.ScopeType.Outline);
                     if (sourceFile != null) {

@@ -327,8 +327,8 @@ public class ColumnDefinition extends BaseData {
                 || type == ColumnType.Longitude || type == ColumnType.Latitude;
     }
 
-    public boolean isDateType() {
-        return isDateType(type);
+    public boolean isTimeType() {
+        return isTimeType(type);
     }
 
     public boolean isEnumType() {
@@ -815,10 +815,10 @@ public class ColumnDefinition extends BaseData {
     public static boolean isDBStringType(ColumnType type) {
         return type == ColumnType.String || type == ColumnType.File
                 || type == ColumnType.Image || type == ColumnType.Enumeration
-                || type == ColumnType.Era || type == ColumnType.Color;
+                || type == ColumnType.Color;
     }
 
-    public static boolean isDateType(ColumnType type) {
+    public static boolean isTimeType(ColumnType type) {
         return type == ColumnType.Datetime || type == ColumnType.Date || type == ColumnType.Era;
     }
 

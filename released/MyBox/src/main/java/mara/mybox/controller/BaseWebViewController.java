@@ -92,6 +92,10 @@ public class BaseWebViewController extends BaseController {
         setFileType(VisitHistory.FileType.Html);
     }
 
+    public void setScrollType(ControlWebView.ScrollType scrollType) {
+        webViewController.scrollType = scrollType;
+    }
+
     @Override
     public void sourceFileChanged(File file) {
         loadFile(file);

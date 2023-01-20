@@ -206,7 +206,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             return;
         }
         if (data2D == null || data2D.getType() != def.getType()) {
-            data2D = Data2D.create(def.getType());
+            setData(Data2D.create(def.getType()));
         } else if (data2D != def) {
             data2D.resetData();
         }
@@ -786,7 +786,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                         }
                         tableColumn.setCellFactory(TableDataColorEditCell.create(dataControl, dataColumn, tableColor));
 
-                    } else if (dataColumn.isDateType()) {
+                    } else if (dataColumn.isTimeType()) {
                         tableColumn.setCellFactory(TableDataDateEditCell.create(dataControl, dataColumn));
 
                     } else if (includeCoordinate && (type == ColumnType.Longitude || type == ColumnType.Latitude)) {

@@ -108,22 +108,25 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             return;
         }
         boolean exist = (info.getRegion() == null) && (sourceFile != null || image != null);
-        sourceFile = file;
-        imageInformation = info;
         synchronized (this) {
             if (loadTask != null && !loadTask.isQuit()) {
                 return;
             }
             loadTask = new SingletonTask<Void>(this) {
 
+                private Image thumbLoaded;
+
                 @Override
                 protected boolean handle() {
-                    image = info.loadThumbnail(loadWidth);
-                    return image != null;
+                    thumbLoaded = info.loadThumbnail(loadWidth);
+                    return thumbLoaded != null;
                 }
 
                 @Override
                 protected void whenSucceeded() {
+                    image = thumbLoaded;
+                    sourceFile = file;
+                    imageInformation = info;
                     afterImageLoaded();
                     setImageChanged(exist);
                 }

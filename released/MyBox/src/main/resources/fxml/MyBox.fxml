@@ -8,7 +8,7 @@ License:    Apache License Version 2.0
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
-<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -17,7 +17,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="thisPane" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MyBoxController">
+<BorderPane fx:id="thisPane" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MyBoxController">
     <top>
         <HBox id="MyBoxMenuBar" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseEntered="#hideMenu" stylesheets="@../styles/MyBox.css" BorderPane.alignment="CENTER_LEFT">
             <children>
@@ -31,8 +31,7 @@ License:    Apache License Version 2.0
                         <Font size="18.0" />
                     </font>
                 </Label>
-                <CheckBox fx:id="imageCheck" mnemonicParsing="false" text="%ViewImage">
-                </CheckBox>
+            <Hyperlink maxWidth="1.7976931348623157E308" minHeight="-Infinity" onAction="#stories" text="%StoriesOfImages" wrapText="true" />
             </children>
             <padding>
                 <Insets left="5.0" right="5.0" />
@@ -54,9 +53,9 @@ License:    Apache License Version 2.0
                             <children>
                                 <HBox alignment="CENTER" maxHeight="150.0" maxWidth="150.0" prefHeight="150.0" prefWidth="150.0">
                                     <children>
-                                        <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                                        <ImageView fitHeight="150.0" fitWidth="150.0" preserveRatio="true" smooth="false">
                                             <image>
-                                                <Image url="@../img/DocumentTools.png" />
+                                                <Image url="@../img/cover2023g1.png" />
                                             </image>
                                         </ImageView>
                                     </children>
@@ -74,7 +73,7 @@ License:    Apache License Version 2.0
                                     <children>
                                         <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../img/ImageTools.png" />
+                                                <Image url="@../img/cover2023g2.png" />
                                             </image>
                                         </ImageView>
                                     </children>
@@ -92,7 +91,7 @@ License:    Apache License Version 2.0
                                     <children>
                                         <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../img/FileTools.png" />
+                                                <Image url="@../img/cover2023g3.png" />
                                             </image>
                                         </ImageView>
                                     </children>
@@ -112,7 +111,7 @@ License:    Apache License Version 2.0
                             <children>
                                 <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../img/NetworkTools.png" />
+                                        <Image url="@../img/cover2023g4.png" />
                                     </image>
                                 </ImageView>
                                 <Label text="%NetworkTools">
@@ -128,7 +127,7 @@ License:    Apache License Version 2.0
                                     <children>
                                         <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../img/DataTools.png" />
+                                                <Image url="@../img/cover2023g5.png" />
                                             </image>
                                         </ImageView>
                                     </children>
@@ -146,7 +145,7 @@ License:    Apache License Version 2.0
                                     <children>
                                         <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../img/MediaTools.png" />
+                                                <Image url="@../img/cover2023g6.png" />
                                             </image>
                                         </ImageView>
                                     </children>
@@ -166,7 +165,7 @@ License:    Apache License Version 2.0
                             <children>
                                 <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../img/RecentAccess.png" />
+                                        <Image url="@../img/cover2023g7.png" />
                                     </image>
                                 </ImageView>
                                 <Label text="%RecentAccessed">
@@ -180,7 +179,7 @@ License:    Apache License Version 2.0
                             <children>
                                 <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../img/Settings.png" />
+                                        <Image url="@../img/cover2023g8.png" />
                                     </image>
                                 </ImageView>
                                 <Label text="Settings/设置">
@@ -194,7 +193,7 @@ License:    Apache License Version 2.0
                             <children>
                                 <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../img/About.png" />
+                                        <Image url="@../img/cover2023g9.png" />
                                     </image>
                                 </ImageView>
                                 <Label text="%About">

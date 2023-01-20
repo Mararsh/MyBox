@@ -106,7 +106,7 @@ public class ControlData2DRowEdit extends BaseController {
                 } else if (column.isNumberType() || type == ColumnType.Longitude || type == ColumnType.Latitude) {
                     makeTextField(column);
 
-                } else if (column.isDateType()) {
+                } else if (column.isTimeType()) {
                     makeDateInput(column);
 
                 } else if (editController.data2D.supportMultipleLine()) {

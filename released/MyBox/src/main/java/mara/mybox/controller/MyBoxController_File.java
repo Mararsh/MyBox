@@ -6,7 +6,6 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -145,9 +144,6 @@ public abstract class MyBoxController_File extends MyBoxController_Image {
 
         showMenu(fileBox, event);
 
-        view.setImage(new Image("img/FileTools.png"));
-        text.setText(Languages.message("FileToolsImageTips"));
-        locateImage(fileBox, false);
     }
 
 }

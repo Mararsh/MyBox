@@ -4,12 +4,12 @@
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="5.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureOperationsController">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureOperationsController">
     <children>
         <Accordion fx:id="accordionPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" VBox.vgrow="ALWAYS">
             <panes>
                 <TitledPane fx:id="copyPane" expanded="false" text="%Copy" />
-                <TitledPane fx:id="clipboardPane" expanded="false" maxWidth="1.7976931348623157E308" text="%Clipboard">
+                <TitledPane fx:id="clipboardPane" expanded="false" text="%Clipboard">
                     <content>
                         <!--<fx:include fx:id="clipboard" source="ImageManufactureClipboard.fxml" />-->
                     </content>
