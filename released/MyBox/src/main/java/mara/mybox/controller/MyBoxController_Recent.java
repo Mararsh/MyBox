@@ -5,8 +5,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.data.VisitHistoryTools;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -35,6 +37,9 @@ public abstract class MyBoxController_Recent extends MyBoxController_Media {
 
         showMenu(recentBox, event);
 
+        view.setImage(new Image("img/RecentAccess.png"));
+        text.setText(Languages.message("RecentAccessImageTips"));
+        locateImage(recentBox, true);
     }
 
 }

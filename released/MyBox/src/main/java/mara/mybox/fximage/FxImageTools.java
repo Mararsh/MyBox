@@ -42,7 +42,6 @@ import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fximage.FxColorTools.toAwtColor;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -348,11 +347,11 @@ public class FxImageTools {
                 try {
                     BufferedImage foreBI = foreImage;
                     if (foreBI == null) {
-                        foreBI = SwingFXUtils.fromFXImage(new Image("img/cover" + AppValues.AppYear + "g9.png"), null);
+                        foreBI = SwingFXUtils.fromFXImage(new Image("img/About.png"), null);
                     }
                     BufferedImage backBI = backImage;
                     if (backBI == null) {
-                        backBI = SwingFXUtils.fromFXImage(new Image("img/cover" + AppValues.AppYear + "g2.png"), null);
+                        backBI = SwingFXUtils.fromFXImage(new Image("img/ww8.png"), null);
                     }
                     files = new ArrayList<>();
                     for (String name : PixelsBlendFactory.blendModes()) {

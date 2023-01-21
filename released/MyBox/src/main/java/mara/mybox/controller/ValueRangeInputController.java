@@ -63,8 +63,8 @@ public class ValueRangeInputController extends BaseInputController {
         } else {
             endInput.clear();
         }
-        examplesStartButton.setVisible(column.isTimeType());
-        examplesEndButton.setVisible(column.isTimeType());
+        examplesStartButton.setVisible(column.isDateType());
+        examplesEndButton.setVisible(column.isDateType());
         includeStartCheck.setSelected(valueRange.isIncludeStart());
         includeEndCheck.setSelected(valueRange.isIncludeEnd());
     }
@@ -75,7 +75,7 @@ public class ValueRangeInputController extends BaseInputController {
         }
         Object v;
         try {
-            if (column.isTimeType()) {
+            if (column.isDateType()) {
                 v = DateTools.datetimeToString(DateTools.encodeDate(startInput.getText()).getTime());
             } else {
                 v = Double.parseDouble(startInput.getText());
@@ -86,7 +86,7 @@ public class ValueRangeInputController extends BaseInputController {
         }
         valueRange.setStart(v);
         try {
-            if (column.isTimeType()) {
+            if (column.isDateType()) {
                 v = DateTools.datetimeToString(DateTools.encodeDate(endInput.getText()).getTime());
             } else {
                 v = Double.parseDouble(endInput.getText());

@@ -5,7 +5,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.value.AppValues;
-import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -146,18 +145,6 @@ public class DataFilter {
         passed = false;
         task = null;
         calculator.reset();
-    }
-
-    @Override
-    public String toString() {
-        String string = sourceScript == null ? "" : sourceScript;
-        if (reversed) {
-            string += "\n" + message("Reverse");
-        }
-        if (maxPassed > 0) {
-            string += "\n" + message("MaximumNumber") + ": " + maxPassed;
-        }
-        return string;
     }
 
     /*

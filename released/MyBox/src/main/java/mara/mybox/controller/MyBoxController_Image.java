@@ -6,6 +6,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -79,6 +80,10 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
         popMenu.getItems().add(closeMenu);
 
         showMenu(imageBox, event);
+
+        view.setImage(new Image("img/ImageTools.png"));
+        text.setText(message("ImageToolsImageTips"));
+        locateImage(imageBox, true);
 
     }
 

@@ -218,9 +218,6 @@ public class ImageJpgFile {
             }
             String nativeFormat = metaData.getNativeMetadataFormatName();// "javax_imageio_jpeg_image_1.0"
             IIOMetadataNode nativeTree = (IIOMetadataNode) metaData.getAsTree(nativeFormat);
-            if (nativeTree == null) {
-                return metaData;
-            }
 
             IIOMetadataNode JPEGvariety, markerSequence;
             NodeList JPEGvarietyNode = nativeTree.getElementsByTagName("JPEGvariety");

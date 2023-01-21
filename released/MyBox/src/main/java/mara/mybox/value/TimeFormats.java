@@ -33,17 +33,17 @@ public class TimeFormats {
     public static final String DatetimeMsE = "MM/dd/yyyy HH:mm:ss.SSS";
     public static final String DatetimeZoneE = "MM/dd/yyyy HH:mm:ss Z";
 
-    public static final String DatetimeA = "y-MM-dd HH:mm:ss";
-    public static final String DatetimeMsA = "y-MM-dd HH:mm:ss.SSS";
-    public static final String DateA = "y-MM-dd";
-    public static final String MonthA = "y-MM";
+    public static final String DatetimeA = "y-M-d H:m:s";
+    public static final String DatetimeMsA = "y-M-d H:m:s.S";
+    public static final String DateA = "y-M-d";
+    public static final String MonthA = "y-M";
     public static final String YearA = "y";
-    public static final String TimeA = "HH:mm:ss";
-    public static final String TimeMsA = "HH:mm:ss.SSS";
+    public static final String TimeA = "H:m:s";
+    public static final String TimeMsA = "H:m:s.S";
 
-    public static final String DatetimeB = "MM/dd/y HH:mm:ss";
-    public static final String DatetimeMsB = "MM/dd/y HH:mm:ss.SSS";
-    public static final String DateB = "MM/dd/y";
-    public static final String MonthB = "MM/y";
+    public static final String DatetimeB = "M/d/y H:m:s";
+    public static final String DatetimeMsB = "M/d/y H:m:s.S";
+    public static final String DateB = "M/d/y";
+    public static final String MonthB = "M/y";
 
 }

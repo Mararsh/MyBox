@@ -43,6 +43,15 @@ public class Data2DChartGroupBoxWhiskerController extends Data2DChartBoxWhiskerC
     }
 
     @Override
+    public String chartTitle() {
+        if (group == null) {
+            return null;
+        }
+        return super.chartTitle() + "\n"
+                + group.getIdColName() + groupid + " - " + group.parameterValue(groupid - 1);
+    }
+
+    @Override
     public void drawChart() {
         drawFrame();
     }
@@ -81,7 +90,6 @@ public class Data2DChartGroupBoxWhiskerController extends Data2DChartBoxWhiskerC
                 conn = DerbyBase.getConnection();
             }
             outputData = statistic.groupData(conn, groupid);
-            groupParameters = group.parameterValue(conn, groupid);
             return outputData != null && !outputData.isEmpty();
         } catch (Exception e) {
             MyBoxLog.error(e);

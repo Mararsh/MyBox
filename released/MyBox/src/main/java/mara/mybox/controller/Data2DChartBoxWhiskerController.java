@@ -586,7 +586,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
     }
 
     @Override
-    public String baseChartTitle() {
+    public String chartTitle() {
         return data2D.displayName() + " - " + message("BoxWhiskerChart");
     }
 

@@ -175,7 +175,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
     }
 
     @Override
-    public String baseChartTitle() {
+    public String chartTitle() {
         String title = selectedCategory;
         if (chartTypesController.isBubbleChart()) {
             title += " - " + selectedValue;

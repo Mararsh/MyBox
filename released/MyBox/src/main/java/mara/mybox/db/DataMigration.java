@@ -155,9 +155,6 @@ public class DataMigration {
                 if (lastVersion < 6006002) {
                     updateIn662(conn);
                 }
-                if (lastVersion < 6007000) {
-                    updateIn67(conn);
-                }
             }
             TableStringValues.add(conn, "InstalledVersions", AppValues.AppVersion);
             conn.setAutoCommit(true);
@@ -165,18 +162,6 @@ public class DataMigration {
             MyBoxLog.debug(e.toString());
         }
         return true;
-    }
-
-    private static void updateIn67(Connection conn) {
-        try {
-            MyBoxLog.info("Updating tables in 6.7...");
-
-            conn.setAutoCommit(true);
-            TableStringValues.clear("GameEliminationImage");
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
     }
 
     private static void updateIn662(Connection conn) {

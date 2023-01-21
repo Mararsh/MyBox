@@ -1,10 +1,11 @@
 package mara.mybox.fxml;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.WebBrowserController;
-import mara.mybox.data.ImageItem;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.HtmlWriteTools;
@@ -168,18 +169,27 @@ public class HelpTools {
     public static void imageStories(BaseController controller) {
         try {
             StringTable table = new StringTable(null, message("StoriesOfImages"));
-            List<ImageItem> predefinedItems = ImageItem.predefined();
-            for (ImageItem item : predefinedItems) {
-                String comments = item.getComments();
-                File file = item.getFile();
-                if (comments == null || comments.isBlank()
-                        || file == null || !file.exists()) {
-                    continue;
+            File pic;
+            for (int y = AppValues.AppYear; y >= 2019; y--) {
+                for (int i = 1; i <= 9; i++) {
+                    String name = "cover" + y + "g" + i;
+                    pic = FxFileTools.getInternalFile("/img/" + name + ".png", "image", name + ".png");
+                    table.newNameValueRow("<Img src='" + pic.toURI().toString() + "' width=500>",
+                            message(name));
                 }
-                table.newNameValueRow(
-                        "<Img src='" + file.toURI().toString() + "' width=" + item.getWidth() + ">",
-                        comments);
             }
+            List<String> icons = new ArrayList<>();
+            icons.addAll(Arrays.asList("Add", "Analyse", "Cancel", "Cat", "Clear", "Clipboard", "Copy",
+                    "Data", "Default", "Delete", "Delimiter", "Demo", "Edit", "Examples", "Export", "Function",
+                    "Go", "Import", "Menu", "NewItem", "OK", "Open", "Panes", "Play", "Query",
+                    "Recover", "Refresh", "Sampled", "Save", "Style", "Tips", "Undo"));
+            for (String name : icons) {
+                pic = FxFileTools.getInternalFile("/buttons/Red/icon" + name + "_100.png", "image", "icon" + name + "_100.png");
+                table.newNameValueRow("<Img src='" + pic.toURI().toString() + "' width=100>", message("icon" + name));
+            }
+            pic = FxFileTools.getInternalFile("/buttons/iconClaw.png", "image", "iconClaw.png");
+            table.newNameValueRow("<Img src='" + pic.toURI().toString() + "' width=100>", message("iconClaw"));
+
             File htmFile = HtmlWriteTools.writeHtml(table.html());
             if (htmFile == null || !htmFile.exists()) {
                 return;

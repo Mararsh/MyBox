@@ -32,6 +32,10 @@ public class DateTools {
     /*
         parse to date
      */
+    public static String bcFormat() {
+        return TimeFormats.DatetimeA + " G";
+    }
+
     // strDate does not contain ear code(bc/ad)
     public static String parseFormat(String strDate) {
         try {
@@ -612,21 +616,11 @@ public class DateTools {
         return Period.between(localDate1, localDate2);
     }
 
-    public static long zeroYear() {
-        Calendar ca = Calendar.getInstance();
-        ca.set(0, 0, 1, 0, 0, 0);
-        return ca.getTime().getTime();
-    }
-
     public static long randomTime(Random r) {
         if (r == null) {
             r = new Random();
         }
         return r.nextLong(new Date().getTime() * 100);
-    }
-
-    public static String bcFormat() {
-        return TimeFormats.Datetime + " G";
     }
 
     public static boolean isBC(long value) {

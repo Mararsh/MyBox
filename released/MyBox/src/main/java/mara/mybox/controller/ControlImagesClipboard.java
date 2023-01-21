@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import javafx.application.Platform;
@@ -17,7 +18,6 @@ import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Callback;
-import mara.mybox.data.ImageItem;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableImageClipboard;
@@ -323,10 +323,21 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
 
                 @Override
                 protected boolean handle() {
-                    List<Image> predefinedItems = ImageItem.internalImages();
+                    List<Image> examples = Arrays.asList(
+                            new Image("img/DocumentTools.png"), new Image("img/ImageTools.png"), new Image("img/FileTools.png"),
+                            new Image("img/NetworkTools.png"), new Image("img/DataTools.png"), new Image("img/MediaTools.png"),
+                            new Image("img/RecentAccess.png"), new Image("img/Settings.png"), new Image("img/About.png"),
+                            new Image("img/n1.png"), new Image("img/n2.png"), new Image("img/n5.png"),
+                            new Image("img/n3.png"), new Image("img/n4.png"), new Image("img/n6.png"),
+                            new Image("img/n7.png"), new Image("img/n8.png"), new Image("img/n9.png"),
+                            new Image("img/ww1.png"), new Image("img/ww2.png"), new Image("img/ww5.png"),
+                            new Image("img/ww3.png"), new Image("img/ww4.png"), new Image("img/ww6.png"),
+                            new Image("img/ww7.png"), new Image("img/ww8.png"), new Image("img/ww9.png"),
+                            new Image("img/zz1.png"), new Image("img/jade.png"), new Image("img/MyBox.png")
+                    );
                     clips = new ArrayList<>();
-                    for (Image image : predefinedItems) {
-                        ImageClipboard clip = ImageClipboard.create(image, ImageClipboard.ImageSource.Example);
+                    for (int i = examples.size() - 1; i >= 0; --i) {
+                        ImageClipboard clip = ImageClipboard.create(examples.get(i), ImageClipboard.ImageSource.Example);
                         if (clip == null) {
                             continue;
                         }

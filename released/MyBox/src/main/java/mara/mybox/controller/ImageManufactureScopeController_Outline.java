@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -17,7 +18,6 @@ import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.data.DoubleRectangle;
-import mara.mybox.data.ImageItem;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
@@ -39,7 +39,16 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
 
     public void initPixTab() {
         try {
-            outlinesList.getItems().setAll(ImageItem.internalImages());
+            List<Image> prePixList = Arrays.asList(
+                    new Image("img/ww1.png"), new Image("img/jade.png"),
+                    new Image("img/ww3.png"), new Image("img/ww4.png"), new Image("img/ww6.png"),
+                    new Image("img/ww7.png"), new Image("img/ww8.png"), new Image("img/ww9.png"),
+                    new Image("img/About.png"), new Image("img/MyBox.png"), new Image("img/DataTools.png"),
+                    new Image("img/RecentAccess.png"), new Image("img/FileTools.png"), new Image("img/ImageTools.png"),
+                    new Image("img/DocumentTools.png"), new Image("img/MediaTools.png"), new Image("img/NetworkTools.png"),
+                    new Image("img/zz1.png")
+            );
+            outlinesList.getItems().addAll(prePixList);
             outlinesList.setCellFactory(new Callback<ListView<Image>, ListCell<Image>>() {
                 @Override
                 public ListCell<Image> call(ListView<Image> param) {

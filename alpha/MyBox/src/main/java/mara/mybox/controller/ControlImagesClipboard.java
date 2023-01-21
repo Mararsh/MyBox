@@ -323,10 +323,10 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
 
                 @Override
                 protected boolean handle() {
-                    List<Image> predefinedItems = ImageItem.internalImages();
+                    List<Image> examples = ImageItem.internalImages();
                     clips = new ArrayList<>();
-                    for (Image image : predefinedItems) {
-                        ImageClipboard clip = ImageClipboard.create(image, ImageClipboard.ImageSource.Example);
+                    for (int i = examples.size() - 1; i >= 0; --i) {
+                        ImageClipboard clip = ImageClipboard.create(examples.get(i), ImageClipboard.ImageSource.Example);
                         if (clip == null) {
                             continue;
                         }

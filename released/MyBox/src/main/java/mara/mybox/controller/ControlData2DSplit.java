@@ -167,7 +167,7 @@ public class ControlData2DSplit extends BaseTableViewController<ValueRange> {
         if (sizeRadio.isSelected()) {
             splitType = SplitType.Size;
             inputsBox.getChildren().add(sizeInput);
-            if (column != null && column.isTimeType()) {
+            if (column != null && column.isDateType()) {
                 inputsBox.getChildren().add(unitPane);
             } else {
                 inputsBox.getChildren().add(scaleBox);
@@ -177,7 +177,7 @@ public class ControlData2DSplit extends BaseTableViewController<ValueRange> {
         } else if (numberRadio.isSelected()) {
             splitType = SplitType.Number;
             inputsBox.getChildren().add(numberInput);
-            if (column == null || !column.isTimeType()) {
+            if (column == null || !column.isDateType()) {
                 inputsBox.getChildren().add(scaleBox);
             }
             return checkNumber();
@@ -185,7 +185,7 @@ public class ControlData2DSplit extends BaseTableViewController<ValueRange> {
         } else if (listRadio.isSelected()) {
             splitType = SplitType.List;
             inputsBox.getChildren().add(listBox);
-            if (column == null || !column.isTimeType()) {
+            if (column == null || !column.isDateType()) {
                 inputsBox.getChildren().add(scaleBox);
             }
             return !tableData.isEmpty();
@@ -211,7 +211,7 @@ public class ControlData2DSplit extends BaseTableViewController<ValueRange> {
             sizeInput.setStyle(UserConfig.badStyle());
             return false;
         }
-        if (column == null || !column.isTimeType()) {
+        if (column == null || !column.isDateType()) {
             return true;
         }
         if (yearsRadio.isSelected()) {

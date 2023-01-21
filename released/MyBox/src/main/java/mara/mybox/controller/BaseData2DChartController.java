@@ -28,10 +28,9 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class BaseData2DChartController extends BaseData2DHandleController {
 
-    protected String selectedCategory, selectedValue, groupParameters;
+    protected String selectedCategory, selectedValue;
     protected DataTableGroup group;
-    protected int chartMaxData, framesNumber;
-    protected long groupid;
+    protected int chartMaxData, framesNumber, groupid;
     protected Thread frameThread;
     protected Connection conn;
     protected List<List<String>> chartData;
@@ -206,7 +205,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             group = null;
             framesNumber = -1;
             groupid = -1;
-            groupParameters = null;
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -215,23 +213,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     }
 
     public String chartTitle() {
-        if (groupController != null) {
-            return groupChartTitle();
-        } else {
-            return baseChartTitle();
-        }
-    }
-
-    public String baseChartTitle() {
         return baseTitle;
-    }
-
-    public String groupChartTitle() {
-        if (group == null) {
-            return baseChartTitle();
-        }
-        return baseChartTitle() + (this instanceof BaseData2DChartHtmlController ? "<BR>" : "\n")
-                + group.getIdColName() + groupid + " - " + groupParameters;
     }
 
     public String categoryName() {
@@ -464,7 +446,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                     if (!group.run()) {
                         return false;
                     }
-                    groupLabels = group.getParameterValues(task);
+                    groupLabels = group.getParameterValues();
                     framesNumber = groupLabels.size();
                     return initGroups();
                 } catch (Exception e) {
@@ -527,7 +509,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                 conn = DerbyBase.getConnection();
             }
             outputData = group.groupData(conn, groupid, outputColumns);
-            groupParameters = group.parameterValue(conn, groupid);
             return initFrame();
         } catch (Exception e) {
             MyBoxLog.console(e.toString());

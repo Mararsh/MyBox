@@ -386,7 +386,7 @@ License:    Apache License Version 2.0
                                     <graphic>
                                         <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/Red/iconExamples.png" />
+                                                <Image url="@../buttons/Red/iconPreview.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -396,7 +396,7 @@ License:    Apache License Version 2.0
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/Red/iconExamples.png" />
+                                                <Image url="@../buttons/Red/iconPreview.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -405,7 +405,7 @@ License:    Apache License Version 2.0
                                     <graphic>
                                         <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/Red/iconExamples.png" />
+                                                <Image url="@../buttons/Red/iconPreview.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -500,7 +500,6 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#FunctionsList" text="%FunctionsList" />
                                 <MenuItem mnemonicParsing="false" onAction="#documents" text="%Documents" />
                                 <MenuItem mnemonicParsing="false" onAction="#readme" text="ReadMe" />
-                                <MenuItem mnemonicParsing="false" onAction="#stories" text="%StoriesOfImages" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#showAbout" text="%About" />
                             </items>
