@@ -69,6 +69,10 @@ public class BaseData implements Cloneable {
         }
     }
 
+    public String label(String columnName) {
+        return columnName;
+    }
+
     /*
         static methods
      */

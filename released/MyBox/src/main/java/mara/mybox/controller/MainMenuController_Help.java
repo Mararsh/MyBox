@@ -3,8 +3,8 @@ package mara.mybox.controller;
 import java.io.File;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.FxFileTools;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -40,7 +40,7 @@ public abstract class MainMenuController_Help extends MainMenuController_Develop
         String lang = Languages.getLangName();
         File file = FxFileTools.getInternalFile("/doc/" + lang + "/MyBox-Documents-" + lang + ".html", "doc", "MyBox-Documents-" + lang + ".html");
         if (file != null && file.exists()) {
-            WebBrowserController.oneOpen(file);
+            PopTools.browseURI(this, file.toURI());
         }
     }
 
@@ -54,6 +54,11 @@ public abstract class MainMenuController_Help extends MainMenuController_Develop
 
     @FXML
     protected void showAbout(ActionEvent event) {
-        ControllerTools.about();
+        HelpTools.about();
+    }
+
+    @FXML
+    protected void stories(ActionEvent event) {
+        HelpTools.imageStories(this);
     }
 }

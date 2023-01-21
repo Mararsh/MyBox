@@ -112,6 +112,21 @@ public class Languages {
         }
     }
 
+    public static String messageIgnoreFirstCase(String msg) {
+        try {
+            if (msg == null || msg.isBlank()) {
+                return msg;
+            }
+            return getBundle().getString(msg);
+        } catch (Exception e) {
+            try {
+                return getBundle().getString(msg.substring(0, 1).toUpperCase() + msg.substring(1, msg.length()));
+            } catch (Exception ex) {
+                return msg;
+            }
+        }
+    }
+
     public static List<String> userLanguages() {
         List<String> languages = new ArrayList<>();
         try {

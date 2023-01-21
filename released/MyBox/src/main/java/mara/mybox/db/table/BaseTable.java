@@ -1092,7 +1092,7 @@ public abstract class BaseTable<D> {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e, tableName);
+            MyBoxLog.debug(e, tableName);
         }
         return dataList;
     }

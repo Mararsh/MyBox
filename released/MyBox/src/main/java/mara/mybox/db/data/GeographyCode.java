@@ -4,6 +4,7 @@ import mara.mybox.data.GeoCoordinateSystem;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -339,6 +340,80 @@ public class GeographyCode extends BaseData {
         } else {
             return "";
         }
+    }
+
+    @Override
+    public String label(String columnName) {
+        if (columnName == null) {
+            return null;
+        }
+        switch (columnName) {
+            case "gcid":
+                return message("ID");
+            case "level":
+                return message("Level");
+            case "longitude":
+                return message("Longitude");
+            case "latitude":
+                return message("Latitude");
+            case "altitude":
+                return message("Altitude");
+            case "precision":
+                return message("Precision");
+            case "coordinate_system":
+                return message("CoordinateSystem");
+            case "chinese_name":
+                return message("ChineseName");
+            case "english_name":
+                return message("EnglishName");
+            case "code1":
+                return message("Code") + "1";
+            case "code2":
+                return message("Code") + "2";
+            case "code3":
+                return message("Code") + "3";
+            case "code4":
+                return message("Code") + "4";
+            case "code5":
+                return message("Code") + "5";
+            case "alias1":
+                return message("Alias") + "1";
+            case "alias2":
+                return message("Alias") + "2";
+            case "alias3":
+                return message("Alias") + "3";
+            case "alias4":
+                return message("Alias") + "4";
+            case "alias5":
+                return message("Alias") + "5";
+            case "owner":
+                return message("Owner");
+            case "continent":
+                return message("Continent");
+            case "country":
+                return message("Country");
+            case "province":
+                return message("Province");
+            case "city":
+                return message("City");
+            case "county":
+                return message("County");
+            case "town":
+                return message("Town");
+            case "village":
+                return message("Village");
+            case "building":
+                return message("Building");
+            case "area":
+                return message("Area");
+            case "population":
+                return message("Population");
+            case "comments":
+                return message("Comments");
+            case "gcsource":
+                return message("Source");
+        }
+        return null;
     }
 
     public static boolean isPredefined(GeographyCode data) {

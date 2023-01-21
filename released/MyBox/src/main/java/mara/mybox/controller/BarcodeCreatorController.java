@@ -446,7 +446,8 @@ public class BarcodeCreatorController extends ImageViewerController {
             });
             qrErrorCorrectionSelecor.getSelectionModel().select(UserConfig.getString("QRErrorCorrection", Languages.message("ErrorCorrectionLevelH")));
 
-            File pic = mara.mybox.fxml.FxFileTools.getInternalFile("/img/About.png", "image", "About.png");
+            File pic = mara.mybox.fxml.FxFileTools.getInternalFile(
+                    "/img/cover" + AppValues.AppYear + "g9.png", "image", "About.png");
             if (pic != null) {
                 sourceFileInput.setText(pic.getAbsolutePath());
             }

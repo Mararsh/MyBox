@@ -29,7 +29,7 @@ public class Data2DWriteTmpTable extends Data2DWriteTable {
 
     @Override
     public void makeTableRow(Data2DRow data2DRow) {
-        tmpTable.makeTmpRow(data2DRow, sourceRow);
+        tmpTable.makeTmpRow(data2DRow, sourceRow, rowIndex);
     }
 
 }

@@ -46,6 +46,7 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.value.AppPaths;
+import mara.mybox.value.AppValues;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -539,7 +540,8 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                     BufferedImage bufferedImage;
                     String tmpFile;
 
-                    BufferedImage outlineSource = SwingFXUtils.fromFXImage(new Image("img/About.png"), null);
+                    BufferedImage outlineSource = SwingFXUtils.fromFXImage(
+                            new Image("img/cover" + AppValues.AppYear + "g9.png"), null);
                     ImageScope scope = new ImageScope(SwingFXUtils.toFXImage(image, null));
                     scope.setScopeType(ImageScope.ScopeType.Outline);
                     if (sourceFile != null) {

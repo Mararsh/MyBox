@@ -342,10 +342,14 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
         if (hasFilterScript) {
             scripts.add(filterScript);
         }
-        List<String> groupScripts = groupController.scripts();
-        if (groupScripts != null) {
-            scripts.addAll(groupScripts);
+        List<String> groupScripts = null;
+        if (groupController != null) {
+            groupScripts = groupController.scripts();
+            if (groupScripts != null) {
+                scripts.addAll(groupScripts);
+            }
         }
+        boolean hasGroupScripts = groupScripts != null && !groupScripts.isEmpty();
         if (scripts.isEmpty()) {
             startOperation();
             return;
@@ -365,7 +369,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                 if (hasFilterScript) {
                     data2D.filter.setFilledScript(filledScripts.get(0));
                 }
-                if (groupScripts != null) {
+                if (hasGroupScripts) {
                     if (hasFilterScript) {
                         groupController.fillScripts(filledScripts.subList(1, filledScripts.size()));
                     } else {

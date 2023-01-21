@@ -2,8 +2,9 @@ package mara.mybox.data;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Node;
@@ -12,6 +13,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javax.imageio.ImageIO;
+import mara.mybox.fxml.FxFileTools;
+import mara.mybox.value.AppValues;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -20,21 +24,28 @@ import javax.imageio.ImageIO;
  */
 public class ImageItem {
 
-    public static Map<String, String> preDefined;
-
-    protected String address, comments;
+    protected String name, address, comments;
     protected int index;
     protected SimpleBooleanProperty selected = new SimpleBooleanProperty(false);
-    protected Image image;
 
-    public ImageItem(String address, String comments) {
-        this.address = address;
-        this.comments = comments;
-        readImage();
+    public ImageItem() {
+        init();
     }
 
-    public boolean isInternel() {
-        return address != null && address.startsWith("img/");
+    private void init() {
+        name = null;
+        address = null;
+        comments = null;
+        selected = new SimpleBooleanProperty(false);
+    }
+
+    public boolean isInternal() {
+        return address != null
+                && (address.startsWith("img/") || address.startsWith("buttons/"));
+    }
+
+    public int getWidth() {
+        return address != null && address.startsWith("buttons/") ? 100 : 500;
     }
 
     public boolean isColor() {
@@ -46,13 +57,16 @@ public class ImageItem {
     }
 
     public boolean isPredefined() {
-        return address != null && predefined().containsKey(address);
+        return address != null && predefined().contains(this);
     }
 
-    public final void readImage() {
+    public Image readImage() {
+        Image image = null;
         try {
-            image = null;
-            if (isInternel()) {
+            if (address == null || isColor()) {
+                return null;
+            }
+            if (isInternal()) {
                 image = new ImageView(new Image(address)).getImage();
             } else if (isFile()) {
                 File file = new File(address);
@@ -63,6 +77,7 @@ public class ImageItem {
             }
         } catch (Exception e) {
         }
+        return image;
     }
 
     public Node makeNode(int size) {
@@ -76,8 +91,9 @@ public class ImageItem {
                 rect.setUserData(index);
                 return rect;
             } else {
+                Image image = readImage();
                 if (image == null) {
-                    readImage();
+                    return null;
                 }
                 ImageView view = new ImageView(image);
                 view.setPreserveRatio(false);
@@ -91,58 +107,101 @@ public class ImageItem {
         }
     }
 
-    public static Map<String, String> predefined() {
-        if (preDefined == null) {
-            preDefined = new LinkedHashMap();
-            preDefined.put("img/About.png", "AboutImageTips");
-            preDefined.put("img/DataTools.png", "DataToolsImageTips");
-            preDefined.put("img/Settings.png", "SettingsImageTips");
-            preDefined.put("img/RecentAccess.png", "RecentAccessImageTips");
-            preDefined.put("img/FileTools.png", "FileToolsImageTips");
-            preDefined.put("img/ImageTools.png", "ImageToolsImageTips");
-            preDefined.put("img/DocumentTools.png", "DocumentToolsImageTips");
-            preDefined.put("img/MediaTools.png", "MediaToolsImageTips");
-            preDefined.put("img/NetworkTools.png", "NetworkToolsImageTips");
-            preDefined.put("img/n1.png", "N1ImageTips");
-            preDefined.put("img/n2.png", "N2ImageTips");
-            preDefined.put("img/n3.png", "N3ImageTips");
-            preDefined.put("img/n4.png", "N4ImageTips");
-            preDefined.put("img/n5.png", "N5ImageTips");
-            preDefined.put("img/n6.png", "N6ImageTips");
-            preDefined.put("img/n7.png", "N7ImageTips");
-            preDefined.put("img/n8.png", "N8ImageTips");
-            preDefined.put("img/n9.png", "N9ImageTips");
-            preDefined.put("img/sn1.png", "sn1ImageTips");
-            preDefined.put("img/sn2.png", "sn2ImageTips");
-            preDefined.put("img/sn3.png", "sn3ImageTips");
-            preDefined.put("img/sn4.png", "sn4ImageTips");
-            preDefined.put("img/sn5.png", "sn5ImageTips");
-            preDefined.put("img/sn6.png", "sn6ImageTips");
-            preDefined.put("img/sn7.png", "sn7ImageTips");
-            preDefined.put("img/sn8.png", "sn8ImageTips");
-            preDefined.put("img/sn9.png", "sn9ImageTips");
-            preDefined.put("img/ww1.png", "ww1ImageTips");
-            preDefined.put("img/ww2.png", "ww2ImageTips");
-            preDefined.put("img/ww3.png", "ww3ImageTips");
-            preDefined.put("img/ww4.png", "ww4ImageTips");
-            preDefined.put("img/ww5.png", "ww5ImageTips");
-            preDefined.put("img/ww6.png", "ww6ImageTips");
-            preDefined.put("img/ww7.png", "ww7ImageTips");
-            preDefined.put("img/ww8.png", "ww8ImageTips");
-            preDefined.put("img/ww9.png", "ww9ImageTips");
-            preDefined.put("img/jade.png", "jadeImageTips");
-            preDefined.put("img/zz1.png", "zz1ImageTips");
-            preDefined.put("img/MyBox.png", "");
-            preDefined.put("color:#ffccfd", "");
-            preDefined.put("color:#fd98a2", "");
-            preDefined.put("color:#dff0fe", "");
-            preDefined.put("color:#65b4fd", "");
-            preDefined.put("color:#fdba98", "");
-            preDefined.put("color:#8fbc8f", "");
-            preDefined.put("color:#9370db", "");
-            preDefined.put("color:#eee8aa", "");
+    public File getFile() {
+        try {
+            File file = null;
+            if (isInternal()) {
+                file = FxFileTools.getInternalFile("/" + address, "image", name);
+            } else if (isFile()) {
+                file = new File(address);
+            }
+            if (file != null && file.exists()) {
+                return file;
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /*
+        static
+     */
+    public static List<ImageItem> predefined() {
+        List<ImageItem> preDefined = new ArrayList<>();
+        try {
+            for (int y = AppValues.AppYear; y >= 2018; y--) {
+                for (int i = 1; i <= (y == 2018 ? 6 : 9); i++) {
+                    String name = "cover" + y + "g" + i;
+                    ImageItem item = new ImageItem()
+                            .setName(name + ".png")
+                            .setAddress("img/" + name + ".png")
+                            .setComments(y == 2018 ? null : message(name));
+                    preDefined.add(item);
+                }
+            }
+
+            ImageItem item = new ImageItem()
+                    .setName("jade.png").setAddress("img/jade.png")
+                    .setComments(message("jadeImageTips"));
+            preDefined.add(item);
+            item = new ImageItem()
+                    .setName("exg1.png").setAddress("img/exg1.png")
+                    .setComments(message("exg1ImageTips"));
+            preDefined.add(item);
+            item = new ImageItem()
+                    .setName("exg2.png").setAddress("img/exg2.png")
+                    .setComments(message("exg2ImageTips"));
+            preDefined.add(item);
+
+            preDefined.add(new ImageItem().setName("Gadwalls.png").setAddress("img/Gadwalls.png"));
+            preDefined.add(new ImageItem().setName("SpermWhale.png").setAddress("img/SpermWhale.png"));
+            preDefined.add(new ImageItem().setName("MyBox.png").setAddress("img/MyBox.png"));
+
+            List<String> icons = new ArrayList<>();
+            icons.addAll(Arrays.asList("Add", "Analyse", "Cancel", "Cat", "Clear", "Clipboard", "Copy",
+                    "Data", "Default", "Delete", "Delimiter", "Demo", "DoubleLeft", "Edit", "Examples", "Export",
+                    "Function", "Go", "Import", "Menu", "NewItem", "OK", "Open", "Panes", "Play", "Query",
+                    "Random", "Recover", "Refresh", "Sampled", "Save", "Style", "Tips", "Undo"));
+            for (String name : icons) {
+                item = new ImageItem()
+                        .setName("icon" + name + "_100.png")
+                        .setAddress("buttons/Red/icon" + name + "_100.png")
+                        .setComments(message("icon" + name));
+                preDefined.add(item);
+            }
+            item = new ImageItem()
+                    .setName("iconClaw.png").setAddress("buttons/iconClaw.png")
+                    .setComments(message("iconClaw"));
+            preDefined.add(item);
+
+            preDefined.add(new ImageItem().setAddress("color:#ffccfd"));
+            preDefined.add(new ImageItem().setAddress("color:#fd98a2"));
+            preDefined.add(new ImageItem().setAddress("color:#dff0fe"));
+            preDefined.add(new ImageItem().setAddress("color:#65b4fd"));
+            preDefined.add(new ImageItem().setAddress("color:#fdba98"));
+            preDefined.add(new ImageItem().setAddress("color:#8fbc8f"));
+            preDefined.add(new ImageItem().setAddress("color:#9370db"));
+            preDefined.add(new ImageItem().setAddress("color:#eee8aa"));
+
+        } catch (Exception e) {
         }
         return preDefined;
+    }
+
+    public static List<Image> internalImages() {
+        List<Image> images = new ArrayList<>();
+        try {
+            for (ImageItem item : predefined()) {
+                Image image = item.readImage();
+                if (image != null) {
+                    images.add(image);
+                }
+            }
+        } catch (Exception e) {
+        }
+        return images;
     }
 
     /*
@@ -192,11 +251,13 @@ public class ImageItem {
         this.index = index;
     }
 
-    public Image getImage() {
-        return image;
+    public String getName() {
+        return name;
     }
 
-    public void setImage(Image image) {
-        this.image = image;
+    public ImageItem setName(String name) {
+        this.name = name;
+        return this;
     }
+
 }

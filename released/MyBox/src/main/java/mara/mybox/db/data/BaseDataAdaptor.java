@@ -399,7 +399,7 @@ public class BaseDataAdaptor {
                 } else {
                     info = "";
                 }
-                info += column.getColumnName() + ": " + display;
+                info += data.label(column.getColumnName()) + ": " + display;
             }
             return info + displayDataMore(data, lineBreak);
         } catch (Exception e) {

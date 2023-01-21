@@ -502,6 +502,19 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         return names;
     }
 
+    public List<String> timeColumnNames() {
+        if (columns == null) {
+            return null;
+        }
+        List<String> names = new ArrayList<>();
+        for (Data2DColumn col : columns) {
+            if (col.isTimeType()) {
+                names.add(col.getColumnName());
+            }
+        }
+        return names;
+    }
+
     public List<Data2DColumn> toColumns(List<String> names) {
         try {
             if (names == null) {
