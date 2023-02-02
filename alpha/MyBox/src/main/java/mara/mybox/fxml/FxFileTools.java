@@ -4,7 +4,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import javafx.stage.FileChooser;
 import mara.mybox.controller.BaseController_Files;
 import mara.mybox.db.data.VisitHistoryTools;
@@ -98,6 +104,46 @@ public class FxFileTools {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static List<String> getResourceFiles(String path) {
+        List<String> files = new ArrayList<>();
+        try {
+            if (!path.endsWith("/")) {
+                path += "/";
+            }
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            URL dirURL = classLoader.getResource(path);
+            if (dirURL.getProtocol().equals("jar")) {
+                String jarPath = dirURL.getPath().substring(5, dirURL.getPath().indexOf("!"));
+                try (final JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"))) {
+                    Enumeration<JarEntry> entries = jar.entries();
+                    while (entries.hasMoreElements()) {
+                        JarEntry entry = entries.nextElement();
+                        String name = entry.getName();
+                        if (entry.isDirectory() || !name.startsWith(path)) {
+                            continue;
+                        }
+                        name = name.substring(path.length());
+                        if (!name.contains("/")) {
+                            files.add(name);
+                        }
+                    }
+                }
+            } else if (dirURL.getProtocol().equals("file")) {
+                File[] list = new File(dirURL.getPath()).listFiles();
+                if (list != null) {
+                    for (File file : list) {
+                        if (file.isFile()) {
+                            files.add(file.getName());
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+        }
+        return files;
     }
 
 }

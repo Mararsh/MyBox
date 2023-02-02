@@ -108,14 +108,14 @@ public class ControlData2DSpliceList extends ControlData2DList {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
 
-            menu = new MenuItem(message("SetAsDataA"), StyleTools.getIconImage("iconA.png"));
+            menu = new MenuItem(message("SetAsDataA"), StyleTools.getIconImageView("iconA.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 dataAAction();
             });
             menu.setDisable(dataAButton.isDisable());
             items.add(menu);
 
-            menu = new MenuItem(message("SetAsDataB"), StyleTools.getIconImage("iconB.png"));
+            menu = new MenuItem(message("SetAsDataB"), StyleTools.getIconImageView("iconB.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 dataBAction();
             });

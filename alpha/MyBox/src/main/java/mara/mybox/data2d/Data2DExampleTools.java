@@ -56,7 +56,7 @@ public class Data2DExampleTools {
         try {
             boolean isChinese = "zh".equals(lang);
 
-            Menu myMenu = new Menu(message("MyData"), StyleTools.getIconImage("iconClaw.png"));
+            Menu myMenu = new Menu(message("MyData"), StyleTools.getIconImageView("iconClaw.png"));
 
             MenuItem menu = new MenuItem(message("Notes"));
             menu.setOnAction((ActionEvent event) -> {
@@ -201,7 +201,7 @@ public class Data2DExampleTools {
             boolean isChinese = "zh".equals(lang);
 
             // https://data.stats.gov.cn/index.htm
-            Menu chinaMenu = new Menu(message("StatisticDataOfChina"), StyleTools.getIconImage("iconChina.png"));
+            Menu chinaMenu = new Menu(message("StatisticDataOfChina"), StyleTools.getIconImageView("iconChina.png"));
 
             MenuItem menu = new MenuItem(message("ChinaPopulation"));
             menu.setOnAction((ActionEvent event) -> {
@@ -492,7 +492,7 @@ public class Data2DExampleTools {
         try {
             boolean isChinese = "zh".equals(lang);
 
-            Menu regressionMenu = new Menu(message("RegressionData"), StyleTools.getIconImage("iconLinearPgression.png"));
+            Menu regressionMenu = new Menu(message("RegressionData"), StyleTools.getIconImageView("iconLinearPgression.png"));
 
             MenuItem menu = new MenuItem(message("IncomeHappiness"));
             menu.setOnAction((ActionEvent event) -> {
@@ -862,7 +862,7 @@ public class Data2DExampleTools {
         try {
             boolean isChinese = "zh".equals(lang);
 
-            Menu locationMenu = new Menu(message("LocationData"), StyleTools.getIconImage("iconLocation.png"));
+            Menu locationMenu = new Menu(message("LocationData"), StyleTools.getIconImageView("iconLocation.png"));
 
             MenuItem menu = new MenuItem(message("ChineseHistoricalCapitals"));
             menu.setOnAction((ActionEvent event) -> {

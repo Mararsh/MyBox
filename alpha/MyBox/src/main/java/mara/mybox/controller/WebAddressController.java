@@ -141,7 +141,7 @@ public class WebAddressController extends BaseWebViewController {
             protected void whenSucceeded() {
                 if (addressTab != null) {
                     if (tabImage == null) {
-                        tabImage = StyleTools.getIconImage("iconMyBox.png");
+                        tabImage = StyleTools.getIconImageView("iconMyBox.png");
                     }
                     tabImage.setFitWidth(20);
                     tabImage.setFitHeight(20);

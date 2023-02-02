@@ -14,9 +14,12 @@ import java.text.MessageFormat;
 import java.util.Map;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
+import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.WebViewTools;
+import mara.mybox.fxml.style.HtmlStyles;
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 
@@ -90,17 +93,19 @@ public class MyBoxPropertiesController extends HtmlTableController {
             addData(message("OSVersion"), System.getProperty("os.version"));
             addData(message("OSArch"), System.getProperty("os.arch"));
 
-            addData(message("ClassPaths"), System.getProperty("java.class.path"));
-            addData(message("LibraryPaths"), System.getProperty("java.library.path"));
+            body = StringTable.tableDiv(table);
 
             String envString = "";
             Map<String, String> env = System.getenv();
             for (String k : env.keySet()) {
                 envString += k + "=" + env.get(k) + "</BR>\n";
             }
-            addData(message("EnvrionmentVariables"), envString);
+            body += "<DIV><P><B>" + message("EnvrionmentVariables") + "</B></BR>" + envString + "</P></DIV>";
 
-            displayHtml();
+            body += "<DIV><P><B>" + message("ClassPaths") + "</B></BR>" + System.getProperty("java.class.path") + "</P></DIV>";
+            body += "<DIV><P><B>" + message("LibraryPaths") + "</B></BR>" + System.getProperty("java.library.path") + "</P></DIV>";
+
+            displayHtml(HtmlWriteTools.html(title, HtmlStyles.styleValue("Default"), body));
 
         } catch (Exception e) {
 

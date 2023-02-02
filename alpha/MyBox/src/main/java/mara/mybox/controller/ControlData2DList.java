@@ -222,7 +222,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
             MenuItem menu;
 
             if (!(manageController instanceof Data2DSpliceController)) {
-                menu = new MenuItem(message("Load"), StyleTools.getIconImage("iconData.png"));
+                menu = new MenuItem(message("Load"), StyleTools.getIconImageView("iconData.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     load();
                 });
@@ -230,7 +230,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
             }
 
             if (buttonsPane.getChildren().contains(renameDataButton)) {
-                menu = new MenuItem(message("Rename"), StyleTools.getIconImage("iconRename.png"));
+                menu = new MenuItem(message("Rename"), StyleTools.getIconImageView("iconRename.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     renameAction();
                 });
@@ -240,7 +240,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
             }
 
             if (buttonsPane.getChildren().contains(deleteDataButton)) {
-                menu = new MenuItem(message("Delete"), StyleTools.getIconImage("iconDelete.png"));
+                menu = new MenuItem(message("Delete"), StyleTools.getIconImageView("iconDelete.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     deleteAction();
                 });
@@ -436,44 +436,44 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
 
             MenuItem menu;
 
-            menu = new MenuItem("CSV", StyleTools.getIconImage("iconCSV.png"));
+            menu = new MenuItem("CSV", StyleTools.getIconImageView("iconCSV.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DDefinition.openType(Data2DDefinition.Type.CSV);
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem("Excel", StyleTools.getIconImage("iconExcel.png"));
+            menu = new MenuItem("Excel", StyleTools.getIconImageView("iconExcel.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DDefinition.openType(Data2DDefinition.Type.Excel);
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Texts"), StyleTools.getIconImage("iconTxt.png"));
+            menu = new MenuItem(message("Texts"), StyleTools.getIconImageView("iconTxt.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DDefinition.openType(Data2DDefinition.Type.Texts);
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Matrix"), StyleTools.getIconImage("iconMatrix.png"));
+            menu = new MenuItem(message("Matrix"), StyleTools.getIconImageView("iconMatrix.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DDefinition.openType(Data2DDefinition.Type.Matrix);
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("DatabaseTable"), StyleTools.getIconImage("iconDatabase.png"));
+            menu = new MenuItem(message("DatabaseTable"), StyleTools.getIconImageView("iconDatabase.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DDefinition.openType(Data2DDefinition.Type.DatabaseTable);
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("MyBoxClipboard"), StyleTools.getIconImage("iconClipboard.png"));
+            menu = new MenuItem(message("MyBoxClipboard"), StyleTools.getIconImageView("iconClipboard.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DDefinition.openType(Data2DDefinition.Type.MyBoxClipboard);
             });
             popMenu.getItems().add(menu);
 
             popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
+            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override

@@ -12,6 +12,8 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.WindowTools.refreshInterfaceAll;
 import static mara.mybox.fxml.WindowTools.reloadAll;
@@ -41,7 +43,9 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     protected RadioMenuItem chineseMenuItem, englishMenuItem,
             font12MenuItem, font15MenuItem, font17MenuItem,
             normalIconMenuItem, bigIconMenuItem, smallIconMenuItem,
-            pinkMenuItem, redMenuItem, blueMenuItem, lightBlueMenuItem, orangeMenuItem, darkGreenMenuItem;
+            pinkMenuItem, redMenuItem, blueMenuItem, lightBlueMenuItem, orangeMenuItem, greenMenuItem, colorCustomizeMenuItem;
+    @FXML
+    protected Rectangle colorCustomizeRect;
     @FXML
     protected MenuItem languagesSperatorMenuItem;
 
@@ -174,10 +178,14 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
             case Orange:
                 orangeMenuItem.setSelected(true);
                 break;
-            case DarkGreen:
-                darkGreenMenuItem.setSelected(true);
+            case Green:
+                greenMenuItem.setSelected(true);
+                break;
+            case Customize:
+                colorCustomizeMenuItem.setSelected(true);
                 break;
         }
+        colorCustomizeRect.setFill(Color.web(AppVariables.CustomizeColorDark));
     }
 
     @FXML
@@ -277,9 +285,20 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     }
 
     @FXML
-    protected void setDarkGeen(ActionEvent event) {
-        StyleTools.setConfigStyleColor("darkgreen");
+    protected void setGeen(ActionEvent event) {
+        StyleTools.setConfigStyleColor("green");
         refreshInterfaceAll();
+    }
+
+    @FXML
+    protected void setColorCustomize(ActionEvent event) {
+        StyleTools.setConfigStyleColor("customize");
+        refreshInterfaceAll();
+    }
+
+    @FXML
+    protected void inputColors(ActionEvent event) {
+        SettingCustomColorsController.open(this);
     }
 
     @FXML

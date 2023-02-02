@@ -26,6 +26,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
@@ -181,8 +182,19 @@ public class MyBoxLoadingController implements Initializable {
                         } else {
                             ControllerTools.openMyBox(myStage);
                         }
-
                     });
+
+                    initIcons();
+                }
+
+                protected void initIcons() {
+                    MyBoxLog.console(message(lang, message("GeneratingIcons")));
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            StyleTools.makeCustomizeIcons(null, false);
+                        }
+                    }.start();
                 }
 
                 @Override

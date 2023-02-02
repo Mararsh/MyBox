@@ -112,7 +112,7 @@ public class ImageManufactureScopesSavedController extends BaseSysTableControlle
                                     default:
                                         return;
                                 }
-                                setGraphic(StyleTools.getIconImage(icon));
+                                setGraphic(StyleTools.getIconImageView(icon));
                             } catch (Exception e) {
                             }
                         }

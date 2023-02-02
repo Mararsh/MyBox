@@ -90,7 +90,7 @@ public class WebBrowserController extends BaseController {
                     Fxmls.WebAddressFxml), AppVariables.currentBundle);
             Pane pane = fxmlLoader.load();
             Tab tab = new Tab();
-            ImageView tabImage = StyleTools.getIconImage("iconMyBox.png");
+            ImageView tabImage = StyleTools.getIconImageView("iconMyBox.png");
             tab.setGraphic(tabImage);
             tab.setContent(pane);
             tabPane.getTabs().add(tabPane.getTabs().size() - 1, tab);

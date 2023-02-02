@@ -177,20 +177,20 @@ public class ControlNamedValues extends BaseSysTableController<NamedValues> {
         try {
             List<MenuItem> items = new ArrayList<>();
 
-            MenuItem menu = new MenuItem(message("Use"), StyleTools.getIconImage("iconYes.png"));
+            MenuItem menu = new MenuItem(message("Use"), StyleTools.getIconImageView("iconYes.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 useAction();
             });
             items.add(menu);
 
-            menu = new MenuItem(message("Rename"), StyleTools.getIconImage("iconRename.png"));
+            menu = new MenuItem(message("Rename"), StyleTools.getIconImageView("iconRename.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 renameAction();
             });
             menu.setDisable(renameDataButton.isDisable());
             items.add(menu);
 
-            menu = new MenuItem(message("Delete"), StyleTools.getIconImage("iconDelete.png"));
+            menu = new MenuItem(message("Delete"), StyleTools.getIconImageView("iconDelete.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 deleteAction();
             });

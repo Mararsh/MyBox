@@ -382,6 +382,7 @@ public class Fxmls {
     public static final String AddressInputFxml = "/fxml/AddressInput.fxml";
     public static final String TableAddRowsFxml = "/fxml/TableAddRows.fxml";
     public static final String DateInputFxml = "/fxml/DateInput.fxml";
+    public static final String SettingCustomColorsFxml = "/fxml/SettingCustomColors.fxml";
 
     public static final String MenuFxml = "/fxml/Menu.fxml";
     public static final String MenuTextEditFxml = "/fxml/MenuTextEdit.fxml";

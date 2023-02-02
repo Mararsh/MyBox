@@ -47,12 +47,14 @@ public class AppVariables {
     public static boolean isChinese, closeCurrentWhenOpenTool, recordWindowsSizeLocation, controlDisplayText,
             hidpiIcons, ignoreDbUnavailable, popErrorLogs, saveDebugLogs, detailedDebugLogs,
             isTesting, handlingExit;
-    public static StyleData.StyleColor ControlColor;
     public static TextClipboardMonitor textClipboardMonitor;
     public static ImageClipboardMonitor imageClipboardMonitor;
     public static Timer exitTimer;
     public static SimpleBooleanProperty errorNotify;
     public static Map<RenderingHints.Key, Object> imageRenderHints;
+    public static StyleData.StyleColor ControlColor;
+    public static String CustomizeColorDark;
+    public static String CustomizeColorLight;
 
     public static void initAppVaribles() {
         try {
@@ -69,6 +71,8 @@ public class AppVariables {
             ControlColor = StyleTools.getConfigStyleColor();
             controlDisplayText = UserConfig.getBoolean("ControlDisplayText", false);
             hidpiIcons = UserConfig.getBoolean("HidpiIcons", Toolkit.getDefaultToolkit().getScreenResolution() > 120);
+            CustomizeColorDark = UserConfig.getString("CustomizeColorDark", "0x000000FF");
+            CustomizeColorLight = UserConfig.getString("CustomizeColorLight", "0xCCCCCCFF");
             saveDebugLogs = UserConfig.getBoolean("SaveDebugLogs", false);
             detailedDebugLogs = UserConfig.getBoolean("DetailedDebugLogs", false);
             ignoreDbUnavailable = false;

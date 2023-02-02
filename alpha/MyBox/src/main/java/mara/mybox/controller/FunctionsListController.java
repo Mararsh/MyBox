@@ -11,7 +11,6 @@ import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 
 /**
@@ -34,8 +33,7 @@ public class FunctionsListController extends ControlWebView {
         try {
             super.initControls();
 
-            goImage = FxFileTools.getInternalFile(
-                    "/" + StyleTools.ButtonsPath + AppVariables.ControlColor.name() + "/iconGo.png",
+            goImage = FxFileTools.getInternalFile("/" + StyleTools.getIconPath() + "iconGo.png",
                     "icons", "iconGo.png", true).toURI().toString();
             webView.getEngine().setOnAlert(new EventHandler<WebEvent<String>>() {
                 @Override

@@ -132,7 +132,7 @@ public class JexlEditor extends JShellEditor {
 
             List<Node> topButtons = new ArrayList<>();
             Button newLineButton = new Button();
-            newLineButton.setGraphic(StyleTools.getIconImage("iconTurnOver.png"));
+            newLineButton.setGraphic(StyleTools.getIconImageView("iconTurnOver.png"));
             NodeStyleTools.setTooltip(newLineButton, new Tooltip(message("Newline")));
             newLineButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -144,7 +144,7 @@ public class JexlEditor extends JShellEditor {
             topButtons.add(newLineButton);
 
             Button clearInputButton = new Button();
-            clearInputButton.setGraphic(StyleTools.getIconImage("iconClear.png"));
+            clearInputButton.setGraphic(StyleTools.getIconImageView("iconClear.png"));
             NodeStyleTools.setTooltip(clearInputButton, new Tooltip(message("ClearInputArea")));
             clearInputButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -155,7 +155,7 @@ public class JexlEditor extends JShellEditor {
             topButtons.add(clearInputButton);
 
             CheckBox popCheck = new CheckBox();
-            popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
+            popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
             NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
             popCheck.setSelected(UserConfig.getBoolean(interfaceName + "ScriptExamplesPopWhenMouseHovering", false));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
@@ -414,7 +414,7 @@ public class JexlEditor extends JShellEditor {
 
             List<Node> topButtons = new ArrayList<>();
             Button newLineButton = new Button();
-            newLineButton.setGraphic(StyleTools.getIconImage("iconTurnOver.png"));
+            newLineButton.setGraphic(StyleTools.getIconImageView("iconTurnOver.png"));
             NodeStyleTools.setTooltip(newLineButton, new Tooltip(message("Newline")));
             newLineButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -426,7 +426,7 @@ public class JexlEditor extends JShellEditor {
             topButtons.add(newLineButton);
 
             Button clearInputButton = new Button();
-            clearInputButton.setGraphic(StyleTools.getIconImage("iconClear.png"));
+            clearInputButton.setGraphic(StyleTools.getIconImageView("iconClear.png"));
             NodeStyleTools.setTooltip(clearInputButton, new Tooltip(message("ClearInputArea")));
             clearInputButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -437,7 +437,7 @@ public class JexlEditor extends JShellEditor {
             topButtons.add(clearInputButton);
 
             CheckBox popCheck = new CheckBox();
-            popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
+            popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
             NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
             popCheck.setSelected(UserConfig.getBoolean(interfaceName + "ContextExamplesPopWhenMouseHovering", false));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {

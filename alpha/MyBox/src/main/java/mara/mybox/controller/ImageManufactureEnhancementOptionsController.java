@@ -348,7 +348,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
                         };
                         stringSelector.getSelectionModel().selectedIndexProperty().addListener(numberBoxListener);
 
-                        manageView = StyleTools.getIconImage("iconSetting.png");
+                        manageView = StyleTools.getIconImageView("iconSetting.png");
                         button.setGraphic(manageView);
                         button.setText("");
                         NodeStyleTools.setTooltip(button, new Tooltip(Languages.message("ManageDot")));

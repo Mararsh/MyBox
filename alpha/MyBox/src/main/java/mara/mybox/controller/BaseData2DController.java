@@ -254,7 +254,7 @@ public abstract class BaseData2DController extends BaseController {
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            CheckMenuItem pMenu = new CheckMenuItem(message("PopWhenMouseHovering"), StyleTools.getIconImage("iconPop.png"));
+            CheckMenuItem pMenu = new CheckMenuItem(message("PopWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
             pMenu.setSelected(UserConfig.getBoolean("Data2DExamplesPopWhenMouseHovering", true));
             pMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -264,7 +264,7 @@ public abstract class BaseData2DController extends BaseController {
             });
             popMenu.getItems().add(pMenu);
 
-            MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
+            MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override

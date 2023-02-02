@@ -131,7 +131,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                             UserConfig.setLong(baseName + "MaxDataNumber", -1);
                         } else {
                             try {
-                                maxData = Integer.valueOf(maxs);
+                                maxData = Integer.parseInt(maxs);
                                 maxInput.setStyle(null);
                                 UserConfig.setLong(baseName + "MaxDataNumber", maxData);
                             } catch (Exception e) {

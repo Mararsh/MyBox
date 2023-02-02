@@ -216,7 +216,7 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
             topButtons.add(new Label(message("TableName")));
 
             CheckBox popCheck = new CheckBox();
-            popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
+            popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
             NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
             String pname = "TableNamesPopWhenMouseHovering" + (internal ? "Internal" : "");
             popCheck.setSelected(UserConfig.getBoolean(pname, false));
@@ -276,7 +276,7 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
             topButtons.add(new Label(message("TableDefinition")));
 
             CheckBox popCheck = new CheckBox();
-            popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
+            popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
             NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
             popCheck.setSelected(UserConfig.getBoolean("TableDefinitionPopWhenMouseHovering", false));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {

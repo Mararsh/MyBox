@@ -26,8 +26,10 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.style.StyleData;
+import mara.mybox.fxml.style.StyleData.StyleColor;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.value.Colors;
+import static mara.mybox.value.Colors.color;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -52,7 +54,7 @@ public class PaletteTools {
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
+            MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent event) -> {
                 popMenu.hide();
@@ -128,18 +130,10 @@ public class PaletteTools {
             @Override
             protected boolean handle() {
                 List<ColorData> data = new ArrayList<>();
-                data.add(new ColorData(Colors.MyBoxDarkRed.getRGB(), message("MyBoxDarkRed")));
-                data.add(new ColorData(Colors.MyBoxLightRed.getRGB(), message("MyBoxLightRed")));
-                data.add(new ColorData(Colors.MyBoxDarkPink.getRGB(), message("MyBoxDarkPink")));
-                data.add(new ColorData(Colors.MyBoxLightPink.getRGB(), message("MyBoxLightPink")));
-                data.add(new ColorData(Colors.MyBoxDarkGreyBlue.getRGB(), message("MyBoxDarkGreyBlue")));
-                data.add(new ColorData(Colors.MyBoxGreyBlue.getRGB(), message("MyBoxGreyBlue")));
-                data.add(new ColorData(Colors.MyBoxDarkBlue.getRGB(), message("MyBoxDarkBlue")));
-                data.add(new ColorData(Colors.MyBoxLightBlue.getRGB(), message("MyBoxLightBlue")));
-                data.add(new ColorData(Colors.MyBoxOrange.getRGB(), message("MyBoxOrange")));
-                data.add(new ColorData(Colors.MyBoxLightOrange.getRGB(), message("MyBoxLightOrange")));
-                data.add(new ColorData(Colors.MyBoxDarkGreen.getRGB(), message("MyBoxDarkGreen")));
-                data.add(new ColorData(Colors.MyBoxLightGreen.getRGB(), message("MyBoxLightGreen")));
+                for (StyleColor style : StyleData.StyleColor.values()) {
+                    data.add(new ColorData(color(style, true).getRGB(), message("MyBoxColor" + style.name() + "Dark")));
+                    data.add(new ColorData(color(style, false).getRGB(), message("MyBoxColor" + style.name() + "Light")));
+                }
                 data.add(new ColorData(FxColorTools.color2rgba(Color.BLACK), message("Black")));
                 data.add(new ColorData(FxColorTools.color2rgba(Color.WHITE), message("White")));
                 data.add(new ColorData(0, message("Transparent")));

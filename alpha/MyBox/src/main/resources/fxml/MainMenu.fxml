@@ -415,7 +415,7 @@ License:    Apache License Version 2.0
 
                                 <Menu mnemonicParsing="false" text="%Icons">
                                     <items>
-                                        <RadioMenuItem fx:id="redMenuItem" mnemonicParsing="false" onAction="#setRed" text="%MyBoxDarkRed">
+                                        <RadioMenuItem fx:id="redMenuItem" mnemonicParsing="false" onAction="#setRed" text="%MyBoxColorRedDark">
                                             <toggleGroup>
                                                 <ToggleGroup fx:id="colorGroup" />
                                             </toggleGroup>
@@ -423,31 +423,37 @@ License:    Apache License Version 2.0
                                                 <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#9D2933" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
                                             </graphic>
                                         </RadioMenuItem>
-                                        <RadioMenuItem fx:id="pinkMenuItem" mnemonicParsing="false" onAction="#setPink" text="%MyBoxDarkPink" toggleGroup="$colorGroup">
+                                        <RadioMenuItem fx:id="pinkMenuItem" mnemonicParsing="false" onAction="#setPink" text="%MyBoxColorPinkDark" toggleGroup="$colorGroup">
                                             <graphic>
                                                 <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#FF2D51" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
                                             </graphic>
                                         </RadioMenuItem>
-                                        <RadioMenuItem fx:id="lightBlueMenuItem" mnemonicParsing="false" onAction="#setLightBlue" text="%MyBoxDarkGreyBlue" toggleGroup="$colorGroup">
+                                        <RadioMenuItem fx:id="lightBlueMenuItem" mnemonicParsing="false" onAction="#setLightBlue" text="%MyBoxColorLightBlueDark" toggleGroup="$colorGroup">
                                             <graphic>
                                                 <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#4C8DAE" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
                                             </graphic>
                                         </RadioMenuItem>
-                                        <RadioMenuItem fx:id="blueMenuItem" mnemonicParsing="false" onAction="#setBlue" text="%MyBoxDarkBlue" toggleGroup="$colorGroup">
+                                        <RadioMenuItem fx:id="blueMenuItem" mnemonicParsing="false" onAction="#setBlue" text="%MyBoxColorBlueDark" toggleGroup="$colorGroup">
                                             <graphic>
                                                 <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#003472" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
                                             </graphic>
                                         </RadioMenuItem>
-                                        <RadioMenuItem fx:id="orangeMenuItem" mnemonicParsing="false" onAction="#setOrange" text="%MyBoxOrange" toggleGroup="$colorGroup">
+                                        <RadioMenuItem fx:id="orangeMenuItem" mnemonicParsing="false" onAction="#setOrange" text="%MyBoxColorOrangeDark" toggleGroup="$colorGroup">
                                             <graphic>
                                                 <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#CA6924" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
                                             </graphic>
                                         </RadioMenuItem>
-                                        <RadioMenuItem fx:id="darkGreenMenuItem" mnemonicParsing="false" onAction="#setDarkGeen" text="%MyBoxDarkGreen" toggleGroup="$colorGroup">
+                                        <RadioMenuItem fx:id="greenMenuItem" mnemonicParsing="false" onAction="#setGeen" text="%MyBoxColorGreenDark" toggleGroup="$colorGroup">
                                             <graphic>
                                                 <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#0D3928" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
                                             </graphic>
                                         </RadioMenuItem>
+                                        <RadioMenuItem fx:id="colorCustomizeMenuItem" mnemonicParsing="false" onAction="#setColorCustomize" text="%Customize" toggleGroup="$colorGroup">
+                                            <graphic>
+                                                <Rectangle fx:id="colorCustomizeRect" arcHeight="5.0" arcWidth="5.0" fill="#DDDDDD" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+                                            </graphic>
+                                        </RadioMenuItem>
+                                        <MenuItem mnemonicParsing="false" onAction="#inputColors" text="%InputDot" />
 
                                         <SeparatorMenuItem mnemonicParsing="false" />
                                         <CheckMenuItem fx:id="controlTextCheck" mnemonicParsing="false" onAction="#setControlDisplayText" text="%DisplayControlText" />

@@ -688,7 +688,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
+            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override

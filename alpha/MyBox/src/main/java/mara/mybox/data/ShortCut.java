@@ -21,7 +21,7 @@ public class ShortCut {
         this.action = action;
         this.possibleAlternative = alt;
         if (iconName != null && !iconName.isBlank()) {
-            icon = StyleTools.getIconImage(iconName);
+            icon = StyleTools.getIconImageView(iconName);
         }
     }
 

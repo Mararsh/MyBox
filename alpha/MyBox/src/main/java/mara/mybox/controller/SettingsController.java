@@ -27,6 +27,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
 import mara.mybox.MyBox;
@@ -92,7 +93,9 @@ public class SettingsController extends BaseController {
     @FXML
     protected RadioButton chineseRadio, englishRadio, embeddedRadio, networkRadio,
             pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio,
-            redRadio, orangeRadio, pinkRadio, lightBlueRadio, blueRadio, darkGreenRadio;
+            redRadio, orangeRadio, pinkRadio, lightBlueRadio, blueRadio, greenRadio, colorCustomizeRadio;
+    @FXML
+    protected Rectangle colorCustomizeRect;
     @FXML
     protected ColorSet strokeColorSetController, anchorColorSetController, gridColorSetController, alphaColorSetController,
             popBgColorController, popInfoColorController, popErrorColorController, popWarnColorController;
@@ -134,13 +137,16 @@ public class SettingsController extends BaseController {
         try {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(hidpiIconsCheck, new Tooltip(message("HidpiIconsComments")));
-            NodeStyleTools.setTooltip(redRadio, new Tooltip(message("MyBoxDarkRed")));
-            NodeStyleTools.setTooltip(pinkRadio, new Tooltip(message("MyBoxDarkPink")));
-            NodeStyleTools.setTooltip(orangeRadio, new Tooltip(message("MyBoxOrange")));
-            NodeStyleTools.setTooltip(lightBlueRadio, new Tooltip(message("MyBoxDarkGreyBlue")));
-            NodeStyleTools.setTooltip(blueRadio, new Tooltip(message("MyBoxDarkBlue")));
-            NodeStyleTools.setTooltip(darkGreenRadio, new Tooltip(message("MyBoxDarkGreen")));
+            NodeStyleTools.setTooltip(redRadio, new Tooltip(message("MyBoxColorRedDark")));
+            NodeStyleTools.setTooltip(pinkRadio, new Tooltip(message("MyBoxColorPinkDark")));
+            NodeStyleTools.setTooltip(orangeRadio, new Tooltip(message("MyBoxColorOrangeDark")));
+            NodeStyleTools.setTooltip(lightBlueRadio, new Tooltip(message("MyBoxColorLightBlueDark")));
+            NodeStyleTools.setTooltip(blueRadio, new Tooltip(message("MyBoxColorBlueDark")));
+            NodeStyleTools.setTooltip(greenRadio, new Tooltip(message("MyBoxColorGreenDark")));
+            NodeStyleTools.setTooltip(colorCustomizeRadio, new Tooltip(message("Customize")));
             NodeStyleTools.setTooltip(imageHisBox, new Tooltip(message("ImageHisComments")));
+
+            colorCustomizeRect.setFill(Color.web(AppVariables.CustomizeColorDark));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -202,10 +208,12 @@ public class SettingsController extends BaseController {
                 case Orange:
                     orangeRadio.setSelected(true);
                     break;
-                case DarkGreen:
-                    darkGreenRadio.setSelected(true);
+                case Green:
+                    greenRadio.setSelected(true);
                     break;
-                case Red:
+                case Customize:
+                    colorCustomizeRadio.setSelected(true);
+                    break;
                 default:
                     redRadio.setSelected(true);
 
@@ -485,8 +493,10 @@ public class SettingsController extends BaseController {
                 StyleTools.setConfigStyleColor("Blue");
             } else if (orangeRadio.isSelected()) {
                 StyleTools.setConfigStyleColor("Orange");
-            } else if (darkGreenRadio.isSelected()) {
-                StyleTools.setConfigStyleColor("DarkGreen");
+            } else if (greenRadio.isSelected()) {
+                StyleTools.setConfigStyleColor("Green");
+            } else if (colorCustomizeRadio.isSelected()) {
+                StyleTools.setConfigStyleColor("Customize");
             } else {
                 StyleTools.setConfigStyleColor("Red");
             }
@@ -526,6 +536,11 @@ public class SettingsController extends BaseController {
     @FXML
     protected void popColorSet() {
         UserConfig.setBoolean("PopColorSetWhenMouseHovering", popColorSetCheck.isSelected());
+    }
+
+    @FXML
+    protected void inputColorAction() {
+        SettingCustomColorsController.open(this);
     }
 
     @FXML
