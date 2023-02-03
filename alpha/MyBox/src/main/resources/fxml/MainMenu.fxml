@@ -384,7 +384,7 @@ License:    Apache License Version 2.0
                                         <ToggleGroup fx:id="iconGroup" />
                                     </toggleGroup>
                                     <graphic>
-                                        <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                        <ImageView fx:id="smallIconView" fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
                                                 <Image url="@../buttons/Red/iconExamples.png" />
                                             </image>
@@ -394,7 +394,7 @@ License:    Apache License Version 2.0
                                 <RadioMenuItem fx:id="normalIconMenuItem" mnemonicParsing="false" onAction="#normalIcon" text="%NormalSizeIcon"  toggleGroup="$iconGroup">
 
                                     <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                        <ImageView fx:id="normalIconView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
                                                 <Image url="@../buttons/Red/iconExamples.png" />
                                             </image>
@@ -403,7 +403,7 @@ License:    Apache License Version 2.0
                                 </RadioMenuItem>
                                 <RadioMenuItem fx:id="bigIconMenuItem" mnemonicParsing="false" onAction="#bigIcon" text="%BigSizeIcon" toggleGroup="$iconGroup">
                                     <graphic>
-                                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                        <ImageView fx:id="bigIconView" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
                                                 <Image url="@../buttons/Red/iconExamples.png" />
                                             </image>

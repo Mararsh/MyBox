@@ -232,13 +232,6 @@ Example,  the new language is named as "aa", and its resource file is "Messages_
 3. Access network only when user requests.    
 4. Only read/write data which user need.       
 
-## Data Compatible    
-
-1. Exported data are in common text formats, like txt/csv/xml/json/html.
-2. Imported data are in common text format, like txt/csv.       
-3. At least one exported format can be imported. 
-4. Imported data are self-contain, that original data can be rebuilt without extra data.       
-
 
 ## Friendly       
 
@@ -248,6 +241,20 @@ Example,  the new language is named as "aa", and its resource file is "Messages_
 4. Pop current texts, image, or data.
 5. Provide buttons or menu items to execute relative functions easily.
 6. Provide examples and useful information.       
+
+## Embedded Database System            
+
+1. Embedded derby which is free and open sources.
+2. Derby can run in embedded mode or in network mode(Only visible to local processes).       
+3. User can access and modify MyBox internal data.
+4. User can define and use database tables, and execute SQL statements.       
+
+## Data Compatible    
+
+1. Exported data are in common text formats, like txt/csv/xml/json/html.
+2. Imported data are in common text format, like txt/csv.       
+3. At least one exported format can be imported. 
+4. Imported data are self-contain, that original data can be rebuilt without extra data.       
 
 
 

@@ -124,10 +124,6 @@ public class SettingsController extends BaseController {
             initImageTab();
             initMapTab();
 
-            isSettingValues = true;
-            initSettingValues();
-            isSettingValues = false;
-
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -137,6 +133,11 @@ public class SettingsController extends BaseController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
+
+            isSettingValues = true;
+            initSettingValues();
+            isSettingValues = false;
+
             NodeStyleTools.setTooltip(hidpiIconsCheck, new Tooltip(message("HidpiIconsComments")));
             NodeStyleTools.setTooltip(redRadio, new Tooltip(message("MyBoxColorRedDark")));
             NodeStyleTools.setTooltip(pinkRadio, new Tooltip(message("MyBoxColorPinkDark")));
@@ -487,21 +488,20 @@ public class SettingsController extends BaseController {
                 return;
             }
             if (pinkRadio.isSelected()) {
-                StyleTools.setConfigStyleColor("Pink");
+                StyleTools.setConfigStyleColor(this, "Pink");
             } else if (lightBlueRadio.isSelected()) {
-                StyleTools.setConfigStyleColor("LightBlue");
+                StyleTools.setConfigStyleColor(this, "LightBlue");
             } else if (blueRadio.isSelected()) {
-                StyleTools.setConfigStyleColor("Blue");
+                StyleTools.setConfigStyleColor(this, "Blue");
             } else if (orangeRadio.isSelected()) {
-                StyleTools.setConfigStyleColor("Orange");
+                StyleTools.setConfigStyleColor(this, "Orange");
             } else if (greenRadio.isSelected()) {
-                StyleTools.setConfigStyleColor("Green");
+                StyleTools.setConfigStyleColor(this, "Green");
             } else if (colorCustomizeRadio.isSelected()) {
-                StyleTools.setConfigStyleColor("Customize");
+                StyleTools.setConfigStyleColor(this, "Customize");
             } else {
-                StyleTools.setConfigStyleColor("Red");
+                StyleTools.setConfigStyleColor(this, "Red");
             }
-            refreshInterfaceAll();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

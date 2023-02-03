@@ -12,6 +12,8 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.WindowTools.refreshInterfaceAll;
@@ -47,6 +49,8 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     @FXML
     protected Rectangle colorCustomizeRect;
     @FXML
+    protected ImageView smallIconView, normalIconView, bigIconView;
+    @FXML
     protected MenuItem languagesSperatorMenuItem;
 
     @Override
@@ -57,6 +61,18 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
             settingsMenu.setOnShowing((Event e) -> {
                 checkSettings();
             });
+            checkSettings();
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+
             checkSettings();
 
         } catch (Exception e) {
@@ -186,6 +202,10 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
                 break;
         }
         colorCustomizeRect.setFill(Colors.customizeColorDark());
+        Image image = StyleTools.getIconImage("iconExamples.png");
+        smallIconView.setImage(image);
+        normalIconView.setImage(image);
+        bigIconView.setImage(image);
     }
 
     @FXML
@@ -250,50 +270,42 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
 
     @FXML
     protected void setDefaultColor(ActionEvent event) {
-        StyleTools.setConfigStyleColor("red");
-        refreshInterfaceAll();
+        setRed(event);
     }
 
     @FXML
     protected void setPink(ActionEvent event) {
-        StyleTools.setConfigStyleColor("pink");
-        refreshInterfaceAll();
+        StyleTools.setConfigStyleColor(parentController, "pink");
     }
 
     @FXML
     protected void setRed(ActionEvent event) {
-        StyleTools.setConfigStyleColor("red");
-        refreshInterfaceAll();
+        StyleTools.setConfigStyleColor(parentController, "red");
     }
 
     @FXML
     protected void setBlue(ActionEvent event) {
-        StyleTools.setConfigStyleColor("blue");
-        refreshInterfaceAll();
+        StyleTools.setConfigStyleColor(parentController, "blue");
     }
 
     @FXML
     protected void setLightBlue(ActionEvent event) {
-        StyleTools.setConfigStyleColor("lightBlue");
-        refreshInterfaceAll();
+        StyleTools.setConfigStyleColor(parentController, "lightBlue");
     }
 
     @FXML
     protected void setOrange(ActionEvent event) {
-        StyleTools.setConfigStyleColor("orange");
-        refreshInterfaceAll();
+        StyleTools.setConfigStyleColor(parentController, "orange");
     }
 
     @FXML
     protected void setGeen(ActionEvent event) {
-        StyleTools.setConfigStyleColor("green");
-        refreshInterfaceAll();
+        StyleTools.setConfigStyleColor(parentController, "green");
     }
 
     @FXML
     protected void setColorCustomize(ActionEvent event) {
-        StyleTools.setConfigStyleColor("customize");
-        refreshInterfaceAll();
+        StyleTools.setConfigStyleColor(parentController, "customize");
     }
 
     @FXML

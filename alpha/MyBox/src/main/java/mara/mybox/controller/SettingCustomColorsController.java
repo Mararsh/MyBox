@@ -1,19 +1,16 @@
 package mara.mybox.controller;
 
-import java.awt.image.BufferedImage;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
-import static mara.mybox.fxml.WindowTools.refreshInterfaceAll;
 import mara.mybox.fxml.style.StyleData;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
@@ -47,7 +44,7 @@ public class SettingCustomColorsController extends BaseChildController {
             getMyStage().centerOnScreen();
 
             darkColor = Colors.customizeColorDark();
-            darkColorSetController.init(this, "CustomizeColorDark", darkColor);
+            darkColorSetController.init(this, baseName + "DarkColor", darkColor).setColor(darkColor);
             darkColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
@@ -57,7 +54,7 @@ public class SettingCustomColorsController extends BaseChildController {
             });
 
             lightColor = Colors.customizeColorLight();
-            lightColorSetController.init(this, "CustomizeColorLight", lightColor);
+            lightColorSetController.init(this, baseName + "LightColor", lightColor).setColor(lightColor);
             lightColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
@@ -75,11 +72,10 @@ public class SettingCustomColorsController extends BaseChildController {
 
     public void updateView() {
         try {
-            BufferedImage image = StyleTools.makeIcon(StyleData.StyleColor.Customize, "iconAdd.png");
-            if (image == null) {
-                return;
+            Image image = StyleTools.makeImage("iconAdd.png", darkColor, lightColor);
+            if (image != null) {
+                exampleView.setImage(image);
             }
-            exampleView.setImage(SwingFXUtils.toFXImage(image, null));
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -88,40 +84,13 @@ public class SettingCustomColorsController extends BaseChildController {
     @FXML
     @Override
     public void okAction() {
-        if (task != null) {
-            task.cancel();
+        UserConfig.setString("CustomizeColorDark", FxColorTools.color2rgba(darkColorSetController.color()));
+        UserConfig.setString("CustomizeColorLight", FxColorTools.color2rgba(lightColorSetController.color()));
+        if (useCheck.isSelected() || AppVariables.ControlColor == StyleData.StyleColor.Customize) {
+            StyleTools.setConfigStyleColor(this, "customize");
+        } else {
+            parentController.refreshInterface();
         }
-        task = new SingletonTask<Void>(this) {
-
-            @Override
-            protected boolean handle() {
-                try {
-                    UserConfig.setString("CustomizeColorDark", FxColorTools.color2rgba(darkColorSetController.color()));
-                    UserConfig.setString("CustomizeColorLight", FxColorTools.color2rgba(lightColorSetController.color()));
-
-                    StyleTools.makeCustomizeIcons(task, true);
-
-                    if (useCheck.isSelected()) {
-                        StyleTools.setConfigStyleColor("customize");
-                    }
-                    return true;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                if (AppVariables.ControlColor == StyleData.StyleColor.Customize) {
-                    refreshInterfaceAll();
-                } else {
-                    parentController.refreshInterface();
-                }
-            }
-
-        };
-        start(task);
     }
 
     public static SettingCustomColorsController open(BaseController parent) {
