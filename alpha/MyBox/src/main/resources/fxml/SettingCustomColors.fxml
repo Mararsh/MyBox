@@ -19,17 +19,27 @@ License:    Apache License Version 2.0
     <children>
         <HBox alignment="CENTER_LEFT" spacing="10.0">
             <children>
-                <Label fx:id="strokeColorLabel" text="%DarkColor" />
+                <Label text="%MyBoxColorCustomizeDark" />
                 <fx:include fx:id="darkColorSet" source="ColorSet.fxml" />
             </children>
         </HBox>
         <HBox alignment="CENTER_LEFT" spacing="10.0">
             <children>
-                <Label fx:id="strokeColorLabel1" text="%LightColor" />
+                <Label text="%MyBoxColorCustomizeLight" />
                 <fx:include fx:id="lightColorSet" source="ColorSet.fxml" />
             </children>
         </HBox>
-      <CheckBox fx:id="useCheck" mnemonicParsing="false" text="%Use" />
+      <HBox alignment="CENTER_LEFT" spacing="10.0">
+         <children>
+            <Label text="%Example" />
+            <ImageView fx:id="exampleView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../buttons/Red/iconAdd.png" />
+               </image>
+            </ImageView>
+         </children>
+      </HBox>
+        <CheckBox fx:id="useCheck" mnemonicParsing="false" text="%Use" />
         <HBox alignment="CENTER_RIGHT" spacing="5.0">
             <children>
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">

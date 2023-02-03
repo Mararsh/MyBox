@@ -1,8 +1,14 @@
 package mara.mybox.controller;
 
+import java.awt.image.BufferedImage;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.SingletonTask;
@@ -11,6 +17,7 @@ import static mara.mybox.fxml.WindowTools.refreshInterfaceAll;
 import mara.mybox.fxml.style.StyleData;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.Colors;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.UserConfig;
 
@@ -21,8 +28,12 @@ import mara.mybox.value.UserConfig;
  */
 public class SettingCustomColorsController extends BaseChildController {
 
+    protected Color darkColor, lightColor;
+
     @FXML
     protected ColorSet darkColorSetController, lightColorSetController;
+    @FXML
+    protected ImageView exampleView;
     @FXML
     protected CheckBox useCheck;
 
@@ -35,12 +46,42 @@ public class SettingCustomColorsController extends BaseChildController {
             }
             getMyStage().centerOnScreen();
 
-            darkColorSetController.init(this, "CustomizeColorDark", Color.web(AppVariables.CustomizeColorDark));
-            lightColorSetController.init(this, "CustomizeColorLight", Color.web(AppVariables.CustomizeColorLight));
+            darkColor = Colors.customizeColorDark();
+            darkColorSetController.init(this, "CustomizeColorDark", darkColor);
+            darkColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+                @Override
+                public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
+                    darkColor = (Color) nv;
+                    updateView();
+                }
+            });
+
+            lightColor = Colors.customizeColorLight();
+            lightColorSetController.init(this, "CustomizeColorLight", lightColor);
+            lightColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+                @Override
+                public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
+                    lightColor = (Color) nv;
+                    updateView();
+                }
+            });
+
+            updateView();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
+        }
+    }
 
+    public void updateView() {
+        try {
+            BufferedImage image = StyleTools.makeIcon(StyleData.StyleColor.Customize, "iconAdd.png");
+            if (image == null) {
+                return;
+            }
+            exampleView.setImage(SwingFXUtils.toFXImage(image, null));
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
         }
     }
 
@@ -55,13 +96,8 @@ public class SettingCustomColorsController extends BaseChildController {
             @Override
             protected boolean handle() {
                 try {
-                    String color = FxColorTools.color2rgba(darkColorSetController.color());
-                    AppVariables.CustomizeColorDark = color;
-                    UserConfig.setString("CustomizeColorDark", color);
-
-                    color = FxColorTools.color2rgba(lightColorSetController.color());
-                    AppVariables.CustomizeColorLight = color;
-                    UserConfig.setString("CustomizeColorLight", color);
+                    UserConfig.setString("CustomizeColorDark", FxColorTools.color2rgba(darkColorSetController.color()));
+                    UserConfig.setString("CustomizeColorLight", FxColorTools.color2rgba(lightColorSetController.color()));
 
                     StyleTools.makeCustomizeIcons(task, true);
 

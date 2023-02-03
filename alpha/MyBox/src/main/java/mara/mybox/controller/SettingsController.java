@@ -51,6 +51,7 @@ import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.Colors;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -146,7 +147,7 @@ public class SettingsController extends BaseController {
             NodeStyleTools.setTooltip(colorCustomizeRadio, new Tooltip(message("Customize")));
             NodeStyleTools.setTooltip(imageHisBox, new Tooltip(message("ImageHisComments")));
 
-            colorCustomizeRect.setFill(Color.web(AppVariables.CustomizeColorDark));
+            colorCustomizeRect.setFill(Colors.customizeColorDark());
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }

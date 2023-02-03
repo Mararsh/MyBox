@@ -4,7 +4,7 @@
 这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。          
 
 ## 新内容
-2023-1-21 版本6.7                
+2023-2-28 版本6.7.1                
                                 
 * 新增：                  
      - 数据分组方式：时间字段具有相同的世纪/年/月/日/时/分/秒时分为同组。                                               
@@ -21,7 +21,7 @@
      - 按行间隔分组时，错误地把分割个数取为分割尺寸。                                               
                                                  
  
-[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7)             
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.1)             
 
 兔年安康！              
    
@@ -29,7 +29,7 @@
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases)目录下（点击此项目主页的`releases`页签）。       
 
 ### 源码
-[MyBox-6.7-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.7/MyBox-6.7-src.zip)   62M-       
+[MyBox-6.7.1-src.zip](https://sourceforge.net/projects/mara-mybox/files/v6.7.1/MyBox-6.7.1-src.zip)   62M-       
 
 关于源码的结构、编辑、和构建，请参考[开发指南](https://sourceforge.net/projects/mara-mybox/files/documents/dev_guide_2.1/MyBox-DevGuide-2.1-zh.pdf) 和
 [打包步骤](https://mararsh.github.io/MyBox/pack_steps.html)       
@@ -40,9 +40,9 @@
 
 | 平台 | 链接 | 大小 | 启动文件 |
 | --- | --- | --- |  --- |
-| win10 x64 | [MyBox-6.7-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.7/MyBox-6.7-win10-x64.zip)  | 260MB- | MyBox.exe |
-| CentOS 7 x64 | [MyBox-6.7-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.7/MyBox-6.7-CentOS7-x64.tar.gz)  | 280MB-  | bin/MyBox  |
-| mac x64| [MyBox-6.7-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.7/MyBox-6.7-mac.dmg)  | 280MB-  |  MyBox-6.7.app   |
+| win10 x64 | [MyBox-6.7.1-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/v6.7.1/MyBox-6.7.1-win10-x64.zip)  | 260MB- | MyBox.exe |
+| CentOS 7 x64 | [MyBox-6.7.1-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/v6.7.1/MyBox-6.7.1-CentOS7-x64.tar.gz)  | 280MB-  | bin/MyBox  |
+| mac x64| [MyBox-6.7.1-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/v6.7.1/MyBox-6.7.1-mac.dmg)  | 280MB-  |  MyBox-6.7.1.app   |
 
 双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。        
   
@@ -52,14 +52,14 @@
 
 | 平台 | 链接 | 大小 | 运行需要 |
 | --- | --- | --- |  --- |
-| win | [MyBox-6.7-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.7/MyBox-6.7-win-jar.zip)  | 190MB- | Java 18或更高版本 |
-| linux | [MyBox-6.7-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.7/MyBox-6.7-linux-jar.zip)  | 200MB-  | Java 18或更高版本 |
-| mac | [MyBox-6.7-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.7/MyBox-6.7-mac-jar.zip)  |  200MB-  | Java 18或更高版本 |
+| win | [MyBox-6.7.1-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.7.1/MyBox-6.7.1-win-jar.zip)  | 190MB- | Java 18或更高版本 |
+| linux | [MyBox-6.7.1-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.7.1/MyBox-6.7.1-linux-jar.zip)  | 200MB-  | Java 18或更高版本 |
+| mac | [MyBox-6.7.1-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/v6.7.1/MyBox-6.7.1-mac-jar.zip)  |  200MB-  | Java 18或更高版本 |
 
 执行以下命令来启动程序：       
-<PRE><CODE>     java   -jar   MyBox-6.7.jar</CODE></PRE>       
+<PRE><CODE>     java   -jar   MyBox-6.7.1.jar</CODE></PRE>       
 程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：       
-<PRE><CODE>     java   -jar   MyBox-6.7.jar   /tmp/a1.jpg</CODE></PRE>       
+<PRE><CODE>     java   -jar   MyBox-6.7.1.jar   /tmp/a1.jpg</CODE></PRE>       
 
 ### 其它下载地址       
 从云盘下载：  [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)       
@@ -81,9 +81,9 @@
 
 | 平台 | MyBox配置文件的目录 |
 | --- | --- |
-| win | `C:\用户\用户名\mybox\MyBox_v6.7.ini`  |
-| linux | `/home/用户名/mybox/MyBox_v6.7.ini` |
-| mac | `/Users/用户名/mybox/MyBox_v6.7.ini` |       
+| win | `C:\用户\用户名\mybox\MyBox_v6.7.1.ini`  |
+| linux | `/home/用户名/mybox/MyBox_v6.7.1.ini` |
+| mac | `/Users/用户名/mybox/MyBox_v6.7.1.ini` |       
 
 可以临时改变配置文件：在命令行启动jar包时设置参数"config=\"配置文件名\""。       
 利用“设置”功能也可以修改配置参数。       
@@ -102,19 +102,19 @@
 # 文档       
 |      文档名       | 版本    | 修改时间   |                                                                                                                                            英文                                                                                                                                               |                                                                                                                                            中文                                                                                                                                               |
 |-------------------|---------|------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 开发日志          | 6.7     | 2023-1-21  | [html](https://mararsh.github.io/MyBox/mybox_devLogs_en.html)                                                                                                                                                                                                                                 | [html](https://mararsh.github.io/MyBox/mybox_devLogs.html)                                                                                                                                                                                                                                    |
+| 开发日志          | 6.7.1   | 2023-2-28  | [html](https://mararsh.github.io/MyBox/mybox_devLogs_en.html)                                                                                                                                                                                                                                 | [html](https://mararsh.github.io/MyBox/mybox_devLogs.html)                                                                                                                                                                                                                                    |
 | 快捷键            | 6.5.6   | 2022-6-11  | [html](https://mararsh.github.io/MyBox/mybox_shortcuts_en.html)                                                                                                                                                                                                                               | [html](https://mararsh.github.io/MyBox/mybox_shortcuts.html)                                                                                                                                                                                                                                  |
 | 功能列表          | 6.6.2   | 2022-11-30 | [html](https://mararsh.github.io/MyBox/mybox_functions_en.html)                                                                                                                                                                                                                               | [html](https://mararsh.github.io/MyBox/mybox_functions.html)                                                                                                                                                                                                                                  |
 | 打包步骤          | 6.3.3   | 2020-9-27  | [html](https://mararsh.github.io/MyBox/pack_steps_en.html)                                                                                                                                                                                                                                    | [html](https://mararsh.github.io/MyBox/pack_steps.html)                                                                                                                                                                                                                                       |
-| 开发指南          | 2.1     | 2020-8-27  | [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/dev_guide_2.1/MyBox-DevGuide-2.1-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/dev_guide_2.1/MyBox-DevGuide-2.1-en.odt)                                                                                                                                                                                  | [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/dev_guide_2.1/MyBox-DevGuide-2.1-zh.pdf)  [odt](https://sourceforge.net/projects/mara-mybox/files/documents/dev_guide_2.1/MyBox-DevGuide-2.1-zh.odt)                                                                                                                                                                                                                |
-| 用户手册-综述     | 6.7     | 2023-1-21  | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.7-Overview-en/MyBox-6.7-Overview-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-Overview-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-Overview-en.odt)                     | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.7-Overview-zh/MyBox-6.7-Overview-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-Overview-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-Overview-zh.odt)                     |
-| 用户手册-数据工具 | 6.7     | 2023-1-21  | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.7-DataTools-en/MyBox-6.7-DataTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DataTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DataTools-en.odt)                 | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.7-DataTools-zh/MyBox-6.7-DataTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DataTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DataTools-zh.odt)                 |
-| 用户手册-文档工具 | 6.7     | 2023-1-21  | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.7-DocumentTools-en/MyBox-6.7-DocumentTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DocumentTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DocumentTools-en.odt) | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.7-DocumentTools-zh/MyBox-6.7-DocumentTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DocumentTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DocumentTools-zh.odt) |
-| 用户手册-图像工具 | 6.7     | 2023-1-21  | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.7-ImageTools-en/MyBox-6.7-ImageTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-ImageTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-ImageTools-en.odt)             | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.7-ImageTools-zh/MyBox-6.7-ImageTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-ImageTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-ImageTools-zh.odt)             |
-| 用户手册-文件工具 | 6.7     | 2023-1-21  | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.7-FileTools-en/MyBox-6.7-FileTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-FileTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-FileTools-en.odt)                 | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.7-FileTools-zh/MyBox-6.7-FileTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-FileTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-FileTools-zh.odt)                 |
-| 用户手册-网络工具 | 6.7     | 2023-1-21  | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.7-NetworkTools-en/MyBox-6.7-NetworkTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-NetworkTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-NetworkTools-en.odt)     | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.7-NetworkTools-zh/MyBox-6.7-NetworkTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-NetworkTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-NetworkTools-zh.odt)     |
-| 用户手册-媒体工具 | 6.7     | 2023-1-21 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.7-MediaTools-en/MyBox-6.7-MediaTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-MediaTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-MediaTools-en.odt)             | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.7-MediaTools-zh/MyBox-6.7-MediaTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-MediaTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-MediaTools-zh.odt)             |
-| 用户手册-开发工具 | 6.7     | 2023-1-21 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.7-DevTools-en/MyBox-6.7-DevTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DevTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DevTools-en.odt)                     | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.7-DevTools-zh/MyBox-6.7-DevTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DevTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DevTools-zh.odt)                     |
+| 开发指南          | 2.1     | 2020-8-27  | [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-DevGuide-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-DevGuide-en.odt)                                                                                                                                                                                  | [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-DevGuide-zh.pdf)  [odt](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-DevGuide-zh.odt)                                                                                                                                                                                                                |
+| 用户手册-综述     | 6.7.1   | 2023-2-28  | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-Overview-en/MyBox-Overview-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-Overview-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-Overview-en.odt)                     | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-Overview-zh/MyBox-Overview-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-Overview-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-Overview-zh.odt)                     |
+| 用户手册-数据工具 | 6.7.1   | 2023-2-28  | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-DataTools-en/MyBox-DataTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-DataTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-DataTools-en.odt)                 | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-DataTools-zh/MyBox-DataTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-DataTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-DataTools-zh.odt)                 |
+| 用户手册-文档工具 | 6.7.1   | 2023-2-28  | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-DocumentTools-en/MyBox-DocumentTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-DocumentTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-DocumentTools-en.odt) | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-DocumentTools-zh/MyBox-DocumentTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-DocumentTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-DocumentTools-zh.odt) |
+| 用户手册-图像工具 | 6.7.1   | 2023-2-28  | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-ImageTools-en/MyBox-ImageTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-ImageTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-ImageTools-en.odt)             | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-ImageTools-zh/MyBox-ImageTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-ImageTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-ImageTools-zh.odt)             |
+| 用户手册-文件工具 | 6.7.1   | 2023-2-28  | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-FileTools-en/MyBox-FileTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-FileTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-FileTools-en.odt)                 | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-FileTools-zh/MyBox-FileTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-FileTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-FileTools-zh.odt)                 |
+| 用户手册-网络工具 | 6.7.1   | 2023-2-28  | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-NetworkTools-en/MyBox-NetworkTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-NetworkTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-NetworkTools-en.odt)     | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-NetworkTools-zh/MyBox-NetworkTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-NetworkTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-NetworkTools-zh.odt)     |
+| 用户手册-媒体工具 | 6.7.1   | 2023-2-28 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-MediaTools-en/MyBox-MediaTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-MediaTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-MediaTools-en.odt)             | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-MediaTools-zh/MyBox-MediaTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-MediaTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-MediaTools-zh.odt)             |
+| 用户手册-开发工具 | 6.7.1   | 2023-2-28 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-DevTools-en/MyBox-DevTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-DevTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-DevTools-en.odt)                     | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-DevTools-zh/MyBox-DevTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-DevTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-DevTools-zh.odt)                     |
 | 示例-笔记         | 6.6.1   | 2022-11-16 | [html](https://mararsh.github.io/MyBox/mybox_examples_notes_en.html)                                                                                                                                                                                                                          | [html](https://mararsh.github.io/MyBox/mybox_examples_notes.html)                                                                                                                                                                                                                                    |
 | 示例-树形         | 6.6.1   | 2022-11-16 | [html](https://mararsh.github.io/MyBox/mybox_examples_tree_en.html)                                                                                                                                                                                                                           | [html](https://mararsh.github.io/MyBox/mybox_examples_tree.html)                                                                                                                                                                                                                                    |
 | 示例-收藏的网址   | 6.6.1   | 2022-11-16 | [html](https://mararsh.github.io/MyBox/mybox_examples_web_favorite_en.html)                                                                                                                                                                                                                   | [html](https://mararsh.github.io/MyBox/mybox_examples_web_favorite.html)                                                                                                                                                                                                                                    |
@@ -128,13 +128,12 @@
 | 关于-坐标系统     | 6.6.1   | 2022-11-16 | [html](https://mararsh.github.io/MyBox/mybox_about_coordinate_system_en.html)                                                                                                                                                                                                                 | [html](https://mararsh.github.io/MyBox/mybox_about_coordinate_system.html)                                                                                                                                                                                                                                    |
 | 关于-媒体         | 6.6.1   | 2022-11-16 | [html](https://mararsh.github.io/MyBox/mybox_about_media_en.html)                                                                                                                                                                                                                             | [html](https://mararsh.github.io/MyBox/mybox_about_media.html)                                                                                                                                                                                                                                    |
 | 关于-数据分析     | 6.6.1   | 2022-11-16 | [html](https://mararsh.github.io/MyBox/mybox_about_data_analysis_en.html)                                                                                                                                                                                                                     | [html](https://mararsh.github.io/MyBox/mybox_about_data_analysis.html)                                                                                                                                                                                                                                    |
-| 调色盘-常用网页颜色           | 6.7     | 2023-1-21 | [rgba](https://mararsh.github.io/MyBox/mybox_palette_web_en.html)  [all](https://mararsh.github.io/MyBox/mybox_palette_web_all_en.html)                                                                                                                                  | [rgba](https://mararsh.github.io/MyBox/mybox_palette_web.html)  [all](https://mararsh.github.io/MyBox/mybox_palette_web_all.html)                                                                                                                                                                                                                                   |
-| 调色盘-中国传统颜色           | 6.7     | 2023-1-21 | [rgba](https://mararsh.github.io/MyBox/mybox_palette_chinese_en.html)  [all](https://mararsh.github.io/MyBox/mybox_palette_chinese_all_en.html)                                                                                                                          | [rgba](https://mararsh.github.io/MyBox/mybox_palette_chinese.html) [all](https://mararsh.github.io/MyBox/mybox_palette_chinese_all.html)                                                                                                                                                                                                                                    |
-| 调色盘-日本传统颜色           | 6.7     | 2023-1-21 | [rgba](https://mararsh.github.io/MyBox/mybox_palette_japanese_en.html)  [all](https://mararsh.github.io/MyBox/mybox_palette_japanese_all_en.html)                                                                                                                        | [rgba](https://mararsh.github.io/MyBox/mybox_palette_japanese.html)  [all](https://mararsh.github.io/MyBox/mybox_palette_japanese_all.html)                                                                                                                                                                                                                                  |
-| 调色盘-来自colorhexa.com颜色  | 6.7     | 2023-1-21 | [rgba](https://mararsh.github.io/MyBox/mybox_palette_colorhexa_en.html)  [all](https://mararsh.github.io/MyBox/mybox_palette_colorhexa_all_en.html)                                                                                                                      | [rgba](https://mararsh.github.io/MyBox/mybox_palette_colorhexa.html)  [all](https://mararsh.github.io/MyBox/mybox_palette_colorhexa_all.html)                                                                                                                                                                                                                                   |
-| 调色盘-MyBox的颜色            | 6.7     | 2023-1-21 | [rgba](https://mararsh.github.io/MyBox/mybox_palette_mybox_en.html)  [all](https://mararsh.github.io/MyBox/mybox_palette_mybox_all_en.html)                                                                                                                              | [rgba](https://mararsh.github.io/MyBox/mybox_palette_mybox.html)  [all](https://mararsh.github.io/MyBox/mybox_palette_mybox_all.html)                                                                                                                                                                                                                                   |
-| 图片的故事        | 6.7     | 2023-1-21 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-6.7-StoriesOfImages-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-StoriesOfImages-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-StoriesOfImages-en.odt)                     | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.7-StoriesOfImages-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-StoriesOfImages-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-StoriesOfImages-zh.odt)                     |   
-
+| 调色盘-常用网页颜色           | 6.7.1   | 2023-2-28 | [rgba](https://mararsh.github.io/MyBox/mybox_palette_web_en.html)  [all](https://mararsh.github.io/MyBox/mybox_palette_web_all_en.html)                                                                                                                                  | [rgba](https://mararsh.github.io/MyBox/mybox_palette_web.html)  [all](https://mararsh.github.io/MyBox/mybox_palette_web_all.html)                                                                                                                                                                                                                                   |
+| 调色盘-中国传统颜色           | 6.7.1   | 2023-2-28 | [rgba](https://mararsh.github.io/MyBox/mybox_palette_chinese_en.html)  [all](https://mararsh.github.io/MyBox/mybox_palette_chinese_all_en.html)                                                                                                                          | [rgba](https://mararsh.github.io/MyBox/mybox_palette_chinese.html) [all](https://mararsh.github.io/MyBox/mybox_palette_chinese_all.html)                                                                                                                                                                                                                                    |
+| 调色盘-日本传统颜色           | 6.7.1   | 2023-2-28 | [rgba](https://mararsh.github.io/MyBox/mybox_palette_japanese_en.html)  [all](https://mararsh.github.io/MyBox/mybox_palette_japanese_all_en.html)                                                                                                                        | [rgba](https://mararsh.github.io/MyBox/mybox_palette_japanese.html)  [all](https://mararsh.github.io/MyBox/mybox_palette_japanese_all.html)                                                                                                                                                                                                                                  |
+| 调色盘-来自colorhexa.com颜色  | 6.7.1   | 2023-2-28 | [rgba](https://mararsh.github.io/MyBox/mybox_palette_colorhexa_en.html)  [all](https://mararsh.github.io/MyBox/mybox_palette_colorhexa_all_en.html)                                                                                                                      | [rgba](https://mararsh.github.io/MyBox/mybox_palette_colorhexa.html)  [all](https://mararsh.github.io/MyBox/mybox_palette_colorhexa_all.html)                                                                                                                                                                                                                                   |
+| 调色盘-MyBox的颜色            | 6.7.1   | 2023-2-28 | [rgba](https://mararsh.github.io/MyBox/mybox_palette_mybox_en.html)  [all](https://mararsh.github.io/MyBox/mybox_palette_mybox_all_en.html)                                                                                                                              | [rgba](https://mararsh.github.io/MyBox/mybox_palette_mybox.html)  [all](https://mararsh.github.io/MyBox/mybox_palette_mybox_all.html)                                                                                                                                                                                                                                   |
+| 图片的故事        | 6.7.1   | 2023-2-28 | [html](https://mararsh.github.io/MyBoxDoc/en/MyBox-StoriesOfImages-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-StoriesOfImages-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-StoriesOfImages-en.odt)                     | [html](https://mararsh.github.io/MyBoxDoc/zh/MyBox-StoriesOfImages-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-StoriesOfImages-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/documents/current/MyBox-StoriesOfImages-zh.odt)                     |   
 
 # 实现基础       
 MyBox基于以下开放资源：       
@@ -202,11 +201,13 @@ MyBox基于以下开放资源：
 
 
 # 特点
-## 跨平台<a id="cross-platform" />       
+## 跨平台       
+
 MyBox用纯Java实现且只基于开放资源，MyBox可运行于支持Java 18的平台。       
 MyBox v5.3以前的版本均基于Java 8。       
 
-## 国际化<a id="international" />       
+## 国际化        
+
 1. 所有代码均国际化。可实时切换语言。
 2. 每种语言对应一个资源文件："Messages_语言名.properties"。
 3. 支持在线添加语言。提供表格，对照英语翻译。新语言可实时生效。       
@@ -219,16 +220,29 @@ MyBox v5.3以前的版本均基于Java 8。
 | 中文 | Messages_zh_CN.properties | 
 | 英文 | Messages_en.properties |  
 
-## 个人的<a id="personal" />
-1. 无注册/登录/数据中心/云存储。
-2. 如无必要，不访问网络。       
-3. 如无必要，不读不写。       
+## 个人的            
 
-## 数据兼容<a id="dataCompatible" />
+1. 所有功能在本机执行。 
+2. 无注册/登录/数据中心/云存储。
+3. 只在用户要求时才访问网络。
+4. 只读写用户需要的数据。       
+
+## 数据兼容            
+
 1. 导出的数据是通用的文本格式，如txt/csv/xml/json/html。
 2. 导入的数据是通用的文本格式，如txt/csv。       
 3. 至少有一种导出格式可以被导入。
 4. 导入的数据是自包含的，即重建原数据无需辅助数据。       
+
+## 友善的          
+
+1. 提供当前功能的提示。       
+2. 记住用户的输入或选择，提供历史记录。
+3. 界面可调整，一些面板可隐藏。
+4. 弹出当前文本、图片、数据。
+5. 提供便利执行相关功能的按钮或菜单项。
+6. 提供示例和有用的信息。       
+
 
 ![截屏-封面](https://mararsh.github.io/MyBox/snap-cover.jpg)       
 

@@ -12,7 +12,6 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.WindowTools.refreshInterfaceAll;
@@ -21,6 +20,7 @@ import static mara.mybox.fxml.WindowTools.styleAll;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.Colors;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -185,7 +185,7 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
                 colorCustomizeMenuItem.setSelected(true);
                 break;
         }
-        colorCustomizeRect.setFill(Color.web(AppVariables.CustomizeColorDark));
+        colorCustomizeRect.setFill(Colors.customizeColorDark());
     }
 
     @FXML

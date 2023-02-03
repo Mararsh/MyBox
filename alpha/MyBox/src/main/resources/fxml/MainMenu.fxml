@@ -453,7 +453,7 @@ License:    Apache License Version 2.0
                                                 <Rectangle fx:id="colorCustomizeRect" arcHeight="5.0" arcWidth="5.0" fill="#DDDDDD" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
                                             </graphic>
                                         </RadioMenuItem>
-                                        <MenuItem mnemonicParsing="false" onAction="#inputColors" text="%InputDot" />
+                                        <MenuItem mnemonicParsing="false" onAction="#inputColors" text="%CustomizeColors" />
 
                                         <SeparatorMenuItem mnemonicParsing="false" />
                                         <CheckMenuItem fx:id="controlTextCheck" mnemonicParsing="false" onAction="#setControlDisplayText" text="%DisplayControlText" />

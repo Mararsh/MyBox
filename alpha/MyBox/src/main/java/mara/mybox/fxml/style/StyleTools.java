@@ -1,6 +1,5 @@
 package mara.mybox.fxml.style;
 
-import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.MessageFormat;
@@ -25,7 +24,6 @@ import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.StyleData.StyleColor;
 import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Colors.color;
 import static mara.mybox.value.Languages.message;
@@ -290,18 +288,15 @@ public class StyleTools {
         setIcon(node, StyleTools.getIconImageView(StyleData));
     }
 
-    public static void makeCustomizeIcons(SingletonTask task, boolean clear) {
+    public static void makeCustomizeIcons(SingletonTask task, boolean replace) {
         try {
             List<String> iconNames = FxFileTools.getResourceFiles(StyleTools.ButtonsSourcePath + "Red/");
             if (iconNames == null || iconNames.isEmpty()) {
                 return;
             }
-            if (clear) {
-                FileDeleteTools.clearDir(new File(AppVariables.MyboxDataPath + "/buttons/"));
-            }
             for (String iconName : iconNames) {
-                String tname = makeIcons(StyleData.StyleColor.Customize, iconName,
-                        AppVariables.MyboxDataPath + "/buttons/");
+                String tname = makeIconFile(StyleData.StyleColor.Customize, iconName,
+                        AppVariables.MyboxDataPath + "/buttons/", replace);
                 if (task != null && tname != null) {
                     task.setInfo(MessageFormat.format(message("FilesGenerated"), tname));
                 }
@@ -311,32 +306,17 @@ public class StyleTools {
         }
     }
 
-    public static String makeIcons(StyleColor style, String iconName, String targetPath) {
+    public static String makeIconFile(StyleColor style, String iconName, String targetPath, boolean replace) {
         try {
-            if (iconName == null) {
+            if (style == null || iconName == null || targetPath == null) {
                 return null;
             }
-            Image image = StyleTools.getButtonImage(iconName);
-            if (image == null) {
-                return null;
-            }
-            BufferedImage srcImage = SwingFXUtils.fromFXImage(image, null);
-
-            Color darkColor = color(StyleColor.Red, true);
-            PixelsOperation operation1
-                    = PixelsOperationFactory.replaceColorOperation(srcImage, darkColor, darkColor, 20);
-            Color lightColor = color(StyleColor.Red, false);
-            PixelsOperation operation2
-                    = PixelsOperationFactory.replaceColorOperation(srcImage, lightColor, lightColor, 20);
             new File(targetPath).mkdirs();
             String tname = targetPath + iconName;
-            if (!new File(tname).exists()) {
-                if (style == StyleColor.Red) {
-                    ImageFileWriters.writeImageFile(srcImage, "png", tname);
-                } else {
-                    operation1.setImage(srcImage).setColorPara2(color(style, true));
-                    operation2.setImage(operation1.operate()).setColorPara2(color(style, false));
-                    ImageFileWriters.writeImageFile(operation2.operate(), "png", tname);
+            if (replace || !new File(tname).exists()) {
+                BufferedImage image = makeIcon(style, iconName);
+                if (image != null) {
+                    ImageFileWriters.writeImageFile(image, "png", tname);
                 }
             }
             return tname;
@@ -346,6 +326,29 @@ public class StyleTools {
         }
     }
 
+    public static BufferedImage makeIcon(StyleColor style, String iconName) {
+        try {
+            if (iconName == null) {
+                return null;
+            }
+            Image image = StyleTools.getButtonImage(iconName);
+            if (image == null) {
+                return null;
+            }
+            BufferedImage srcImage = SwingFXUtils.fromFXImage(image, null);
+            if (style == StyleColor.Red) {
+                return srcImage;
+            }
+            PixelsOperation operation = PixelsOperationFactory.replaceColorOperation(srcImage,
+                    color(StyleColor.Red, true), color(style, true), 20);
+            operation = PixelsOperationFactory.replaceColorOperation(operation.operate(),
+                    color(StyleColor.Red, false), color(style, false), 20);
+            return operation.operate();
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            return null;
+        }
+    }
 
     /*
         Tips

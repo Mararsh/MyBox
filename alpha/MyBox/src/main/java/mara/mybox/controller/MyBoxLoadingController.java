@@ -139,6 +139,13 @@ public class MyBoxLoadingController implements Initializable {
                         MicrosoftDocumentTools.registryFactories();
                         AlarmClock.scheduleAll();
 
+                        new Thread() {
+                            @Override
+                            public void run() {
+                                StyleTools.makeCustomizeIcons(null, false);
+                            }
+                        }.start();
+
                     } catch (Exception e) {
                         Platform.runLater(() -> {
                             infoLabel.setText(e.toString());
@@ -184,17 +191,6 @@ public class MyBoxLoadingController implements Initializable {
                         }
                     });
 
-                    initIcons();
-                }
-
-                protected void initIcons() {
-                    MyBoxLog.console(message(lang, message("GeneratingIcons")));
-                    new Thread() {
-                        @Override
-                        public void run() {
-                            StyleTools.makeCustomizeIcons(null, false);
-                        }
-                    }.start();
                 }
 
                 @Override

@@ -211,7 +211,7 @@ public class PixelsOperationFactory {
     }
 
     public static PixelsOperation replaceColorOperation(BufferedImage image, Color oldColor, Color newColor, int distance) {
-        if (oldColor == null || newColor == null || distance < 0) {
+        if (oldColor == null || distance < 0) {
             return null;
         }
         try {
@@ -230,6 +230,7 @@ public class PixelsOperationFactory {
             return null;
         }
     }
+
 
     /*
         subclass
