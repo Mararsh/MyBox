@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -13,6 +14,7 @@ import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleData;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Colors;
 import mara.mybox.value.Fxmls;
@@ -41,7 +43,6 @@ public class SettingCustomColorsController extends BaseChildController {
                 baseName = parent.baseName;
                 getMyStage().setTitle(parent.getTitle());
             }
-            getMyStage().centerOnScreen();
 
             darkColor = Colors.customizeColorDark();
             darkColorSetController.init(this, baseName + "DarkColor", darkColor).setColor(darkColor);
@@ -84,13 +85,20 @@ public class SettingCustomColorsController extends BaseChildController {
     @FXML
     @Override
     public void okAction() {
-        UserConfig.setString("CustomizeColorDark", FxColorTools.color2rgba(darkColorSetController.color()));
-        UserConfig.setString("CustomizeColorLight", FxColorTools.color2rgba(lightColorSetController.color()));
+        String dark = FxColorTools.color2rgba(darkColorSetController.color());
+        String light = FxColorTools.color2rgba(lightColorSetController.color());
+        if (!dark.equalsIgnoreCase(UserConfig.getString("CustomizeColorDark", null))
+                || !light.equalsIgnoreCase(UserConfig.getString("CustomizeColorLight", null))) {
+            UserConfig.setString("CustomizeColorDark", dark);
+            UserConfig.setString("CustomizeColorLight", light);
+            FileDeleteTools.clearDir(new File(AppVariables.MyboxDataPath + "/buttons/"));
+        }
         if (useCheck.isSelected() || AppVariables.ControlColor == StyleData.StyleColor.Customize) {
-            StyleTools.setConfigStyleColor(this, "customize");
+            StyleTools.setConfigStyleColor(parentController, "customize");
         } else {
             parentController.refreshInterface();
         }
+        closeStage();
     }
 
     public static SettingCustomColorsController open(BaseController parent) {

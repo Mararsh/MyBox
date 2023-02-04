@@ -165,6 +165,9 @@ public class StyleTools {
                         new File(targetPath).mkdirs();
                         for (String iconName : iconNames) {
                             String tname = targetPath + iconName;
+                            if (new File(tname).exists()) {
+                                continue;
+                            }
                             BufferedImage image = makeIcon(StyleColor.Customize, iconName);
                             if (image != null) {
                                 ImageFileWriters.writeImageFile(image, "png", tname);

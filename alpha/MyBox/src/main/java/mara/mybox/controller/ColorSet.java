@@ -73,11 +73,11 @@ public class ColorSet extends BaseController {
 
             rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
-                public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
+                public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
                     if (isSettingValues) {
                         return;
                     }
-                    UserConfig.setString(thisName, ((Color) newValue).toString());
+                    UserConfig.setString(thisName, ((Color) nv).toString());
                 }
             });
 
