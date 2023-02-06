@@ -453,7 +453,7 @@ public class WindowTools {
 
     public static void clearInvalidData() {
         try {
-            MyBoxLog.info("clearing tmeporary data...");
+            MyBoxLog.info("clearing temporary data...");
 
             FileDeleteTools.clearDir(AppVariables.MyBoxTempPath);
 

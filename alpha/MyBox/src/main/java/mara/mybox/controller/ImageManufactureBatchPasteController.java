@@ -6,20 +6,15 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import mara.mybox.bufferedimage.ImageBlend;
 import mara.mybox.bufferedimage.MarginTools;
-import mara.mybox.bufferedimage.PixelsBlend;
-import mara.mybox.bufferedimage.PixelsBlendFactory;
 import mara.mybox.bufferedimage.TransformTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.Colors;
@@ -34,21 +29,19 @@ import mara.mybox.value.UserConfig;
 public class ImageManufactureBatchPasteController extends BaseImageManufactureBatchController {
 
     protected int positionType, margin, posX, posY;
-    protected PixelsBlend.ImagesBlendMode blendMode;
-    protected float opacity;
     protected BufferedImage clipSource;
     protected int rotateAngle;
 
     @FXML
-    protected ComboBox<String> opacitySelector, blendSelector, angleSelector;
+    protected ComboBox<String> angleSelector;
     @FXML
-    protected CheckBox enlargeCheck, clipTopCheck, ignoreTransparentCheck;
+    protected CheckBox enlargeCheck;
     @FXML
     protected ToggleGroup positionGroup;
     @FXML
     protected TextField xInput, yInput, marginInput;
     @FXML
-    protected Button demoButton;
+    protected ControlImagesBlend blendController;
 
     private class PositionType {
 
@@ -97,56 +90,7 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
                 }
             });
 
-            clipTopCheck.setSelected(UserConfig.getBoolean(baseName + "ClipOnTop", true));
-            clipTopCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setBoolean(baseName + "ClipOnTop", clipTopCheck.isSelected());
-                }
-            });
-
-            ignoreTransparentCheck.setSelected(UserConfig.getBoolean(baseName + "IgnoreTransparent", true));
-            ignoreTransparentCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setBoolean(baseName + "IgnoreTransparent", ignoreTransparentCheck.isSelected());
-                }
-            });
-
-            String mode = UserConfig.getString(baseName + "TextBlendMode", Languages.message("NormalMode"));
-            blendMode = PixelsBlendFactory.blendMode(mode);
-            blendSelector.getItems().addAll(PixelsBlendFactory.blendModes());
-            blendSelector.setValue(mode);
-            blendSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
-                    String mode = blendSelector.getSelectionModel().getSelectedItem();
-                    blendMode = PixelsBlendFactory.blendMode(mode);
-                    UserConfig.setString(baseName + "TextBlendMode", mode);
-                }
-            });
-
-            opacity = UserConfig.getInt(baseName + "Opacity", 100) / 100f;
-            opacity = (opacity >= 0.0f && opacity <= 1.0f) ? opacity : 1.0f;
-            opacitySelector.getItems().addAll(Arrays.asList("0.5", "1.0", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
-            opacitySelector.setValue(opacity + "");
-            opacitySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        float f = Float.valueOf(newValue);
-                        if (opacity >= 0.0f && opacity <= 1.0f) {
-                            opacity = f;
-                            UserConfig.setInt(baseName + "Opacity", (int) (f * 100));
-                            ValidationTools.setEditorNormal(opacitySelector);
-                        } else {
-                            ValidationTools.setEditorBadStyle(opacitySelector);
-                        }
-                    } catch (Exception e) {
-                        ValidationTools.setEditorBadStyle(opacitySelector);
-                    }
-                }
-            });
+            blendController.setParameters(this);
 
             angleSelector.getItems().addAll(Arrays.asList("0", "90", "180", "45", "30", "60", "15", "5", "10", "1", "75", "120", "135"));
             angleSelector.setVisibleRowCount(10);
@@ -334,19 +278,13 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
                     break;
             }
 
-            BufferedImage target = ImageBlend.blend(clipSource, bgImage, x, y,
-                    blendMode, opacity, !clipTopCheck.isSelected(), ignoreTransparentCheck.isSelected());
+            BufferedImage target = blendController.blend(clipSource, bgImage, x, y);
             return target;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
         }
 
-    }
-
-    @FXML
-    protected void demo() {
-        FxImageTools.blendDemo(this, demoButton, null, null, 20, 20, opacity, !clipTopCheck.isSelected(), ignoreTransparentCheck.isSelected());
     }
 
 }

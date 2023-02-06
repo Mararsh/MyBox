@@ -41,6 +41,18 @@
                                 </ImageView>
                             </graphic>
                         </RadioButton>
+                  <RadioButton fx:id="colorBlendRadio" layoutX="51.0" layoutY="10.0">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="colorGroup1" />
+                     </toggleGroup>
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/iconCross.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </RadioButton>
                         <RadioButton fx:id="colorRGBRadio" toggleGroup="$colorGroup">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

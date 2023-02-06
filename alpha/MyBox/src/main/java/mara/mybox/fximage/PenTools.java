@@ -103,7 +103,8 @@ public class PenTools {
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = mara.mybox.bufferedimage.PenTools.drawRectangle(source, rect,
-                toAwtColor(strokeColor), strokeWidth, arcWidth, dotted, isFill, toAwtColor(fillColor), blendMode, opacity, orderReversed, ignoreTransparent);
+                toAwtColor(strokeColor), strokeWidth, arcWidth, dotted, isFill, toAwtColor(fillColor),
+                blendMode, opacity, orderReversed, ignoreTransparent);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }

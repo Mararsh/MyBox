@@ -7,7 +7,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -23,8 +22,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import mara.mybox.bufferedimage.ImageMosaic.MosaicType;
-import mara.mybox.bufferedimage.PixelsBlend.ImagesBlendMode;
-import mara.mybox.bufferedimage.PixelsBlendFactory;
 import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoublePoint;
@@ -49,8 +46,6 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
     protected PenType opType;
     protected int strokeWidth, arcWidth, intensity, defaultStrokeWidth;
     protected DoublePoint lastPoint;
-    protected ImagesBlendMode blendMode;
-    protected float opacity;
     protected String strokeWidthKey;
     protected List<Line> penLines;
 
@@ -66,17 +61,17 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
     @FXML
     protected VBox setBox, blendBox;
     @FXML
-    protected ComboBox<String> strokeWidthBox, strokeTypeBox, arcBox, intensityBox, opacitySelector, blendSelector;
+    protected ComboBox<String> strokeWidthBox, strokeTypeBox, arcBox, intensityBox;
     @FXML
     protected Label commentsLabel;
     @FXML
-    protected CheckBox fillCheck, dottedCheck, coordinatePenCheck, blendTopCheck, ignoreTransparentCheck;
+    protected CheckBox fillCheck, dottedCheck, coordinatePenCheck;
     @FXML
     protected ColorSet strokeColorSetController;
     @FXML
     protected ColorSet fillColorSetController;
     @FXML
-    protected Button demoButton;
+    protected ControlImagesBlend blendController;
 
     public enum PenType {
         Polyline, DrawLines, Erase, Rectangle, Circle, Ellipse, Polygon, Frosted, Mosaic
@@ -117,7 +112,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v >= 0) {
                             strokeWidth = v;
                             UserConfig.setInt(strokeWidthKey, strokeWidth);
@@ -210,58 +205,10 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 }
             });
 
-            String mode = UserConfig.getString("ImagePenBlendMode", Languages.message("NormalMode"));
-            blendMode = PixelsBlendFactory.blendMode(mode);
-            blendSelector.getItems().addAll(PixelsBlendFactory.blendModes());
-            blendSelector.setValue(mode);
-            blendSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            blendController.setParameters(this);
+            blendController.optionChangedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
-                    String mode = blendSelector.getSelectionModel().getSelectedItem();
-                    blendMode = PixelsBlendFactory.blendMode(mode);
-                    UserConfig.setString("ImagePenBlendMode", mode);
-                    updateMask();
-                }
-            });
-
-            opacity = UserConfig.getInt("ImagePenOpacity", 100) / 100f;
-            opacity = (opacity >= 0.0f && opacity <= 1.0f) ? opacity : 1.0f;
-            opacitySelector.getItems().addAll(Arrays.asList("0.5", "1.0", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
-            opacitySelector.setValue(opacity + "");
-            opacitySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        float f = Float.valueOf(newValue);
-                        if (opacity >= 0.0f && opacity <= 1.0f) {
-                            opacity = f;
-                            UserConfig.setInt("ImagePenOpacity", (int) (f * 100));
-                            ValidationTools.setEditorNormal(opacitySelector);
-                            updateMask();
-                        } else {
-                            ValidationTools.setEditorBadStyle(opacitySelector);
-                        }
-                    } catch (Exception e) {
-                        ValidationTools.setEditorBadStyle(opacitySelector);
-                    }
-                }
-            });
-
-            blendTopCheck.setSelected(UserConfig.getBoolean("ImagePenBlendTop", true));
-            blendTopCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov,
-                        Boolean old_toggle, Boolean new_toggle) {
-                    UserConfig.setBoolean("ImagePenBlendTop", blendTopCheck.isSelected());
-                    updateMask();
-                }
-            });
-
-            ignoreTransparentCheck.setSelected(UserConfig.getBoolean(baseName + "IgnoreTransparent", true));
-            ignoreTransparentCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setBoolean(baseName + "IgnoreTransparent", ignoreTransparentCheck.isSelected());
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     updateMask();
                 }
             });
@@ -274,7 +221,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                         return;
                     }
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v > 0) {
                             intensity = v;
                             ValidationTools.setEditorNormal(intensityBox);
@@ -319,6 +266,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             imageView.toBack();
             withdrawButton.setVisible(false);
             clearPenLines();
+            setBlender();
             RadioButton selected = (RadioButton) typeGroup.getSelectedToggle();
             if (rectangleRadio.equals(selected)) {
                 opType = PenType.Rectangle;
@@ -453,7 +401,8 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                     newImage = PenTools.drawRectangle(imageView.getImage(),
                             imageController.maskRectangleData, (Color) strokeColorSetController.rect.getFill(), strokeWidth,
                             arcWidth, dottedCheck.isSelected(), fillCheck.isSelected(), (Color) fillColorSetController.rect.getFill(),
-                            blendMode, opacity, !blendTopCheck.isSelected(), ignoreTransparentCheck.isSelected());
+                            blendController.blendMode, blendController.opacity,
+                            !blendController.isTop(), blendController.ignoreTransparent());
                     return newImage != null;
                 }
 
@@ -486,7 +435,8 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                     newImage = PenTools.drawCircle(imageView.getImage(),
                             imageController.maskCircleData, (Color) strokeColorSetController.rect.getFill(), strokeWidth,
                             dottedCheck.isSelected(), fillCheck.isSelected(), (Color) fillColorSetController.rect.getFill(),
-                            blendMode, opacity, !blendTopCheck.isSelected(), ignoreTransparentCheck.isSelected());
+                            blendController.blendMode, blendController.opacity,
+                            !blendController.isTop(), blendController.ignoreTransparent());
                     return newImage != null;
                 }
 
@@ -519,7 +469,8 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                     newImage = PenTools.drawEllipse(imageView.getImage(),
                             imageController.maskEllipseData, (Color) strokeColorSetController.rect.getFill(), strokeWidth,
                             dottedCheck.isSelected(), fillCheck.isSelected(), (Color) fillColorSetController.rect.getFill(),
-                            blendMode, opacity, !blendTopCheck.isSelected(), ignoreTransparentCheck.isSelected());
+                            blendController.blendMode, blendController.opacity,
+                            !blendController.isTop(), blendController.ignoreTransparent());
                     return newImage != null;
                 }
 
@@ -555,7 +506,8 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                     newImage = PenTools.drawPolygon(imageView.getImage(),
                             imageController.maskPolygonData, (Color) strokeColorSetController.rect.getFill(), strokeWidth,
                             dottedCheck.isSelected(), fillCheck.isSelected(), (Color) fillColorSetController.rect.getFill(),
-                            blendMode, opacity, !blendTopCheck.isSelected(), ignoreTransparentCheck.isSelected());
+                            blendController.blendMode, blendController.opacity,
+                            !blendController.isTop(), blendController.ignoreTransparent());
                     return newImage != null;
                 }
 
@@ -632,7 +584,8 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                         case Polyline:
                             newImage = PenTools.drawLines(imageView.getImage(),
                                     imageController.maskPolylineLineData, (Color) strokeColorSetController.rect.getFill(), strokeWidth,
-                                    dottedCheck.isSelected(), blendMode, opacity, !blendTopCheck.isSelected(), ignoreTransparentCheck.isSelected());
+                                    dottedCheck.isSelected(), blendController.blendMode, blendController.opacity,
+                                    !blendController.isTop(), blendController.ignoreTransparent());
                             break;
                         case Erase:
                             newImage = PenTools.drawErase(imageView.getImage(), imageController.maskPenData, strokeWidth);
@@ -640,7 +593,8 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                         case DrawLines:
                             newImage = PenTools.drawLines(imageView.getImage(),
                                     imageController.maskPenData, (Color) strokeColorSetController.rect.getFill(), strokeWidth,
-                                    dottedCheck.isSelected(), blendMode, opacity, !blendTopCheck.isSelected(), ignoreTransparentCheck.isSelected());
+                                    dottedCheck.isSelected(), blendController.blendMode, blendController.opacity,
+                                    !blendController.isTop(), blendController.ignoreTransparent());
                             break;
                     }
                     return newImage != null;
@@ -672,7 +626,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                     false, 1.0f, lastPoint, thisPoint);
         } else {
             penLine = imageController.drawMaskPenLine(strokeWidth, (Color) strokeColorSetController.rect.getFill(),
-                    dottedCheck.isSelected(), opacity, lastPoint, thisPoint);
+                    dottedCheck.isSelected(), blendController.opacity, lastPoint, thisPoint);
         }
 
         if (penLine != null) {
@@ -692,6 +646,15 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             penLines = null;
         }
         lastPoint = null;
+    }
+
+    protected void setBlender() {
+        blendController.backImage = imageView.getImage();
+        blendController.foreImage = FxImageTools.createImage(
+                (int) (imageView.getImage().getWidth() / 2), (int) (imageView.getImage().getHeight() / 2),
+                (Color) strokeColorSetController.rect.getFill());
+        blendController.x = (int) (blendController.backImage.getWidth() - blendController.foreImage.getWidth()) / 2;
+        blendController.y = (int) (blendController.backImage.getHeight() - blendController.foreImage.getHeight()) / 2;
     }
 
     @FXML
@@ -922,17 +885,6 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
     @Override
     protected void resetOperationPane() {
         checkPenType();
-    }
-
-    @FXML
-    protected void demo() {
-        Image backImage = imageView.getImage();
-        Image foreImage = FxImageTools.createImage((int) (backImage.getWidth() / 2), (int) (backImage.getHeight() / 2),
-                (Color) strokeColorSetController.rect.getFill());
-        double x = (backImage.getWidth() - foreImage.getWidth()) / 2;
-        double y = (backImage.getHeight() - foreImage.getHeight()) / 2;
-        FxImageTools.blendDemoFx(imageController, demoButton,
-                foreImage, backImage, (int) x, (int) y, opacity, !blendTopCheck.isSelected(), ignoreTransparentCheck.isSelected());
     }
 
 }

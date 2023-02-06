@@ -321,7 +321,7 @@ public class PixelsOperationFactory {
 
         @Override
         protected Color operateColor(Color color) {
-            return PixelsBlend.blendColors(colorPara1, color, floatPara1, skipTransparent);
+            return PixelsBlend.blend(colorPara1, color, floatPara1, skipTransparent);
         }
     }
 

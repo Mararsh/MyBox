@@ -96,7 +96,7 @@ public abstract class PixelsBlend {
             backColor = new Color(backPixel, true);
         }
         makeRGB();
-        alpha = (int) (foreColor.getAlpha() * opacity + backColor.getAlpha() * (1.0f - opacity));
+        makeAlpha();
         Color newColor = new Color(
                 Math.min(Math.max(red, 0), 255),
                 Math.min(Math.max(green, 0), 255),
@@ -112,10 +112,14 @@ public abstract class PixelsBlend {
         blue = (int) (foreColor.getBlue() * opacity + backColor.getBlue() * (1.0f - opacity));
     }
 
+    protected void makeAlpha() {
+        alpha = (int) (foreColor.getAlpha() * opacity + backColor.getAlpha() * (1.0f - opacity));
+    }
+
     /*
         static
      */
-    public static Color blendColors(Color foreColor, Color backColor, float opacity, boolean ignoreTransparency) {
+    public static Color blend(Color foreColor, Color backColor, float opacity, boolean ignoreTransparency) {
         if (ignoreTransparency) {
             if (foreColor.getRGB() == 0) {
                 return backColor;
@@ -124,10 +128,10 @@ public abstract class PixelsBlend {
                 return foreColor;
             }
         }
-        return makeRGB(foreColor, backColor, opacity);
+        return blend(foreColor, backColor, opacity);
     }
 
-    public static Color makeRGB(Color foreColor, Color backColor, float opacity) {
+    public static Color blend(Color foreColor, Color backColor, float opacity) {
         int red = (int) (foreColor.getRed() * opacity + backColor.getRed() * (1.0f - opacity));
         int green = (int) (foreColor.getGreen() * opacity + backColor.getGreen() * (1.0f - opacity));
         int blue = (int) (foreColor.getBlue() * opacity + backColor.getBlue() * (1.0f - opacity));
