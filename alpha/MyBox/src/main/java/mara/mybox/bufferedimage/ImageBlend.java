@@ -34,25 +34,31 @@ public class ImageBlend {
         this.y = y;
     }
 
+    public static PixelsBlend blender(ImagesBlendMode blendMode, float opacity,
+            boolean orderReversed, boolean ignoreTransparent) {
+        return PixelsBlendFactory.create(blendMode)
+                .setBlendMode(blendMode)
+                .setOpacity(opacity)
+                .setOrderReversed(orderReversed)
+                .setIgnoreTransparency(ignoreTransparent);
+    }
+
     public static BufferedImage blend(BufferedImage foreImage, BufferedImage backImage,
-            int x, int y, ImagesBlendMode blendMode, float opacity, boolean orderReversed, boolean ignoreTransparent) {
+            int x, int y, PixelsBlend blender) {
         try {
-            if (foreImage == null || backImage == null || blendMode == null) {
+            if (foreImage == null || backImage == null || blender == null) {
                 return null;
             }
             int imageType = BufferedImage.TYPE_INT_ARGB;
             DoubleRectangle rect = new DoubleRectangle(x, y,
                     x + foreImage.getWidth() - 1, y + foreImage.getHeight() - 1);
             BufferedImage target = new BufferedImage(backImage.getWidth(), backImage.getHeight(), imageType);
-            PixelsBlend colorBlend = PixelsBlendFactory.create(blendMode)
-                    .setBlendMode(blendMode).setOpacity(opacity)
-                    .setOrderReversed(orderReversed).setIgnoreTransparency(ignoreTransparent);
             for (int j = 0; j < backImage.getHeight(); ++j) {
                 for (int i = 0; i < backImage.getWidth(); ++i) {
                     int backPixel = backImage.getRGB(i, j);
                     if (rect.contains(i, j)) {
                         int forePixel = foreImage.getRGB(i - x, j - y);
-                        target.setRGB(i, j, colorBlend.blend(forePixel, backPixel));
+                        target.setRGB(i, j, blender.blend(forePixel, backPixel));
                     } else {
                         target.setRGB(i, j, backPixel);
                     }

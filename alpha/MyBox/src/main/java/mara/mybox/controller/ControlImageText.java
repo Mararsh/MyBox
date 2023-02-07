@@ -784,6 +784,10 @@ public class ControlImageText extends BaseController {
         return blendController.opacity;
     }
 
+    public PixelsBlend blender() {
+        return blendController.blender();
+    }
+
     public boolean showBorders() {
         return bordersCheck.isSelected();
     }

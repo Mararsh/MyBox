@@ -401,8 +401,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                     newImage = PenTools.drawRectangle(imageView.getImage(),
                             imageController.maskRectangleData, (Color) strokeColorSetController.rect.getFill(), strokeWidth,
                             arcWidth, dottedCheck.isSelected(), fillCheck.isSelected(), (Color) fillColorSetController.rect.getFill(),
-                            blendController.blendMode, blendController.opacity,
-                            !blendController.isTop(), blendController.ignoreTransparent());
+                            blendController.opacity, blendController.blender());
                     return newImage != null;
                 }
 
@@ -435,8 +434,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                     newImage = PenTools.drawCircle(imageView.getImage(),
                             imageController.maskCircleData, (Color) strokeColorSetController.rect.getFill(), strokeWidth,
                             dottedCheck.isSelected(), fillCheck.isSelected(), (Color) fillColorSetController.rect.getFill(),
-                            blendController.blendMode, blendController.opacity,
-                            !blendController.isTop(), blendController.ignoreTransparent());
+                            blendController.opacity, blendController.blender());
                     return newImage != null;
                 }
 
@@ -469,8 +467,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                     newImage = PenTools.drawEllipse(imageView.getImage(),
                             imageController.maskEllipseData, (Color) strokeColorSetController.rect.getFill(), strokeWidth,
                             dottedCheck.isSelected(), fillCheck.isSelected(), (Color) fillColorSetController.rect.getFill(),
-                            blendController.blendMode, blendController.opacity,
-                            !blendController.isTop(), blendController.ignoreTransparent());
+                            blendController.opacity, blendController.blender());
                     return newImage != null;
                 }
 
@@ -506,8 +503,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                     newImage = PenTools.drawPolygon(imageView.getImage(),
                             imageController.maskPolygonData, (Color) strokeColorSetController.rect.getFill(), strokeWidth,
                             dottedCheck.isSelected(), fillCheck.isSelected(), (Color) fillColorSetController.rect.getFill(),
-                            blendController.blendMode, blendController.opacity,
-                            !blendController.isTop(), blendController.ignoreTransparent());
+                            blendController.opacity, blendController.blender());
                     return newImage != null;
                 }
 
@@ -583,18 +579,18 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                     switch (opType) {
                         case Polyline:
                             newImage = PenTools.drawLines(imageView.getImage(),
-                                    imageController.maskPolylineLineData, (Color) strokeColorSetController.rect.getFill(), strokeWidth,
-                                    dottedCheck.isSelected(), blendController.blendMode, blendController.opacity,
-                                    !blendController.isTop(), blendController.ignoreTransparent());
+                                    imageController.maskPolylineLineData,
+                                    (Color) strokeColorSetController.rect.getFill(), strokeWidth, dottedCheck.isSelected(),
+                                    blendController.opacity, blendController.blender());
                             break;
                         case Erase:
                             newImage = PenTools.drawErase(imageView.getImage(), imageController.maskPenData, strokeWidth);
                             break;
                         case DrawLines:
                             newImage = PenTools.drawLines(imageView.getImage(),
-                                    imageController.maskPenData, (Color) strokeColorSetController.rect.getFill(), strokeWidth,
-                                    dottedCheck.isSelected(), blendController.blendMode, blendController.opacity,
-                                    !blendController.isTop(), blendController.ignoreTransparent());
+                                    imageController.maskPenData,
+                                    (Color) strokeColorSetController.rect.getFill(), strokeWidth, dottedCheck.isSelected(),
+                                    blendController.opacity, blendController.blender());
                             break;
                     }
                     return newImage != null;

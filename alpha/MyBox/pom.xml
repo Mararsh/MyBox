@@ -284,6 +284,7 @@
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
                     <appendAssemblyId>false</appendAssemblyId>
+                    <finalName>${project.name}</finalName>
                 </configuration>
                 <executions>
                     <execution>

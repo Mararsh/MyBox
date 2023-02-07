@@ -1,7 +1,10 @@
 package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -12,11 +15,18 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageBlend;
+import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.bufferedimage.PixelsBlend.ImagesBlendMode;
 import mara.mybox.bufferedimage.PixelsBlendFactory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fxml.WindowTools;
+import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.value.AppValues;
+import mara.mybox.value.AppVariables;
+import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -116,48 +126,101 @@ public class ControlImagesBlend extends BaseController {
         optionChangedNotify.set(!optionChangedNotify.get());
     }
 
-    protected boolean isTop() {
+    public boolean isTop() {
         return foreTopCheck.isSelected();
     }
 
-    protected boolean ignoreTransparent() {
+    public boolean ignoreTransparent() {
         return ignoreTransparentCheck.isSelected();
     }
 
-    @FXML
-    protected void demo() {
-        demo(foreImage, backImage);
+    public PixelsBlend blender() {
+        return ImageBlend.blender(blendMode, opacity, !isTop(), ignoreTransparent());
     }
 
-    protected void demo(Image foreImage, Image backImage) {
+    @FXML
+    public void demo() {
+        demo(foreImage, backImage, x, y);
+    }
+
+    public void demo(Image foreImage, Image backImage, int x, int y) {
         this.foreImage = foreImage;
         this.backImage = backImage;
-        this.x = 0;
-        this.y = 0;
-        FxImageTools.blendDemoFx(this, demoButton, foreImage, backImage,
-                x, y, opacity, !foreTopCheck.isSelected(), ignoreTransparentCheck.isSelected());
+        this.x = x;
+        this.y = y;
+        demoButton.setVisible(false);
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+            private List<File> files;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    BufferedImage foreBI = SwingFXUtils.fromFXImage(
+                            foreImage == null ? new Image("img/cover" + AppValues.AppYear + "g2.png") : foreImage, null);
+                    BufferedImage backBI = SwingFXUtils.fromFXImage(
+                            backImage == null ? new Image("img/cover" + AppValues.AppYear + "g5.png") : backImage, null);
+                    files = new ArrayList<>();
+                    boolean reversed = !isTop();
+                    boolean ignoreTrans = ignoreTransparent();
+                    BufferedImage blended = ImageBlend.blend(foreBI, backBI, x, y,
+                            ImageBlend.blender(ImagesBlendMode.NORMAL, 1f, reversed, ignoreTrans));
+                    File tmpFile = new File(AppVariables.MyBoxTempPath + File.separator
+                            + message("NormalMode") + "-" + message("Opacity") + "-1.0f.png");
+                    if (ImageFileWriters.writeImageFile(blended, tmpFile)) {
+                        files.add(tmpFile);
+                        task.setInfo(tmpFile.getAbsolutePath());
+                    }
+                    for (String name : PixelsBlendFactory.blendModes()) {
+                        PixelsBlend.ImagesBlendMode mode = PixelsBlendFactory.blendMode(name);
+                        blended = ImageBlend.blend(foreBI, backBI, x, y,
+                                ImageBlend.blender(mode, opacity, reversed, ignoreTrans));
+                        tmpFile = new File(AppVariables.MyBoxTempPath + File.separator + name + "-"
+                                + message("Opacity") + "-" + opacity + "f.png");
+                        if (ImageFileWriters.writeImageFile(blended, tmpFile)) {
+                            files.add(tmpFile);
+                            task.setInfo(tmpFile.getAbsolutePath());
+                        }
+                    }
+                    return !files.isEmpty();
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                ImagesBrowserController b
+                        = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);
+                b.loadImages(files);
+            }
+
+            @Override
+            protected void finalAction() {
+                demoButton.setVisible(true);
+            }
+
+        };
+        start(task);
     }
 
-    protected BufferedImage blend(BufferedImage fore, BufferedImage back, int x, int y) {
+    public BufferedImage blend(BufferedImage fore, BufferedImage back, int x, int y) {
         this.foreImage = SwingFXUtils.toFXImage(fore, null);
         this.backImage = SwingFXUtils.toFXImage(back, null);
         this.x = x;
         this.y = y;
-        return ImageBlend.blend(fore, back, x, y,
-                blendMode, opacity,
-                !foreTopCheck.isSelected(),
-                ignoreTransparentCheck.isSelected());
+        return ImageBlend.blend(fore, back, x, y, blender());
     }
 
-    protected Image blend(Image foreImage, Image backImage, int x, int y) {
+    public Image blend(Image foreImage, Image backImage, int x, int y) {
         this.foreImage = foreImage;
         this.backImage = backImage;
         this.x = x;
         this.y = y;
-        return FxImageTools.blend(foreImage, backImage, x, y,
-                blendMode, opacity,
-                !foreTopCheck.isSelected(),
-                ignoreTransparentCheck.isSelected());
+        return FxImageTools.blend(foreImage, backImage, x, y, blender());
     }
 
 }

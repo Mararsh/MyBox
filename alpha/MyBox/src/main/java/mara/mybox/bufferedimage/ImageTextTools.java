@@ -55,8 +55,8 @@ public class ImageTextTools {
                         optionsController.bordersStrokeColor(),
                         optionsController.getBordersStrokeWidth(), optionsController.getBordersArc(),
                         optionsController.bordersDotted(), optionsController.bordersFilled(),
-                        optionsController.bordersFillColor(),
-                        PixelsBlend.ImagesBlendMode.NORMAL, optionsController.getBordersOpacity(), false, true);
+                        optionsController.bordersFillColor(), opacity,
+                        ImageBlend.blender(PixelsBlend.ImagesBlendMode.NORMAL, opacity, false, true));
             }
             Color textColor = optionsController.textColor();
             boolean noBlend = textColor.equals(Colors.TRANSPARENT);
@@ -118,9 +118,7 @@ public class ImageTextTools {
             if (noBlend) {
                 return foreImage;
             } else {
-                return ImageBlend.blend(foreImage, backImage, 0, 0,
-                        optionsController.getBlendMode(), opacity,
-                        optionsController.orderReversed(), optionsController.ignoreTransparent());
+                return ImageBlend.blend(foreImage, backImage, 0, 0, optionsController.blender());
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
