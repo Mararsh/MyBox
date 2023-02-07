@@ -113,7 +113,7 @@ public class ControlData2DStyleList extends BaseSysTableController<Data2DStyle> 
         if (manageController == null) {
             return;
         }
-        Data2DStyle selected = tableView.getSelectionModel().getSelectedItem();
+        Data2DStyle selected = selectedItem();
         if (selected == null) {
             return;
         }

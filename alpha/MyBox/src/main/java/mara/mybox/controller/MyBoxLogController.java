@@ -183,7 +183,7 @@ public class MyBoxLogController extends BaseDataManageController<MyBoxLog> {
     @FXML
     @Override
     public void viewAction() {
-        List<MyBoxLog> selected = tableView.getSelectionModel().getSelectedItems();
+        List<MyBoxLog> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
         }
@@ -193,7 +193,7 @@ public class MyBoxLogController extends BaseDataManageController<MyBoxLog> {
 
     @FXML
     public void messageAction() {
-        List<MyBoxLog> selected = tableView.getSelectionModel().getSelectedItems();
+        List<MyBoxLog> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
         }

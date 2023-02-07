@@ -529,6 +529,8 @@ public abstract class BaseTableViewController<P> extends BaseController {
                             }
                         }
                         isSettingValues = false;
+                        checkSelected();
+                        notifySelected();
                     }
                 });
             }
@@ -571,6 +573,58 @@ public abstract class BaseTableViewController<P> extends BaseController {
         }
     }
 
+    protected boolean isNoneSelected() {
+        return tableView.getSelectionModel().getSelectedIndices().isEmpty();
+    }
+
+    protected int selectedIndix() {
+        try {
+            int index = tableView.getSelectionModel().getSelectedIndex();
+            if (index >= 0 && index < tableData.size()) {
+                return index;
+            }
+            List<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
+            if (selected != null && !selected.isEmpty()) {
+                return selected.get(0);
+            }
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+        }
+        return -1;
+    }
+
+    protected P selectedItem() {
+        try {
+            int index = selectedIndix();
+            if (index >= 0 && index < tableData.size()) {
+                return tableData.get(index);
+            }
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+        }
+        return null;
+    }
+
+    protected List<P> selectedItems() {
+        try {
+            List<P> items = tableView.getSelectionModel().getSelectedItems();
+            if (items != null) {
+                return items;
+            }
+            List<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
+            if (selected != null && !selected.isEmpty()) {
+                items = new ArrayList<>();
+                for (int index : selected) {
+                    items.add(tableData.get(index));
+                }
+                return items;
+            }
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+        }
+        return null;
+    }
+
     /*
         data
      */
@@ -611,7 +665,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
     }
 
     public void copySelected() {
-        List<P> selected = tableView.getSelectionModel().getSelectedItems();
+        List<P> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
         }
@@ -684,7 +738,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             return;
         }
         boolean isEmpty = tableData == null || tableData.isEmpty();
-        boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
+        boolean none = isNoneSelected();
         if (deleteButton != null) {
             deleteButton.setDisable(none);
         }
@@ -755,13 +809,13 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
             menu = new MenuItem(message("AddBeforeSelected"));
             menu.setOnAction((ActionEvent event) -> {
-                addRows(tableView.getSelectionModel().getSelectedIndex(), 1);
+                addRows(selectedIndix(), 1);
             });
             popMenu.getItems().add(menu);
 
             menu = new MenuItem(message("AddAfterSelected"));
             menu.setOnAction((ActionEvent event) -> {
-                addRows(tableView.getSelectionModel().getSelectedIndex() + 1, 1);
+                addRows(selectedIndix() + 1, 1);
             });
             popMenu.getItems().add(menu);
 
@@ -784,7 +838,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
     @FXML
     public void editAction() {
-        edit(tableView.getSelectionModel().getSelectedIndex());
+        edit(selectedIndix());
     }
 
     public void editNull() {
@@ -801,7 +855,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
     @FXML
     public void viewAction() {
-        view(tableView.getSelectionModel().getSelectedIndex());
+        view(selectedIndix());
     }
 
     public void viewNull() {
@@ -824,7 +878,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
     @FXML
     public void insertAction() {
-        addRows(tableView.getSelectionModel().getSelectedIndex(), 1);
+        addRows(selectedIndix(), 1);
     }
 
     @FXML
@@ -880,7 +934,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
     protected int deleteSelectedData() {
         List<P> selected = new ArrayList<>();
-        selected.addAll(tableView.getSelectionModel().getSelectedItems());
+        selected.addAll(selectedItems());
         if (selected.isEmpty()) {
             return 0;
         }
@@ -943,7 +997,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
     @FXML
     public void deleteRowsAction() {
-        List<P> selected = tableView.getSelectionModel().getSelectedItems();
+        List<P> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
             deleteAllRows();
             return;
@@ -1030,7 +1084,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
     @FXML
     public void moveTopAction() {
         List<P> selected = new ArrayList<>();
-        selected.addAll(tableView.getSelectionModel().getSelectedItems());
+        selected.addAll(selectedItems());
         if (selected.isEmpty()) {
             return;
         }

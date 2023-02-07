@@ -2,18 +2,15 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javax.imageio.ImageIO;
-import mara.mybox.bufferedimage.ImageFileInformation;
-import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.style.StyleData.StyleColor;
 import mara.mybox.fxml.style.StyleTools;
@@ -73,53 +70,21 @@ public class MyBoxIconsController extends BaseBatchFileController {
                 popError(message("WrongSourceCodesPath"));
                 return false;
             }
-            synchronized (this) {
-                if (task != null) {
-                    task.cancel();
+            List<File> icons = Arrays.asList(new File(redPath).listFiles());
+            Collections.sort(icons, new Comparator<File>() {
+                @Override
+                public int compare(File v1, File v2) {
+                    long diff = v2.lastModified() - v1.lastModified();
+                    if (diff == 0) {
+                        return 0;
+                    } else if (diff > 0) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
                 }
-                task = new SingletonTask<Void>(this) {
-
-                    private List<ImageInformation> infos;
-
-                    @Override
-                    protected boolean handle() {
-                        File[] icons = new File(redPath).listFiles();
-                        infos = new ArrayList<>();
-                        for (File file : icons) {
-                            if (task == null || isCancelled()) {
-                                return false;
-                            }
-                            ImageFileInformation finfo = ImageFileInformation.create(file);
-                            infos.addAll(finfo.getImagesInformation());
-                        }
-                        Collections.sort(infos, new Comparator<ImageInformation>() {
-                            @Override
-                            public int compare(ImageInformation v1, ImageInformation v2) {
-                                long diff = v2.getModifyTime() - v1.getModifyTime();
-                                if (diff == 0) {
-                                    return 0;
-                                } else if (diff > 0) {
-                                    return 1;
-                                } else {
-                                    return -1;
-                                }
-                            }
-                        });
-                        return true;
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        if (!infos.isEmpty()) {
-                            tableData.addAll(infos);
-                            tableView.refresh();
-                            popDone();
-                        }
-                    }
-
-                };
-                start(task);
-            }
+            });
+            tableController.addFiles(0, icons);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -135,7 +100,7 @@ public class MyBoxIconsController extends BaseBatchFileController {
                 return false;
             }
             updateLogs(resourcePath + StyleTools.ButtonsSourcePath);
-            if (tableView.getSelectionModel().getSelectedItem() == null) {
+            if (tableController.isNoneSelected()) {
                 for (StyleColor style : StyleColor.values()) {
                     if (style == StyleColor.Red || style == StyleColor.Customize) {
                         continue;

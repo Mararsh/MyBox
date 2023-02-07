@@ -160,8 +160,7 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
     @Override
     public void checkButtons() {
         super.checkButtons();
-        boolean isEmpty = tableData == null || tableData.isEmpty();
-        boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
+        boolean none = isNoneSelected();
         if (queryTagsButton != null) {
             queryTagsButton.setDisable(none);
         }
@@ -250,7 +249,7 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
 
     @FXML
     public void queryTags() {
-        List<Tag> selected = tableView.getSelectionModel().getSelectedItems();
+        List<Tag> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
             popError(message("SelectToHandle"));
             return;

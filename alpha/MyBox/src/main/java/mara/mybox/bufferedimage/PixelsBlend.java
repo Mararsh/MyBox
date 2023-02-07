@@ -1,6 +1,9 @@
 package mara.mybox.bufferedimage;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
+import mara.mybox.data.DoubleRectangle;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -57,28 +60,6 @@ public abstract class PixelsBlend {
     public PixelsBlend() {
     }
 
-    public PixelsBlend(ImagesBlendMode blendMode) {
-        this.blendMode = blendMode;
-    }
-
-    public PixelsBlend(ImagesBlendMode blendMode, float opacity) {
-        this.blendMode = blendMode;
-        this.opacity = opacity;
-    }
-
-    public PixelsBlend(ImagesBlendMode blendMode, float opacity, boolean orderReversed) {
-        this.blendMode = blendMode;
-        this.opacity = opacity;
-        this.orderReversed = orderReversed;
-    }
-
-    public PixelsBlend(ImagesBlendMode blendMode, float opacity, boolean orderReversed, boolean ignoreTransparency) {
-        this.blendMode = blendMode;
-        this.opacity = opacity;
-        this.orderReversed = orderReversed;
-        this.ignoreTransparency = ignoreTransparency;
-    }
-
     protected int blend(int forePixel, int backPixel) {
         if (ignoreTransparency) {
             if (forePixel == 0) {
@@ -105,15 +86,53 @@ public abstract class PixelsBlend {
         return newColor.getRGB();
     }
 
+    protected Color blend(Color foreColor, Color backColor) {
+        if (foreColor == null) {
+            return backColor;
+        }
+        if (backColor == null) {
+            return foreColor;
+        }
+        int b = blend(foreColor.getRGB(), backColor.getRGB());
+        return new Color(b, true);
+    }
+
     // replace this in different blend mode. Refer to "PixelsBlendFactory"
     protected void makeRGB() {
-        red = (int) (foreColor.getRed() * opacity + backColor.getRed() * (1.0f - opacity));
-        green = (int) (foreColor.getGreen() * opacity + backColor.getGreen() * (1.0f - opacity));
-        blue = (int) (foreColor.getBlue() * opacity + backColor.getBlue() * (1.0f - opacity));
+        red = blendValues(foreColor.getRed(), backColor.getRed(), opacity);
+        green = blendValues(foreColor.getGreen(), backColor.getGreen(), opacity);
+        blue = blendValues(foreColor.getBlue(), backColor.getBlue(), opacity);
     }
 
     protected void makeAlpha() {
         alpha = (int) (foreColor.getAlpha() * opacity + backColor.getAlpha() * (1.0f - opacity));
+    }
+
+    public BufferedImage blend(BufferedImage foreImage, BufferedImage backImage, int x, int y) {
+        try {
+            if (foreImage == null || backImage == null) {
+                return null;
+            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
+            DoubleRectangle rect = new DoubleRectangle(x, y,
+                    x + foreImage.getWidth() - 1, y + foreImage.getHeight() - 1);
+            BufferedImage target = new BufferedImage(backImage.getWidth(), backImage.getHeight(), imageType);
+            for (int j = 0; j < backImage.getHeight(); ++j) {
+                for (int i = 0; i < backImage.getWidth(); ++i) {
+                    int backPixel = backImage.getRGB(i, j);
+                    if (rect.contains(i, j)) {
+                        int forePixel = foreImage.getRGB(i - x, j - y);
+                        target.setRGB(i, j, blend(forePixel, backPixel));
+                    } else {
+                        target.setRGB(i, j, backPixel);
+                    }
+                }
+            }
+            return target;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return foreImage;
+        }
     }
 
     /*
@@ -132,10 +151,10 @@ public abstract class PixelsBlend {
     }
 
     public static Color blend(Color foreColor, Color backColor, float opacity) {
-        int red = (int) (foreColor.getRed() * opacity + backColor.getRed() * (1.0f - opacity));
-        int green = (int) (foreColor.getGreen() * opacity + backColor.getGreen() * (1.0f - opacity));
-        int blue = (int) (foreColor.getBlue() * opacity + backColor.getBlue() * (1.0f - opacity));
-        int alpha = (int) (foreColor.getAlpha() * opacity + backColor.getAlpha() * (1.0f - opacity));
+        int red = blendValues(foreColor.getRed(), backColor.getRed(), opacity);
+        int green = blendValues(foreColor.getGreen(), backColor.getRed(), opacity);
+        int blue = blendValues(foreColor.getBlue(), backColor.getRed(), opacity);
+        int alpha = blendValues(foreColor.getAlpha(), backColor.getRed(), opacity);
         Color newColor = new Color(
                 Math.min(Math.max(red, 0), 255),
                 Math.min(Math.max(green, 0), 255),
@@ -144,6 +163,46 @@ public abstract class PixelsBlend {
         return newColor;
     }
 
+    public static int blendValues(int A, int B, float weight) {
+        return (int) (A * weight + B * (1.0f - weight));
+    }
+
+    public static PixelsBlend blender(ImagesBlendMode blendMode, float opacity,
+            boolean orderReversed, boolean ignoreTransparent) {
+        return PixelsBlendFactory.create(blendMode)
+                .setBlendMode(blendMode)
+                .setOpacity(opacity)
+                .setOrderReversed(orderReversed)
+                .setIgnoreTransparency(ignoreTransparent);
+    }
+
+    public static BufferedImage blend(BufferedImage foreImage, BufferedImage backImage,
+            int x, int y, PixelsBlend blender) {
+        try {
+            if (foreImage == null || backImage == null || blender == null) {
+                return null;
+            }
+            int imageType = BufferedImage.TYPE_INT_ARGB;
+            DoubleRectangle rect = new DoubleRectangle(x, y,
+                    x + foreImage.getWidth() - 1, y + foreImage.getHeight() - 1);
+            BufferedImage target = new BufferedImage(backImage.getWidth(), backImage.getHeight(), imageType);
+            for (int j = 0; j < backImage.getHeight(); ++j) {
+                for (int i = 0; i < backImage.getWidth(); ++i) {
+                    int backPixel = backImage.getRGB(i, j);
+                    if (rect.contains(i, j)) {
+                        int forePixel = foreImage.getRGB(i - x, j - y);
+                        target.setRGB(i, j, blender.blend(forePixel, backPixel));
+                    } else {
+                        target.setRGB(i, j, backPixel);
+                    }
+                }
+            }
+            return target;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return foreImage;
+        }
+    }
 
     /*
         get/set

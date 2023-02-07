@@ -86,7 +86,7 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
         }
         super.checkButtons();
         boolean isEmpty = tableData == null || tableData.isEmpty();
-        boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
+        boolean none = isNoneSelected();
         clearMatricesButton.setDisable(isEmpty);
         deleteMatricesButton.setDisable(none);
         renameMatrixButton.setDisable(none);
@@ -97,7 +97,7 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
     @FXML
     public void matrixAAction() {
         try {
-            Data2DDefinition selected = tableView.getSelectionModel().getSelectedItem();
+            Data2DDefinition selected = selectedItem();
             if (selected == null) {
                 return;
             }
@@ -111,7 +111,7 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
     @FXML
     public void matrixBAction() {
         try {
-            Data2DDefinition selected = tableView.getSelectionModel().getSelectedItem();
+            Data2DDefinition selected = selectedItem();
             if (selected == null) {
                 return;
             }
@@ -129,8 +129,8 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
 
     @FXML
     public void renameAction() {
-        int index = tableView.getSelectionModel().getSelectedIndex();
-        Data2DDefinition selected = tableView.getSelectionModel().getSelectedItem();
+        int index = selectedIndix();
+        Data2DDefinition selected = selectedItem();
         if (selected == null) {
             return;
         }

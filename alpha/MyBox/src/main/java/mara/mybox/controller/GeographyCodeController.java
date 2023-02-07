@@ -266,7 +266,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
     @FXML
     @Override
     public void editAction() {
-        GeographyCode selected = (GeographyCode) tableView.getSelectionModel().getSelectedItem();
+        GeographyCode selected = (GeographyCode) selectedItem();
         if (selected == null) {
             return;
         }
@@ -282,7 +282,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
     @FXML
     @Override
     public void viewAction() {
-        GeographyCode selected = (GeographyCode) tableView.getSelectionModel().getSelectedItem();
+        GeographyCode selected = (GeographyCode) selectedItem();
         if (selected == null) {
             return;
         }
@@ -292,7 +292,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
     @FXML
     public void locationAction(ActionEvent event) {
         try {
-            GeographyCode code = (GeographyCode) tableView.getSelectionModel().getSelectedItem();
+            GeographyCode code = (GeographyCode) selectedItem();
             if (code == null) {
                 return;
             }
@@ -474,7 +474,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
     }
 
     protected void setSelectedData(boolean predefined) {
-        final List<GeographyCode> selected = tableView.getSelectionModel().getSelectedItems();
+        final List<GeographyCode> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
         }

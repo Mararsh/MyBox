@@ -14,10 +14,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
-import mara.mybox.bufferedimage.ImageBlend;
+import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.bufferedimage.PixelsBlend.ImagesBlendMode;
 import mara.mybox.bufferedimage.PixelsBlendFactory;
+import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.SingletonTask;
@@ -54,7 +55,7 @@ public class ControlImagesBlend extends BaseController {
     public void setParameters(BaseController parent) {
         try {
             this.parentController = parent;
-            baseName = parentController.baseName + "Blend";
+            baseName = parentController.interfaceName + "Blend";
             x = 0;
             y = 0;
             foreImage = null;
@@ -135,7 +136,14 @@ public class ControlImagesBlend extends BaseController {
     }
 
     public PixelsBlend blender() {
-        return ImageBlend.blender(blendMode, opacity, !isTop(), ignoreTransparent());
+        return PixelsBlend.blender(blendMode, opacity, !isTop(), ignoreTransparent());
+    }
+
+    protected void setImage(Image image, Color color) {
+        backImage = image;
+        foreImage = FxImageTools.createImage((int) (image.getWidth() / 2), (int) (image.getHeight() / 2), color);
+        x = (int) (backImage.getWidth() - foreImage.getWidth()) / 2;
+        y = (int) (backImage.getHeight() - foreImage.getHeight()) / 2;
     }
 
     @FXML
@@ -160,13 +168,18 @@ public class ControlImagesBlend extends BaseController {
                 try {
                     BufferedImage foreBI = SwingFXUtils.fromFXImage(
                             foreImage == null ? new Image("img/cover" + AppValues.AppYear + "g2.png") : foreImage, null);
+                    foreBI = ScaleTools.scaleImageLess(foreBI, 1000000);
                     BufferedImage backBI = SwingFXUtils.fromFXImage(
                             backImage == null ? new Image("img/cover" + AppValues.AppYear + "g5.png") : backImage, null);
+                    backBI = ScaleTools.scaleImageLess(backBI, 1000000);
                     files = new ArrayList<>();
                     boolean reversed = !isTop();
                     boolean ignoreTrans = ignoreTransparent();
-                    BufferedImage blended = ImageBlend.blend(foreBI, backBI, x, y,
-                            ImageBlend.blender(ImagesBlendMode.NORMAL, 1f, reversed, ignoreTrans));
+                    BufferedImage blended = PixelsBlend.blend(foreBI, backBI, x, y,
+                            PixelsBlend.blender(ImagesBlendMode.NORMAL, 1f, reversed, ignoreTrans));
+                    if (task == null || task.isCancelled()) {
+                        return true;
+                    }
                     File tmpFile = new File(AppVariables.MyBoxTempPath + File.separator
                             + message("NormalMode") + "-" + message("Opacity") + "-1.0f.png");
                     if (ImageFileWriters.writeImageFile(blended, tmpFile)) {
@@ -174,9 +187,15 @@ public class ControlImagesBlend extends BaseController {
                         task.setInfo(tmpFile.getAbsolutePath());
                     }
                     for (String name : PixelsBlendFactory.blendModes()) {
+                        if (task == null || task.isCancelled()) {
+                            return true;
+                        }
                         PixelsBlend.ImagesBlendMode mode = PixelsBlendFactory.blendMode(name);
-                        blended = ImageBlend.blend(foreBI, backBI, x, y,
-                                ImageBlend.blender(mode, opacity, reversed, ignoreTrans));
+                        blended = PixelsBlend.blend(foreBI, backBI, x, y,
+                                PixelsBlend.blender(mode, opacity, reversed, ignoreTrans));
+                        if (task == null || task.isCancelled()) {
+                            return true;
+                        }
                         tmpFile = new File(AppVariables.MyBoxTempPath + File.separator + name + "-"
                                 + message("Opacity") + "-" + opacity + "f.png");
                         if (ImageFileWriters.writeImageFile(blended, tmpFile)) {
@@ -193,14 +212,16 @@ public class ControlImagesBlend extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                ImagesBrowserController b
-                        = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);
-                b.loadImages(files);
             }
 
             @Override
             protected void finalAction() {
                 demoButton.setVisible(true);
+                if (files != null && !files.isEmpty()) {
+                    ImagesBrowserController b
+                            = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);
+                    b.loadImages(files);
+                }
             }
 
         };
@@ -212,7 +233,7 @@ public class ControlImagesBlend extends BaseController {
         this.backImage = SwingFXUtils.toFXImage(back, null);
         this.x = x;
         this.y = y;
-        return ImageBlend.blend(fore, back, x, y, blender());
+        return PixelsBlend.blend(fore, back, x, y, blender());
     }
 
     public Image blend(Image foreImage, Image backImage, int x, int y) {

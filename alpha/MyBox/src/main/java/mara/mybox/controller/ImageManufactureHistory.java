@@ -499,7 +499,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
 
     @FXML
     public void deleteHistories() {
-        ImageEditHistory selected = tableView.getSelectionModel().getSelectedItem();
+        ImageEditHistory selected = selectedItem();
         if (selected == null) {
             return;
         }
@@ -521,7 +521,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
 
     @FXML
     public void okHistory() {
-        loadImageHistory(tableView.getSelectionModel().getSelectedIndex());
+        loadImageHistory(selectedIndix());
     }
 
     @FXML
@@ -538,7 +538,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
     @FXML
     public void viewHistory() {
         synchronized (this) {
-            ImageEditHistory selected = tableView.getSelectionModel().getSelectedItem();
+            ImageEditHistory selected = selectedItem();
             if (selected == null) {
                 return;
             }
@@ -596,7 +596,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
 
     public void popHistory() {
         synchronized (this) {
-            ImageEditHistory selected = tableView.getSelectionModel().getSelectedItem();
+            ImageEditHistory selected = selectedItem();
             if (selected == null) {
                 return;
             }
@@ -630,8 +630,8 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
             return;
         }
         super.checkButtons();
-        boolean isEmpty = tableData == null || tableData.isEmpty();
-        boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
+
+        boolean none = isNoneSelected();
 
         if (deleteHistoriesButton != null) {
             deleteHistoriesButton.setDisable(none);

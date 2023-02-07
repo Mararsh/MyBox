@@ -239,8 +239,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
             return;
         }
         super.checkButtons();
-        boolean isEmpty = tableData == null || tableData.isEmpty();
-        boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
+        boolean none = isNoneSelected();
         copyButton.setDisable(none);
         equalButton.setDisable(none);
         infoButton.setDisable(none);
@@ -612,7 +611,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
     public void startAction() {
         try {
             stopped = false;
-            List<Link> selected = tableView.getSelectionModel().getSelectedItems();
+            List<Link> selected = selectedItems();
             if (selected == null || selected.isEmpty()) {
                 return;
             }
@@ -706,7 +705,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
     }
 
     public void setPath() {
-        List<Link> selected = tableView.getSelectionModel().getSelectedItems();
+        List<Link> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
         }
@@ -733,7 +732,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
     }
 
     public void addOrderBeforeFilename() {
-        List<Link> selected = tableView.getSelectionModel().getSelectedItems();
+        List<Link> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
         }
@@ -752,7 +751,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
     }
 
     public void setFilename() {
-        List<Link> selected = tableView.getSelectionModel().getSelectedItems();
+        List<Link> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
         }
@@ -792,7 +791,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
         if (tabPane.getSelectionModel().getSelectedItem() != linksTab) {
             return;
         }
-        Link link = tableView.getSelectionModel().getSelectedItem();
+        Link link = selectedItem();
         if (link == null) {
             return;
         }
@@ -803,7 +802,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
     @FXML
     @Override
     public void infoAction() {
-        Link link = tableView.getSelectionModel().getSelectedItem();
+        Link link = selectedItem();
         if (link == null) {
             return;
         }
@@ -849,7 +848,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
 
     @FXML
     protected void openLink() {
-        Link link = tableView.getSelectionModel().getSelectedItem();
+        Link link = selectedItem();
         openLink(link);
     }
 

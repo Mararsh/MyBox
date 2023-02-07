@@ -357,7 +357,6 @@ public class ControlPlay extends BaseController {
             }
             currentIndex = correctIndex(index);
             if (currentIndex < 0) {
-                MyBoxLog.console(currentIndex);
                 pause();
                 return false;
             }

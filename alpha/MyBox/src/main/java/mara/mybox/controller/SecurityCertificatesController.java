@@ -90,7 +90,7 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
         if (isSettingValues) {
             return;
         }
-        CertificateEntry selected = tableView.getSelectionModel().getSelectedItem();
+        CertificateEntry selected = selectedItem();
         if (selected == null) {
             certArea.setText("");
             deleteButton.setDisable(true);
@@ -334,7 +334,7 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
         if (sourceFile == null) {
             return;
         }
-        List<CertificateEntry> selected = tableView.getSelectionModel().getSelectedItems();
+        List<CertificateEntry> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
         }

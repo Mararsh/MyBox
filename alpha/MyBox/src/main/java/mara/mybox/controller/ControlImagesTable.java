@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javafx.application.Platform;
@@ -20,7 +21,6 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.ImageClipboardTools;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableImageInfoCell;
@@ -31,7 +31,6 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -196,10 +195,9 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
     protected void checkButtons() {
         super.checkButtons();
         try {
-            editButton.setDisable(true);
             infoButton.setDisable(true);
             metaButton.setDisable(true);
-            ImageInformation info = tableView.getSelectionModel().getSelectedItem();
+            ImageInformation info = selectedItem();
             if (info == null || info.getFile() == null) {
                 return;
             }
@@ -207,12 +205,12 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
             if (suffix == null) {
                 return;
             }
-            boolean notImageFile = suffix.equalsIgnoreCase("ppt")
+            boolean invalid = isNoneSelected()
+                    || suffix.equalsIgnoreCase("ppt")
                     || suffix.equalsIgnoreCase("pptx")
                     || suffix.equalsIgnoreCase("pdf");
-            editButton.setDisable(notImageFile);
-            infoButton.setDisable(notImageFile);
-            metaButton.setDisable(notImageFile);
+            infoButton.setDisable(invalid);
+            metaButton.setDisable(invalid);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -254,66 +252,41 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
 
     @Override
     protected ImageInformation create(File file) {
-        ImageInformation d = new ImageInformation(file);
-        return d;
+        ImageFileInformation finfo = ImageFileInformation.create(file);
+        return finfo != null ? finfo.getImageInformation() : null;
     }
 
     @Override
-    public void addFiles(final int index, final List<File> files) {
-        if (files == null || files.isEmpty()) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-
-        task = new SingletonTask<Void>(this) {
-
-            private int offset;
-
-            @Override
-            protected boolean handle() {
-                offset = index >= 0 && index < tableData.size() ? index : tableData.size();
-                for (int i = 0; i < files.size(); i++) {
-                    File file = files.get(i);
-                    if (task == null || isCancelled()) {
-                        return false;
-                    }
-                    if (task != null) {
-                        task.setInfo(message("Add") + ": " + file);
-                    }
-                    ImageFileInformation finfo = ImageFileInformation.create(file);
-                    if (finfo == null) {
-                        continue;
-                    }
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            List<ImageInformation> infos = finfo.getImagesInformation();
-                            tableData.addAll(offset, infos);
-                            offset += infos.size();
-                        }
-                    });
+    public List<ImageInformation> createFiles(List<File> files) {
+        try {
+            if (files == null || files.isEmpty()) {
+                return null;
+            }
+            List<ImageInformation> infos = new ArrayList<>();
+            for (File file : files) {
+                if (task == null || task.isCancelled()) {
+                    return infos;
                 }
-                return true;
-            }
+                task.setInfo(file.getAbsolutePath());
+                ImageFileInformation finfo = ImageFileInformation.create(file);
+                if (finfo != null) {
+                    infos.addAll(finfo.getImagesInformation());
 
-            @Override
-            protected void whenSucceeded() {
-                tableView.refresh();
-                popDone();
-                recordFileAdded(files);
+                }
+                recordFileAdded(file);
             }
-
-        };
-        start(task);
+            return infos;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
     }
 
     @FXML
     @Override
     public void viewAction() {
         try {
-            ImageInformation info = tableView.getSelectionModel().getSelectedItem();
+            ImageInformation info = selectedItem();
             if (info == null || info.getFile() == null) {
                 return;
             }
@@ -338,7 +311,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
     @Override
     public void editAction() {
         try {
-            ImageInformation info = tableView.getSelectionModel().getSelectedItem();
+            ImageInformation info = selectedItem();
             if (info == null) {
                 return;
             }
@@ -354,7 +327,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
         if (tableData.isEmpty()) {
             return;
         }
-        ImageInformation info = tableView.getSelectionModel().getSelectedItem();
+        ImageInformation info = selectedItem();
         if (info == null) {
             info = tableData.get(0);
         }
@@ -367,7 +340,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
         if (tableData.isEmpty()) {
             return;
         }
-        ImageInformation info = tableView.getSelectionModel().getSelectedItem();
+        ImageInformation info = selectedItem();
         if (info == null) {
             info = tableData.get(0);
         }
@@ -389,7 +362,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
 
     protected void checkDuration() {
         try {
-            int v = Integer.valueOf(durationSelector.getValue());
+            int v = Integer.parseInt(durationSelector.getValue());
             if (v > 0) {
                 duration = v;
                 ValidationTools.setEditorNormal(durationSelector);
@@ -409,7 +382,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
                 return;
             }
             isSettingValues = true;
-            List<ImageInformation> rows = tableView.getSelectionModel().getSelectedItems();
+            List<ImageInformation> rows = selectedItems();
             if (rows == null || rows.isEmpty()) {
                 rows = tableData;
             }

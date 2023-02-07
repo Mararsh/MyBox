@@ -60,7 +60,7 @@ public class AutoTestingCasesController extends BaseTableViewController<TestCase
     @Override
     public void startAction() {
         try {
-            List<TestCase> selected = tableView.getSelectionModel().getSelectedItems();
+            List<TestCase> selected = selectedItems();
             if (selected == null || selected.isEmpty()) {
                 selected = new ArrayList<>();
                 selected.addAll(tableData);

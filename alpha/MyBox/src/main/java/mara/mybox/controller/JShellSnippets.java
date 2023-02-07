@@ -113,8 +113,7 @@ public class JShellSnippets extends BaseTableViewController<JShellSnippet> {
             return;
         }
         super.checkButtons();
-        boolean isEmpty = tableData == null || tableData.isEmpty();
-        boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
+        boolean none = isNoneSelected();
         deleteSnippetsButton.setDisable(none);
     }
 
@@ -186,7 +185,7 @@ public class JShellSnippets extends BaseTableViewController<JShellSnippet> {
     @FXML
     protected void deleteSnippets() {
         List<JShellSnippet> selected = new ArrayList<>();
-        selected.addAll(tableView.getSelectionModel().getSelectedItems());
+        selected.addAll(selectedItems());
         if (selected.isEmpty()) {
             return;
         }

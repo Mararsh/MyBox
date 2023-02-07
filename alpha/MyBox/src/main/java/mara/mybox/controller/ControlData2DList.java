@@ -275,7 +275,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
         }
         super.checkButtons();
         boolean isEmpty = tableData == null || tableData.isEmpty();
-        boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
+        boolean none = isNoneSelected();
         if (clearDataButton != null) {
             clearDataButton.setDisable(isEmpty);
         }
@@ -385,7 +385,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
 
     public void load() {
         try {
-            load(tableView.getSelectionModel().getSelectedItem());
+            load(selectedItem());
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -408,8 +408,8 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
         if (manageController.loadController == null) {
             return;
         }
-        int index = tableView.getSelectionModel().getSelectedIndex();
-        Data2DDefinition selected = tableView.getSelectionModel().getSelectedItem();
+        int index = selectedIndix();
+        Data2DDefinition selected = selectedItem();
         if (selected == null) {
             return;
         }

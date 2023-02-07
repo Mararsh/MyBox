@@ -80,7 +80,7 @@ public class ColorCopyController extends ControlColorPaletteSelector {
     }
 
     protected void copyColors(ColorPaletteName palette) {
-        List<ColorData> selectedColors = colorsManager.colorsController.tableView.getSelectionModel().getSelectedItems();
+        List<ColorData> selectedColors = colorsManager.colorsController.selectedItems();
         if (selectedColors == null || selectedColors.isEmpty()) {
             popError(Languages.message("SelectColorsCopy"));
             return;

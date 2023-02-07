@@ -663,8 +663,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
         }
         super.checkButtons();
 
-        boolean isEmpty = tableData == null || tableData.isEmpty();
-        boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
+        boolean none = isNoneSelected();
         if (insertFilesButton != null) {
             insertFilesButton.setDisable(none);
         }
@@ -714,7 +713,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
     @FXML
     @Override
     public void viewAction() {
-        int index = tableView.getSelectionModel().getSelectedIndex();
+        int index = selectedIndix();
         if (index < 0 || index > tableData.size() - 1) {
             return;
         }
@@ -788,8 +787,8 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
         }
         recordFileAdded(files.get(0));
         synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
+            if (task != null) {
+                task.cancel();
             }
             task = new SingletonTask<Void>(this) {
 
@@ -818,11 +817,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
                 }
 
             };
-            if (parentController != null) {
-                parentController.start(task, true);
-            } else {
-                start(task, false);
-            }
+            start(task);
         }
 
     }
@@ -834,6 +829,10 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             }
             List<P> infos = new ArrayList<>();
             for (File file : files) {
+                if (task == null || task.isCancelled()) {
+                    return infos;
+                }
+                task.setInfo(file.getAbsolutePath());
                 P t = create(file);
                 if (t != null) {
                     infos.add(t);
@@ -904,7 +903,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
     @FXML
     @Override
     public void insertFilesAction() {
-        int index = tableView.getSelectionModel().getSelectedIndex();
+        int index = selectedIndix();
         if (index >= 0) {
             addFiles(index);
         } else {
@@ -914,7 +913,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
 
     @Override
     public void insertFile(File file) {
-        int index = tableView.getSelectionModel().getSelectedIndex();
+        int index = selectedIndix();
         if (index >= 0) {
             addFile(index, file);
         } else {
@@ -925,7 +924,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
     @FXML
     @Override
     public void insertDirectoryAction() {
-        int index = tableView.getSelectionModel().getSelectedIndex();
+        int index = selectedIndix();
         if (index >= 0) {
             addDirectory(index);
         } else {
@@ -935,7 +934,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
 
     @Override
     public void insertDirectory(File directory) {
-        int index = tableView.getSelectionModel().getSelectedIndex();
+        int index = selectedIndix();
         if (index >= 0) {
             addDirectory(index, directory);
         } else {

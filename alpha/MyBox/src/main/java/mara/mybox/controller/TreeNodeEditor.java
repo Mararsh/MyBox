@@ -348,7 +348,7 @@ public class TreeNodeEditor extends TreeTagsController {
                     }
                     long nodeid = currentNode.getNodeid();
                     List<String> nodeTags = tableTreeNodeTag.nodeTagNames(conn, nodeid);
-                    List<Tag> selected = tableView.getSelectionModel().getSelectedItems();
+                    List<Tag> selected = selectedItems();
                     if (selected == null || selected.isEmpty()) {
                         tableTreeNodeTag.removeTags(conn, nodeid);
                     } else {

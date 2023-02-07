@@ -440,8 +440,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
         super.checkButtons();
         clearButton.setDisable(false);
 
-        boolean isEmpty = tableData == null || tableData.isEmpty();
-        boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
+        boolean none = isNoneSelected();
         if (setButton != null) {
             setButton.setDisable(none);
         }
@@ -689,7 +688,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
     public void clear(String type) {
         String title, sql;
         if (message("ClearSelectedDataInPage").equals(type)) {
-            List<P> rows = tableView.getSelectionModel().getSelectedItems();
+            List<P> rows = selectedItems();
             if (rows == null || rows.isEmpty()) {
                 popError(message("NoData"));
                 return;

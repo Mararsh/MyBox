@@ -648,7 +648,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
         blendController.backImage = imageView.getImage();
         blendController.foreImage = FxImageTools.createImage(
                 (int) (imageView.getImage().getWidth() / 2), (int) (imageView.getImage().getHeight() / 2),
-                (Color) strokeColorSetController.rect.getFill());
+                strokeColorSetController.color());
         blendController.x = (int) (blendController.backImage.getWidth() - blendController.foreImage.getWidth()) / 2;
         blendController.y = (int) (blendController.backImage.getHeight() - blendController.foreImage.getHeight()) / 2;
     }

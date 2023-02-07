@@ -567,7 +567,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     @FXML
     @Override
     public void deleteRowsAction() {
-        List<Data2DColumn> selected = tableView.getSelectionModel().getSelectedItems();
+        List<Data2DColumn> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
             deleteAllRows();
             return;
@@ -742,7 +742,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
     @FXML
     @Override
     public void editAction() {
-        int index = tableView.getSelectionModel().getSelectedIndex();
+        int index = selectedIndix();
         if (index < 0) {
             return;
         }

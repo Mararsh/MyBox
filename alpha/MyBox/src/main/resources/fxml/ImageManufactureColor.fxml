@@ -41,10 +41,7 @@
                                 </ImageView>
                             </graphic>
                         </RadioButton>
-                  <RadioButton fx:id="colorBlendRadio" layoutX="51.0" layoutY="10.0">
-                     <toggleGroup>
-                        <ToggleGroup fx:id="colorGroup1" />
-                     </toggleGroup>
+                  <RadioButton fx:id="colorBlendRadio" layoutX="51.0" layoutY="10.0" toggleGroup="$colorGroup">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -262,21 +259,27 @@
                             </children>
                         </VBox>
                   <CheckBox fx:id="ignoreTransparentCheck" mnemonicParsing="false" selected="true" text="%IgnoreTransparent" />
-                        <HBox alignment="CENTER_LEFT" spacing="5.0">
-                            <children>
-                                <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconOK.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                            </children>
-                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="5.0" />
                     </children>
                 </VBox>
+            <VBox fx:id="blendBox" spacing="5.0">
+               <children>
+                  <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                     <children>
+                        <fx:include fx:id="blend" source="ControlImagesBlend.fxml" />
+                     </children>
+                  </VBox>
+                  <Button fx:id="goBlendButton" mnemonicParsing="false" onAction="#blendAction">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconGo.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </VBox>
             </children>
         </VBox>
         <Label fx:id="commentsLabel" minHeight="-Infinity" prefWidth="300.0" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true">

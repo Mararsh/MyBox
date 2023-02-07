@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
@@ -39,13 +40,44 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
 
     public void initPixTab() {
         try {
-            outlinesList.getItems().setAll(ImageItem.internalImages());
             outlinesList.setCellFactory(new Callback<ListView<Image>, ListCell<Image>>() {
                 @Override
                 public ListCell<Image> call(ListView<Image> param) {
                     return new ListImageCell();
                 }
             });
+            if (task != null) {
+                task.cancel();
+            }
+            outlinesList.getItems().clear();
+            task = new SingletonTask<Void>(this) {
+
+                @Override
+                protected boolean handle() {
+                    for (ImageItem item : ImageItem.predefined()) {
+                        if (task == null || task.isCancelled()) {
+                            return true;
+                        }
+                        Image image = item.readImage();
+                        if (image != null) {
+                            Platform.runLater(() -> {
+                                isSettingValues = true;
+                                outlinesList.getItems().add(image);
+                                isSettingValues = false;
+                            });
+                            task.setInfo(item.getName());
+                        }
+                    }
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                }
+
+            };
+            start(task);
+
             outlinesList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Image>() {
                 @Override
                 public void changed(ObservableValue ov, Image oldValue, Image newValue) {

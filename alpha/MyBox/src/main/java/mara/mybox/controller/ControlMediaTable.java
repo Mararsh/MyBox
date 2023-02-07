@@ -230,7 +230,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
     @Override
     public void checkSelected() {
         super.checkSelected();
-        MediaInformation selected = tableView.getSelectionModel().getSelectedItem();
+        MediaInformation selected = selectedItem();
         if (selected == null || selected.getInfo() == null) {
             return;
         }
@@ -271,7 +271,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
 
     @Override
     public void itemDoubleClicked() {
-        int index = tableView.getSelectionModel().getSelectedIndex();
+        int index = selectedIndix();
         if (index < 0 || index > tableData.size() - 1) {
             return;
         }
@@ -378,7 +378,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
     @FXML
     @Override
     public void infoAction() {
-        MediaInformation info = tableView.getSelectionModel().getSelectedItem();
+        MediaInformation info = selectedItem();
         if (info == null) {
             return;
         }

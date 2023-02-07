@@ -177,7 +177,7 @@ public class ControlData2DEditTable extends ControlData2DLoad {
     @FXML
     @Override
     public void editAction() {
-        int index = tableView.getSelectionModel().getSelectedIndex();
+        int index = selectedIndix();
         if (index < 0) {
             return;
         }

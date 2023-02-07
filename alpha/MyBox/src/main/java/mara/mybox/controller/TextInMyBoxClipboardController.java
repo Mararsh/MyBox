@@ -81,7 +81,7 @@ public class TextInMyBoxClipboardController extends BaseSysTableController<TextC
         if (isSettingValues) {
             return;
         }
-        TextClipboard selected = tableView.getSelectionModel().getSelectedItem();
+        TextClipboard selected = selectedItem();
         if (selected != null) {
             textArea.setText(selected.getText());
         }

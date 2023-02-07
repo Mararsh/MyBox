@@ -190,20 +190,6 @@ public class ImageItem {
         return preDefined;
     }
 
-    public static List<Image> internalImages() {
-        List<Image> images = new ArrayList<>();
-        try {
-            for (ImageItem item : predefined()) {
-                Image image = item.readImage();
-                if (image != null) {
-                    images.add(image);
-                }
-            }
-        } catch (Exception e) {
-        }
-        return images;
-    }
-
     /*
         get/set
      */

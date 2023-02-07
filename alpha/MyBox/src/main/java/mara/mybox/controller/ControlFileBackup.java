@@ -171,8 +171,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
             return;
         }
         super.checkButtons();
-        boolean isEmpty = tableData == null || tableData.isEmpty();
-        boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
+        boolean none = isNoneSelected();
         if (deleteBackupButton != null) {
             deleteBackupButton.setDisable(none);
         }
@@ -327,7 +326,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
 
     @FXML
     public synchronized void deleteBackups() {
-        List<FileBackup> selected = tableView.getSelectionModel().getSelectedItems();
+        List<FileBackup> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
         }
@@ -361,7 +360,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
 
     @FXML
     public void viewBackup() {
-        FileBackup selected = tableView.getSelectionModel().getSelectedItem();
+        FileBackup selected = selectedItem();
         if (selected == null) {
             return;
         }
@@ -373,7 +372,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
         if (sourceFile == null) {
             return;
         }
-        FileBackup selected = tableView.getSelectionModel().getSelectedItem();
+        FileBackup selected = selectedItem();
         if (selected == null) {
             return;
         }
@@ -415,7 +414,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
     }
 
     public FileBackup selectedBackup() {
-        return tableView.getSelectionModel().getSelectedItem();
+        return selectedItem();
     }
 
     @FXML

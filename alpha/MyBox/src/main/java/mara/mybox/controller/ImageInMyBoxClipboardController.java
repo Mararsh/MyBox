@@ -59,7 +59,7 @@ public class ImageInMyBoxClipboardController extends ImageViewerController {
                 @Override
                 protected boolean handle() {
                     try {
-                        ImageClipboard clip = clipsController.tableView.getSelectionModel().getSelectedItem();
+                        ImageClipboard clip = clipsController.selectedItem();
                         if (clip == null) {
                             clip = clipsController.tableData.get(0);
                         }

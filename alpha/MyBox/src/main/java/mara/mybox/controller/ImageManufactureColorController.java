@@ -34,11 +34,13 @@ import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperation.ColorActionType;
 import mara.mybox.bufferedimage.PixelsOperation.OperationType;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
+import mara.mybox.bufferedimage.PixelsOperationFactory.BlendColor;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
@@ -48,7 +50,6 @@ import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -65,7 +66,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
     private ColorActionType colorActionType;
 
     @FXML
-    protected VBox setBox, replaceBox;
+    protected VBox setBox, replaceBox, blendBox;
     @FXML
     protected HBox valueBox, valueColorBox;
     @FXML
@@ -73,7 +74,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
     @FXML
     protected ToggleGroup colorGroup, distanceGroup;
     @FXML
-    protected RadioButton colorReplaceRadio, colorColorRadio, colorRGBRadio,
+    protected RadioButton colorReplaceRadio, colorColorRadio, colorBlendRadio, colorRGBRadio,
             colorBrightnessRadio, colorHueRadio, colorSaturationRadio,
             colorRedRadio, colorGreenRadio, colorBlueRadio, colorOpacityRadio,
             colorYellowRadio, colorCyanRadio, colorMagentaRadio,
@@ -84,13 +85,15 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
     protected Label colorLabel, colorUnit, commentsLabel;
     @FXML
     protected Button colorIncreaseButton, colorDecreaseButton, colorFilterButton,
-            colorInvertButton, demoButton;
+            colorInvertButton, goBlendButton, demoButton;
     @FXML
     protected CheckBox distanceExcludeCheck, squareRootCheck, ignoreTransparentCheck;
     @FXML
     protected ImageView distanceTipsView;
     @FXML
     protected ColorSet originalColorSetController, newColorSetController, valueColorSetController;
+    @FXML
+    protected ControlImagesBlend blendController;
 
     @Override
     public void initPane() {
@@ -147,12 +150,15 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                     UserConfig.setBoolean(baseName + "IgnoreTransparent", ignoreTransparentCheck.isSelected());
                 }
             });
+
             originalColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
                     ignoreTransparentCheck.setVisible(!originalColorSetController.color().equals(Color.TRANSPARENT));
                 }
             });
+
+            blendController.setParameters(this);
 
             checkDistance();
         } catch (Exception e) {
@@ -189,10 +195,9 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                 distanceSelector.setValue(value);
                 isSettingValues = false;
                 try {
-                    int v = Integer.valueOf(value);
-                    if (v == 0
-                            && ((Color) originalColorSetController.rect.getFill()).equals(((Color) newColorSetController.rect.getFill()))) {
-                        popError(Languages.message("OriginalNewSameColor"));
+                    int v = Integer.parseInt(value);
+                    if (v == 0 && originalColorSetController.color().equals(newColorSetController.color())) {
+                        popError(message("OriginalNewSameColor"));
                         return;
                     }
                     if (v >= 0 && v <= max) {
@@ -223,7 +228,6 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
             valueBox.getChildren().clear();
             valueSelector.getItems().clear();
             ValidationTools.setEditorNormal(valueSelector);
-            okButton.disableProperty().unbind();
             commentsLabel.setText("");
             colorLabel.setText(message("Value"));
             colorUnit.setText("0-255");
@@ -233,34 +237,35 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
             }
             if (colorReplaceRadio.isSelected()) {
                 imageController.imageTab();
-                okButton.disableProperty().bind(distanceSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()));
                 colorOperationType = OperationType.ReplaceColor;
-                setBox.getChildren().addAll(replaceBox);
-                commentsLabel.setText(Languages.message("ManufactureWholeImage"));
+                setBox.getChildren().addAll(replaceBox, opBox);
+                opBox.getChildren().addAll(setButton, colorFilterButton);
+                commentsLabel.setText(message("ManufactureWholeImage"));
                 scopeCheck.setSelected(false);
                 scopeCheck.setDisable(true);
 
             } else {
-                okButton.setDisable(true);
-                commentsLabel.setText(Languages.message("DefineScopeAndManufacture"));
+                commentsLabel.setText(message("DefineScopeAndManufacture"));
                 scopeCheck.setDisable(false);
                 if (!scopeController.scopeWhole()) {
                     imageController.scopeTab();
+                    scopeCheck.setSelected(true);
                 }
 
                 if (colorColorRadio.isSelected()) {
                     colorOperationType = OperationType.Color;
-                    makeValuesBox(0, 100);
-                    colorUnit.setText("0-100");
-                    colorLabel.setText(message("Opacity"));
-                    setBox.getChildren().addAll(valueColorBox, valueBox, opBox, scopeCheck);
-                    valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
+                    setBox.getChildren().addAll(valueColorBox, scopeCheck, opBox);
                     opBox.getChildren().addAll(setButton, colorFilterButton);
+
+                } else if (colorBlendRadio.isSelected()) {
+                    colorOperationType = OperationType.Blend;
+                    setBox.getChildren().addAll(valueColorBox, scopeCheck, blendBox);
+                    setBlender();
 
                 } else if (colorRGBRadio.isSelected()) {
                     colorOperationType = OperationType.RGB;
                     makeValuesBox(0, 255);
-                    setBox.getChildren().addAll(valueBox, opBox, scopeCheck);
+                    setBox.getChildren().addAll(valueBox, scopeCheck, opBox);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(colorIncreaseButton, colorDecreaseButton, colorInvertButton);
 
@@ -268,7 +273,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                     colorOperationType = OperationType.Brightness;
                     makeValuesBox(0, 100);
                     colorUnit.setText("0-100");
-                    setBox.getChildren().addAll(valueBox, opBox, scopeCheck);
+                    setBox.getChildren().addAll(valueBox, scopeCheck, opBox);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorIncreaseButton, colorDecreaseButton);
 
@@ -276,7 +281,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                     colorOperationType = OperationType.Saturation;
                     makeValuesBox(0, 100);
                     colorUnit.setText("0-100");
-                    setBox.getChildren().addAll(valueBox, opBox, scopeCheck);
+                    setBox.getChildren().addAll(valueBox, scopeCheck, opBox);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorIncreaseButton, colorDecreaseButton);
 
@@ -284,56 +289,56 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                     colorOperationType = OperationType.Hue;
                     makeValuesBox(0, 360);
                     colorUnit.setText("0-360");
-                    setBox.getChildren().addAll(valueBox, opBox, scopeCheck);
+                    setBox.getChildren().addAll(valueBox, scopeCheck, opBox);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorIncreaseButton, colorDecreaseButton);
 
                 } else if (colorRedRadio.isSelected()) {
                     colorOperationType = OperationType.Red;
                     makeValuesBox(0, 255);
-                    setBox.getChildren().addAll(valueBox, opBox, scopeCheck);
+                    setBox.getChildren().addAll(valueBox, scopeCheck, opBox);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorIncreaseButton, colorDecreaseButton, colorFilterButton, colorInvertButton);
 
                 } else if (colorGreenRadio.isSelected()) {
                     colorOperationType = OperationType.Green;
                     makeValuesBox(0, 255);
-                    setBox.getChildren().addAll(valueBox, opBox, scopeCheck);
+                    setBox.getChildren().addAll(valueBox, scopeCheck, opBox);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorIncreaseButton, colorDecreaseButton, colorFilterButton, colorInvertButton);
 
                 } else if (colorBlueRadio.isSelected()) {
                     colorOperationType = OperationType.Blue;
                     makeValuesBox(0, 255);
-                    setBox.getChildren().addAll(valueBox, opBox, scopeCheck);
+                    setBox.getChildren().addAll(valueBox, scopeCheck, opBox);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorIncreaseButton, colorDecreaseButton, colorFilterButton, colorInvertButton);
 
                 } else if (colorYellowRadio.isSelected()) {
                     colorOperationType = OperationType.Yellow;
                     makeValuesBox(0, 255);
-                    setBox.getChildren().addAll(valueBox, opBox, scopeCheck);
+                    setBox.getChildren().addAll(valueBox, scopeCheck, opBox);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorIncreaseButton, colorDecreaseButton, colorFilterButton, colorInvertButton);
 
                 } else if (colorCyanRadio.isSelected()) {
                     colorOperationType = OperationType.Cyan;
                     makeValuesBox(0, 255);
-                    setBox.getChildren().addAll(valueBox, opBox, scopeCheck);
+                    setBox.getChildren().addAll(valueBox, scopeCheck, opBox);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorIncreaseButton, colorDecreaseButton, colorFilterButton, colorInvertButton);
 
                 } else if (colorMagentaRadio.isSelected()) {
                     colorOperationType = OperationType.Magenta;
                     makeValuesBox(0, 255);
-                    setBox.getChildren().addAll(valueBox, opBox, scopeCheck);
+                    setBox.getChildren().addAll(valueBox, scopeCheck, opBox);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorIncreaseButton, colorDecreaseButton, colorFilterButton, colorInvertButton);
 
                 } else if (colorOpacityRadio.isSelected()) {
                     colorOperationType = OperationType.Opacity;
                     makeValuesBox(0, 255);
-                    setBox.getChildren().addAll(valueBox, opBox, scopeCheck);
+                    setBox.getChildren().addAll(valueBox, scopeCheck, opBox);
                     valueBox.getChildren().addAll(colorLabel, valueSelector, colorUnit);
                     opBox.getChildren().addAll(setButton, colorIncreaseButton, colorDecreaseButton);
 
@@ -362,7 +367,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v >= min && v <= max) {
                             colorValue = v;
                             ValidationTools.setEditorNormal(valueSelector);
@@ -379,6 +384,15 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    protected void setBlender() {
+        blendController.backImage = imageView.getImage();
+        blendController.foreImage = FxImageTools.createImage(
+                (int) (imageView.getImage().getWidth() / 2), (int) (imageView.getImage().getHeight() / 2),
+                valueColorSetController.color());
+        blendController.x = (int) (blendController.backImage.getWidth() - blendController.foreImage.getWidth()) / 2;
+        blendController.y = (int) (blendController.backImage.getHeight() - blendController.foreImage.getHeight()) / 2;
     }
 
     @Override
@@ -412,13 +426,6 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
     }
 
     @FXML
-    @Override
-    public void okAction() {
-        colorActionType = ColorActionType.Set;
-        applyChange();
-    }
-
-    @FXML
     public void filterAction() {
         colorActionType = ColorActionType.Filter;
         applyChange();
@@ -427,6 +434,12 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
     @FXML
     public void invertAction() {
         colorActionType = ColorActionType.Invert;
+        applyChange();
+    }
+
+    @FXML
+    public void blendAction() {
+        colorActionType = ColorActionType.Set;
         applyChange();
     }
 
@@ -446,8 +459,8 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                 protected boolean handle() {
                     PixelsOperation pixelsOperation;
                     if (colorOperationType == OperationType.ReplaceColor) {
-                        java.awt.Color originalColor = ColorConvertTools.converColor((Color) originalColorSetController.rect.getFill());
-                        java.awt.Color newColor = ColorConvertTools.converColor((Color) newColorSetController.rect.getFill());
+                        java.awt.Color originalColor = originalColorSetController.awtColor();
+                        java.awt.Color newColor = newColorSetController.awtColor();
                         ImageScope scope = new ImageScope(imageView.getImage());
                         scope.setScopeType(ImageScope.ScopeType.Color);
                         scope.setColorScopeType(ImageScope.ColorScopeType.Color);
@@ -467,20 +480,22 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                         }
                         scope.setColorExcluded(distanceExcludeCheck.isSelected());
                         pixelsOperation = PixelsOperationFactory.create(imageView.getImage(),
-                                scope, OperationType.ReplaceColor, ColorActionType.Set);
-                        pixelsOperation.setColorPara1(originalColor);
-                        pixelsOperation.setColorPara2(newColor);
-                        pixelsOperation.setSkipTransparent(originalColor.getRGB() != 0 && ignoreTransparentCheck.isSelected());
+                                scope, OperationType.ReplaceColor, colorActionType)
+                                .setColorPara1(originalColor)
+                                .setColorPara2(newColor)
+                                .setSkipTransparent(originalColor.getRGB() != 0 && ignoreTransparentCheck.isSelected());
 
                     } else {
                         pixelsOperation = PixelsOperationFactory.create(imageView.getImage(),
-                                scopeController.scope, colorOperationType, colorActionType);
-                        pixelsOperation.setSkipTransparent(scopeController.ignoreTransparentCheck.isSelected());
+                                scopeController.scope, colorOperationType, colorActionType)
+                                .setSkipTransparent(scopeController.ignoreTransparentCheck.isSelected());
                         switch (colorOperationType) {
                             case Color:
-                                pixelsOperation.setColorPara1(ColorConvertTools.converColor((Color) valueColorSetController.rect.getFill()));
-                                pixelsOperation.setIntPara1(colorValue * 255 / 100);
-                                pixelsOperation.setFloatPara1(colorValue / 100.0f);
+                                pixelsOperation.setColorPara1(valueColorSetController.awtColor());
+                                break;
+                            case Blend:
+                                pixelsOperation.setColorPara1(valueColorSetController.awtColor());
+                                ((BlendColor) pixelsOperation).setBlender(blendController.blender());
                                 break;
                             case RGB:
                                 pixelsOperation.setIntPara1(colorValue);
@@ -523,7 +538,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
         if (imageView.getImage() == null) {
             return;
         }
-        imageController.popInformation(Languages.message("WaitAndHandling"));
+        imageController.popInformation(message("WaitAndHandling"));
         demoButton.setDisable(true);
         Task demoTask = new Task<Void>() {
             private List<String> files;
@@ -560,7 +575,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                     pixelsOperation.setFloatPara1(0.5f);
                     bufferedImage = pixelsOperation.operate();
                     tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("Color") + "_" + Languages.message("Filter") + ".png";
+                            + message("Color") + "_" + message("Filter") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -570,7 +585,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                     pixelsOperation.setFloatPara1(0.5f);
                     bufferedImage = pixelsOperation.operate();
                     tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("Brightness") + "_" + Languages.message("Increase") + ".png";
+                            + message("Brightness") + "_" + message("Increase") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -580,7 +595,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                     pixelsOperation.setFloatPara1(0.3f);
                     bufferedImage = pixelsOperation.operate();
                     tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("Hue") + "_" + Languages.message("Decrease") + ".png";
+                            + message("Hue") + "_" + message("Decrease") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -590,7 +605,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                     pixelsOperation.setFloatPara1(0.5f);
                     bufferedImage = pixelsOperation.operate();
                     tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("Saturation") + "_" + Languages.message("Increase") + ".png";
+                            + message("Saturation") + "_" + message("Increase") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -600,7 +615,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                     pixelsOperation.setIntPara1(128);
                     bufferedImage = pixelsOperation.operate();
                     tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("Opacity") + "_" + Languages.message("Decrease") + ".png";
+                            + message("Opacity") + "_" + message("Decrease") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -609,7 +624,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                             scope, OperationType.RGB, ColorActionType.Invert);
                     bufferedImage = pixelsOperation.operate();
                     tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("RGB") + "_" + Languages.message("Invert") + ".png";
+                            + message("RGB") + "_" + message("Invert") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -618,7 +633,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                             scope, OperationType.Red, ColorActionType.Filter);
                     bufferedImage = pixelsOperation.operate();
                     tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("Red") + "_" + Languages.message("Filter") + ".png";
+                            + message("Red") + "_" + message("Filter") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -628,7 +643,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                     pixelsOperation.setIntPara1(60);
                     bufferedImage = pixelsOperation.operate();
                     tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("Yellow") + "_" + Languages.message("Increase") + ".png";
+                            + message("Yellow") + "_" + message("Increase") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -638,7 +653,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                     pixelsOperation.setIntPara1(60);
                     bufferedImage = pixelsOperation.operate();
                     tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("Magenta") + "_" + Languages.message("Decrease") + ".png";
+                            + message("Magenta") + "_" + message("Decrease") + ".png";
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }

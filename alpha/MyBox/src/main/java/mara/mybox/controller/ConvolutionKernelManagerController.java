@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
@@ -125,27 +124,15 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
     }
 
     @Override
-    protected void checkSelected() {
-        ObservableList<ConvolutionKernel> selected = tableView.getSelectionModel().getSelectedItems();
-        if (selected != null && selected.size() > 0) {
-            editButton.setDisable(false);
-            deleteButton.setDisable(false);
-            copyButton.setDisable(false);
-        } else {
-            editButton.setDisable(true);
-            deleteButton.setDisable(true);
-            copyButton.setDisable(true);
-        }
-    }
-
-    @Override
     protected void checkButtons() {
         if (isSettingValues) {
             return;
         }
         super.checkButtons();
-        ObservableList<ConvolutionKernel> selected = tableView.getSelectionModel().getSelectedItems();
-        copyButton.setDisable(selected == null || selected.size() <= 0);
+        boolean none = isNoneSelected();
+        editButton.setDisable(none);
+        deleteButton.setDisable(none);
+        copyButton.setDisable(none);
     }
 
     @Override
@@ -416,7 +403,7 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
     @FXML
     @Override
     public void editAction() {
-        final List<ConvolutionKernel> selected = tableView.getSelectionModel().getSelectedItems();
+        final List<ConvolutionKernel> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
         }
@@ -468,7 +455,7 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
     @FXML
     @Override
     public void deleteAction() {
-        final List<ConvolutionKernel> selected = tableView.getSelectionModel().getSelectedItems();
+        final List<ConvolutionKernel> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
         }

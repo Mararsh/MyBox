@@ -620,8 +620,8 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             return;
         }
         super.checkButtons();
-        boolean isEmpty = tableData == null || tableData.isEmpty();
-        boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
+
+        boolean none = isNoneSelected();
         deleteButton.setDisable(none);
         copyButton.setDisable(none);
         moveDataButton.setDisable(none);
@@ -645,7 +645,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     @FXML
     @Override
     public void editAction() {
-        editNode(tableView.getSelectionModel().getSelectedItem());
+        editNode(selectedItem());
     }
 
     public void editNode(TreeNode node) {
@@ -669,7 +669,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     @FXML
     @Override
     public void pasteAction() {
-        pasteNode(tableView.getSelectionModel().getSelectedItem());
+        pasteNode(selectedItem());
     }
 
     public void pasteNode(TreeNode node) {

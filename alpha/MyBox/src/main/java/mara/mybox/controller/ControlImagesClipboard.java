@@ -246,7 +246,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
     @FXML
     @Override
     public void editAction() {
-        ImageClipboard clip = tableView.getSelectionModel().getSelectedItem();
+        ImageClipboard clip = selectedItem();
         if (clip == null) {
             return;
         }
@@ -278,7 +278,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
     @FXML
     @Override
     public void copyToSystemClipboard() {
-        ImageClipboard clip = tableView.getSelectionModel().getSelectedItem();
+        ImageClipboard clip = selectedItem();
         if (clip == null) {
             return;
         }
@@ -313,36 +313,45 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
 
     @FXML
     public void examplesAction() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
 
-                private List<ImageClipboard> clips;
+            private List<ImageClipboard> clips;
 
-                @Override
-                protected boolean handle() {
-                    List<Image> predefinedItems = ImageItem.internalImages();
-                    clips = new ArrayList<>();
-                    for (Image image : predefinedItems) {
+            @Override
+            protected boolean handle() {
+                clips = new ArrayList<>();
+                for (ImageItem item : ImageItem.predefined()) {
+                    if (task == null || task.isCancelled()) {
+                        return true;
+                    }
+                    Image image = item.readImage();
+                    if (image != null) {
                         ImageClipboard clip = ImageClipboard.create(image, ImageClipboard.ImageSource.Example);
                         if (clip == null) {
                             continue;
                         }
                         clips.add(clip);
+                        task.setInfo(item.getName());
                     }
-                    tableDefinition.insertList(clips);
-                    return true;
-                }
 
-                @Override
-                protected void whenSucceeded() {
-                    refreshAction();
                 }
-            };
-            start(task);
-        }
+                tableDefinition.insertList(clips);
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+            }
+
+            @Override
+            protected void finalAction() {
+                refreshAction();
+            }
+        };
+        start(task);
     }
 
     @FXML

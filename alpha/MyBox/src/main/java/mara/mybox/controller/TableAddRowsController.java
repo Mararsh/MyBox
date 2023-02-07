@@ -108,7 +108,7 @@ public class TableAddRowsController extends BaseChildController {
                 rows.add("" + (i + 1));
             }
             rowSelector.getItems().setAll(rows);
-            int tableSelect = tableViewController.tableView.getSelectionModel().getSelectedIndex();
+            int tableSelect = tableViewController.selectedIndix();
             rowSelector.getSelectionModel().select(tableSelect >= 0 ? tableSelect : (thisSelect >= 0 ? thisSelect : 0));
 
         } catch (Exception e) {

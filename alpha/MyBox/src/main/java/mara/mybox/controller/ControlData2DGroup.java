@@ -502,7 +502,7 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
     @FXML
     @Override
     public void editAction() {
-        int index = tableView.getSelectionModel().getSelectedIndex();
+        int index = selectedIndix();
         if (index < 0) {
             return;
         }
@@ -526,7 +526,7 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
     @Override
     public void deleteAction() {
         try {
-            List<DataFilter> selected = tableView.getSelectionModel().getSelectedItems();
+            List<DataFilter> selected = selectedItems();
             if (selected == null || selected.isEmpty()) {
                 clearAction();
                 return;

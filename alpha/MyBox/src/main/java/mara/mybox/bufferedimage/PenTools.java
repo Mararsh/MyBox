@@ -78,7 +78,7 @@ public class PenTools {
                         }
                     }
                 } else {
-                    target = ImageBlend.blend(foreImage, srcImage, 0, 0, blender);
+                    target = PixelsBlend.blend(foreImage, srcImage, 0, 0, blender);
                 }
             }
             if (isFill) {
@@ -111,7 +111,7 @@ public class PenTools {
                         }
                     }
                 } else {
-                    target = ImageBlend.blend(foreImage, backImage, 0, 0, blender);
+                    target = PixelsBlend.blend(foreImage, backImage, 0, 0, blender);
                 }
             }
             return target;
@@ -172,7 +172,7 @@ public class PenTools {
                         }
                     }
                 } else {
-                    target = ImageBlend.blend(foreImage, srcImage, 0, 0, blender);
+                    target = PixelsBlend.blend(foreImage, srcImage, 0, 0, blender);
                 }
             }
             if (isFill) {
@@ -205,7 +205,7 @@ public class PenTools {
                         }
                     }
                 } else {
-                    target = ImageBlend.blend(foreImage, backImage, 0, 0, blender);
+                    target = PixelsBlend.blend(foreImage, backImage, 0, 0, blender);
                 }
             }
             return target;
@@ -263,7 +263,7 @@ public class PenTools {
                 }
                 return target;
             } else {
-                return ImageBlend.blend(foreImage, srcImage, 0, 0, blender);
+                return PixelsBlend.blend(foreImage, srcImage, 0, 0, blender);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -373,7 +373,7 @@ public class PenTools {
                     }
 
                 } else {
-                    target = ImageBlend.blend(foreImage, srcImage, 0, 0, blender);
+                    target = PixelsBlend.blend(foreImage, srcImage, 0, 0, blender);
                 }
             }
             if (isFill) {
@@ -406,7 +406,7 @@ public class PenTools {
                         }
                     }
                 } else {
-                    target = ImageBlend.blend(foreImage, backImage, 0, 0, blender);
+                    target = PixelsBlend.blend(foreImage, backImage, 0, 0, blender);
                 }
             }
             return target;
@@ -473,7 +473,7 @@ public class PenTools {
                         }
                     }
                 } else {
-                    target = ImageBlend.blend(foreImage, srcImage, 0, 0, blender);
+                    target = PixelsBlend.blend(foreImage, srcImage, 0, 0, blender);
                 }
             }
             if (isFill) {
@@ -512,7 +512,7 @@ public class PenTools {
                     }
 
                 } else {
-                    target = ImageBlend.blend(foreImage, backImage, 0, 0, blender);
+                    target = PixelsBlend.blend(foreImage, backImage, 0, 0, blender);
                 }
             }
             return target;
@@ -582,7 +582,7 @@ public class PenTools {
 
                 return target;
             } else {
-                return ImageBlend.blend(foreImage, srcImage, 0, 0, blender);
+                return PixelsBlend.blend(foreImage, srcImage, 0, 0, blender);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -652,7 +652,7 @@ public class PenTools {
                 }
                 return target;
             } else {
-                return ImageBlend.blend(foreImage, srcImage, 0, 0, blender);
+                return PixelsBlend.blend(foreImage, srcImage, 0, 0, blender);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

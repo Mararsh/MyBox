@@ -194,8 +194,8 @@ public class ImageManufactureScopesSavedController extends BaseSysTableControlle
             return;
         }
         super.checkButtons();
-        boolean isEmpty = tableData == null || tableData.isEmpty();
-        boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
+
+        boolean none = isNoneSelected();
         useScopeButton.setDisable(none);
     }
 
@@ -206,7 +206,7 @@ public class ImageManufactureScopesSavedController extends BaseSysTableControlle
 
     @FXML
     public void useScope() {
-        ImageScope selected = tableView.getSelectionModel().getSelectedItem();
+        ImageScope selected = selectedItem();
         if (selected == null) {
             return;
         }

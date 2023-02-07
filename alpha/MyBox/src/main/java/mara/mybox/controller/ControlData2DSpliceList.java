@@ -51,7 +51,7 @@ public class ControlData2DSpliceList extends ControlData2DList {
     @Override
     public void editAction() {
         try {
-            Data2DDefinition selected = tableView.getSelectionModel().getSelectedItem();
+            Data2DDefinition selected = selectedItem();
             if (selected == null) {
                 return;
             }
@@ -67,8 +67,7 @@ public class ControlData2DSpliceList extends ControlData2DList {
             return;
         }
         super.checkButtons();
-        boolean isEmpty = tableData == null || tableData.isEmpty();
-        boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
+        boolean none = isNoneSelected();
         editDataButton.setDisable(none);
         dataAButton.setDisable(none);
         dataBButton.setDisable(none);
@@ -77,7 +76,7 @@ public class ControlData2DSpliceList extends ControlData2DList {
     @FXML
     public void dataAAction() {
         try {
-            Data2DDefinition selected = tableView.getSelectionModel().getSelectedItem();
+            Data2DDefinition selected = selectedItem();
             if (selected == null) {
                 return;
             }
@@ -91,7 +90,7 @@ public class ControlData2DSpliceList extends ControlData2DList {
     @FXML
     public void dataBAction() {
         try {
-            Data2DDefinition selected = tableView.getSelectionModel().getSelectedItem();
+            Data2DDefinition selected = selectedItem();
             if (selected == null) {
                 return;
             }

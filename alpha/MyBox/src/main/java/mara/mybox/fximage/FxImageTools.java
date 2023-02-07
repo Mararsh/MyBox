@@ -21,7 +21,6 @@ import javafx.scene.text.Text;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.bufferedimage.ColorConvertTools;
-import mara.mybox.bufferedimage.ImageBlend;
 import mara.mybox.bufferedimage.ImageTextTools;
 import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
@@ -232,7 +231,7 @@ public class FxImageTools {
         }
         BufferedImage source1 = SwingFXUtils.fromFXImage(foreImage, null);
         BufferedImage source2 = SwingFXUtils.fromFXImage(backImage, null);
-        BufferedImage target = ImageBlend.blend(source1, source2, x, y, blender);
+        BufferedImage target = PixelsBlend.blend(source1, source2, x, y, blender);
         if (target == null) {
             target = source1;
         }

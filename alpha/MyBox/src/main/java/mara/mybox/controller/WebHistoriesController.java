@@ -101,8 +101,7 @@ public class WebHistoriesController extends BaseSysTableController<WebHistory> {
         }
         super.checkButtons();
 
-        boolean isEmpty = tableData == null || tableData.isEmpty();
-        boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
+        boolean none = isNoneSelected();
         goButton.setDisable(none);
     }
 
@@ -207,7 +206,7 @@ public class WebHistoriesController extends BaseSysTableController<WebHistory> {
     @FXML
     @Override
     public void goAction() {
-        WebHistory selected = tableView.getSelectionModel().getSelectedItem();
+        WebHistory selected = selectedItem();
         if (selected == null) {
             return;
         }

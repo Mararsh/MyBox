@@ -246,7 +246,7 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
             return;
         }
         boolean userPassword = tableView.getColumns().contains(userPasswordColumn);
-        List<PdfInformation> rows = tableView.getSelectionModel().getSelectedItems();
+        List<PdfInformation> rows = selectedItems();
         if (rows == null || rows.isEmpty()) {
             rows = tableData;
         }

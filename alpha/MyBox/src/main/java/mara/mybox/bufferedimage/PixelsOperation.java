@@ -23,7 +23,7 @@ import mara.mybox.value.Colors;
 public abstract class PixelsOperation {
 
     protected BufferedImage image;
-    protected boolean isDithering, boolPara, skipTransparent = true, excludeScope;
+    protected boolean isDithering, boolPara1, boolPara2, skipTransparent = true, excludeScope;
     protected int intPara1, intPara2, intPara3, scopeColor = 0;
     protected float floatPara1, floatPara2;
     protected Color colorPara1, colorPara2, bkColor;
@@ -39,8 +39,8 @@ public abstract class PixelsOperation {
         Smooth, Denoise, Blur, Sharpen, Clarity, Emboss, EdgeDetect,
         Thresholding, Quantization, Gray, BlackOrWhite, Sepia,
         ReplaceColor, Invert, Red, Green, Blue, Yellow, Cyan, Magenta, Mosaic, FrostedGlass,
-        Brightness, Saturation, Hue, Opacity, PreOpacity, RGB, Color, ShowScope,
-        Convolution, Contrast
+        Brightness, Saturation, Hue, Opacity, PreOpacity, RGB, Color, Blend,
+        ShowScope, Convolution, Contrast
     }
 
     public enum ColorActionType {
@@ -379,76 +379,94 @@ public abstract class PixelsOperation {
         return this;
     }
 
-    public boolean isBoolPara() {
-        return boolPara;
+    public boolean isBoolPara1() {
+        return boolPara1;
     }
 
-    public void setBoolPara(boolean boolPara) {
-        this.boolPara = boolPara;
+    public PixelsOperation setBoolPara1(boolean boolPara1) {
+        this.boolPara1 = boolPara1;
+        return this;
+    }
+
+    public boolean isBoolPara2() {
+        return boolPara2;
+    }
+
+    public PixelsOperation setBoolPara2(boolean boolPara2) {
+        this.boolPara2 = boolPara2;
+        return this;
     }
 
     public int getIntPara1() {
         return intPara1;
     }
 
-    public void setIntPara1(int intPara1) {
+    public PixelsOperation setIntPara1(int intPara1) {
         this.intPara1 = intPara1;
+        return this;
     }
 
     public int getIntPara2() {
         return intPara2;
     }
 
-    public void setIntPara2(int intPara2) {
+    public PixelsOperation setIntPara2(int intPara2) {
         this.intPara2 = intPara2;
+        return this;
     }
 
     public int getIntPara3() {
         return intPara3;
     }
 
-    public void setIntPara3(int intPara3) {
+    public PixelsOperation setIntPara3(int intPara3) {
         this.intPara3 = intPara3;
+        return this;
     }
 
     public float getFloatPara1() {
         return floatPara1;
     }
 
-    public void setFloatPara1(float floatPara1) {
+    public PixelsOperation setFloatPara1(float floatPara1) {
         this.floatPara1 = floatPara1;
+        return this;
     }
 
     public float getFloatPara2() {
         return floatPara2;
     }
 
-    public void setFloatPara2(float floatPara2) {
+    public PixelsOperation setFloatPara2(float floatPara2) {
         this.floatPara2 = floatPara2;
+        return this;
     }
 
     public Color[] getThisLine() {
         return thisLine;
     }
 
-    public void setThisLine(Color[] thisLine) {
+    public PixelsOperation setThisLine(Color[] thisLine) {
         this.thisLine = thisLine;
+        return this;
     }
 
     public Color[] getNextLine() {
         return nextLine;
     }
 
-    public void setNextLine(Color[] nextLine) {
+    public PixelsOperation setNextLine(Color[] nextLine) {
         this.nextLine = nextLine;
+        return this;
     }
 
     public int getThisLineY() {
         return thisLineY;
     }
 
-    public void setThisLineY(int thisLineY) {
+    public PixelsOperation setThisLineY(int thisLineY) {
         this.thisLineY = thisLineY;
+        return this;
     }
 
     public int getImageWidth() {
@@ -489,40 +507,45 @@ public abstract class PixelsOperation {
         return colorActionType;
     }
 
-    public void setColorActionType(ColorActionType colorActionType) {
+    public PixelsOperation setColorActionType(ColorActionType colorActionType) {
         this.colorActionType = colorActionType;
+        return this;
     }
 
     public int getScopeColor() {
         return scopeColor;
     }
 
-    public void setScopeColor(int scopeColor) {
+    public PixelsOperation setScopeColor(int scopeColor) {
         this.scopeColor = scopeColor;
+        return this;
     }
 
     public boolean isSkipTransparent() {
         return skipTransparent;
     }
 
-    public void setSkipTransparent(boolean skipTransparent) {
+    public PixelsOperation setSkipTransparent(boolean skipTransparent) {
         this.skipTransparent = skipTransparent;
+        return this;
     }
 
     public boolean isExcludeScope() {
         return excludeScope;
     }
 
-    public void setExcludeScope(boolean excludeScope) {
+    public PixelsOperation setExcludeScope(boolean excludeScope) {
         this.excludeScope = excludeScope;
+        return this;
     }
 
     public Color getBkColor() {
         return bkColor;
     }
 
-    public void setBkColor(Color bkColor) {
+    public PixelsOperation setBkColor(Color bkColor) {
         this.bkColor = bkColor;
+        return this;
     }
 
 }
