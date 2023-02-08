@@ -422,6 +422,15 @@ License:    Apache License Version 2.0
                                                                               </ImageView>
                                                                           </graphic>
                                                                       </Button>
+                                                      <Button fx:id="functionsButton" mnemonicParsing="false" onMouseEntered="#popHtmlFunctionsMenu">
+                                                         <graphic>
+                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                               <image>
+                                                                  <Image url="@../buttons/Red/iconFunction.png" />
+                                                               </image>
+                                                            </ImageView>
+                                                         </graphic>
+                                                      </Button>
                                                                   </children>
                                                               </HBox>
                                                               <fx:include fx:id="webView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlWebView.fxml" VBox.vgrow="ALWAYS" />

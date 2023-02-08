@@ -25,6 +25,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.MouseEvent;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.HtmlWriteTools;
@@ -416,6 +417,11 @@ public class MarkdownEditorController extends TextEditorController {
             MyBoxLog.debug(e.toString());
         }
         return false;
+    }
+
+    @FXML
+    public void popHtmlFunctionsMenu(MouseEvent mouseEvent) {
+        webViewController.popFunctionsMenu(mouseEvent);
     }
 
 }

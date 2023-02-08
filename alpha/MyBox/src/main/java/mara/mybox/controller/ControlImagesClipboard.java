@@ -116,10 +116,12 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
             this.parentController = parent;
             if (use) {
                 useClipButton.disableProperty().bind(tableView.getSelectionModel().selectedItemProperty().isNull());
+                sourceColumn.setVisible(false);
+                timeColumn.setVisible(false);
             } else {
                 buttonsPane.getChildren().remove(useClipButton);
-                copyToSystemClipboardButton.disableProperty().bind(tableView.getSelectionModel().selectedItemProperty().isNull());
             }
+            copyToSystemClipboardButton.disableProperty().bind(tableView.getSelectionModel().selectedItemProperty().isNull());
             refreshAction();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

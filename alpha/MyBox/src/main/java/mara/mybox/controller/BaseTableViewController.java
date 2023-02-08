@@ -518,19 +518,11 @@ public abstract class BaseTableViewController<P> extends BaseController {
                         if (isSettingValues) {
                             return;
                         }
-                        isSettingValues = true;
                         if (newValue) {
-                            for (int i = 0; i < tableData.size(); i++) {
-                                tableView.getSelectionModel().select(i);
-                            }
+                            tableView.getSelectionModel().selectAll();
                         } else {
-                            for (int i = 0; i < tableData.size(); i++) {
-                                tableView.getSelectionModel().clearSelection(i);
-                            }
+                            tableView.getSelectionModel().clearSelection();
                         }
-                        isSettingValues = false;
-                        checkSelected();
-                        notifySelected();
                     }
                 });
             }

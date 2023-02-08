@@ -45,6 +45,8 @@ public class Data2DExampleTools {
 
             items.add(location(lang, controller));
 
+            items.add(projectManagement(lang, controller));
+
             return items;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -863,6 +865,93 @@ public class Data2DExampleTools {
             boolean isChinese = "zh".equals(lang);
 
             Menu locationMenu = new Menu(message("LocationData"), StyleTools.getIconImageView("iconLocation.png"));
+
+            MenuItem menu = new MenuItem(message("ChineseHistoricalCapitals"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn(message(lang, "Country"), ColumnType.String, true).setWidth(140));
+                columns.add(new Data2DColumn(message(lang, "Capital"), ColumnType.String, true).setWidth(200));
+                columns.add(new Data2DColumn(message(lang, "Longitude"), ColumnType.Longitude));
+                columns.add(new Data2DColumn(message(lang, "Latitude"), ColumnType.Latitude));
+                columns.add(new Data2DColumn(message(lang, "StartTime"), ColumnType.Era).setFormat(isChinese ? "Gy" : "y G"));
+                columns.add(new Data2DColumn(message(lang, "EndTime"), ColumnType.Era).setFormat(isChinese ? "Gy" : "y G"));
+                columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
+                data.setColumns(columns).setDataName(message("ChineseHistoricalCapitals"));
+                if (makeExampleFile("ChineseHistoricalCapitals_" + lang, data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            locationMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("AutumnMovementPatternsOfEuropeanGadwalls"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn(message(lang, "StartTime"), ColumnType.Datetime, 180).setFixTwoDigitYear(true));
+                columns.add(new Data2DColumn(message(lang, "EndTime"), ColumnType.Datetime, 180).setFixTwoDigitYear(true));
+                columns.add(new Data2DColumn(message(lang, "Longitude"), ColumnType.Longitude));
+                columns.add(new Data2DColumn(message(lang, "Latitude"), ColumnType.Latitude));
+                columns.add(new Data2DColumn(message(lang, "CoordinateSystem"), ColumnType.String));
+                columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
+                data.setColumns(columns).setDataName(message("AutumnMovementPatternsOfEuropeanGadwalls"))
+                        .setComments("https://www.datarepository.movebank.org/handle/10255/move.346");
+                if (makeExampleFile("EuropeanGadwalls", data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            locationMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("SpermWhalesGulfOfMexico"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn(message(lang, "Time"), ColumnType.Datetime, 180).setFixTwoDigitYear(true));
+                columns.add(new Data2DColumn(message(lang, "Longitude"), ColumnType.Longitude));
+                columns.add(new Data2DColumn(message(lang, "Latitude"), ColumnType.Latitude));
+                columns.add(new Data2DColumn(message(lang, "CoordinateSystem"), ColumnType.String));
+                columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
+                data.setColumns(columns).setDataName(message("SpermWhalesGulfOfMexico"))
+                        .setComments("https://www.datarepository.movebank.org/handle/10255/move.1059");
+                if (makeExampleFile("SpermWhales", data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            locationMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("EpidemicReportsCOVID19"));
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn(message(lang, "Date"), ColumnType.Date)
+                        .setFixTwoDigitYear(false).setFormat("yyyy-MM-dd"));
+                columns.add(new Data2DColumn(message(lang, "Country"), ColumnType.String));
+                columns.add(new Data2DColumn(message(lang, "Province"), ColumnType.String));
+                columns.add(new Data2DColumn(message(lang, "Confirmed"), ColumnType.Integer).setInvalidAs(InvalidAs.Zero));
+                columns.add(new Data2DColumn(message(lang, "Healed"), ColumnType.Integer).setInvalidAs(InvalidAs.Zero));
+                columns.add(new Data2DColumn(message(lang, "Dead"), ColumnType.Integer).setInvalidAs(InvalidAs.Zero));
+                columns.add(new Data2DColumn(message(lang, "Longitude"), ColumnType.Longitude));
+                columns.add(new Data2DColumn(message(lang, "Latitude"), ColumnType.Latitude));
+                data.setColumns(columns).setDataName(message("EpidemicReportsCOVID19"))
+                        .setComments("https://github.com/CSSEGISandData/COVID-19");
+                if (makeExampleFile("EpidemicReports", data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            locationMenu.getItems().add(menu);
+
+            return locationMenu;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static Menu projectManagement(String lang, ControlData2D controller) {
+        try {
+            boolean isChinese = "zh".equals(lang);
+
+            Menu locationMenu = new Menu(message("ProjectManagement"), StyleTools.getIconImageView("iconCalculator.png"));
 
             MenuItem menu = new MenuItem(message("ChineseHistoricalCapitals"));
             menu.setOnAction((ActionEvent event) -> {

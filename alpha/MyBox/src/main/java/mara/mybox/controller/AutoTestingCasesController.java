@@ -9,7 +9,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.dev.TestCase;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -27,7 +27,7 @@ public class AutoTestingCasesController extends BaseTableViewController<TestCase
     protected TextArea textArea;
 
     public AutoTestingCasesController() {
-        baseTitle = Languages.message("TestCases");
+        baseTitle = message("TestCases");
     }
 
     @Override
