@@ -13,9 +13,10 @@ mvn -P linux package
 cd pack/linux
 mv ../../target/MyBox.jar  jar/   &&  \
 $jpackagePath/jpackage  --type  app-image --vendor Mara  --verbose  --runtime-image $jdkPath  --dest app --name  MyBox  --input jar --main-jar  MyBox.jar  --icon res/MyBox.png 
+mv jar/MyBox.jar  .
+gzip MyBox.jar 
+mv MyBox.jar.gz  MyBox-linux.jar.gz
 cd  app
 tar cfz  MyBox-CentOS7-x64.tar.gz  MyBox
-mv MyBox*.gz ..
 cd ..
-mv jar/*.jar  .
 rm -rf ../../target

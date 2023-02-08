@@ -37,19 +37,9 @@ public class PixelsOperationFactory {
             OperationType operationType, ColorActionType colorActionType) {
         switch (operationType) {
             case ReplaceColor:
-                switch (colorActionType) {
-                    case Filter:
-                        return new ReplaceFilter(image, scope);
-                    default:
-                        return new ReplaceColor(image, scope);
-                }
+                return new ReplaceColor(image, scope);
             case Color:
-                switch (colorActionType) {
-                    case Filter:
-                        return new FilterColor(image, scope);
-                    default:
-                        return new SetColor(image, scope);
-                }
+                return new ColorSet(image, scope);
             case Blend:
                 return new BlendColor(image, scope);
             case Opacity:
@@ -287,6 +277,9 @@ public class PixelsOperationFactory {
 
     public static class ReplaceColor extends PixelsOperation {
 
+        private float paraHue, paraSaturation, paraBrightness,
+                colorHue, colorSaturation, colorBrightness;
+
         public ReplaceColor(BufferedImage image, ImageScope scope) {
             this.operationType = OperationType.ReplaceColor;
             this.colorActionType = ColorActionType.Set;
@@ -295,39 +288,31 @@ public class PixelsOperationFactory {
         }
 
         @Override
-        protected Color operateColor(Color color) {
-            return colorPara2;
-        }
-    }
-
-    public static class ReplaceFilter extends PixelsOperation {
-
-        private float[] paraHSB;
-
-        public ReplaceFilter(BufferedImage image, ImageScope scope) {
-            this.operationType = OperationType.ReplaceColor;
-            this.colorActionType = ColorActionType.Filter;
-            this.image = image;
-            this.scope = scope;
-        }
-
-        @Override
         public PixelsOperation setColorPara2(Color colorPara2) {
             this.colorPara2 = colorPara2;
-            paraHSB = ColorConvertTools.color2hsb(colorPara2);
+            float[] hsb = ColorConvertTools.color2hsb(colorPara2);
+            paraHue = hsb[0];
+            paraSaturation = hsb[1];
+            paraBrightness = hsb[2];
             return this;
         }
 
         @Override
         protected Color operateColor(Color color) {
             float[] hsb = ColorConvertTools.color2hsb(color);
-            return ColorConvertTools.hsb2rgb(paraHSB[0], paraHSB[1], hsb[2]);
+            colorHue = boolPara1 ? paraHue : hsb[0];
+            colorSaturation = boolPara2 ? paraSaturation : hsb[1];
+            colorBrightness = boolPara3 ? paraBrightness : hsb[2];
+            return ColorConvertTools.hsb2rgb(colorHue, colorSaturation, colorBrightness);
         }
     }
 
-    public static class SetColor extends PixelsOperation {
+    public static class ColorSet extends PixelsOperation {
 
-        public SetColor(BufferedImage image, ImageScope scope) {
+        private float paraHue, paraSaturation, paraBrightness,
+                colorHue, colorSaturation, colorBrightness;
+
+        public ColorSet(BufferedImage image, ImageScope scope) {
             this.operationType = OperationType.Color;
             this.colorActionType = ColorActionType.Set;
             this.image = image;
@@ -335,33 +320,22 @@ public class PixelsOperationFactory {
         }
 
         @Override
-        protected Color operateColor(Color color) {
-            return colorPara1;
-        }
-    }
-
-    public static class FilterColor extends PixelsOperation {
-
-        private float[] paraHSB;
-
-        public FilterColor(BufferedImage image, ImageScope scope) {
-            this.operationType = OperationType.Color;
-            this.colorActionType = ColorActionType.Filter;
-            this.image = image;
-            this.scope = scope;
-        }
-
-        @Override
         public PixelsOperation setColorPara1(Color colorPara1) {
             this.colorPara1 = colorPara1;
-            paraHSB = ColorConvertTools.color2hsb(colorPara1);
+            float[] hsb = ColorConvertTools.color2hsb(colorPara1);
+            paraHue = hsb[0];
+            paraSaturation = hsb[1];
+            paraBrightness = hsb[2];
             return this;
         }
 
         @Override
         protected Color operateColor(Color color) {
             float[] hsb = ColorConvertTools.color2hsb(color);
-            return ColorConvertTools.hsb2rgb(paraHSB[0], paraHSB[1], hsb[2]);
+            colorHue = boolPara1 ? paraHue : hsb[0];
+            colorSaturation = boolPara2 ? paraSaturation : hsb[1];
+            colorBrightness = boolPara3 ? paraBrightness : hsb[2];
+            return ColorConvertTools.hsb2rgb(colorHue, colorSaturation, colorBrightness);
         }
     }
 

@@ -15,13 +15,13 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
-import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -41,13 +41,13 @@ public class ImageManufactureBatchReplaceColorController extends BaseImageManufa
     @FXML
     protected ComboBox<String> distanceSelector;
     @FXML
-    protected CheckBox excludeCheck, ignoreTransparentCheck, squareRootCheck;
+    protected CheckBox excludeCheck, ignoreTransparentCheck, squareRootCheck,
+            hueCheck, saturationCheck, brightnessCheck;
     @FXML
     protected ColorSet originalColorSetController, newColorSetController;
 
     public ImageManufactureBatchReplaceColorController() {
-        baseTitle = Languages.message("ImageManufactureBatchReplaceColor");
-
+        baseTitle = message("ImageManufactureBatchReplaceColor");
     }
 
     @Override
@@ -89,6 +89,30 @@ public class ImageManufactureBatchReplaceColorController extends BaseImageManufa
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldv, Boolean newv) {
                     checkValues();
+                }
+            });
+
+            hueCheck.setSelected(UserConfig.getBoolean(baseName + "ReplaceHue", false));
+            hueCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldv, Boolean newv) {
+                    UserConfig.setBoolean(baseName + "ReplaceHue", hueCheck.isSelected());
+                }
+            });
+
+            saturationCheck.setSelected(UserConfig.getBoolean(baseName + "ReplaceSaturation", false));
+            saturationCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldv, Boolean newv) {
+                    UserConfig.setBoolean(baseName + "ReplaceSaturation", saturationCheck.isSelected());
+                }
+            });
+
+            brightnessCheck.setSelected(UserConfig.getBoolean(baseName + "ReplaceBrightness", false));
+            brightnessCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldv, Boolean newv) {
+                    UserConfig.setBoolean(baseName + "ReplaceBrightness", brightnessCheck.isSelected());
                 }
             });
 
@@ -137,7 +161,7 @@ public class ImageManufactureBatchReplaceColorController extends BaseImageManufa
                 distanceSelector.setValue(value);
                 isSettingValues = false;
                 try {
-                    int v = Integer.valueOf(value);
+                    int v = Integer.parseInt(value);
                     if (v == 0
                             && ((Color) originalColorSetController.rect.getFill()).equals(((Color) newColorSetController.rect.getFill()))) {
                         popError(Languages.message("OriginalNewSameColor"));
@@ -159,14 +183,17 @@ public class ImageManufactureBatchReplaceColorController extends BaseImageManufa
 
     @Override
     public boolean makeMoreParameters() {
-        originalColor = ColorConvertTools.converColor((Color) originalColorSetController.rect.getFill());
-        newColor = ColorConvertTools.converColor((Color) newColorSetController.rect.getFill());
+        originalColor = originalColorSetController.awtColor();
+        newColor = newColorSetController.awtColor();
+        if (!hueCheck.isSelected() && !saturationCheck.isSelected() && !brightnessCheck.isSelected()) {
+            popError(message("SelectToHandle"));
+            return false;
+        }
         return super.makeMoreParameters();
     }
 
     @Override
     protected BufferedImage handleImage(BufferedImage source) {
-
         ImageScope scope = new ImageScope();
         scope.setScopeType(ImageScope.ScopeType.Color);
         scope.setColorScopeType(ImageScope.ColorScopeType.Color);
@@ -186,10 +213,13 @@ public class ImageManufactureBatchReplaceColorController extends BaseImageManufa
         }
         scope.setColorExcluded(excludeCheck.isSelected());
         PixelsOperation pixelsOperation = PixelsOperationFactory.create(source, scope,
-                PixelsOperation.OperationType.ReplaceColor, PixelsOperation.ColorActionType.Set);
-        pixelsOperation.setColorPara1(originalColor);
-        pixelsOperation.setColorPara2(newColor);
-        pixelsOperation.setSkipTransparent(ignoreTransparentCheck.isSelected());
+                PixelsOperation.OperationType.ReplaceColor, PixelsOperation.ColorActionType.Set)
+                .setColorPara1(originalColor)
+                .setColorPara2(newColor)
+                .setSkipTransparent(originalColor.getRGB() != 0 && ignoreTransparentCheck.isSelected())
+                .setBoolPara1(hueCheck.isSelected())
+                .setBoolPara2(saturationCheck.isSelected())
+                .setBoolPara3(brightnessCheck.isSelected());
         BufferedImage target = pixelsOperation.operate();
 
         return target;

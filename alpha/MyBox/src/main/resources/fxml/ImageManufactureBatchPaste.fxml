@@ -50,56 +50,59 @@ License:    Apache License Version 2.0
                                                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                                     </padding>
                                                     <children>
-                                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                        <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                             <children>
-                                                                <Label text="%ImageToPaste" />
-                                                                <TextField fx:id="sourceFileInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                                <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconFolderImage.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </Button>
+                                                              <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                                  <children>
+                                                                      <Label text="%ImageToPaste" />
+                                                                      <TextField fx:id="sourceFileInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                                      <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
+                                                                          <graphic>
+                                                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                  <image>
+                                                                                      <Image url="@../buttons/Red/iconFolderImage.png" />
+                                                                                  </image>
+                                                                              </ImageView>
+                                                                          </graphic>
+                                                                      </Button>
+                                                                  </children>
+                                                              </HBox>
+                                                                <FlowPane hgap="5.0" prefWidth="200.0" vgap="5.0">
+                                                                    <children>
+                                                                        <Label text="%Rotate" />
+                                                                        <ComboBox fx:id="angleSelector" editable="true" prefWidth="140.0" />
+                                                                    </children>
+                                                                </FlowPane>
+                                                              <CheckBox fx:id="enlargeCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%EnlargeImageWhenClipOut" wrapText="true" VBox.vgrow="NEVER" />
                                                             </children>
-                                                        </HBox>
-                                                        <CheckBox fx:id="enlargeCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%EnlargeImageWhenClipOut" wrapText="true" VBox.vgrow="NEVER" />
+                                                        </VBox>
                                                         <VBox fx:id="blendBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                             <children>
                                                                 <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
                                                                     <children>
                                                                         <Label text="%Position" />
-                                                                        <RadioButton mnemonicParsing="false" selected="true" text="%RightBottom">
-                                                                            <toggleGroup>
+                                                                        <RadioButton fx:id="centerRadio" mnemonicParsing="false" selected="true" text="%Center">
+                                                         <toggleGroup>
                                                                                 <ToggleGroup fx:id="positionGroup" />
-                                                                            </toggleGroup>
-                                                                        </RadioButton>
-                                                                        <RadioButton mnemonicParsing="false" text="%RightTop" toggleGroup="$positionGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="%LeftBottom" toggleGroup="$positionGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="%LeftTop" toggleGroup="$positionGroup" />
-                                                                        <Label text="%Margins" />
+                                                         </toggleGroup></RadioButton>
+                                                                        <RadioButton fx:id="leftTopRadio" mnemonicParsing="false" text="%LeftTop" toggleGroup="$positionGroup" />
+                                                                        <RadioButton fx:id="leftBottomRadio" mnemonicParsing="false" text="%LeftBottom" toggleGroup="$positionGroup" />
+                                                                        <RadioButton fx:id="rightTopRadio" mnemonicParsing="false" text="%RightTop" toggleGroup="$positionGroup" />
+                                                                        <RadioButton fx:id="rightBottomRadio" mnemonicParsing="false" text="%RightBottom" toggleGroup="$positionGroup" />
+                                                                        <Label text="%Margins">
+                                                         <FlowPane.margin>
+                                                            <Insets left="20.0" />
+                                                         </FlowPane.margin>
+                                                      </Label>
                                                                         <TextField fx:id="marginInput" prefWidth="80.0" text="20" />
                                                                     </children>
                                                                 </FlowPane>
                                                                 <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
                                                                     <children>
                                                                         <Label text="%Position" visible="false" />
-                                                                        <RadioButton mnemonicParsing="false" text="%Center" toggleGroup="$positionGroup" />
-                                                                        <RadioButton mnemonicParsing="false" text="%Custom" toggleGroup="$positionGroup" />
+                                                                        <RadioButton fx:id="customizeRadio" mnemonicParsing="false" text="%Custom" toggleGroup="$positionGroup" />
                                                                         <TextField prefWidth="90.0" promptText="X" fx:id="xInput" />
                                                                         <TextField fx:id="yInput" prefWidth="90.0" promptText="Y" />
-                                                                    </children>
-                                                                </FlowPane>
-                                                            </children>
-                                                        </VBox>
-                                                        <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                                            <children>
-                                                                <FlowPane hgap="5.0" prefWidth="200.0" vgap="5.0">
-                                                                    <children>
-                                                                        <Label text="%Rotate" />
-                                                                        <ComboBox fx:id="angleSelector" editable="true" prefWidth="140.0" />
                                                                     </children>
                                                                 </FlowPane>
                                                             </children>

@@ -786,7 +786,7 @@ public class ImageAnalyseController extends ImageViewerController {
             }
             StringBuilder s = new StringBuilder();
             long imageSize = (long) (image.getWidth() * image.getHeight());
-            s.append("<P>").append(message("Pixels")).append(":").append(StringTools.format(imageSize)).append(" ")
+            s.append("<P>").append(message("Pixels")).append(":").append(StringTools.format(imageSize)).append("<BR>")
                     .append(message("NonTransparent")).append(":").append(StringTools.format(nonTransparent))
                     .append("(").append(FloatTools.percentage(nonTransparent, imageSize)).append("%)").append("</P>");
             String indent = "    ";

@@ -18,7 +18,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.Colors;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -28,7 +28,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ImageManufactureBatchPasteController extends BaseImageManufactureBatchController {
 
-    protected int positionType, margin, posX, posY;
+    protected int margin, posX, posY;
     protected BufferedImage clipSource;
     protected int rotateAngle;
 
@@ -39,22 +39,14 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
     @FXML
     protected ToggleGroup positionGroup;
     @FXML
+    protected RadioButton centerRadio, leftTopRadio, leftBottomRadio, rightTopRadio, rightBottomRadio, customizeRadio;
+    @FXML
     protected TextField xInput, yInput, marginInput;
     @FXML
     protected ControlImagesBlend blendController;
 
-    private class PositionType {
-
-        static final int RightBottom = 0;
-        static final int RightTop = 1;
-        static final int LeftBottom = 2;
-        static final int LeftTop = 3;
-        static final int Center = 4;
-        static final int Custom = 5;
-    }
-
     public ImageManufactureBatchPasteController() {
-        baseTitle = Languages.message("ImageManufactureBatchPaste");
+        baseTitle = message("ImageManufactureBatchPaste");
     }
 
     @Override
@@ -99,7 +91,7 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        rotateAngle = Integer.valueOf(newValue);
+                        rotateAngle = Integer.parseInt(newValue);
                         ValidationTools.setEditorNormal(angleSelector);
                     } catch (Exception e) {
                         ValidationTools.setEditorBadStyle(angleSelector);
@@ -107,23 +99,28 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
                 }
             });
 
+            margin = UserConfig.getInt(baseName + "Margin", 20);
+            marginInput.setText(margin + "");
+            marginInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> v, String ov, String nv) {
+                    checkMargin();
+                }
+            });
+
             xInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    checkWaterPosition();
+                public void changed(ObservableValue<? extends String> v, String ov, String nv) {
+                    checkPosition();
                 }
             });
             yInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    checkWaterPosition();
+                public void changed(ObservableValue<? extends String> v, String ov, String nv) {
+                    checkPosition();
                 }
             });
 
-            margin = UserConfig.getInt(baseName + "Margin", 20);
-            marginInput.setText(margin + "");
             positionGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
@@ -138,48 +135,29 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
     }
 
     private void checkPositionType() {
+        marginInput.setDisable(true);
+        marginInput.setStyle(null);
         xInput.setDisable(true);
         xInput.setStyle(null);
         yInput.setDisable(true);
         yInput.setStyle(null);
-        marginInput.setDisable(true);
-        marginInput.setStyle(null);
 
-        RadioButton selected = (RadioButton) positionGroup.getSelectedToggle();
-        if (Languages.message("RightBottom").equals(selected.getText())) {
-            positionType = PositionType.RightBottom;
-            marginInput.setDisable(false);
-            checkMargin();
-
-        } else if (Languages.message("RightTop").equals(selected.getText())) {
-            positionType = PositionType.RightTop;
-            marginInput.setDisable(false);
-            checkMargin();
-
-        } else if (Languages.message("LeftBottom").equals(selected.getText())) {
-            positionType = PositionType.LeftBottom;
-            marginInput.setDisable(false);
-            checkMargin();
-
-        } else if (Languages.message("LeftTop").equals(selected.getText())) {
-            positionType = PositionType.LeftTop;
-            marginInput.setDisable(false);
-            checkMargin();
-
-        } else if (Languages.message("Center").equals(selected.getText())) {
-            positionType = PositionType.Center;
-
-        } else if (Languages.message("Custom").equals(selected.getText())) {
-            positionType = PositionType.Custom;
+        if (customizeRadio.isSelected()) {
             xInput.setDisable(false);
             yInput.setDisable(false);
-            checkWaterPosition();
+            checkPosition();
+
+        } else if (centerRadio.isSelected()) {
+
+        } else {
+            marginInput.setDisable(false);
+            checkMargin();
         }
     }
 
     private void checkMargin() {
         try {
-            int v = Integer.valueOf(marginInput.getText());
+            int v = Integer.parseInt(marginInput.getText());
             if (v >= 0) {
                 margin = v;
                 UserConfig.setInt(baseName + "Margin", margin);
@@ -190,12 +168,11 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
         } catch (Exception e) {
             marginInput.setStyle(UserConfig.badStyle());
         }
-
     }
 
-    private void checkWaterPosition() {
+    private void checkPosition() {
         try {
-            int v = Integer.valueOf(xInput.getText());
+            int v = Integer.parseInt(xInput.getText());
             if (v >= 0) {
                 posX = v;
                 xInput.setStyle(null);
@@ -207,7 +184,7 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
         }
 
         try {
-            int v = Integer.valueOf(yInput.getText());
+            int v = Integer.parseInt(yInput.getText());
             if (v >= 0) {
                 posY = v;
                 yInput.setStyle(null);
@@ -217,15 +194,10 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
         } catch (Exception e) {
             yInput.setStyle(UserConfig.badStyle());
         }
-
     }
 
     @Override
-    public boolean makeMoreParameters() {
-        if (!super.makeMoreParameters()) {
-            return false;
-        }
-
+    public boolean beforeHandleFiles() {
         clipSource = ImageFileReaders.readImage(sourceFile);
         if (clipSource != null) {
             clipSource = TransformTools.rotateImage(clipSource, rotateAngle);
@@ -251,33 +223,33 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
             }
 
             int x, y;
-            switch (positionType) {
-                case PositionType.Center:
-                    x = (bgImage.getWidth() - clipSource.getWidth()) / 2;
-                    y = (bgImage.getHeight() - clipSource.getHeight()) / 2;
-                    break;
-                case PositionType.RightBottom:
-                    x = bgImage.getWidth() - 1 - margin;
-                    y = bgImage.getHeight() - 1 - margin;
-                    break;
-                case PositionType.RightTop:
-                    x = bgImage.getWidth() - 1 - margin;
-                    y = margin;
-                    break;
-                case PositionType.LeftBottom:
-                    x = margin;
-                    y = bgImage.getHeight() - 1 - margin;
-                    break;
-                case PositionType.Custom:
-                    x = posX;
-                    y = posY;
-                    break;
-                default:
-                    x = margin;
-                    y = margin;
-                    break;
-            }
+            if (centerRadio.isSelected()) {
+                x = (bgImage.getWidth() - clipSource.getWidth()) / 2;
+                y = (bgImage.getHeight() - clipSource.getHeight()) / 2;
 
+            } else if (leftTopRadio.isSelected()) {
+                x = margin;
+                y = margin;
+
+            } else if (leftBottomRadio.isSelected()) {
+                x = margin;
+                y = bgImage.getHeight() - clipSource.getHeight() - margin;
+
+            } else if (rightTopRadio.isSelected()) {
+                x = bgImage.getWidth() - clipSource.getWidth() - margin;
+                y = margin;
+
+            } else if (rightBottomRadio.isSelected()) {
+                x = bgImage.getWidth() - clipSource.getWidth() - margin;
+                y = bgImage.getHeight() - clipSource.getHeight() - margin;
+
+            } else if (customizeRadio.isSelected()) {
+                x = posX;
+                y = posY;
+
+            } else {
+                return null;
+            }
             BufferedImage target = blendController.blend(clipSource, bgImage, x, y);
             return target;
         } catch (Exception e) {

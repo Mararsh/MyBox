@@ -4,7 +4,7 @@
 This is desktop application based on JavaFx to provide simple and easy functions. It's free and open sources.
 
 ## Latest Version       
-Links of codes and documents in this document refer to the latest ones.     
+Links of codes and documents in this document refer to the latest versions.     
 
 The latest version can be downloaded in following addresses:             
          
@@ -63,8 +63,8 @@ When JRE or JDK([Oracle jdk](https://www.oracle.com/technetwork/java/javase/down
 | Platform | Link | Size  | Requirements |        
 | --- | --- | ---  | ---  |
 | win | [MyBox-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-win-jar.zip)  | 190MB- | Java 18 or higher |
-| linux | [MyBox-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-linux-jar.zip)  | 200MB-  | Java 18 or higher |
-| mac | [MyBox-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-mac-jar.zip)  |  200MB-  | Java 18 or higher |        
+| linux | [MyBox-linux.jar.gz](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-linux.jar.gz)  | 200MB-  | Java 18 or higher |
+| mac | [MyBox-mac.jar.gz](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-mac.jar.gz)  |  200MB-  | Java 18 or higher |        
 
 
 Run following command to launch this program with Jar package:        
@@ -253,13 +253,6 @@ Example,  the new language is named as "aa", and its resource file is "Messages_
 9. Appearance of interface and controls can be chosen and modified.    
        
 
-## Embedded Database System            
-
-1. Embedded derby which is free and open sources.
-2. Derby can run in embedded mode or in network mode(Only visible to processes of local host).       
-3. User can access and modify MyBox internal data.
-4. User can define and use database tables, and execute SQL statements.       
-
 ## Data Compatible    
 
 1. Exported data are in common text formats, like txt/csv/xml/json/html.
@@ -268,6 +261,23 @@ Example,  the new language is named as "aa", and its resource file is "Messages_
 4. Imported data are self-contain, that original data can be rebuilt without extra data.       
 
 
+## Embedded Database System            
+
+1. Embedded derby which is free and open sources.
+2. Derby can run in embedded mode or in network mode(Only visible to processes of local host).       
+3. User can define and use database tables, and execute SQL statements.       
+
+## Assit Coding            
+
+1. Monitor memory/CPU usage in real time.
+2. Adjust logging online.       
+3. Access and modify internal data online.
+4. Generate icons automatically.
+5. Edit and apply languages online.
+6. Test automatically.
+7. Documents updated in time.   
+
+# Snapshots            
 
 ![Snap-cover](https://mararsh.github.io/MyBox/snap-cover-en.jpg)       
 

@@ -64,8 +64,8 @@
 | 平台 | 链接 | 大小 | 运行需要 |
 | --- | --- | --- |  --- |
 | win | [MyBox-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-win-jar.zip)  | 190MB- | Java 18或更高版本 |
-| linux | [MyBox-linux-jar.zip](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-linux-jar.zip)  | 200MB-  | Java 18或更高版本 |
-| mac | [MyBox-mac-jar.zip](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-mac-jar.zip)  |  200MB-  | Java 18或更高版本 |
+| linux | [MyBox-linux.jar.gz](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-linux.jar.gz)  | 200MB-  | Java 18或更高版本 |
+| mac | [MyBox-mac.jar.gz](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-mac.jar.gz)  |  200MB-  | Java 18或更高版本 |
 
 执行以下命令来启动程序：       
 <PRE><CODE>     java   -jar   MyBox.jar</CODE></PRE>       
@@ -248,13 +248,6 @@ MyBox v5.3以前的版本均基于Java 8。
 8. 提供示例和有用的信息。  
 9. 界面和控件的外观可选择和修改。      
 
-## 内置数据库系统            
-
-1. 内置免费开源的数据库系统derby。
-2. derby可内置运行、也可网路运行（只允许本机进程访问）。       
-3. 用户可访问和修改MyBox内部数据。
-4. 用户可定义和使用数据库表、可执行SQL语句。       
-
 ## 数据兼容            
 
 1. 导出的数据是通用的文本格式，如txt/csv/xml/json/html。
@@ -262,8 +255,25 @@ MyBox v5.3以前的版本均基于Java 8。
 3. 至少有一种导出格式可以被导入。
 4. 导入的数据是自包含的，即重建原数据无需辅助数据。       
 
+## 内置数据库系统            
+
+1. 内置免费开源的数据库系统derby。
+2. derby可内置运行、也可网路运行（只允许本机进程访问）。       
+3. 用户可定义和使用数据库表、可执行SQL语句。       
+
+## 辅助编码            
+
+1. 实时监测内存和CPU占用量。
+2. 在线调整日志。       
+3. 在线访问和修改内部数据。
+4. 自动生成图标。
+5. 在线编辑和应用语言。
+6. 自动测试。
+7. 及时更新的文档。       
 
 
+# 截图
+      
 ![截屏-封面](https://mararsh.github.io/MyBox/snap-cover.jpg)       
 
 ![截屏-界面](https://mararsh.github.io/MyBox/snap-interface.jpg)       

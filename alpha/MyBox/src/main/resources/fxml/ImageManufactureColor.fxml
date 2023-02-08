@@ -150,12 +150,63 @@
                         <Label fx:id="colorUnit" />
                     </children>
                 </HBox>
-                <HBox fx:id="valueColorBox" alignment="CENTER_LEFT" spacing="5.0">
-                    <children>
-                        <fx:include fx:id="valueColorSet" source="ColorSet.fxml" />
-                    </children>
-                </HBox>
-                <FlowPane fx:id="opBox" hgap="5.0" prefWidth="80.0" vgap="5.0">
+                  <VBox fx:id="colorMatchBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                      <children>
+                        <FlowPane fx:id="originalColorPane" hgap="5.0" prefWrapLength="80.0" vgap="5.0">
+                            <children>
+                                <Label fx:id="colorUnit1" text="%OriginalColor" />
+                                <fx:include fx:id="originalColorSet" source="ColorSet.fxml" />
+                            </children>
+                        </FlowPane>
+                          <FlowPane hgap="5.0" prefWidth="80.0" vgap="5.0">
+                              <children>
+                        <Label text="%Match" />
+                                  <RadioButton fx:id="distanceColorRadio" mnemonicParsing="false" selected="true" text="%Color">
+                                      <toggleGroup>
+                                          <ToggleGroup fx:id="distanceGroup" />
+                                      </toggleGroup>
+                                  </RadioButton>
+                                  <RadioButton fx:id="distanceHueRadio" mnemonicParsing="false" text="%Hue" toggleGroup="$distanceGroup" />
+                                  <ImageView fx:id="distanceTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                      <image>
+                                          <Image url="@../buttons/Red/iconTips.png" />
+                                      </image>
+                                  </ImageView>
+                              </children>
+                          </FlowPane>
+                          <FlowPane hgap="5.0" prefWrapLength="80.0" vgap="5.0">
+                              <children>
+                                  <Label text="%Distance" />
+                                  <ComboBox fx:id="distanceSelector" editable="true" minWidth="-Infinity" prefWidth="120.0" />
+                                  <CheckBox fx:id="squareRootCheck" minWidth="-Infinity" mnemonicParsing="false" text="%SquareRoot" />
+                              </children>
+                          </FlowPane>
+                          <FlowPane hgap="5.0" prefWidth="80.0" vgap="5.0">
+                     <children>
+                                <CheckBox fx:id="distanceExcludeCheck" minWidth="-Infinity" mnemonicParsing="false" text="%Excluded" />
+                     </children>
+                          </FlowPane>
+                      </children>
+                  </VBox>
+            <VBox fx:id="newColorBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+               <children>
+                        <FlowPane fx:id="newColorPane" hgap="5.0" prefWrapLength="80.0" vgap="5.0">
+                            <children>
+                                <Label fx:id="colorUnit11" text="%NewColor" />
+                                <fx:include fx:id="newColorSet" source="ColorSet.fxml" />
+                            </children>
+                        </FlowPane>
+                  <FlowPane fx:id="newColorPane1" hgap="5.0" prefWrapLength="80.0" vgap="5.0">
+                     <children>
+                        <Label text="%Replace" />
+                        <CheckBox fx:id="hueCheck" mnemonicParsing="false" selected="true" text="%Hue" />
+                        <CheckBox fx:id="saturationCheck" layoutX="39.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Saturation" />
+                        <CheckBox fx:id="brightnessCheck" layoutX="10.0" layoutY="31.0" mnemonicParsing="false" text="%Brightness" />
+                     </children>
+                  </FlowPane>
+               </children>
+            </VBox>
+                <FlowPane fx:id="opBox" hgap="5.0" prefWrapLength="80.0" vgap="5.0">
                     <children>
                         <Button fx:id="setButton" mnemonicParsing="false" onAction="#setAction">
                             <graphic>
@@ -202,68 +253,24 @@
                                 </ImageView>
                             </graphic>
                         </Button>
+                  <Button fx:id="goColorButton" mnemonicParsing="false" onAction="#colorAction">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconGo.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
                     </children>
                 </FlowPane>
-                  <CheckBox fx:id="scopeCheck" mnemonicParsing="false">
-                      <graphic> 
-                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                              <image>
-                                  <Image url="@../buttons/Red/iconTarget.png" />
-                              </image>
-                          </ImageView>
-                      </graphic>
-                  </CheckBox>
-                <VBox fx:id="replaceBox" spacing="5.0">
-                    <children>
-                        <FlowPane fx:id="originalColorPane" hgap="5.0" layoutX="10.0" layoutY="211.0" prefWidth="80.0" vgap="5.0">
-                            <children>
-                                <Label fx:id="colorUnit1" text="%OriginalColor" />
-                                <fx:include fx:id="originalColorSet" source="ColorSet.fxml" />
-                            </children>
-                        </FlowPane>
-                        <FlowPane fx:id="newColorPane" hgap="5.0" prefWidth="80.0" vgap="5.0">
-                            <children>
-                                <Label fx:id="colorUnit11" text="%NewColor" />
-                                <fx:include fx:id="newColorSet" source="ColorSet.fxml" />
-                            </children>
-                        </FlowPane>
-                        <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
-                            <children>
-                                <FlowPane hgap="5.0" prefWidth="80.0" vgap="5.0">
-                                    <children>
-                                        <Label text="%Distance" />
-                                        <ImageView fx:id="distanceTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconTips.png" />
-                                            </image>
-                                        </ImageView>
-                                    </children>
-                                </FlowPane>
-                                <FlowPane hgap="5.0" prefWidth="80.0" vgap="5.0">
-                                    <children>
-                                        <RadioButton fx:id="distanceColorRadio" mnemonicParsing="false" selected="true" text="%Color">
-                                            <toggleGroup>
-                                                <ToggleGroup fx:id="distanceGroup" />
-                                            </toggleGroup>
-                                        </RadioButton>
-                                        <RadioButton fx:id="distanceHueRadio" mnemonicParsing="false" text="%Hue" toggleGroup="$distanceGroup" />
-                                    </children>
-                                </FlowPane>
-                                <FlowPane hgap="5.0" prefWidth="80.0" vgap="5.0">
-                                    <children>
-                                        <ComboBox fx:id="distanceSelector" editable="true" minWidth="-Infinity" prefWidth="120.0" />
-                                        <CheckBox fx:id="squareRootCheck" layoutX="115.0" layoutY="18.0" minWidth="-Infinity" mnemonicParsing="false" text="%SquareRoot" />
-                                    </children>
-                                </FlowPane>
-                                <CheckBox fx:id="distanceExcludeCheck" minWidth="-Infinity" mnemonicParsing="false" text="%Excluded" />
-                            </children>
-                        </VBox>
-                  <CheckBox fx:id="ignoreTransparentCheck" mnemonicParsing="false" selected="true" text="%IgnoreTransparent" />
-                        <HBox alignment="CENTER_LEFT" spacing="5.0" />
-                    </children>
-                </VBox>
             <VBox fx:id="blendBox" spacing="5.0">
                <children>
+                      <HBox alignment="CENTER_LEFT" spacing="5.0">
+                          <children>
+                              <fx:include fx:id="valueColorSet" source="ColorSet.fxml" />
+                          </children>
+                      </HBox>
                   <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                      <children>
                         <fx:include fx:id="blend" source="ControlImagesBlend.fxml" />
@@ -282,6 +289,20 @@
             </VBox>
             </children>
         </VBox>
+      <FlowPane fx:id="scopePane" alignment="CENTER_LEFT" columnHalignment="CENTER" hgap="2.0" prefWrapLength="80.0" vgap="2.0">
+         <children>
+                  <CheckBox fx:id="scopeCheck" mnemonicParsing="false">
+                      <graphic> 
+                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                  <Image url="@../buttons/Red/iconTarget.png" />
+                              </image>
+                          </ImageView>
+                      </graphic>
+                  </CheckBox>
+            <CheckBox fx:id="ignoreTransparentCheck" mnemonicParsing="false" selected="true" text="%IgnoreTransparent" />
+         </children>
+      </FlowPane>
         <Label fx:id="commentsLabel" minHeight="-Infinity" prefWidth="300.0" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true">
             <VBox.margin>
                 <Insets top="10.0" />

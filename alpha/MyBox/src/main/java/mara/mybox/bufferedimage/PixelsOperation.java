@@ -23,7 +23,7 @@ import mara.mybox.value.Colors;
 public abstract class PixelsOperation {
 
     protected BufferedImage image;
-    protected boolean isDithering, boolPara1, boolPara2, skipTransparent = true, excludeScope;
+    protected boolean isDithering, boolPara1, boolPara2, boolPara3, skipTransparent = true, excludeScope;
     protected int intPara1, intPara2, intPara3, scopeColor = 0;
     protected float floatPara1, floatPara2;
     protected Color colorPara1, colorPara2, bkColor;
@@ -44,7 +44,7 @@ public abstract class PixelsOperation {
     }
 
     public enum ColorActionType {
-        Increase, Decrease, Set, Filter, Invert
+        Set, Increase, Decrease, Filter, Invert
     }
 
     public PixelsOperation() {
@@ -394,6 +394,15 @@ public abstract class PixelsOperation {
 
     public PixelsOperation setBoolPara2(boolean boolPara2) {
         this.boolPara2 = boolPara2;
+        return this;
+    }
+
+    public boolean isBoolPara3() {
+        return boolPara3;
+    }
+
+    public PixelsOperation setBoolPara3(boolean boolPara3) {
+        this.boolPara3 = boolPara3;
         return this;
     }
 
