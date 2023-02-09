@@ -38,8 +38,10 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     // return whether handled
     public boolean keyEventsFilter(KeyEvent event) {
         try {
-//            MyBoxLog.debug("window:" + getMyWindow().getClass() + "   isFocused:" + getMyWindow().isFocused()
-//                    + "  " + "filter:" + this.getClass() + " text:" + event.getText() + " code:" + event.getCode()
+//            if (getMyWindow() != null) {
+//                MyBoxLog.debug("window:" + getMyWindow().getClass() + "   isFocused:" + getMyWindow().isFocused());
+//            }
+//            MyBoxLog.debug("filter:" + this.getClass() + " text:" + event.getText() + " code:" + event.getCode()
 //                    + " source:" + event.getSource().getClass() + " target:" + (event.getTarget() == null ? "null" : event.getTarget()));
             keyEvent = event;
             if (event.isControlDown()) {
@@ -233,6 +235,9 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
 
             case DIGIT4:
                 return controlAlt4();
+
+            case DIGIT5:
+                return controlAlt5();
 
         }
         return false;
@@ -526,6 +531,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean controlAlt1() {
+        MyBoxLog.debug("here");
         return false;
     }
 
@@ -538,6 +544,10 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean controlAlt4() {
+        return false;
+    }
+
+    public boolean controlAlt5() {
         return false;
     }
 

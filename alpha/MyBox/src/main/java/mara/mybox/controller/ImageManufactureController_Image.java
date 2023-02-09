@@ -122,9 +122,9 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
 
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        if (!super.keyEventsFilter(event)) {
-            if (!scopeController.keyEventsFilter(event)) {
-                return operationsController.keyEventsFilter(event);
+        if (!operationsController.keyEventsFilter(event)) {  // handle operation pane at first
+            if (!super.keyEventsFilter(event)) {
+                return scopeController.keyEventsFilter(event);
             } else {
                 return true;
             }
@@ -137,16 +137,16 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == imageTab) {
-                super.controlAltK();
+                return super.controlAltK();
 
             } else if (tab == scopeTab) {
-                scopeController.controlAltK();
+                return scopeController.controlAltK();
 
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
-        return true;
+        return false;
     }
 
     @Override
@@ -154,16 +154,16 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == imageTab) {
-                super.controlAltT();
+                return super.controlAltT();
 
             } else if (tab == scopeTab) {
-                scopeController.controlAltT();
+                return scopeController.controlAltT();
 
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
-        return true;
+        return false;
     }
 
     @Override
@@ -171,16 +171,16 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == imageTab) {
-                super.controlAlt1();
+                return super.controlAlt1();
 
             } else if (tab == scopeTab) {
-                scopeController.controlAlt1();
+                return scopeController.controlAlt1();
 
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
-        return true;
+        return false;
     }
 
     @Override
@@ -188,16 +188,16 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == imageTab) {
-                super.controlAlt2();
+                return super.controlAlt2();
 
             } else if (tab == scopeTab) {
-                scopeController.controlAlt2();
+                return scopeController.controlAlt2();
 
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
-        return true;
+        return false;
     }
 
     @Override
@@ -205,16 +205,16 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == imageTab) {
-                super.controlAlt3();
+                return super.controlAlt3();
 
             } else if (tab == scopeTab) {
-                scopeController.controlAlt3();
+                return scopeController.controlAlt3();
 
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
-        return true;
+        return false;
     }
 
     @Override
@@ -222,16 +222,16 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == imageTab) {
-                super.controlAlt4();
+                return super.controlAlt4();
 
             } else if (tab == scopeTab) {
-                scopeController.controlAlt4();
+                return scopeController.controlAlt4();
 
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
-        return true;
+        return false;
     }
 
     @Override

@@ -504,7 +504,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(isChinese ? "快乐" : "happiness", ColumnType.Double, true));
                 data.setColumns(columns).setDataName(message("IncomeHappiness"))
                         .setComments("https://www.scribbr.com/statistics/simple-linear-regression/");
-                if (makeExampleFile("IncomeHappiness", data)) {
+                if (makeExampleFile("DataAnalyse_IncomeHappiness", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -518,7 +518,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(isChinese ? "薪资" : "Salary", ColumnType.Double, true));
                 data.setColumns(columns).setDataName(message("ExperienceSalary"))
                         .setComments("https://github.com/krishnaik06/simple-Linear-Regression");
-                if (makeExampleFile("ExperienceSalary", data)) {
+                if (makeExampleFile("DataAnalyse_ExperienceSalary", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -535,7 +535,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(isChinese ? "种类" : "Species", ColumnType.String, true));
                 data.setColumns(columns).setDataName(message("IrisSpecies"))
                         .setComments("http://archive.ics.uci.edu/ml/datasets/Iris");
-                if (makeExampleFile("IrisSpecies", data)) {
+                if (makeExampleFile("DataAnalyse_IrisSpecies", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -558,7 +558,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(isChinese ? "一年后病情进展" : "disease progression one year after baseline", ColumnType.Double));
                 data.setColumns(columns).setDataName(message("DiabetesPrediction"))
                         .setComments("https://hastie.su.domains/Papers/LARS/");
-                if (makeExampleFile("DiabetesPrediction", data)) {
+                if (makeExampleFile("DataAnalyse_DiabetesPrediction", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -583,7 +583,7 @@ public class Data2DExampleTools {
                         .setComments("https://hastie.su.domains/Papers/LARS/ \n"
                                 + "first 10 columns have been normalized to have mean 0 and "
                                 + "Euclidean norm 1 and the last column y has been centered (mean 0).");
-                if (makeExampleFile("DiabetesPrediction_standardized", data)) {
+                if (makeExampleFile("DataAnalyse_DiabetesPrediction_standardized", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -612,7 +612,7 @@ public class Data2DExampleTools {
                         .setComments("http://archive.ics.uci.edu/ml/datasets/Heart+failure+clinical+records \n"
                                 + "Davide Chicco, Giuseppe Jurman: \"Machine learning can predict survival of patients with heart failure "
                                 + "from serum creatinine and ejection fraction alone\". BMC Medical Informatics and Decision Making 20, 16 (2020)");
-                if (makeExampleFile("HeartFailure", data)) {
+                if (makeExampleFile("DataAnalyse_HeartFailure", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -634,7 +634,7 @@ public class Data2DExampleTools {
                 data.setColumns(columns).setDataName(message("ConcreteCompressiveStrength"))
                         .setComments("http://archive.ics.uci.edu/ml/datasets/Concrete+Compressive+Strength \n"
                                 + "https://zhuanlan.zhihu.com/p/168747748");
-                if (makeExampleFile("ConcreteCompressiveStrength", data)) {
+                if (makeExampleFile("DataAnalyse_ConcreteCompressiveStrength", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -657,7 +657,7 @@ public class Data2DExampleTools {
                 data.setColumns(columns).setDataName(message("DogRadiographsDataset"))
                         .setComments("https://www4.stat.ncsu.edu/~boos/var.select/lucency.html \n"
                                 + "Radiographic and Clinical Changes of the Tibial Tuberosity after Tibial Plateau Leveling Osteomtomy.");
-                if (makeExampleFile("DogRadiographs", data)) {
+                if (makeExampleFile("DataAnalyse_DogRadiographs", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -690,7 +690,7 @@ public class Data2DExampleTools {
                         .setComments("https://www4.stat.ncsu.edu/~boos/var.select/baseball.html \n"
                                 + "Salary information for 337 Major League Baseball (MLB) players who are not pitchers "
                                 + "and played at least one game during both the 1991 and 1992 seasons.");
-                if (makeExampleFile("BaseballSalaries", data)) {
+                if (makeExampleFile("DataAnalyse_BaseballSalaries", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -819,7 +819,7 @@ public class Data2DExampleTools {
                         .setComments("http://archive.ics.uci.edu/ml/datasets/South+German+Credit\n"
                                 + "700 good and 300 bad credits with 20 predictor variables. Data from 1973 to 1975. "
                                 + "Stratified sample from actual credits with bad credits heavily oversampled. A cost matrix can be used.");
-                if (makeExampleFile("SouthGermanCredit", data)) {
+                if (makeExampleFile("DataAnalyse_SouthGermanCredit", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -847,7 +847,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(isChinese ? "价格中位数" : "median_price", ColumnType.Double));
                 data.setColumns(columns).setDataName(message("BostonHousingPrices"))
                         .setComments("https://github.com/tomsharp/SVR/tree/master/data");
-                if (makeExampleFile("BostonHousingPrices", data)) {
+                if (makeExampleFile("DataAnalyse_BostonHousingPrices", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -878,7 +878,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(message(lang, "EndTime"), ColumnType.Era).setFormat(isChinese ? "Gy" : "y G"));
                 columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
                 data.setColumns(columns).setDataName(message("ChineseHistoricalCapitals"));
-                if (makeExampleFile("ChineseHistoricalCapitals_" + lang, data)) {
+                if (makeExampleFile("Location_ChineseHistoricalCapitals_" + lang, data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -896,7 +896,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
                 data.setColumns(columns).setDataName(message("AutumnMovementPatternsOfEuropeanGadwalls"))
                         .setComments("https://www.datarepository.movebank.org/handle/10255/move.346");
-                if (makeExampleFile("EuropeanGadwalls", data)) {
+                if (makeExampleFile("Location_EuropeanGadwalls", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -913,7 +913,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
                 data.setColumns(columns).setDataName(message("SpermWhalesGulfOfMexico"))
                         .setComments("https://www.datarepository.movebank.org/handle/10255/move.1059");
-                if (makeExampleFile("SpermWhales", data)) {
+                if (makeExampleFile("Location_SpermWhales", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -934,7 +934,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(message(lang, "Latitude"), ColumnType.Latitude));
                 data.setColumns(columns).setDataName(message("EpidemicReportsCOVID19"))
                         .setComments("https://github.com/CSSEGISandData/COVID-19");
-                if (makeExampleFile("EpidemicReports", data)) {
+                if (makeExampleFile("Location_EpidemicReports", data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -951,83 +951,127 @@ public class Data2DExampleTools {
         try {
             boolean isChinese = "zh".equals(lang);
 
-            Menu locationMenu = new Menu(message("ProjectManagement"), StyleTools.getIconImageView("iconCalculator.png"));
+            Menu pmMenu = new Menu(message("ProjectManagement"), StyleTools.getIconImageView("iconCalculator.png"));
 
-            MenuItem menu = new MenuItem(message("ChineseHistoricalCapitals"));
+            MenuItem menu = new MenuItem(isChinese ? "项目登记" : "Project register");
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = new DataFileCSV();
                 List<Data2DColumn> columns = new ArrayList<>();
-                columns.add(new Data2DColumn(message(lang, "Country"), ColumnType.String, true).setWidth(140));
-                columns.add(new Data2DColumn(message(lang, "Capital"), ColumnType.String, true).setWidth(200));
-                columns.add(new Data2DColumn(message(lang, "Longitude"), ColumnType.Longitude));
-                columns.add(new Data2DColumn(message(lang, "Latitude"), ColumnType.Latitude));
-                columns.add(new Data2DColumn(message(lang, "StartTime"), ColumnType.Era).setFormat(isChinese ? "Gy" : "y G"));
-                columns.add(new Data2DColumn(message(lang, "EndTime"), ColumnType.Era).setFormat(isChinese ? "Gy" : "y G"));
+                columns.add(new Data2DColumn(message(lang, "ConfigurationID"), ColumnType.String, true).setWidth(140));
+                columns.add(new Data2DColumn(message(lang, "Name"), ColumnType.String, true).setWidth(200));
+                columns.add(new Data2DColumn(message(lang, "Status"), ColumnType.Enumeration)
+                        .setFormat(isChinese ? "申请\n已批准\n需求分析\n设计\n实现\n测试\n验证\n维护\n已完成\n被否定\n失败\n已取消"
+                                : "Applying\nApproved\nRequirement\nDesign\nImplementing\nTesting\nValidated\nMaintenance\nCompleted\nDenied\nFailed\nCanceled"));
+                columns.add(new Data2DColumn(isChinese ? "项目经理" : "Manager", ColumnType.String));
+                columns.add(new Data2DColumn(isChinese ? "批准者" : "Approver", ColumnType.String));
+                columns.add(new Data2DColumn(isChinese ? "开始时间" : "StartTime", ColumnType.Datetime));
+                columns.add(new Data2DColumn(isChinese ? "关闭时间" : "ClosedTime", ColumnType.Datetime));
                 columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
-                data.setColumns(columns).setDataName(message("ChineseHistoricalCapitals"));
-                if (makeExampleFile("ChineseHistoricalCapitals_" + lang, data)) {
+                data.setColumns(columns).setDataName(isChinese ? "项目登记" : "Project register");
+                if (makeExampleFile("PM_ProjectRegister_" + lang, data)) {
                     controller.loadCSVFile(data);
                 }
             });
-            locationMenu.getItems().add(menu);
+            pmMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("AutumnMovementPatternsOfEuropeanGadwalls"));
+            menu = new MenuItem(isChinese ? "任务登记" : "Task register");
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = new DataFileCSV();
                 List<Data2DColumn> columns = new ArrayList<>();
-                columns.add(new Data2DColumn(message(lang, "StartTime"), ColumnType.Datetime, 180).setFixTwoDigitYear(true));
-                columns.add(new Data2DColumn(message(lang, "EndTime"), ColumnType.Datetime, 180).setFixTwoDigitYear(true));
-                columns.add(new Data2DColumn(message(lang, "Longitude"), ColumnType.Longitude));
-                columns.add(new Data2DColumn(message(lang, "Latitude"), ColumnType.Latitude));
-                columns.add(new Data2DColumn(message(lang, "CoordinateSystem"), ColumnType.String));
+                columns.add(new Data2DColumn(message(lang, "ConfigurationID"), ColumnType.String, true).setWidth(140));
+                columns.add(new Data2DColumn(isChinese ? "项目编号" : "Project ID", ColumnType.String, true).setWidth(140));
+                columns.add(new Data2DColumn(message(lang, "Name"), ColumnType.String, true).setWidth(200));
+                columns.add(new Data2DColumn(message(lang, "Status"), ColumnType.Enumeration)
+                        .setFormat(isChinese ? "分派\n执行\n完成\n失败\n取消"
+                                : "Assign\nPerform\nComplete\nFail\nCancel"));
+                columns.add(new Data2DColumn(isChinese ? "执行者" : "Performer", ColumnType.String));
+                columns.add(new Data2DColumn(isChinese ? "开始时间" : "StartTime", ColumnType.Datetime));
+                columns.add(new Data2DColumn(isChinese ? "关闭时间" : "ClosedTime", ColumnType.Datetime));
                 columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
-                data.setColumns(columns).setDataName(message("AutumnMovementPatternsOfEuropeanGadwalls"))
-                        .setComments("https://www.datarepository.movebank.org/handle/10255/move.346");
-                if (makeExampleFile("EuropeanGadwalls", data)) {
+                data.setColumns(columns).setDataName(isChinese ? "任务登记" : "Task register");
+                if (makeExampleFile("PM_TaskRegister_" + lang, data)) {
                     controller.loadCSVFile(data);
                 }
             });
-            locationMenu.getItems().add(menu);
+            pmMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("SpermWhalesGulfOfMexico"));
+            menu = new MenuItem(isChinese ? "资源登记" : "Resource register");
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = new DataFileCSV();
                 List<Data2DColumn> columns = new ArrayList<>();
-                columns.add(new Data2DColumn(message(lang, "Time"), ColumnType.Datetime, 180).setFixTwoDigitYear(true));
-                columns.add(new Data2DColumn(message(lang, "Longitude"), ColumnType.Longitude));
-                columns.add(new Data2DColumn(message(lang, "Latitude"), ColumnType.Latitude));
-                columns.add(new Data2DColumn(message(lang, "CoordinateSystem"), ColumnType.String));
+                columns.add(new Data2DColumn(message(lang, "ConfigurationID"), ColumnType.String, true).setWidth(140));
+                columns.add(new Data2DColumn(message(lang, "Type"), ColumnType.Enumeration)
+                        .setFormat(isChinese ? "设备\n程序\n源代码\n文档\n数据\n其它"
+                                : "Device\nProgram\nSource codes\nDocument\nData\nOther"));
+                columns.add(new Data2DColumn(message(lang, "Name"), ColumnType.String, true));
+                columns.add(new Data2DColumn(message(lang, "Status"), ColumnType.Enumeration)
+                        .setFormat(isChinese ? "正常\n出借\n出售\n废弃\n损毁\n丢失"
+                                : "Normal\nLent\nSaled\nDiscarded\nDamaged\nLost"));
+                columns.add(new Data2DColumn(isChinese ? "保管者" : "Keeper", ColumnType.String));
+                columns.add(new Data2DColumn(isChinese ? "登记时间" : "RegisterTime", ColumnType.Datetime));
+                columns.add(new Data2DColumn(isChinese ? "失效时间" : "InvalidTime", ColumnType.Datetime));
                 columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
-                data.setColumns(columns).setDataName(message("SpermWhalesGulfOfMexico"))
-                        .setComments("https://www.datarepository.movebank.org/handle/10255/move.1059");
-                if (makeExampleFile("SpermWhales", data)) {
+                data.setColumns(columns).setDataName(isChinese ? "资源登记" : "Resource register");
+                if (makeExampleFile("PM_ResourceRegister_" + lang, data)) {
                     controller.loadCSVFile(data);
                 }
             });
-            locationMenu.getItems().add(menu);
+            pmMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("EpidemicReportsCOVID19"));
+            menu = new MenuItem(isChinese ? "风险分析" : "Risk Analysis");
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = new DataFileCSV();
                 List<Data2DColumn> columns = new ArrayList<>();
-                columns.add(new Data2DColumn(message(lang, "Date"), ColumnType.Date)
-                        .setFixTwoDigitYear(false).setFormat("yyyy-MM-dd"));
-                columns.add(new Data2DColumn(message(lang, "Country"), ColumnType.String));
-                columns.add(new Data2DColumn(message(lang, "Province"), ColumnType.String));
-                columns.add(new Data2DColumn(message(lang, "Confirmed"), ColumnType.Integer).setInvalidAs(InvalidAs.Zero));
-                columns.add(new Data2DColumn(message(lang, "Healed"), ColumnType.Integer).setInvalidAs(InvalidAs.Zero));
-                columns.add(new Data2DColumn(message(lang, "Dead"), ColumnType.Integer).setInvalidAs(InvalidAs.Zero));
-                columns.add(new Data2DColumn(message(lang, "Longitude"), ColumnType.Longitude));
-                columns.add(new Data2DColumn(message(lang, "Latitude"), ColumnType.Latitude));
-                data.setColumns(columns).setDataName(message("EpidemicReportsCOVID19"))
-                        .setComments("https://github.com/CSSEGISandData/COVID-19");
-                if (makeExampleFile("EpidemicReports", data)) {
+                columns.add(new Data2DColumn(message(lang, "ConfigurationID"), ColumnType.String, true).setWidth(140));
+                columns.add(new Data2DColumn(isChinese ? "任务编号" : "Task ID", ColumnType.String, true).setWidth(140));
+                columns.add(new Data2DColumn(message(lang, "Type"), ColumnType.Enumeration)
+                        .setFormat(isChinese ? "范围\n质量\n时间\n资金\n技术\n人力\n法律\n其它"
+                                : "Scope\nQuality\nTime\nMoney\nTechnique\nHuman\nLaw\nOther"));
+                columns.add(new Data2DColumn(isChinese ? "风险项" : "Risk Item", ColumnType.String, true));
+                columns.add(new Data2DColumn(isChinese ? "可能性" : "Probability", ColumnType.Integer));
+                columns.add(new Data2DColumn(isChinese ? "严重性" : "Severity", ColumnType.Integer));
+                columns.add(new Data2DColumn(isChinese ? "优先级" : "Priority", ColumnType.Integer));
+                columns.add(new Data2DColumn(message(lang, "Description"), ColumnType.String));
+                columns.add(new Data2DColumn(isChinese ? "影响" : "Effects", ColumnType.String));
+                columns.add(new Data2DColumn(isChinese ? "应急措施" : "Contingency Actions", ColumnType.String));
+                columns.add(new Data2DColumn(isChinese ? "分析者" : "Analyzer", ColumnType.String));
+                columns.add(new Data2DColumn(isChinese ? "分析时间" : "Analysis time", ColumnType.Datetime));
+                data.setColumns(columns).setDataName(isChinese ? "风险分析" : "Risk Analysis");
+                if (makeExampleFile("PM_RiskAnalysis_" + lang, data)) {
                     controller.loadCSVFile(data);
                 }
             });
-            locationMenu.getItems().add(menu);
+            pmMenu.getItems().add(menu);
 
-            return locationMenu;
+            menu = new MenuItem(isChinese ? "成本记录" : "Cost Records");
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn(message(lang, "ConfigurationID"), ColumnType.String, true).setWidth(140));
+                columns.add(new Data2DColumn(message(lang, "Type"), ColumnType.Enumeration)
+                        .setFormat(isChinese ? "项目\n任务\n其它"
+                                : "Project\nTask\nOther"));
+                columns.add(new Data2DColumn(isChinese ? "事项" : "Item", ColumnType.String));
+                columns.add(new Data2DColumn(isChinese ? "计划开始日期" : "Planned start time", ColumnType.Date));
+                columns.add(new Data2DColumn(isChinese ? "计划结束日期" : "Planned end time", ColumnType.Date));
+                columns.add(new Data2DColumn(isChinese ? "计划工作量（人月）" : "Planned workload(person-month)", ColumnType.Float));
+                columns.add(new Data2DColumn(isChinese ? "计划消耗（元）" : "Planned cost(Yuan)", ColumnType.Float));
+                columns.add(new Data2DColumn(isChinese ? "计划产出" : "Planned results", ColumnType.String));
+                columns.add(new Data2DColumn(isChinese ? "实际开始日期" : "Actual start time", ColumnType.Date));
+                columns.add(new Data2DColumn(isChinese ? "实际结束日期" : "Actual end time", ColumnType.Date));
+                columns.add(new Data2DColumn(isChinese ? "实际工作量（人月）" : "Actual workload(person-month)", ColumnType.Float));
+                columns.add(new Data2DColumn(isChinese ? "实际消耗（元）" : "Actual cost(Yuan)", ColumnType.Float));
+                columns.add(new Data2DColumn(isChinese ? "实际产出" : "Actual results", ColumnType.String));
+                columns.add(new Data2DColumn(isChinese ? "记录者" : "Recorder", ColumnType.String));
+                columns.add(new Data2DColumn(isChinese ? "记录时间" : "Record time", ColumnType.Datetime));
+                data.setColumns(columns).setDataName(isChinese ? "成本记录" : "Cost Records");
+                if (makeExampleFile("PM_CostRecords_" + lang, data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            pmMenu.getItems().add(menu);
+
+            return pmMenu;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;

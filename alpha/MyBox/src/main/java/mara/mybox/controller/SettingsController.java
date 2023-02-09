@@ -83,7 +83,7 @@ public class SettingsController extends BaseController {
     @FXML
     protected VBox localBox, dataBox;
     @FXML
-    protected ComboBox<String> styleBox, fontSizeBox, iconSizeBox,
+    protected ComboBox<String> fontSizeBox, iconSizeBox,
             strokeWidthBox, anchorWidthBox, gridWidthSelector, gridIntervalSelector, gridOpacitySelector,
             popSizeSelector, popDurationSelector;
     @FXML
@@ -163,39 +163,6 @@ public class SettingsController extends BaseController {
 
             recentFileNumber = UserConfig.getInt("FileRecentNumber", 20);
             fileRecentInput.setText(recentFileNumber + "");
-
-            String style = UserConfig.getString("InterfaceStyle", AppValues.DefaultStyle);
-            switch (style) {
-                case AppValues.DefaultStyle:
-                    styleBox.getSelectionModel().select(message("DefaultStyle"));
-                    break;
-                case AppValues.caspianStyle:
-                    styleBox.getSelectionModel().select(message("caspianStyle"));
-                    break;
-                case AppValues.WhiteOnBlackStyle:
-                    styleBox.getSelectionModel().select(message("WhiteOnBlackStyle"));
-                    break;
-                case AppValues.PinkOnBlackStyle:
-                    styleBox.getSelectionModel().select(message("PinkOnBlackStyle"));
-                    break;
-                case AppValues.YellowOnBlackStyle:
-                    styleBox.getSelectionModel().select(message("YellowOnBlackStyle"));
-                    break;
-                case AppValues.GreenOnBlackStyle:
-                    styleBox.getSelectionModel().select(message("GreenOnBlackStyle"));
-                    break;
-                case AppValues.WhiteOnBlueStyle:
-                    styleBox.getSelectionModel().select(message("WhiteOnBlueStyle"));
-                    break;
-                case AppValues.WhiteOnGreenStyle:
-                    styleBox.getSelectionModel().select(message("WhiteOnGreenStyle"));
-                    break;
-                case AppValues.WhiteOnPurpleStyle:
-                    styleBox.getSelectionModel().select(message("WhiteOnVioletredStyle"));
-                    break;
-                default:
-                    break;
-            }
 
             switch (AppVariables.ControlColor) {
                 case Pink:
@@ -310,20 +277,6 @@ public class SettingsController extends BaseController {
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
                     UserConfig.setBoolean("RecordWindowsSizeLocation", recordWindowsSizeLocationCheck.isSelected());
                     AppVariables.recordWindowsSizeLocation = recordWindowsSizeLocationCheck.isSelected();
-                }
-            });
-
-            styleBox.getItems().addAll(Arrays.asList(message("DefaultStyle"), message("caspianStyle"),
-                    message("WhiteOnBlackStyle"), message("PinkOnBlackStyle"),
-                    message("YellowOnBlackStyle"), message("GreenOnBlackStyle"),
-                    message("WhiteOnBlueStyle"), message("WhiteOnGreenStyle"),
-                    message("WhiteOnVioletredStyle")));
-            styleBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    if (newValue != null && !newValue.isEmpty()) {
-                        checkStyle(newValue);
-                    }
                 }
             });
 
@@ -453,33 +406,6 @@ public class SettingsController extends BaseController {
         } else {
             englishRadio.setSelected(true);
         }
-    }
-
-    protected void checkStyle(String s) {
-        try {
-            if (message("DefaultStyle").equals(s)) {
-                setStyle(AppValues.MyBoxStyle);
-            } else if (message("caspianStyle").equals(s)) {
-                setStyle(AppValues.caspianStyle);
-            } else if (message("WhiteOnBlackStyle").equals(s)) {
-                setStyle(AppValues.WhiteOnBlackStyle);
-            } else if (message("PinkOnBlackStyle").equals(s)) {
-                setStyle(AppValues.PinkOnBlackStyle);
-            } else if (message("YellowOnBlackStyle").equals(s)) {
-                setStyle(AppValues.YellowOnBlackStyle);
-            } else if (message("GreenOnBlackStyle").equals(s)) {
-                setStyle(AppValues.GreenOnBlackStyle);
-            } else if (message("WhiteOnBlueStyle").equals(s)) {
-                setStyle(AppValues.WhiteOnBlueStyle);
-            } else if (message("WhiteOnGreenStyle").equals(s)) {
-                setStyle(AppValues.WhiteOnGreenStyle);
-            } else if (message("WhiteOnVioletredStyle").equals(s)) {
-                setStyle(AppValues.WhiteOnPurpleStyle);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-
     }
 
     protected void checkControlsColor() {

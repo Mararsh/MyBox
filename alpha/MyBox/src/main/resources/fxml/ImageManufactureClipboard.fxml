@@ -6,7 +6,6 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.image.Image?>
@@ -52,14 +51,9 @@
                                         </VBox>
                                         <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                             <children>
-                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                                    <children>
-                                                        <Label text="%Rotate" />
-                                                        <Slider fx:id="angleSlider" blockIncrement="1.0" max="360.0" showTickLabels="true" showTickMarks="true" />
-                                                    </children>
-                                                </HBox>
                                                 <FlowPane hgap="5.0" prefWidth="200.0" vgap="5.0">
                                                     <children>
+                                                        <Label text="%Rotate" />
                                                         <ComboBox fx:id="angleBox" editable="true" prefWidth="100.0" />
                                                         <Button fx:id="rotateLeftButton" mnemonicParsing="false" onAction="#rotateLeft">
                                                             <graphic>

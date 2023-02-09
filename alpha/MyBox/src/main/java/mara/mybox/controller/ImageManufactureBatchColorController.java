@@ -8,7 +8,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -31,7 +30,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ImageManufactureBatchColorController extends BaseImageManufactureBatchController {
 
-    private int colorValue;
+    private int colorValue, valueMax;
     private OperationType colorOperationType;
     private ColorActionType colorActionType;
 
@@ -44,8 +43,6 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
             colorYellowRadio, colorCyanRadio, colorMagentaRadio;
     @FXML
     protected RadioButton setRadio, invertRadio, increaseRadio, decreaseRadio, filterRadio;
-    @FXML
-    protected Slider colorSlider;
     @FXML
     protected TextField colorInput;
     @FXML
@@ -94,14 +91,6 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
                 }
             });
             checkOperationType();
-
-            colorSlider.valueProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                    colorValue = newValue.intValue();
-                    colorInput.setText(colorValue + "");
-                }
-            });
 
             colorInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -173,14 +162,11 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
             increaseRadio.setDisable(false);
             decreaseRadio.setDisable(false);
             setRadio.setSelected(true);
-            colorUnit.setText("0-255");
+            valueMax = 255;
             ignoreTransparentCheck.setVisible(true);
 
             if (colorRGBRadio.isSelected()) {
                 colorOperationType = OperationType.RGB;
-                colorSlider.setMax(255);
-                colorSlider.setMin(0);
-                colorSlider.setBlockIncrement(1);
                 if (colorInput.getText().trim().isEmpty()) {
                     colorInput.setText("10");
                 }
@@ -190,99 +176,77 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
 
             } else if (colorBrightnessRadio.isSelected()) {
                 colorOperationType = OperationType.Brightness;
-                colorSlider.setMax(100);
-                colorSlider.setMin(0);
-                colorSlider.setBlockIncrement(1);
                 if (colorInput.getText().trim().isEmpty()) {
                     colorInput.setText("50");
                 }
                 filterRadio.setDisable(true);
                 invertRadio.setDisable(true);
-                colorUnit.setText("0-100");
+                valueMax = 100;
 
             } else if (colorSaturationRadio.isSelected()) {
                 colorOperationType = OperationType.Saturation;
-                colorSlider.setMax(100);
-                colorSlider.setMin(0);
-                colorSlider.setBlockIncrement(1);
                 if (colorInput.getText().trim().isEmpty()) {
                     colorInput.setText("50");
                 }
                 filterRadio.setDisable(true);
                 invertRadio.setDisable(true);
-                colorUnit.setText("0-100");
+                valueMax = 100;
 
             } else if (colorHueRadio.isSelected()) {
                 colorOperationType = OperationType.Hue;
-                colorSlider.setMax(360);
-                colorSlider.setMin(0);
-                colorSlider.setBlockIncrement(1);
+                valueMax = 360;
                 if (colorInput.getText().trim().isEmpty()) {
                     colorInput.setText("50");
                 }
                 filterRadio.setDisable(true);
                 invertRadio.setDisable(true);
-                colorUnit.setText("0-360");
+                valueMax = 360;
 
             } else if (colorRedRadio.isSelected()) {
                 colorOperationType = OperationType.Red;
-                colorSlider.setMax(255);
-                colorSlider.setMin(0);
-                colorSlider.setBlockIncrement(1);
+                valueMax = 255;
                 if (colorInput.getText().trim().isEmpty()) {
                     colorInput.setText("50");
                 }
 
             } else if (colorGreenRadio.isSelected()) {
                 colorOperationType = OperationType.Green;
-                colorSlider.setMax(255);
-                colorSlider.setMin(0);
-                colorSlider.setBlockIncrement(1);
+                valueMax = 255;
                 if (colorInput.getText().trim().isEmpty()) {
                     colorInput.setText("50");
                 }
 
             } else if (colorBlueRadio.isSelected()) {
                 colorOperationType = OperationType.Blue;
-                colorSlider.setMax(255);
-                colorSlider.setMin(0);
-                colorSlider.setBlockIncrement(1);
+                valueMax = 255;
                 if (colorInput.getText().trim().isEmpty()) {
                     colorInput.setText("50");
                 }
 
             } else if (colorYellowRadio.isSelected()) {
                 colorOperationType = OperationType.Yellow;
-                colorSlider.setMax(255);
-                colorSlider.setMin(0);
-                colorSlider.setBlockIncrement(1);
+                valueMax = 255;
                 if (colorInput.getText().trim().isEmpty()) {
                     colorInput.setText("50");
                 }
 
             } else if (colorCyanRadio.isSelected()) {
                 colorOperationType = OperationType.Cyan;
-                colorSlider.setMax(255);
-                colorSlider.setMin(0);
-                colorSlider.setBlockIncrement(1);
+                valueMax = 255;
                 if (colorInput.getText().trim().isEmpty()) {
                     colorInput.setText("50");
                 }
 
             } else if (colorMagentaRadio.isSelected()) {
                 colorOperationType = OperationType.Magenta;
-                colorSlider.setMax(255);
-                colorSlider.setMin(0);
-                colorSlider.setBlockIncrement(1);
+                valueMax = 255;
                 if (colorInput.getText().trim().isEmpty()) {
                     colorInput.setText("50");
                 }
 
             } else if (colorOpacityRadio.isSelected()) {
                 colorOperationType = OperationType.Opacity;
-                colorSlider.setMax(255);
-                colorSlider.setMin(0);
-                colorSlider.setBlockIncrement(1);
+                valueMax = 255;
                 if (colorInput.getText().trim().isEmpty()) {
                     colorInput.setText("50");
                 }
@@ -291,6 +255,8 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
 
             }
 
+            colorUnit.setText("0-" + valueMax);
+
         }
 
     }
@@ -298,9 +264,8 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
     private void checkColorInput() {
         try {
             colorValue = Integer.parseInt(colorInput.getText());
-            if (colorValue >= 0 && colorValue <= colorSlider.getMax()) {
+            if (colorValue >= 0 && colorValue <= valueMax) {
                 colorInput.setStyle(null);
-                colorSlider.setValue(colorValue);
             } else {
                 colorInput.setStyle(UserConfig.badStyle());
             }

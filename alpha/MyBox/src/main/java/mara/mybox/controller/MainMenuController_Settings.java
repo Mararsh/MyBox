@@ -20,7 +20,6 @@ import static mara.mybox.fxml.WindowTools.refreshInterfaceAll;
 import static mara.mybox.fxml.WindowTools.reloadAll;
 import static mara.mybox.fxml.WindowTools.styleAll;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Colors;
 import mara.mybox.value.Fxmls;
@@ -366,56 +365,6 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     @FXML
     protected void controlPanesAction() {
         UserConfig.setBoolean("MousePassControlPanes", controlPanesCheck.isSelected());
-    }
-
-    @FXML
-    protected void setDefaultStyle(ActionEvent event) {
-        setStyle(AppValues.DefaultStyle);
-    }
-
-    @FXML
-    protected void setWhiteOnBlackStyle(ActionEvent event) {
-        setStyle(AppValues.WhiteOnBlackStyle);
-    }
-
-    @FXML
-    protected void setYellowOnBlackStyle(ActionEvent event) {
-        setStyle(AppValues.YellowOnBlackStyle);
-    }
-
-    @FXML
-    protected void setWhiteOnGreenStyle(ActionEvent event) {
-        setStyle(AppValues.WhiteOnGreenStyle);
-    }
-
-    @FXML
-    protected void setCaspianStyle(ActionEvent event) {
-        setStyle(AppValues.caspianStyle);
-    }
-
-    @FXML
-    protected void setGreenOnBlackStyle(ActionEvent event) {
-        setStyle(AppValues.GreenOnBlackStyle);
-    }
-
-    @FXML
-    protected void setPinkOnBlackStyle(ActionEvent event) {
-        setStyle(AppValues.PinkOnBlackStyle);
-    }
-
-    @FXML
-    protected void setBlackOnYellowStyle(ActionEvent event) {
-        setStyle(AppValues.BlackOnYellowStyle);
-    }
-
-    @FXML
-    protected void setWhiteOnPurpleStyle(ActionEvent event) {
-        setStyle(AppValues.WhiteOnPurpleStyle);
-    }
-
-    @FXML
-    protected void setWhiteOnBlueStyle(ActionEvent event) {
-        setStyle(AppValues.WhiteOnBlueStyle);
     }
 
     public void setStyle(String style) {

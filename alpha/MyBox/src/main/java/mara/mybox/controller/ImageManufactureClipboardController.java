@@ -9,7 +9,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
@@ -47,8 +46,6 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
     protected Tab imagesPane, setPane;
     @FXML
     protected ComboBox<String> angleBox, ratioBox;
-    @FXML
-    protected Slider angleSlider;
     @FXML
     protected CheckBox keepRatioCheck, enlargeCheck;
     @FXML
@@ -145,13 +142,6 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             });
             ratioBox.getSelectionModel().select(0);
 
-            angleSlider.valueProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                    pasteClip(newValue.intValue());
-                }
-            });
-
             angleBox.getItems().addAll(Arrays.asList("0", "90", "180", "45", "30", "60", "15", "5", "10", "1", "75", "120", "135"));
             angleBox.setVisibleRowCount(10);
             angleBox.setValue("0");
@@ -173,7 +163,6 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
 
             okButton.setDisable(true);
             cancelButton.disableProperty().bind(okButton.disableProperty());
-            angleSlider.disableProperty().bind(okButton.disableProperty());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

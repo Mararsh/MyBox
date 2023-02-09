@@ -20,7 +20,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
@@ -735,38 +734,53 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
     }
 
     @Override
-    public boolean altFilter(KeyEvent event) {
-        if (!event.isAltDown() || event.getCode() == null) {
+    public boolean controlAlt1() {
+        if (opBox.getChildren().contains(setButton) && !setButton.isDisabled()) {
+            setAction();
+            return true;
+        } else {
             return false;
         }
-        switch (event.getCode()) {
-            case DIGIT1:
-                if (opBox.getChildren().contains(setButton) && !setButton.isDisabled()) {
-                    setAction();
-                }
-                return true;
-            case DIGIT2:
-                if (opBox.getChildren().contains(colorIncreaseButton) && !colorIncreaseButton.isDisabled()) {
-                    increaseAction();
-                }
-                return true;
-            case DIGIT3:
-                if (opBox.getChildren().contains(colorDecreaseButton) && !colorDecreaseButton.isDisabled()) {
-                    decreaseAction();
-                }
-                return true;
-            case DIGIT4:
-                if (opBox.getChildren().contains(colorFilterButton) && !colorFilterButton.isDisabled()) {
-                    filterAction();
-                }
-                return true;
-            case DIGIT5:
-                if (opBox.getChildren().contains(colorInvertButton) && !colorInvertButton.isDisabled()) {
-                    invertAction();
-                }
-                return true;
+    }
+
+    @Override
+    public boolean controlAlt2() {
+        if (opBox.getChildren().contains(colorIncreaseButton) && !colorIncreaseButton.isDisabled()) {
+            increaseAction();
+            return true;
+        } else {
+            return false;
         }
-        return super.altFilter(event);
+    }
+
+    @Override
+    public boolean controlAlt3() {
+        if (opBox.getChildren().contains(colorDecreaseButton) && !colorDecreaseButton.isDisabled()) {
+            decreaseAction();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean controlAlt4() {
+        if (opBox.getChildren().contains(colorFilterButton) && !colorFilterButton.isDisabled()) {
+            filterAction();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean controlAlt5() {
+        if (opBox.getChildren().contains(colorInvertButton) && !colorInvertButton.isDisabled()) {
+            invertAction();
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

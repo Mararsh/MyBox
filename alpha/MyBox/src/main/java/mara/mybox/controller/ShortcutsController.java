@@ -114,18 +114,18 @@ public class ShortcutsController extends BaseTableViewController<ShortCut> {
             tableData.add(new ShortCut("CTRL", "t", message("SelectArea") + " / " + message("CopyText"), "ALT+t", "iconTarget.png"));
             tableData.add(new ShortCut("CTRL", "m", message("MyBoxClipboard"), "ALT+m", "iconClipboard.png"));
             tableData.add(new ShortCut("CTRL", "j", message("SystemClipboard"), "ALT+j", "iconSystemClipboard.png"));
-            tableData.add(new ShortCut("CTRL", "1", message("OriginalSize") + " / " + message("Previous"), "", "iconOriginalSize.png"));
-            tableData.add(new ShortCut("CTRL", "2", message("PaneSize") + " / " + message("Next"), "", "iconPaneSize.png"));
-            tableData.add(new ShortCut("CTRL", "3", message("ZoomIn"), "", "iconZoomIn.png"));
-            tableData.add(new ShortCut("CTRL", "4", message("ZoomOut"), "", "iconZoomOut.png"));
+            tableData.add(new ShortCut("CTRL", "1", message("OriginalSize") + " / " + message("Previous"), "ALT+1", "iconOriginalSize.png"));
+            tableData.add(new ShortCut("CTRL", "2", message("PaneSize") + " / " + message("Next"), "ALT+2", "iconPaneSize.png"));
+            tableData.add(new ShortCut("CTRL", "3", message("ZoomIn"), "ALT+3", "iconZoomIn.png"));
+            tableData.add(new ShortCut("CTRL", "4", message("ZoomOut"), "ALT+4", "iconZoomOut.png"));
             tableData.add(new ShortCut("CTRL", "-", message("DecreaseFontSize"), "", "iconMinus.png"));
             tableData.add(new ShortCut("CTRL", "=", message("IncreaseFontSize"), "", "iconPlus.png"));
 
-            tableData.add(new ShortCut("ALT", "1", message("Set") + " / " + message("Previous"), "F1", "iconOK.png"));
-            tableData.add(new ShortCut("ALT", "2", message("Increase") + " / " + message("Next"), "", "iconPlus.png"));
-            tableData.add(new ShortCut("ALT", "3", message("Decrease"), "", "iconMinus.png"));
-            tableData.add(new ShortCut("ALT", "4", message("Filter"), "", "iconFilter.png"));
-            tableData.add(new ShortCut("ALT", "5", message("Invert"), "", "iconInvert.png"));
+            tableData.add(new ShortCut("ALT", "1", message("Set") + " / " + message("Previous"), "F1 / CTRL+1", "iconOK.png"));
+            tableData.add(new ShortCut("ALT", "2", message("Increase") + " / " + message("Next"), "CTRL+2", "iconPlus.png"));
+            tableData.add(new ShortCut("ALT", "3", message("Decrease"), "CTRL+5", "iconMinus.png"));
+            tableData.add(new ShortCut("ALT", "4", message("Filter"), "CTRL+5", "iconFilter.png"));
+            tableData.add(new ShortCut("ALT", "5", message("Invert"), "CTRL+5", "iconInvert.png"));
             tableData.add(new ShortCut("ALT", "PAGE_UP", message("Previous"), "PAGE_UP", "iconPrevious.png"));
             tableData.add(new ShortCut("ALT", "PAGE_DOWN", message("Next"), "PAGE_DOWN", "iconNext.png"));
             tableData.add(new ShortCut("ALT", "HOME", message("First"), "HOME", "iconFirst.png"));

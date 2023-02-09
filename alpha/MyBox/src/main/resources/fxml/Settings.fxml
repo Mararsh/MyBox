@@ -122,16 +122,6 @@ License:    Apache License Version 2.0
                                           </Button>
                                                     </children>
                                                 </HBox>
-                                                <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                                                    <children>
-                                                        <Label text="%InterfaceStyle">
-                                                            <HBox.margin>
-                                                                <Insets />
-                                                            </HBox.margin>
-                                                        </Label>
-                                                        <ComboBox fx:id="styleBox" prefWidth="272.0" />
-                                                    </children>
-                                                </HBox>
                                     <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="192.0" spacing="10.0">
                                        <children>
                                                         <CheckBox fx:id="hidpiIconsCheck" mnemonicParsing="false" text="%HidpiIcons">

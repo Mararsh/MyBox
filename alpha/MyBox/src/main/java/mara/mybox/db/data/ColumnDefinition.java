@@ -231,7 +231,7 @@ public class ColumnDefinition extends BaseData {
                 case Double:
                 case Longitude:
                 case Latitude:
-                    Double.parseDouble(value.replaceAll(",", ""));
+                    Double.valueOf(value.replaceAll(",", ""));
                     return true;
                 case Float:
                     Float.parseFloat(value.replaceAll(",", ""));

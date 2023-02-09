@@ -42,13 +42,13 @@ public class StylePrefix {
             case "colorRGBRadio":
                 return new StyleData(id, "", message("RGB"), "", "iconRGB.png");
             case "colorIncreaseButton":
-                return new StyleData(id, message("Increase"), "ALT+2", "iconPlus.png");
+                return new StyleData(id, message("Increase"), "CTRL+2", "iconPlus.png");
             case "colorDecreaseButton":
-                return new StyleData(id, message("Decrease"), "ALT+3", "iconMinus.png");
+                return new StyleData(id, message("Decrease"), "CTRL+3", "iconMinus.png");
             case "colorFilterButton":
-                return new StyleData(id, message("Filter"), "ALT+4", "iconFilter.png");
+                return new StyleData(id, message("Filter"), "CTRL+4", "iconFilter.png");
             case "colorInvertButton":
-                return new StyleData(id, message("Invert"), "ALT+5", "iconInvert.png");
+                return new StyleData(id, message("Invert"), "CTRL+5", "iconInvert.png");
             case "colorReplaceRadio":
                 return new StyleData(id, "", message("ReplaceColor"), "", "iconReplace.png");
             case "setRadio":

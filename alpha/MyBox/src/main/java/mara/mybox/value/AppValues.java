@@ -35,15 +35,4 @@ public class AppValues {
     public static final String GaoDeMapServiceKey = "d7444d9a7fae01fa850236d909ad4450";
     public static final String TianDiTuWebKey = "0ddeb917def62b4691500526cc30a9b1";
 
-    public static final String WhiteOnBlackStyle = "/styles/modena/whiteOnBlack.css";
-    public static final String WhiteOnBlueStyle = "/styles/modena/whiteOnBlue.css";
-    public static final String DefaultStyle = "/styles/modena/modena.css";
-    public static final String PinkOnBlackStyle = "/styles/modena/pinkOnBlack.css";
-    public static final String WhiteOnPurpleStyle = "/styles/modena/whiteOnPurple.css";
-    public static final String caspianStyle = "/styles/caspian/caspian.css";
-    public static final String YellowOnBlackStyle = "/styles/modena/yellowOnBlack.css";
-    public static final String BlackOnYellowStyle = "/styles/modena/blackOnYellow.css";
-    public static final String WhiteOnGreenStyle = "/styles/modena/whiteOnGreen.css";
-    public static final String GreenOnBlackStyle = "/styles/modena/greenOnBlack.css";
-
 }
