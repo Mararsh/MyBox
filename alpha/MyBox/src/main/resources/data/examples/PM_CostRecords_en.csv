@@ -1,3 +1,3 @@
-Configuration ID,Type,Item,Planned start time,Planned end time,Planned workload(person-month),Planned cost(Yuan),Planned results,Actual start time,Actual end time,Actual workload(person-month),Actual cost(Yuan),Actual results,Recorder,Record time
+Task ID,Planned start time,Planned end time,Planned workload(person-month),Planned cost(Yuan),Planned results,Actual start time,Actual end time,Actual workload(person-month),Actual cost(Yuan),Actual results,Recorder,Record time
 C-P-000583,Project,P-MyBox-2022-D036,2022-5-1,2022-8-31,1.5,0,3 grouping ways,2022-5-1,2023-1-21,3.5,0,6 grouping ways,mara,2023-2-11 11:30:42
 C-T-000583,Task,T-01732,2023-2-10,2023-3-30,1.5,0,interfaces which refer to colors compression,,,,,,mara,2023-2-11 11:30:42

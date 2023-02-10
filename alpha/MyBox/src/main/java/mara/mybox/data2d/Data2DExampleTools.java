@@ -959,16 +959,34 @@ public class Data2DExampleTools {
                 List<Data2DColumn> columns = new ArrayList<>();
                 columns.add(new Data2DColumn(message(lang, "ConfigurationID"), ColumnType.String, true).setWidth(140));
                 columns.add(new Data2DColumn(message(lang, "Name"), ColumnType.String, true).setWidth(200));
-                columns.add(new Data2DColumn(message(lang, "Status"), ColumnType.Enumeration)
+                columns.add(new Data2DColumn(message(lang, "LastStatus"), ColumnType.Enumeration)
                         .setFormat(isChinese ? "申请\n已批准\n需求分析\n设计\n实现\n测试\n验证\n维护\n已完成\n被否定\n失败\n已取消"
                                 : "Applying\nApproved\nRequirement\nDesign\nImplementing\nTesting\nValidated\nMaintenance\nCompleted\nDenied\nFailed\nCanceled"));
                 columns.add(new Data2DColumn(isChinese ? "项目经理" : "Manager", ColumnType.String));
                 columns.add(new Data2DColumn(isChinese ? "批准者" : "Approver", ColumnType.String));
-                columns.add(new Data2DColumn(isChinese ? "开始时间" : "StartTime", ColumnType.Datetime));
-                columns.add(new Data2DColumn(isChinese ? "关闭时间" : "ClosedTime", ColumnType.Datetime));
+                columns.add(new Data2DColumn(message(lang, "StartTime"), ColumnType.Datetime));
+                columns.add(new Data2DColumn(isChinese ? "关闭时间" : "Closed time", ColumnType.Datetime));
                 columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
                 data.setColumns(columns).setDataName(isChinese ? "项目登记" : "Project register");
                 if (makeExampleFile("PM_ProjectRegister_" + lang, data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            pmMenu.getItems().add(menu);
+
+            menu = new MenuItem(isChinese ? "项目状态" : "Project Status");
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn(isChinese ? "项目编号" : "Project ID", ColumnType.String, true).setWidth(140));
+                columns.add(new Data2DColumn(message(lang, "Status"), ColumnType.Enumeration)
+                        .setFormat(isChinese ? "申请\n已批准\n需求分析\n设计\n实现\n测试\n验证\n维护\n已完成\n被否定\n失败\n已取消"
+                                : "Applying\nApproved\nRequirement\nDesign\nImplementing\nTesting\nValidated\nMaintenance\nCompleted\nDenied\nFailed\nCanceled"));
+                columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
+                columns.add(new Data2DColumn(message(lang, "Recorder"), ColumnType.String));
+                columns.add(new Data2DColumn(message(lang, "RecordTime"), ColumnType.Datetime));
+                data.setColumns(columns).setDataName(isChinese ? "项目状态" : "Project Status");
+                if (makeExampleFile("PM_ProjectStatus_" + lang, data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -981,7 +999,7 @@ public class Data2DExampleTools {
                 columns.add(new Data2DColumn(message(lang, "ConfigurationID"), ColumnType.String, true).setWidth(140));
                 columns.add(new Data2DColumn(isChinese ? "项目编号" : "Project ID", ColumnType.String, true).setWidth(140));
                 columns.add(new Data2DColumn(message(lang, "Name"), ColumnType.String, true).setWidth(200));
-                columns.add(new Data2DColumn(message(lang, "Status"), ColumnType.Enumeration)
+                columns.add(new Data2DColumn(message(lang, "LastStatus"), ColumnType.Enumeration)
                         .setFormat(isChinese ? "分派\n执行\n完成\n失败\n取消"
                                 : "Assign\nPerform\nComplete\nFail\nCancel"));
                 columns.add(new Data2DColumn(isChinese ? "执行者" : "Performer", ColumnType.String));
@@ -995,24 +1013,98 @@ public class Data2DExampleTools {
             });
             pmMenu.getItems().add(menu);
 
+            menu = new MenuItem(isChinese ? "任务状态" : "Task Status");
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn(isChinese ? "任务编号" : "Task ID", ColumnType.String, true).setWidth(140));
+                columns.add(new Data2DColumn(message(lang, "Status"), ColumnType.Enumeration)
+                        .setFormat(isChinese ? "计划\n执行\n完成\n失败\n取消"
+                                : "Plan\nPerform\nComplete\nFail\nCancel"));
+                columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
+                columns.add(new Data2DColumn(message(lang, "Recorder"), ColumnType.String));
+                columns.add(new Data2DColumn(message(lang, "RecordTime"), ColumnType.Datetime));
+                data.setColumns(columns).setDataName(isChinese ? "任务状态" : "Task Status");
+                if (makeExampleFile("PM_TaskStatus_" + lang, data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            pmMenu.getItems().add(menu);
+
+            menu = new MenuItem(isChinese ? "人员登记" : "Person register");
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn(message(lang, "ConfigurationID"), ColumnType.String, true).setWidth(140));
+                columns.add(new Data2DColumn(isChinese ? "任务编号" : "Task ID", ColumnType.String, true).setWidth(140));
+                columns.add(new Data2DColumn(message(lang, "Role"), ColumnType.Enumeration)
+                        .setFormat(isChinese ? "投资人\n监管者\n项目经理\n组长\n设计者\n编程者\n测试者\n其他/她"
+                                : "Investor\nSupervisor\nProject manager\nTeam leader\nDesigner\nProgrammer\nTester\n\nOther"));
+                columns.add(new Data2DColumn(message(lang, "Name"), ColumnType.String, true));
+                columns.add(new Data2DColumn(message(lang, "PhoneNumber"), ColumnType.String));
+                columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
+                data.setColumns(columns).setDataName(isChinese ? "人员登记" : "Person register");
+                if (makeExampleFile("PM_PersonRegister_" + lang, data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            pmMenu.getItems().add(menu);
+
+            menu = new MenuItem(isChinese ? "人员状态" : "Person Status");
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn(isChinese ? "人员编号" : "Person ID", ColumnType.String, true).setWidth(140));
+                columns.add(new Data2DColumn(message(lang, "Status"), ColumnType.Enumeration)
+                        .setFormat(isChinese ? "加入\n修改信息\n退出"
+                                : "Join\nUpdate information\nQuit"));
+                columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
+                columns.add(new Data2DColumn(message(lang, "Recorder"), ColumnType.String));
+                columns.add(new Data2DColumn(message(lang, "RecordTime"), ColumnType.Datetime));
+                data.setColumns(columns).setDataName(isChinese ? "人员状态" : "Person Status");
+                if (makeExampleFile("PM_PersonStatus_" + lang, data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            pmMenu.getItems().add(menu);
+
             menu = new MenuItem(isChinese ? "资源登记" : "Resource register");
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = new DataFileCSV();
                 List<Data2DColumn> columns = new ArrayList<>();
                 columns.add(new Data2DColumn(message(lang, "ConfigurationID"), ColumnType.String, true).setWidth(140));
+                columns.add(new Data2DColumn(isChinese ? "任务编号" : "Task ID", ColumnType.String, true).setWidth(140));
                 columns.add(new Data2DColumn(message(lang, "Type"), ColumnType.Enumeration)
                         .setFormat(isChinese ? "设备\n程序\n源代码\n文档\n数据\n其它"
                                 : "Device\nProgram\nSource codes\nDocument\nData\nOther"));
                 columns.add(new Data2DColumn(message(lang, "Name"), ColumnType.String, true));
-                columns.add(new Data2DColumn(message(lang, "Status"), ColumnType.Enumeration)
+                columns.add(new Data2DColumn(message(lang, "LastStatus"), ColumnType.Enumeration)
                         .setFormat(isChinese ? "正常\n出借\n出售\n废弃\n损毁\n丢失"
                                 : "Normal\nLent\nSaled\nDiscarded\nDamaged\nLost"));
                 columns.add(new Data2DColumn(isChinese ? "保管者" : "Keeper", ColumnType.String));
-                columns.add(new Data2DColumn(isChinese ? "登记时间" : "RegisterTime", ColumnType.Datetime));
-                columns.add(new Data2DColumn(isChinese ? "失效时间" : "InvalidTime", ColumnType.Datetime));
+                columns.add(new Data2DColumn(isChinese ? "登记时间" : "Register time", ColumnType.Datetime));
+                columns.add(new Data2DColumn(isChinese ? "失效时间" : "Invalid time", ColumnType.Datetime));
                 columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
                 data.setColumns(columns).setDataName(isChinese ? "资源登记" : "Resource register");
                 if (makeExampleFile("PM_ResourceRegister_" + lang, data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            pmMenu.getItems().add(menu);
+
+            menu = new MenuItem(isChinese ? "资源状态" : "Resource Status");
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn(isChinese ? "资源编号" : "Resource ID", ColumnType.String, true).setWidth(140));
+                columns.add(new Data2DColumn(message(lang, "Status"), ColumnType.Enumeration)
+                        .setFormat(isChinese ? "正常\n出借\n出售\n废弃\n损毁\n丢失"
+                                : "Normal\nLent\nSaled\nDiscarded\nDamaged\nLost"));
+                columns.add(new Data2DColumn(message(lang, "Comments"), ColumnType.String));
+                columns.add(new Data2DColumn(message(lang, "Recorder"), ColumnType.String));
+                columns.add(new Data2DColumn(message(lang, "RecordTime"), ColumnType.Datetime));
+                data.setColumns(columns).setDataName(isChinese ? "资源状态" : "Resource Status");
+                if (makeExampleFile("PM_ResourceStatus_" + lang, data)) {
                     controller.loadCSVFile(data);
                 }
             });
@@ -1043,29 +1135,47 @@ public class Data2DExampleTools {
             });
             pmMenu.getItems().add(menu);
 
-            menu = new MenuItem(isChinese ? "成本记录" : "Cost Records");
+            menu = new MenuItem(isChinese ? "成本记录" : "Cost Record");
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = new DataFileCSV();
                 List<Data2DColumn> columns = new ArrayList<>();
-                columns.add(new Data2DColumn(message(lang, "ConfigurationID"), ColumnType.String, true).setWidth(140));
-                columns.add(new Data2DColumn(message(lang, "Type"), ColumnType.Enumeration)
-                        .setFormat(isChinese ? "项目\n任务\n其它"
-                                : "Project\nTask\nOther"));
-                columns.add(new Data2DColumn(isChinese ? "事项" : "Item", ColumnType.String));
+                columns.add(new Data2DColumn(isChinese ? "任务编号" : "Task ID", ColumnType.String, true).setWidth(140));
                 columns.add(new Data2DColumn(isChinese ? "计划开始日期" : "Planned start time", ColumnType.Date));
                 columns.add(new Data2DColumn(isChinese ? "计划结束日期" : "Planned end time", ColumnType.Date));
                 columns.add(new Data2DColumn(isChinese ? "计划工作量（人月）" : "Planned workload(person-month)", ColumnType.Float));
-                columns.add(new Data2DColumn(isChinese ? "计划消耗（元）" : "Planned cost(Yuan)", ColumnType.Float));
+                columns.add(new Data2DColumn(isChinese ? "计划成本（元）" : "Planned cost(Yuan)", ColumnType.Float));
                 columns.add(new Data2DColumn(isChinese ? "计划产出" : "Planned results", ColumnType.String));
                 columns.add(new Data2DColumn(isChinese ? "实际开始日期" : "Actual start time", ColumnType.Date));
                 columns.add(new Data2DColumn(isChinese ? "实际结束日期" : "Actual end time", ColumnType.Date));
                 columns.add(new Data2DColumn(isChinese ? "实际工作量（人月）" : "Actual workload(person-month)", ColumnType.Float));
-                columns.add(new Data2DColumn(isChinese ? "实际消耗（元）" : "Actual cost(Yuan)", ColumnType.Float));
+                columns.add(new Data2DColumn(isChinese ? "实际成本（元）" : "Actual cost(Yuan)", ColumnType.Float));
                 columns.add(new Data2DColumn(isChinese ? "实际产出" : "Actual results", ColumnType.String));
-                columns.add(new Data2DColumn(isChinese ? "记录者" : "Recorder", ColumnType.String));
-                columns.add(new Data2DColumn(isChinese ? "记录时间" : "Record time", ColumnType.Datetime));
+                columns.add(new Data2DColumn(message(lang, "Recorder"), ColumnType.String));
+                columns.add(new Data2DColumn(message(lang, "RecordTime"), ColumnType.Datetime));
                 data.setColumns(columns).setDataName(isChinese ? "成本记录" : "Cost Records");
                 if (makeExampleFile("PM_CostRecords_" + lang, data)) {
+                    controller.loadCSVFile(data);
+                }
+            });
+            pmMenu.getItems().add(menu);
+
+            menu = new MenuItem(isChinese ? "检验记录" : "Verify Record");
+            menu.setOnAction((ActionEvent event) -> {
+                DataFileCSV data = new DataFileCSV();
+                List<Data2DColumn> columns = new ArrayList<>();
+                columns.add(new Data2DColumn(isChinese ? "任务编号" : "Task ID", ColumnType.String, true).setWidth(140));
+                columns.add(new Data2DColumn(isChinese ? "事项" : "Item", ColumnType.Integer));
+                columns.add(new Data2DColumn(message(lang, "Result"), ColumnType.Enumeration)
+                        .setFormat(isChinese ? "通过\n部分通过\n未通过"
+                                : "Pass\nPart pass\nNot pass"));
+                columns.add(new Data2DColumn(isChinese ? "严重性" : "Severity", ColumnType.Integer));
+                columns.add(new Data2DColumn(message(lang, "Description"), ColumnType.String));
+                columns.add(new Data2DColumn(isChinese ? "影响" : "Effects", ColumnType.String));
+                columns.add(new Data2DColumn(isChinese ? "建议" : "Suggestions", ColumnType.String));
+                columns.add(new Data2DColumn(isChinese ? "检验者" : "Verifier", ColumnType.String));
+                columns.add(new Data2DColumn(isChinese ? "检验时间" : "Verification time", ColumnType.Datetime));
+                data.setColumns(columns).setDataName(isChinese ? "检验记录" : "Verify Record");
+                if (makeExampleFile("PM_VerifyRecord_" + lang, data)) {
                     controller.loadCSVFile(data);
                 }
             });

@@ -279,26 +279,34 @@ public class PixelsOperationFactory {
 
         private float paraHue, paraSaturation, paraBrightness,
                 colorHue, colorSaturation, colorBrightness;
+        private boolean directReplace;
 
         public ReplaceColor(BufferedImage image, ImageScope scope) {
             this.operationType = OperationType.ReplaceColor;
             this.colorActionType = ColorActionType.Set;
             this.image = image;
             this.scope = scope;
+            boolPara1 = boolPara2 = boolPara3 = true;
+            directReplace = false;
         }
 
         @Override
-        public PixelsOperation setColorPara2(Color colorPara2) {
-            this.colorPara2 = colorPara2;
-            float[] hsb = ColorConvertTools.color2hsb(colorPara2);
-            paraHue = hsb[0];
-            paraSaturation = hsb[1];
-            paraBrightness = hsb[2];
-            return this;
+        public BufferedImage operate() {
+            directReplace = boolPara1 && boolPara2 && boolPara3;
+            if (!directReplace) {
+                float[] hsb = ColorConvertTools.color2hsb(colorPara2);
+                paraHue = hsb[0];
+                paraSaturation = hsb[1];
+                paraBrightness = hsb[2];
+            }
+            return super.operate();
         }
 
         @Override
         protected Color operateColor(Color color) {
+            if (directReplace) {
+                return colorPara2;
+            }
             float[] hsb = ColorConvertTools.color2hsb(color);
             colorHue = boolPara1 ? paraHue : hsb[0];
             colorSaturation = boolPara2 ? paraSaturation : hsb[1];
@@ -311,26 +319,34 @@ public class PixelsOperationFactory {
 
         private float paraHue, paraSaturation, paraBrightness,
                 colorHue, colorSaturation, colorBrightness;
+        private boolean directReplace;
 
         public ColorSet(BufferedImage image, ImageScope scope) {
             this.operationType = OperationType.Color;
             this.colorActionType = ColorActionType.Set;
             this.image = image;
             this.scope = scope;
+            boolPara1 = boolPara2 = boolPara3 = true;
+            directReplace = false;
         }
 
         @Override
-        public PixelsOperation setColorPara1(Color colorPara1) {
-            this.colorPara1 = colorPara1;
-            float[] hsb = ColorConvertTools.color2hsb(colorPara1);
-            paraHue = hsb[0];
-            paraSaturation = hsb[1];
-            paraBrightness = hsb[2];
-            return this;
+        public BufferedImage operate() {
+            directReplace = boolPara1 && boolPara2 && boolPara3;
+            if (!directReplace) {
+                float[] hsb = ColorConvertTools.color2hsb(colorPara1);
+                paraHue = hsb[0];
+                paraSaturation = hsb[1];
+                paraBrightness = hsb[2];
+            }
+            return super.operate();
         }
 
         @Override
         protected Color operateColor(Color color) {
+            if (directReplace) {
+                return colorPara1;
+            }
             float[] hsb = ColorConvertTools.color2hsb(color);
             colorHue = boolPara1 ? paraHue : hsb[0];
             colorSaturation = boolPara2 ? paraSaturation : hsb[1];
