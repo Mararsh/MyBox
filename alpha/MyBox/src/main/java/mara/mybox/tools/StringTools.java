@@ -22,6 +22,13 @@ import static mara.mybox.value.Languages.message;
  */
 public class StringTools {
 
+    public static String maxLen(String string, int maxLen) {
+        if (string == null) {
+            return string;
+        }
+        return string.length() > maxLen ? string.substring(0, maxLen) : string;
+    }
+
     public static String[] separatedBySpace(String string) {
         String[] ss = new String[2];
         String s = string.trim();

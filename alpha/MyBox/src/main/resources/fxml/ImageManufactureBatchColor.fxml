@@ -225,6 +225,7 @@ License:    Apache License Version 2.0
                                                       <CheckBox fx:id="hueCheck" mnemonicParsing="false" selected="true" text="%Hue" />
                                                       <CheckBox fx:id="saturationCheck" layoutX="39.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Saturation" />
                                                       <CheckBox fx:id="brightnessCheck" layoutX="10.0" layoutY="31.0" mnemonicParsing="false" text="%Brightness" />
+                                                      <Label text="%NoSelectionMeansAll" />
                                                    </children>
                                                 </FlowPane>
                                                 <VBox fx:id="blendBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">

@@ -17,6 +17,7 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.IndexRange;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
@@ -29,6 +30,7 @@ import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.ScheduleTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TmpFileTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -40,8 +42,9 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlPlay extends BaseController {
 
-    protected int framesNumber, currentIndex, fromFrame, toFrame;
+    protected int total, currentIndex, fromFrame, toFrame, maxList = 100;
     protected long timeValue;
+    protected List<String> frameNames;
     protected SimpleBooleanProperty stopped;
     protected Thread playThread, targetThread;
     protected ScheduledFuture schedule;
@@ -86,13 +89,13 @@ public class ControlPlay extends BaseController {
                 snapBox.setVisible(false);
             }
 
-            frameSelector.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+            frameSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
-                public void changed(ObservableValue ov, Number oldValue, Number newValue) {
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
                     if (isSettingValues) {
                         return;
                     }
-                    pauseFrame(newValue.intValue());
+                    pauseFrame(StringTools.numberPrefix(newValue) - 1);
                 }
             });
 
@@ -167,15 +170,71 @@ public class ControlPlay extends BaseController {
         }
     }
 
+    // 0-based, include end
+    public IndexRange currentRange() {
+        return range(total, fromFrame, toFrame, currentIndex);
+    }
+
+    public IndexRange range(int total, int from, int to, int index) {
+        int s = total;
+        if (s < 1) {
+            return null;
+        }
+        int f = Math.max(from, index - maxList / 2);
+        if (f < 0 || f >= s) {
+            f = 0;
+        }
+        int t = Math.min(to, f + maxList - 1);
+        if (t < 0 || t >= s) {
+            t = s - 1;
+        }
+        if (f > t) {
+            return null;
+        }
+        return new IndexRange(f, t);
+    }
+
+    public void setList(List<String> list) {
+        if (list == null || list.isEmpty()) {
+            frameSelector.getItems().clear();
+            return;
+        }
+        List<String> names = new ArrayList<>();
+        String currentName = null;
+        for (String item : list) {
+            String name = StringTools.maxLen(item.replaceAll("\n", " "), 100);
+            names.add(name);
+            if (name.startsWith((currentIndex + 1) + " ")) {
+                currentName = name;
+            }
+        }
+        isSettingValues = true;
+        frameSelector.getItems().setAll(names);
+        frameSelector.getSelectionModel().select(currentName);
+        isSettingValues = false;
+    }
+
+    public void refreshList() {
+        IndexRange range = range(total, fromFrame, toFrame, currentIndex);
+        if (range == null) {
+            frameSelector.getItems().clear();
+            return;
+        }
+        List<String> labels = new ArrayList<>();
+        for (int i = range.getStart(); i <= range.getEnd(); i++) {
+            labels.add((i + 1) + "");
+        }
+        isSettingValues = true;
+        frameSelector.getItems().setAll(labels);
+        frameSelector.getSelectionModel().select((currentIndex + 1) + "");
+        isSettingValues = false;
+    }
+
     // from, to, frameIndex are 0-based. Include to.
     // Displayed values are 1-based while internal values are 0-based
-    public boolean play(List<String> frames, int from, int to) {
+    public boolean play(int total, int from, int to) {
         try {
-            if (frames == null || frames.isEmpty()) {
-                return false;
-            }
-            clear();
-            int s = frames.size();
+            int s = total;
             if (s < 1) {
                 return false;
             }
@@ -195,25 +254,14 @@ public class ControlPlay extends BaseController {
             fromFrame = f;
             toFrame = t;
             currentIndex = 0;
-            framesNumber = frames.size();
+            this.total = total;
             if (reverseCheck.isSelected()) {
                 currentIndex = toFrame;
             } else {
                 currentIndex = fromFrame;
             }
             setPauseButton(false);
-            List<String> names = new ArrayList<>();
-            for (String frame : frames) {
-                String v = frame.replaceAll("\n", " ");
-                int len = v.length();
-                if (len > 100) {
-                    v = v.substring(0, 100);
-                }
-                names.add(v);
-            }
-            frameSelector.getItems().setAll(names);
-            frameSelector.getSelectionModel().select(currentIndex);
-            totalLabel.setText("/" + framesNumber);
+            totalLabel.setText("/" + total);
             isSettingValues = false;
             startFrame(currentIndex);
             return true;
@@ -223,51 +271,8 @@ public class ControlPlay extends BaseController {
         }
     }
 
-    public boolean play(int total, int from, int to) {
-        try {
-            if (total < 1) {
-                return false;
-            }
-            int f = from;
-            int t = to;
-            if (f < 0 || f >= total) {
-                f = 0;
-            }
-            if (t < 0 || t >= total) {
-                t = total - 1;
-            }
-            if (f > t) {
-                return false;
-            }
-            List<String> frames = new ArrayList<>();
-            for (int i = f + 1; i <= t + 1; ++i) {
-                frames.add(i + "");
-            }
-            return play(frames, f, t);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return false;
-        }
-    }
-
-    public boolean play(List<String> frames) {
-        try {
-            if (frames == null || frames.isEmpty()) {
-                return false;
-            }
-            int size = frames.size();
-            if (size == 0) {
-                return false;
-            }
-            List<String> names = new ArrayList<>();
-            for (int i = 0; i < size; i++) {
-                names.add((i + 1) + "  " + frames.get(i));
-            }
-            return play(names, 0, size - 1);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return false;
-        }
+    public boolean play(int total) {
+        return play(total, 0, total - 1);
     }
 
     protected void startFrame(int index) {
@@ -352,7 +357,7 @@ public class ControlPlay extends BaseController {
 
     protected boolean checkIndex(int index) {
         try {
-            if (framesNumber < 1) {
+            if (total < 1) {
                 return false;
             }
             currentIndex = correctIndex(index);
@@ -376,15 +381,15 @@ public class ControlPlay extends BaseController {
     }
 
     public int correctIndex(int index) {
-        if (framesNumber < 1) {
+        if (total < 1) {
             return -1;
         }
         int end = toFrame;
-        if (end < 0 || end >= framesNumber) {
-            end = framesNumber - 1;
+        if (end < 0 || end >= total) {
+            end = total - 1;
         }
         int start = fromFrame;
-        if (start < 0 || start >= framesNumber) {
+        if (start < 0 || start >= total) {
             start = 0;
         }
         if (index > end) {
@@ -430,6 +435,7 @@ public class ControlPlay extends BaseController {
         try {
             if (stopped.get()) {
                 stopped.set(false);
+                currentIndex = StringTools.numberPrefix(frameSelector.getValue()) - 1;
                 startFrame(currentIndex);
             } else {
                 pause();
@@ -508,7 +514,7 @@ public class ControlPlay extends BaseController {
 
     public void clear() {
         pause();
-        framesNumber = 0;
+        total = 0;
         currentIndex = 0;
         fromFrame = 0;
         toFrame = -1;
@@ -545,7 +551,7 @@ public class ControlPlay extends BaseController {
         snapParameters.setFill(colorController.color());
         snapParameters.setTransform(javafx.scene.transform.Transform.scale(snapScale, snapScale));
         if (reverseCheck.isSelected()) {
-            currentIndex = framesNumber - 1;
+            currentIndex = total - 1;
         } else {
             currentIndex = 0;
         }

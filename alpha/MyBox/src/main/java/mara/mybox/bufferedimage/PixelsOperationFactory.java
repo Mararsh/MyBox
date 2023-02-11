@@ -292,7 +292,8 @@ public class PixelsOperationFactory {
 
         @Override
         public BufferedImage operate() {
-            directReplace = boolPara1 && boolPara2 && boolPara3;
+            directReplace = (boolPara1 && boolPara2 && boolPara3)
+                    || (!boolPara1 && !boolPara2 && !boolPara3);
             if (!directReplace) {
                 float[] hsb = ColorConvertTools.color2hsb(colorPara2);
                 paraHue = hsb[0];
@@ -332,7 +333,8 @@ public class PixelsOperationFactory {
 
         @Override
         public BufferedImage operate() {
-            directReplace = boolPara1 && boolPara2 && boolPara3;
+            directReplace = (boolPara1 && boolPara2 && boolPara3)
+                    || (!boolPara1 && !boolPara2 && !boolPara3);
             if (!directReplace) {
                 float[] hsb = ColorConvertTools.color2hsb(colorPara1);
                 paraHue = hsb[0];

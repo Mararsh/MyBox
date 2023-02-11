@@ -259,6 +259,8 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
 
         }
 
+        refreshStyle(setBox);
+
     }
 
     private void checkColorInput() {
@@ -288,15 +290,6 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
         } else {
             colorActionType = ColorActionType.Set;
         }
-    }
-
-    @Override
-    public boolean makeMoreParameters() {
-        if (colorColorRadio.isSelected() && !hueCheck.isSelected()
-                && !saturationCheck.isSelected() && !brightnessCheck.isSelected()) {
-            return false;
-        }
-        return super.makeMoreParameters();
     }
 
     @Override

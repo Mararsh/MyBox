@@ -49,7 +49,7 @@ License:    Apache License Version 2.0
         <FlowPane alignment="CENTER_LEFT" hgap="5.0" layoutX="10.0" layoutY="53.0" prefWrapLength="200.0" vgap="5.0">
             <children>
                 <Label minHeight="-Infinity" text="%Frame" wrapText="true" />
-                <ComboBox fx:id="frameSelector" prefWidth="100.0" />
+                <ComboBox fx:id="frameSelector" editable="true" prefWidth="100.0" />
                 <Label fx:id="totalLabel" minHeight="-Infinity" text="/" wrapText="true" />
                 <Button fx:id="pauseButton" mnemonicParsing="false" onAction="#pauseAction">
                     <graphic>

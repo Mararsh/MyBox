@@ -202,6 +202,7 @@
                         <CheckBox fx:id="hueCheck" mnemonicParsing="false" selected="true" text="%Hue" />
                         <CheckBox fx:id="saturationCheck" layoutX="39.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Saturation" />
                         <CheckBox fx:id="brightnessCheck" layoutX="10.0" layoutY="31.0" mnemonicParsing="false" text="%Brightness" />
+                        <Label text="%NoSelectionMeansAll" />
                      </children>
                   </FlowPane>
                </children>
@@ -253,15 +254,6 @@
                                 </ImageView>
                             </graphic>
                         </Button>
-                  <Button fx:id="goColorButton" mnemonicParsing="false" onAction="#colorAction">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/Red/iconGo.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
                     </children>
                 </FlowPane>
             <VBox fx:id="blendBox" spacing="5.0">
@@ -276,7 +268,7 @@
                         <fx:include fx:id="blend" source="ControlImagesBlend.fxml" />
                      </children>
                   </VBox>
-                  <Button fx:id="goBlendButton" mnemonicParsing="false" onAction="#blendAction">
+                  <Button fx:id="goButton" mnemonicParsing="false" onAction="#goAction">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                            <image>

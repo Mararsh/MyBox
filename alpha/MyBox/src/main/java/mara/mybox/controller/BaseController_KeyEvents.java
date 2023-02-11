@@ -319,6 +319,11 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
                 okAction();
             }
             return true;
+        } else if (goButton != null) {
+            if (!goButton.isDisabled() && goButton.isVisible()) {
+                goAction();
+            }
+            return true;
         }
         return false;
     }

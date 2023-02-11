@@ -442,7 +442,12 @@ public class StyleButton {
             return new StyleData(id, message("Width"), "", "iconXRuler.png");
         }
         if (id.startsWith("go")) {
-            return new StyleData(id, message("Go"), "", "iconGo.png");
+            switch (id) {
+                case "goButton":
+                    return new StyleData(id, message("Go"), "F1 / CTRL+e / ALT+e", "iconGo.png");
+                default:
+                    return new StyleData(id, message("Go"), "", "iconGo.png");
+            }
         }
         if (id.startsWith("preview")) {
             return new StyleData(id, message("PreviewComments"), "", "iconExamples.png");

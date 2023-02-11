@@ -11,6 +11,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javafx.scene.control.IndexRange;
 import mara.mybox.controller.ControlData2DGroup;
 import mara.mybox.data.DataSort;
 import mara.mybox.data.ValueRange;
@@ -1255,28 +1256,25 @@ public class DataTableGroup {
         return tableGroupParameters == null ? 0 : tableGroupParameters.size();
     }
 
-    public List<String> getParameterValues(SingletonTask ptask) {
+    public List<String> getParameterLabels(Connection qconn, IndexRange range) {
         List<String> values = new ArrayList<>();
-        if (tableGroupParameters == null) {
+        if (qconn == null || tableGroupParameters == null || range == null) {
             return values;
         }
         String sql = "SELECT group_parameters from " + tableGroupParameters.getTableName()
-                + " ORDER BY group_index ASC";
-        try ( Connection pconn = DerbyBase.getConnection();
-                 PreparedStatement statement = pconn.prepareStatement(sql);
+                + " ORDER BY group_index ASC "
+                + " OFFSET " + range.getStart() + " ROWS FETCH NEXT " + (range.getLength() + 1) + " ROWS ONLY ";
+        try ( PreparedStatement statement = qconn.prepareStatement(sql);
                  ResultSet results = statement.executeQuery()) {
-            while (results.next() && ptask != null && !ptask.isCancelled()) {
+            int index = range.getStart() + 1;
+            while (results.next()) {
                 String p = results.getString("group_parameters");
                 if (p != null) {
-                    values.add(p);
+                    values.add(index++ + "   " + p);
                 }
             }
         } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            } else {
-                MyBoxLog.error(e.toString());
-            }
+            MyBoxLog.error(e.toString());
         }
         return values;
     }

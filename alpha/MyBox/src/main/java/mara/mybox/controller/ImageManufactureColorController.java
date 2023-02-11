@@ -84,7 +84,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
     protected Label colorLabel, colorUnit, commentsLabel;
     @FXML
     protected Button colorIncreaseButton, colorDecreaseButton, colorFilterButton,
-            colorInvertButton, goBlendButton, goColorButton, demoButton;
+            colorInvertButton, demoButton;
     @FXML
     protected CheckBox distanceExcludeCheck, squareRootCheck, ignoreTransparentCheck,
             hueCheck, saturationCheck, brightnessCheck;
@@ -263,7 +263,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                 imageController.imageTab();
                 colorOperationType = OperationType.ReplaceColor;
                 setBox.getChildren().addAll(colorMatchBox, newColorBox, opBox);
-                opBox.getChildren().addAll(goColorButton);
+                opBox.getChildren().addAll(goButton);
                 commentsLabel.setText(message("ManufactureWholeImage"));
                 scopeCheck.setSelected(false);
                 scopeCheck.setDisable(true);
@@ -279,11 +279,12 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                 if (colorColorRadio.isSelected()) {
                     colorOperationType = OperationType.Color;
                     setBox.getChildren().addAll(newColorBox, opBox);
-                    opBox.getChildren().addAll(goColorButton);
+                    opBox.getChildren().addAll(goButton);
 
                 } else if (colorBlendRadio.isSelected()) {
                     colorOperationType = OperationType.Blend;
-                    setBox.getChildren().addAll(blendBox);
+                    setBox.getChildren().addAll(blendBox, opBox);
+                    opBox.getChildren().addAll(goButton);
                     setBlender();
 
                 } else if (colorRGBRadio.isSelected()) {
@@ -435,11 +436,8 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
     }
 
     @FXML
-    public void colorAction() {
-        if (!hueCheck.isSelected() && !saturationCheck.isSelected() && !brightnessCheck.isSelected()) {
-            popError(message("SelectToHandle"));
-            return;
-        }
+    @Override
+    public void goAction() {
         colorActionType = ColorActionType.Set;
         applyChange();
     }
@@ -475,106 +473,98 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
         applyChange();
     }
 
-    @FXML
-    public void blendAction() {
-        colorActionType = ColorActionType.Set;
-        applyChange();
-    }
-
     private void applyChange() {
         if (imageController == null || colorOperationType == null || colorActionType == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private Image newImage;
-
-                @Override
-                protected boolean handle() {
-                    PixelsOperation pixelsOperation;
-                    if (colorOperationType == OperationType.ReplaceColor) {
-                        java.awt.Color originalColor = originalColorSetController.awtColor();
-                        java.awt.Color newColor = newColorSetController.awtColor();
-                        ImageScope scope = new ImageScope(imageView.getImage());
-                        scope.setScopeType(ImageScope.ScopeType.Color);
-                        scope.setColorScopeType(ImageScope.ColorScopeType.Color);
-                        List<java.awt.Color> colors = new ArrayList();
-                        colors.add(originalColor);
-                        scope.setColors(colors);
-                        if (distanceColorRadio.isSelected()) {
-                            scope.setColorScopeType(ImageScope.ColorScopeType.Color);
-                            if (squareRootCheck.isSelected()) {
-                                scope.setColorDistanceSquare(colorDistance);
-                            } else {
-                                scope.setColorDistance(colorDistance);
-                            }
-                        } else {
-                            scope.setColorScopeType(ImageScope.ColorScopeType.Hue);
-                            scope.setHsbDistance(colorDistance / 360.0f);
-                        }
-                        scope.setColorExcluded(distanceExcludeCheck.isSelected());
-                        pixelsOperation = PixelsOperationFactory.create(imageView.getImage(),
-                                scope, OperationType.ReplaceColor, colorActionType)
-                                .setColorPara1(originalColor)
-                                .setColorPara2(newColor)
-                                .setSkipTransparent(originalColor.getRGB() != 0 && ignoreTransparentCheck.isSelected())
-                                .setBoolPara1(hueCheck.isSelected())
-                                .setBoolPara2(saturationCheck.isSelected())
-                                .setBoolPara3(brightnessCheck.isSelected());
-
-                    } else {
-                        pixelsOperation = PixelsOperationFactory.create(imageView.getImage(),
-                                scopeController.scope, colorOperationType, colorActionType)
-                                .setSkipTransparent(ignoreTransparentCheck.isSelected());
-                        switch (colorOperationType) {
-                            case Color:
-                                pixelsOperation.setColorPara1(newColorSetController.awtColor())
-                                        .setBoolPara1(hueCheck.isSelected())
-                                        .setBoolPara2(saturationCheck.isSelected())
-                                        .setBoolPara3(brightnessCheck.isSelected());
-                                break;
-                            case Blend:
-                                pixelsOperation.setColorPara1(valueColorSetController.awtColor());
-                                ((BlendColor) pixelsOperation).setBlender(blendController.blender());
-                                break;
-                            case RGB:
-                                pixelsOperation.setIntPara1(colorValue);
-                                break;
-                            case Hue:
-                                pixelsOperation.setFloatPara1(colorValue / 360.0f);
-                                break;
-                            case Brightness:
-                            case Saturation:
-                                pixelsOperation.setFloatPara1(colorValue / 100.0f);
-                                break;
-                            case Red:
-                            case Green:
-                            case Blue:
-                            case Yellow:
-                            case Cyan:
-                            case Magenta:
-                            case Opacity:
-                                pixelsOperation.setIntPara1(colorValue);
-                                break;
-                        }
-                    }
-                    newImage = pixelsOperation.operateFxImage();
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    imageController.popSuccessful();
-                    imageController.updateImage(ImageOperation.Color,
-                            colorOperationType.name(), colorActionType.name(), newImage, cost);
-                }
-            };
-            imageController.start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private Image newImage;
+
+            @Override
+            protected boolean handle() {
+                PixelsOperation pixelsOperation;
+                if (colorOperationType == OperationType.ReplaceColor) {
+                    java.awt.Color originalColor = originalColorSetController.awtColor();
+                    java.awt.Color newColor = newColorSetController.awtColor();
+                    ImageScope scope = new ImageScope(imageView.getImage());
+                    scope.setScopeType(ImageScope.ScopeType.Color);
+                    scope.setColorScopeType(ImageScope.ColorScopeType.Color);
+                    List<java.awt.Color> colors = new ArrayList();
+                    colors.add(originalColor);
+                    scope.setColors(colors);
+                    if (distanceColorRadio.isSelected()) {
+                        scope.setColorScopeType(ImageScope.ColorScopeType.Color);
+                        if (squareRootCheck.isSelected()) {
+                            scope.setColorDistanceSquare(colorDistance);
+                        } else {
+                            scope.setColorDistance(colorDistance);
+                        }
+                    } else {
+                        scope.setColorScopeType(ImageScope.ColorScopeType.Hue);
+                        scope.setHsbDistance(colorDistance / 360.0f);
+                    }
+                    scope.setColorExcluded(distanceExcludeCheck.isSelected());
+                    pixelsOperation = PixelsOperationFactory.create(imageView.getImage(),
+                            scope, OperationType.ReplaceColor, colorActionType)
+                            .setColorPara1(originalColor)
+                            .setColorPara2(newColor)
+                            .setSkipTransparent(originalColor.getRGB() != 0 && ignoreTransparentCheck.isSelected())
+                            .setBoolPara1(hueCheck.isSelected())
+                            .setBoolPara2(saturationCheck.isSelected())
+                            .setBoolPara3(brightnessCheck.isSelected());
+
+                } else {
+                    pixelsOperation = PixelsOperationFactory.create(imageView.getImage(),
+                            scopeController.scope, colorOperationType, colorActionType)
+                            .setSkipTransparent(ignoreTransparentCheck.isSelected());
+                    switch (colorOperationType) {
+                        case Color:
+                            pixelsOperation.setColorPara1(newColorSetController.awtColor())
+                                    .setBoolPara1(hueCheck.isSelected())
+                                    .setBoolPara2(saturationCheck.isSelected())
+                                    .setBoolPara3(brightnessCheck.isSelected());
+                            break;
+                        case Blend:
+                            pixelsOperation.setColorPara1(valueColorSetController.awtColor());
+                            ((BlendColor) pixelsOperation).setBlender(blendController.blender());
+                            break;
+                        case RGB:
+                            pixelsOperation.setIntPara1(colorValue);
+                            break;
+                        case Hue:
+                            pixelsOperation.setFloatPara1(colorValue / 360.0f);
+                            break;
+                        case Brightness:
+                        case Saturation:
+                            pixelsOperation.setFloatPara1(colorValue / 100.0f);
+                            break;
+                        case Red:
+                        case Green:
+                        case Blue:
+                        case Yellow:
+                        case Cyan:
+                        case Magenta:
+                        case Opacity:
+                            pixelsOperation.setIntPara1(colorValue);
+                            break;
+                    }
+                }
+                newImage = pixelsOperation.operateFxImage();
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                imageController.popSuccessful();
+                imageController.updateImage(ImageOperation.Color,
+                        colorOperationType.name(), colorActionType.name(), newImage, cost);
+            }
+        };
+        start(task);
     }
 
     @FXML
