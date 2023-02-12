@@ -26,6 +26,16 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
             loadScene(Fxmls.ImageViewerFxml);
         });
 
+        MenuItem EditImage = new MenuItem(message("EditImage"));
+        EditImage.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.ImageManufactureFxml);
+        });
+
+        MenuItem EditSVG = new MenuItem(message("SVGEditor"));
+        EditSVG.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.SVGEditorFxml);
+        });
+
         MenuItem imagesBrowser = new MenuItem(message("ImagesBrowser"));
         imagesBrowser.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.ImagesBrowserFxml);
@@ -64,8 +74,9 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
-                imageViewer, imagesBrowser, ImageAnalyse, ImagesPlay, new SeparatorMenuItem(),
-                imageManufactureMenu(), new SeparatorMenuItem(),
+                imageViewer, EditImage, EditSVG,
+                imageManufactureMenu(), manufactureBatchMenu(),
+                ImageAnalyse, ImagesPlay, imagesBrowser, new SeparatorMenuItem(),
                 ManageColors, QueryColor, colorSpaceMenu(), new SeparatorMenuItem(),
                 ImagesInMyBoxClipboard, ImagesInSystemClipboard, miscellaneousMenu());
 
@@ -83,10 +94,6 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
     }
 
     private Menu imageManufactureMenu() {
-        MenuItem EditImage = new MenuItem(message("EditImage"));
-        EditImage.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.ImageManufactureFxml);
-        });
 
         MenuItem ImagesEditor = new MenuItem(message("ImagesEditor"));
         ImagesEditor.setOnAction((ActionEvent event1) -> {
@@ -96,11 +103,6 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
         MenuItem ImagesSplice = new MenuItem(message("ImagesSplice"));
         ImagesSplice.setOnAction((ActionEvent event) -> {
             loadScene(Fxmls.ImagesSpliceFxml);
-        });
-
-        MenuItem imageAlphaAdd = new MenuItem(message("ImageAlphaAdd"));
-        imageAlphaAdd.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageAlphaAddBatchFxml);
         });
 
         MenuItem ImageSplit = new MenuItem(message("ImageSplit"));
@@ -118,33 +120,16 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
             loadScene(Fxmls.ImageRepeatFxml);
         });
 
-        MenuItem imageAlphaExtract = new MenuItem(message("ImageAlphaExtract"));
-        imageAlphaExtract.setOnAction((ActionEvent event) -> {
-            loadScene(Fxmls.ImageAlphaExtractBatchFxml);
-        });
-
-        MenuItem imageConverterBatch = new MenuItem(message("ImageConverterBatch"));
-        imageConverterBatch.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.ImageConverterBatchFxml);
-        });
-
         MenuItem imageOCR = new MenuItem(message("ImageOCR"));
         imageOCR.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.ImageOCRFxml);
         });
 
-        MenuItem imageOCRBatch = new MenuItem(message("ImageOCRBatch"));
-        imageOCRBatch.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.ImageOCRBatchFxml);
-        });
-
         Menu manufactureMenu = new Menu(message("ImageManufacture"));
 
         manufactureMenu.getItems().addAll(
-                EditImage, manufactureBatchMenu(), new SeparatorMenuItem(),
-                ImagesEditor, ImagesSplice, ImageRepeat, imageAlphaAdd, new SeparatorMenuItem(),
-                ImageSplit, ImageSample, imageAlphaExtract, new SeparatorMenuItem(),
-                imageConverterBatch, imageOCR, imageOCRBatch);
+                ImagesEditor, ImageRepeat, ImagesSplice, ImageSplit, ImageSample, new SeparatorMenuItem(),
+                imageOCR);
 
         return manufactureMenu;
 
@@ -211,10 +196,32 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
             loadScene(Fxmls.ImageManufactureBatchMarginsFxml);
         });
 
+        MenuItem imageAlphaAdd = new MenuItem(message("ImageAlphaAdd"));
+        imageAlphaAdd.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageAlphaAddBatchFxml);
+        });
+
+        MenuItem imageAlphaExtract = new MenuItem(message("ImageAlphaExtract"));
+        imageAlphaExtract.setOnAction((ActionEvent event) -> {
+            loadScene(Fxmls.ImageAlphaExtractBatchFxml);
+        });
+
+        MenuItem imageConverterBatch = new MenuItem(message("FormatsConversion"));
+        imageConverterBatch.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.ImageConverterBatchFxml);
+        });
+
+        MenuItem imageOCRBatch = new MenuItem(message("ImageOCRBatch"));
+        imageOCRBatch.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.ImageOCRBatchFxml);
+        });
+
         Menu manufactureBatchMenu = new Menu(message("ImageManufactureBatch"));
         manufactureBatchMenu.getItems().addAll(imageSizeMenu, imageCropMenu, imagePasteMenu,
                 imageColorMenu, imageEffectsMenu, imageEnhancementMenu, imageReplaceColorMenu,
-                imageTextMenu, imageArcMenu, imageShadowMenu, imageTransformMenu, imageMarginsMenu);
+                imageTextMenu, imageArcMenu, imageShadowMenu, imageTransformMenu, imageMarginsMenu, new SeparatorMenuItem(),
+                imageConverterBatch, imageAlphaExtract, imageAlphaAdd, new SeparatorMenuItem(),
+                imageOCRBatch);
         return manufactureBatchMenu;
 
     }

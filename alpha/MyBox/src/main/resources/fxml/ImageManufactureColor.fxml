@@ -209,7 +209,7 @@
             </VBox>
                 <FlowPane fx:id="opBox" hgap="5.0" prefWrapLength="80.0" vgap="5.0">
                     <children>
-                        <Button fx:id="setButton" mnemonicParsing="false" onAction="#setAction">
+                        <Button fx:id="colorSetButton" mnemonicParsing="false" onAction="#setAction">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>

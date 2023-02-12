@@ -121,7 +121,7 @@ public class ShortcutsController extends BaseTableViewController<ShortCut> {
             tableData.add(new ShortCut("CTRL", "-", message("DecreaseFontSize"), "", "iconMinus.png"));
             tableData.add(new ShortCut("CTRL", "=", message("IncreaseFontSize"), "", "iconPlus.png"));
 
-            tableData.add(new ShortCut("ALT", "1", message("Set") + " / " + message("Previous"), "F1 / CTRL+1", "iconOK.png"));
+            tableData.add(new ShortCut("ALT", "1", message("Set") + " / " + message("Previous"), "CTRL+1", "iconEqual.png"));
             tableData.add(new ShortCut("ALT", "2", message("Increase") + " / " + message("Next"), "CTRL+2", "iconPlus.png"));
             tableData.add(new ShortCut("ALT", "3", message("Decrease"), "CTRL+5", "iconMinus.png"));
             tableData.add(new ShortCut("ALT", "4", message("Filter"), "CTRL+5", "iconFilter.png"));

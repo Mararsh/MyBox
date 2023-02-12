@@ -14,55 +14,46 @@ public class StylePrefix {
         if (id == null || id.isEmpty()) {
             return null;
         }
-        switch (id) {
-            case "colorBrightnessRadio":
-                return new StyleData(id, "", message("Brightness"), "", "iconBrightness.png");
-            case "colorHueRadio":
-                return new StyleData(id, "", message("Hue"), "", "iconHue.png");
-            case "colorSaturationRadio":
-                return new StyleData(id, "", message("Saturation"), "", "iconSaturation.png");
-            case "colorRedRadio":
-                return new StyleData(id, "", message("Red"), "", "");
-            case "colorGreenRadio":
-                return new StyleData(id, "", message("Green"), "", "");
-            case "colorBlueRadio":
-                return new StyleData(id, "", message("Blue"), "", "");
-            case "colorYellowRadio":
-                return new StyleData(id, "", message("Yellow"), "", "");
-            case "colorCyanRadio":
-                return new StyleData(id, "", message("Cyan"), "", "");
-            case "colorMagentaRadio":
-                return new StyleData(id, "", message("Magenta"), "", "");
-            case "colorOpacityRadio":
-                return new StyleData(id, "", message("Opacity"), "", "iconOpacity.png");
-            case "colorColorRadio":
-                return new StyleData(id, "", message("Color"), "", "iconDraw.png");
-            case "colorBlendRadio":
-                return new StyleData(id, "", message("Blend"), "", "iconCross.png");
-            case "colorRGBRadio":
-                return new StyleData(id, "", message("RGB"), "", "iconRGB.png");
-            case "colorIncreaseButton":
-                return new StyleData(id, message("Increase"), "CTRL+2", "iconPlus.png");
-            case "colorDecreaseButton":
-                return new StyleData(id, message("Decrease"), "CTRL+3", "iconMinus.png");
-            case "colorFilterButton":
-                return new StyleData(id, message("Filter"), "CTRL+4", "iconFilter.png");
-            case "colorInvertButton":
-                return new StyleData(id, message("Invert"), "CTRL+5", "iconInvert.png");
-            case "colorReplaceRadio":
-                return new StyleData(id, "", message("ReplaceColor"), "", "iconReplace.png");
-            case "setRadio":
-                return new StyleData(id, "", message("ReplaceColor"), "", "iconReplace.png");
-            case "invertRadio":
-                return new StyleData(id, "", message("ReplaceColor"), "", "iconReplace.png");
-            case "increaseRadio":
-                return new StyleData(id, "", message("ReplaceColor"), "", "iconReplace.png");
-            case "decreaseRadio":
-                return new StyleData(id, "", message("ReplaceColor"), "", "iconReplace.png");
-            case "filterRadio":
-                return new StyleData(id, "", message("ReplaceColor"), "", "iconReplace.png");
-            default:
-                return StyleTools.getStyleData(node, id);
+        if (id.startsWith("colorReplace")) {
+            return new StyleData(id, "", message("ReplaceColor"), "", "iconReplace.png");
+        } else if (id.startsWith("colorColor")) {
+            return new StyleData(id, "", message("Color"), "", "iconDraw.png");
+        } else if (id.startsWith("colorBlend")) {
+            return new StyleData(id, "", message("Blend"), "", "iconCross.png");
+        } else if (id.startsWith("colorRGB")) {
+            return new StyleData(id, "", message("RGB"), "", "iconRGB.png");
+        } else if (id.startsWith("colorBrightness")) {
+            return new StyleData(id, "", message("Brightness"), "", "iconBrightness.png");
+        } else if (id.startsWith("colorHue")) {
+            return new StyleData(id, "", message("Hue"), "", "iconHue.png");
+        } else if (id.startsWith("colorSaturation")) {
+            return new StyleData(id, "", message("Saturation"), "", "iconSaturation.png");
+        } else if (id.startsWith("colorRed")) {
+            return new StyleData(id, "", message("Red"), "", "");
+        } else if (id.startsWith("colorGreen")) {
+            return new StyleData(id, "", message("Green"), "", "");
+        } else if (id.startsWith("colorBlue")) {
+            return new StyleData(id, "", message("Blue"), "", "");
+        } else if (id.startsWith("colorYellow")) {
+            return new StyleData(id, "", message("Yellow"), "", "");
+        } else if (id.startsWith("colorCyan")) {
+            return new StyleData(id, "", message("Cyan"), "", "");
+        } else if (id.startsWith("colorMagenta")) {
+            return new StyleData(id, "", message("Magenta"), "", "");
+        } else if (id.startsWith("colorOpacity")) {
+            return new StyleData(id, "", message("Opacity"), "", "iconOpacity.png");
+        } else if (id.startsWith("colorSet")) {
+            return new StyleData(id, message("Set"), "CTRL+1", "iconEqual.png");
+        } else if (id.startsWith("colorIncrease")) {
+            return new StyleData(id, message("Increase"), "CTRL+2", "iconPlus.png");
+        } else if (id.startsWith("colorDecrease")) {
+            return new StyleData(id, message("Decrease"), "CTRL+3", "iconMinus.png");
+        } else if (id.startsWith("colorFilter")) {
+            return new StyleData(id, message("Filter"), "CTRL+4", "iconFilter.png");
+        } else if (id.startsWith("colorInvert")) {
+            return new StyleData(id, message("Invert"), "CTRL+5", "iconInvert.png");
+        } else {
+            return StyleTools.getStyleData(node, id);
         }
     }
 

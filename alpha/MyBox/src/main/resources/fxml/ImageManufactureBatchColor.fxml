@@ -155,7 +155,7 @@ License:    Apache License Version 2.0
                                                                     <FlowPane fx:id="operationPane" hgap="5.0" vgap="5.0">
                                                                         <children>
                                                                             <Label text="%Operation" />
-                                                                            <RadioButton fx:id="setRadio" mnemonicParsing="false" selected="true">
+                                                                            <RadioButton fx:id="colorSetRadio" mnemonicParsing="false" selected="true">
                                                                                 <toggleGroup>
                                                                                     <ToggleGroup fx:id="opGroup" />
                                                                                 </toggleGroup>
@@ -167,7 +167,7 @@ License:    Apache License Version 2.0
                                                                                     </ImageView>
                                                                                 </graphic>
                                                                             </RadioButton>
-                                                                            <RadioButton fx:id="increaseRadio" mnemonicParsing="false" toggleGroup="$opGroup">
+                                                                            <RadioButton fx:id="colorIncreaseRadio" mnemonicParsing="false" toggleGroup="$opGroup">
                                                                                 <graphic>
                                                                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                         <image>
@@ -176,7 +176,7 @@ License:    Apache License Version 2.0
                                                                                     </ImageView>
                                                                                 </graphic>
                                                                             </RadioButton>
-                                                                            <RadioButton fx:id="decreaseRadio" mnemonicParsing="false" toggleGroup="$opGroup">
+                                                                            <RadioButton fx:id="colorDecreaseRadio" mnemonicParsing="false" toggleGroup="$opGroup">
                                                                                 <graphic>
                                                                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                         <image>
@@ -185,7 +185,7 @@ License:    Apache License Version 2.0
                                                                                     </ImageView>
                                                                                 </graphic>
                                                                             </RadioButton>
-                                                                            <RadioButton fx:id="filterRadio" mnemonicParsing="false" toggleGroup="$opGroup">
+                                                                            <RadioButton fx:id="colorFilterRadio" mnemonicParsing="false" toggleGroup="$opGroup">
                                                                                 <graphic>
                                                                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                         <image>
@@ -194,7 +194,7 @@ License:    Apache License Version 2.0
                                                                                     </ImageView>
                                                                                 </graphic>
                                                                             </RadioButton>
-                                                                            <RadioButton fx:id="invertRadio" mnemonicParsing="false" toggleGroup="$opGroup">
+                                                                            <RadioButton fx:id="colorInvertRadio" mnemonicParsing="false" toggleGroup="$opGroup">
                                                                                 <graphic>
                                                                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                         <image>

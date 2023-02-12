@@ -22,6 +22,9 @@ public class TextFileTools {
     }
 
     public static String readTexts(File file, Charset charset) {
+        if (file == null || charset == null) {
+            return null;
+        }
         StringBuilder s = new StringBuilder();
         File validFile = FileTools.removeBOM(file);
         try (final BufferedReader reader = new BufferedReader(new FileReader(validFile, charset))) {
