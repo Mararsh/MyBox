@@ -538,7 +538,7 @@ public class ControlWebView extends BaseController {
             addDocListener(doc);
             pageLoadedNotify.set(!pageLoadedNotify.get());
 
-            if (!(this instanceof ControlHtmlEditor)) {
+            if (!(this instanceof ControlHtmlRichEditor)) {
                 try {
                     webEngine.executeScript("document.body.contentEditable=" + UserConfig.getBoolean("WebViewEditable", false));
                 } catch (Exception e) {
@@ -1218,7 +1218,7 @@ public class ControlWebView extends BaseController {
 
             Menu codesMenu = new Menu(message("Edit"), StyleTools.getIconImageView("iconEdit.png"));
             items.add(codesMenu);
-            if (!(this instanceof ControlHtmlEditor)) {
+            if (!(this instanceof ControlHtmlRichEditor)) {
                 CheckMenuItem editableMenu = new CheckMenuItem(message("Editable"), StyleTools.getIconImageView("iconEdit.png"));
                 editableMenu.setSelected(UserConfig.getBoolean("WebViewEditable", false));
                 editableMenu.setOnAction(new EventHandler<ActionEvent>() {

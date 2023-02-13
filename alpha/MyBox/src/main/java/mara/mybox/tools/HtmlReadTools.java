@@ -1,11 +1,6 @@
 package mara.mybox.tools;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -14,7 +9,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.GZIPInputStream;
 import javafx.concurrent.Task;
 import javafx.scene.control.IndexRange;
 import javax.net.ssl.HttpsURLConnection;
@@ -29,7 +23,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Languages;
-import mara.mybox.value.UserConfig;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
 import org.w3c.dom.Document;
@@ -62,64 +55,15 @@ public class HtmlReadTools {
                 return null;
             }
             File tmpFile = TmpFileTools.getTempFile();
-
-            if ("file".equalsIgnoreCase(url.getProtocol())) {
+            String protocal = url.getProtocol();
+            if ("file".equalsIgnoreCase(protocal)) {
                 FileCopyTools.copyFile(new File(url.getFile()), tmpFile);
-            } else if ("https".equalsIgnoreCase(url.getProtocol())) {
-                HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-                SSLContext sc = SSLContext.getInstance(AppValues.HttpsProtocal);
-                sc.init(null, null, null);
-                connection.setSSLSocketFactory(sc.getSocketFactory());
-                connection.setConnectTimeout(UserConfig.getInt("WebConnectTimeout", 10000));
-                connection.setReadTimeout(UserConfig.getInt("WebReadTimeout", 10000));
-                connection.setRequestProperty("User-Agent", httpUserAgent);
-                connection.connect();
-                if ("gzip".equalsIgnoreCase(connection.getContentEncoding())) {
-                    try (final BufferedInputStream inStream = new BufferedInputStream(new GZIPInputStream(connection.getInputStream()));
-                            final BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
-                        byte[] buf = new byte[AppValues.IOBufferLength];
-                        int len;
-                        while ((len = inStream.read(buf)) > 0) {
-                            outputStream.write(buf, 0, len);
-                        }
-                    }
-                } else {
-                    try (final BufferedInputStream inStream = new BufferedInputStream(connection.getInputStream());
-                            final BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
-                        byte[] buf = new byte[AppValues.IOBufferLength];
-                        int len;
-                        while ((len = inStream.read(buf)) > 0) {
-                            outputStream.write(buf, 0, len);
-                        }
-                    }
+            } else if ("http".equalsIgnoreCase(protocal) || "https".equalsIgnoreCase(protocal)) {
+                org.jsoup.nodes.Document doc = url2Doc(urlAddress);
+                if (doc == null) {
+                    return null;
                 }
-            } else if ("http".equalsIgnoreCase(url.getProtocol())) {
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                //                connection.setRequestMethod("GET");
-                connection.setRequestProperty("User-Agent", httpUserAgent);
-                connection.setConnectTimeout(UserConfig.getInt("WebConnectTimeout", 10000));
-                connection.setReadTimeout(UserConfig.getInt("WebReadTimeout", 10000));
-                connection.setUseCaches(false);
-                connection.connect();
-                if ("gzip".equalsIgnoreCase(connection.getContentEncoding())) {
-                    try (final BufferedInputStream inStream = new BufferedInputStream(new GZIPInputStream(connection.getInputStream()));
-                            final BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
-                        byte[] buf = new byte[AppValues.IOBufferLength];
-                        int len;
-                        while ((len = inStream.read(buf)) > 0) {
-                            outputStream.write(buf, 0, len);
-                        }
-                    }
-                } else {
-                    try (final BufferedInputStream inStream = new BufferedInputStream(connection.getInputStream());
-                            final BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
-                        byte[] buf = new byte[AppValues.IOBufferLength];
-                        int len;
-                        while ((len = inStream.read(buf)) > 0) {
-                            outputStream.write(buf, 0, len);
-                        }
-                    }
-                }
+                TextFileTools.writeFile(tmpFile, doc.html(), doc.charset());
             }
             if (tmpFile == null || !tmpFile.exists()) {
                 return null;
@@ -141,6 +85,37 @@ public class HtmlReadTools {
             return null;
         }
         return TextFileTools.readTexts(tmpFile);
+    }
+
+    public static org.jsoup.nodes.Document url2Doc(String urlAddress) {
+        try {
+            if (urlAddress == null) {
+                return null;
+            }
+            URL url;
+            try {
+                url = new URL(urlAddress);
+            } catch (Exception e) {
+                return null;
+            }
+            return Jsoup.connect(url.toString()).get();
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString() + " " + urlAddress);
+            return null;
+        }
+    }
+
+    public static String url2html(String urlAddress) {
+        try {
+            org.jsoup.nodes.Document doc = url2Doc(urlAddress);
+            if (doc == null) {
+                return null;
+            }
+            return doc.html();
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString() + " " + urlAddress);
+            return null;
+        }
     }
 
     public static File url2Image(String address, String name) {
@@ -175,44 +150,6 @@ public class HtmlReadTools {
             }
         } catch (Exception e) {
             MyBoxLog.debug(e, address);
-            return null;
-        }
-    }
-
-    public static String readURL(String address) {
-        try {
-            if (address == null) {
-                return null;
-            }
-            URL url;
-            try {
-                url = new URL(address);
-            } catch (Exception e) {
-                return null;
-            }
-            try (final BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()))) {
-                String inputLine;
-                StringBuilder sb = new StringBuilder();
-                while ((inputLine = in.readLine()) != null) {
-                    sb.append(inputLine).append("\n");
-                }
-                return sb.toString();
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-            return null;
-        }
-    }
-
-    public static org.jsoup.nodes.Document url2doc(String urlAddress) {
-        try {
-            String html = url2text(urlAddress);
-            if (html == null) {
-                return null;
-            }
-            return Jsoup.parse(html);
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
             return null;
         }
     }

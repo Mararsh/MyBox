@@ -476,7 +476,7 @@ public class StyleButton {
         if (id.startsWith("fold")) {
             return new StyleData(id, message("Fold"), "", "iconMinus.png");
         }
-        if (id.startsWith("unford")) {
+        if (id.startsWith("unfold")) {
             return new StyleData(id, message("Unfold"), "", "iconTree.png");
         }
         if (id.startsWith("moveData")) {

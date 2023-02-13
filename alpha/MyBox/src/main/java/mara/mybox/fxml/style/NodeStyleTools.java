@@ -70,11 +70,14 @@ public class NodeStyleTools {
 
     public static void refreshStyle(Parent node) {
         try {
+            if (node == null) {
+                return;
+            }
             applyStyle(node);
             node.applyCss();
             node.layout();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

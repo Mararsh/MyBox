@@ -14,7 +14,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-8-11
  * @License Apache License Version 2.0
  */
-public class NoteEditor extends HtmlEditorController {
+public class NoteEditor extends ControlHtmlEditor {
 
     protected NotesController notesController;
     protected boolean tagsChanged;
@@ -30,7 +30,6 @@ public class NoteEditor extends HtmlEditorController {
             this.baseName = notesController.baseName;
             saveButton = notesController.saveButton;
             webViewController.defaultStyle = HtmlStyles.styleValue("Default");
-            editorController.defaultStyle = HtmlStyles.styleValue("Default");
 
             attributesController.setEditor(this);
             notesController.nodeController = attributesController;
@@ -83,8 +82,8 @@ public class NoteEditor extends HtmlEditorController {
     }
 
     @Override
-    public String htmlByEditor() {
-        return HtmlReadTools.body(htmlEditor.getHtmlText(), false);
+    public String htmlByRichEditor() {
+        return HtmlReadTools.body(richEditor.getHtmlText(), false);
     }
 
 }

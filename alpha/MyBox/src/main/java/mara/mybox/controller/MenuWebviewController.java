@@ -91,13 +91,13 @@ public class MenuWebviewController extends MenuController {
 
             checkWebviewPane();
 
-            if (webViewController instanceof ControlHtmlEditor) {
-                setTitleid(((ControlHtmlEditor) webViewController).htmlEditor.getId());
+            if (webViewController instanceof ControlHtmlRichEditor) {
+                setTitleid(((ControlHtmlRichEditor) webViewController).htmlEditor.getId());
             } else {
                 setTitleid(webView.getId());
             }
 
-            if (webViewController instanceof ControlHtmlEditor) {
+            if (webViewController instanceof ControlHtmlRichEditor) {
                 editableCheck.setVisible(false);
             } else {
                 editableCheck.setVisible(true);
