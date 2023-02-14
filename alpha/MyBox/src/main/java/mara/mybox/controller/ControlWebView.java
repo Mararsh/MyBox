@@ -80,7 +80,7 @@ public class ControlWebView extends BaseController {
     protected double linkX, linkY, scrollTop, scrollLeft;
     protected ScrollType scrollType;
     protected float zoomScale;
-    protected String address, style, defaultStyle, initStyle;
+    protected String address, contents, style, defaultStyle, initStyle;
     protected Charset charset;
     protected Map<Integer, Document> framesDoc;
     protected EventListener docListener;
@@ -451,6 +451,7 @@ public class ControlWebView extends BaseController {
     }
 
     public void writeContents(String contents) {
+        this.contents = contents;
         webEngine.getLoadWorker().cancel();
         if (contents == null) {
             webEngine.loadContent("");
@@ -490,6 +491,7 @@ public class ControlWebView extends BaseController {
             if (!setAddress(value)) {
                 return;
             }
+            contents = null;
             setWebViewLabel(message("Loading..."));
             webEngine.getLoadWorker().cancel();
             webEngine.load(address);
@@ -535,6 +537,7 @@ public class ControlWebView extends BaseController {
             Document doc = webEngine.getDocument();
             charset = HtmlReadTools.charset(doc);
             framesDoc.clear();
+
             addDocListener(doc);
             pageLoadedNotify.set(!pageLoadedNotify.get());
 
@@ -619,11 +622,15 @@ public class ControlWebView extends BaseController {
     }
 
     public String loadedHtml() {
-        return HtmlReadTools.removeNode(WebViewTools.getHtml(webEngine), StyleNodeID);
+        if (contents != null) {
+            return contents;
+        } else {
+            return currentHtml();
+        }
     }
 
     public String currentHtml() {
-        return WebViewTools.getHtml(webEngine);
+        return HtmlReadTools.removeNode(WebViewTools.getHtml(webEngine), StyleNodeID);
     }
 
     public void setStyle(String style) {

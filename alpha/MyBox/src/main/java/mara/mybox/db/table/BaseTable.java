@@ -40,7 +40,7 @@ public abstract class BaseTable<D> {
     public final static int FilenameMaxLength = 32672;
     public final static int StringMaxLength = 32672;
 
-    protected String tableName, idColumn, orderColumns;
+    protected String tableName, idColumnName, orderColumns;
     protected List<ColumnDefinition> columns, primaryColumns, foreignColumns, referredColumns;
     protected boolean supportBatchUpdate;
     protected long newID = -1;
@@ -424,7 +424,7 @@ public abstract class BaseTable<D> {
      */
     private void init() {
         tableName = null;
-        idColumn = null;
+        idColumnName = null;
         orderColumns = null;
         columns = new ArrayList<>();
         primaryColumns = new ArrayList<>();
@@ -449,7 +449,7 @@ public abstract class BaseTable<D> {
             if (column.isIsPrimaryKey()) {
                 primaryColumns.add(column);
                 if (column.isAuto()) {
-                    idColumn = column.getColumnName();
+                    idColumnName = column.getColumnName();
                 }
             }
             if (column.getReferTable() != null && column.getReferColumn() != null) {
@@ -644,10 +644,10 @@ public abstract class BaseTable<D> {
     }
 
     public void setId(D source, D target) {
-        if (source == null || target == null || idColumn == null) {
+        if (source == null || target == null || idColumnName == null) {
             return;
         }
-        setValue(target, idColumn, getValue(source, idColumn));
+        setValue(target, idColumnName, getValue(source, idColumnName));
     }
 
     // https://stackoverflow.com/questions/18555122/create-instance-of-generic-type-in-java-when-parameterized-type-passes-through-h?r=SearchResults
@@ -1220,7 +1220,7 @@ public abstract class BaseTable<D> {
         try {
             D exist = exist(conn, data);
             if (exist != null) {
-                if (idColumn != null) {
+                if (idColumnName != null) {
                     setId(exist, data);
                 }
                 return updateData(conn, data);
@@ -1264,14 +1264,14 @@ public abstract class BaseTable<D> {
         try {
             if (setInsertStatement(conn, statement, data)) {
                 if (statement.executeUpdate() > 0) {
-                    if (idColumn != null) {
+                    if (idColumnName != null) {
 //                        boolean ac = conn.getAutoCommit();
 //                        conn.setAutoCommit(true);
                         try ( Statement query = conn.createStatement();
                                  ResultSet resultSet = query.executeQuery("VALUES IDENTITY_VAL_LOCAL()")) {
                             if (resultSet.next()) {
                                 newID = resultSet.getLong(1);
-                                setValue(data, idColumn, newID);
+                                setValue(data, idColumnName, newID);
                             }
                         } catch (Exception e) {
                             MyBoxLog.error(e, tableName);
@@ -1541,9 +1541,9 @@ public abstract class BaseTable<D> {
         String clearSQL = "DELETE FROM " + DerbyBase.fixedIdentifier(tableName);
         try ( PreparedStatement clear = conn.prepareStatement(clearSQL)) {
             count = clear.executeUpdate();
-            if (count >= 0 && idColumn != null) {
+            if (count >= 0 && idColumnName != null) {
                 String resetSQL = "ALTER TABLE " + DerbyBase.fixedIdentifier(tableName)
-                        + " ALTER COLUMN " + idColumn + " RESTART WITH 1";
+                        + " ALTER COLUMN " + idColumnName + " RESTART WITH 1";
                 try ( PreparedStatement reset = conn.prepareStatement(resetSQL)) {
                     reset.executeUpdate();
                 } catch (Exception e) {
@@ -1605,7 +1605,7 @@ public abstract class BaseTable<D> {
                             column.setIsPrimaryKey(true);
                             if (column.isAuto()) {
                                 column.setAuto(true);
-                                idColumn = referredName;
+                                idColumnName = referredName;
                             }
                             primaryColumns.add(column);
                             break;
@@ -1701,12 +1701,12 @@ public abstract class BaseTable<D> {
         return this;
     }
 
-    public String getIdColumn() {
-        return idColumn;
+    public String getIdColumnName() {
+        return idColumnName;
     }
 
     public BaseTable setIdColumn(String idColumn) {
-        this.idColumn = idColumn;
+        this.idColumnName = idColumn;
         return this;
     }
 

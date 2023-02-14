@@ -80,11 +80,30 @@ public class HtmlReadTools {
     }
 
     public static String url2text(String urlAddress) {
-        File tmpFile = url2File(urlAddress);
-        if (tmpFile == null) {
+        try {
+            if (urlAddress == null) {
+                return null;
+            }
+            URL url;
+            try {
+                url = new URL(urlAddress);
+            } catch (Exception e) {
+                return null;
+            }
+            String protocal = url.getProtocol();
+            if ("file".equalsIgnoreCase(protocal)) {
+                return TextFileTools.readTexts(new File(url.getFile()));
+            } else if ("http".equalsIgnoreCase(protocal) || "https".equalsIgnoreCase(protocal)) {
+                org.jsoup.nodes.Document doc = url2Doc(urlAddress);
+                if (doc != null) {
+                    return doc.html();
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString() + " " + urlAddress);
             return null;
         }
-        return TextFileTools.readTexts(tmpFile);
     }
 
     public static org.jsoup.nodes.Document url2Doc(String urlAddress) {

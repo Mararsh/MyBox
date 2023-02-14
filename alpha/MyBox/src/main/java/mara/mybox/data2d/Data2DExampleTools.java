@@ -1159,15 +1159,13 @@ public class Data2DExampleTools {
             });
             pmMenu.getItems().add(menu);
 
-            menu = new MenuItem(isChinese ? "检验记录" : "Verify Record");
+            menu = new MenuItem(isChinese ? "检验记录" : "Verification Record");
             menu.setOnAction((ActionEvent event) -> {
                 DataFileCSV data = new DataFileCSV();
                 List<Data2DColumn> columns = new ArrayList<>();
                 columns.add(new Data2DColumn(isChinese ? "任务编号" : "Task ID", ColumnType.String, true).setWidth(140));
                 columns.add(new Data2DColumn(isChinese ? "事项" : "Item", ColumnType.Integer));
-                columns.add(new Data2DColumn(message(lang, "Result"), ColumnType.Enumeration)
-                        .setFormat(isChinese ? "通过\n部分通过\n未通过"
-                                : "Pass\nPart pass\nNot pass"));
+                columns.add(new Data2DColumn(message(lang, "Result"), ColumnType.Boolean));
                 columns.add(new Data2DColumn(isChinese ? "严重性" : "Severity", ColumnType.Integer));
                 columns.add(new Data2DColumn(message(lang, "Description"), ColumnType.String));
                 columns.add(new Data2DColumn(isChinese ? "影响" : "Effects", ColumnType.String));

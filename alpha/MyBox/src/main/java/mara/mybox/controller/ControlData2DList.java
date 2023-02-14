@@ -97,7 +97,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
             tableData2DDefinition = manageController.tableData2DDefinition;
             tableDefinition = tableData2DDefinition;
             tableName = tableDefinition.getTableName();
-            idColumn = tableDefinition.getIdColumn();
+            idColumnName = tableDefinition.getIdColumnName();
 
             if (manageController instanceof Data2DSpliceController) {
                 buttonsPane.getChildren().removeAll(renameDataButton);

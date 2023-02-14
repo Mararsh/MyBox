@@ -35,10 +35,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableColumn;
-import javafx.scene.control.TreeTableView;
-import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.KeyEvent;
@@ -46,7 +42,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.web.HTMLEditor;
 import javafx.stage.Stage;
-import mara.mybox.data.HtmlNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
@@ -56,32 +51,28 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 /**
  * @Author Mara
  * @CreateDate 2018-7-31
  * @License Apache License Version 2.0
  */
-public class ControlHtmlEditor extends WebAddressController {
+public class ControlHtmlEditor extends BaseWebViewController {
 
     protected HTMLEditor richEditor;
-    protected boolean addressChanged, pageLoaded, codesChanged, domChanged, richChanged,
+    protected boolean codesChanged, domChanged, richChanged,
             mdChanged, textsChanged, fileChanged;
     protected MutableDataSet htmlOptions;
     protected FlexmarkHtmlConverter htmlConverter;
     protected Parser htmlParser;
     protected HtmlRenderer htmlRender;
     protected String title;
-    protected TreeItem<HtmlNode> treeRoot;
 
     protected final ButtonType buttonClose = new ButtonType(message("Close"));
     protected final ButtonType buttonSynchronize = new ButtonType(message("SynchronizeAndClose"));
@@ -96,16 +87,13 @@ public class ControlHtmlEditor extends WebAddressController {
     @FXML
     protected Label codesLabel, markdownLabel, textsLabel;
     @FXML
+    protected ControlHtmlDom domController;
+    @FXML
     protected ControlFileBackup backupController;
     @FXML
     protected CheckBox wrapCodesCheck, wrapMarkdownCheck, wrapTextsCheck;
     @FXML
-    protected Button menuViewButton, synchronizeViewButton, popViewButton,
-            menuTextsButton, menuMDButton, menuRichButton, menuCodesButton;
-    @FXML
-    protected TreeTableView<HtmlNode> domTree;
-    @FXML
-    protected TreeTableColumn<HtmlNode, String> tagColumn, idColumn, classnameColumn;
+    protected Button menuViewButton, synchronizeViewButton, popViewButton;
 
     public ControlHtmlEditor() {
         TipsLabelKey = "HtmlEditorTips";
@@ -117,7 +105,6 @@ public class ControlHtmlEditor extends WebAddressController {
             super.initControls();
             initTabPane();
             initCodesTab();
-            initDomTab();
             initEdtiorTab();
             initMarkdownTab();
             initTextsTab();
@@ -140,17 +127,6 @@ public class ControlHtmlEditor extends WebAddressController {
             showTabs();
 
             NodeStyleTools.refreshStyle(thisPane);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    protected void initDomTab() {
-        try {
-            tagColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("tag"));
-            idColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("id"));
-            classnameColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("classname"));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -335,15 +311,74 @@ public class ControlHtmlEditor extends WebAddressController {
             } else {
                 NodeStyleTools.setTooltip(menuViewButton, message("ContextMenu") + "\nF12");
             }
-            NodeStyleTools.setTooltip(menuTextsButton, message("ContextMenu") + "\nF12");
-            NodeStyleTools.setTooltip(menuMDButton, message("ContextMenu") + "\nF12");
-            NodeStyleTools.setTooltip(menuRichButton, message("ContextMenu") + "\nF12");
-            NodeStyleTools.setTooltip(menuCodesButton, message("ContextMenu") + "\nF12");
+            NodeStyleTools.setTooltip(menuButton, message("ContextMenu") + "\nF12");
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
 
+
+    /*
+        load
+     */
+    @Override
+    public boolean loadFile(File file) {
+        if (!super.loadFile(file)) {
+            return false;
+        }
+        return writePanes(HtmlReadTools.url2text(file.toURI().toString()));
+    }
+
+    @Override
+    public boolean loadAddress(String address) {
+        if (!super.loadAddress(address)) {
+            return false;
+        }
+        return writePanes(HtmlReadTools.url2text(address));
+    }
+
+    @Override
+    public boolean loadContents(String contents) {
+        if (!super.loadContents(contents)) {
+            return false;
+        }
+        return writePanes(contents);
+    }
+
+    @Override
+    public boolean loadContents(String address, String contents) {
+        if (!super.loadContents(address, contents)) {
+            return false;
+        }
+        return writePanes(contents);
+    }
+
+    public boolean writePanes(String html) {
+        fileChanged = false;
+        sourceFile = webViewController.sourceFile;
+        if (webViewController.address != null) {
+            loadRichEditor(webViewController.address);
+        } else {
+            loadRichEditor(html, false);
+        }
+        loadHtmlCodes(html, false);
+        loadDom(html, false);
+        loadMarkdown(html, false);
+        loadText(html, false);
+        viewChanged(false);
+        backupController.loadBackups(sourceFile);
+        return true;
+    }
+
+    @FXML
+    @Override
+    public void refreshAction() {
+        if (webViewController.address != null) {
+            loadAddress(webViewController.address);
+        } else if (webViewController.contents != null) {
+            loadContents(webViewController.contents);
+        }
+    }
 
     /*
         file
@@ -390,9 +425,7 @@ public class ControlHtmlEditor extends WebAddressController {
                 protected void whenSucceeded() {
                     popSaved();
                     recordFileWritten(targetFile);
-                    setSourceFile(targetFile);
-                    addressChanged();
-                    updateFileStatus(false);
+                    loadFile(targetFile);
                 }
             };
             start(task);
@@ -405,10 +438,6 @@ public class ControlHtmlEditor extends WebAddressController {
         webViewController.saveAs(currentHtml(true));
     }
 
-    public String currentHtml() {
-        return currentHtml(false);
-    }
-
     public String currentHtml(boolean synchronize) {
         try {
             if (webViewController.framesDoc.isEmpty()) {
@@ -418,8 +447,21 @@ public class ControlHtmlEditor extends WebAddressController {
                     String html = htmlInWebview();
                     if (synchronize) {
                         loadHtmlCodes(html, false);
+                        loadDom(html, false);
                         loadMarkdown(html, false);
                         loadText(html, false);
+                        loadRichEditor(html, false);
+
+                    }
+                    return html;
+
+                } else if (currentTab == domTab) {
+                    String html = htmlByDom();
+                    if (synchronize) {
+                        loadHtmlCodes(html, false);
+                        loadMarkdown(html, false);
+                        loadText(html, false);
+                        loadView(html, false);
                         loadRichEditor(html, false);
                     }
                     return html;
@@ -428,6 +470,7 @@ public class ControlHtmlEditor extends WebAddressController {
                     String html = htmlByRichEditor();
                     if (synchronize) {
                         loadHtmlCodes(html, false);
+                        loadDom(html, false);
                         loadMarkdown(html, false);
                         loadText(html, false);
                         loadView(html, false);
@@ -438,6 +481,7 @@ public class ControlHtmlEditor extends WebAddressController {
                     String html = htmlByMarkdown();
                     if (synchronize) {
                         loadHtmlCodes(html, false);
+                        loadDom(html, false);
                         loadRichEditor(html, false);
                         loadText(html, false);
                         loadView(html, false);
@@ -448,6 +492,7 @@ public class ControlHtmlEditor extends WebAddressController {
                     String html = htmlByText();
                     if (synchronize) {
                         loadHtmlCodes(html, false);
+                        loadDom(html, false);
                         loadMarkdown(html, false);
                         loadRichEditor(html, false);
                         loadView(html, false);
@@ -459,6 +504,7 @@ public class ControlHtmlEditor extends WebAddressController {
             String html = htmlByCodes();
             if (synchronize) {
                 loadRichEditor(html, false);
+                loadDom(html, false);
                 loadMarkdown(html, false);
                 loadText(html, false);
                 loadView(html, false);
@@ -470,33 +516,27 @@ public class ControlHtmlEditor extends WebAddressController {
         return null;
     }
 
-    @FXML
-    @Override
-    public void createAction() {
+    public boolean create() {
         try {
             if (!checkBeforeNextAction()) {
-                return;
+                return false;
             }
-            addressChanged = false;
-            addressInput.setText("");
             loadContents(HtmlWriteTools.emptyHmtl(null));
-//            loadRichEditor("", false);
-//            loadHtmlCodes("", false);
-//            loadMarkdown("", false);
-//            loadText("", false);
             getMyStage().setTitle(getBaseTitle());
             fileChanged = false;
             if (backupController != null) {
                 backupController.loadBackups(null);
             }
+            return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
+            return false;
         }
     }
 
     @Override
     protected void updateStageTitle() {
-        if (myStage == null) {
+        if (getMyStage() == null) {
             return;
         }
         super.updateStageTitle();
@@ -510,106 +550,24 @@ public class ControlHtmlEditor extends WebAddressController {
         updateStageTitle();
         if (!changed) {
             viewChanged(false);
+            domChanged(false);
             codesChanged(false);
             richEditorChanged(false);
             markdownChanged(false);
             textsChanged(false);
-            addressChanged = false;
         }
     }
-
 
     /*
         webview
      */
-    @Override
-    public void addressChanged() {
-        addressChanged = true;
-        super.addressChanged();
-    }
-
-    @Override
-    public void pageLoading() {
-        super.pageLoading();
-        pageLoaded = false;
-        if (saveButton != null) {
-            saveButton.setDisable(true);
-        }
-        if (saveAsButton != null) {
-            saveAsButton.setDisable(true);
-        }
-        if (synchronizeButton != null) {
-            synchronizeButton.setDisable(true);
-        }
-        codesArea.setEditable(false);
-        domTree.setEditable(false);
-        richEditor.setDisable(true);
-        markdownArea.setEditable(false);
-        textsArea.setEditable(false);
-        if (addressChanged) {
-            String info = webViewController.address;
-            info += (info == null ? "" : info + "\n") + message("Loading...");
-            codesArea.setText(info);
-            markdownArea.setText(info);
-            richEditorController.writeContents(info);
-            textsArea.setText(info);
-        }
-    }
-
-    @Override
-    public void pageLoaded() {
+    public void loadView(String html, boolean updated) {
         try {
-            pageLoaded = true;
-            if (addressChanged) {
-                fileChanged = false;
-                String html = htmlInWebview();
-                if (webViewController.address != null) {
-                    loadRichEditor(webViewController.address);
-                } else {
-                    loadRichEditor(html, false);
-                }
-                loadHtmlCodes(html, false);
-                loadDom(html, false);
-                loadMarkdown(html, false);
-                loadText(html, false);
-                Platform.runLater(() -> {
-                    if (backupController != null) {
-                        viewChanged(false);
-                        backupController.loadBackups(sourceFile);
-                    }
-                });
-            }
-            addressChanged = false;
-            if (saveButton != null) {
-                saveButton.setDisable(false);
-            }
-            if (saveAsButton != null) {
-                saveAsButton.setDisable(false);
-            }
-            if (synchronizeButton != null) {
-                synchronizeButton.setDisable(false);
-            }
-            codesArea.setEditable(true);
-            domTree.setEditable(true);
-            richEditor.setDisable(false);
-            markdownArea.setEditable(true);
-            textsArea.setEditable(true);
-            title = webEngine.getTitle();
-            super.pageLoaded();
+            webViewController.writeContents(html);
+            viewChanged(updated);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-    }
-
-    public void loadView(String html, boolean updated) {
-        Platform.runLater(() -> {
-            try {
-                webViewController.writeContents(html);
-                viewChanged(updated);
-            } catch (Exception e) {
-                MyBoxLog.error(e.toString());
-            }
-        });
     }
 
     protected void viewChanged(boolean changed) {
@@ -620,13 +578,7 @@ public class ControlHtmlEditor extends WebAddressController {
     }
 
     public String htmlInWebview() {
-        return webViewController.loadedHtml();
-    }
-
-    @FXML
-    @Override
-    public void refreshAction() {
-        webViewController.refresh();
+        return webViewController.currentHtml();
     }
 
     /*
@@ -636,18 +588,12 @@ public class ControlHtmlEditor extends WebAddressController {
         if (!tabPane.getTabs().contains(codesTab)) {
             return;
         }
-        Platform.runLater(() -> {
-            try {
-                codesArea.setEditable(false);
-                codesArea.setText(htmlCodes(html));
-                if (pageLoaded) {
-                    codesArea.setEditable(true);
-                }
-                codesChanged(updated);
-            } catch (Exception e) {
-                MyBoxLog.error(e.toString());
-            }
-        });
+        try {
+            codesArea.setText(htmlCodes(html));
+            codesChanged(updated);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     public String htmlByCodes() {
@@ -696,23 +642,12 @@ public class ControlHtmlEditor extends WebAddressController {
         if (!tabPane.getTabs().contains(domTab)) {
             return;
         }
-        Platform.runLater(() -> {
-            try {
-                treeRoot = new TreeItem(new HtmlNode("DOM"));
-                treeRoot.setExpanded(true);
-                domTree.setRoot(treeRoot);
-
-                Document doc = Jsoup.parse(html);
-                makeNodes(treeRoot, doc);
-                domChanged(updated);
-            } catch (Exception e) {
-                MyBoxLog.error(e.toString());
-            }
-        });
+        domController.load(html);
+        domChanged(updated);
     }
 
     public String htmlByDom() {
-        return htmlByCodes();
+        return domController.html();
     }
 
     protected void domChanged(boolean changed) {
@@ -720,51 +655,6 @@ public class ControlHtmlEditor extends WebAddressController {
         domTab.setText("dom" + (changed ? " *" : ""));
         if (changed) {
             updateFileStatus(true);
-        }
-    }
-
-    public void makeNodes(TreeItem parent, Element element) {
-        try {
-            if (parent == null || element == null) {
-                return;
-            }
-            TreeItem<HtmlNode> node = new TreeItem(new HtmlNode(element));
-            node.setExpanded(false);
-            parent.getChildren().add(node);
-
-            Elements children = element.children();
-            if (children == null || children.isEmpty()) {
-                return;
-            }
-            for (Element child : children) {
-                makeNodes(node, child);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
-    public void foldAction() {
-        unfold(domTree.getRoot(), false);
-    }
-
-    @FXML
-    public void unfoldAction() {
-        unfold(domTree.getRoot(), true);
-    }
-
-    public void unfold(TreeItem item, boolean unfold) {
-        if (item == null) {
-            return;
-        }
-        item.setExpanded(unfold);
-        List<TreeItem> children = item.getChildren();
-        if (children == null || children.isEmpty()) {
-            return;
-        }
-        for (TreeItem child : children) {
-            unfold(child, unfold);
         }
     }
 
@@ -794,18 +684,16 @@ public class ControlHtmlEditor extends WebAddressController {
         if (!tabPane.getTabs().contains(richEditorTab)) {
             return;
         }
-        Platform.runLater(() -> {
-            try {
-                String contents = html;
-                if (StringTools.include(html, "<FRAMESET ", true)) {
-                    contents = "<p>" + message("FrameSetAndSelectFrame") + "</p>";
-                }
-                richEditorController.writeContents(contents);
-                richChanged = updated;
-            } catch (Exception e) {
-                MyBoxLog.error(e.toString());
+        try {
+            String contents = html;
+            if (StringTools.include(html, "<FRAMESET ", true)) {
+                contents = "<p>" + message("FrameSetAndSelectFrame") + "</p>";
             }
-        });
+            richEditorController.writeContents(contents);
+            richChanged = updated;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     public String htmlByRichEditor() {
@@ -843,26 +731,20 @@ public class ControlHtmlEditor extends WebAddressController {
         if (!tabPane.getTabs().contains(markdownTab)) {
             return;
         }
-        Platform.runLater(() -> {
-            try {
-                String md;
-                if (html == null || html.isEmpty()) {
-                    md = html;
-                } else if (StringTools.include(html, "<FRAMESET ", true)) {
-                    md = message("FrameSetAndSelectFrame");
-                } else {
-                    md = htmlConverter.convert(html);
-                }
-                markdownArea.setEditable(false);
-                markdownArea.setText(md);
-                if (pageLoaded) {
-                    markdownArea.setEditable(true);
-                }
-                markdownChanged(changed);
-            } catch (Exception e) {
-                MyBoxLog.error(e.toString());
+        try {
+            String md;
+            if (html == null || html.isEmpty()) {
+                md = html;
+            } else if (StringTools.include(html, "<FRAMESET ", true)) {
+                md = message("FrameSetAndSelectFrame");
+            } else {
+                md = htmlConverter.convert(html);
             }
-        });
+            markdownArea.setText(md);
+            markdownChanged(changed);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     public String htmlByMarkdown() {
@@ -894,22 +776,15 @@ public class ControlHtmlEditor extends WebAddressController {
         texts
      */
     public void loadText(String html, boolean updated) {
-//        MyBoxLog.error(updated);
         if (!tabPane.getTabs().contains(textsTab)) {
             return;
         }
-        Platform.runLater(() -> {
-            try {
-                textsArea.setEditable(false);
-                textsArea.setText(HtmlWriteTools.htmlToText(html));
-                if (pageLoaded) {
-                    textsArea.setEditable(true);
-                }
-                textsChanged(updated);
-            } catch (Exception e) {
-                MyBoxLog.error(e.toString());
-            }
-        });
+        try {
+            textsArea.setText(HtmlWriteTools.htmlToText(html));
+            textsChanged(updated);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     public String htmlByText() {
@@ -1016,11 +891,6 @@ public class ControlHtmlEditor extends WebAddressController {
 
     @FXML
     public boolean synchronizeViewAction() {
-        synchronizeWebview();
-        return true;
-    }
-
-    public void synchronizeWebview() {
         Platform.runLater(() -> {
             String html = htmlInWebview();
             loadHtmlCodes(html, true);
@@ -1029,6 +899,7 @@ public class ControlHtmlEditor extends WebAddressController {
             loadMarkdown(html, true);
             loadText(html, true);
         });
+        return true;
     }
 
     public void synchronizeCodes() {
@@ -1101,6 +972,10 @@ public class ControlHtmlEditor extends WebAddressController {
                 MenuHtmlCodesController.open(this, codesArea, localToScreen.getX(), localToScreen.getY());
                 return true;
 
+            } else if (tab == domTab) {
+
+                return true;
+
             } else if (tab == richEditorTab) {
                 Point2D localToScreen = richEditor.localToScreen(richEditor.getWidth() - 80, 80);
                 MenuWebviewController.pop(richEditorController, null, localToScreen.getX(), localToScreen.getY());
@@ -1143,6 +1018,32 @@ public class ControlHtmlEditor extends WebAddressController {
 
             } else if (tab == textsTab) {
                 TextClipboardPopController.open(this, textsArea);
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    @FXML
+    @Override
+    public void clearAction() {
+        try {
+            Tab tab = tabPane.getSelectionModel().getSelectedItem();
+            if (tab == codesTab) {
+                clearTexts();
+
+            } else if (tab == domTab) {
+                domController.clearDom();
+
+            } else if (tab == richEditorTab) {
+                clearRichEditor();
+
+            } else if (tab == markdownTab) {
+                clearMarkdown();
+
+            } else if (tab == textsTab) {
+                clearTexts();
+
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

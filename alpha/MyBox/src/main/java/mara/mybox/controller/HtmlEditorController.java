@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import javafx.fxml.FXML;
 import javafx.scene.input.KeyEvent;
 import mara.mybox.dev.MyBoxLog;
@@ -31,10 +32,43 @@ public class HtmlEditorController extends WebAddressController {
         }
     }
 
+    @Override
+    public void goAction() {
+        editController.loadAddress(addressInput.getText());
+    }
+
+    @Override
+    public boolean loadFile(File file) {
+        return editController.loadFile(file);
+    }
+
+    @Override
+    public boolean loadAddress(String address) {
+        return editController.loadAddress(address);
+    }
+
+    @Override
+    public boolean loadContents(String contents) {
+        return editController.loadContents(contents);
+    }
+
+    @Override
+    public boolean loadContents(String address, String contents) {
+        return editController.loadContents(address, contents);
+    }
+
+    @FXML
+    @Override
+    public void createAction() {
+        if (editController.create()) {
+            addressInput.setText("");
+        }
+    }
+
     @FXML
     @Override
     public void refreshAction() {
-        webViewController.refresh();
+        editController.refreshAction();
     }
 
     @Override

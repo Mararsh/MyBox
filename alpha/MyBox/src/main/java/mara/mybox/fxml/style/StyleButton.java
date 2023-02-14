@@ -471,7 +471,7 @@ public class StyleButton {
             return new StyleData(id, message("List"), "", "iconList.png");
         }
         if (id.startsWith("codes")) {
-            return new StyleData(id, "", "", "iconMeta.png");
+            return new StyleData(id, message("Codes"), "", "iconMeta.png");
         }
         if (id.startsWith("fold")) {
             return new StyleData(id, message("Fold"), "", "iconMinus.png");

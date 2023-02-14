@@ -44,8 +44,10 @@ public class StringTools {
     }
 
     public static String[] splitBySpace(String string) {
-        String[] splitted = string.trim().split("\\s+");
-        return splitted;
+        if (string == null) {
+            return null;
+        }
+        return string.trim().split("\\s+");
     }
 
     public static String[] splitByComma(String string) {

@@ -166,11 +166,7 @@ public class BaseWebViewController extends BaseController {
     }
 
     public void pageLoaded() {
-        try {
-            updateStageTitle();
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+        updateStageTitle();
     }
 
     public void addressChanged() {
@@ -182,7 +178,7 @@ public class BaseWebViewController extends BaseController {
     }
 
     protected void updateStageTitle() {
-        if (myStage == null) {
+        if (getMyStage() == null) {
             return;
         }
         String title = getBaseTitle();

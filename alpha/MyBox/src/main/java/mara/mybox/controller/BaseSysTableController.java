@@ -57,7 +57,7 @@ public abstract class BaseSysTableController<P> extends BaseTableViewController<
         tableDefinition = t;
         if (tableDefinition != null) {
             tableName = tableDefinition.getTableName();
-            idColumn = tableDefinition.getIdColumn();
+            idColumnName = tableDefinition.getIdColumnName();
         }
     }
 
