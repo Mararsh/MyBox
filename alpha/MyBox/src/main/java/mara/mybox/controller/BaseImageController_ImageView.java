@@ -544,7 +544,7 @@ public abstract class BaseImageController_ImageView extends BaseController {
                 imageLabelOriginal = new Label(imageLabel.getText());
                 imageLabelOriginal.setStyle(imageLabel.getStyle());
                 imageLabel.setText(message("PickingColorsNow"));
-                imageLabel.setStyle(NodeStyleTools.darkRedText);
+                imageLabel.setStyle(NodeStyleTools.darkRedTextStyle());
             } else {
                 popInformation(message("PickingColorsNow"));
             }

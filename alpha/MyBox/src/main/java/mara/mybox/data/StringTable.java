@@ -3,9 +3,9 @@ package mara.mybox.data;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import mara.mybox.controller.HtmlTableController;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.HtmlStyles;
-import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Languages;
 
@@ -85,7 +85,7 @@ public class StringTable {
     }
 
     public void htmlTable() {
-        HtmlReadTools.htmlTable(title, body(this));
+        HtmlTableController.open(title, body(this));
     }
 
     public void newLinkRow(String name, String link) {

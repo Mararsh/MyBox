@@ -202,7 +202,7 @@ public class ControlPlay extends BaseController {
         List<String> names = new ArrayList<>();
         String currentName = null;
         for (String item : list) {
-            String name = StringTools.maxLen(item.replaceAll("\n", " "), 100);
+            String name = StringTools.start(item.replaceAll("\n", " "), 100);
             names.add(name);
             if (name.startsWith((currentIndex + 1) + " ")) {
                 currentName = name;

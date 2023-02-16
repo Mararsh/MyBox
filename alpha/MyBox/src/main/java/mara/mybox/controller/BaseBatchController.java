@@ -27,7 +27,6 @@ import mara.mybox.data.FileInformation;
 import mara.mybox.data.FileInformation.FileSelectorType;
 import mara.mybox.data.ProcessParameters;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.ValidationTools;
@@ -187,7 +186,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             if (targetFiles == null || targetFiles.isEmpty()) {
                 return;
             }
-            final ImagesBrowserController controller = ControllerTools.openImagesBrowser(null);
+            ImagesBrowserController controller = ImagesBrowserController.open();
             if (controller != null) {
                 controller.loadImages(targetFiles.subList(0, Math.min(9, targetFiles.size())), 3);
             }

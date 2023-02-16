@@ -19,7 +19,6 @@ import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
@@ -300,7 +299,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
                 controller.loadFile(info.getFile(), info.getIndex());
 
             } else {
-                ControllerTools.openImageViewer(info);
+                ImageViewerController.openImageInfo(info);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -315,7 +314,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
             if (info == null) {
                 return;
             }
-            ControllerTools.openImageManufacture(null, info);
+            ImageManufactureController.openImageInfo(info);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -331,7 +330,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
         if (info == null) {
             info = tableData.get(0);
         }
-        ControllerTools.openImageInformation(null, info);
+        ImageInformationController.open(info);
     }
 
     @FXML
@@ -344,7 +343,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
         if (info == null) {
             info = tableData.get(0);
         }
-        ControllerTools.openImageMetaData(null, info);
+        ImageMetaDataController.open(info);
     }
 
     @FXML

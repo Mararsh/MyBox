@@ -977,7 +977,7 @@ public class SettingsController extends BaseController {
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     float v = 0.1f;
                     try {
-                        v = Float.valueOf(newValue);
+                        v = Float.parseFloat(newValue);
                     } catch (Exception e) {
                     }
                     UserConfig.setString("GridLinesOpacity", v + "");
@@ -992,7 +992,7 @@ public class SettingsController extends BaseController {
                         Paint oldValue, Paint newValue) {
                     if (!Color.WHITE.equals((Color) newValue)) {
                         alphaLabel.setText(message("AlphaReplaceComments"));
-                        alphaLabel.setStyle(NodeStyleTools.darkRedText);
+                        alphaLabel.setStyle(NodeStyleTools.darkRedTextStyle());
                     } else {
                         alphaLabel.setText("");
                         popSuccessful();

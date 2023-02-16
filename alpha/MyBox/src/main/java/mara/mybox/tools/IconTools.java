@@ -123,7 +123,7 @@ public class IconTools {
             if (address == null || targetFile == null) {
                 return null;
             }
-            File iconFile = HtmlReadTools.url2File(address);
+            File iconFile = HtmlReadTools.download(address);
             if (iconFile == null || !iconFile.exists()) {
                 return null;
             }

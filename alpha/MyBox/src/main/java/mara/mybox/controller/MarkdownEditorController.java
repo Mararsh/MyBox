@@ -28,7 +28,9 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -422,6 +424,35 @@ public class MarkdownEditorController extends TextEditorController {
     @FXML
     public void popHtmlFunctionsMenu(MouseEvent mouseEvent) {
         webViewController.popFunctionsMenu(mouseEvent);
+    }
+
+    /*
+        static
+     */
+    public static MarkdownEditorController open() {
+        try {
+            MarkdownEditorController controller = (MarkdownEditorController) WindowTools.openStage(Fxmls.MarkdownEditorFxml);
+            if (controller != null) {
+                controller.requestMouse();
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static MarkdownEditorController open(File file) {
+        try {
+            MarkdownEditorController controller = open();
+            if (controller != null && file != null) {
+                controller.sourceFileChanged(file);
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
     }
 
 }

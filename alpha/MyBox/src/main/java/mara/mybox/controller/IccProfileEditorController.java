@@ -141,7 +141,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             initTagsTable();
             initOptions();
 
-            backupController.setControls(this, baseName);
+            backupController.setParameters(this, baseName);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

@@ -642,7 +642,7 @@ public class ControlMap extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                HtmlEditorController.load(html);
+                HtmlEditorController.openHtml(html);
             }
 
         };

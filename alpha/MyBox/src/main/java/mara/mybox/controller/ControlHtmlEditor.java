@@ -54,6 +54,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
+import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -72,7 +73,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
     protected FlexmarkHtmlConverter htmlConverter;
     protected Parser htmlParser;
     protected HtmlRenderer htmlRender;
-    protected String title;
+    protected String title, baseURI;
 
     protected final ButtonType buttonClose = new ButtonType(message("Close"));
     protected final ButtonType buttonSynchronize = new ButtonType(message("SynchronizeAndClose"));
@@ -100,16 +101,26 @@ public class ControlHtmlEditor extends BaseWebViewController {
     }
 
     @Override
+    public void initValues() {
+        try {
+            super.initValues();
+
+            domController.htmlEditor = this;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
     public void initControls() {
         try {
             super.initControls();
             initTabPane();
             initCodesTab();
-            initEdtiorTab();
+            initRichEdtiorTab();
             initMarkdownTab();
             initTextsTab();
             initBackupsTab();
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -133,7 +144,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
         }
     }
 
-    protected void initEdtiorTab() {
+    protected void initRichEdtiorTab() {
         try {
             richEditor = richEditorController.htmlEditor;
 
@@ -143,7 +154,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
                 @Override
                 public void handle(InputEvent event) {
 //                    MyBoxLog.debug("setOnDragExited");
-                    if (!richEditor.isDisabled()) {
+                    if (isSettingValues) {
                         richEditorChanged(true);
                     }
                 }
@@ -152,7 +163,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
                 @Override
                 public void handle(KeyEvent event) {
 //                    MyBoxLog.debug("setOnKeyReleased");
-                    if (!richEditor.isDisabled()) {
+                    if (isSettingValues) {
                         richEditorChanged(true);
                     }
                 }
@@ -182,7 +193,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
             codesArea.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    if (!codesArea.isEditable()) {
+                    if (isSettingValues) {
                         return;
                     }
                     codesChanged(true);
@@ -216,7 +227,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
             markdownArea.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    if (!markdownArea.isEditable()) {
+                    if (isSettingValues) {
                         return;
                     }
                     markdownChanged(true);
@@ -267,7 +278,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
             textsArea.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    if (!textsArea.isEditable()) {
+                    if (isSettingValues) {
                         return;
                     }
                     textsChanged(true);
@@ -292,7 +303,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
     protected void initBackupsTab() {
         try {
             if (backupController != null) {
-                backupController.setControls(this, baseName);
+                backupController.setParameters(this, baseName);
             }
 
         } catch (Exception e) {
@@ -319,14 +330,14 @@ public class ControlHtmlEditor extends BaseWebViewController {
 
 
     /*
-        load
+        source
      */
     @Override
     public boolean loadFile(File file) {
         if (!super.loadFile(file)) {
             return false;
         }
-        return writePanes(HtmlReadTools.url2text(file.toURI().toString()));
+        return writePanes(TextFileTools.readTexts(file));
     }
 
     @Override
@@ -334,7 +345,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
         if (!super.loadAddress(address)) {
             return false;
         }
-        return writePanes(HtmlReadTools.url2text(address));
+        return writePanes(HtmlReadTools.url2html(address));
     }
 
     @Override
@@ -342,6 +353,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
         if (!super.loadContents(contents)) {
             return false;
         }
+        baseURI = null;
         return writePanes(contents);
     }
 
@@ -350,12 +362,14 @@ public class ControlHtmlEditor extends BaseWebViewController {
         if (!super.loadContents(address, contents)) {
             return false;
         }
+        baseURI = HtmlReadTools.baseURI(address);
         return writePanes(contents);
     }
 
     public boolean writePanes(String html) {
         fileChanged = false;
         sourceFile = webViewController.sourceFile;
+        isSettingValues = true;
         if (webViewController.address != null) {
             loadRichEditor(webViewController.address);
         } else {
@@ -365,14 +379,18 @@ public class ControlHtmlEditor extends BaseWebViewController {
         loadDom(html, false);
         loadMarkdown(html, false);
         loadText(html, false);
+        isSettingValues = false;
         viewChanged(false);
-        backupController.loadBackups(sourceFile);
+        if (backupController != null) {
+            backupController.loadBackups(sourceFile);
+        }
         return true;
     }
 
     @FXML
     @Override
     public void refreshAction() {
+        fileChanged = false;
         if (webViewController.address != null) {
             loadAddress(webViewController.address);
         } else if (webViewController.contents != null) {
@@ -386,50 +404,49 @@ public class ControlHtmlEditor extends BaseWebViewController {
     @FXML
     @Override
     public void saveAction() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            if (sourceFile == null) {
-                targetFile = chooseSaveFile();
-                if (targetFile == null) {
-                    return;
-                }
-            } else {
-                targetFile = sourceFile;
-            }
-            String html = currentHtml(true);
-            if (html == null || html.isBlank()) {
-                popError(message("NoData"));
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                @Override
-                protected boolean handle() {
-                    try {
-                        File tmpFile = HtmlWriteTools.writeHtml(html);
-                        if (tmpFile == null || !tmpFile.exists()) {
-                            return false;
-                        }
-                        if (sourceFile != null && backupController != null && backupController.needBackup()) {
-                            backupController.addBackup(task, sourceFile);
-                        }
-                        return FileTools.rename(tmpFile, targetFile);
-                    } catch (Exception e) {
-                        error = e.toString();
+        if (task != null && !task.isQuit()) {
+            return;
+        }
+        if (sourceFile == null) {
+            targetFile = chooseSaveFile();
+        } else {
+            targetFile = sourceFile;
+        }
+        if (targetFile == null) {
+            return;
+        }
+        String html = currentHtml(true);
+        if (html == null || html.isBlank()) {
+            popError(message("NoData"));
+            return;
+        }
+        task = new SingletonTask<Void>(this) {
+            @Override
+            protected boolean handle() {
+                try {
+                    File tmpFile = HtmlWriteTools.writeHtml(html);
+                    if (tmpFile == null || !tmpFile.exists()) {
                         return false;
                     }
+                    if (sourceFile != null && backupController != null && backupController.needBackup()) {
+                        backupController.addBackup(task, sourceFile);
+                    }
+                    return FileTools.rename(tmpFile, targetFile);
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
                 }
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    popSaved();
-                    recordFileWritten(targetFile);
-                    loadFile(targetFile);
-                }
-            };
-            start(task);
-        }
+            @Override
+            protected void whenSucceeded() {
+                popSaved();
+                recordFileWritten(targetFile);
+                fileChanged = false;
+                loadFile(targetFile);
+            }
+        };
+        start(task);
     }
 
     @FXML
@@ -973,7 +990,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
                 return true;
 
             } else if (tab == domTab) {
-
+                domController.popFunctionsMenu(null);
                 return true;
 
             } else if (tab == richEditorTab) {

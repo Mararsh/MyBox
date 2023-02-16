@@ -775,11 +775,11 @@ public class TreeNodeExportController extends BaseTaskController {
         try {
             openTarget(null);
             if (framesetFile != null && framesetFile.exists()) {
-                WebBrowserController.oneOpen(framesetFile);
+                WebBrowserController.openFile(framesetFile);
                 return;
             }
             if (htmlFile != null && htmlFile.exists()) {
-                WebBrowserController.oneOpen(htmlFile);
+                WebBrowserController.openFile(htmlFile);
                 return;
             }
             if (xmlFile != null && xmlFile.exists()) {

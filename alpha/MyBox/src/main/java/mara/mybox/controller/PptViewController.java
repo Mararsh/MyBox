@@ -21,7 +21,9 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
@@ -293,6 +295,30 @@ public class PptViewController extends BaseFileImagesViewController {
         } catch (Exception e) {
         }
         super.cleanPane();
+    }
+
+    /*
+        static
+     */
+    public static PptViewController open() {
+        try {
+            PptViewController controller = (PptViewController) WindowTools.openStage(Fxmls.PptViewFxml);
+            if (controller != null) {
+                controller.requestMouse();
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static PptViewController openFile(File file) {
+        PptViewController controller = open();
+        if (controller != null) {
+            controller.sourceFileChanged(file);
+        }
+        return controller;
     }
 
 }

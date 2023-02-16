@@ -65,7 +65,7 @@ public class WebFavoritesController extends TreeManageController {
             popError(message("InvalidData") + ": " + message("Address"));
             return;
         }
-        WebBrowserController.oneOpen(address, true);
+        WebBrowserController.openAddress(address, true);
     }
 
     /*

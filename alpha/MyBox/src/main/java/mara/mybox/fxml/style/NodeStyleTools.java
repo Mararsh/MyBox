@@ -25,13 +25,33 @@ import mara.mybox.value.AppVariables;
  */
 public class NodeStyleTools {
 
-    public static String errorData = "-fx-background-color: #e5fbe5;";
-    public static String blueText = "-fx-text-fill: #2e598a;";
-    public static String redText = "-fx-text-fill: #961c1c;";
-    public static String darkRedText = "-fx-text-fill: #961c1c;  -fx-font-weight: bolder;";
-    public static String darkBlueText = "-fx-text-fill: #2e598a;  -fx-font-weight: bolder;";
-    public static String selectedData = "-fx-background-color:  #0096C9; -fx-text-background-color: white;";
-    public static String selectedRow = "-fx-background-color:  lightgray; -fx-text-fill: -fx-selection-bar-text;";
+    public static String errorDataStyle() {
+        return "-fx-background-color: #e5fbe5;";
+    }
+
+    public static String blueTextStyle() {
+        return "-fx-text-fill: #2e598a;";
+    }
+
+    public static String redTextStyle() {
+        return "-fx-text-fill: #961c1c;";
+    }
+
+    public static String darkRedTextStyle() {
+        return "-fx-text-fill: #961c1c;  -fx-font-weight: bolder;";
+    }
+
+    public static String darkBlueTextStyle() {
+        return "-fx-text-fill: #2e598a;  -fx-font-weight: bolder;";
+    }
+
+    public static String selectedDataStyle() {
+        return "-fx-background-color:  #0096C9; -fx-text-background-color: white;";
+    }
+
+    public static String selectedRowStyle() {
+        return "-fx-background-color:  lightgray; -fx-text-fill: -fx-selection-bar-text;";
+    }
 
     public static void applyStyle(Node node) {
         try {

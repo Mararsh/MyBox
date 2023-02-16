@@ -28,6 +28,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -406,16 +407,14 @@ public class ControlData2DColumnEdit extends BaseChildController {
             values.add(message("GroupInTenThousands"));
             values.add(message("ScientificNotation"));
             values.add(message("None"));
-            popExamples(mouseEvent, values, message("DecimalFormat"),
-                    "https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/DecimalFormat.html");
+            popExamples(mouseEvent, values, message("DecimalFormat"), HelpTools.decimalFormatLink());
 
         } else if (longRadio.isSelected() || intRadio.isSelected() || shortRadio.isSelected()) {
             List<String> values = new ArrayList<>();
             values.add(message("GroupInThousands"));
             values.add(message("GroupInTenThousands"));
             values.add(message("None"));
-            popExamples(mouseEvent, values, message("DecimalFormat"),
-                    "https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/DecimalFormat.html");
+            popExamples(mouseEvent, values, message("DecimalFormat"), HelpTools.decimalFormatLink());
 
         } else if (datetimeRadio.isSelected()) {
             List<String> values = new ArrayList<>();
@@ -431,8 +430,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             values.add(TimeFormats.DateE);
             values.add(TimeFormats.MonthE);
             values.add(TimeFormats.DatetimeZoneE);
-            popExamples(mouseEvent, values, message("DateFormat"),
-                    "https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/SimpleDateFormat.html");
+            popExamples(mouseEvent, values, message("DateFormat"), HelpTools.simpleDateFormatLink());
 
         } else if (dateRadio.isSelected()) {
             List<String> values = new ArrayList<>();
@@ -441,8 +439,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             values.add(TimeFormats.Year);
             values.add(TimeFormats.DateE);
             values.add(TimeFormats.MonthE);
-            popExamples(mouseEvent, values, message("DateFormat"),
-                    "https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/SimpleDateFormat.html");
+            popExamples(mouseEvent, values, message("DateFormat"), HelpTools.simpleDateFormatLink());
 
         } else if (eraRadio.isSelected()) {
             List<String> values = new ArrayList<>();
@@ -456,8 +453,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             values.add("G" + TimeFormats.DateA);
             values.add("G" + TimeFormats.MonthA);
             values.add("G" + TimeFormats.YearA);
-            popExamples(mouseEvent, values, message("DateFormat"),
-                    "https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/SimpleDateFormat.html");
+            popExamples(mouseEvent, values, message("DateFormat"), HelpTools.simpleDateFormatLink());
 
         }
 

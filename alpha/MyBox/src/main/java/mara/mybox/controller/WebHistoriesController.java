@@ -210,7 +210,7 @@ public class WebHistoriesController extends BaseSysTableController<WebHistory> {
         if (selected == null) {
             return;
         }
-        WebBrowserController.oneOpen(selected.getAddress(), true);
+        WebBrowserController.openAddress(selected.getAddress(), true);
     }
 
     /*

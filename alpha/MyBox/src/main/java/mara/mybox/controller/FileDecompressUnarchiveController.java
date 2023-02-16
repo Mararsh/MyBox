@@ -24,10 +24,12 @@ import mara.mybox.data.FileInformation;
 import mara.mybox.data.FileInformation.FileType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.CompressTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
+import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -539,6 +541,31 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
         updateLogs(MessageFormat.format(message("FileUnarchived"),
                 message("Selected") + ":" + selected.size(),
                 fileUnarchive.getArchiveSuccess(), fileUnarchive.getArchiveFail()));
+    }
+
+    /*
+        static
+     */
+    public static FileDecompressUnarchiveController open() {
+        try {
+            FileDecompressUnarchiveController controller
+                    = (FileDecompressUnarchiveController) WindowTools.openStage(Fxmls.FileDecompressUnarchiveFxml);
+            if (controller != null) {
+                controller.requestMouse();
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static FileDecompressUnarchiveController open(File file) {
+        FileDecompressUnarchiveController controller = open();
+        if (controller != null) {
+            controller.sourceFileChanged(file);
+        }
+        return controller;
     }
 
 }

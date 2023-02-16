@@ -10,10 +10,12 @@ import javafx.scene.control.TextField;
 import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.fxml.ControllerTools;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TmpFileTools;
+import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -108,7 +110,6 @@ public class ImageMetaDataController extends BaseController {
         if (file == null) {
             return;
         }
-        recordFileWritten(file);
         save(file, false);
     }
 
@@ -125,13 +126,14 @@ public class ImageMetaDataController extends BaseController {
                 @Override
                 protected boolean handle() {
                     ok = TextFileTools.writeFile(file, metaDataInput.getText()) != null;
+                    recordFileWritten(file);
                     return true;
                 }
 
                 @Override
                 protected void whenSucceeded() {
                     if (isEdit) {
-                        ControllerTools.openTextEditer(null, file);
+                        TextEditorController.open(file);
                     } else {
                         popSuccessful();
                     }
@@ -146,6 +148,38 @@ public class ImageMetaDataController extends BaseController {
     public void editAction() {
         File file = TmpFileTools.getTempFile(".txt");
         save(file, true);
+    }
+
+    /*
+        static
+     */
+    public static ImageMetaDataController open() {
+        try {
+            ImageMetaDataController controller = (ImageMetaDataController) WindowTools.openStage(Fxmls.ImageMetaDataFxml);
+            if (controller != null) {
+                controller.requestMouse();
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static ImageMetaDataController open(ImageInformation info) {
+        try {
+            if (info == null) {
+                return null;
+            }
+            ImageMetaDataController controller = open();
+            if (controller != null) {
+                controller.loadImageFileMeta(info);
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
     }
 
 }

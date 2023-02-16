@@ -1077,7 +1077,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
                 @Override
                 protected void whenSucceeded() {
-                    WebAddressController c = WebBrowserController.oneLoad(
+                    WebAddressController c = WebBrowserController.openHtml(
                             HtmlWriteTools.html(chainName(node), HtmlStyles.styleValue("Default"), s.toString()), true);
                 }
             };

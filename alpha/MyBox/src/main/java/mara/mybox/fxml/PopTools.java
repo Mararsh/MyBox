@@ -57,6 +57,7 @@ import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
@@ -252,8 +253,7 @@ public class PopTools {
         if (name == null) {
             return null;
         }
-        name = name.replaceAll("_", " ");
-        return name.length() > 80 ? "..." + name.substring(name.length() - 80) : name;
+        return StringTools.end(name.replaceAll("_", " "), 80);
     }
 
     /*
@@ -420,6 +420,28 @@ public class PopTools {
                 }
             });
             popMenu.getItems().add(checkMenu);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("CssEn"));
+            menu.setStyle("-fx-text-fill: blue;");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    controller.openLink(HelpTools.cssEnLink());
+                }
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("CssZh"));
+            menu.setStyle("-fx-text-fill: blue;");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    controller.openLink(HelpTools.cssZhLink());
+                }
+            });
+            popMenu.getItems().add(menu);
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
@@ -798,7 +820,7 @@ public class PopTools {
             link.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    parent.openLink("https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/SimpleDateFormat.html");
+                    parent.openLink(HelpTools.simpleDateFormatLink());
                 }
             });
             controller.addNode(link);
@@ -836,7 +858,7 @@ public class PopTools {
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    parent.openLink("https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/SimpleDateFormat.html");
+                    parent.openLink(HelpTools.simpleDateFormatLink());
                 }
             });
             popMenu.getItems().add(menu);

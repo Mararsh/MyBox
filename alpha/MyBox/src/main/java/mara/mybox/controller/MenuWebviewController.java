@@ -303,7 +303,7 @@ public class MenuWebviewController extends MenuController {
         if (webView == null) {
             return;
         }
-        ImageViewerController.load(NodeTools.snap(webView));
+        ImageViewerController.openImage(NodeTools.snap(webView));
     }
 
     @FXML

@@ -6,12 +6,13 @@ import java.util.List;
 import javafx.fxml.FXML;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TmpFileTools;
-import mara.mybox.fxml.style.HtmlStyles;
+import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -169,7 +170,8 @@ public class HtmlTableController extends BaseWebViewController {
                 @Override
                 protected void whenSucceeded() {
                     if (isEdit) {
-                        ControllerTools.openHtmlEditor(null, file);
+                        recordFileWritten(file);
+                        HtmlEditorController.openFile(file);
                     } else {
                         popSuccessful();
                     }
@@ -195,6 +197,40 @@ public class HtmlTableController extends BaseWebViewController {
 
     public void setBody(String body) {
         this.body = body;
+    }
+
+    /*
+        static
+     */
+    public static HtmlTableController open() {
+        try {
+            HtmlTableController controller = (HtmlTableController) WindowTools.openStage(Fxmls.HtmlTableFxml);
+            if (controller != null) {
+                controller.requestMouse();
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static HtmlTableController open(String body) {
+        return open(null, body);
+    }
+
+    public static HtmlTableController open(String title, String body) {
+        try {
+            HtmlTableController controller = open();
+            if (controller != null) {
+                controller.initTable(title);
+                controller.loadBody(body);
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
     }
 
 }

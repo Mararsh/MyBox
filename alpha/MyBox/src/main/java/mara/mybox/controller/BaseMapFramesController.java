@@ -19,7 +19,6 @@ import javafx.scene.transform.Transform;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
@@ -250,7 +249,7 @@ public abstract class BaseMapFramesController extends BaseMapController {
 
                 @Override
                 protected void whenSucceeded() {
-                    ControllerTools.openImageViewer(file);
+                    ImageViewerController.openFile(file);
                 }
 
             };

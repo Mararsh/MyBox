@@ -18,6 +18,7 @@ import jdk.jshell.JShell;
 import jdk.jshell.SourceCodeAnalysis;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.HtmlStyles;
@@ -287,7 +288,7 @@ public class JShellEditor extends TreeNodeEditor {
             alink.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    openLink("https://docs.oracle.com/javase/tutorial/java/index.html");
+                    openLink(HelpTools.javaLink());
                 }
             });
             controller.addNode(alink);
@@ -296,7 +297,7 @@ public class JShellEditor extends TreeNodeEditor {
             jlink.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    openLink("https://docs.oracle.com/en/java/javase/17/docs/api/index.html");
+                    openLink(HelpTools.javaAPILink());
                 }
             });
             controller.addNode(jlink);
@@ -305,7 +306,7 @@ public class JShellEditor extends TreeNodeEditor {
             blink.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    openLink("https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Math.html");
+                    openLink(HelpTools.javaMathLink());
                 }
             });
             controller.addNode(blink);

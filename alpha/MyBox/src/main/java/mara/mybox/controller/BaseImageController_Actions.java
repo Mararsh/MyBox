@@ -24,7 +24,6 @@ import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.CropTools;
 import mara.mybox.fximage.TransformTools;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.SingletonTask;
@@ -293,7 +292,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         if (imageInformation == null) {
             return;
         }
-        ControllerTools.showImageInformation(imageInformation);
+        ImageInformationController.open(imageInformation);
     }
 
     @FXML
@@ -301,7 +300,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         if (imageInformation == null) {
             return;
         }
-        ControllerTools.showImageMetaData(imageInformation);
+        ImageMetaDataController.open(imageInformation);
     }
 
     public void checkImage(BaseImageController imageController) {
@@ -632,7 +631,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                         sourceFileChanged(newfile);
 
                     } else if (saveAsType == SaveAsType.Open) {
-                        ControllerTools.openImageViewer(newfile);
+                        ImageViewerController.openFile(newfile);
 
                     }
                 }

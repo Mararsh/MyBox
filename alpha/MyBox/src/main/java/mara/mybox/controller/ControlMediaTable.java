@@ -23,7 +23,6 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.table.TableMediaList;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableDurationCell;
@@ -392,7 +391,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
         if (info.getHtml() == null) {
             info.makeHtml(null);
         }
-        ControllerTools.openHtmlTable(null, info.getHtml());
+        HtmlTableController.open(info.getHtml());
     }
 
     @FXML

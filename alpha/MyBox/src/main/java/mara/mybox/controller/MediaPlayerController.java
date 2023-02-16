@@ -46,6 +46,7 @@ import mara.mybox.data.MediaInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
@@ -988,6 +989,30 @@ public class MediaPlayerController extends BaseController {
         } catch (Exception e) {
         }
         super.cleanPane();
+    }
+
+    /*
+        static
+     */
+    public static MediaPlayerController open() {
+        try {
+            MediaPlayerController controller = (MediaPlayerController) WindowTools.openStage(Fxmls.MediaPlayerFxml);
+            if (controller != null) {
+                controller.requestMouse();
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static MediaPlayerController open(File file) {
+        MediaPlayerController controller = open();
+        if (controller != null) {
+            controller.loadFile(file);
+        }
+        return controller;
     }
 
 }

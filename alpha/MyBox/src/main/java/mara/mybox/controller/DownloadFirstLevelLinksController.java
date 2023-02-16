@@ -516,7 +516,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
                 protected boolean handle() {
                     try {
                         URL url = new URL(address);
-                        File urlFile = HtmlReadTools.url2File(address);
+                        File urlFile = HtmlReadTools.url2file(address);
                         String html = TextFileTools.readTexts(urlFile);
                         if (html == null) {
                             return false;
@@ -887,7 +887,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
                 + message("Name") + ": " + (link.getName() == null ? "" : link.getName()) + "<br>"
                 + message("Title") + ": " + (link.getTitle() == null ? "" : link.getTitle()) + "<br>"
                 + message("TargetFile") + ": " + link.getFile();
-        HtmlReadTools.htmlTable(message("Link"), s);
+        HtmlTableController.open(message("Link"), s);
     }
 
     @FXML
@@ -1165,7 +1165,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
                 link.setFile(file.getAbsolutePath());
 
                 updateLogs(message("Downloading") + ": " + url + " --> " + file);
-                File tmpFile = HtmlReadTools.url2File(url.toString());
+                File tmpFile = HtmlReadTools.url2file(url.toString());
                 if (tmpFile != null && tmpFile.exists()) {
                     FileTools.rename(tmpFile, file);
                     link.setDlTime(new Date());

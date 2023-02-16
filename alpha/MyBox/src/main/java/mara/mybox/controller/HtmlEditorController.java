@@ -83,11 +83,51 @@ public class HtmlEditorController extends WebAddressController {
     /*
         static
      */
-    public static HtmlEditorController load(String html) {
+    public static HtmlEditorController open() {
         try {
             HtmlEditorController controller = (HtmlEditorController) WindowTools.openStage(Fxmls.HtmlEditorFxml);
-            controller.loadContents(html);
-            controller.requestMouse();
+            if (controller != null) {
+                controller.requestMouse();
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static HtmlEditorController openFile(File file) {
+        try {
+            HtmlEditorController controller = open();
+            if (controller != null && file != null) {
+                controller.sourceFileChanged(file);
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static HtmlEditorController openAddress(String address) {
+        try {
+            HtmlEditorController controller = open();
+            if (controller != null && address != null) {
+                controller.loadAddress(address);
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static HtmlEditorController openHtml(String html) {
+        try {
+            HtmlEditorController controller = open();
+            if (controller != null && html != null) {
+                controller.loadContents(html);
+            }
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

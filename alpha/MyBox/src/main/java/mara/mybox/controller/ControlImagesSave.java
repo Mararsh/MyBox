@@ -42,7 +42,6 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -641,7 +640,7 @@ public class ControlImagesSave extends BaseController {
                 protected void whenSucceeded() {
                     parentController.popSuccessful();
                     recordFileWritten(targetFile);
-                    ControllerTools.openPdfViewer(null, targetFile);
+                    PdfViewController.open(targetFile);
                 }
 
             };

@@ -1,5 +1,6 @@
 package mara.mybox.data;
 
+import mara.mybox.tools.StringTools;
 import org.jsoup.nodes.Attributes;
 import org.jsoup.nodes.Element;
 
@@ -11,18 +12,21 @@ import org.jsoup.nodes.Element;
 public class HtmlNode {
 
     protected Element element;
-    protected String tag;
 
     public HtmlNode() {
         element = null;
     }
 
-    public HtmlNode(String name) {
-        tag = name;
+    public HtmlNode(String tag) {
+        setElement(new Element(tag));
     }
 
     public HtmlNode(Element element) {
         setElement(element);
+    }
+
+    public HtmlNode copy() {
+        return new HtmlNode(element.clone());
     }
 
     /*
@@ -40,7 +44,7 @@ public class HtmlNode {
     }
 
     public String getTag() {
-        return element == null ? tag : element.tagName();
+        return element == null ? null : element.tagName();
     }
 
     public String getId() {
@@ -51,8 +55,24 @@ public class HtmlNode {
         return element == null ? null : element.nodeName();
     }
 
-    public String getText() {
+    public String getWholeOwnText() {
         return element == null ? null : element.wholeOwnText();
+    }
+
+    public String getWholeText() {
+        return element == null ? null : element.wholeText();
+    }
+
+    public String getText() {
+        return element == null ? null : element.text();
+    }
+
+    public String getTextStart() {
+        String s = getWholeOwnText();
+        if (s == null) {
+            return null;
+        }
+        return StringTools.start(s.trim().replaceAll("\n", " "), 60);
     }
 
     public String getValue() {
@@ -65,6 +85,10 @@ public class HtmlNode {
 
     public String getInnerHtml() {
         return element == null ? null : element.html();
+    }
+
+    public String getOuterHtml() {
+        return element == null ? null : element.outerHtml();
     }
 
     public String getClassname() {

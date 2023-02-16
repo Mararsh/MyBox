@@ -225,7 +225,7 @@ public abstract class BaseData2DChartFx extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                HtmlEditorController.load(html);
+                HtmlEditorController.openHtml(html);
             }
 
         };

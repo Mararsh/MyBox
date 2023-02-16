@@ -27,7 +27,6 @@ import javafx.scene.text.Text;
 import javafx.util.Callback;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableImageInfoCell;
 import mara.mybox.fxml.cell.TableRowSelectionCell;
@@ -328,7 +327,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
                     }
                     return;
                 } else if (event.getClickCount() > 1) {
-                    ControllerTools.openImageViewer(null, clickedFile);
+                    ImageViewerController.openFile(clickedFile);
                     return;
                 }
                 currentIndex = index;
@@ -628,7 +627,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
                         }
                         File file = info.getImageFileInformation().getFile();
                         if (event.getClickCount() > 1) {
-                            ControllerTools.openImageViewer(null, file);
+                            ImageViewerController.openFile(file);
                         } else {
                             loadImageFile(file, loadWidth, 0);
                         }

@@ -17,6 +17,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.HelpTools;
 import static mara.mybox.value.AppVariables.imageRenderHints;
 import mara.mybox.value.ImageRenderHints;
 
@@ -360,7 +361,7 @@ public class ControlImageRender extends BaseController {
 
     @FXML
     public void about() {
-        openLink("https://docs.oracle.com/en/java/javase/17/docs/api/java.desktop/java/awt/RenderingHints.html");
+        openLink(HelpTools.renderingHintsLink());
     }
 
     /*

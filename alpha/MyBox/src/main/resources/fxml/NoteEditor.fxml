@@ -10,12 +10,9 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TreeTableColumn?>
-<?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.FlowPane?>
@@ -174,60 +171,11 @@ License:    Apache License Version 2.0
                 </Tab>
             <Tab fx:id="domTab" text="DOM">
                <content>
-                  <SplitPane dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT">
-                     <items>
-                        <VBox>
-                           <children>
-                              <FlowPane alignment="TOP_RIGHT" hgap="2.0" prefWrapLength="800.0" vgap="2.0">
-                                 <children>
-                                    <Button fx:id="unfoldButton" layoutX="450.0" layoutY="10.0" mnemonicParsing="false" onAction="#unfoldAction">
-                                       <graphic>
-                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconTree.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
-                                    <Button fx:id="foldButton" layoutX="488.0" layoutY="10.0" mnemonicParsing="false" onAction="#foldAction">
-                                       <graphic>
-                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconMinus.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
-                                 </children>
-                              </FlowPane>
-                              <TreeTableView fx:id="domTree" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                                 <columns>
-                                    <TreeTableColumn fx:id="tagColumn" prefWidth="240.0" text="%Tag" />
-                                    <TreeTableColumn fx:id="idColumn" prefWidth="100.0" text="id" />
-                                    <TreeTableColumn fx:id="classnameColumn" prefWidth="120.0" text="classname" />
-                                 </columns>
-                              </TreeTableView>
-                           </children>
-                        </VBox>
-                        <VBox prefHeight="200.0" prefWidth="100.0">
-                           <children>
-                              <FlowPane alignment="TOP_RIGHT" hgap="2.0" prefWrapLength="800.0" vgap="2.0">
-                                 <children>
-                                    <Button fx:id="clearCodesButton11" mnemonicParsing="false" onAction="#clearCodes">
-                                       <graphic>
-                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconClear.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
-                                 </children>
-                              </FlowPane>
-                           </children>
-                        </VBox>
-                     </items>
-                  </SplitPane>
+                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                     <children>
+                        <fx:include fx:id="dom" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlHtmlDom.fxml" VBox.vgrow="ALWAYS" />
+                     </children>
+                  </VBox>
                </content>
             </Tab>
                 <Tab fx:id="richEditorTab" text="%RichText">

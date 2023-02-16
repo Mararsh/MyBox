@@ -1342,7 +1342,7 @@ public class ImageAnalyseController extends ImageViewerController {
 
                     @Override
                     protected void whenSucceeded() {
-                        WebBrowserController.oneOpen(file);
+                        WebBrowserController.openFile(file);
 
                     }
                 };

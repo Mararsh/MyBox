@@ -43,7 +43,6 @@ import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeTools;
@@ -241,7 +240,7 @@ public class ControlWebView extends BaseController {
                                 } else if (!href.startsWith("javascript:")) {
                                     if (linkInNewTab) {
                                         ev.preventDefault();
-                                        WebBrowserController.oneOpen(htmlElement.getFinalAddress(), true);
+                                        WebBrowserController.openAddress(htmlElement.getFinalAddress(), true);
                                     } else if (!"AsPage".equals(clickAction)) {
                                         ev.preventDefault();
                                         if (clickAction == null || "PopMenu".equals(clickAction)) {
@@ -257,7 +256,7 @@ public class ControlWebView extends BaseController {
                                         } else if ("Load".equals(clickAction)) {
                                             loadAddress(htmlElement.getFinalAddress());
                                         } else {
-                                            WebBrowserController.oneOpen(htmlElement.getFinalAddress(), "OpenSwitch".equals(clickAction));
+                                            WebBrowserController.openAddress(htmlElement.getFinalAddress(), "OpenSwitch".equals(clickAction));
                                         }
                                     }
                                 }
@@ -698,13 +697,13 @@ public class ControlWebView extends BaseController {
 
         menu = new MenuItem(message("OpenLinkInNewTab"));
         menu.setOnAction((ActionEvent event) -> {
-            WebBrowserController.oneOpen(finalAddress, false);
+            WebBrowserController.openAddress(finalAddress, false);
         });
         openMenu.getItems().add(menu);
 
         menu = new MenuItem(message("OpenLinkInNewTabSwitch"));
         menu.setOnAction((ActionEvent event) -> {
-            WebBrowserController.oneOpen(finalAddress, true);
+            WebBrowserController.openAddress(finalAddress, true);
         });
         openMenu.getItems().add(menu);
 
@@ -856,7 +855,7 @@ public class ControlWebView extends BaseController {
                 @Override
                 protected boolean handle() {
                     try {
-                        File imageFile = HtmlReadTools.url2Image(address, name);
+                        File imageFile = HtmlReadTools.url2image(address, name);
                         BufferedImage bi = ImageFileReaders.readImage(imageFile);
                         if (bi == null) {
                             return false;
@@ -879,10 +878,10 @@ public class ControlWebView extends BaseController {
                             ImageClipboardTools.copyToMyBoxClipboard(myController, image, ImageClipboard.ImageSource.Link);
                             break;
                         case "edit":
-                            ImageManufactureController.load(image);
+                            ImageManufactureController.openImage(image);
                             break;
                         default:
-                            ImageViewerController.load(image);
+                            ImageViewerController.openImage(image);
                     }
                 }
 
@@ -1165,9 +1164,9 @@ public class ControlWebView extends BaseController {
                 menu = new MenuItem(message("OpenLinkInNewTabSwitch"), StyleTools.getIconImageView("iconWindow.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     if (address != null && !address.isBlank()) {
-                        WebBrowserController.oneOpen(address, true);
+                        WebBrowserController.openAddress(address, true);
                     } else {
-                        WebBrowserController.oneLoad(html, true);
+                        WebBrowserController.openHtml(html, true);
                     }
                 });
                 viewMenu.getItems().add(menu);
@@ -1175,9 +1174,9 @@ public class ControlWebView extends BaseController {
                 menu = new MenuItem(message("OpenLinkInNewTab"), StyleTools.getIconImageView("iconWindow.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     if (address != null && !address.isBlank()) {
-                        WebBrowserController.oneOpen(address, false);
+                        WebBrowserController.openAddress(address, false);
                     } else {
-                        WebBrowserController.oneLoad(html, false);
+                        WebBrowserController.openHtml(html, false);
                     }
                 });
                 viewMenu.getItems().add(menu);
@@ -1661,7 +1660,7 @@ public class ControlWebView extends BaseController {
                 protected void whenSucceeded() {
                     popSaved();
                     recordFileWritten(file);
-                    ControllerTools.openHtmlEditor(null, file);
+                    HtmlEditorController.openFile(file);
                 }
             };
             start(task);
@@ -1788,7 +1787,7 @@ public class ControlWebView extends BaseController {
 
     @FXML
     public void snapAction() {
-        ImageViewerController.load(NodeTools.snap(webView));
+        ImageViewerController.openImage(NodeTools.snap(webView));
     }
 
     @Override

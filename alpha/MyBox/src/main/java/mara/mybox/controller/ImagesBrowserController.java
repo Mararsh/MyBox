@@ -7,8 +7,10 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Tooltip;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -175,6 +177,22 @@ public class ImagesBrowserController extends ImagesBrowserController_Pane {
         super.refreshInterface();
         makeImagesNevigator(true);
         return this;
+    }
+
+    /*
+        static
+     */
+    public static ImagesBrowserController open() {
+        try {
+            ImagesBrowserController controller = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);
+            if (controller != null) {
+                controller.requestMouse();
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
     }
 
 }

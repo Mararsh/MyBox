@@ -1,13 +1,16 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.IndexRange;
 import javafx.scene.input.ContextMenuEvent;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.TextTools;
+import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -130,6 +133,30 @@ public class TextEditorController extends BaseFileEditorController {
     public boolean popAction() {
         TextPopController.openInput(this, mainArea);
         return true;
+    }
+
+    /*
+        static
+     */
+    public static TextEditorController open() {
+        try {
+            TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
+            if (controller != null) {
+                controller.requestMouse();
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static TextEditorController open(File file) {
+        TextEditorController controller = open();
+        if (controller != null) {
+            controller.openFile(file);
+        }
+        return controller;
     }
 
 }

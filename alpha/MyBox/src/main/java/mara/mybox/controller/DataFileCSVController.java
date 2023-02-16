@@ -160,45 +160,64 @@ public class DataFileCSVController extends BaseData2DFileController {
     /*
         static
      */
+    public static DataFileCSVController open() {
+        try {
+            DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
+            if (controller != null) {
+                controller.requestMouse();
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
     public static DataFileCSVController open(File file, Charset charset, boolean withNames, String delimiter) {
-        DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
-        controller.setFile(file, charset, withNames, delimiter);
-        controller.requestMouse();
+        DataFileCSVController controller = open();
+        if (controller != null) {
+            controller.setFile(file, charset, withNames, delimiter);
+        }
         return controller;
     }
 
     public static DataFileCSVController open(String name, List<Data2DColumn> cols, List<List<String>> data) {
-        DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
-        controller.dataController.loadTmpData(name, cols, data);
-        controller.requestMouse();
+        DataFileCSVController controller = open();
+        if (controller != null) {
+            controller.dataController.loadTmpData(name, cols, data);
+        }
         return controller;
     }
 
     public static DataFileCSVController openFile(File file) {
-        DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
-        controller.sourceFileChanged(file);
-        controller.requestMouse();
+        DataFileCSVController controller = open();
+        if (controller != null) {
+            controller.sourceFileChanged(file);
+        }
         return controller;
     }
 
     public static DataFileCSVController open(Data2DDefinition def) {
-        DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
-        controller.loadDef(def);
-        controller.requestMouse();
+        DataFileCSVController controller = open();
+        if (controller != null) {
+            controller.loadDef(def);
+        }
         return controller;
     }
 
     public static DataFileCSVController loadCSV(DataFileCSV csvData) {
         DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
-        controller.loadCSVData(csvData);
-        controller.requestMouse();
+        if (controller != null) {
+            controller.loadCSVData(csvData);
+        }
         return controller;
     }
 
     public static DataFileCSVController loadTable(DataTable dataTable) {
-        DataFileCSVController controller = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
-        controller.loadTableData(dataTable);
-        controller.requestMouse();
+        DataFileCSVController controller = open();
+        if (controller != null) {
+            controller.loadTableData(dataTable);
+        }
         return controller;
     }
 

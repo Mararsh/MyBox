@@ -21,9 +21,9 @@ import javafx.util.Callback;
 import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.ListColorCell;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
@@ -49,9 +49,9 @@ public abstract class ImageManufactureScopeController_Colors extends ImageManufa
                     int size = colorsList.getItems().size();
                     colorsSizeLabel.setText(Languages.message("Count") + ": " + size);
                     if (size > 100) {
-                        colorsSizeLabel.setStyle(NodeStyleTools.redText);
+                        colorsSizeLabel.setStyle(NodeStyleTools.redTextStyle());
                     } else {
-                        colorsSizeLabel.setStyle(NodeStyleTools.blueText);
+                        colorsSizeLabel.setStyle(NodeStyleTools.blueTextStyle());
                     }
                     clearColorsButton.setDisable(size == 0);
                 }
@@ -96,7 +96,7 @@ public abstract class ImageManufactureScopeController_Colors extends ImageManufa
         imageLabelOriginal.setStyle(scopeTips.getStyle());
         String tips = message("PickingColorsForScope");
         scopeTips.setText(tips);
-        scopeTips.setStyle(NodeStyleTools.darkRedText);
+        scopeTips.setStyle(NodeStyleTools.darkRedTextStyle());
         NodeStyleTools.setTooltip(scopeTips, tips);
         NodeStyleTools.setTooltip(scopeTipsView, tips);
         scopeTipsView.setVisible(!tips.isBlank());

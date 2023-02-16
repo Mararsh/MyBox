@@ -22,11 +22,19 @@ import static mara.mybox.value.Languages.message;
  */
 public class StringTools {
 
-    public static String maxLen(String string, int maxLen) {
+    public static String start(String string, int maxLen) {
         if (string == null) {
             return string;
         }
         return string.length() > maxLen ? string.substring(0, maxLen) : string;
+    }
+
+    public static String end(String string, int maxLen) {
+        if (string == null) {
+            return string;
+        }
+        int len = string.length();
+        return len > maxLen ? string.substring(len - maxLen, len) : string;
     }
 
     public static String[] separatedBySpace(String string) {

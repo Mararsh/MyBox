@@ -22,6 +22,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.chart.ResidualChart;
@@ -362,7 +363,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
 
     @FXML
     public void cssGuide() {
-        WebBrowserController.oneOpen("https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html", true);
+        openLink(HelpTools.javaFxCssLink());
     }
 
     /*

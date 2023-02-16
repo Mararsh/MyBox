@@ -23,7 +23,6 @@ import javax.net.ssl.SSLSocket;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.SingletonTask;
@@ -269,7 +268,7 @@ public class NetworkQueryAddressController extends HtmlTableController {
 
                 @Override
                 protected void whenSucceeded() {
-                    ControllerTools.openTextEditer(null, file);
+                    TextEditorController.open(file);
                 }
 
             };

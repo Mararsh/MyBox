@@ -30,9 +30,9 @@ import mara.mybox.fxml.cell.TableCoordinateSystemCell;
 import mara.mybox.fxml.cell.TableLatitudeCell;
 import mara.mybox.fxml.cell.TableLongitudeCell;
 import mara.mybox.fxml.cell.TableMessageCell;
-import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -286,7 +286,8 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
         if (selected == null) {
             return;
         }
-        HtmlReadTools.htmlTable(Languages.message("GeographyCode"), BaseDataAdaptor.displayData(tableDefinition, selected, null, true));
+        HtmlTableController.open(message("GeographyCode"),
+                BaseDataAdaptor.displayData(tableDefinition, selected, null, true));
     }
 
     @FXML

@@ -14,11 +14,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import mara.mybox.controller.HtmlEditorController;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.Link;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import static mara.mybox.tools.HtmlReadTools.charsetInHead;
 import static mara.mybox.tools.HtmlReadTools.tag;
@@ -58,7 +58,7 @@ public class HtmlWriteTools {
     public static void editHtml(String html) {
         try {
             File htmFile = writeHtml(html);
-            ControllerTools.openHtmlEditor(null, htmFile);
+            HtmlEditorController.openFile(htmFile);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

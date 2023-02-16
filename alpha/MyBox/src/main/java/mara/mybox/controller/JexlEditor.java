@@ -17,6 +17,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -363,7 +364,7 @@ public class JexlEditor extends JShellEditor {
             jlink.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    openLink("https://docs.oracle.com/en/java/javase/17/docs/api/index.html");
+                    openLink(HelpTools.javaAPILink());
                 }
             });
             controller.addNode(jlink);
@@ -477,7 +478,7 @@ public class JexlEditor extends JShellEditor {
             jlink.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    openLink("https://docs.oracle.com/en/java/javase/17/docs/api/index.html");
+                    openLink(HelpTools.javaAPILink());
                 }
             });
             controller.addNode(jlink);

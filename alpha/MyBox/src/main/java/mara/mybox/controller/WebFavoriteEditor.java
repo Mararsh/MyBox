@@ -110,7 +110,7 @@ public class WebFavoriteEditor extends TreeNodeEditor {
         if (address == null || address.isBlank()) {
             return;
         }
-        WebBrowserController.oneOpen(address, true);
+        WebBrowserController.openAddress(address, true);
     }
 
 }

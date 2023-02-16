@@ -17,7 +17,6 @@ import javafx.stage.Window;
 import mara.mybox.data.CertificateEntry;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.SingletonTask;
@@ -64,7 +63,7 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
             addButton.setDisable(true);
             recoverButton.setDisable(true);
 
-            backupController.setControls(this, baseName);
+            backupController.setParameters(this, baseName);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -302,7 +301,7 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
                 @Override
                 protected void whenSucceeded() {
                     if (result != null) {
-                        ControllerTools.openHtmlTable(null, result);
+                        HtmlTableController.open(result);
                     } else {
                         popError(error);
                     }

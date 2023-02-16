@@ -43,7 +43,6 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.ImageViewTools;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.SingletonTask;
@@ -923,7 +922,6 @@ public class ChromaticityDiagramController extends ImageViewerController {
         if (file == null) {
             return;
         }
-        recordFileWritten(file, VisitHistory.FileType.Image);
 
         synchronized (this) {
             if (task != null && !task.isQuit()) {
@@ -944,7 +942,8 @@ public class ChromaticityDiagramController extends ImageViewerController {
 
                 @Override
                 protected void whenSucceeded() {
-                    ControllerTools.openImageViewer(null, file);
+                    recordFileWritten(file, VisitHistory.FileType.Image);
+                    ImageViewerController.openFile(file);
                 }
 
             };

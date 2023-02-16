@@ -31,29 +31,11 @@ License:    Apache License Version 2.0
                <children>
                                 <FlowPane alignment="TOP_RIGHT" hgap="2.0" prefWrapLength="800.0" vgap="2.0">
                                     <children>
-                        <Button fx:id="unfoldButton" layoutX="450.0" layoutY="10.0" mnemonicParsing="false" onAction="#unfoldAction">
+                        <Button fx:id="functionsButton" mnemonicParsing="false" onMouseEntered="#popFunctionsMenu">
                            <graphic>
-                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../buttons/Red/iconTree.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                        <Button fx:id="foldButton" layoutX="488.0" layoutY="10.0" mnemonicParsing="false" onAction="#foldAction">
-                           <graphic>
-                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../buttons/Red/iconMinus.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                        <Button fx:id="codesButton" layoutX="774.0" layoutY="10.0" mnemonicParsing="false" onAction="#codesAction">
-                           <graphic>
-                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../buttons/Red/iconMeta.png" />
+                                    <Image url="@../buttons/Red/iconFunction.png" />
                                  </image>
                               </ImageView>
                            </graphic>
@@ -63,6 +45,7 @@ License:    Apache License Version 2.0
                   <TreeTableView fx:id="domTree" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                     <columns>
                       <TreeTableColumn fx:id="tagColumn" prefWidth="240.0" text="Tag" />
+                        <TreeTableColumn fx:id="textColumn" prefWidth="150.0" text="text" />
                       <TreeTableColumn fx:id="idColumn" prefWidth="100.0" text="id" />
                         <TreeTableColumn fx:id="classnameColumn" prefWidth="120.0" text="classname" />
                     </columns>
@@ -107,9 +90,7 @@ License:    Apache License Version 2.0
                                  </children>
                               </HBox>
                               <Label text="text" />
-                              <TextArea fx:id="textInput" maxWidth="1.7976931348623157E308" prefHeight="100.0" />
-                              <Label text="value" />
-                              <TextArea fx:id="valueInput" maxWidth="1.7976931348623157E308" prefHeight="100.0" />
+                              <TextArea fx:id="textInput" maxWidth="1.7976931348623157E308" prefHeight="150.0" />
                               <HBox alignment="CENTER_LEFT" spacing="5.0">
                                  <children>
                                     <Button fx:id="clearAttributesButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#clearAttributes">
@@ -141,7 +122,7 @@ License:    Apache License Version 2.0
                                     </Button>
                                  </children>
                               </HBox>
-                              <TableView fx:id="attributesTable" editable="true" prefHeight="200.0" prefWidth="200.0">
+                              <TableView fx:id="attributesTable" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                 <columns>
                                   <TableColumn fx:id="keyColumn" prefWidth="120.0" text="key" />
                                   <TableColumn fx:id="valueColumn" prefWidth="200.0" text="value" />

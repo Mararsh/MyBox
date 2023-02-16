@@ -16,6 +16,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.data.Data2DRow;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import static mara.mybox.value.Languages.message;
 
@@ -278,7 +279,7 @@ public class ControlNewDataTable extends BaseController {
 
     @FXML
     public void sqlLink() {
-        openLink("https://db.apache.org/derby/docs/10.15/ref/crefsqlj18919.html");
+        openLink(HelpTools.sqlLink());
     }
 
 }

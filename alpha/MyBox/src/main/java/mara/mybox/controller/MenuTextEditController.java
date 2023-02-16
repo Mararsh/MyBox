@@ -297,7 +297,7 @@ public class MenuTextEditController extends MenuTextBaseController {
 
             @Override
             protected void whenSucceeded() {
-                HtmlEditorController.load(html);
+                HtmlEditorController.openHtml(html);
             }
 
         };
@@ -344,7 +344,7 @@ public class MenuTextEditController extends MenuTextBaseController {
             popError(message("NoData"));
             return;
         }
-        ImageViewerController.load(NodeTools.snap(textInput));
+        ImageViewerController.openImage(NodeTools.snap(textInput));
     }
 
     @Override

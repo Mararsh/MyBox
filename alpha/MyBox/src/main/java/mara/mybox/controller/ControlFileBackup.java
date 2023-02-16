@@ -122,7 +122,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
     }
 
     // call this to init
-    public void setControls(BaseController parent, String baseName) {
+    public void setParameters(BaseController parent, String baseName) {
         try {
             this.parentController = parent;
             this.baseName = baseName;

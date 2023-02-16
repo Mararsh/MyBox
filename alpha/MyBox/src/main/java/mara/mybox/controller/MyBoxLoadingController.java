@@ -21,7 +21,6 @@ import mara.mybox.MyBox;
 import mara.mybox.bufferedimage.ImageColorSpace;
 import mara.mybox.db.DataMigration;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.AlarmClock;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.PopTools;
@@ -136,7 +135,7 @@ public class MyBoxLoadingController implements Initializable {
                         ImageIO.setCacheDirectory(AppVariables.MyBoxTempPath);
 
                         MicrosoftDocumentTools.registryFactories();
-                        AlarmClock.scheduleAll();
+//                        AlarmClock.scheduleAll();
 
                     } catch (Exception e) {
                         Platform.runLater(() -> {

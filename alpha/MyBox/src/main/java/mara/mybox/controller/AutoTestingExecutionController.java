@@ -77,7 +77,7 @@ public class AutoTestingExecutionController extends BaseTableViewController<Test
                                 return;
                             }
                             if (this.isSelected()) {
-                                setStyle(NodeStyleTools.selectedData);
+                                setStyle(NodeStyleTools.selectedRowStyle());
                             } else {
                                 switch (item.getStatus()) {
                                     case Success:
