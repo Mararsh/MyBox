@@ -533,11 +533,12 @@ public class ControlWebView extends BaseController {
             }
             setWebViewLabel(message("Loaded"));
 
-            Document doc = webEngine.getDocument();
-            charset = HtmlReadTools.charset(doc);
+            charset = HtmlReadTools.charset(loadedHtml());
+
             framesDoc.clear();
 
-            addDocListener(doc);
+            addDocListener(webEngine.getDocument());
+
             pageLoadedNotify.set(!pageLoadedNotify.get());
 
             if (!(this instanceof ControlHtmlRichEditor)) {

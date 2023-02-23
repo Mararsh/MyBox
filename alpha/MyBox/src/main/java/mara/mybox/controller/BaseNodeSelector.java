@@ -177,7 +177,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                             setGraphic(null);
                             return;
                         }
-                        if (UserConfig.getBoolean("TreeDisplaySequenceNumber", true)) {
+                        if (UserConfig.getBoolean("TreeDisplayHierarchyNumber", true)) {
                             String serialNumber = serialNumber(getTreeItem());
                             setText(serialNumber + "  " + display(item));
                         } else {
@@ -413,12 +413,12 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         items.add(menu);
         items.add(new SeparatorMenuItem());
 
-        CheckMenuItem editableMenu = new CheckMenuItem(message("SequenceNumber"), StyleTools.getIconImageView("iconNumber.png"));
-        editableMenu.setSelected(UserConfig.getBoolean("TreeDisplaySequenceNumber", true));
+        CheckMenuItem editableMenu = new CheckMenuItem(message("HierarchyNumber"), StyleTools.getIconImageView("iconNumber.png"));
+        editableMenu.setSelected(UserConfig.getBoolean("TreeDisplayHierarchyNumber", true));
         editableMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                UserConfig.setBoolean("TreeDisplaySequenceNumber", editableMenu.isSelected());
+                UserConfig.setBoolean("TreeDisplayHierarchyNumber", editableMenu.isSelected());
                 treeView.refresh();
             }
         });
@@ -449,7 +449,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             });
             editNodeMenu.setToggleGroup(clickGroup);
 
-            RadioMenuItem pasteNodeMenu = new RadioMenuItem(message("Paste"), StyleTools.getIconImageView("iconPaste.png"));
+            RadioMenuItem pasteNodeMenu = new RadioMenuItem(message("PasteNodeValueToCurrentEdit"), StyleTools.getIconImageView("iconPaste.png"));
             pasteNodeMenu.setSelected("Paste".equals(currentClick));
             pasteNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -512,7 +512,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             Menu dataMenu = new Menu(message("Data"), StyleTools.getIconImageView("iconData.png"));
             items.add(dataMenu);
 
-            menu = new MenuItem(message("TreeView"), StyleTools.getIconImageView("iconTree.png"));
+            menu = new MenuItem(message("TreeView"), StyleTools.getIconImageView("iconHtml.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 treeView();
             });
@@ -557,7 +557,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             });
             viewMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Unfold"), StyleTools.getIconImageView("iconPLus.png"));
+            menu = new MenuItem(message("Unfold"), StyleTools.getIconImageView("iconPlus.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 unfoldNodes();
             });
@@ -569,60 +569,63 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             });
             viewMenu.getItems().add(menu);
 
-            Menu modifyMenu = new Menu(message("Modify"), StyleTools.getIconImageView("iconEdit.png"));
-            items.add(modifyMenu);
+            Menu modifyNodeMenu = new Menu(message("ModifyNodeValue"), StyleTools.getIconImageView("iconEdit.png"));
+            items.add(modifyNodeMenu);
 
-            menu = new MenuItem(message("Add"), StyleTools.getIconImageView("iconAdd.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                addNode(targetItem);
-            });
-            modifyMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("Edit"), StyleTools.getIconImageView("iconEdit.png"));
+            menu = new MenuItem(message("EditNode"), StyleTools.getIconImageView("iconEdit.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 editNode(targetItem);
             });
-            modifyMenu.getItems().add(menu);
+            modifyNodeMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Paste"), StyleTools.getIconImageView("iconPaste.png"));
+            menu = new MenuItem(message("PasteNodeValueToCurrentEdit"), StyleTools.getIconImageView("iconPaste.png"));
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
                     pasteNode(targetItem);
                 }
             });
-            modifyMenu.getItems().add(menu);
+            modifyNodeMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Delete"), StyleTools.getIconImageView("iconDelete.png"));
+            Menu modifyTreeMenu = new Menu(message("ModifyTree"), StyleTools.getIconImageView("iconTree.png"));
+            items.add(modifyTreeMenu);
+
+            menu = new MenuItem(message("AddNode"), StyleTools.getIconImageView("iconAdd.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                addNode(targetItem);
+            });
+            modifyTreeMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("DeleteNode"), StyleTools.getIconImageView("iconDelete.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 deleteNode(targetItem);
             });
-            modifyMenu.getItems().add(menu);
+            modifyTreeMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Rename"), StyleTools.getIconImageView("iconRename.png"));
+            menu = new MenuItem(message("RenameNode"), StyleTools.getIconImageView("iconRename.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 renameNode(targetItem);
             });
             menu.setDisable(isRoot);
-            modifyMenu.getItems().add(menu);
+            modifyTreeMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Copy"), StyleTools.getIconImageView("iconCopy.png"));
+            menu = new MenuItem(message("CopyNodes"), StyleTools.getIconImageView("iconCopy.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 copyNode(targetItem);
             });
             menu.setDisable(isRoot);
-            modifyMenu.getItems().add(menu);
+            modifyTreeMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Move"), StyleTools.getIconImageView("iconRef.png"));
+            menu = new MenuItem(message("MoveNodes"), StyleTools.getIconImageView("iconRef.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 moveNode(targetItem);
             });
             menu.setDisable(isRoot);
-            modifyMenu.getItems().add(menu);
+            modifyTreeMenu.getItems().add(menu);
 
         } else {
 
-            menu = new MenuItem(message("Add"), StyleTools.getIconImageView("iconAdd.png"));
+            menu = new MenuItem(message("AddNode"), StyleTools.getIconImageView("iconAdd.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 addNode(targetItem);
             });
@@ -634,7 +637,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             });
             items.add(menu);
 
-            menu = new MenuItem(message("Unfold"), StyleTools.getIconImageView("iconPLus.png"));
+            menu = new MenuItem(message("Unfold"), StyleTools.getIconImageView("iconPlus.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 unfoldNodes();
             });
@@ -1058,7 +1061,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                             .append("    <INPUT type=\"checkbox\" checked onclick=\"showClass('TreeNode', this.checked);\">")
                             .append(message("Unfold")).append("</INPUT>\n")
                             .append("    <INPUT type=\"checkbox\" checked onclick=\"showClass('SerialNumber', this.checked);\">")
-                            .append(message("SequenceNumber")).append("</INPUT>\n")
+                            .append(message("HierarchyNumber")).append("</INPUT>\n")
                             .append("    <INPUT type=\"checkbox\" checked onclick=\"showClass('NodeTag', this.checked);\">")
                             .append(message("Tags")).append("</INPUT>\n")
                             .append("    <INPUT type=\"checkbox\" checked onclick=\"showClass('nodeValue', this.checked);\">")

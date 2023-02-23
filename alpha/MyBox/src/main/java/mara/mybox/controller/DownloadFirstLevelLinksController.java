@@ -521,7 +521,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
                         if (html == null) {
                             return false;
                         }
-                        title = HtmlReadTools.htmlTitle(html);
+                        title = HtmlReadTools.title(html);
                         addressLink = Link.create().setUrl(url).setAddress(url.toString())
                                 .setName(title).setTitle(title).setHtml(html);
                         addressLink.setFile(urlFile.getAbsolutePath());
@@ -1171,7 +1171,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
                     link.setDlTime(new Date());
                     updateLogs(message("Downloaded") + ": " + url + " --> " + file);
                     if (utf8Check.isSelected()) {
-                        String utf8 = HtmlWriteTools.toUTF8(file, false);
+                        String utf8 = HtmlWriteTools.toUTF8(file);
                         if (utf8 == null) {
                             updateLogs(message("Failed") + ": " + file);
                         } else if (!"NeedNot".equals(utf8)) {

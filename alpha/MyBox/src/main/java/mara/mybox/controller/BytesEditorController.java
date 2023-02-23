@@ -19,6 +19,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.ByteTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -260,7 +261,7 @@ public class BytesEditorController extends BaseFileEditorController {
                                 return false;
                             }
                             lineText = new String(hex, sourceInformation.getCharset());
-                            lineText = lineText.replaceAll("\n|\r", " ") + "\n";
+                            lineText = StringTools.replaceLineBreak(lineText) + "\n";
                             bytes.append(lineText);
                         }
                         pairText = bytes.toString();

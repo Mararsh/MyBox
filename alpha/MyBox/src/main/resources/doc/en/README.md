@@ -4,7 +4,7 @@
 This is desktop application based on JavaFx to provide simple and easy functions. It's free and open sources.
 
 ## Latest Version       
-Links of codes and documents in this document refer to the latest versions.     
+Contents of this document may be expired, but its links refer to the latest versions.     
 
 The latest version can be downloaded in following addresses:             
          
@@ -263,19 +263,31 @@ Example,  the new language is named as "aa", and its resource file is "Messages_
 
 ## Embedded Database System            
 
-1. Embedded derby which is free and open sources.
-2. Derby can run in embedded mode or in network mode(Only visible to processes of local host).       
-3. User can define and use database tables, and execute SQL statements.       
+1. Derby is free and open sources:            
+    - When start MyBox for the first time, some seconds are cost to create internal database tables and write initial data.            
+    - All database files are under data path, so different target data sets can be handled by switching data paths.            
+    - Multiple MyBox instances can share data by visiting same data path.            
+    - When database files not found under data path(damaged or deleted unexpectedly), MyBox can create database automatically.            
+2. Derby runs in embedded mode by default:             
+    - External processes can not access the database.            
+    - Only one MyBox instance can use the database at the same time.            
+3. Derby can run in network mode:            
+    - The first visitor becomes the server.            
+    - Processes of local host can visit the database in port 1527 and becomes its clients.                
+    - Processes out of local host can not visit the database directly.                
+4. MyBox internal tables save the data required by all functions. User can access and modify the internal data online.            
+5. User can define customized database tables.            
+6. User can view and edit definitons and data of database tables in paginated tables, and execute SQL statements.                   
+7. To implement data sorting, tranposing, statistic, and grouping, MyBox will create temporary database tables, and clear them in time.            
 
 ## Assit Coding            
 
 1. Monitor memory/CPU usage in real time.
 2. Adjust logging online.       
-3. Access and modify internal data online.
-4. Generate icons automatically.
-5. Edit and apply languages online.
-6. Test automatically.
-7. Documents updated in time.   
+3. Generate icons automatically.
+4. Edit and apply languages online.
+5. Test automatically.
+6. All kinds of documents.   
 
 # Snapshots            
 

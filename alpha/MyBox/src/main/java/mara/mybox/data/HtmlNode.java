@@ -1,5 +1,7 @@
 package mara.mybox.data;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import mara.mybox.tools.StringTools;
 import org.jsoup.nodes.Attributes;
 import org.jsoup.nodes.Element;
@@ -12,6 +14,7 @@ import org.jsoup.nodes.Element;
 public class HtmlNode {
 
     protected Element element;
+    protected final BooleanProperty selected = new SimpleBooleanProperty(false);
 
     public HtmlNode() {
         element = null;
@@ -68,19 +71,23 @@ public class HtmlNode {
     }
 
     public String getTextStart() {
-        String s = getWholeOwnText();
-        if (s == null) {
-            return null;
-        }
-        return StringTools.start(s.trim().replaceAll("\n", " "), 60);
+        return StringTools.abbreviate(getWholeOwnText(), 60);
     }
 
     public String getValue() {
         return element == null ? null : element.val();
     }
 
+    public String getValueStart() {
+        return StringTools.abbreviate(getValue(), 60);
+    }
+
     public String getData() {
         return element == null ? null : element.data();
+    }
+
+    public String getDataStart() {
+        return StringTools.abbreviate(getData(), 60);
     }
 
     public String getInnerHtml() {
@@ -97,6 +104,30 @@ public class HtmlNode {
 
     public Attributes getAttributes() {
         return element == null ? null : element.attributes();
+    }
+
+    public BooleanProperty getSelected() {
+        return selected;
+    }
+
+    public String getSerialNumber() {
+        return serialNumber(element);
+    }
+
+    public String getLabel() {
+        return getSerialNumber() + " " + getTag();
+    }
+
+    public static String serialNumber(Element e) {
+        if (e == null) {
+            return "";
+        }
+        Element parent = e.parent();
+        if (parent == null) {
+            return "";
+        }
+        String p = serialNumber(parent);
+        return (p == null || p.isBlank() ? "" : p + ".") + (parent.children().indexOf(e) + 1);
     }
 
 }

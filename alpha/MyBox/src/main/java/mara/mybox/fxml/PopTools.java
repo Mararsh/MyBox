@@ -253,7 +253,7 @@ public class PopTools {
         if (name == null) {
             return null;
         }
-        return StringTools.end(name.replaceAll("_", " "), 80);
+        return StringTools.end(name.trim().replaceAll("_|\r|\n", " "), 80);
     }
 
     /*
@@ -885,6 +885,7 @@ public class PopTools {
         try {
             MenuController controller = MenuController.open(parent, input, event);
             Button clearButton = new Button(message("Clear"));
+            NodeStyleTools.setTooltip(clearButton, new Tooltip(message("ClearInputArea")));
             clearButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -894,6 +895,7 @@ public class PopTools {
                 }
             });
             controller.addNode(clearButton);
+
             List<String> values = Arrays.asList("^      " + message("StartLocation"),
                     "$      " + message("EndLocation"),
                     "*      " + message("ZeroOrNTimes"),
@@ -1216,7 +1218,7 @@ public class PopTools {
             });
             controller.addNode(jlink);
 
-            Hyperlink mlink = new Hyperlink("JavaScript Tutorial - " + message("English"));
+            Hyperlink mlink = new Hyperlink(message("JavaScriptTutorial") + " - " + message("English"));
             mlink.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -1225,7 +1227,7 @@ public class PopTools {
             });
             controller.addNode(mlink);
 
-            Hyperlink alink = new Hyperlink("JavaScript Tutorial - " + message("Chinese"));
+            Hyperlink alink = new Hyperlink(message("JavaScriptTutorial") + " - " + message("Chinese"));
             alink.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -1239,7 +1241,7 @@ public class PopTools {
                 nlink.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        parent.openLink("https://docs.oracle.com/javase/10/nashorn/toc.htm");
+                        parent.openLink(HelpTools.nashornLink());
                     }
                 });
                 controller.addNode(nlink);
@@ -1289,6 +1291,49 @@ public class PopTools {
                     "var array = [ 'A', 'B', 'C', 'D' ];\n"
                     + "array.includes('#{" + colName + "})')"
             ), true, 5);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public static List<String> htmlTags() {
+        return Arrays.asList(
+                "p", "img", "a", "div", "li", "ul", "ol", "h1", "h2", "h3", "h4",
+                "button", "input", "label", "form", "table", "tr", "th", "td",
+                "font", "span", "b", "hr", "br", "frame", "pre",
+                "meta", "script", "style"
+        );
+    }
+
+    public static void popHtmlTagExamples(BaseController parent, TextInputControl input, Event event) {
+        try {
+            MenuController controller = MenuController.open(parent, input, event);
+            Button clearButton = new Button(message("ClearInputArea"));
+            clearButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    input.clear();
+                    controller.getThisPane().requestFocus();
+                    input.requestFocus();
+                }
+            });
+            controller.addNode(clearButton);
+
+            List< Node> nodes = new ArrayList<>();
+            for (String value : htmlTags()) {
+                Button button = new Button(value);
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        input.setText(value);
+                        controller.getThisPane().requestFocus();
+                        input.requestFocus();
+                    }
+                });
+                nodes.add(button);
+            }
+            controller.addFlowPane(nodes);
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

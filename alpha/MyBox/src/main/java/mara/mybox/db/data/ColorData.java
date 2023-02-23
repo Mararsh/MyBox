@@ -11,6 +11,7 @@ import mara.mybox.color.SRGB;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppValues;
 
 /**
@@ -391,11 +392,11 @@ public class ColorData extends BaseData {
     }
 
     public static String htmlValue(ColorData data) {
-        return data.display().replaceAll("\n", "</br>");
+        return StringTools.replaceHtmlLineBreak(data.display());
     }
 
     public static String htmlSimpleValue(ColorData data) {
-        return data.simpleDisplay().replaceAll("\n", "</br>");
+        return StringTools.replaceHtmlLineBreak(data.simpleDisplay());
     }
 
     /*

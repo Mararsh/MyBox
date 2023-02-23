@@ -25,13 +25,13 @@ public class HelpTools {
             table.newNameValueRow("Author", "Mara");
             table.newNameValueRow("Version", AppValues.AppVersion);
             table.newNameValueRow("Date", AppValues.AppVersionDate);
-            table.newNameValueRow("License", Languages.message("FreeOpenSource"));
+            table.newNameValueRow("License", message("FreeOpenSource"));
             table.newLinkRow("", "https://www.apache.org/licenses/LICENSE-2.0");
             table.newLinkRow("MainPage", "https://github.com/Mararsh/MyBox");
             table.newLinkRow("Mirror", "https://sourceforge.net/projects/mara-mybox/files/");
             table.newLinkRow("LatestRelease", "https://github.com/Mararsh/MyBox/releases");
             table.newLinkRow("KnownIssues", "https://github.com/Mararsh/MyBox/issues");
-            table.newNameValueRow("", Languages.message("WelcomePR"));
+            table.newNameValueRow("", message("WelcomePR"));
             table.newLinkRow("CloudStorage", "https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F");
             table.newLinkRow("MyBoxInternetDataPath", "https://github.com/Mararsh/MyBox_data");
             File htmFile = HtmlWriteTools.writeHtml(table.html());
@@ -116,7 +116,7 @@ public class HelpTools {
 
     public static File aboutCoordinateSystem() {
         try {
-            StringTable table = new StringTable(null, Languages.message("AboutCoordinateSystem"));
+            StringTable table = new StringTable(null, message("AboutCoordinateSystem"));
             table.newLinkRow("ChinaCommonGeospatialInformationServices", "https://www.tianditu.gov.cn/");
             table.newLinkRow("", "https://www.tianditu.gov.cn/world_coronavirusmap/");
             table.newLinkRow("ChineseCoordinateSystems", "https://politics.stackexchange.com/questions/40991/why-must-chinese-maps-be-obfuscated");
@@ -147,7 +147,7 @@ public class HelpTools {
 
     public static File aboutMedia() {
         try {
-            StringTable table = new StringTable(null, Languages.message("AboutMedia"));
+            StringTable table = new StringTable(null, message("AboutMedia"));
             table.newLinkRow("FFmpegDocuments", "http://ffmpeg.org/documentation.html");
             table.newLinkRow("FFmpeg wiki", "https://trac.ffmpeg.org");
             table.newLinkRow("H264VideoEncodingGuide", "http://trac.ffmpeg.org/wiki/Encode/H.264");
@@ -158,7 +158,18 @@ public class HelpTools {
 
             File htmFile = HtmlWriteTools.writeHtml(table.html());
             return htmFile;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
 
+    public static File aboutGroupingRows() {
+        try {
+            String lang = Languages.getLangName();
+            File file = FxFileTools.getInternalFile("/doc/" + lang + "/about-grouping-" + lang + ".html",
+                    "doc", "about-grouping-" + lang + ".html");
+            return file;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
@@ -244,6 +255,26 @@ public class HelpTools {
 
     public static String cssZhLink() {
         return "https://www.w3school.com.cn/cssref/index.asp";
+    }
+
+    public static String nashornLink() {
+        return "https://docs.oracle.com/javase/10/nashorn/toc.htm";
+    }
+
+    public static String htmlZhLink() {
+        return "https://www.w3school.com.cn/html/index.asp";
+    }
+
+    public static String htmlEnLink() {
+        return "https://developer.mozilla.org/en-US/docs/Learn/HTML";
+    }
+
+    public static String javaScriptZhLink() {
+        return "https://www.w3school.com.cn/js/index.asp";
+    }
+
+    public static String javaScriptEnLink() {
+        return "https://developer.mozilla.org/en-US/docs/Web/JavaScript";
     }
 
 }

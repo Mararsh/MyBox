@@ -1,6 +1,7 @@
 package mara.mybox.db.data;
 
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -92,7 +93,7 @@ public class Data2DStyle extends BaseData {
             styleValue += "-fx-font-weight: bolder; ";
         }
         if (moreStyle != null && !moreStyle.isBlank()) {
-            styleValue += moreStyle.replaceAll("\n", " ");
+            styleValue += StringTools.replaceLineBreak(moreStyle);
         }
         return styleValue.isBlank() ? null : styleValue.trim();
     }

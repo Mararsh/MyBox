@@ -28,6 +28,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -207,7 +208,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
             timer = null;
         }
         infoViewController.loadContents​(null);
-        finalTitle = queryCondition.getTitle().replaceAll("\n", " ");
+        finalTitle = StringTools.replaceLineBreak(queryCondition.getTitle());
         setQuerySQL();
         return true;
     }
@@ -401,7 +402,9 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
                 html += "<SPAN class=\"boldText\">" + message("SetConditionsComments") + "</SPAN>";
             } else {
                 html += "<SPAN class=\"boldText\">" + message("QueryConditionsName") + ":</SPAN> </BR>";
-                html += "<SPAN class=\"valueText\">" + queryCondition.getTitle().replaceAll("\n", "</BR>") + "</SPAN></BR></BR>";
+                html += "<SPAN class=\"valueText\">"
+                        + StringTools.replaceHtmlLineBreak(queryCondition.getTitle())
+                        + "</SPAN></BR></BR>";
 
                 html += "<SPAN class=\"boldText\">" + message("QueryConditions") + ":</SPAN></BR>";
                 html += "<SPAN class=\"valueText\">" + queryCondition.getWhere() + "</SPAN></BR></BR>";

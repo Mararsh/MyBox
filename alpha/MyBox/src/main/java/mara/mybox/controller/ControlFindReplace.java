@@ -449,10 +449,10 @@ public class ControlFindReplace extends BaseController {
         }
         String selectedText = textInput.getSelectedText();
         if (editerController != null && editerController.sourceInformation.getEditType() == Edit_Type.Bytes) {
-            pageText = pageText.replaceAll("\n", " ");
-            findString = findString.replaceAll("\n", " ");
-            replaceString = replaceString.replaceAll("\n", " ");
-            selectedText = selectedText.replaceAll("\n", " ");
+            pageText = StringTools.replaceLineBreak(pageText);
+            findString = StringTools.replaceLineBreak(findString);
+            replaceString = StringTools.replaceLineBreak(replaceString);
+            selectedText = StringTools.replaceLineBreak(selectedText);
         }
         int anchor = textInput.getAnchor();
         int unit = editerController != null ? editerController.sourceInformation.getObjectUnit() : 1;

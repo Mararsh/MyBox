@@ -11,7 +11,6 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.HtmlWriteTools;
-
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.Languages;
@@ -74,7 +73,7 @@ public class HtmlSetCharsetController extends BaseBatchFileController {
             if (target == null) {
                 return Languages.message("Skip");
             }
-            String changed = HtmlWriteTools.setCharset(srcFile, charset, true);
+            String changed = HtmlWriteTools.setCharset(TextFileTools.readTexts(srcFile), charset);
             if (changed == null) {
                 return Languages.message("Failed");
             }

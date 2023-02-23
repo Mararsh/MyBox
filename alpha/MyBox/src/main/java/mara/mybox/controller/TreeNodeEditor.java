@@ -33,12 +33,12 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public class TreeNodeEditor extends TreeTagsController {
-
+    
     protected boolean nodeChanged;
     protected String defaultExt;
     protected TreeNode parentNode;
     protected SingletonTask tagsTask;
-
+    
     @FXML
     protected Tab valueTab, attributesTab;
     @FXML
@@ -49,21 +49,21 @@ public class TreeNodeEditor extends TreeTagsController {
     protected Label chainLabel, nameLabel, valueLabel, moreLabel, timeLabel;
     @FXML
     protected CheckBox wrapCheck;
-
+    
     public TreeNodeEditor() {
         defaultExt = "txt";
     }
-
+    
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.Text);
     }
-
+    
     @Override
     public void initControls() {
         try {
             super.initControls();
-
+            
             nameInput.textProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue v, String ov, String nv) {
@@ -76,7 +76,7 @@ public class TreeNodeEditor extends TreeTagsController {
                     }
                 }
             });
-
+            
             if (valueInput != null) {
                 valueInput.textProperty().addListener(new ChangeListener<String>() {
                     @Override
@@ -93,7 +93,7 @@ public class TreeNodeEditor extends TreeTagsController {
                     }
                 });
             }
-
+            
             if (moreInput != null) {
                 moreInput.textProperty().addListener(new ChangeListener<String>() {
                     @Override
@@ -108,17 +108,17 @@ public class TreeNodeEditor extends TreeTagsController {
                     }
                 });
             }
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-
+    
     @Override
     public void setParameters(TreeManageController treeController) {
         try {
             super.setParameters(treeController);
-
+            
             nameLabel.setText(treeController.nameMsg);
             if (valueLabel != null) {
                 valueLabel.setText(treeController.valueMsg);
@@ -127,7 +127,7 @@ public class TreeNodeEditor extends TreeTagsController {
                 moreLabel.setText(treeController.moreMsg);
             }
             timeLabel.setText(treeController.timeMsg);
-
+            
             treeController.tagsController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldTab, Boolean newTab) {
@@ -137,7 +137,7 @@ public class TreeNodeEditor extends TreeTagsController {
                     markTags();
                 }
             });
-
+            
             if (wrapCheck != null && (valueInput instanceof TextArea)) {
                 wrapCheck.setSelected(UserConfig.getBoolean(category + "ValueWrap", false));
                 wrapCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -149,12 +149,12 @@ public class TreeNodeEditor extends TreeTagsController {
                 });
                 ((TextArea) valueInput).setWrapText(wrapCheck.isSelected());
             }
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-
+    
     public void nodeChanged(boolean changed) {
         if (isSettingValues) {
             return;
@@ -162,7 +162,7 @@ public class TreeNodeEditor extends TreeTagsController {
         nodeChanged = changed;
         treeController.nodeChanged();
     }
-
+    
     @Override
     public void notifySelected() {
         if (isSettingValues) {
@@ -174,7 +174,7 @@ public class TreeNodeEditor extends TreeTagsController {
         }
         selectedNotify.set(!selectedNotify.get());
     }
-
+    
     protected void editNode(TreeNode node) {
         isSettingValues = true;
         currentNode = node;
@@ -215,27 +215,27 @@ public class TreeNodeEditor extends TreeTagsController {
             valueTab.setText(treeController.valueMsg);
         }
     }
-
+    
     protected void showEditorPane() {
         treeController.showRightPane();
     }
-
+    
     protected void checkParentNode(TreeNode node) {
         if (parentNode == null || node.getNodeid() != parentNode.getNodeid()) {
             return;
         }
         refreshParentNode();
     }
-
+    
     protected void setParentNode(TreeNode node) {
         parentNode = node;
         refreshParentNode();
     }
-
+    
     protected void refreshParentNode() {
         SingletonTask updateTask = new SingletonTask<Void>(this) {
             private String chainName;
-
+            
             @Override
             protected boolean handle() {
                 try ( Connection conn = DerbyBase.getConnection()) {
@@ -257,7 +257,7 @@ public class TreeNodeEditor extends TreeTagsController {
                 }
                 return true;
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 chainLabel.setText(chainName);
@@ -265,7 +265,7 @@ public class TreeNodeEditor extends TreeTagsController {
         };
         start(updateTask, false);
     }
-
+    
     protected void copyNode() {
         isSettingValues = true;
         parentController.setTitle(parentController.baseTitle + ": " + message("NewData"));
@@ -276,7 +276,7 @@ public class TreeNodeEditor extends TreeTagsController {
         isSettingValues = false;
         nodeChanged(false);
     }
-
+    
     public TreeNode pickNodeData() {
         String name = nameInput.getText();
         if (name == null || name.isBlank()) {
@@ -300,7 +300,7 @@ public class TreeNodeEditor extends TreeTagsController {
         }
         return node;
     }
-
+    
     public void saveNode() {
         TreeNode node = pickNodeData();
         if (node == null) {
@@ -315,7 +315,7 @@ public class TreeNodeEditor extends TreeTagsController {
         }
         task = new SingletonTask<Void>(this) {
             private boolean newData = false;
-
+            
             @Override
             protected boolean handle() {
                 try ( Connection conn = DerbyBase.getConnection()) {
@@ -379,7 +379,7 @@ public class TreeNodeEditor extends TreeTagsController {
                 }
                 return currentNode != null;
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 if (parentNode == null) {
@@ -398,11 +398,11 @@ public class TreeNodeEditor extends TreeTagsController {
                     popSaved();
                 }
             }
-
+            
         };
         start(task, false);
     }
-
+    
     @FXML
     @Override
     public void saveAsAction() {
@@ -419,28 +419,28 @@ public class TreeNodeEditor extends TreeTagsController {
             return;
         }
         task = new SingletonTask<Void>(this) {
-
+            
             @Override
             protected boolean handle() {
                 File tfile = TextFileTools.writeFile(file, codes, Charset.forName("UTF-8"));
                 return tfile != null && tfile.exists();
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 popInformation(message("Saved"));
                 recordFileWritten(file);
             }
-
+            
         };
         start(task);
     }
-
+    
     @FXML
     public void clearValue() {
         valueInput.clear();
     }
-
+    
     public void renamed(String newName) {
         if (nameInput == null) {
             return;
@@ -449,14 +449,14 @@ public class TreeNodeEditor extends TreeTagsController {
         nameInput.setText(newName);
         isSettingValues = false;
     }
-
+    
     @FXML
     @Override
     public void postLoadedTableData() {
         super.postLoadedTableData();
         markTags();
     }
-
+    
     public void loadFile(File file) {
         if (file == null || !file.exists() || !checkBeforeNextAction()) {
             return;
@@ -467,33 +467,34 @@ public class TreeNodeEditor extends TreeTagsController {
         }
         valueInput.clear();
         task = new SingletonTask<Void>(this) {
-
+            
             String codes;
-
+            
             @Override
             protected boolean handle() {
                 codes = TextFileTools.readTexts(file);
                 return codes != null;
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 valueInput.setText(codes);
                 recordFileOpened(file);
             }
-
+            
         };
         start(task);
     }
-
+    
     public void pasteText(String text) {
         if (valueInput == null || text == null || text.isEmpty()) {
             return;
         }
         valueInput.replaceText(valueInput.getSelection(), text);
         valueInput.requestFocus();
+        tabPane.getSelectionModel().select(valueTab);
     }
-
+    
     public void markTags() {
         if (tableData.isEmpty() || currentNode == null) {
             return;
@@ -503,13 +504,13 @@ public class TreeNodeEditor extends TreeTagsController {
         }
         tagsTask = new SingletonTask<Void>(this) {
             private List<String> nodeTags;
-
+            
             @Override
             protected boolean handle() {
                 nodeTags = tableTreeNodeTag.nodeTagNames(currentNode.getNodeid());
                 return true;
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 if (nodeTags != null && !nodeTags.isEmpty()) {
@@ -522,22 +523,22 @@ public class TreeNodeEditor extends TreeTagsController {
                     isSettingValues = false;
                 }
             }
-
+            
         };
         start(tagsTask);
     }
-
+    
     @FXML
     @Override
     public void addTag() {
         treeController.tagsController.addTag(true);
     }
-
+    
     @FXML
     public void selectParent() {
         TreeNodeParentController.open(this);
     }
-
+    
     @Override
     public void cleanPane() {
         try {
@@ -548,5 +549,5 @@ public class TreeNodeEditor extends TreeTagsController {
         }
         super.cleanPane();
     }
-
+    
 }

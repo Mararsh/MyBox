@@ -23,6 +23,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.JShellTools;
+import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -91,7 +92,8 @@ public class JexlEditor extends JShellEditor {
             }
 
             String jexlScriptOrignal = "jexlScript = jexlEngine.createScript(\"" + script + "\");\n";
-            String jexlScript = "jexlScript = jexlEngine.createScript(\"" + script.replaceAll("\n", " ") + "\");\n";
+            String jexlScript = "jexlScript = jexlEngine.createScript(\""
+                    + StringTools.replaceLineBreak(script) + "\");\n";
             runSnippet(jexlScriptOrignal, jexlScript);
 
             String parameters = parametersInput.getText();

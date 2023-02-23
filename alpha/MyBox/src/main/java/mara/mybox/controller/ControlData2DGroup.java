@@ -20,6 +20,7 @@ import mara.mybox.data2d.DataFilter;
 import mara.mybox.data2d.reader.DataTableGroup.GroupType;
 import mara.mybox.data2d.reader.DataTableGroup.TimeType;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.HelpTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -535,6 +536,11 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @FXML
+    public void aboutGroupingRows() {
+        openLink(HelpTools.aboutGroupingRows());
     }
 
     @Override

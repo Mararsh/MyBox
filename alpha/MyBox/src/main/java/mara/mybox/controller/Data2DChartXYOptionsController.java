@@ -31,6 +31,7 @@ import mara.mybox.fxml.chart.XYChartMaker;
 import mara.mybox.fxml.chart.XYChartOptions;
 import mara.mybox.fxml.chart.XYChartOptions.ChartCoordinate;
 import mara.mybox.fxml.chart.XYChartOptions.LabelLocation;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -358,7 +359,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
 
     @FXML
     public void applyBubbleStyle() {
-        chartMaker.setBubbleStyle(bubbleStyleInput.getText().replaceAll("\n", " "));
+        chartMaker.setBubbleStyle(StringTools.replaceLineBreak(bubbleStyleInput.getText()));
     }
 
     @FXML

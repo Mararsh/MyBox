@@ -35,6 +35,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TreeItem;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.KeyEvent;
@@ -42,7 +43,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.web.HTMLEditor;
 import javafx.stage.Stage;
+import mara.mybox.data.HtmlNode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
@@ -88,7 +91,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
     @FXML
     protected Label codesLabel, markdownLabel, textsLabel;
     @FXML
-    protected ControlHtmlDom domController;
+    protected ControlHtmlDomManage domController;
     @FXML
     protected ControlFileBackup backupController;
     @FXML
@@ -105,7 +108,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
         try {
             super.initValues();
 
-            domController.htmlEditor = this;
+            domController.setEditor(this);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -667,12 +670,16 @@ public class ControlHtmlEditor extends BaseWebViewController {
         return domController.html();
     }
 
-    protected void domChanged(boolean changed) {
+    public void domChanged(boolean changed) {
         domChanged = changed;
         domTab.setText("dom" + (changed ? " *" : ""));
         if (changed) {
             updateFileStatus(true);
         }
+    }
+
+    public void updateNode(TreeItem<HtmlNode> item) {
+        domChanged(true);
     }
 
     /*
@@ -1346,6 +1353,69 @@ public class ControlHtmlEditor extends BaseWebViewController {
             return null;
         }
         return items;
+    }
+
+    @FXML
+    public void popHelpMenu(MouseEvent mouseEvent) {
+        try {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = new ContextMenu();
+            popMenu.setAutoHide(true);
+
+            MenuItem menuItem = new MenuItem(message("HtmlTutorial") + " - " + message("English"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    myController.openLink(HelpTools.htmlEnLink());
+                }
+            });
+            popMenu.getItems().add(menuItem);
+
+            menuItem = new MenuItem(message("JavaScriptTutorial") + " - " + message("English"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    myController.openLink(HelpTools.javaScriptEnLink());
+                }
+            });
+            popMenu.getItems().add(menuItem);
+
+            menuItem = new MenuItem(message("HtmlTutorial") + " - " + message("Chinese"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    myController.openLink(HelpTools.htmlZhLink());
+                }
+            });
+            popMenu.getItems().add(menuItem);
+
+            menuItem = new MenuItem(message("JavaScriptTutorial") + " - " + message("Chinese"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    myController.openLink(HelpTools.javaScriptZhLink());
+                }
+            });
+            popMenu.getItems().add(menuItem);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    popMenu.hide();
+                }
+            });
+            popMenu.getItems().add(menu);
+
+            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @Override

@@ -57,7 +57,7 @@ public class TableFileBackup extends BaseTable<FileBackup> {
 
     public List<FileBackup> read(String file) {
         List<FileBackup> dataList = new ArrayList<>();
-        if (file == null || file.trim().isBlank()) {
+        if (file == null || file.isBlank()) {
             return dataList;
         }
         try ( Connection conn = DerbyBase.getConnection()) {
@@ -73,11 +73,6 @@ public class TableFileBackup extends BaseTable<FileBackup> {
         if (filename == null || filename.isBlank()) {
             return records;
         }
-        File file = new File(filename);
-        if (!file.exists()) {
-            clearBackups(conn, filename);
-            return records;
-        }
         int max = UserConfig.getInt("MaxFileBackups", Default_Max_Backups);
         if (max <= 0) {
             max = Default_Max_Backups;
@@ -89,7 +84,7 @@ public class TableFileBackup extends BaseTable<FileBackup> {
             statement.setString(1, filename);
             try ( ResultSet results = statement.executeQuery()) {
                 while (results.next()) {
-                    FileBackup data = (FileBackup) readData(results);
+                    FileBackup data = readData(results);
                     File backup = data.getBackup();
                     if (backup == null || !backup.exists() || records.size() >= max) {
                         invalid.add(data);
@@ -120,21 +115,36 @@ public class TableFileBackup extends BaseTable<FileBackup> {
         if (conn == null || filename == null) {
             return;
         }
+        List<String> files = new ArrayList<>();
+        files.add(filename);
+        clearBackups(conn, files);
+    }
+
+    public void clearBackups(Connection conn, List<String> files) {
+        if (conn == null || files == null || files.isEmpty()) {
+            return;
+        }
         try ( PreparedStatement statement = conn.prepareStatement(FileQuery)) {
             conn.setAutoCommit(true);
-            statement.setString(1, filename);
-            try ( ResultSet results = statement.executeQuery()) {
-                while (results.next()) {
-                    FileBackup data = (FileBackup) readData(results);
-                    FileDeleteTools.delete(data.getBackup());
+            for (String file : files) {
+                statement.setString(1, file);
+                try ( ResultSet results = statement.executeQuery()) {
+                    while (results.next()) {
+                        FileBackup data = readData(results);
+                        FileDeleteTools.delete(data.getBackup());
+                    }
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
                 }
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
         try ( PreparedStatement statement = conn.prepareStatement(DeleteFile)) {
-            statement.setString(1, filename);
-            statement.executeUpdate();
+            for (String file : files) {
+                statement.setString(1, file);
+                statement.executeUpdate();
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -145,21 +155,29 @@ public class TableFileBackup extends BaseTable<FileBackup> {
         try {
             conn.setAutoCommit(true);
             List<FileBackup> invalid = new ArrayList<>();
+            List<String> clear = new ArrayList<>();
             try ( PreparedStatement query = conn.prepareStatement(queryAllStatement());
                      ResultSet results = query.executeQuery()) {
                 while (results.next()) {
                     FileBackup data = readData(results);
-                    if (data.getBackup() == null || !data.getBackup().exists()
-                            || data.getFile() == null || !data.getFile().exists()) {
+                    File file = data.getFile();
+                    if (file == null) {
                         invalid.add(data);
+                    } else if (!file.exists()) {
+                        clear.add(file.getAbsolutePath());
+                    } else {
+                        File backup = data.getBackup();
+                        if (backup == null || !backup.exists()) {
+                            invalid.add(data);
+                        }
                     }
                 }
-
             } catch (Exception e) {
                 MyBoxLog.debug(e, tableName);
             }
-            count = invalid.size();
+            clearBackups(conn, clear);
             deleteData(conn, invalid);
+            count = clear.size() + invalid.size();
             conn.setAutoCommit(true);
         } catch (Exception e) {
             MyBoxLog.error(e, tableName);

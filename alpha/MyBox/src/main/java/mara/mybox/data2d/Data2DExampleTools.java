@@ -58,7 +58,7 @@ public class Data2DExampleTools {
         try {
             boolean isChinese = "zh".equals(lang);
 
-            Menu myMenu = new Menu(message("MyData"), StyleTools.getIconImageView("iconClaw.png"));
+            Menu myMenu = new Menu(message("MyData"), StyleTools.getIconImageView("iconCat.png"));
 
             MenuItem menu = new MenuItem(message("Notes"));
             menu.setOnAction((ActionEvent event) -> {

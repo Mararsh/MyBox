@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TreeTableColumn?>
+<?import javafx.scene.control.TreeTableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlHtmlDomSource">
+    <children>
+        <HBox alignment="CENTER_LEFT" layoutX="30.0" layoutY="537.0" spacing="5.0">
+            <children>
+                <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%SelectSourceNodes" wrapText="true" HBox.hgrow="ALWAYS" />
+                <Button fx:id="functionsButton" mnemonicParsing="false" onMouseEntered="#popFunctionsMenu">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconFunction.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+        </HBox>
+        <TreeTableView fx:id="domTree" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+            <columns>
+                <TreeTableColumn fx:id="sequenceColumn" prefWidth="160.0" text="%HierarchyNumber" />
+            <TreeTableColumn fx:id="selectColumn" minWidth="-1.0" prefWidth="50.0" text="%Select" />
+                <TreeTableColumn fx:id="tagColumn" text="Tag" />
+                <TreeTableColumn fx:id="textColumn" prefWidth="100.0" text="text" />
+                <TreeTableColumn fx:id="idColumn" text="id" />
+                <TreeTableColumn fx:id="classnameColumn" text="classname" />
+                <TreeTableColumn fx:id="dataColumn" prefWidth="100.0" text="data" />
+                <TreeTableColumn fx:id="rvalueColumn" prefWidth="100.0" text="value" />
+            </columns>
+        </TreeTableView>
+    </children>
+</VBox>

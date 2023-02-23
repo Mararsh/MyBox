@@ -17,6 +17,7 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -108,7 +109,7 @@ public class DataTableQueryEditor extends TreeNodeEditor {
             popError(message("InvalidParameters") + ": SQL");
             return;
         }
-        String query = s.replaceAll("\n", " ");
+        String query = StringTools.replaceLineBreak(s);
         if (task != null) {
             task.cancel();
         }

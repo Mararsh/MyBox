@@ -98,7 +98,7 @@ License:    Apache License Version 2.0
                                                         </RadioButton>
                                                         <RadioButton fx:id="orangeRadio" layoutX="124.0" layoutY="15.0" mnemonicParsing="false" toggleGroup="$controlColorGroup">
                                                             <graphic>
-                                                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#CA6924" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+                                                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#622A1D" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
                                                             </graphic>
                                                         </RadioButton>
                                                         <RadioButton fx:id="greenRadio" layoutX="342.0" layoutY="10.0" mnemonicParsing="false" toggleGroup="$controlColorGroup">
@@ -111,19 +111,19 @@ License:    Apache License Version 2.0
                                                                 <Rectangle fx:id="colorCustomizeRect" arcHeight="5.0" arcWidth="5.0" fill="#DDDDDD" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
                                                             </graphic>
                                                         </RadioButton>
-                                          <Button fx:id="inputButton" mnemonicParsing="false" onAction="#inputColorAction">
-                                             <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/Red/iconRename.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
+                                                        <Button fx:id="inputButton" mnemonicParsing="false" onAction="#inputColorAction">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconRename.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
                                                     </children>
                                                 </HBox>
-                                    <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="192.0" spacing="10.0">
-                                       <children>
+                                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="192.0" spacing="10.0">
+                                                    <children>
                                                         <CheckBox fx:id="hidpiIconsCheck" mnemonicParsing="false" text="%HidpiIcons">
                                                             <HBox.margin>
                                                                 <Insets />
@@ -134,8 +134,8 @@ License:    Apache License Version 2.0
                                                                 <Insets />
                                                             </HBox.margin>
                                                         </CheckBox>
-                                       </children>
-                                    </HBox>
+                                                    </children>
+                                                </HBox>
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                                     <children>
                                                         <CheckBox fx:id="recordWindowsSizeLocationCheck" mnemonicParsing="false" selected="true" text="%RecordWindowsSizeLocation" />

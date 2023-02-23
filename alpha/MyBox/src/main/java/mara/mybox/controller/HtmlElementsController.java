@@ -193,15 +193,8 @@ public class HtmlElementsController extends WebAddressController {
     @FXML
     public void popExamples(MouseEvent mouseEvent) {
         try {
-            List<String> values = new ArrayList<>();
-            values.addAll(Arrays.asList(
-                    "p", "img", "a", "div", "li", "ul", "ol", "h1", "h2", "h3",
-                    "button", "input", "label", "form", "table", "tr", "th", "td",
-                    "script", "style", "font", "span", "b", "hr", "br", "frame", "pre"
-            ));
-
             List<Node> buttons = new ArrayList<>();
-            for (String value : values) {
+            for (String value : PopTools.htmlTags()) {
                 Button button = new Button(value);
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override

@@ -35,6 +35,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.tools.StringTools;
 import static mara.mybox.tools.TmpFileTools.getPathTempFile;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppVariables;
@@ -188,7 +189,7 @@ public class ControlMathFunctionCalculator extends BaseController {
         if (d == null || d.isBlank()) {
             return null;
         }
-        return d.replaceAll("\n", "  ");
+        return StringTools.replaceLineBreak(d);
     }
 
     public String resultName() {

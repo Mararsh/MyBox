@@ -26,6 +26,7 @@ import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.LongTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 
@@ -995,7 +996,7 @@ public abstract class BaseTable<D> {
         if (referred != null) {
             html += "</BR>" + referred;
         }
-        html += "</BR><HR>" + createTableStatement().replaceAll("\n", "</BR>");
+        html += "</BR><HR>" + StringTools.replaceHtmlLineBreak(createTableStatement());
         return HtmlWriteTools.html(tableName, HtmlStyles.styleValue("Default"), html);
     }
 

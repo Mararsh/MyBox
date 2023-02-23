@@ -441,7 +441,7 @@ License:    Apache License Version 2.0
                                         </RadioMenuItem>
                                         <RadioMenuItem fx:id="orangeMenuItem" mnemonicParsing="false" onAction="#setOrange" text="%MyBoxColorOrangeDark" toggleGroup="$colorGroup">
                                             <graphic>
-                                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#CA6924" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+                                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#622A1D" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
                                             </graphic>
                                         </RadioMenuItem>
                                         <RadioMenuItem fx:id="greenMenuItem" mnemonicParsing="false" onAction="#setGeen" text="%MyBoxColorGreenDark" toggleGroup="$colorGroup">

@@ -26,7 +26,7 @@ public class StringTools {
         if (string == null) {
             return string;
         }
-        return string.length() > maxLen ? string.substring(0, maxLen) : string;
+        return string.length() > maxLen ? string.substring(0, maxLen) + "..." : string;
     }
 
     public static String end(String string, int maxLen) {
@@ -34,7 +34,32 @@ public class StringTools {
             return string;
         }
         int len = string.length();
-        return len > maxLen ? string.substring(len - maxLen, len) : string;
+        return len > maxLen ? "..." + string.substring(len - maxLen, len) : string;
+    }
+
+    public static String abbreviate(String string, int maxLen) {
+        if (string == null) {
+            return string;
+        }
+        return start(replaceLineBreak(string, " ").trim(), maxLen);
+    }
+
+    public static String replaceLineBreak(String string) {
+        return replaceLineBreak(string, " ");
+    }
+
+    public static String replaceHtmlLineBreak(String string) {
+        return replaceLineBreak(string, "</BR>");
+    }
+
+    public static String replaceLineBreak(String string, String replaceAs) {
+        if (string == null) {
+            return string;
+        }
+        if (replaceAs == null) {
+            replaceAs = "";
+        }
+        return string.replaceAll("\r\n|\n|\r", replaceAs);
     }
 
     public static String[] separatedBySpace(String string) {

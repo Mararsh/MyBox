@@ -40,6 +40,8 @@ public class Fxmls {
     public static final String PdfSplitBatchFxml = "/fxml/PdfSplitBatch.fxml";
 
     public static final String HtmlEditorFxml = "/fxml/HtmlEditor.fxml";
+    public static final String HtmlDomCopyFxml = "/fxml/HtmlDomCopy.fxml";
+    public static final String HtmlDomAddFxml = "/fxml/HtmlDomAdd.fxml";
     public static final String HtmlToMarkdownFxml = "/fxml/HtmlToMarkdown.fxml";
     public static final String HtmlToTextFxml = "/fxml/HtmlToText.fxml";
     public static final String HtmlToPdfFxml = "/fxml/HtmlToPdf.fxml";
