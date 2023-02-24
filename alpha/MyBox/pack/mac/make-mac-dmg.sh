@@ -1,7 +1,7 @@
 # Unzip source package. Edit this script to change directories as your env.
 # In terminal window, enter path "MyBox/pack/mac", and run this script.
-jpackagePath=/Library/Java/JavaVirtualMachines/jdk-18.jdk/Contents/Home/bin
-jdkPath=/Library/Java/JavaVirtualMachines/jdk-18.jdk/Contents/Home
+jpackagePath=/Library/Java/JavaVirtualMachines/jdk-19.0.2.jdk/Contents/Home/bin
+jdkPath=/Library/Java/JavaVirtualMachines/jdk-19.0.2.jdk/Contents/Home
 
 rm -rf app/*
 rm -rf jar/*

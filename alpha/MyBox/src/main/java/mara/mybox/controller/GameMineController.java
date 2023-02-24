@@ -50,7 +50,6 @@ import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlWriteTools;
-import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -108,7 +107,7 @@ public class GameMineController extends BaseWebViewController {
             super.initValues();
             random = new Random();
             dropShadow = new DropShadow();
-            mineImage = StyleTools.getIconPath(AppVariables.ControlColor) + "iconClear.png";
+            mineImage = StyleTools.getIconPath() + "iconClear.png";
 
             spacing = 0;
             chessSize = UserConfig.getInt(baseName + "ChessSize", 20);

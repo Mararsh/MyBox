@@ -10,8 +10,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <mainClass>mara.mybox.MyBox</mainClass>
-        <maven.compiler.source>${javaVersion}</maven.compiler.source>
-        <maven.compiler.target>${javaVersion}</maven.compiler.target>
+        <maven.compiler.source>19</maven.compiler.source>
+        <maven.compiler.target>19</maven.compiler.target>
     </properties>
 
     <organization>
@@ -22,43 +22,43 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
-            <version>18.0.1</version>
+            <version>19.0.2.1</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>18.0.1</version>
+            <version>19.0.2.1</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>18.0.1</version>
+            <version>19.0.2.1</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-web</artifactId>
-            <version>16</version>
+            <version>19.0.2.1</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-media</artifactId>
-            <version>18.0.1</version>
+            <version>19.0.2.1</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
-            <version>18.0.1</version>
+            <version>19.0.2.1</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-swing</artifactId>
-            <version>18.0.1</version>
+            <version>19.0.2.1</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
@@ -114,12 +114,12 @@
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
-            <version>2.0.26</version>
+            <version>2.0.27</version>
         </dependency>
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox-tools</artifactId>
-            <version>2.0.26</version>
+            <version>2.0.27</version>
         </dependency>
         <dependency>
             <groupId>net.sf.cssbox</groupId>
@@ -164,7 +164,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
-            <version>1.21</version>
+            <version>1.22</version>
         </dependency>
         <dependency>
             <groupId>org.tukaani</groupId>
@@ -179,22 +179,22 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>5.2.2</version>
+            <version>5.2.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>5.2.2</version>
+            <version>5.2.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-scratchpad</artifactId>
-            <version>5.2.2</version>
+            <version>5.2.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-csv</artifactId>
-            <version>1.9.0</version>
+            <version>1.10.0</version>
         </dependency>
         <dependency>
             <groupId>com.sun.mail</groupId>
@@ -307,7 +307,7 @@
             <id>win</id>
             <properties>
                 <platform>win</platform>
-                <javaVersion>18</javaVersion>
+                <javaVersion>19</javaVersion>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -317,7 +317,7 @@
             <id>linux</id>
             <properties>
                 <platform>linux</platform>
-                <javaVersion>18</javaVersion>
+                <javaVersion>19</javaVersion>
             </properties>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -327,7 +327,7 @@
             <id>mac</id>
             <properties>
                 <platform>mac</platform>
-                <javaVersion>18</javaVersion>
+                <javaVersion>19</javaVersion>
             </properties>
             <activation>
                 <activeByDefault>false</activeByDefault>

@@ -444,27 +444,32 @@ public class MediaPlayerController extends BaseController {
     }
 
     public void dataChanged() {
-        try {
-            if (isSettingValues) {
-                return;
-            }
-            if (player == null && currentMedia == null) {
-                if (autoplayCheck.isSelected() && !tableData.isEmpty()) {
-                    currentIndex = 0;
-                    playCurrent();
-                }
-                return;
-            }
-            if (currentMedia != null) {
-                int index = tableData.indexOf(currentMedia);
-                if (index < 0) {
-                    initPlayer();
-                }
-            }
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    if (player == null && currentMedia == null) {
+                        if (autoplayCheck.isSelected() && !tableData.isEmpty()) {
+                            currentIndex = 0;
+                            playCurrent();
+                        }
+                        return;
+                    }
+                    if (currentMedia != null) {
+                        int index = tableData.indexOf(currentMedia);
+                        if (index < 0) {
+                            initPlayer();
+                        }
+                    }
 
-        } catch (Exception e) {
+                } catch (Exception e) {
 
-        }
+                }
+            }
+        });
     }
 
     public void load(File file) {
@@ -956,6 +961,24 @@ public class MediaPlayerController extends BaseController {
         mediaView.setPreserveRatio(true);
         mediaView.setFitWidth(playerBox.getWidth() - 5);
         mediaView.setFitHeight(playerBox.getHeight() - playerControlBox.getHeight() - 5);
+    }
+
+    @FXML
+    public void zoomIn() {
+        if (isSettingValues) {
+            return;
+        }
+        mediaView.setPreserveRatio(true);
+        mediaView.setFitWidth(mediaView.getFitWidth() + 20);
+    }
+
+    @FXML
+    public void zoomOut() {
+        if (isSettingValues) {
+            return;
+        }
+        mediaView.setPreserveRatio(true);
+        mediaView.setFitWidth(mediaView.getFitWidth() - 20);
     }
 
     @FXML

@@ -1,6 +1,6 @@
 rem Unzip source package. Edit this script to change directories as your env.
-set jpackagePath=D:\Programs\Java\openjdk-18\bin
-set jdkPath=D:\Programs\Java\openjdk-18
+set jpackagePath=D:\Programs\Java\openjdk-19.0.2\bin
+set jdkPath=D:\Programs\Java\openjdk-19.0.2
 
 rd/Q/S    app\
 rd/Q/S    jar\

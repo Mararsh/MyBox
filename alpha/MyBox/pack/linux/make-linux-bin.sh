@@ -1,7 +1,7 @@
 # Unzip source package. Edit this script to change directories as your env.
 # In terminal window, enter path "MyBox/pack/linux", and run this script.
-jpackagePath=/usr/java/jdk-18/bin
-jdkPath=/usr/java/jdk-18
+jpackagePath=/usr/java/jdk-19.0.2/bin
+jdkPath=/usr/java/jdk-19.0.2
 
 rm -rf app/*
 rm -rf jar/*

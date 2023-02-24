@@ -231,7 +231,7 @@ public class StyleTools {
             return null;
         }
         try {
-            String stylePath = getIconPath(AppVariables.ControlColor);
+            String stylePath = getIconPath();
             ImageView view = null;
             if (AppVariables.hidpiIcons && iconName.endsWith(".png") && !iconName.endsWith("_100.png")) {
                 String hiName = iconName.substring(0, iconName.length() - 4) + "_100.png";

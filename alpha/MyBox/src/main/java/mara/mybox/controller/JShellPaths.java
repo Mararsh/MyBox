@@ -86,7 +86,7 @@ public class JShellPaths extends BaseController {
     @FXML
     protected void selectJar() {
         try {
-            File file = FxFileTools.selectFile(this, VisitHistory.FileType.Jar);
+            File file = FxFileTools.selectFile(this);
             if (file == null) {
                 return;
             }
@@ -98,6 +98,7 @@ public class JShellPaths extends BaseController {
 
     protected void selectJar(File file) {
         pathInput.setText(file.getAbsolutePath());
+        recordFileOpened(file);
     }
 
     @FXML
@@ -106,17 +107,6 @@ public class JShellPaths extends BaseController {
             return;
         }
         new RecentVisitMenu(this, event) {
-            @Override
-            public List<VisitHistory> recentFiles() {
-                return VisitHistoryTools.getRecentReadWrite(VisitHistory.FileType.Jar,
-                        AppVariables.fileRecentNumber * 3 / 4);
-            }
-
-            @Override
-            public List<VisitHistory> recentPaths() {
-                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Jar,
-                        AppVariables.fileRecentNumber / 4 + 1);
-            }
 
             @Override
             public void handleSelect() {
@@ -130,7 +120,6 @@ public class JShellPaths extends BaseController {
                     selectJar();
                     return;
                 }
-                recordFileOpened(file);
                 selectJar(file);
             }
 

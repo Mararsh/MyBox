@@ -1347,7 +1347,7 @@ public class GameEliminationController extends BaseController {
             afterElimination((int) node.getUserData(), adjacent.getLength());
             findAdjacentAndEliminate();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
