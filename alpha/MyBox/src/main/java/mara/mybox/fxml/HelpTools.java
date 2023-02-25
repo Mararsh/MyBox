@@ -19,6 +19,19 @@ import static mara.mybox.value.Languages.message;
  */
 public class HelpTools {
 
+    public static void readMe(BaseController controller) {
+        try {
+            String lang = Languages.getLangName();
+            File file = FxFileTools.getInternalFile("/doc/" + lang + "/readme-" + lang + ".html",
+                    "doc", "readme-" + lang + ".html");
+            if (file != null && file.exists()) {
+                PopTools.browseURI(controller, file.toURI());
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     public static void about() {
         try {
             StringTable table = new StringTable(null, "MyBox");

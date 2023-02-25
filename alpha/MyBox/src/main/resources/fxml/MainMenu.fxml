@@ -502,11 +502,11 @@ License:    Apache License Version 2.0
                         </Menu>
                         <Menu fx:id="helpMenu" mnemonicParsing="false" text="%Help">
                             <items>
+                                <MenuItem mnemonicParsing="false" onAction="#readme" text="%ReadMe" />
                                 <MenuItem mnemonicParsing="false" onAction="#Overview" text="%Overview" />
                                 <MenuItem mnemonicParsing="false" onAction="#Shortcuts" text="%Shortcuts" />
                                 <MenuItem mnemonicParsing="false" onAction="#FunctionsList" text="%FunctionsList" />
                                 <MenuItem mnemonicParsing="false" onAction="#documents" text="%Documents" />
-                                <MenuItem mnemonicParsing="false" onAction="#readme" text="ReadMe" />
                                 <MenuItem mnemonicParsing="false" onAction="#stories" text="%StoriesOfImages" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#showAbout" text="%About" />

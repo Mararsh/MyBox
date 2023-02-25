@@ -76,7 +76,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
     protected FlexmarkHtmlConverter htmlConverter;
     protected Parser htmlParser;
     protected HtmlRenderer htmlRender;
-    protected String title, baseURI;
+    protected String title;
 
     protected final ButtonType buttonClose = new ButtonType(message("Close"));
     protected final ButtonType buttonSynchronize = new ButtonType(message("SynchronizeAndClose"));
@@ -356,7 +356,6 @@ public class ControlHtmlEditor extends BaseWebViewController {
         if (!super.loadContents(contents)) {
             return false;
         }
-        baseURI = null;
         return writePanes(contents);
     }
 
@@ -365,11 +364,11 @@ public class ControlHtmlEditor extends BaseWebViewController {
         if (!super.loadContents(address, contents)) {
             return false;
         }
-        baseURI = HtmlReadTools.baseURI(address);
         return writePanes(contents);
     }
 
     public boolean writePanes(String html) {
+        MyBoxLog.console(html);
         fileChanged = false;
         sourceFile = webViewController.sourceFile;
         isSettingValues = true;

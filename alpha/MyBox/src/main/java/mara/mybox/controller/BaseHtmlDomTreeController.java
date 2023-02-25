@@ -82,9 +82,13 @@ public class BaseHtmlDomTreeController extends BaseController {
 
     public void load(String html) {
         try {
-            load(Jsoup.parse(html));
+            if (html == null) {
+                clearDom();
+            } else {
+                load(Jsoup.parse(html));
+            }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

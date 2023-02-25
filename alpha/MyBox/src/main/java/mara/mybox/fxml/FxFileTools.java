@@ -84,7 +84,7 @@ public class FxFileTools {
 
     public static File selectFile(BaseController_Files controller, int fileType) {
         return selectFile(controller,
-                UserConfig.getPath("LastPath"),
+                UserConfig.getPath(VisitHistoryTools.getPathKey(fileType)),
                 VisitHistoryTools.getExtensionFilter(fileType));
     }
 

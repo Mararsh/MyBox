@@ -86,7 +86,7 @@ A file path can follow the command as argument to be opened directly by MyBox. E
 While forward compatibility is not supported: Wrong may happen when old version handles data of new version.
 
 
-## Configuration <a id="Config"></a>
+## Configuration 
 Configuration file is under "User Home":        
 
 | Platform | Path of MyBox Configuration File |        

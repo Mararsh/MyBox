@@ -43,90 +43,6 @@ public class HtmlReadTools {
     /*
         read html
      */
-    public static org.jsoup.nodes.Document url2doc(String urlAddress) {
-        try {
-            if (urlAddress == null) {
-                return null;
-            }
-            URL url;
-            try {
-                url = new URL(urlAddress);
-            } catch (Exception e) {
-                return null;
-            }
-            String protocal = url.getProtocol();
-            if ("file".equalsIgnoreCase(protocal)) {
-                return file2doc(new File(url.getFile()));
-
-            } else if ("http".equalsIgnoreCase(protocal) || "https".equalsIgnoreCase(protocal)) {
-                return Jsoup.connect(url.toString()).get();
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString() + " " + urlAddress);
-        }
-        return null;
-    }
-
-    public static org.jsoup.nodes.Document file2doc(File file) {
-        try {
-            if (file == null || !file.exists()) {
-                return null;
-            }
-            return Jsoup.parse(TextFileTools.readTexts(file));
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString() + " " + file);
-            return null;
-        }
-    }
-
-    public static String url2html(String urlAddress) {
-        try {
-            org.jsoup.nodes.Document doc = url2doc(urlAddress);
-            if (doc != null) {
-                return doc.html();
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString() + " " + urlAddress);
-        }
-        return null;
-    }
-
-    public static File url2file(String urlAddress) {
-        try {
-            org.jsoup.nodes.Document doc = url2doc(urlAddress);
-            if (doc == null) {
-                return null;
-            }
-            String html = doc.html();
-            File tmpFile = TmpFileTools.getTempFile();
-            TextFileTools.writeFile(tmpFile, html, doc.charset());
-            if (tmpFile == null || !tmpFile.exists()) {
-                return null;
-            }
-            if (tmpFile.length() == 0) {
-                FileDeleteTools.delete(tmpFile);
-                return null;
-            }
-            return tmpFile;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString() + " " + urlAddress);
-            return null;
-        }
-    }
-
-    public static String baseURI(String urlAddress) {
-        try {
-            org.jsoup.nodes.Document doc = url2doc(urlAddress);
-            if (doc == null) {
-                return null;
-            }
-            return doc.baseUri();
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString() + " " + urlAddress);
-            return null;
-        }
-    }
-
     public static File download(String urlAddress) {
         try {
             if (urlAddress == null) {
@@ -139,10 +55,10 @@ public class HtmlReadTools {
                 return null;
             }
             File tmpFile = TmpFileTools.getTempFile();
-
-            if ("file".equalsIgnoreCase(url.getProtocol())) {
+            String protocal = url.getProtocol();
+            if ("file".equalsIgnoreCase(protocal)) {
                 FileCopyTools.copyFile(new File(url.getFile()), tmpFile);
-            } else if ("https".equalsIgnoreCase(url.getProtocol())) {
+            } else if ("https".equalsIgnoreCase(protocal)) {
                 HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
                 SSLContext sc = SSLContext.getInstance(AppValues.HttpsProtocal);
                 sc.init(null, null, null);
@@ -170,7 +86,7 @@ public class HtmlReadTools {
                         }
                     }
                 }
-            } else if ("http".equalsIgnoreCase(url.getProtocol())) {
+            } else if ("http".equalsIgnoreCase(protocal)) {
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 //                connection.setRequestMethod("GET");
                 connection.setRequestProperty("User-Agent", httpUserAgent);
@@ -206,6 +122,48 @@ public class HtmlReadTools {
                 return null;
             }
             return tmpFile;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString() + " " + urlAddress);
+            return null;
+        }
+    }
+
+    public static String url2html(String urlAddress) {
+        try {
+            File file = download(urlAddress);
+            if (file != null) {
+                return null;
+            }
+            return TextFileTools.readTexts(file);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString() + " " + urlAddress);
+            return null;
+        }
+    }
+
+    public static org.jsoup.nodes.Document url2doc(String urlAddress) {
+        return file2doc(download(urlAddress));
+    }
+
+    public static org.jsoup.nodes.Document file2doc(File file) {
+        try {
+            if (file == null || !file.exists()) {
+                return null;
+            }
+            return Jsoup.parse(TextFileTools.readTexts(file));
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString() + " " + file);
+            return null;
+        }
+    }
+
+    public static String baseURI(String urlAddress) {
+        try {
+            org.jsoup.nodes.Document doc = url2doc(urlAddress);
+            if (doc == null) {
+                return null;
+            }
+            return doc.baseUri();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString() + " " + urlAddress);
             return null;

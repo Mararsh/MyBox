@@ -1,0 +1,256 @@
+<!DOCTYPE html><HTML>
+    <HEAD>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    </HEAD>
+<h1><a href="https://github.com/Mararsh/MyBox">中文ReadMe</a>   <img src="https://mararsh.github.io/MyBox/iconGo.png" alt="ReadMe" /></h1>
+<h1>MyBox: Set of Easy Tools</h1>
+<p>This is desktop application based on JavaFx to provide simple and easy functions. It&rsquo;s free and open sources.</p>
+<h2>What&rsquo;s New</h2>
+<p>2023-1-21 v6.7</p>
+<ul>
+    <li>Added features:
+        <ul>
+            <li>Group data by same values of century/year/month/day/hour/minute/second of a time column.</li>
+            <li>Group data by same results of row expressions.</li>
+            <li>Charset can be set for &ldquo;Run System Command&rdquo;.</li>
+            <li>Document &ldquo;Stories of Images&rdquo;.</li>
+        </ul>
+    </li>
+    <li>Improved codes:
+        <ul>
+            <li>Grouping parameters are saved in database instead of in memory.</li>
+            <li>In data formats, hour/minute/second are always long values.</li>
+            <li>Rename internal images.</li>
+            <li>Solved problems:</li>
+            <li>When group by value ranges of time column, ranges should be displayed as time rather than as long.</li>
+            <li>When group by conditions, all values should be imported in temprory table, or else results may be wrong.</li>
+            <li>When group by rows number, split number is wrongly picked as split size.</li>
+        </ul>
+    </li>
+</ul>
+<p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7">Closed requirements/bugs in this version</a></p>
+<p>Happy and healthy Chinese New Year!</p>
+<h2>Download and Execution</h2>
+<p>Packages of each version have been uploaded at <a href="https://github.com/Mararsh/MyBox/releases?">Releases</a> directory now. You can find them by clicking <code>releases</code> tab in main page of this project.</p>
+<h3>Source Codes</h3>
+<p><a href="https://sourceforge.net/projects/mara-mybox/files/v6.7/MyBox-6.7-src.zip">MyBox-6.7-src.zip</a>   62MB-</p>
+<p>About structure, editing, and building of source codes, please refer to <a href="https://sourceforge.net/projects/mara-mybox/files/documents/dev_guide_2.1/MyBox-DevGuide-2.1-en.pdf">Developement Guide</a> and <a href="https://mararsh.github.io/MyBox/pack_steps_en.html">Packing Steps</a></p>
+<h3>Self-contain packages</h3>
+<p>Self-contain packages include all files and need not java env nor installation.</p>
+<table>
+    <thead>
+        <tr><th> Platform </th><th> Link </th><th> Size  </th><th> Launcher </th></tr>
+    </thead>
+    <tbody>
+        <tr><td> win10 x64 </td><td> <a href="https://sourceforge.net/projects/mara-mybox/files/v6.7/MyBox-6.7-win10-x64.zip">MyBox-6.7-win-x64.zip</a>  </td><td> 260MB- </td><td> MyBox.exe </td></tr>
+        <tr><td> CentOS 7 x64 </td><td> <a href="https://sourceforge.net/projects/mara-mybox/files/v6.7/MyBox-6.7-CentOS7-x64.tar.gz">MyBox-6.7-CentOS7-x64.tar.gz</a>  </td><td> 280MB-  </td><td> bin/MyBox  </td></tr>
+        <tr><td> mac </td><td> <a href="https://sourceforge.net/projects/mara-mybox/files/v6.7/MyBox-6.7-mac.dmg">MyBox-6.7-mac.dmg</a>  </td><td> 280MB-  </td><td>  MyBox-6.7.app   </td></tr>
+    </tbody>
+</table>
+<p>User can double click the launcher to start MyBox or run it by command line. The default &ldquo;Open Method&rdquo; of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file&rsquo;s name.</p>
+<h3>Jar</h3>
+<p>When JRE or JDK(<a href="https://www.oracle.com/technetwork/java/javase/downloads/index.html">Oracle jdk</a> or <a href="http://jdk.java.net/">open jdk</a>) is installed, jar can run:</p>
+<table>
+    <thead>
+        <tr><th> Platform </th><th> Link </th><th> Size  </th><th> Requirements </th></tr>
+    </thead>
+    <tbody>
+        <tr><td> win </td><td> <a href="https://sourceforge.net/projects/mara-mybox/files/v6.7/MyBox-6.7-win-jar.zip">MyBox-6.7-win-jar.zip</a>  </td><td> 190MB- </td><td> Java 18 or higher </td></tr>
+        <tr><td> linux </td><td> <a href="https://sourceforge.net/projects/mara-mybox/files/v6.7/MyBox-6.7-linux-jar.zip">MyBox-6.7-linux-jar.zip</a>  </td><td> 200MB-  </td><td> Java 18 or higher </td></tr>
+        <tr><td> mac </td><td> <a href="https://sourceforge.net/projects/mara-mybox/files/v6.7/MyBox-6.7-mac-jar.zip">MyBox-6.7-mac-jar.zip</a>  </td><td>  200MB-  </td><td> Java 18 or higher </td></tr>
+    </tbody>
+</table>
+<p>Run following command to launch this program with Jar package:</p>
+<PRE><CODE>     java   -jar   MyBox-6.7.jar</CODE></PRE>        
+<p>A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:</p>
+<PRE><CODE>     java   -jar   MyBox-6.7.jar   /tmp/a1.jpg</CODE></PRE>        
+<h3>Other addresses to download</h3>
+<p>Download from cloud storage: <a href="https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F">https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F</a><br />
+Download from sourceforge: <a href="https://sourceforge.net/projects/mara-mybox/files/">https://sourceforge.net/projects/mara-mybox/files/</a></p>
+<h2>Limitation</h2>
+<ul>
+    <li>Without enough testings, MyBox has low reliability. Data damage even happened in some versions.</li>
+    <li>New functions being added and codes being improved continually, MyBox has bad stability. Unexpected function failures happened sometimes.</li>
+    <li>MyBox windows may often be blocked when some Input Method is running. Workaround is to disable/uninstall this Input Method.</li>
+</ul>
+<h2>Migration</h2>
+<ol>
+    <li>Each version has itself&rsquo;s configuration file. New version can copy parameters from existed versions.</li>
+    <li>Data handled in each version are under &ldquo;Data Directory&rdquo; referred by it. Multiple versions can refer to same data directory.</li>
+    <li>MyBox is backward compatibility: Later version can work on data of previous versions. While forward compatibility is not supported: Wrong may happen when old version handles data of new version.</li>
+</ol>
+<h2>Configuration <a id="Config"></a></h2>
+<p>Configuration file is under &ldquo;User Home&rdquo;:</p>
+<table>
+    <thead>
+        <tr><th> Platform </th><th> Path of MyBox Configuration File </th></tr>
+    </thead>
+    <tbody>
+        <tr><td> win </td><td> <code>C:\users\UserName\mybox\MyBox_v6.7.ini</code>  </td></tr>
+        <tr><td> linux </td><td> <code>/home/UserName/mybox/MyBox_v6.7.ini</code> </td></tr>
+        <tr><td> mac </td><td> <code>/Users/UserName/mybox/MyBox_v6.7.ini</code> </td></tr>
+    </tbody>
+</table>
+<p>Add parameter &ldquo;config=&quot;FilePath&quot;&rdquo; when run jar to change configuration file temporarily.<br />
+Function &ldquo;Settings&rdquo; can be used to change configuration values.</p>
+<h1>Resource Addresses</h1>
+<table>
+    <thead>
+        <tr><th> Contents </th><th> Link </th></tr>
+    </thead>
+    <tbody>
+        <tr><td> Project Main Page </td><td> <a href="https://github.com/Mararsh/MyBox">https://github.com/Mararsh/MyBoxl</a>   </td></tr>
+        <tr><td> Source Codes and Compiled Packages </td><td>  <a href="https://github.com/Mararsh/MyBox/releases">https://github.com/Mararsh/MyBox/releases</a>  </td></tr>
+        <tr><td> Submit Software Requirements and Problem Reports </td><td> <a href="https://github.com/Mararsh/MyBox/issues">https://github.com/Mararsh/MyBox/issues</a> </td></tr>
+        <tr><td> Data </td><td> <a href="https://github.com/Mararsh/MyBox_data">https://github.com/Mararsh/MyBox_data</a> </td></tr>
+        <tr><td> Documents </td><td> <a href="https://github.com/Mararsh/MyBoxDoc">https://github.com/Mararsh/MyBoxDoc</a> </td></tr>
+        <tr><td> Mirror Site </td><td> <a href="https://sourceforge.net/projects/mara-mybox/files/">https://sourceforge.net/projects/mara-mybox/files/</a> </td></tr>
+        <tr><td> Cloud Storage </td><td> <a href="https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F">https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F</a> </td></tr>
+    </tbody>
+</table>
+<h1>Documents</h1>
+<table>
+    <thead>
+        <tr><th>              Name              </th><th> Version </th><th>   Time     </th><th>                                                                                                                                            English                                                                                                                                            </th><th>                                                                                                                                            Chinese                                                                                                                                            </th></tr>
+    </thead>
+    <tbody>
+        <tr><td> Development Logs               </td><td> 6.7     </td><td> 2023-1-21  </td><td> <a href="https://mararsh.github.io/MyBox/mybox_devLogs_en.html">html</a>                                                                                                                                                                                                                                 </td><td> <a href="https://mararsh.github.io/MyBox/mybox_devLogs.html">html</a>                                                                                                                                                                                                                                    </td></tr>
+        <tr><td> Shortcuts                      </td><td> 6.5.6   </td><td> 2022-6-11  </td><td> <a href="https://mararsh.github.io/MyBox/mybox_shortcuts_en.html">html</a>                                                                                                                                                                                                                               </td><td> <a href="https://mararsh.github.io/MyBox/mybox_shortcuts.html">html</a>                                                                                                                                                                                                                                  </td></tr>
+        <tr><td> Functions list                 </td><td> 6.6.2   </td><td> 2022-11-30 </td><td> <a href="https://mararsh.github.io/MyBox/mybox_functions_en.html">html</a>                                                                                                                                                                                                                               </td><td> <a href="https://mararsh.github.io/MyBox/mybox_functions.html">html</a>                                                                                                                                                                                                                                  </td></tr>
+        <tr><td> Packing Steps                  </td><td> 6.3.3   </td><td> 2020-9-27  </td><td> <a href="https://mararsh.github.io/MyBox/pack_steps_en.html">html</a>                                                                                                                                                                                                                                    </td><td> <a href="https://mararsh.github.io/MyBox/pack_steps.html">html</a>                                                                                                                                                                                                                                       </td></tr>
+        <tr><td> Development Guide              </td><td> 2.1     </td><td> 2020-8-27  </td><td> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/dev_guide_2.1/MyBox-DevGuide-2.1-en.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/dev_guide_2.1/MyBox-DevGuide-2.1-en.odt">odt</a>                                                                                                                                                                                  </td><td> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/dev_guide_2.1/MyBox-DevGuide-2.1-zh.pdf">PDF</a>  <a href="https://sourceforge.net/projects/mara-mybox/files/documents/dev_guide_2.1/MyBox-DevGuide-2.1-zh.odt">odt</a>                                                                                                                                                                                                                </td></tr>
+        <tr><td> User Guide - Overview          </td><td> 6.7     </td><td> 2023-1-21  </td><td> <a href="https://mararsh.github.io/MyBoxDoc/en/MyBox-6.7-Overview-en/MyBox-6.7-Overview-en.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-Overview-en.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-Overview-en.odt">odt</a>                     </td><td> <a href="https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.7-Overview-zh/MyBox-6.7-Overview-zh.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-Overview-zh.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-Overview-zh.odt">odt</a>                     </td></tr>
+        <tr><td> User Guide - Data Tools        </td><td> 6.7     </td><td> 2023-1-21  </td><td> <a href="https://mararsh.github.io/MyBoxDoc/en/MyBox-6.7-DataTools-en/MyBox-6.7-DataTools-en.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DataTools-en.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DataTools-en.odt">odt</a>                 </td><td> <a href="https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.7-DataTools-zh/MyBox-6.7-DataTools-zh.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DataTools-zh.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DataTools-zh.odt">odt</a>                 </td></tr>
+        <tr><td> User Guide - Document Tools    </td><td> 6.7     </td><td> 2023-1-21  </td><td> <a href="https://mararsh.github.io/MyBoxDoc/en/MyBox-6.7-DocumentTools-en/MyBox-6.7-DocumentTools-en.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DocumentTools-en.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DocumentTools-en.odt">odt</a> </td><td> <a href="https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.7-DocumentTools-zh/MyBox-6.7-DocumentTools-zh.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DocumentTools-zh.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DocumentTools-zh.odt">odt</a> </td></tr>
+        <tr><td> User Guide - Image Tools       </td><td> 6.7     </td><td> 2023-1-21  </td><td> <a href="https://mararsh.github.io/MyBoxDoc/en/MyBox-6.7-ImageTools-en/MyBox-6.7-ImageTools-en.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-ImageTools-en.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-ImageTools-en.odt">odt</a>             </td><td> <a href="https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.7-ImageTools-zh/MyBox-6.7-ImageTools-zh.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-ImageTools-zh.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-ImageTools-zh.odt">odt</a>             </td></tr>
+        <tr><td> User Guide - File Tools        </td><td> 6.7     </td><td> 2023-1-21  </td><td> <a href="https://mararsh.github.io/MyBoxDoc/en/MyBox-6.7-FileTools-en/MyBox-6.7-FileTools-en.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-FileTools-en.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-FileTools-en.odt">odt</a>                 </td><td> <a href="https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.7-FileTools-zh/MyBox-6.7-FileTools-zh.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-FileTools-zh.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-FileTools-zh.odt">odt</a>                 </td></tr>
+        <tr><td> User Guide - Network Tools     </td><td> 6.7     </td><td> 2023-1-21  </td><td> <a href="https://mararsh.github.io/MyBoxDoc/en/MyBox-6.7-NetworkTools-en/MyBox-6.7-NetworkTools-en.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-NetworkTools-en.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-NetworkTools-en.odt">odt</a>     </td><td> <a href="https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.7-NetworkTools-zh/MyBox-6.7-NetworkTools-zh.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-NetworkTools-zh.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-NetworkTools-zh.odt">odt</a>     </td></tr>
+        <tr><td> User Guide - Media Tools       </td><td> 6.7     </td><td> 2023-1-21  </td><td> <a href="https://mararsh.github.io/MyBoxDoc/en/MyBox-6.7-MediaTools-en/MyBox-6.7-MediaTools-en.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-MediaTools-en.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-MediaTools-en.odt">odt</a>             </td><td> <a href="https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.7-MediaTools-zh/MyBox-6.7-MediaTools-zh.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-MediaTools-zh.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-MediaTools-zh.odt">odt</a>             </td></tr>
+        <tr><td> User Guide - Development Tools </td><td> 6.7     </td><td> 2023-1-21  </td><td> <a href="https://mararsh.github.io/MyBoxDoc/en/MyBox-6.7-DevTools-en/MyBox-6.7-DevTools-en.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DevTools-en.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DevTools-en.odt">odt</a>                     </td><td> <a href="https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.7-DevTools-zh/MyBox-6.7-DevTools-zh.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DevTools-zh.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DevTools-zh.odt">odt</a>                     </td></tr>
+        <tr><td> Examples - Notes               </td><td> 6.6.1   </td><td> 2022-11-16 </td><td> <a href="https://mararsh.github.io/MyBox/mybox_examples_notes_en.html">html</a>                                                                                                                                                                                                                          </td><td> <a href="https://mararsh.github.io/MyBox/mybox_examples_notes.html">html</a>                                                                                                                                                                                                                                    </td></tr>
+        <tr><td> Examples - Information in Tree </td><td> 6.6.1   </td><td> 2022-11-16 </td><td> <a href="https://mararsh.github.io/MyBox/mybox_examples_tree_en.html">html</a>                                                                                                                                                                                                                           </td><td> <a href="https://mararsh.github.io/MyBox/mybox_examples_tree.html">html</a>                                                                                                                                                                                                                                    </td></tr>
+        <tr><td> Examples - Favorite Address    </td><td> 6.6.1   </td><td> 2022-11-16 </td><td> <a href="https://mararsh.github.io/MyBox/mybox_examples_web_favorite_en.html">html</a>                                                                                                                                                                                                                   </td><td> <a href="https://mararsh.github.io/MyBox/mybox_examples_web_favorite.html">html</a>                                                                                                                                                                                                                                    </td></tr>
+        <tr><td> Examples - SQL                 </td><td> 6.6.1   </td><td> 2022-11-16 </td><td> <a href="https://mararsh.github.io/MyBox/mybox_examples_sql_en.html">html</a>                                                                                                                                                                                                                            </td><td> <a href="https://mararsh.github.io/MyBox/mybox_examples_jshell.html">html</a>                                                                                                                                                                                                                                    </td></tr>
+        <tr><td> Examples - JShell              </td><td> 6.6.1   </td><td> 2022-11-16 </td><td> <a href="https://mararsh.github.io/MyBox/mybox_examples_jshell_en.html">html</a>                                                                                                                                                                                                                         </td><td> <a href="https://mararsh.github.io/MyBox/mybox_examples_jexl.html">html</a>                                                                                                                                                                                                                                    </td></tr>
+        <tr><td> Examples - JEXL                </td><td> 6.6.1   </td><td> 2022-11-16 </td><td> <a href="https://mararsh.github.io/MyBox/mybox_examples_jexl_en.html">html</a>                                                                                                                                                                                                                           </td><td> <a href="https://mararsh.github.io/MyBox/mybox_examples_javascript.html">html</a>                                                                                                                                                                                                                                    </td></tr>
+        <tr><td> Examples - JavaScript          </td><td> 6.6.1   </td><td> 2022-11-16 </td><td> <a href="https://mararsh.github.io/MyBox/mybox_examples_javascript_en.html">html</a>                                                                                                                                                                                                                     </td><td> <a href="https://mararsh.github.io/MyBox/mybox_examples_javascript.html">html</a>                                                                                                                                                                                                                                    </td></tr>
+        <tr><td> Examples - Math Function       </td><td> 6.6.1   </td><td> 2022-11-16 </td><td> <a href="https://mararsh.github.io/MyBox/mybox_examples_math_funtion_en.html">html</a>                                                                                                                                                                                                                   </td><td> <a href="https://mararsh.github.io/MyBox/mybox_examples_math_funtion.html">html</a>                                                                                                                                                                                                                                    </td></tr>
+        <tr><td> Examples - Row Filter          </td><td> 6.6.1   </td><td> 2022-11-16 </td><td> <a href="https://mararsh.github.io/MyBox/mybox_examples_row_filter_en.html">html</a>                                                                                                                                                                                                                     </td><td> <a href="https://mararsh.github.io/MyBox/mybox_examples_row_filter.html">html</a>                                                                                                                                                                                                                                    </td></tr>
+        <tr><td> About - Color                  </td><td> 6.6.1   </td><td> 2022-11-16 </td><td> <a href="https://mararsh.github.io/MyBox/mybox_about_color_en.html">html</a>                                                                                                                                                                                                                             </td><td> <a href="https://mararsh.github.io/MyBox/mybox_about_color.html">html</a>                                                                                                                                                                                                                                    </td></tr>
+        <tr><td> About - Coordinate System      </td><td> 6.6.1   </td><td> 2022-11-16 </td><td> <a href="https://mararsh.github.io/MyBox/mybox_about_coordinate_system_en.html">html</a>                                                                                                                                                                                                                 </td><td> <a href="https://mararsh.github.io/MyBox/mybox_about_coordinate_system.html">html</a>                                                                                                                                                                                                                                    </td></tr>
+        <tr><td> About - Media                  </td><td> 6.6.1   </td><td> 2022-11-16 </td><td> <a href="https://mararsh.github.io/MyBox/mybox_about_media_en.html">html</a>                                                                                                                                                                                                                             </td><td> <a href="https://mararsh.github.io/MyBox/mybox_about_media.html">html</a>                                                                                                                                                                                                                                    </td></tr>
+        <tr><td> About - Data Analysis          </td><td> 6.6.1   </td><td> 2022-11-16 </td><td> <a href="https://mararsh.github.io/MyBox/mybox_about_data_analysis_en.html">html</a>                                                                                                                                                                                                                     </td><td> <a href="https://mararsh.github.io/MyBox/mybox_about_data_analysis.html">html</a>                                                                                                                                                                                                                                    </td></tr>
+        <tr><td> Palette - Common Web Colors                    </td><td> 6.7     </td><td> 2023-1-21 </td><td> <a href="https://mararsh.github.io/MyBox/mybox_palette_web_en.html">rgba</a>  <a href="https://mararsh.github.io/MyBox/mybox_palette_web_all_en.html">all</a>                                                                                                                                  </td><td> <a href="https://mararsh.github.io/MyBox/mybox_palette_web.html">rgba</a>  <a href="https://mararsh.github.io/MyBox/mybox_palette_web_all.html">all</a>                                                                                                                                                                                                                                   </td></tr>
+        <tr><td> Palette - Chinese Traditional Colors           </td><td> 6.7     </td><td> 2023-1-21 </td><td> <a href="https://mararsh.github.io/MyBox/mybox_palette_chinese_en.html">rgba</a>  <a href="https://mararsh.github.io/MyBox/mybox_palette_chinese_all_en.html">all</a>                                                                                                                          </td><td> <a href="https://mararsh.github.io/MyBox/mybox_palette_chinese.html">rgba</a> <a href="https://mararsh.github.io/MyBox/mybox_palette_chinese_all.html">all</a>                                                                                                                                                                                                                                    </td></tr>
+        <tr><td> Palette - Japanese Traditional Colors          </td><td> 6.7     </td><td> 2023-1-21 </td><td> <a href="https://mararsh.github.io/MyBox/mybox_palette_japanese_en.html">rgba</a>  <a href="https://mararsh.github.io/MyBox/mybox_palette_japanese_all_en.html">all</a>                                                                                                                        </td><td> <a href="https://mararsh.github.io/MyBox/mybox_palette_japanese.html">rgba</a>  <a href="https://mararsh.github.io/MyBox/mybox_palette_japanese_all.html">all</a>                                                                                                                                                                                                                                  </td></tr>
+        <tr><td> Palette - Colors from colorhexa.com            </td><td> 6.7     </td><td> 2023-1-21 </td><td> <a href="https://mararsh.github.io/MyBox/mybox_palette_colorhexa_en.html">rgba</a>  <a href="https://mararsh.github.io/MyBox/mybox_palette_colorhexa_all_en.html">all</a>                                                                                                                      </td><td> <a href="https://mararsh.github.io/MyBox/mybox_palette_colorhexa.html">rgba</a>  <a href="https://mararsh.github.io/MyBox/mybox_palette_colorhexa_all.html">all</a>                                                                                                                                                                                                                                   </td></tr>
+        <tr><td> Palette - MyBox Colors                         </td><td> 6.7     </td><td> 2023-1-21 </td><td> <a href="https://mararsh.github.io/MyBox/mybox_palette_mybox_en.html">rgba</a>  <a href="https://mararsh.github.io/MyBox/mybox_palette_mybox_all_en.html">all</a>                                                                                                                              </td><td> <a href="https://mararsh.github.io/MyBox/mybox_palette_mybox.html">rgba</a>  <a href="https://mararsh.github.io/MyBox/mybox_palette_mybox_all.html">all</a>                                                                                                                                                                                                                                   </td></tr>
+        <tr><td> Stories of Images              </td><td> 6.7     </td><td> 2023-1-21  </td><td> <a href="https://mararsh.github.io/MyBoxDoc/en/MyBox-6.7-StoriesOfImages-en.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-StoriesOfImages-en.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-StoriesOfImages-en.odt">odt</a>                     </td><td> <a href="https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.7-StoriesOfImages-zh.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-StoriesOfImages-zh.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-StoriesOfImages-zh.odt">odt</a>                     </td></tr>
+    </tbody>
+</table>
+<h1>Implementation</h1>
+<p>MyBox is based on following open sources:</p>
+<table>
+    <thead>
+        <tr><th> Name </th><th> Role </th><th> Link </th></tr>
+    </thead>
+    <tbody>
+        <tr><td> JDK </td><td> Java </td><td> http://jdk.java.net/   </td></tr>
+        <tr><td>   </td><td>   </td><td> https://www.oracle.com/technetwork/java/javase/downloads/index.html  </td></tr>
+        <tr><td>   </td><td>   </td><td> https://docs.oracle.com/en/java/javase/18/docs/api/index.html  </td></tr>
+        <tr><td>  JavaFx </td><td> GUI </td><td>  https://gluonhq.com/products/javafx/ </td></tr>
+        <tr><td>   </td><td>   </td><td>  https://docs.oracle.com/javafx/2/  </td></tr>
+        <tr><td>   </td><td>   </td><td>  https://gluonhq.com/products/scene-builder/  </td></tr>
+        <tr><td>   </td><td>   </td><td>  https://openjfx.io/javadoc/18/ </td></tr>
+        <tr><td> Derby </td><td> Database </td><td> http://db.apache.org/derby/ </td></tr>
+        <tr><td> NetBeans </td><td> IDE</td><td> https://netbeans.org/ </td></tr>
+        <tr><td> jpackage </td><td> pack </td><td> https://docs.oracle.com/en/java/javase/18/docs/specs/man/jpackage.html </td></tr>
+        <tr><td> maven </td><td> build </td><td> https://maven.apache.org/ </td></tr>
+        <tr><td> jai-imageio </td><td> Image manufacture </td><td> https://github.com/jai-imageio/jai-imageio-core </td></tr>
+        <tr><td> PDFBox </td><td> PDF manufacture </td><td> https://pdfbox.apache.org/ </td></tr>
+        <tr><td> PDF2DOM </td><td> PDF to html </td><td> http://cssbox.sourceforge.net/pdf2dom/ </td></tr>
+        <tr><td> GifDecoder </td><td> Decode broken gif  </td><td> https://github.com/DhyanB/Open-Imaging/ </td></tr>
+        <tr><td> EncodingDetect </td><td> Determine encoding of text file </td><td> https://www.cnblogs.com/ChurchYim/p/8427373.html </td></tr>
+        <tr><td> Lindbloom </td><td> Color theory</td><td> http://brucelindbloom.com/index.html </td></tr>
+        <tr><td> Free Icons </td><td> Icon </td><td> https://icons8.com/icons/set/home </td></tr>
+        <tr><td> tess4j </td><td> OCR </td><td> https://github.com/nguyenq/tess4j </td></tr>
+        <tr><td> tesseract </td><td> OCR </td><td> https://github.com/tesseract-ocr/tesseract </td></tr>
+        <tr><td> barcode4j </td><td> Create barcodes </td><td> http://barcode4j.sourceforge.net </td></tr>
+        <tr><td> zxing </td><td> Create/Decode barcodes </td><td> https://github.com/zxing/zxing </td></tr>
+        <tr><td> flexmark-java </td><td> Convert Markdown </td><td> https://github.com/vsch/flexmark-java </td></tr>
+        <tr><td> commons-compress </td><td> archive/compress </td><td> https://commons.apache.org/proper/commons-compress </td></tr>
+        <tr><td> XZ for Java </td><td> archive/compress </td><td> https://tukaani.org/xz/java.html </td></tr>
+        <tr><td> ffmpeg</td><td> convert/create medias </td><td> http://ffmpeg.org </td></tr>
+        <tr><td> image4j </td><td> ico format </td><td> https://github.com/imcdonagh/image4j </td></tr>
+        <tr><td> AutoCommitCell </td><td> Submit updates </td><td> https://stackoverflow.com/questions/24694616 （Ogmios） </td></tr>
+        <tr><td> GaoDe </td><td> Map </td><td> https://lbs.amap.com/api/javascript-api/summary </td></tr>
+        <tr><td> GaoDe </td><td> Coordinate </td><td> https://lbs.amap.com/api/webservice/guide/api/georegeo </td></tr>
+        <tr><td> WeiBo </td><td> Image materials</td><td> https://weibo.com/3876734080/InmB1aPiL?type=comment#_rnd1582211299665 </td></tr>
+        <tr><td> poi </td><td> Microsoft Documents </td><td> https://poi.apache.org </td></tr>
+        <tr><td> LabeledBarChart </td><td> Javafx charts </td><td> https://stackoverflow.com/questions/34286062/how-to-clear-text-added-in-a-javafx-barchart/41494789#41494789 (Roland) </td></tr>
+        <tr><td> commons-csv </td><td> CSV </td><td> https://commons.apache.org/proper/commons-csv/ </td></tr>
+        <tr><td> geonames </td><td> Location data </td><td> https://www.geonames.org/countries/ </td></tr>
+        <tr><td> world-area </td><td> Location data </td><td> https://github.com/wizardcode/world-area </td></tr>
+        <tr><td> China National Bureau of Statistics </td><td> Data </td><td> http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/ </td></tr>
+        <tr><td> JHU </td><td> COVID-19 data </td><td> https://github.com/CSSEGISandData/COVID-19 </td></tr>
+        <tr><td> Website </td><td> Color data </td><td> https://tool.lanrentuku.com/color/china.html </td></tr>
+        <tr><td> Book </td><td> Materials </td><td> https://book.douban.com/subject/3894923/ </td></tr>
+        <tr><td> National Geomatics Center of China </td><td> Map </td><td> http://lbs.tianditu.gov.cn/api/js4.0/guide.html </td></tr>
+        <tr><td> movebank </td><td> Location data </td><td> https://www.datarepository.movebank.org </td></tr>
+        <tr><td> CoordinateConverter </td><td> convert coordinates </td><td> https://www.jianshu.com/p/c39a2c72dc65?from=singlemessage </td></tr>
+        <tr><td> JavaMail </td><td> email </td><td> https://javaee.github.io/javamail/ </td></tr>
+        <tr><td> Commons IO </td><td> File IO </td><td> https://commons.apache.org/proper/commons-io/ </td></tr>
+        <tr><td> colorhexa </td><td> Color data </td><td> https://www.colorhexa.com/color-names </td></tr>
+        <tr><td> WQY </td><td> Font file </td><td> http://wenq.org/wqy2/ </td></tr>
+        <tr><td> ttc2ttf </td><td> Extract ttf </td><td> https://github.com/fermi1981/TTC_TTF </td></tr>
+        <tr><td> sfds </td><td> Handwriting </td><td> http://www.sfds.cn/725B/ </td></tr>
+        <tr><td> Book </td><td> Materials </td><td> https://book.douban.com/subject/10465940/ </td></tr>
+        <tr><td> PaginatedPdfTable </td><td> PDF </td><td> https://github.com/eduardohl/Paginated-PDFBox-Table-Sample </td></tr>
+        <tr><td> jsoup </td><td> DOM </td><td> https://jsoup.org/ </td></tr>
+        <tr><td> ZhiHu </td><td> Materials </td><td> https://www.zhihu.com/question/41580677/answer/1300242801 </td></tr>
+        <tr><td> commons-math </td><td> Calculation </td><td> https://commons.apache.org/proper/commons-math/index.html </td></tr>
+        <tr><td> JEXL </td><td> Calculation </td><td> https://commons.apache.org/proper/commons-jexl </td></tr>
+        <tr><td> OpenOffice </td><td> Document </td><td> <a href="http://www.openoffice.org/">http://www.openoffice.org/</a> </td></tr>
+        <tr><td> nashorn </td><td> JavaScript </td><td> <a href="https://openjdk.org/projects/nashorn/">https://openjdk.org/projects/nashorn/</a> </td></tr>
+        <tr><td> echarts-gl </td><td> WebGL </td><td> <a href="https://github.com/ecomfe/echarts-gl">https://github.com/ecomfe/echarts-gl</a> </td></tr>
+    </tbody>
+</table>
+<h1>Features</h1>
+<h2>Cross Platforms <a id="Cross-platform"></a></h2>
+<p>MyBox is implemented in pure Java and only based on open sources, and it can run on platforms which support Java 18.<br />
+Versions before v5.3 are based on Java 8.</p>
+<h2>Internationalized <a id="Internationalized"></a></h2>
+<ol>
+    <li>All codes of MyBox are internationalized. Language can be switched in time.</li>
+    <li>Each langauge is defined in one resource file, like: &ldquo;Messages_NAME.properties&rdquo;.</li>
+    <li>Support adding new languages online. Table is provided with English as comparison. New langauges take effects at once.<br />
+        Example,  the new language is named as &ldquo;aa&rdquo;, and its resource file is &ldquo;Messages_aa.properties&rdquo;.</li>
+    <li>Translated languages can be shared with others: Put the files under &ldquo;mybox_languages&rdquo; of data path and MyBox is aware of them immediately.</li>
+    <li>Embed Chinese and English, whose files are under path <code>MyBox/src/main/resources/bundles/</code>.</li>
+</ol>
+<table>
+    <thead>
+        <tr><th> Language </th><th> Resource file of interface </th></tr>
+    </thead>
+    <tbody>
+        <tr><td> Chinese </td><td> Messages_zh_CN.properties </td></tr>
+        <tr><td> English </td><td> Messages_en.properties </td></tr>
+    </tbody>
+</table>
+<h2>Personal<a id="personal" /></h2>
+<ol>
+    <li>No register/login/DataCenter/Cloud.</li>
+    <li>No network if unnecessary.</li>
+    <li>Not read/write if unnecessary.</li>
+</ol>
+<h2>Data Compatible<a id="dataCompatible" /></h2>
+<ol>
+    <li>Exported data are in common text formats, like txt/csv/xml/json/html.</li>
+    <li>Imported data are in common text format, like txt/csv.</li>
+    <li>At least one exported format can be imported.</li>
+    <li>Imported data are self-contain, that original data can be rebuilt without extra data.</li>
+</ol>
+<p><img src="https://mararsh.github.io/MyBox/snap-cover-en.jpg" alt="Snap-cover" /></p>
+<p><img src="https://mararsh.github.io/MyBox/snap-interface-en.jpg" alt="Snap-interface" /></p>
+<p><img src="https://mararsh.github.io/MyBox/snap-table-en.jpg" alt="Snap-table" /></p>
+</HTML>

@@ -283,6 +283,23 @@ sftp> cd v6.4.2
 sftp> lcd  D:\releases\Mybox\2021-03-21-v6.4.2
 sftp> put D:\releases\Mybox\2021-03-21-v6.4.2\MyBox-6.4.2-linux.tar.gz
 </CODE></PRE>
+Access the files:  https://sourceforge.net/projects/mara-mybox/files/
+
+
+##MyBox#
+Notebook > Notebook > Note Examples > Coding
+sftp to sourceforge (to upload website files)
+<PRE><CODE>
+C:\Users\mara>sftp mararsh@frs.sourceforge.net
+Password:
+Connected to mararsh@frs.sourceforge.net.
+sftp> cd /home/project-web/mara-mybox/htdocs
+sftp> ls
+sftp> lcd  D:\GitHub\MyBox\docs
+sftp> put *.*
+</CODE></PRE>
+Access the website:  https://mara-mybox.sourceforge.io/index.html
+
 
 ##MyBox#
 Notebook > Notebook > Note Examples > Coding

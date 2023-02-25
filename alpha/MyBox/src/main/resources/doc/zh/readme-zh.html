@@ -1,0 +1,745 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>关于MyBox</title>
+        <style>
+
+            body {
+                width: 900px;
+                margin:0 auto;
+            }
+            table {
+                max-width:95%;
+                margin : 10px;
+                border-style: solid;
+                border-width:2px;
+                border-collapse: collapse;
+            }
+            th, td {
+                border-style: solid;
+                border-width:1px;
+                padding: 8px;
+                border-collapse: collapse;
+            }
+            th {
+                font-weight:bold;
+                text-align:center;
+            }
+            tr {
+                height: 1.2em;
+            }
+        </style>
+    </head>
+    <body contenteditable="false">
+        <h1><a href="https://github.com/Mararsh/MyBox/tree/master/en">ReadMe in English</a> <img src="https://mararsh.github.io/MyBox/iconGo.png" alt="ReadMe"></h1>
+        <h1>MyBox：简易工具集</h1>
+        <p>这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。</p>
+        <h2>新内容</h2>
+        <p>2023-1-21 版本6.7</p>
+        <ul>
+            <li>新增： 
+                <ul>
+                    <li>数据分组方式：时间字段具有相同的世纪/年/月/日/时/分/秒时分为同组。</li>
+                    <li>数据分组方式：行表达式的值相同时分为同组。</li>
+                    <li>“运行系统命令”可设置字符集。</li>
+                    <li>文档《图片的故事》。</li>
+                </ul></li>
+            <li>代码优化： 
+                <ul>
+                    <li>分组的参数保存在数据库中而不是在内存里。</li>
+                    <li>时间的格式中，时分秒总是长值。</li>
+                    <li>重命名内部图片。</li>
+                </ul></li>
+            <li>解决： 
+                <ul>
+                    <li>当按时间类型的值区间分组时，参数应显示为时间而不是整数。</li>
+                    <li>按条件分组时应当把所有数值导入临时表中，否则结果可能不正确。</li>
+                    <li>按行间隔分组时，错误地把分割个数取为分割尺寸。</li>
+                </ul></li>
+        </ul>
+        <p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7">此版本关闭的需求/问题列表</a></p>
+        <p>兔年安康！</p>
+        <h2>下载与运行</h2>
+        <p>每个版本编译好的包已发布在<a href="https://github.com/Mararsh/MyBox/releases">Releases</a>目录下（点击此项目主页的<code>releases</code>页签）。</p>
+        <h3>源码</h3>
+        <p><a href="https://sourceforge.net/projects/mara-mybox/files/v6.7/MyBox-6.7-src.zip">MyBox-6.7-src.zip</a> 58M-</p>
+        <p>关于源码的结构、编辑、和构建，请参考<a href="https://sourceforge.net/projects/mara-mybox/files/documents/dev_guide_2.1/MyBox-DevGuide-2.1-zh.pdf">开发指南</a> 和 <a href="https://mararsh.github.io/MyBox/pack_steps.html">打包步骤</a></p>
+        <h3>自包含程序包</h3>
+        <p>自包含的程序包无需java环境、无需安装、解包可用。</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>平台</th>
+                    <th>链接</th>
+                    <th>大小</th>
+                    <th>启动文件</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>win10 x64</td>
+                    <td><a href="https://sourceforge.net/projects/mara-mybox/files/v6.7/MyBox-6.7-win10-x64.zip">MyBox-6.7-win10-x64.zip</a></td>
+                    <td>260MB-</td>
+                    <td>MyBox.exe</td>
+                </tr>
+                <tr>
+                    <td>CentOS 7 x64</td>
+                    <td><a href="https://sourceforge.net/projects/mara-mybox/files/v6.7/MyBox-6.7-CentOS7-x64.tar.gz">MyBox-6.7-CentOS7-x64.tar.gz</a></td>
+                    <td>280MB-</td>
+                    <td>bin/MyBox</td>
+                </tr>
+                <tr>
+                    <td>mac x64</td>
+                    <td><a href="https://sourceforge.net/projects/mara-mybox/files/v6.7/MyBox-6.7-mac.dmg">MyBox-6.7-mac.dmg</a></td>
+                    <td>280MB-</td>
+                    <td>MyBox-6.7.app</td>
+                </tr>
+            </tbody>
+        </table>
+        <p>双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。</p>
+        <h3>Jar包</h3>
+        <p>在已安装JRE或者JDK <a href="https://www.oracle.com/technetwork/java/javase/downloads/index.html">Oracle jdk</a>或<a href="http://jdk.java.net/">open jdk</a>均可）的环境下，可以下载jar包。</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>平台</th>
+                    <th>链接</th>
+                    <th>大小</th>
+                    <th>运行需要</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>win</td>
+                    <td><a href="https://sourceforge.net/projects/mara-mybox/files/v6.7/MyBox-6.7-win-jar.zip">MyBox-6.7-win-jar.zip</a></td>
+                    <td>190MB-</td>
+                    <td>Java 18或更高版本</td>
+                </tr>
+                <tr>
+                    <td>linux</td>
+                    <td><a href="https://sourceforge.net/projects/mara-mybox/files/v6.7/MyBox-6.7-linux-jar.zip">MyBox-6.7-linux-jar.zip</a></td>
+                    <td>200MB-</td>
+                    <td>Java 18或更高版本</td>
+                </tr>
+                <tr>
+                    <td>mac</td>
+                    <td><a href="https://sourceforge.net/projects/mara-mybox/files/v6.7/MyBox-6.7-mac-jar.zip">MyBox-6.7-mac-jar.zip</a></td>
+                    <td>200MB-</td>
+                    <td>Java 18或更高版本</td>
+                </tr>
+            </tbody>
+        </table>
+        <p>执行以下命令来启动程序：</p>
+        <pre><code>     java   -jar   MyBox-6.7.jar</code></pre>
+        <p>程序可以跟一个文件名作为参数、以用MyBox直接打开此文件。例如以下命令是打开此图片：</p>
+        <pre><code>     java   -jar   MyBox-6.7.jar   /tmp/a1.jpg</code></pre>
+        <h3>其它下载地址</h3>
+        <p>从云盘下载： <a href="https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F">https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F</a><br> 从sourceforge下载：<a href="https://sourceforge.net/projects/mara-mybox/files/">https://sourceforge.net/projects/mara-mybox/files/</a></p>
+        <h3>限制</h3>
+        <ul>
+            <li>MyBox未经足够测试，可靠性低，有的版本甚至可能出现毁坏数据的错误。</li>
+            <li>MyBox持续新增功能同时改进代码，稳定性差，时而发生非预期的功能失效。</li>
+            <li>在某个输入法运行时，MyBox的窗口经常僵住。解决办法：禁用/卸载此输入法。</li>
+        </ul>
+        <h2>版本迁移</h2>
+        <ol>
+            <li>每个版本有自己的配置文件，新版本可以复制已安装版本的参数。</li>
+            <li>每个版本处理的所有数据都在它指向的“数据目录”下。多个版本可以指向同一数据目录。</li>
+            <li>MyBox向后兼容：新版本可以处理旧版本的数据目录。而不保证向前兼容：旧版本处理新版本的数据目录时可能出错。</li>
+        </ol>
+        <h2>配置<a id="Config"></a></h2><a id="Config"> <p>配置文件在"用户目录"下:</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>平台</th>
+                        <th>MyBox配置文件的目录</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>win</td>
+                        <td><code>C:\用户\用户名\mybox\MyBox_v6.7.ini</code></td>
+                    </tr>
+                    <tr>
+                        <td>linux</td>
+                        <td><code>/home/用户名/mybox/MyBox_v6.7.ini</code></td>
+                    </tr>
+                    <tr>
+                        <td>mac</td>
+                        <td><code>/Users/用户名/mybox/MyBox_v6.7.ini</code></td>
+                    </tr>
+                </tbody>
+            </table> <p>可以临时改变配置文件：在命令行启动jar包时设置参数"config="配置文件名""。<br> 利用“设置”功能也可以修改配置参数。</p> <h1>资源地址</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>内容</th>
+                        <th>链接</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>项目主页</td>
+                        <td><a href="https://github.com/Mararsh/MyBox">https://github.com/Mararsh/MyBoxl</a></td>
+                    </tr>
+                    <tr>
+                        <td>源代码和编译好的包</td>
+                        <td><a href="https://github.com/Mararsh/MyBox/releases">https://github.com/Mararsh/MyBox/releases</a></td>
+                    </tr>
+                    <tr>
+                        <td>在线提交软件需求和问题报告</td>
+                        <td><a href="https://github.com/Mararsh/MyBox/issues">https://github.com/Mararsh/MyBox/issues</a></td>
+                    </tr>
+                    <tr>
+                        <td>数据</td>
+                        <td><a href="https://github.com/Mararsh/MyBox_data">https://github.com/Mararsh/MyBox_data</a></td>
+                    </tr>
+                    <tr>
+                        <td>文档</td>
+                        <td><a href="https://github.com/Mararsh/MyBoxDoc">https://github.com/Mararsh/MyBoxDoc</a></td>
+                    </tr>
+                    <tr>
+                        <td>镜像</td>
+                        <td><a href="https://sourceforge.net/projects/mara-mybox/files/">https://sourceforge.net/projects/mara-mybox/files/</a></td>
+                    </tr>
+                    <tr>
+                        <td>云盘</td>
+                        <td><a href="https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F">https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F</a></td>
+                    </tr>
+                </tbody>
+            </table> <h1>文档</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>文档名</th>
+                        <th>版本</th>
+                        <th>修改时间</th>
+                        <th>英文</th>
+                        <th>中文</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>开发日志</td>
+                        <td>6.7</td>
+                        <td>2023-1-21</td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_devLogs_en.html">html</a></td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_devLogs.html">html</a></td>
+                    </tr>
+                    <tr>
+                        <td>快捷键</td>
+                        <td>6.5.6</td>
+                        <td>2022-6-11</td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_shortcuts_en.html">html</a></td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_shortcuts.html">html</a></td>
+                    </tr>
+                    <tr>
+                        <td>功能列表</td>
+                        <td>6.6.2</td>
+                        <td>2022-11-30</td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_functions_en.html">html</a></td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_functions.html">html</a></td>
+                    </tr>
+                    <tr>
+                        <td>打包步骤</td>
+                        <td>6.3.3</td>
+                        <td>2020-9-27</td>
+                        <td><a href="https://mararsh.github.io/MyBox/pack_steps_en.html">html</a></td>
+                        <td><a href="https://mararsh.github.io/MyBox/pack_steps.html">html</a></td>
+                    </tr>
+                    <tr>
+                        <td>开发指南</td>
+                        <td>2.1</td>
+                        <td>2020-8-27</td>
+                        <td><a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.2/MyBox-DevGuide-2.1-en.pdf">PDF</a></td>
+                        <td><a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.6.2/MyBox-DevGuide-2.1-zh.pdf">PDF</a></td>
+                    </tr>
+                    <tr>
+                        <td>用户手册-综述</td>
+                        <td>6.7</td>
+                        <td>2023-1-21</td>
+                        <td><a href="https://mararsh.github.io/MyBoxDoc/en/MyBox-6.7-Overview-en/MyBox-6.7-Overview-en.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-Overview-en.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-Overview-en.odt">odt</a></td>
+                        <td><a href="https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.7-Overview-zh/MyBox-6.7-Overview-zh.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-Overview-zh.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-Overview-zh.odt">odt</a></td>
+                    </tr>
+                    <tr>
+                        <td>用户手册-数据工具</td>
+                        <td>6.7</td>
+                        <td>2023-1-21</td>
+                        <td><a href="https://mararsh.github.io/MyBoxDoc/en/MyBox-6.7-DataTools-en/MyBox-6.7-DataTools-en.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DataTools-en.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DataTools-en.odt">odt</a></td>
+                        <td><a href="https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.7-DataTools-zh/MyBox-6.7-DataTools-zh.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DataTools-zh.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DataTools-zh.odt">odt</a></td>
+                    </tr>
+                    <tr>
+                        <td>用户手册-文档工具</td>
+                        <td>6.7</td>
+                        <td>2023-1-21</td>
+                        <td><a href="https://mararsh.github.io/MyBoxDoc/en/MyBox-6.7-DocumentTools-en/MyBox-6.7-DocumentTools-en.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DocumentTools-en.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DocumentTools-en.odt">odt</a></td>
+                        <td><a href="https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.7-DocumentTools-zh/MyBox-6.7-DocumentTools-zh.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DocumentTools-zh.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DocumentTools-zh.odt">odt</a></td>
+                    </tr>
+                    <tr>
+                        <td>用户手册-图像工具</td>
+                        <td>6.7</td>
+                        <td>2023-1-21</td>
+                        <td><a href="https://mararsh.github.io/MyBoxDoc/en/MyBox-6.7-ImageTools-en/MyBox-6.7-ImageTools-en.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-ImageTools-en.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-ImageTools-en.odt">odt</a></td>
+                        <td><a href="https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.7-ImageTools-zh/MyBox-6.7-ImageTools-zh.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-ImageTools-zh.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-ImageTools-zh.odt">odt</a></td>
+                    </tr>
+                    <tr>
+                        <td>用户手册-文件工具</td>
+                        <td>6.7</td>
+                        <td>2023-1-21</td>
+                        <td><a href="https://mararsh.github.io/MyBoxDoc/en/MyBox-6.7-FileTools-en/MyBox-6.7-FileTools-en.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-FileTools-en.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-FileTools-en.odt">odt</a></td>
+                        <td><a href="https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.7-FileTools-zh/MyBox-6.7-FileTools-zh.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-FileTools-zh.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-FileTools-zh.odt">odt</a></td>
+                    </tr>
+                    <tr>
+                        <td>用户手册-网络工具</td>
+                        <td>6.7</td>
+                        <td>2023-1-21</td>
+                        <td><a href="https://mararsh.github.io/MyBoxDoc/en/MyBox-6.7-NetworkTools-en/MyBox-6.7-NetworkTools-en.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-NetworkTools-en.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-NetworkTools-en.odt">odt</a></td>
+                        <td><a href="https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.7-NetworkTools-zh/MyBox-6.7-NetworkTools-zh.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-NetworkTools-zh.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-NetworkTools-zh.odt">odt</a></td>
+                    </tr>
+                    <tr>
+                        <td>用户手册-媒体工具</td>
+                        <td>6.7</td>
+                        <td>2023-1-21</td>
+                        <td><a href="https://mararsh.github.io/MyBoxDoc/en/MyBox-6.7-MediaTools-en/MyBox-6.7-MediaTools-en.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-MediaTools-en.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-MediaTools-en.odt">odt</a></td>
+                        <td><a href="https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.7-MediaTools-zh/MyBox-6.7-MediaTools-zh.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-MediaTools-zh.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-MediaTools-zh.odt">odt</a></td>
+                    </tr>
+                    <tr>
+                        <td>用户手册-开发工具</td>
+                        <td>6.7</td>
+                        <td>2023-1-21</td>
+                        <td><a href="https://mararsh.github.io/MyBoxDoc/en/MyBox-6.7-DevTools-en/MyBox-6.7-DevTools-en.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DevTools-en.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DevTools-en.odt">odt</a></td>
+                        <td><a href="https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.7-DevTools-zh/MyBox-6.7-DevTools-zh.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DevTools-zh.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-DevTools-zh.odt">odt</a></td>
+                    </tr>
+                    <tr>
+                        <td>示例-笔记</td>
+                        <td>6.6.1</td>
+                        <td>2022-11-16</td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_examples_notes_en.html">html</a></td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_examples_notes.html">html</a></td>
+                    </tr>
+                    <tr>
+                        <td>示例-树形</td>
+                        <td>6.6.1</td>
+                        <td>2022-11-16</td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_examples_tree_en.html">html</a></td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_examples_tree.html">html</a></td>
+                    </tr>
+                    <tr>
+                        <td>示例-收藏的网址</td>
+                        <td>6.6.1</td>
+                        <td>2022-11-16</td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_examples_web_favorite_en.html">html</a></td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_examples_web_favorite.html">html</a></td>
+                    </tr>
+                    <tr>
+                        <td>示例-SQL</td>
+                        <td>6.6.1</td>
+                        <td>2022-11-16</td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_examples_sql_en.html">html</a></td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_examples_sql.html">html</a></td>
+                    </tr>
+                    <tr>
+                        <td>示例-JShell</td>
+                        <td>6.6.1</td>
+                        <td>2022-11-16</td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_examples_jshell_en.html">html</a></td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_examples_jshell.html">html</a></td>
+                    </tr>
+                    <tr>
+                        <td>示例-JEXL</td>
+                        <td>6.6.1</td>
+                        <td>2022-11-16</td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_examples_jexl_en.html">html</a></td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_examples_jexl.html">html</a></td>
+                    </tr>
+                    <tr>
+                        <td>示例-JavaScript</td>
+                        <td>6.6.1</td>
+                        <td>2022-11-16</td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_examples_javascript_en.html">html</a></td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_examples_javascript.html">html</a></td>
+                    </tr>
+                    <tr>
+                        <td>示例-数学函数</td>
+                        <td>6.6.1</td>
+                        <td>2022-11-16</td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_examples_math_funtion_en.html">html</a></td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_examples_math_funtion.html">html</a></td>
+                    </tr>
+                    <tr>
+                        <td>示例-行过滤</td>
+                        <td>6.6.1</td>
+                        <td>2022-11-16</td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_examples_row_filter_en.html">html</a></td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_examples_row_filter.html">html</a></td>
+                    </tr>
+                    <tr>
+                        <td>关于-颜色</td>
+                        <td>6.6.1</td>
+                        <td>2022-11-16</td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_about_color_en.html">html</a></td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_about_color.html">html</a></td>
+                    </tr>
+                    <tr>
+                        <td>关于-坐标系统</td>
+                        <td>6.6.1</td>
+                        <td>2022-11-16</td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_about_coordinate_system_en.html">html</a></td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_about_coordinate_system.html">html</a></td>
+                    </tr>
+                    <tr>
+                        <td>关于-媒体</td>
+                        <td>6.6.1</td>
+                        <td>2022-11-16</td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_about_media_en.html">html</a></td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_about_media.html">html</a></td>
+                    </tr>
+                    <tr>
+                        <td>关于-数据分析</td>
+                        <td>6.6.1</td>
+                        <td>2022-11-16</td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_about_data_analysis_en.html">html</a></td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_about_data_analysis.html">html</a></td>
+                    </tr>
+                    <tr>
+                        <td>调色盘-常用网页颜色</td>
+                        <td>6.7</td>
+                        <td>2023-1-21</td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_palette_web_en.html">major</a> <a href="https://mararsh.github.io/MyBox/mybox_palette_web_all_en.html">all</a></td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_palette_web.html">major</a> <a href="https://mararsh.github.io/MyBox/mybox_palette_web_all.html">all</a></td>
+                    </tr>
+                    <tr>
+                        <td>调色盘-中国传统颜色</td>
+                        <td>6.7</td>
+                        <td>2023-1-21</td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_palette_chinese_en.html">major</a> <a href="https://mararsh.github.io/MyBox/mybox_palette_chinese_all_en.html">all</a></td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_palette_chinese.html">major</a> <a href="https://mararsh.github.io/MyBox/mybox_palette_chinese_all.html">all</a></td>
+                    </tr>
+                    <tr>
+                        <td>调色盘-日本传统颜色</td>
+                        <td>6.7</td>
+                        <td>2023-1-21</td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_palette_japanese_en.html">major</a> <a href="https://mararsh.github.io/MyBox/mybox_palette_japanese_all_en.html">all</a></td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_palette_japanese.html">major</a> <a href="https://mararsh.github.io/MyBox/mybox_palette_japanese_all.html">all</a></td>
+                    </tr>
+                    <tr>
+                        <td>调色盘-来自colorhexa.com颜色</td>
+                        <td>6.7</td>
+                        <td>2023-1-21</td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_palette_colorhexa_en.html">major</a> <a href="https://mararsh.github.io/MyBox/mybox_palette_colorhexa_all_en.html">all</a></td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_palette_colorhexa.html">major</a> <a href="https://mararsh.github.io/MyBox/mybox_palette_colorhexa_all.html">all</a></td>
+                    </tr>
+                    <tr>
+                        <td>调色盘-MyBox的颜色</td>
+                        <td>6.7</td>
+                        <td>2023-1-21</td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_palette_mybox_en.html">major</a> <a href="https://mararsh.github.io/MyBox/mybox_palette_mybox_all_en.html">all</a></td>
+                        <td><a href="https://mararsh.github.io/MyBox/mybox_palette_mybox.html">major</a> <a href="https://mararsh.github.io/MyBox/mybox_palette_mybox_all.html">all</a></td>
+                    </tr>
+                    <tr>
+                        <td>图片的故事</td>
+                        <td>6.7</td>
+                        <td>2023-1-21</td>
+                        <td><a href="https://mararsh.github.io/MyBoxDoc/en/MyBox-6.7-StoriesOfImages-en.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-StoriesOfImages-en.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-StoriesOfImages-en.odt">odt</a></td>
+                        <td><a href="https://mararsh.github.io/MyBoxDoc/zh/MyBox-6.7-StoriesOfImages-zh.html">html</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-StoriesOfImages-zh.pdf">PDF</a> <a href="https://sourceforge.net/projects/mara-mybox/files/documents/user_guide_6.7/MyBox-6.7-StoriesOfImages-zh.odt">odt</a></td>
+                    </tr>
+                </tbody>
+            </table> <h1>实现基础</h1> <p>MyBox基于以下开放资源：</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>名字</th>
+                        <th>角色</th>
+                        <th>链接</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>JDK</td>
+                        <td>Java语言</td>
+                        <td><a href="http://jdk.java.net/">http://jdk.java.net/</a></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td><a href="https://www.oracle.com/technetwork/java/javase/downloads/index.html">https://www.oracle.com/technetwork/java/javase/downloads/index.html</a></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td><a href="https://docs.oracle.com/en/java/javase/18/docs/api/index.html">https://docs.oracle.com/en/java/javase/18/docs/api/index.html</a></td>
+                    </tr>
+                    <tr>
+                        <td>JavaFx</td>
+                        <td>图形化界面</td>
+                        <td><a href="https://gluonhq.com/products/javafx/">https://gluonhq.com/products/javafx/</a></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td><a href="https://docs.oracle.com/javafx/2/">https://docs.oracle.com/javafx/2/</a></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td><a href="https://gluonhq.com/products/scene-builder/">https://gluonhq.com/products/scene-builder/</a></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td><a href="https://openjfx.io/javadoc/18/">https://openjfx.io/javadoc/18/</a></td>
+                    </tr>
+                    <tr>
+                        <td>Derby</td>
+                        <td>数据库</td>
+                        <td><a href="http://db.apache.org/derby/">http://db.apache.org/derby/</a></td>
+                    </tr>
+                    <tr>
+                        <td>NetBeans</td>
+                        <td>集成开发环境</td>
+                        <td><a href="https://netbeans.org/">https://netbeans.org/</a></td>
+                    </tr>
+                    <tr>
+                        <td>jpackage</td>
+                        <td>自包含包</td>
+                        <td><a href="https://docs.oracle.com/en/java/javase/18/docs/specs/man/jpackage.html">https://docs.oracle.com/en/java/javase/18/docs/specs/man/jpackage.html</a></td>
+                    </tr>
+                    <tr>
+                        <td>maven</td>
+                        <td>代码构建</td>
+                        <td><a href="https://maven.apache.org/">https://maven.apache.org/</a></td>
+                    </tr>
+                    <tr>
+                        <td>jai-imageio</td>
+                        <td>图像处理</td>
+                        <td><a href="https://github.com/jai-imageio/jai-imageio-core">https://github.com/jai-imageio/jai-imageio-core</a></td>
+                    </tr>
+                    <tr>
+                        <td>PDFBox</td>
+                        <td>PDF处理</td>
+                        <td><a href="https://pdfbox.apache.org/">https://pdfbox.apache.org/</a></td>
+                    </tr>
+                    <tr>
+                        <td>PDF2DOM</td>
+                        <td>PDF转html</td>
+                        <td><a href="http://cssbox.sourceforge.net/pdf2dom/">http://cssbox.sourceforge.net/pdf2dom/</a></td>
+                    </tr>
+                    <tr>
+                        <td>GifDecoder</td>
+                        <td>不规范Gif</td>
+                        <td><a href="https://github.com/DhyanB/Open-Imaging/">https://github.com/DhyanB/Open-Imaging/</a></td>
+                    </tr>
+                    <tr>
+                        <td>EncodingDetect</td>
+                        <td>文本编码</td>
+                        <td><a href="https://www.cnblogs.com/ChurchYim/p/8427373.html">https://www.cnblogs.com/ChurchYim/p/8427373.html</a></td>
+                    </tr>
+                    <tr>
+                        <td>Free Icons</td>
+                        <td>图标</td>
+                        <td><a href="https://icons8.com/icons/set/home">https://icons8.com/icons/set/home</a></td>
+                    </tr>
+                    <tr>
+                        <td>Lindbloom</td>
+                        <td>色彩理论</td>
+                        <td><a href="http://brucelindbloom.com/index.html">http://brucelindbloom.com/index.html</a></td>
+                    </tr>
+                    <tr>
+                        <td>tess4j</td>
+                        <td>OCR</td>
+                        <td><a href="https://github.com/nguyenq/tess4j">https://github.com/nguyenq/tess4j</a></td>
+                    </tr>
+                    <tr>
+                        <td>tesseract</td>
+                        <td>OCR</td>
+                        <td><a href="https://github.com/tesseract-ocr/tesseract">https://github.com/tesseract-ocr/tesseract</a></td>
+                    </tr>
+                    <tr>
+                        <td>barcode4j</td>
+                        <td>生成条码</td>
+                        <td><a href="http://barcode4j.sourceforge.net">http://barcode4j.sourceforge.net</a></td>
+                    </tr>
+                    <tr>
+                        <td>zxing</td>
+                        <td>生成/解码条码</td>
+                        <td><a href="https://github.com/zxing/zxing">https://github.com/zxing/zxing</a></td>
+                    </tr>
+                    <tr>
+                        <td>flexmark-java</td>
+                        <td>转换Markdown</td>
+                        <td><a href="https://github.com/vsch/flexmark-java">https://github.com/vsch/flexmark-java</a></td>
+                    </tr>
+                    <tr>
+                        <td>commons-compress</td>
+                        <td>归档/压缩</td>
+                        <td><a href="https://commons.apache.org/proper/commons-compress">https://commons.apache.org/proper/commons-compress</a></td>
+                    </tr>
+                    <tr>
+                        <td>XZ for Java</td>
+                        <td>归档/压缩</td>
+                        <td><a href="https://tukaani.org/xz/java.html">https://tukaani.org/xz/java.html</a></td>
+                    </tr>
+                    <tr>
+                        <td>ffmpeg</td>
+                        <td>媒体转换/生成</td>
+                        <td><a href="http://ffmpeg.org">http://ffmpeg.org</a></td>
+                    </tr>
+                    <tr>
+                        <td>image4j</td>
+                        <td>ico格式</td>
+                        <td><a href="https://github.com/imcdonagh/image4j">https://github.com/imcdonagh/image4j</a></td>
+                    </tr>
+                    <tr>
+                        <td>AutoCommitCell</td>
+                        <td>提交修改</td>
+                        <td><a href="https://stackoverflow.com/questions/24694616">https://stackoverflow.com/questions/24694616 （Ogmios）</a></td>
+                    </tr>
+                    <tr>
+                        <td>高德</td>
+                        <td>地图</td>
+                        <td><a href="https://lbs.amap.com/api/javascript-api/summary">https://lbs.amap.com/api/javascript-api/summary</a></td>
+                    </tr>
+                    <tr>
+                        <td>高德</td>
+                        <td>坐标</td>
+                        <td><a href="https://lbs.amap.com/api/webservice/guide/api/georegeo">https://lbs.amap.com/api/webservice/guide/api/georegeo</a></td>
+                    </tr>
+                    <tr>
+                        <td>微博</td>
+                        <td>图片素材</td>
+                        <td><a href="https://weibo.com/3876734080/InmB1aPiL?type=comment#_rnd1582211299665">https://weibo.com/3876734080/InmB1aPiL?type=comment#_rnd1582211299665</a></td>
+                    </tr>
+                    <tr>
+                        <td>poi</td>
+                        <td>微软文档</td>
+                        <td><a href="https://poi.apache.org">https://poi.apache.org</a></td>
+                    </tr>
+                    <tr>
+                        <td>LabeledBarChart</td>
+                        <td>JavaFx图</td>
+                        <td><a href="https://stackoverflow.com/questions/34286062/how-to-clear-text-added-in-a-javafx-barchart/41494789#41494789" title="Roland">https://stackoverflow.com/questions/34286062/how-to-clear-text-added-in-a-javafx-barchart/41494789#41494789 (Roland)</a></td>
+                    </tr>
+                    <tr>
+                        <td>commons-csv</td>
+                        <td>CSV</td>
+                        <td><a href="https://commons.apache.org/proper/commons-csv/">https://commons.apache.org/proper/commons-csv/</a></td>
+                    </tr>
+                    <tr>
+                        <td>geonames</td>
+                        <td>位置数据</td>
+                        <td><a href="https://www.geonames.org/countries/">https://www.geonames.org/countries/</a></td>
+                    </tr>
+                    <tr>
+                        <td>world-area</td>
+                        <td>位置数据</td>
+                        <td><a href="https://github.com/wizardcode/world-area">https://github.com/wizardcode/world-area</a></td>
+                    </tr>
+                    <tr>
+                        <td>中国国家统计局</td>
+                        <td>数据</td>
+                        <td><a href="http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/">http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/</a></td>
+                    </tr>
+                    <tr>
+                        <td>JHU</td>
+                        <td>COVID-19数据</td>
+                        <td><a href="https://github.com/CSSEGISandData/COVID-19">https://github.com/CSSEGISandData/COVID-19</a></td>
+                    </tr>
+                    <tr>
+                        <td>懒人图库</td>
+                        <td>色彩数据</td>
+                        <td><a href="https://tool.lanrentuku.com/color/china.html">https://tool.lanrentuku.com/color/china.html</a></td>
+                    </tr>
+                    <tr>
+                        <td>中国纹样全集</td>
+                        <td>素材</td>
+                        <td><a href="https://book.douban.com/subject/3894923/">https://book.douban.com/subject/3894923/</a></td>
+                    </tr>
+                    <tr>
+                        <td>中国国家基础地理信息中心</td>
+                        <td>地图</td>
+                        <td><a href="http://lbs.tianditu.gov.cn/api/js4.0/guide.html">http://lbs.tianditu.gov.cn/api/js4.0/guide.html</a></td>
+                    </tr>
+                    <tr>
+                        <td>movebank</td>
+                        <td>位置数据</td>
+                        <td><a href="https://www.datarepository.movebank.org">https://www.datarepository.movebank.org</a></td>
+                    </tr>
+                    <tr>
+                        <td>CoordinateConverter</td>
+                        <td>坐标转换</td>
+                        <td><a href="https://www.jianshu.com/p/c39a2c72dc65?from=singlemessage">https://www.jianshu.com/p/c39a2c72dc65?from=singlemessage</a></td>
+                    </tr>
+                    <tr>
+                        <td>JavaMail</td>
+                        <td>email</td>
+                        <td><a href="https://javaee.github.io/javamail/">https://javaee.github.io/javamail/</a></td>
+                    </tr>
+                    <tr>
+                        <td>Commons IO</td>
+                        <td>文件读写</td>
+                        <td><a href="https://commons.apache.org/proper/commons-io/">https://commons.apache.org/proper/commons-io/</a></td>
+                    </tr>
+                    <tr>
+                        <td>colorhexa</td>
+                        <td>色彩数据</td>
+                        <td><a href="https://www.colorhexa.com/color-names">https://www.colorhexa.com/color-names</a></td>
+                    </tr>
+                    <tr>
+                        <td>文泉驿</td>
+                        <td>开源字体</td>
+                        <td><a href="http://wenq.org/wqy2/">http://wenq.org/wqy2/</a></td>
+                    </tr>
+                    <tr>
+                        <td>ttc2ttf</td>
+                        <td>提取ttf</td>
+                        <td><a href="https://github.com/fermi1981/TTC_TTF">https://github.com/fermi1981/TTC_TTF</a></td>
+                    </tr>
+                    <tr>
+                        <td>中国出土壁画全集</td>
+                        <td>素材</td>
+                        <td><a href="https://book.douban.com/subject/10465940/">https://book.douban.com/subject/10465940/</a></td>
+                    </tr>
+                    <tr>
+                        <td>sfds</td>
+                        <td>书法</td>
+                        <td><a href="http://www.sfds.cn/725B/">http://www.sfds.cn/725B/</a></td>
+                    </tr>
+                    <tr>
+                        <td>PaginatedPdfTable</td>
+                        <td>PDF</td>
+                        <td><a href="https://github.com/eduardohl/Paginated-PDFBox-Table-Sample">https://github.com/eduardohl/Paginated-PDFBox-Table-Sample</a></td>
+                    </tr>
+                    <tr>
+                        <td>jsoup</td>
+                        <td>DOM</td>
+                        <td><a href="https://jsoup.org/">https://jsoup.org/</a></td>
+                    </tr>
+                    <tr>
+                        <td>知乎</td>
+                        <td>素材</td>
+                        <td><a href="https://www.zhihu.com/question/41580677/answer/1300242801">https://www.zhihu.com/question/41580677/answer/1300242801</a></td>
+                    </tr>
+                    <tr>
+                        <td>commons-math</td>
+                        <td>计算</td>
+                        <td><a href="https://commons.apache.org/proper/commons-math/index.html">https://commons.apache.org/proper/commons-math/index.html</a></td>
+                    </tr>
+                    <tr>
+                        <td>JEXL</td>
+                        <td>计算</td>
+                        <td><a href="https://commons.apache.org/proper/commons-jexl">https://commons.apache.org/proper/commons-jexl</a></td>
+                    </tr>
+                    <tr>
+                        <td>OpenOffice</td>
+                        <td>文档</td>
+                        <td><a href="http://www.openoffice.org/">http://www.openoffice.org/</a></td>
+                    </tr>
+                    <tr>
+                        <td>nashorn</td>
+                        <td>JavaScript</td>
+                        <td><a href="https://openjdk.org/projects/nashorn/">https://openjdk.org/projects/nashorn/</a></td>
+                    </tr>
+                </tbody>
+            </table> </a>
+    </body>
+</html>

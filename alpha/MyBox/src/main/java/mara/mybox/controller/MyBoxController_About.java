@@ -21,6 +21,11 @@ public abstract class MyBoxController_About extends MyBoxController_Settings {
     protected void showAboutMenu(MouseEvent event) {
         hideMenu(event);
 
+        MenuItem ReadMe = new MenuItem(Languages.message("ReadMe"));
+        ReadMe.setOnAction((ActionEvent event1) -> {
+            HelpTools.readMe(myController);
+        });
+
         MenuItem About = new MenuItem(Languages.message("About"));
         About.setOnAction((ActionEvent event1) -> {
             HelpTools.about();

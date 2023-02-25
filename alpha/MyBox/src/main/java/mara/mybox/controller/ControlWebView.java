@@ -18,6 +18,10 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
+import static javafx.concurrent.Worker.State.CANCELLED;
+import static javafx.concurrent.Worker.State.FAILED;
+import static javafx.concurrent.Worker.State.RUNNING;
+import static javafx.concurrent.Worker.State.SUCCEEDED;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -88,7 +92,7 @@ public class ControlWebView extends BaseController {
     protected final SimpleBooleanProperty addressChangedNotify, addressInvalidNotify,
             pageLoadingNotify, pageLoadedNotify;
     protected final String StyleNodeID = "MyBox__Html_Style20211118";
-    protected boolean linkInNewTab;
+    protected boolean loaded, linkInNewTab;
 
     @FXML
     protected WebView webView;
@@ -156,40 +160,18 @@ public class ControlWebView extends BaseController {
             webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<Worker.State>() {
                 @Override
                 public void changed(ObservableValue ov, Worker.State oldState, Worker.State newState) {
-                    switch (newState) {
-                        case RUNNING:
-                            pageIsLoading();
-                            break;
-                        case SUCCEEDED:
-                            afterPageLoaded();
-                            break;
-                        case CANCELLED:
-                            if (webViewLabel != null) {
-                                webViewLabel.setText(message("Canceled"));
-                            }
-                            break;
-                        case FAILED:
-                            if (webViewLabel != null) {
-                                webViewLabel.setText(message("Failed"));
-                            }
-                            break;
-                        default:
-                            if (webViewLabel != null) {
-                                webViewLabel.setText(newState.name());
-                            }
-                    }
+                    Platform.runLater(() -> {
+                        worker(newState);
+                    });
                 }
             });
 
             webView.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent mouseEvent) {
-                    closePopup();
-                    if (parentController != null) {
-                        parentController.closePopup();
-                    }
-                    linkX = mouseEvent.getScreenX();
-                    linkY = mouseEvent.getScreenY();
+                    Platform.runLater(() -> {
+                        mouseClicked(mouseEvent);
+                    });
                 }
             });
 
@@ -197,101 +179,9 @@ public class ControlWebView extends BaseController {
             docListener = new EventListener() {
                 @Override
                 public synchronized void handleEvent(org.w3c.dom.events.Event ev) {
-                    try {
-                        String domEventType = ev.getType();
-                        String tag = null, href = null;
-                        if (ev.getTarget() != null) {
-                            element = (Element) ev.getTarget();
-                            tag = element.getTagName();
-                            if (tag != null) {
-                                if (tag.equalsIgnoreCase("a")) {
-                                    href = element.getAttribute("href");
-                                } else if (tag.equalsIgnoreCase("img")) {
-                                    href = element.getAttribute("src");
-                                }
-                            }
-                        } else {
-                            element = null;
-                        }
-//                        MyBoxLog.console(webView.getId() + " " + domEventType + " " + tag + " " + href);
-                        if (webViewLabel != null) {
-                            if ("mouseover".equals(domEventType)) {
-                                webViewLabel.setText(href != null ? URLDecoder.decode(href, charset) : tag);
-                            } else if ("mouseout".equals(domEventType)) {
-                                webViewLabel.setText("");
-                            }
-                        }
-                        if (element == null) {
-                            return;
-                        }
-//                        MyBoxLog.console(webView.getId() + " " + domEventType + " " + tag + " " + href);
-                        if (href != null) {
-                            String target = element.getAttribute("target");
-                            String clickAction = UserConfig.getString("WebViewWhenClickImageLink", "PopMenu");
-                            HtmlElement htmlElement = new HtmlElement(element, charset);
-//                            MyBoxLog.console(target);
-                            if ("click".equals(domEventType)) {
-                                if (target != null && !target.equalsIgnoreCase("_blank")) {
-                                    webEngine.executeScript("if ( window.frames." + target
-                                            + ".document.readyState==\"complete\") alert('FrameReadyName-" + target + "');");
-                                    webEngine.executeScript("window.frames." + target + ".document.onreadystatechange = "
-                                            + "function(){ if ( window.frames." + target
-                                            + ".document.readyState==\"complete\") alert('FrameReadyName-" + target + "'); }");
-                                } else if (!href.startsWith("javascript:")) {
-                                    if (linkInNewTab) {
-                                        ev.preventDefault();
-                                        WebBrowserController.openAddress(htmlElement.getFinalAddress(), true);
-                                    } else if (!"AsPage".equals(clickAction)) {
-                                        ev.preventDefault();
-                                        if (clickAction == null || "PopMenu".equals(clickAction)) {
-                                            timer = new Timer();
-                                            timer.schedule(new TimerTask() {
-                                                @Override
-                                                public void run() {
-                                                    Platform.runLater(() -> {
-                                                        popLinkMenu(htmlElement);
-                                                    });
-                                                }
-                                            }, 100);
-                                        } else if ("Load".equals(clickAction)) {
-                                            loadAddress(htmlElement.getFinalAddress());
-                                        } else {
-                                            WebBrowserController.openAddress(htmlElement.getFinalAddress(), "OpenSwitch".equals(clickAction));
-                                        }
-                                    }
-                                }
-                            } else if ("contextmenu".equals(domEventType)) {
-                                ev.preventDefault();
-                                timer = new Timer();
-                                timer.schedule(new TimerTask() {
-                                    @Override
-                                    public void run() {
-                                        Platform.runLater(() -> {
-                                            popLinkMenu(htmlElement);
-                                        });
-                                    }
-                                }, 100);
-                            }
-
-                        } else if ("contextmenu".equals(domEventType) && !"frame".equalsIgnoreCase(tag)) {
-                            ev.preventDefault();
-                            timer = new Timer();
-                            timer.schedule(new TimerTask() {
-                                @Override
-                                public void run() {
-                                    Platform.runLater(() -> {
-                                        popElementMenu(element);
-                                    });
-                                }
-                            }, 100);
-                        }
-                        MenuWebviewController menu = MenuWebviewController.running(webView);
-                        if (menu != null) {
-                            menu.setElement(element);
-                        }
-                    } catch (Exception e) {
-                        MyBoxLog.error(e);
-                    }
+                    Platform.runLater(() -> {
+                        docEvent(ev);
+                    });
                 }
             };
 
@@ -362,38 +252,7 @@ public class ControlWebView extends BaseController {
             webEngine.setOnAlert(new EventHandler<WebEvent<String>>() {
                 @Override
                 public void handle(WebEvent<String> ev) {
-                    String msg = ev.getData();
-                    if (msg == null) {
-                        return;
-                    }
-                    int value = -1;
-                    if (msg.startsWith("FrameReadyIndex-")) {
-                        value = Integer.parseInt(msg.substring("FrameReadyIndex-".length()));
-                    } else if (msg.startsWith("FrameReadyName-")) {
-                        value = WebViewTools.frameIndex(webEngine, msg.substring("FrameReadyName-".length()));
-                    } else if (msg.startsWith("scrollTop-")) {
-                        scrollTop = Double.valueOf(msg.substring("scrollTop-".length()));
-                        ev.consume();
-                        return;
-                    } else if (msg.startsWith("scrollLeft-")) {
-                        scrollLeft = Double.valueOf(msg.substring("scrollLeft-".length()));
-                        ev.consume();
-                        return;
-                    }
-                    if (value < 0) {
-                        return;
-                    }
-                    ev.consume();
-                    int frameIndex = value;
-                    Timer timer = new Timer();
-                    timer.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            Platform.runLater(() -> {
-                                addFrameListener(frameIndex);
-                            });
-                        }
-                    }, 500);
+                    alert(ev);
                 }
             });
 
@@ -411,6 +270,177 @@ public class ControlWebView extends BaseController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    public void worker(Worker.State state) {
+        switch (state) {
+            case RUNNING:
+                pageIsLoading();
+                break;
+            case SUCCEEDED:
+                afterPageLoaded();
+                break;
+            case CANCELLED:
+                if (webViewLabel != null) {
+                    webViewLabel.setText(message("Canceled"));
+                }
+                break;
+            case FAILED:
+                if (webViewLabel != null) {
+                    webViewLabel.setText(message("Failed"));
+                }
+                break;
+            default:
+                if (webViewLabel != null) {
+                    webViewLabel.setText(state.name());
+                }
+        }
+    }
+
+    public void mouseClicked(MouseEvent mouseEvent) {
+        closePopup();
+        if (parentController != null) {
+            parentController.closePopup();
+        }
+        linkX = mouseEvent.getScreenX();
+        linkY = mouseEvent.getScreenY();
+    }
+
+    public synchronized void docEvent(org.w3c.dom.events.Event ev) {
+        try {
+            String domEventType = ev.getType();
+            String tag = null, href = null;
+            if (ev.getTarget() != null) {
+                element = (Element) ev.getTarget();
+                tag = element.getTagName();
+                if (tag != null) {
+                    if (tag.equalsIgnoreCase("a")) {
+                        href = element.getAttribute("href");
+                    } else if (tag.equalsIgnoreCase("img")) {
+                        href = element.getAttribute("src");
+                    }
+                }
+            } else {
+                element = null;
+            }
+//                        MyBoxLog.console(webView.getId() + " " + domEventType + " " + tag + " " + href);
+            if (webViewLabel != null) {
+                if ("mouseover".equals(domEventType)) {
+                    webViewLabel.setText(href != null ? URLDecoder.decode(href, charset) : tag);
+                } else if ("mouseout".equals(domEventType)) {
+                    webViewLabel.setText("");
+                }
+            }
+            if (element == null) {
+                return;
+            }
+//                        MyBoxLog.console(webView.getId() + " " + domEventType + " " + tag + " " + href);
+            if (href != null) {
+                String target = element.getAttribute("target");
+                String clickAction = UserConfig.getString("WebViewWhenClickImageLink", "PopMenu");
+                HtmlElement htmlElement = new HtmlElement(element, charset);
+//                            MyBoxLog.console(target);
+                if ("click".equals(domEventType)) {
+                    if (target != null && !target.equalsIgnoreCase("_blank")) {
+                        webEngine.executeScript("if ( window.frames." + target
+                                + ".document.readyState==\"complete\") alert('FrameReadyName-" + target + "');");
+                        webEngine.executeScript("window.frames." + target + ".document.onreadystatechange = "
+                                + "function(){ if ( window.frames." + target
+                                + ".document.readyState==\"complete\") alert('FrameReadyName-" + target + "'); }");
+                    } else if (!href.startsWith("javascript:")) {
+                        if (linkInNewTab) {
+                            ev.preventDefault();
+                            WebBrowserController.openAddress(htmlElement.getFinalAddress(), true);
+                        } else if (!"AsPage".equals(clickAction)) {
+                            ev.preventDefault();
+                            if (clickAction == null || "PopMenu".equals(clickAction)) {
+                                timer = new Timer();
+                                timer.schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        Platform.runLater(() -> {
+                                            popLinkMenu(htmlElement);
+                                        });
+                                    }
+                                }, 100);
+                            } else if ("Load".equals(clickAction)) {
+                                loadAddress(htmlElement.getFinalAddress());
+                            } else {
+                                WebBrowserController.openAddress(htmlElement.getFinalAddress(), "OpenSwitch".equals(clickAction));
+                            }
+                        }
+                    }
+                } else if ("contextmenu".equals(domEventType)) {
+                    ev.preventDefault();
+                    timer = new Timer();
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            Platform.runLater(() -> {
+                                popLinkMenu(htmlElement);
+                            });
+                        }
+                    }, 100);
+                }
+
+            } else if ("contextmenu".equals(domEventType) && !"frame".equalsIgnoreCase(tag)) {
+                ev.preventDefault();
+                timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        Platform.runLater(() -> {
+                            popElementMenu(element);
+                        });
+                    }
+                }, 100);
+            }
+            MenuWebviewController menu = MenuWebviewController.running(webView);
+            if (menu != null) {
+                menu.setElement(element);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void alert(WebEvent<String> ev) {
+        String msg = ev.getData();
+        if (msg == null) {
+            return;
+        }
+        if (loaded) {
+            alertInformation(msg);
+            return;
+        }
+        int value = -1;
+        if (msg.startsWith("FrameReadyIndex-")) {
+            value = Integer.parseInt(msg.substring("FrameReadyIndex-".length()));
+        } else if (msg.startsWith("FrameReadyName-")) {
+            value = WebViewTools.frameIndex(webEngine, msg.substring("FrameReadyName-".length()));
+        } else if (msg.startsWith("scrollTop-")) {
+            scrollTop = Double.parseDouble(msg.substring("scrollTop-".length()));
+            ev.consume();
+            return;
+        } else if (msg.startsWith("scrollLeft-")) {
+            scrollLeft = Double.parseDouble(msg.substring("scrollLeft-".length()));
+            ev.consume();
+            return;
+        }
+        if (value < 0) {
+            return;
+        }
+        ev.consume();
+        int frameIndex = value;
+        Timer atimer = new Timer();
+        atimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    addFrameListener(frameIndex);
+                });
+            }
+        }, 500);
     }
 
     public boolean loadFile(File file) {
@@ -519,6 +549,7 @@ public class ControlWebView extends BaseController {
     }
 
     private void pageIsLoading() {
+        loaded = false;
         setWebViewLabel(message("Loading..."));
         pageLoadingNotify.set(!pageLoadingNotify.get());
     }
@@ -567,6 +598,8 @@ public class ControlWebView extends BaseController {
             } catch (Exception e) {
 //                MyBoxLog.debug(e);
             }
+
+            loaded = true;
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

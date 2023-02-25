@@ -516,7 +516,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
                 protected boolean handle() {
                     try {
                         URL url = new URL(address);
-                        File urlFile = HtmlReadTools.url2file(address);
+                        File urlFile = HtmlReadTools.download(address);
                         String html = TextFileTools.readTexts(urlFile);
                         if (html == null) {
                             return false;
@@ -1165,7 +1165,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
                 link.setFile(file.getAbsolutePath());
 
                 updateLogs(message("Downloading") + ": " + url + " --> " + file);
-                File tmpFile = HtmlReadTools.url2file(url.toString());
+                File tmpFile = HtmlReadTools.download(url.toString());
                 if (tmpFile != null && tmpFile.exists()) {
                     FileTools.rename(tmpFile, file);
                     link.setDlTime(new Date());
