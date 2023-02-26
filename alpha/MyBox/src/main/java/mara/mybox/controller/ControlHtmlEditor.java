@@ -1,19 +1,12 @@
 package mara.mybox.controller;
 
-import com.vladsch.flexmark.ext.abbreviation.AbbreviationExtension;
-import com.vladsch.flexmark.ext.definition.DefinitionExtension;
-import com.vladsch.flexmark.ext.footnotes.FootnoteExtension;
-import com.vladsch.flexmark.ext.tables.TablesExtension;
-import com.vladsch.flexmark.ext.typographic.TypographicExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.html2md.converter.FlexmarkHtmlConverter;
 import com.vladsch.flexmark.parser.Parser;
-import com.vladsch.flexmark.parser.ParserEmulationProfile;
 import com.vladsch.flexmark.util.ast.Node;
-import com.vladsch.flexmark.util.data.MutableDataSet;
+import com.vladsch.flexmark.util.data.MutableDataHolder;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
@@ -56,6 +49,7 @@ import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.tools.MarkdownTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Fxmls;
@@ -72,7 +66,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
     protected HTMLEditor richEditor;
     protected boolean codesChanged, domChanged, richChanged,
             mdChanged, textsChanged, fileChanged;
-    protected MutableDataSet htmlOptions;
+    protected MutableDataHolder htmlOptions;
     protected FlexmarkHtmlConverter htmlConverter;
     protected Parser htmlParser;
     protected HtmlRenderer htmlRender;
@@ -254,19 +248,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
                 }
             });
 
-            htmlOptions = new MutableDataSet();
-            htmlOptions.setFrom(ParserEmulationProfile.valueOf("PEGDOWN"));
-            htmlOptions.set(Parser.EXTENSIONS, Arrays.asList(
-                    AbbreviationExtension.create(),
-                    DefinitionExtension.create(),
-                    FootnoteExtension.create(),
-                    TypographicExtension.create(),
-                    TablesExtension.create()
-            ));
-            htmlOptions.set(HtmlRenderer.INDENT_SIZE, 4)
-                    .set(TablesExtension.TRIM_CELL_WHITESPACE, false)
-                    .set(TablesExtension.DISCARD_EXTRA_COLUMNS, true)
-                    .set(TablesExtension.APPEND_MISSING_COLUMNS, true);
+            htmlOptions = MarkdownTools.htmlOptions();
             htmlConverter = FlexmarkHtmlConverter.builder(htmlOptions).build();
             htmlParser = Parser.builder(htmlOptions).build();
             htmlRender = HtmlRenderer.builder(htmlOptions).build();
@@ -368,7 +350,6 @@ public class ControlHtmlEditor extends BaseWebViewController {
     }
 
     public boolean writePanes(String html) {
-        MyBoxLog.console(html);
         fileChanged = false;
         sourceFile = webViewController.sourceFile;
         isSettingValues = true;

@@ -1,7 +1,9 @@
 # Unzip source package. Edit this script to change directories as your env.
 # In terminal window, enter path "MyBox/pack/linux", and run this script.
-jpackagePath=/usr/java/jdk-19.0.2/bin
-jdkPath=/usr/java/jdk-19.0.2
+export JAVA_HOME="/usr/java/jdk-19.0.2"
+export CLASSPATH=".;$JAVA_HOME/lib" 
+export PATH="$JAVA_HOME/bin;$PATH"
+export jpackagePath="%JAVA_HOME%/bin"
 
 rm -rf app/*
 rm -rf jar/*
@@ -12,7 +14,7 @@ mvn clean
 mvn -P linux package
 cd pack/linux
 mv ../../target/MyBox.jar  jar/   &&  \
-$jpackagePath/jpackage  --type  app-image --vendor Mara  --verbose  --runtime-image $jdkPath  --dest app --name  MyBox  --input jar --main-jar  MyBox.jar  --icon res/MyBox.png 
+$jpackagePath/jpackage  --type  app-image --vendor Mara  --verbose  --runtime-image $JAVA_HOME  --dest app --name  MyBox  --input jar --main-jar  MyBox.jar  --icon res/MyBox.png 
 mv jar/MyBox.jar  .
 gzip MyBox.jar 
 mv MyBox.jar.gz  MyBox-linux.jar.gz

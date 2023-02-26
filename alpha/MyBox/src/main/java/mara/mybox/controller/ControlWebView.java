@@ -50,7 +50,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeTools;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
@@ -61,6 +60,7 @@ import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.tools.UrlTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -145,7 +145,7 @@ public class ControlWebView extends BaseController {
         try {
             initWebView();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -191,28 +191,34 @@ public class ControlWebView extends BaseController {
                     if (nt == null) {
                         return;
                     }
-                    if (webViewLabel != null) {
-                        webViewLabel.setText(nt.getMessage());
-                    }
-                    alertError(nt.getMessage());
+                    Platform.runLater(() -> {
+                        if (webViewLabel != null) {
+                            webViewLabel.setText(nt.getMessage());
+                        }
+                        alertError(nt.getMessage());
+                    });
                 }
             });
 
             webEngine.setOnStatusChanged(new EventHandler<WebEvent<String>>() {
                 @Override
                 public void handle(WebEvent<String> ev) {
-                    if (webViewLabel != null) {
-                        webViewLabel.setText(ev.getData());
-                    }
+                    Platform.runLater(() -> {
+                        if (webViewLabel != null) {
+                            webViewLabel.setText(ev.getData());
+                        }
+                    });
                 }
             });
 
             webEngine.locationProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue ov, String oldv, String newv) {
-                    if (webViewLabel != null && newv != null) {
-                        webViewLabel.setText(URLDecoder.decode(newv, charset));
-                    }
+                    Platform.runLater(() -> {
+                        if (webViewLabel != null && newv != null) {
+                            webViewLabel.setText(URLDecoder.decode(newv, charset));
+                        }
+                    });
                 }
             });
 
@@ -273,37 +279,45 @@ public class ControlWebView extends BaseController {
     }
 
     public void worker(Worker.State state) {
-        switch (state) {
-            case RUNNING:
-                pageIsLoading();
-                break;
-            case SUCCEEDED:
-                afterPageLoaded();
-                break;
-            case CANCELLED:
-                if (webViewLabel != null) {
-                    webViewLabel.setText(message("Canceled"));
-                }
-                break;
-            case FAILED:
-                if (webViewLabel != null) {
-                    webViewLabel.setText(message("Failed"));
-                }
-                break;
-            default:
-                if (webViewLabel != null) {
-                    webViewLabel.setText(state.name());
-                }
+        try {
+            switch (state) {
+                case RUNNING:
+                    pageIsLoading();
+                    break;
+                case SUCCEEDED:
+                    afterPageLoaded();
+                    break;
+                case CANCELLED:
+                    if (webViewLabel != null) {
+                        webViewLabel.setText(message("Canceled"));
+                    }
+                    break;
+                case FAILED:
+                    if (webViewLabel != null) {
+                        webViewLabel.setText(message("Failed"));
+                    }
+                    break;
+                default:
+                    if (webViewLabel != null) {
+                        webViewLabel.setText(state.name());
+                    }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 
     public void mouseClicked(MouseEvent mouseEvent) {
-        closePopup();
-        if (parentController != null) {
-            parentController.closePopup();
+        try {
+            closePopup();
+            if (parentController != null) {
+                parentController.closePopup();
+            }
+            linkX = mouseEvent.getScreenX();
+            linkY = mouseEvent.getScreenY();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
-        linkX = mouseEvent.getScreenX();
-        linkY = mouseEvent.getScreenY();
     }
 
     public synchronized void docEvent(org.w3c.dom.events.Event ev) {
@@ -405,42 +419,46 @@ public class ControlWebView extends BaseController {
     }
 
     public void alert(WebEvent<String> ev) {
-        String msg = ev.getData();
-        if (msg == null) {
-            return;
-        }
-        if (loaded) {
-            alertInformation(msg);
-            return;
-        }
-        int value = -1;
-        if (msg.startsWith("FrameReadyIndex-")) {
-            value = Integer.parseInt(msg.substring("FrameReadyIndex-".length()));
-        } else if (msg.startsWith("FrameReadyName-")) {
-            value = WebViewTools.frameIndex(webEngine, msg.substring("FrameReadyName-".length()));
-        } else if (msg.startsWith("scrollTop-")) {
-            scrollTop = Double.parseDouble(msg.substring("scrollTop-".length()));
-            ev.consume();
-            return;
-        } else if (msg.startsWith("scrollLeft-")) {
-            scrollLeft = Double.parseDouble(msg.substring("scrollLeft-".length()));
-            ev.consume();
-            return;
-        }
-        if (value < 0) {
-            return;
-        }
-        ev.consume();
-        int frameIndex = value;
-        Timer atimer = new Timer();
-        atimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Platform.runLater(() -> {
-                    addFrameListener(frameIndex);
-                });
+        try {
+            String msg = ev.getData();
+            if (msg == null) {
+                return;
             }
-        }, 500);
+            int value = -1;
+            if (msg.startsWith("FrameReadyIndex-")) {
+                value = Integer.parseInt(msg.substring("FrameReadyIndex-".length()));
+            } else if (msg.startsWith("FrameReadyName-")) {
+                value = WebViewTools.frameIndex(webEngine, msg.substring("FrameReadyName-".length()));
+            } else if (msg.startsWith("scrollTop-")) {
+                scrollTop = Double.parseDouble(msg.substring("scrollTop-".length()));
+                ev.consume();
+                return;
+            } else if (msg.startsWith("scrollLeft-")) {
+                scrollLeft = Double.parseDouble(msg.substring("scrollLeft-".length()));
+                ev.consume();
+                return;
+            }
+            if (value < 0) {
+                if (loaded) {
+                    alertInformation(msg);
+                    return;
+                }
+                return;
+            }
+            ev.consume();
+            int frameIndex = value;
+            Timer atimer = new Timer();
+            atimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Platform.runLater(() -> {
+                        addFrameListener(frameIndex);
+                    });
+                }
+            }, 500);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     public boolean loadFile(File file) {
@@ -699,7 +717,7 @@ public class ControlWebView extends BaseController {
                 + message("Link") + ": " + URLDecoder.decode(href, charset)
                 + (!linkAddress.equalsIgnoreCase(href) ? "\n" + message("Address") + ": "
                 + finalAddress : "");
-        MenuItem menu = new MenuItem(title);
+        MenuItem menu = new MenuItem(StringTools.menuPrefix(title));
         menu.setStyle("-fx-text-fill: #2e598a;");
         items.add(menu);
         items.add(new SeparatorMenuItem());
@@ -1015,7 +1033,7 @@ public class ControlWebView extends BaseController {
             MenuItem menu;
 
             if (address != null && !address.isBlank()) {
-                menu = new MenuItem(address);
+                menu = new MenuItem(StringTools.menuPrefix(address));
                 menu.setStyle("-fx-text-fill: #2e598a;");
                 items.add(menu);
                 items.add(new SeparatorMenuItem());
@@ -1114,7 +1132,7 @@ public class ControlWebView extends BaseController {
             MenuItem menu;
 
             if (address != null && !address.isBlank()) {
-                menu = new MenuItem(PopTools.limitMenuName(address));
+                menu = new MenuItem(StringTools.menuPrefix(address));
                 menu.setStyle("-fx-text-fill: #2e598a;");
                 items.add(menu);
                 items.add(new SeparatorMenuItem());

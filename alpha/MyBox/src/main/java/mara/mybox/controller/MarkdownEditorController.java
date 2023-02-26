@@ -1,15 +1,9 @@
 package mara.mybox.controller;
 
-import com.vladsch.flexmark.ext.abbreviation.AbbreviationExtension;
-import com.vladsch.flexmark.ext.definition.DefinitionExtension;
-import com.vladsch.flexmark.ext.footnotes.FootnoteExtension;
-import com.vladsch.flexmark.ext.tables.TablesExtension;
-import com.vladsch.flexmark.ext.typographic.TypographicExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
-import com.vladsch.flexmark.parser.ParserEmulationProfile;
 import com.vladsch.flexmark.util.ast.Node;
-import com.vladsch.flexmark.util.data.MutableDataSet;
+import com.vladsch.flexmark.util.data.MutableDataHolder;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Timer;
@@ -30,6 +24,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.tools.MarkdownTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -41,7 +36,7 @@ import mara.mybox.value.UserConfig;
  */
 public class MarkdownEditorController extends TextEditorController {
 
-    protected MutableDataSet htmlOptions;
+    protected MutableDataHolder htmlOptions;
     protected Parser htmlParser;
     protected HtmlRenderer htmlRenderer;
     protected int indentSize = 4;
@@ -249,24 +244,8 @@ public class MarkdownEditorController extends TextEditorController {
     // https://github.com/vsch/flexmark-java/wiki/Usage
     protected void makeHtmlConverter() {
         try {
-            htmlOptions = new MutableDataSet();
-            htmlOptions.setFrom(ParserEmulationProfile.valueOf(emulationSelector.getValue()));
-            htmlOptions.set(Parser.EXTENSIONS, Arrays.asList(
-                    AbbreviationExtension.create(),
-                    DefinitionExtension.create(),
-                    FootnoteExtension.create(),
-                    TablesExtension.create(),
-                    TypographicExtension.create()
-            ));
-
-            htmlOptions.set(HtmlRenderer.INDENT_SIZE, indentSize)
-                    //                    .set(HtmlRenderer.PERCENT_ENCODE_URLS, true)
-                    //                    .set(TablesExtension.COLUMN_SPANS, false)
-                    .set(TablesExtension.TRIM_CELL_WHITESPACE, trimCheck.isSelected())
-                    .set(TablesExtension.APPEND_MISSING_COLUMNS, appendCheck.isSelected())
-                    .set(TablesExtension.DISCARD_EXTRA_COLUMNS, discardCheck.isSelected())
-                    .set(TablesExtension.APPEND_MISSING_COLUMNS, appendCheck.isSelected());
-
+            htmlOptions = MarkdownTools.htmlOptions(emulationSelector.getValue(), indentSize,
+                    trimCheck.isSelected(), discardCheck.isSelected(), appendCheck.isSelected());
             htmlParser = Parser.builder(htmlOptions).build();
             htmlRenderer = HtmlRenderer.builder(htmlOptions).build();
 

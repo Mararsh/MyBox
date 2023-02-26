@@ -247,15 +247,6 @@ public class PopTools {
         }
     }
 
-    // https://github.com/Mararsh/MyBox/issues/1266
-    // Error popped when menu name includes "_". Not sure whether this is a bug of javafx
-    public static String limitMenuName(String name) {
-        if (name == null) {
-            return null;
-        }
-        return StringTools.end(name.trim().replaceAll("_|\r|\n", " "), 80);
-    }
-
     /*
         buttons
      */
@@ -1126,7 +1117,7 @@ public class PopTools {
 
             for (SourceCodeAnalysis.Suggestion suggestion : suggestions) {
                 String c = suggestion.continuation();
-                menu = new MenuItem(c);
+                menu = new MenuItem(StringTools.abbreviate(c, 100));
                 menu.setOnAction((ActionEvent event) -> {
                     scriptInput.replaceText(scriptInput.getSelection(), c);
                 });

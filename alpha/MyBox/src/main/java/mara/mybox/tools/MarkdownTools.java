@@ -3,13 +3,32 @@ package mara.mybox.tools;
 import com.vladsch.flexmark.ast.Heading;
 import com.vladsch.flexmark.ast.Image;
 import com.vladsch.flexmark.ast.ImageRef;
+import com.vladsch.flexmark.ext.abbreviation.AbbreviationExtension;
+import com.vladsch.flexmark.ext.definition.DefinitionExtension;
+import com.vladsch.flexmark.ext.footnotes.FootnoteExtension;
+import com.vladsch.flexmark.ext.tables.TablesExtension;
+import com.vladsch.flexmark.ext.typographic.TypographicExtension;
+import com.vladsch.flexmark.html.HtmlRenderer;
+import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.parser.ParserEmulationProfile;
 import com.vladsch.flexmark.util.ast.Block;
 import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.data.MutableDataHolder;
+import com.vladsch.flexmark.util.data.MutableDataSet;
 import com.vladsch.flexmark.util.sequence.BasedSequence;
+import java.io.File;
 import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import mara.mybox.data.Link;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.style.HtmlStyles;
+import static mara.mybox.tools.HtmlWriteTools.setCharset;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 /**
  * @Author Mara
@@ -121,6 +140,63 @@ public class MarkdownTools {
                 child = child.getNext();
             }
         }
+    }
+
+    public static MutableDataHolder htmlOptions(String emulation,
+            int indentSize, boolean trim, boolean discard, boolean append) {
+        try {
+            MutableDataHolder htmlOptions = new MutableDataSet();
+            htmlOptions.setFrom(ParserEmulationProfile.valueOf(emulation));
+            htmlOptions.set(Parser.EXTENSIONS, Arrays.asList(
+                    AbbreviationExtension.create(),
+                    DefinitionExtension.create(),
+                    FootnoteExtension.create(),
+                    TypographicExtension.create(),
+                    TablesExtension.create()
+            ));
+            htmlOptions.set(HtmlRenderer.INDENT_SIZE, indentSize)
+                    //                    .set(HtmlRenderer.PERCENT_ENCODE_URLS, true)
+                    //                    .set(TablesExtension.COLUMN_SPANS, false)
+                    .set(TablesExtension.TRIM_CELL_WHITESPACE, trim)
+                    .set(TablesExtension.DISCARD_EXTRA_COLUMNS, discard)
+                    .set(TablesExtension.APPEND_MISSING_COLUMNS, append);
+
+            return htmlOptions;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static MutableDataHolder htmlOptions() {
+        return htmlOptions("PEGDOWN", 4, false, true, true);
+    }
+
+    public static String md2html(MutableDataHolder htmlOptions, File mdFile) {
+        try {
+            if (mdFile == null || !mdFile.exists()) {
+                return null;
+            }
+            Parser htmlParser = Parser.builder(htmlOptions).build();
+            HtmlRenderer htmlRender = HtmlRenderer.builder(htmlOptions).build();
+            Node document = htmlParser.parse(TextFileTools.readTexts(mdFile));
+            String html = htmlRender.render(document);
+            Document doc = Jsoup.parse(html);
+            if (doc == null) {
+                return null;
+            }
+            setCharset(doc, Charset.forName("UTF-8"));
+            doc.head().appendChild(new Element("style").text(HtmlStyles.DefaultStyle));
+            return doc.outerHtml();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static String md2html(File mdFile) {
+        return md2html(htmlOptions(), mdFile);
     }
 
 }

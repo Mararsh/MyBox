@@ -14,11 +14,13 @@ public class HtmlStyles {
     }
 
     public static final String BaseStyle
-            = ".center { text-align:center;  max-width:95%; }\n"
+            = "body {width: 900px;  margin:0 auto; } \n"
             + "table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;}\n"
             + "th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;}\n"
             + "th { font-weight:bold;  text-align:center;}\n"
             + "tr { height: 1.2em;  }\n"
+            + "img { max-width: 100%;}\n"
+            + ".center { text-align:center;  max-width:95%; }\n"
             + ".valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;}\n"
             + ".boldText { font-weight:bold;  }\n";
     public static final String DefaultStyle

@@ -33,6 +33,7 @@ import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -240,7 +241,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                 @Override
 
                 protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
+                    try (Connection conn = DerbyBase.getConnection()) {
                         P rootNode = root(conn);
                         rootItem = new TreeItem(rootNode);
                         ignoreNode = getIgnoreNode();
@@ -408,7 +409,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         boolean isRoot = targetItem == null || isRoot(targetItem.getValue());
 
         List<MenuItem> items = new ArrayList<>();
-        MenuItem menu = new MenuItem(PopTools.limitMenuName(chainName(targetItem)));
+        MenuItem menu = new MenuItem(StringTools.menuSuffix(chainName(targetItem)));
         menu.setStyle("-fx-text-fill: #2e598a;");
         items.add(menu);
         items.add(new SeparatorMenuItem());
@@ -730,7 +731,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
                 @Override
                 protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
+                    try (Connection conn = DerbyBase.getConnection()) {
                         if (isRoot) {
                             clearTree(conn, node);
                             P rootNode = root(conn);
@@ -839,7 +840,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
                 @Override
                 protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
+                    try (Connection conn = DerbyBase.getConnection()) {
                         expandChildren(conn, item);
                     } catch (Exception e) {
                         error = e.toString();
@@ -899,7 +900,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
                 @Override
                 protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
+                    try (Connection conn = DerbyBase.getConnection()) {
                         loadChildren(conn, item);
                     } catch (Exception e) {
                         error = e.toString();
@@ -1068,7 +1069,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                             .append(message("Values")).append("</INPUT>\n")
                             .append("</DIV>\n")
                             .append("<HR>\n");
-                    try ( Connection conn = DerbyBase.getConnection()) {
+                    try (Connection conn = DerbyBase.getConnection()) {
                         treeView(conn, nodeValue, 4, "", s);
                     } catch (Exception e) {
                         error = e.toString();

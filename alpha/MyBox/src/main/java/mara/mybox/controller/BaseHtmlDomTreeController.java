@@ -20,8 +20,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.robot.Robot;
 import mara.mybox.data.HtmlNode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
@@ -217,8 +217,8 @@ public class BaseHtmlDomTreeController extends BaseController {
             return;
         }
         List<MenuItem> items = new ArrayList<>();
-        MenuItem menuItem = new MenuItem(item.getValue().getSerialNumber() + "  "
-                + PopTools.limitMenuName(item.getValue().getTag()));
+        MenuItem menuItem = new MenuItem(StringTools.menuPrefix(
+                item.getValue().getSerialNumber() + "  " + item.getValue().getTag()));
         menuItem.setStyle("-fx-text-fill: #2e598a;");
         items.add(menuItem);
         items.add(new SeparatorMenuItem());

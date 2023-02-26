@@ -3,12 +3,13 @@ package mara.mybox.fxml;
 import java.io.File;
 import java.util.List;
 import mara.mybox.controller.BaseController;
-import mara.mybox.controller.WebBrowserController;
 import mara.mybox.data.ImageItem;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.HtmlWriteTools;
-import mara.mybox.value.AppValues;
+import mara.mybox.tools.MarkdownTools;
+import mara.mybox.tools.TextFileTools;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
@@ -22,39 +23,21 @@ public class HelpTools {
     public static void readMe(BaseController controller) {
         try {
             String lang = Languages.getLangName();
-            File file = FxFileTools.getInternalFile("/doc/" + lang + "/readme-" + lang + ".html",
-                    "doc", "readme-" + lang + ".html");
-            if (file != null && file.exists()) {
-                PopTools.browseURI(controller, file.toURI());
+            File htmlFile = new File(AppVariables.MyboxDataPath + "/doc/readme-" + lang + ".htm");
+            if (!htmlFile.exists()) {
+                File mdFile = FxFileTools.getInternalFile("/doc/" + lang + "/README.md",
+                        "doc", "README-" + lang + ".md");
+                String html = MarkdownTools.md2html(mdFile);
+                if (html == null) {
+                    return;
+                }
+                html = html.replaceAll("href=\"", "target=_blank href=\"");
+                TextFileTools.writeFile(htmlFile, html);
             }
+            PopTools.browseURI(controller, htmlFile.toURI());
+            SoundTools.miao5();
         } catch (Exception e) {
             MyBoxLog.error(e);
-        }
-    }
-
-    public static void about() {
-        try {
-            StringTable table = new StringTable(null, "MyBox");
-            table.newNameValueRow("Author", "Mara");
-            table.newNameValueRow("Version", AppValues.AppVersion);
-            table.newNameValueRow("Date", AppValues.AppVersionDate);
-            table.newNameValueRow("License", message("FreeOpenSource"));
-            table.newLinkRow("", "https://www.apache.org/licenses/LICENSE-2.0");
-            table.newLinkRow("MainPage", "https://github.com/Mararsh/MyBox");
-            table.newLinkRow("Mirror", "https://sourceforge.net/projects/mara-mybox/files/");
-            table.newLinkRow("LatestRelease", "https://github.com/Mararsh/MyBox/releases");
-            table.newLinkRow("KnownIssues", "https://github.com/Mararsh/MyBox/issues");
-            table.newNameValueRow("", message("WelcomePR"));
-            table.newLinkRow("CloudStorage", "https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F");
-            table.newLinkRow("MyBoxInternetDataPath", "https://github.com/Mararsh/MyBox_data");
-            File htmFile = HtmlWriteTools.writeHtml(table.html());
-            if (htmFile == null || !htmFile.exists()) {
-                return;
-            }
-            SoundTools.miao5();
-            WebBrowserController.openFile(htmFile);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
         }
     }
 

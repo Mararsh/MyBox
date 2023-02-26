@@ -1,13 +1,10 @@
 package mara.mybox.controller;
 
 import com.ibm.icu.text.MessageFormat;
-import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
-import com.vladsch.flexmark.parser.ParserEmulationProfile;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataHolder;
-import com.vladsch.flexmark.util.data.MutableDataSet;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -24,6 +21,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.tools.MarkdownTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -152,22 +150,8 @@ public class MarkdownToHtmlController extends BaseBatchFileController {
     @Override
     public boolean makeMoreParameters() {
         try {
-            htmlOptions = new MutableDataSet();
-            htmlOptions.setFrom(ParserEmulationProfile.valueOf(emulationSelector.getValue()));
-            htmlOptions.set(Parser.EXTENSIONS, Arrays.asList(
-                    //                    AbbreviationExtension.create(),
-                    //                    DefinitionExtension.create(),
-                    //                    FootnoteExtension.create(),
-                    //                    TypographicExtension.create(),
-                    TablesExtension.create()
-            ));
-            htmlOptions.set(HtmlRenderer.INDENT_SIZE, indentSize)
-                    //                    .set(HtmlRenderer.PERCENT_ENCODE_URLS, true)
-                    //                    .set(TablesExtension.COLUMN_SPANS, false)
-                    .set(TablesExtension.TRIM_CELL_WHITESPACE, trimCheck.isSelected())
-                    .set(TablesExtension.DISCARD_EXTRA_COLUMNS, discardCheck.isSelected())
-                    .set(TablesExtension.APPEND_MISSING_COLUMNS, appendCheck.isSelected());
-
+            htmlOptions = MarkdownTools.htmlOptions(emulationSelector.getValue(), indentSize,
+                    trimCheck.isSelected(), discardCheck.isSelected(), appendCheck.isSelected());
             htmlParser = Parser.builder(htmlOptions).build();
             htmlRender = HtmlRenderer.builder(htmlOptions).build();
 

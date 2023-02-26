@@ -13,6 +13,7 @@ import mara.mybox.controller.BaseController_Files;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -91,7 +92,7 @@ public abstract class RecentVisitMenu {
                     menu.setStyle("-fx-text-fill: #2e598a;");
                     popMenu.getItems().add(menu);
                     for (String fname : files) {
-                        menu = new MenuItem(PopTools.limitMenuName(fname));
+                        menu = new MenuItem(StringTools.menuSuffix(fname));
                         menu.setOnAction((ActionEvent event1) -> {
                             handleFile(fname);
                         });
@@ -106,7 +107,7 @@ public abstract class RecentVisitMenu {
                 menu.setStyle("-fx-text-fill: #2e598a;");
                 popMenu.getItems().add(menu);
                 for (String example : examples) {
-                    menu = new MenuItem(PopTools.limitMenuName(example));
+                    menu = new MenuItem(StringTools.menuSuffix(example));
                     menu.setOnAction((ActionEvent event1) -> {
                         handleFile(example);
                     });
@@ -120,7 +121,7 @@ public abstract class RecentVisitMenu {
                 menu.setStyle("-fx-text-fill: #2e598a;");
                 popMenu.getItems().add(menu);
                 for (String path : paths) {
-                    menu = new MenuItem(PopTools.limitMenuName(path));
+                    menu = new MenuItem(StringTools.menuSuffix(path));
                     menu.setOnAction((ActionEvent event1) -> {
                         handlePath(path);
                     });

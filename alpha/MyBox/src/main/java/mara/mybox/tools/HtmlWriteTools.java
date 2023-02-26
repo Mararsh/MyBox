@@ -1,11 +1,8 @@
 package mara.mybox.tools;
 
-import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
-import com.vladsch.flexmark.parser.ParserEmulationProfile;
 import com.vladsch.flexmark.util.data.MutableDataHolder;
-import com.vladsch.flexmark.util.data.MutableDataSet;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -209,15 +206,7 @@ public class HtmlWriteTools {
             if (md == null || md.isBlank()) {
                 return null;
             }
-            MutableDataHolder htmlOptions = new MutableDataSet();
-            htmlOptions.setFrom(ParserEmulationProfile.valueOf("PEGDOWN"));
-            htmlOptions.set(Parser.EXTENSIONS, Arrays.asList(
-                    TablesExtension.create()
-            ));
-            htmlOptions.set(HtmlRenderer.INDENT_SIZE, 4)
-                    .set(TablesExtension.TRIM_CELL_WHITESPACE, false)
-                    .set(TablesExtension.DISCARD_EXTRA_COLUMNS, true)
-                    .set(TablesExtension.APPEND_MISSING_COLUMNS, true);
+            MutableDataHolder htmlOptions = MarkdownTools.htmlOptions();
             Parser htmlParser = Parser.builder(htmlOptions).build();
             HtmlRenderer htmlRender = HtmlRenderer.builder(htmlOptions).build();
             return md2html(md, htmlParser, htmlRender);

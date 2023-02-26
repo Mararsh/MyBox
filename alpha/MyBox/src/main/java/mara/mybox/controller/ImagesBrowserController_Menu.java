@@ -9,6 +9,7 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.bufferedimage.ImageInformation;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.Languages;
 
 /**
@@ -31,7 +32,7 @@ public abstract class ImagesBrowserController_Menu extends ImagesBrowserControll
         List<MenuItem> items = new ArrayList<>();
         MenuItem menu;
 
-        menu = new MenuItem(info.getFile().getAbsolutePath());
+        menu = new MenuItem(StringTools.menuSuffix(info.getFile().getAbsolutePath()));
         menu.setStyle("-fx-text-fill: #2e598a;");
         items.add(menu);
 

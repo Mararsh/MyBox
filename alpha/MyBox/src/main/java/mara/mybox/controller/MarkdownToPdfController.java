@@ -1,18 +1,15 @@
 package mara.mybox.controller;
 
-import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
-import com.vladsch.flexmark.parser.ParserEmulationProfile;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataHolder;
-import com.vladsch.flexmark.util.data.MutableDataSet;
 import java.io.File;
-import java.util.Arrays;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
+import mara.mybox.tools.MarkdownTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Languages;
 
@@ -55,15 +52,7 @@ public class MarkdownToPdfController extends BaseBatchFileController {
     @Override
     public boolean makeMoreParameters() {
         try {
-            htmlOptions = new MutableDataSet();
-            htmlOptions.setFrom(ParserEmulationProfile.valueOf("PEGDOWN"));
-            htmlOptions.set(Parser.EXTENSIONS, Arrays.asList(
-                    TablesExtension.create()
-            ));
-            htmlOptions.set(HtmlRenderer.INDENT_SIZE, 4)
-                    .set(TablesExtension.TRIM_CELL_WHITESPACE, false)
-                    .set(TablesExtension.DISCARD_EXTRA_COLUMNS, true)
-                    .set(TablesExtension.APPEND_MISSING_COLUMNS, true);
+            htmlOptions = MarkdownTools.htmlOptions();
             htmlParser = Parser.builder(htmlOptions).build();
             htmlRender = HtmlRenderer.builder(htmlOptions).build();
 

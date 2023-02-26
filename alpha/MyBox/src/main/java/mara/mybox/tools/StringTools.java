@@ -44,6 +44,22 @@ public class StringTools {
         return start(replaceLineBreak(string, " ").trim(), maxLen);
     }
 
+    // https://github.com/Mararsh/MyBox/issues/1266
+    // Error popped when menu name includes "_". Not sure whether this is a bug of javafx
+    public static String menuSuffix(String name) {
+        if (name == null) {
+            return null;
+        }
+        return end(name.replaceAll("_|\r\n|\r|\n", " ").trim(), 80);
+    }
+
+    public static String menuPrefix(String name) {
+        if (name == null) {
+            return null;
+        }
+        return start(name.replaceAll("_|\r\n|\r|\n", " ").trim(), 80);
+    }
+
     public static String replaceLineBreak(String string) {
         return replaceLineBreak(string, " ");
     }

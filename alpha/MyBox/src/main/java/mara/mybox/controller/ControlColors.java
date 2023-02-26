@@ -63,6 +63,7 @@ import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableColorCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -376,7 +377,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
         ColorPaletteName palette = palettesController.palettesList.getSelectionModel().getSelectedItem();
         boolean isALl = palette.getName().equals(palettesController.allColors.getName());
         List<MenuItem> items = new ArrayList<>();
-        MenuItem menu = new MenuItem(palette.getName());
+        MenuItem menu = new MenuItem(StringTools.menuPrefix(palette.getName()));
         menu.setStyle("-fx-text-fill: #2e598a;");
         items.add(menu);
         items.add(new SeparatorMenuItem());
@@ -495,7 +496,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
             task = new SingletonTask<Void>(this) {
                 @Override
                 protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
+                    try (Connection conn = DerbyBase.getConnection()) {
                         if (tableColorPaletteName.find(conn, name) != null) {
                             error = "AlreadyExisted";
                             return false;
@@ -542,8 +543,8 @@ public class ControlColors extends BaseSysTableController<ColorData> {
 
                 @Override
                 protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection();
-                             PreparedStatement query = conn.prepareStatement(TableColorPalette.QueryPalette)) {
+                    try (Connection conn = DerbyBase.getConnection();
+                            PreparedStatement query = conn.prepareStatement(TableColorPalette.QueryPalette)) {
                         if (tableColorPaletteName.find(conn, name) != null) {
                             error = "AlreadyExisted";
                             return false;
@@ -553,7 +554,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
                         long paletteid = newPalatte.getCpnid();
                         query.setLong(1, selected.getCpnid());
                         conn.setAutoCommit(true);
-                        try ( ResultSet results = query.executeQuery()) {
+                        try (ResultSet results = query.executeQuery()) {
                             conn.setAutoCommit(false);
                             while (results.next()) {
                                 ColorPalette data = tableColorPalette.readData(results);
@@ -1051,7 +1052,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
 
                 @Override
                 protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
+                    try (Connection conn = DerbyBase.getConnection()) {
                         ColorData colorData = tableColor.write(conn, new ColorData(color), false);
                         if (colorData == null) {
                             return false;

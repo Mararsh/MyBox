@@ -21,7 +21,7 @@ License:    Apache License Version 2.0
     <children>
                 <HBox alignment="CENTER_LEFT" spacing="2.0">
                     <children>
-                        <Label text="Tag" />
+                        <Label minWidth="-Infinity" text="Tag" textOverrun="WORD_ELLIPSIS" />
                         <TextField fx:id="tagInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
             <Button fx:id="examplesButton" mnemonicParsing="false" onMouseEntered="#popTagExamples">
                <graphic>

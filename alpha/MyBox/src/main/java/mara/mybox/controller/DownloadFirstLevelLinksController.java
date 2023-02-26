@@ -72,6 +72,7 @@ import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.tools.MarkdownTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -167,7 +168,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
             super.initValues();
             stopped = true;
 
-            htmlOptions = new MutableDataSet();
+            htmlOptions = MarkdownTools.htmlOptions();
             htmlParser = Parser.builder(htmlOptions).build();
             htmlRender = HtmlRenderer.builder(htmlOptions).build();
 

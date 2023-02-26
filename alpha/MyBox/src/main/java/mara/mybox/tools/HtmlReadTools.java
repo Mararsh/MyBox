@@ -60,12 +60,12 @@ public class HtmlReadTools {
                 FileCopyTools.copyFile(new File(url.getFile()), tmpFile);
             } else if ("https".equalsIgnoreCase(protocal)) {
                 HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-                SSLContext sc = SSLContext.getInstance(AppValues.HttpsProtocal);
-                sc.init(null, null, null);
-                connection.setSSLSocketFactory(sc.getSocketFactory());
+//                SSLContext sc = SSLContext.getInstance(AppValues.HttpsProtocal);
+//                sc.init(null, null, null);
+//                connection.setSSLSocketFactory(sc.getSocketFactory());
                 connection.setConnectTimeout(UserConfig.getInt("WebConnectTimeout", 10000));
                 connection.setReadTimeout(UserConfig.getInt("WebReadTimeout", 10000));
-                connection.setRequestProperty("User-Agent", httpUserAgent);
+//                connection.setRequestProperty("User-Agent", httpUserAgent);
                 connection.connect();
                 if ("gzip".equalsIgnoreCase(connection.getContentEncoding())) {
                     try (final BufferedInputStream inStream = new BufferedInputStream(new GZIPInputStream(connection.getInputStream()));
@@ -89,7 +89,7 @@ public class HtmlReadTools {
             } else if ("http".equalsIgnoreCase(protocal)) {
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 //                connection.setRequestMethod("GET");
-                connection.setRequestProperty("User-Agent", httpUserAgent);
+//                connection.setRequestProperty("User-Agent", httpUserAgent);
                 connection.setConnectTimeout(UserConfig.getInt("WebConnectTimeout", 10000));
                 connection.setReadTimeout(UserConfig.getInt("WebReadTimeout", 10000));
                 connection.setUseCaches(false);
@@ -123,43 +123,67 @@ public class HtmlReadTools {
             }
             return tmpFile;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString() + " " + urlAddress);
+            MyBoxLog.console(e.toString() + " " + urlAddress);
             return null;
         }
     }
 
     public static String url2html(String urlAddress) {
         try {
-            File file = download(urlAddress);
-            if (file != null) {
+            if (urlAddress == null) {
                 return null;
             }
-            return TextFileTools.readTexts(file);
+            URL url;
+            try {
+                url = new URL(urlAddress);
+            } catch (Exception e) {
+                return null;
+            }
+            String protocal = url.getProtocol();
+            if ("file".equalsIgnoreCase(protocal)) {
+                return TextFileTools.readTexts(new File(url.getFile()));
+            } else if ("https".equalsIgnoreCase(protocal) || "http".equalsIgnoreCase(protocal)) {
+                Document doc = Jsoup.connect(url.toString()).get();
+                if (doc != null) {
+                    return doc.outerHtml();
+                }
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString() + " " + urlAddress);
-            return null;
         }
+        return null;
     }
 
-    public static org.jsoup.nodes.Document url2doc(String urlAddress) {
-        return file2doc(download(urlAddress));
+    public static Document url2doc(String urlAddress) {
+        try {
+            String html = url2html(urlAddress);
+            if (html != null) {
+                return Jsoup.parse(html);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString() + " " + urlAddress);
+        }
+        return null;
     }
 
-    public static org.jsoup.nodes.Document file2doc(File file) {
+    public static Document file2doc(File file) {
         try {
             if (file == null || !file.exists()) {
                 return null;
             }
-            return Jsoup.parse(TextFileTools.readTexts(file));
+            String html = TextFileTools.readTexts(file);
+            if (html != null) {
+                return Jsoup.parse(html);
+            }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString() + " " + file);
-            return null;
+            MyBoxLog.error(e.toString() + " " + file);
         }
+        return null;
     }
 
     public static String baseURI(String urlAddress) {
         try {
-            org.jsoup.nodes.Document doc = url2doc(urlAddress);
+            Document doc = url2doc(urlAddress);
             if (doc == null) {
                 return null;
             }
@@ -404,7 +428,7 @@ public class HtmlReadTools {
             if (html == null) {
                 return null;
             }
-            org.jsoup.nodes.Document doc = Jsoup.parse(html);
+            Document doc = Jsoup.parse(html);
             if (doc == null) {
                 return null;
             }
@@ -464,7 +488,7 @@ public class HtmlReadTools {
         if (html == null) {
             return null;
         }
-        org.jsoup.nodes.Document doc = Jsoup.parse(html);
+        Document doc = Jsoup.parse(html);
         Elements elements = doc.getElementsByTag("a");
         List<Link> links = new ArrayList<>();
         for (org.jsoup.nodes.Element element : elements) {
@@ -521,7 +545,7 @@ public class HtmlReadTools {
                 return null;
             }
             List<StringTable> tables = new ArrayList<>();
-            org.jsoup.nodes.Document doc = Jsoup.parse(html);
+            Document doc = Jsoup.parse(html);
             Elements tablesList = doc.getElementsByTag("table");
             String titlePrefix = name != null ? name + "_t_" : "t_";
             int count = 0;
@@ -574,11 +598,11 @@ public class HtmlReadTools {
             if (html == null || id == null || id.isBlank()) {
                 return html;
             }
-            org.jsoup.nodes.Document doc = Jsoup.parse(html);
+            Document doc = Jsoup.parse(html);
             org.jsoup.nodes.Element element = doc.getElementById(id);
             if (element != null) {
                 element.remove();
-                return doc.html();
+                return doc.outerHtml();
             } else {
                 return html;
             }

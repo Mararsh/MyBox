@@ -51,7 +51,7 @@ public class TextFileTools {
         }
         file.getParentFile().mkdirs();
         Charset fileCharset = charset != null ? charset : Charset.forName("utf-8");
-        try ( BufferedWriter writer = new BufferedWriter(new FileWriter(file, fileCharset, false))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, fileCharset, false))) {
             writer.write(data);
             writer.flush();
         } catch (Exception e) {
@@ -67,6 +67,9 @@ public class TextFileTools {
 
     public static Charset charset(File file) {
         try {
+            if (file == null || !file.exists()) {
+                return Charset.forName("utf-8");
+            }
             TextEditInformation info = new TextEditInformation(file);
             if (TextTools.checkCharset(info)) {
                 return info.getCharset();
