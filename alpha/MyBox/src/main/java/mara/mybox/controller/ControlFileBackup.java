@@ -307,7 +307,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
             @Override
             protected boolean handle() {
                 try {
-                    tableFileBackup.clearBackups(sourceFile.getAbsolutePath());
+                    tableFileBackup.clearBackups(task, sourceFile.getAbsolutePath());
                 } catch (Exception e) {
                     error = e.toString();
                     return false;

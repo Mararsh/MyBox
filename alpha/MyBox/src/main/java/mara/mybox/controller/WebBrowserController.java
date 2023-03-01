@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -53,6 +55,26 @@ public class WebBrowserController extends BaseController {
         try {
             super.initValues();
             tabControllers = new HashMap();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+                @Override
+                public void changed(ObservableValue ov, Tab oldValue, Tab newValue) {
+                    WebAddressController controller = tabControllers.get(newValue);
+                    if (controller != null) {
+                        setTitle(baseTitle + " - " + controller.webViewController.title());
+                    }
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

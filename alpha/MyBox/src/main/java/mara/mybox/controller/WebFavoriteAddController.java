@@ -66,6 +66,7 @@ public class WebFavoriteAddController extends TreeNodesController {
                 protected boolean handle() {
                     try {
                         data = new TreeNode();
+                        data.setCategory(category);
                         data.setTitle(title);
                         data.setValue(address);
                         File icon = IconTools.readIcon(address, true);

@@ -141,7 +141,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
 
                 @Override
                 protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
+                    try (Connection conn = DerbyBase.getConnection()) {
                         DataInternalTable dataTable = new DataInternalTable();
                         for (String name : DataInternalTable.InternalTables) {
                             if (tableData2DDefinition.queryTable(conn, name, Data2DDefinition.Type.InternalTable) == null) {
@@ -167,7 +167,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
 
                 @Override
                 protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
+                    try (Connection conn = DerbyBase.getConnection()) {
                         List<String> tables = DerbyBase.allTables(conn);
                         DataTable dataTable = new DataTable();
                         for (String referredName : tables) {
@@ -199,8 +199,8 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
 
     @Override
     public boolean checkBeforeLoadingTableData() {
-        try ( Connection conn = DerbyBase.getConnection();) {
-            tableData2DDefinition.clearInvalid(conn, false);
+        try (Connection conn = DerbyBase.getConnection();) {
+            tableData2DDefinition.clearInvalid(task, conn, false);
         } catch (Exception e) {
         }
         return true;
@@ -295,8 +295,8 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
         if (manageController instanceof Data2DManageController
                 || manageController instanceof DataTablesController) {
             boolean changed = false;
-            try ( Connection conn = DerbyBase.getConnection();
-                     Statement statement = conn.createStatement()) {
+            try (Connection conn = DerbyBase.getConnection();
+                    Statement statement = conn.createStatement()) {
                 for (Data2DDefinition item : data) {
                     if (item.isUserTable() && item.getSheet() != null) {
                         String referName = DerbyBase.fixedIdentifier(item.getSheet());
@@ -343,10 +343,10 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
             String sql = "SELECT d2did, sheet FROM " + tableData2DDefinition.getTableName()
                     + " WHERE  data_type = " + Data2D.type(Data2DDefinition.Type.DatabaseTable);
             boolean isCurrent = false;
-            try ( Connection conn = DerbyBase.getConnection();
-                     Statement query = conn.createStatement();
-                     Statement delete = conn.createStatement();
-                     ResultSet results = query.executeQuery(sql)) {
+            try (Connection conn = DerbyBase.getConnection();
+                    Statement query = conn.createStatement();
+                    Statement delete = conn.createStatement();
+                    ResultSet results = query.executeQuery(sql)) {
                 List<String> names = new ArrayList<>();
                 while (results.next()) {
                     names.add(results.getString("sheet"));

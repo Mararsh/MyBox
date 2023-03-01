@@ -32,6 +32,7 @@ import mara.mybox.db.table.TableUserConf;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -399,7 +400,7 @@ public class WindowTools {
             ImageClipboardTools.stopImageClipboardMonitor();
             TextClipboardTools.stopTextClipboardMonitor();
 
-            clearInvalidData();
+            clearExpiredData(null);
 
             if (AppVariables.scheduledTasks != null && !AppVariables.scheduledTasks.isEmpty()) {
                 if (UserConfig.getBoolean("StopAlarmsWhenExit")) {
@@ -451,28 +452,49 @@ public class WindowTools {
 
     }
 
-    public static void clearInvalidData() {
-        try {
-            MyBoxLog.info("clearing temporary data...");
+    public static void recordInfo(SingletonTask task, String info) {
+        if (task != null) {
+            task.setInfo(info);
+        } else {
+            MyBoxLog.console(info);
+        }
+    }
 
+    public static void recordError(SingletonTask task, String error) {
+        if (task != null) {
+            task.setError(error);
+        } else {
+            MyBoxLog.error(error);
+        }
+    }
+
+    public static void clearExpiredData(SingletonTask task) {
+        try {
+            recordInfo(task, message("ClearExpiredData") + "...");
+
+            recordInfo(task, message("Clear") + ": " + AppVariables.MyBoxTempPath);
             FileDeleteTools.clearDir(AppVariables.MyBoxTempPath);
 
-            try ( Connection conn = DerbyBase.getConnection()) {
+            try (Connection conn = DerbyBase.getConnection()) {
 
-                new TableImageClipboard().clearInvalid(conn);
+                new TableImageClipboard().clearInvalid(task, conn);
 
-                new TableImageEditHistory().clearInvalid(conn);
+                new TableImageEditHistory().clearInvalid(task, conn);
 
-                new TableFileBackup().clearInvalid(conn);
+                new TableFileBackup().clearInvalid(task, conn);
 
-                new TableData2DDefinition().clearInvalid(conn, true);
+                new TableData2DDefinition().clearInvalid(task, conn, true);
 
             } catch (Exception e) {
                 MyBoxLog.error(e);
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
         }
     }
 

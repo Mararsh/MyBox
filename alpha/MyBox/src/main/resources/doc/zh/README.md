@@ -10,8 +10,8 @@
 
 | 地址 | 文件 | 主页 | 
 | --- | --- | 
-| github | [https://github.com/Mararsh/MyBox/releases](https://github.com/Mararsh/MyBox/releases)  | [https://github.com/Mararsh/MyBox](https://github.com/Mararsh/MyBox)  |
-| sourceforge | [https://sourceforge.net/projects/mara-mybox/files/](https://sourceforge.net/projects/mara-mybox/files/)  | [https://mara-mybox.sourceforge.io/index.html](https://mara-mybox.sourceforge.io/index.html)  |
+| github | [https://github.com/Mararsh/MyBox/releases](https://github.com/Mararsh/MyBox/releases)  | [英文](https://mara-mybox.sourceforge.io/readme-en.html)   [中文](https://mara-mybox.sourceforge.io/readme-zh.html) |
+| sourceforge | [https://sourceforge.net/projects/mara-mybox/files/](https://sourceforge.net/projects/mara-mybox/files/)  | [英文](https://mara-mybox.sourceforge.io/readme-en.htm)  [中文](https://mara-mybox.sourceforge.io/readme-zh.htm) |
 | 云盘 | [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)   |  |
 
 

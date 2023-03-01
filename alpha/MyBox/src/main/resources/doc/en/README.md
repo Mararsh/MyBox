@@ -7,12 +7,12 @@ This is desktop application based on JavaFx to provide simple and easy functions
 Contents of this document may be expired, but its links refer to the latest versions.     
 
 The latest version can be downloaded in following addresses:             
-         
-| address | link | 
+
+| address | files | readme | 
 | --- | --- | 
-| github | [https://github.com/Mararsh/MyBox](https://github.com/Mararsh/MyBox)  |
-| sourceforge | [https://sourceforge.net/projects/mara-mybox/files/](https://sourceforge.net/projects/mara-mybox/files/)  |
-| cloud | [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)   |
+| github | [https://github.com/Mararsh/MyBox/releases](https://github.com/Mararsh/MyBox/releases)  | [English](https://mara-mybox.sourceforge.io/readme-en.html)   [Chinese](https://mara-mybox.sourceforge.io/readme-zh.html) |
+| sourceforge | [https://sourceforge.net/projects/mara-mybox/files/](https://sourceforge.net/projects/mara-mybox/files/)  | [English](https://mara-mybox.sourceforge.io/readme-en.htm)  [Chinese](https://mara-mybox.sourceforge.io/readme-zh.htm) |
+| cloud | [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)   |  |
 
 
 ## What's New                       

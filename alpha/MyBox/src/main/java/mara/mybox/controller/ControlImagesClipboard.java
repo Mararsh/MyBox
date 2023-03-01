@@ -203,7 +203,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
     @Override
     public List<ImageClipboard> readPageData(Connection conn) {
         try {
-            ((TableImageClipboard) tableDefinition).clearInvalid(conn);
+            ((TableImageClipboard) tableDefinition).clearInvalid(task, conn);
             return tableDefinition.queryConditions(conn, queryConditions, orderColumns, startRowOfCurrentPage, pageSize);
         } catch (Exception e) {
             MyBoxLog.error(e);

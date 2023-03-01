@@ -129,6 +129,9 @@ Tags:喜欢;;;0x0d3928ff;;;待补充;;;0xfff2dfff
 笔记本 > 笔记示例 > 网址
 娱乐-中文
 Tags:喜欢;;;0x0d3928ff;;;待补充;;;0xfff2dfff
+<a target=_blank href="https://tv.cctv.com/2022/08/27/VIDARmuWi2Ebs0b0NSsA1Ao7220827.shtml">诗画中国</a><br>
+<a target=_blank href="http://www.radio.cn/pc-portal/sanji/zhibo_2.html?channelname=0&name=1395534&title=radio">小喇叭</a><br>
+<a target=_blank href="http://www.radio.cn/pc-portal/sanji/zhibo_2.html?channelname=0&name=1395682&title=radio">品味书香</a><br>
 <a target=_blank href="https://www.qingting.fm">蜻蜓FM</a><br>
 <a target=_blank href="https://www.bilibili.com">哔哩哔哩</a><br>
 <a target=_blank href="https://www.youku.com">优酷</a><br>
@@ -137,7 +140,6 @@ Tags:喜欢;;;0x0d3928ff;;;待补充;;;0xfff2dfff
 <a target=_blank href="https://weibo.com">微博</a><br>
 <a target=_blank href="https://bbs.tianya.cn/">天涯</a><br>
 <a target=_blank href="https://www.lofter.com/">lofter</a><br>
-<a target=_blank href="https://www.qingting.fm/channels/138236/">小喇叭</a><br>
 <a target=_blank href="https://www.bilibili.com/video/BV1Px411P761">牡丹亭（1986年）张继青</a><br>
 <a target=_blank href="https://www.bilibili.com/video/BV1rs411n7Dd">白蛇传-杜近芳 叶盛兰（杜近芳 叶少兰）</a><br>
 <a target=_blank href="https://www.bilibili.com/video/BV11x411j7As">梁祝-范瑞娟 傅全香</a><br>

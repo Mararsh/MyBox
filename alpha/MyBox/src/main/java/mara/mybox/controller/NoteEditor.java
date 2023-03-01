@@ -68,6 +68,10 @@ public class NoteEditor extends ControlHtmlEditor {
         editNote(attributesController.currentNode);
     }
 
+    @Override
+    protected void updateStageTitle() {
+    }
+
     /*
         html
      */

@@ -65,7 +65,7 @@ public abstract class BaseTable<D> {
         if (sql == null || sql.isBlank()) {
             return null;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
             if (setColumnsValues(statement, primaryColumns, data, 1) < 0) {
                 return null;
             }
@@ -703,7 +703,7 @@ public abstract class BaseTable<D> {
     }
 
     public int conditionSize(String condition) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return conditionSize(conn, condition);
         } catch (Exception e) {
             MyBoxLog.error(e, tableName);
@@ -725,8 +725,8 @@ public abstract class BaseTable<D> {
             String sql = sizeStatement() + c;
             int size = 0;
             conn.setAutoCommit(true);
-            try ( PreparedStatement sizeQuery = conn.prepareStatement(sql);
-                     ResultSet results = sizeQuery.executeQuery()) {
+            try (PreparedStatement sizeQuery = conn.prepareStatement(sql);
+                    ResultSet results = sizeQuery.executeQuery()) {
                 if (results != null && results.next()) {
                     size = results.getInt(1);
                 }
@@ -746,7 +746,7 @@ public abstract class BaseTable<D> {
     }
 
     public boolean isEmpty(String sql) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return isEmpty(conn, sql);
         } catch (Exception e) {
@@ -759,8 +759,8 @@ public abstract class BaseTable<D> {
         try {
             boolean isEmpty = true;
             conn.setAutoCommit(true);
-            try ( PreparedStatement statement = conn.prepareStatement(sql);
-                     ResultSet results = statement.executeQuery()) {
+            try (PreparedStatement statement = conn.prepareStatement(sql);
+                    ResultSet results = statement.executeQuery()) {
                 isEmpty = results == null || !results.next();
             } catch (Exception e) {
                 MyBoxLog.error(e, sql);
@@ -1012,7 +1012,7 @@ public abstract class BaseTable<D> {
         if (data == null) {
             return null;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return readData(conn, data);
         } catch (Exception e) {
@@ -1023,8 +1023,8 @@ public abstract class BaseTable<D> {
 
     public D queryOne(String sql) {
         D data = null;
-        try ( Connection conn = DerbyBase.getConnection();
-                 PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (Connection conn = DerbyBase.getConnection();
+                PreparedStatement statement = conn.prepareStatement(sql)) {
             data = query(conn, statement);
         } catch (Exception e) {
             MyBoxLog.error(e, sql);
@@ -1040,7 +1040,7 @@ public abstract class BaseTable<D> {
             D data;
             statement.setMaxRows(1);
             conn.setAutoCommit(true);
-            try ( ResultSet results = statement.executeQuery()) {
+            try (ResultSet results = statement.executeQuery()) {
                 if (results.next()) {
                     data = readData(results);
                 } else {
@@ -1085,7 +1085,7 @@ public abstract class BaseTable<D> {
 
     public List<D> query(PreparedStatement statement) {
         List<D> dataList = new ArrayList<>();
-        try ( ResultSet results = statement.executeQuery()) {
+        try (ResultSet results = statement.executeQuery()) {
             while (results.next()) {
                 D data = readData(results);
                 if (data != null) {
@@ -1104,7 +1104,7 @@ public abstract class BaseTable<D> {
 
     public List<D> query(String sql, int max) {
         List<D> dataList = new ArrayList<>();
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             dataList = query(conn, sql, max);
         } catch (Exception e) {
             MyBoxLog.error(e, sql);
@@ -1118,7 +1118,7 @@ public abstract class BaseTable<D> {
 
     public List<D> query(Connection conn, String sql, int max) {
         List<D> dataList = new ArrayList<>();
-        try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
             if (max > 0) {
                 statement.setMaxRows(max);
             }
@@ -1149,7 +1149,7 @@ public abstract class BaseTable<D> {
         if (start < 0 || size <= 0) {
             return dataList;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return queryConditions(conn, condition, orderby, start, size);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -1205,7 +1205,7 @@ public abstract class BaseTable<D> {
         if (!valid(data)) {
             return null;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return writeData(conn, data);
         } catch (Exception e) {
             MyBoxLog.error(e, tableName);
@@ -1235,7 +1235,7 @@ public abstract class BaseTable<D> {
     }
 
     public D insertData(D data) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return insertData(conn, data);
         } catch (Exception e) {
             MyBoxLog.error(e, tableName);
@@ -1249,7 +1249,7 @@ public abstract class BaseTable<D> {
             return null;
         }
         String sql = insertStatement();
-        try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
             return insertData(conn, statement, data);
         } catch (Exception e) {
             MyBoxLog.error(e, sql);
@@ -1268,8 +1268,8 @@ public abstract class BaseTable<D> {
                     if (idColumnName != null) {
 //                        boolean ac = conn.getAutoCommit();
 //                        conn.setAutoCommit(true);
-                        try ( Statement query = conn.createStatement();
-                                 ResultSet resultSet = query.executeQuery("VALUES IDENTITY_VAL_LOCAL()")) {
+                        try (Statement query = conn.createStatement();
+                                ResultSet resultSet = query.executeQuery("VALUES IDENTITY_VAL_LOCAL()")) {
                             if (resultSet.next()) {
                                 newID = resultSet.getLong(1);
                                 setValue(data, idColumnName, newID);
@@ -1294,7 +1294,7 @@ public abstract class BaseTable<D> {
             return -1;
         }
         int count = -1;
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             conn.setAutoCommit(false);
             count = insertList(conn, dataList);
             conn.commit();
@@ -1310,7 +1310,7 @@ public abstract class BaseTable<D> {
         }
         String sql = insertStatement();
         int count = 0;
-        try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
             for (D data : dataList) {
                 if (setInsertStatement(conn, statement, data)) {
                     count += statement.executeUpdate();
@@ -1323,7 +1323,7 @@ public abstract class BaseTable<D> {
     }
 
     public D updateData(D data) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return updateData(conn, data);
         } catch (Exception e) {
             MyBoxLog.error(e, tableName);
@@ -1335,7 +1335,7 @@ public abstract class BaseTable<D> {
         if (conn == null || !valid(data)) {
             return null;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(updateStatement())) {
+        try (PreparedStatement statement = conn.prepareStatement(updateStatement())) {
             return updateData(conn, statement, data);
         } catch (Exception e) {
             MyBoxLog.error(e, tableName);
@@ -1369,7 +1369,7 @@ public abstract class BaseTable<D> {
             return -1;
         }
         int count = -1;
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             conn.setAutoCommit(false);
             count = updateList(conn, dataList);
             conn.commit();
@@ -1385,7 +1385,7 @@ public abstract class BaseTable<D> {
         }
         String sql = updateStatement();
         int count = 0;
-        try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
             for (int i = 0; i < dataList.size(); ++i) {
                 D data = dataList.get(i);
                 if (!setDeleteStatement(conn, statement, data)) {
@@ -1446,7 +1446,7 @@ public abstract class BaseTable<D> {
         if (conn == null || sql == null) {
             return -1;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
             return statement.executeUpdate();
         } catch (Exception e) {
             MyBoxLog.error(e, sql);
@@ -1455,7 +1455,7 @@ public abstract class BaseTable<D> {
     }
 
     public int deleteData(D data) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return deleteData(conn, data);
         } catch (Exception e) {
             MyBoxLog.error(e, tableName);
@@ -1464,7 +1464,7 @@ public abstract class BaseTable<D> {
     }
 
     public int deleteData(Connection conn, D data) {
-        try ( PreparedStatement statement = conn.prepareStatement(deleteStatement())) {
+        try (PreparedStatement statement = conn.prepareStatement(deleteStatement())) {
             setDeleteStatement(conn, statement, data);
             return statement.executeUpdate();
         } catch (Exception e) {
@@ -1477,7 +1477,7 @@ public abstract class BaseTable<D> {
         if (dataList == null || dataList.isEmpty()) {
             return 0;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return deleteData(conn, dataList);
         } catch (Exception e) {
             MyBoxLog.error(e, tableName);
@@ -1490,7 +1490,7 @@ public abstract class BaseTable<D> {
             return 0;
         }
         int count = 0;
-        try ( PreparedStatement statement = conn.prepareStatement(deleteStatement())) {
+        try (PreparedStatement statement = conn.prepareStatement(deleteStatement())) {
             conn.setAutoCommit(false);
             for (int i = 0; i < dataList.size(); ++i) {
                 D data = dataList.get(i);
@@ -1529,7 +1529,7 @@ public abstract class BaseTable<D> {
     }
 
     public long clearData() {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return clearData(conn);
         } catch (Exception e) {
             MyBoxLog.error(e, tableName);
@@ -1540,12 +1540,12 @@ public abstract class BaseTable<D> {
     public long clearData(Connection conn) {
         int count = -1;
         String clearSQL = "DELETE FROM " + DerbyBase.fixedIdentifier(tableName);
-        try ( PreparedStatement clear = conn.prepareStatement(clearSQL)) {
+        try (PreparedStatement clear = conn.prepareStatement(clearSQL)) {
             count = clear.executeUpdate();
             if (count >= 0 && idColumnName != null) {
                 String resetSQL = "ALTER TABLE " + DerbyBase.fixedIdentifier(tableName)
                         + " ALTER COLUMN " + idColumnName + " RESTART WITH 1";
-                try ( PreparedStatement reset = conn.prepareStatement(resetSQL)) {
+                try (PreparedStatement reset = conn.prepareStatement(resetSQL)) {
                     reset.executeUpdate();
                 } catch (Exception e) {
                     MyBoxLog.error(e, resetSQL);
@@ -1558,7 +1558,7 @@ public abstract class BaseTable<D> {
     }
 
     public BaseTable readDefinitionFromDB(String tableName) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return readDefinitionFromDB(conn, tableName);
         } catch (Exception e) {
             MyBoxLog.error(e, tableName);
@@ -1575,7 +1575,7 @@ public abstract class BaseTable<D> {
             tableName = tname;
             String savedTableName = DerbyBase.savedName(tname);
             DatabaseMetaData dbMeta = conn.getMetaData();
-            try ( ResultSet resultSet = dbMeta.getColumns(null, "MARA", savedTableName, "%")) {
+            try (ResultSet resultSet = dbMeta.getColumns(null, "MARA", savedTableName, "%")) {
                 while (resultSet.next()) {
                     String savedColumnName = resultSet.getString("COLUMN_NAME");
                     String referredName = DerbyBase.fixedIdentifier(savedColumnName);
@@ -1597,7 +1597,7 @@ public abstract class BaseTable<D> {
                 MyBoxLog.error(e, tableName);
             }
             primaryColumns = new ArrayList<>();
-            try ( ResultSet resultSet = dbMeta.getPrimaryKeys(null, "MARA", savedTableName)) {
+            try (ResultSet resultSet = dbMeta.getPrimaryKeys(null, "MARA", savedTableName)) {
                 while (resultSet.next()) {
                     String savedColumnName = resultSet.getString("COLUMN_NAME");
                     String referredName = DerbyBase.fixedIdentifier(savedColumnName);
@@ -1617,7 +1617,7 @@ public abstract class BaseTable<D> {
 //                MyBoxLog.console(e);
             }
             foreignColumns = new ArrayList<>();
-            try ( ResultSet resultSet = dbMeta.getImportedKeys(null, "MARA", savedTableName)) {
+            try (ResultSet resultSet = dbMeta.getImportedKeys(null, "MARA", savedTableName)) {
                 while (resultSet.next()) {
                     String savedColumnName = resultSet.getString("FKCOLUMN_NAME");
                     String referredName = DerbyBase.fixedIdentifier(savedColumnName);
@@ -1636,7 +1636,7 @@ public abstract class BaseTable<D> {
             } catch (Exception e) {
             }
             referredColumns = new ArrayList<>();
-            try ( ResultSet resultSet = dbMeta.getExportedKeys(null, "MARA", savedTableName)) {
+            try (ResultSet resultSet = dbMeta.getExportedKeys(null, "MARA", savedTableName)) {
                 while (resultSet.next()) {
                     String savedColumnName = resultSet.getString("PKCOLUMN_NAME");
                     String referredName = DerbyBase.fixedIdentifier(savedColumnName);

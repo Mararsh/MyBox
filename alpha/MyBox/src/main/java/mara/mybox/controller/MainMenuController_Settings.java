@@ -390,4 +390,9 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
         parentController.clearUserSettings();
     }
 
+    @FXML
+    public void clearExpiredData(ActionEvent event) {
+        parentController.clearExpiredData();
+    }
+
 }

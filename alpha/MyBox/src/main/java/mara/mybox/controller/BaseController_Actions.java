@@ -22,6 +22,7 @@ import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
+import static mara.mybox.fxml.WindowTools.recordError;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -343,6 +344,38 @@ public abstract class BaseController_Actions extends BaseController_Interface {
             };
             start(task);
         }
+    }
+
+    public void clearExpiredData() {
+        if (task != null && !task.isQuit()) {
+            return;
+        }
+        task = new SingletonTask<Void>(myController) {
+
+            private String info;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    WindowTools.clearExpiredData(task);
+                    info = task.getInfo();
+                    return true;
+                } catch (Exception e) {
+                    recordError(task, e.toString());
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (info != null && !info.isBlank()) {
+                    TextPopController.loadText(myController, info);
+                } else {
+                    popSuccessful();
+                }
+            }
+        };
+        start(task);
     }
 
     public void view(File file) {

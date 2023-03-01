@@ -465,8 +465,9 @@ License:    Apache License Version 2.0
 
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openDataPath" text="%OpenDataPath" />
-                                <MenuItem mnemonicParsing="false" onAction="#editConfigFile" text="%EditConfigFile" />
                                 <MenuItem mnemonicParsing="false" onAction="#clearSettings" text="%ClearPersonalSettings" />
+                                <MenuItem mnemonicParsing="false" onAction="#clearExpiredData" text="%ClearExpiredData" />
+                                <MenuItem mnemonicParsing="false" onAction="#editConfigFile" text="%EditConfigFile" />
                             </items>
                         </Menu>
                         <Menu fx:id="recentMenu" mnemonicParsing="false" text="%RecentAccessed">

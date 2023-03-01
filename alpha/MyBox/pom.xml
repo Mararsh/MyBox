@@ -264,7 +264,6 @@
                     <debug>false</debug>
                     <compilerArgs>
                         <!--<arg>-Xlint:unchecked</arg>-->
-
                     </compilerArgs>
                 </configuration>
             </plugin>

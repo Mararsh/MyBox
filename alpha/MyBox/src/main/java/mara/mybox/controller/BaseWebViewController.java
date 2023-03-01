@@ -177,17 +177,15 @@ public class BaseWebViewController extends BaseController {
         popError(message("InvalidAddress"));
     }
 
+    public String title() {
+        return getBaseTitle() + "  " + webViewController.title();
+    }
+
     protected void updateStageTitle() {
         if (getMyStage() == null) {
             return;
         }
-        String title = getBaseTitle();
-        if (sourceFile != null) {
-            title += "  " + sourceFile.getAbsolutePath();
-        } else if (webViewController != null && webViewController.address != null) {
-            title += "  " + webViewController.address;
-        }
-        myStage.setTitle(title);
+        myStage.setTitle(title());
     }
 
     protected void setWebViewLabel(String string) {

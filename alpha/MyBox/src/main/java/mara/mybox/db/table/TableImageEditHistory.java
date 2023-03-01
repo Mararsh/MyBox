@@ -14,10 +14,14 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
+import static mara.mybox.fxml.WindowTools.recordError;
+import static mara.mybox.fxml.WindowTools.recordInfo;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppPaths;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -30,6 +34,12 @@ import mara.mybox.value.UserConfig;
 public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
 
     public static final int Default_Max_Histories = 20;
+
+    public static final String FileQuery
+            = "SELECT * FROM Image_Edit_History  WHERE image_location=? ORDER BY operation_time DESC";
+
+    public static final String DeleteFile
+            = "DELETE FROM Image_Edit_History  WHERE image_location=?";
 
     public TableImageEditHistory() {
         tableName = "Image_Edit_History";
@@ -66,11 +76,11 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
             max = TableImageEditHistory.Default_Max_Histories;
             UserConfig.setInt("MaxImageHistories", Default_Max_Histories);
         }
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection();
+                Statement statement = conn.createStatement()) {
             List<ImageEditHistory> invalid = new ArrayList<>();
             String sql = " SELECT * FROM Image_Edit_History WHERE image_location='" + filename + "' ORDER BY operation_time DESC";
-            try ( ResultSet results = statement.executeQuery(sql)) {
+            try (ResultSet results = statement.executeQuery(sql)) {
                 while (results.next()) {
                     ImageEditHistory his = new ImageEditHistory();
                     his.setImage(filename);
@@ -104,7 +114,7 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
         }
         String sql = "DELETE FROM Image_Edit_History WHERE image_location='" + image
                 + "' AND history_location='" + hisname + "'";
-        try ( Statement statement = conn.createStatement()) {
+        try (Statement statement = conn.createStatement()) {
             statement.executeUpdate(sql);
         } catch (Exception e) {
             MyBoxLog.error(e, sql);
@@ -129,7 +139,7 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
                 || his_location == null || his_location.trim().isEmpty()) {
             return read(image);
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             String fields = "image_location, history_location ,operation_time ";
             String values = " '" + image + "', '" + his_location + "', '" + DateTools.datetimeToString(new Date()) + "' ";
             if (update_type != null) {
@@ -168,7 +178,7 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
         if (his == null || his.getImage() == null) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             String fields = "image_location, history_location ,operation_time ";
             String values = " '" + his.getImage() + "', '" + his.getHistoryLocation()
                     + "', '" + DateTools.datetimeToString(his.getOperationTime()) + "' ";
@@ -207,7 +217,7 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
             return true;
         }
         List<ImageEditHistory> records = read(image);
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             conn.setAutoCommit(false);
             for (int i = 0; i < records.size(); ++i) {
                 deleteRecord(conn, image, records.get(i).getHistoryLocation());
@@ -221,7 +231,7 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
     }
 
     public static boolean deleteHistory(String image, String hisname) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             deleteRecord(conn, image, hisname);
             return true;
         } catch (Exception e) {
@@ -230,11 +240,11 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
         }
     }
 
-    public int clear() {
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement statement = conn.createStatement()) {
+    public int clearAll() {
+        try (Connection conn = DerbyBase.getConnection();
+                Statement statement = conn.createStatement()) {
             String sql = " SELECT history_location FROM Image_Edit_History";
-            try ( ResultSet results = statement.executeQuery(sql)) {
+            try (ResultSet results = statement.executeQuery(sql)) {
                 while (results.next()) {
                     FileDeleteTools.delete(results.getString("history_location"));
                 }
@@ -257,24 +267,80 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
         }
     }
 
-    public int clearInvalid(Connection conn) {
+    public void clearHistories(SingletonTask task, Connection conn, List<String> files) {
+        if (conn == null || files == null || files.isEmpty()) {
+            return;
+        }
+        recordInfo(task, FileQuery);
+        try (PreparedStatement statement = conn.prepareStatement(FileQuery)) {
+            conn.setAutoCommit(true);
+            for (String file : files) {
+                recordInfo(task, message("Check") + ": " + file);
+                statement.setString(1, file);
+                try (ResultSet results = statement.executeQuery()) {
+                    while (results.next()) {
+                        ImageEditHistory data = readData(results);
+                        recordInfo(task, message("Delete") + ": " + data.getHistoryLocation());
+                        FileDeleteTools.delete(data.getHistoryLocation());
+                    }
+                } catch (Exception e) {
+                    recordError(task, e.toString() + "\n" + tableName);
+                }
+            }
+        } catch (Exception e) {
+            recordError(task, e.toString() + "\n" + tableName);
+        }
+        recordInfo(task, DeleteFile);
+        try (PreparedStatement statement = conn.prepareStatement(DeleteFile)) {
+            for (String file : files) {
+                recordInfo(task, message("Clear") + ": " + file);
+                statement.setString(1, file);
+                statement.executeUpdate();
+            }
+        } catch (Exception e) {
+            recordError(task, e.toString() + "\n" + tableName);
+        }
+    }
+
+    public int clearInvalid(SingletonTask task, Connection conn) {
         int count = 0;
         try {
+            recordInfo(task, message("Check") + ": " + tableName);
             conn.setAutoCommit(true);
             List<ImageEditHistory> invalid = new ArrayList<>();
-            try ( PreparedStatement query = conn.prepareStatement(queryAllStatement());
-                     ResultSet results = query.executeQuery()) {
+            List<String> clear = new ArrayList<>();
+            try (PreparedStatement query = conn.prepareStatement(queryAllStatement());
+                    ResultSet results = query.executeQuery()) {
                 while (results.next()) {
                     ImageEditHistory data = readData(results);
-                    if (data.getHistoryLocation() == null || !new File(data.getHistoryLocation()).exists()) {
+                    String image = data.getImage();
+                    if (image == null) {
                         invalid.add(data);
+                        continue;
+                    }
+                    File imageFile = new File(image);
+                    if (!imageFile.exists()) {
+                        clear.add(imageFile.getAbsolutePath());
+                        recordInfo(task, message("NotFound") + ": " + image);
+                    } else {
+                        String his = data.getHistoryLocation();
+                        if (his == null) {
+                            invalid.add(data);
+                            continue;
+                        }
+                        File hisFile = new File(his);
+                        if (!hisFile.exists()) {
+                            invalid.add(data);
+                            recordInfo(task, message("NotFound") + ": " + his);
+                        }
                     }
                 }
-
             } catch (Exception e) {
                 MyBoxLog.debug(e, tableName);
             }
-            count = invalid.size();
+            count = clear.size() + invalid.size();
+            recordInfo(task, message("Invalid") + ": " + clear.size() + " + " + invalid.size());
+            clearHistories(task, conn, clear);
             deleteData(conn, invalid);
             conn.setAutoCommit(true);
         } catch (Exception e) {

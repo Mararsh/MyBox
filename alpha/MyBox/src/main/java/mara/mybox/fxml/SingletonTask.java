@@ -41,6 +41,13 @@ public class SingletonTask<Void> extends BaseTask<Void> {
         MyBoxLog.error(error);
     }
 
+    public String getInfo() {
+        if (loading == null) {
+            return null;
+        }
+        return loading.getInfo();
+    }
+
     @Override
     protected void whenSucceeded() {
         if (controller != null) {

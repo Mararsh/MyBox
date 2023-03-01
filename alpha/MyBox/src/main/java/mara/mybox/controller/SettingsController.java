@@ -1028,7 +1028,7 @@ public class SettingsController extends BaseController {
 
     private void checkRecentFile() {
         try {
-            int v = Integer.valueOf(fileRecentInput.getText());
+            int v = Integer.parseInt(fileRecentInput.getText());
             if (v >= 0) {
                 recentFileNumber = v;
                 fileRecentInput.setStyle(null);
@@ -1048,7 +1048,7 @@ public class SettingsController extends BaseController {
         if (!PopTools.askSure(this, getBaseTitle(), message("SureClear"))) {
             return;
         }
-        new TableImageEditHistory().clear();
+        new TableImageEditHistory().clearAll();
         popSuccessful();
     }
 
