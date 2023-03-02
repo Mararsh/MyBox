@@ -38,10 +38,12 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
+import javafx.scene.web.PromptData;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebErrorEvent;
 import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
+import javafx.util.Callback;
 import mara.mybox.data.HtmlElement;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.ImageClipboard;
@@ -50,6 +52,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeTools;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
@@ -218,39 +221,20 @@ public class ControlWebView extends BaseController {
                 }
             });
 
-//            webEngine.setPromptHandler(new Callback< PromptData, String>() {
-//                @Override
-//                public String call(PromptData p) {
-////                    MyBoxLog.console("here:" + p.getMessage());
-//                    String value = PopTools.askValue(
-//                            parentController != null ? parentController.getBaseTitle() : myController.getBaseTitle(),
-//                            null, p.getMessage(), p.getDefaultValue());
-//                    return value;
-//                }
-//            });
-//            webEngine.setConfirmHandler(new Callback< String, Boolean>() {
-//                @Override
-//                public Boolean call(String message) {
-//                    try {
-////                        MyBoxLog.console("here:" + message);
-//                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//                        alert.setTitle(parentController != null ? parentController.getBaseTitle() : myController.getBaseTitle());
-//                        alert.setHeaderText(null);
-//                        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-//                        alert.getDialogPane().setContent(new Label(message));
-//                        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-//                        stage.setAlwaysOnTop(true);
-//                        stage.toFront();
-//                        alert.getButtonTypes().addAll(ButtonType.YES, ButtonType.NO);
-//                        Optional<ButtonType> result = alert.showAndWait();
-//                        return result != null && result.get() == ButtonType.YES;
-//                    } catch (Exception e) {
-//                        MyBoxLog.error(e.toString());
-//                        return false;
-//                    }
-//
-//                }
-//            });
+            webEngine.setPromptHandler(new Callback< PromptData, String>() {
+                @Override
+                public String call(PromptData p) {
+                    return prompt(p);
+                }
+            });
+
+            webEngine.setConfirmHandler(new Callback< String, Boolean>() {
+                @Override
+                public Boolean call(String message) {
+                    return confirm(message);
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -270,11 +254,17 @@ public class ControlWebView extends BaseController {
                         succeeded();
                         break;
                     case CANCELLED:
+                        if (timer != null) {
+                            timer.cancel();
+                        }
                         if (webViewLabel != null) {
                             webViewLabel.setText(message("Canceled"));
                         }
                         break;
                     case FAILED:
+                        if (timer != null) {
+                            timer.cancel();
+                        }
                         if (webViewLabel != null) {
                             webViewLabel.setText(message("Failed"));
                         }
@@ -301,36 +291,6 @@ public class ControlWebView extends BaseController {
                     parentController.closePopup();
                 }
             });
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void frameIndexReady(int frameIndex) {
-        try {
-//            MyBoxLog.console(frameIndex);
-            if (framesDoc.containsKey(frameIndex)) {
-                return;
-            }
-            Timer atimer = new Timer();
-            atimer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    Platform.runLater(() -> {
-                        setFrameListener(frameIndex);
-                    });
-                }
-            }, 500);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void frameNameReady(String frameName) {
-        try {
-            int frameIndex = WebViewTools.frameIndex(webEngine, frameName);
-//            MyBoxLog.console(frameName + "   " + frameIndex);
-            frameIndexReady(frameIndex);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -492,13 +452,30 @@ public class ControlWebView extends BaseController {
         }
     }
 
+    public String prompt(PromptData p) {
+        try {
+            return PopTools.askValue(getTitle(), null, p.getMessage(), p.getDefaultValue());
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return null;
+    }
+
+    public Boolean confirm(String message) {
+        try {
+            return PopTools.askSure(getTitle(), message);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return false;
+        }
+    }
+
     /*
         status
      */
     private void ready() {
         try {
-            charset = Charset.defaultCharset();
-            framesDoc.clear();
+            clearDoc();
             pageLoadingNotify.set(!pageLoadingNotify.get());
         } catch (Exception e) {
             MyBoxLog.console(e);
@@ -549,31 +526,12 @@ public class ControlWebView extends BaseController {
                 return;
             }
             EventTarget t = (EventTarget) doc.getDocumentElement();
-
             t.addEventListener("contextmenu", docListener, true);
             t.addEventListener("click", docListener, true);
             t.addEventListener("mouseover", docListener, true);
             t.addEventListener("mouseout", docListener, true);
         } catch (Exception e) {
             MyBoxLog.console(e);
-        }
-    }
-
-    protected void setFrameListener(int frameIndex) {
-        try {
-            if (frameIndex < 0) {
-                return;
-            }
-            Object c = executeScript("window.frames[" + frameIndex + "].document");
-            if (c == null) {
-                return;
-            }
-            Document frame = (Document) c;
-            framesDoc.put(frameIndex, frame);
-
-            setDocListeners(frame);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
         }
     }
 
@@ -639,6 +597,74 @@ public class ControlWebView extends BaseController {
         }
     }
 
+    public void frameIndexReady(int frameIndex) {
+        try {
+//            MyBoxLog.console(frameIndex);
+            if (framesDoc.containsKey(frameIndex)) {
+                return;
+            }
+            Timer atimer = new Timer();
+            atimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Platform.runLater(() -> {
+                        setFrameListener(frameIndex);
+                    });
+                }
+            }, 500);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void frameNameReady(String frameName) {
+        try {
+            int frameIndex = WebViewTools.frameIndex(webEngine, frameName);
+//            MyBoxLog.console(frameName + "   " + frameIndex);
+            frameIndexReady(frameIndex);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    protected void setFrameListener(int frameIndex) {
+        try {
+            if (frameIndex < 0) {
+                return;
+            }
+            Object c = executeScript("window.frames[" + frameIndex + "].document");
+            if (c == null) {
+                return;
+            }
+            Document frame = (Document) c;
+            framesDoc.put(frameIndex, frame);
+
+            setDocListeners(frame);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    private void clearDoc() {
+        try {
+            if (timer != null) {
+                timer.cancel();
+            }
+            Document doc = webEngine.getDocument();
+            if (doc != null) {
+                EventTarget t = (EventTarget) doc.getDocumentElement();
+                t.removeEventListener("contextmenu", docListener, true);
+                t.removeEventListener("click", docListener, true);
+                t.removeEventListener("mouseover", docListener, true);
+                t.removeEventListener("mouseout", docListener, true);
+            }
+            framesDoc.clear();
+            charset = Charset.defaultCharset();
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+        }
+    }
+
     /*
         value
      */
@@ -673,7 +699,7 @@ public class ControlWebView extends BaseController {
     public String title() {
         String title = webEngine.getTitle();
         if (title == null) {
-            title = address == null ? message("Some") : address;
+            title = address;
         }
         return title;
     }
@@ -818,11 +844,15 @@ public class ControlWebView extends BaseController {
         String name = htmlElement.getName();
         List<MenuItem> items = new ArrayList<>();
         boolean showName = name != null && !name.isBlank() && !name.equalsIgnoreCase(href);
-        String title = (showName ? message("Name") + ": " + name + "\n" : "")
-                + message("Link") + ": " + URLDecoder.decode(href, charset)
-                + (!linkAddress.equalsIgnoreCase(href) ? "\n" + message("Address") + ": "
-                + finalAddress : "");
-        MenuItem menu = new MenuItem(StringTools.menuPrefix(title));
+        String title = "";
+        if (showName) {
+            title = message("Name") + ": " + StringTools.menuPrefix(name) + "\n";
+        }
+        title += message("Link") + ": " + StringTools.menuPrefix(URLDecoder.decode(href, charset));
+        if (!linkAddress.equalsIgnoreCase(href)) {
+            title += "\n" + message("Address") + ": " + StringTools.menuPrefix(finalAddress);
+        }
+        MenuItem menu = new MenuItem(title);
         menu.setStyle("-fx-text-fill: #2e598a;");
         items.add(menu);
         items.add(new SeparatorMenuItem());
@@ -841,9 +871,7 @@ public class ControlWebView extends BaseController {
 
         menu = new MenuItem(message("AddAsFavorite"), StyleTools.getIconImageView("iconStar.png"));
         menu.setOnAction((ActionEvent event) -> {
-            WebFavoriteAddController controller = (WebFavoriteAddController) WindowTools.openStage(Fxmls.WebFavoriteAddFxml);
-            controller.setValues(name == null || name.isBlank() ? finalAddress : name, finalAddress);
-
+            WebFavoriteAddController.open(name, finalAddress);
         });
         items.add(menu);
 
@@ -1256,13 +1284,10 @@ public class ControlWebView extends BaseController {
             Menu viewMenu = new Menu(message("View"), StyleTools.getIconImageView("iconView.png"));
             items.add(viewMenu);
 
-            String title = title();
-            if (title != null && !title.isBlank() && address != null && !address.isBlank()) {
+            if (address != null && !address.isBlank()) {
                 menu = new MenuItem(message("AddAsFavorite"), StyleTools.getIconImageView("iconStar.png"));
                 menu.setOnAction((ActionEvent event) -> {
-                    WebFavoriteAddController controller = (WebFavoriteAddController) WindowTools.openStage(Fxmls.WebFavoriteAddFxml);
-                    controller.setValues(title, address);
-
+                    WebFavoriteAddController.open(title(), address);
                 });
                 viewMenu.getItems().add(menu);
             }

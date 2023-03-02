@@ -316,7 +316,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
     }
 
     public void clearUserSettings() {
-        if (!PopTools.askSure(myController, getBaseTitle(), message("ClearPersonalSettings"), message("SureClear"))) {
+        if (!PopTools.askSure(getTitle(), message("ClearPersonalSettings"), message("SureClear"))) {
             return;
         }
         synchronized (this) {

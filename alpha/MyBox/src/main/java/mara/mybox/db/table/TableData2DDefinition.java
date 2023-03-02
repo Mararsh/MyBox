@@ -302,10 +302,10 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         try {
             recordInfo(task, message("Check") + ": " + tableName);
             conn.setAutoCommit(true);
-            recordInfo(task, Delete_InvalidExcelSheet);
+//            recordInfo(task, Delete_InvalidExcelSheet);
             update(conn, Delete_InvalidExcelSheet);
             String sql = "SELECT * FROM Data2D_Definition WHERE data_type < 4";
-            recordInfo(task, sql);
+//            recordInfo(task, sql);
             List<Data2DDefinition> invalid = new ArrayList<>();
             try (ResultSet results = conn.prepareStatement(sql).executeQuery()) {
                 while (results.next()) {
@@ -332,7 +332,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             invalid.clear();
             sql = "SELECT * FROM Data2D_Definition WHERE data_type ="
                     + Data2D.type(Data2DDefinition.Type.DatabaseTable);
-            recordInfo(task, sql);
+//            recordInfo(task, sql);
             try (ResultSet results = conn.prepareStatement(sql).executeQuery()) {
                 while (results.next()) {
                     Data2DDefinition data = readData(results);
@@ -353,7 +353,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
                         + Data2D.type(Data2DDefinition.Type.DatabaseTable)
                         + " AND ( sheet like '" + TmpTable.TmpTablePrefix + "%'"
                         + " OR sheet like '" + TmpTable.TmpTablePrefix.toLowerCase() + "%' )";
-                recordInfo(task, sql);
+//                recordInfo(task, sql);
                 try (ResultSet results = conn.prepareStatement(sql).executeQuery()) {
                     while (results.next()) {
                         Data2DDefinition data = readData(results);

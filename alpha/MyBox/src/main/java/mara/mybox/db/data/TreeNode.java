@@ -49,14 +49,6 @@ public class TreeNode extends BaseData {
         init();
     }
 
-//    public TreeNode(TreeNode parent, String title, String value, String more) {
-//        init();
-//        this.parentid = parent.getNodeid();
-//        this.category = parent.getCategory();
-//        this.title = title;
-//        this.value = value;
-//        this.more = more;
-//    }
     public TreeNode(TreeNode parent, String title) {
         init();
         this.parentid = parent.getNodeid();

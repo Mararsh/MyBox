@@ -184,12 +184,12 @@ public class PopTools {
         return value;
     }
 
-    public static boolean askSure(BaseController controller, String title, String sureString) {
-        return askSure(controller, title, null, sureString);
+    public static boolean askSure(String title, String sureString) {
+        return askSure(title, null, sureString);
     }
 
     // https://openjfx.io/javadoc/17/javafx.controls/javafx/scene/control/Dialog.html
-    public static boolean askSure(BaseController controller, String title, String header, String sureString) {
+    public static boolean askSure(String title, String header, String sureString) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(title);
         if (header != null) {

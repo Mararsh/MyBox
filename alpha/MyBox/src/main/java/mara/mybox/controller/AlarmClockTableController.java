@@ -115,7 +115,7 @@ public class AlarmClockTableController extends BaseController {
     @FXML
     @Override
     public void clearAction() {
-        if (!PopTools.askSure(myController, myStage.getTitle(), Languages.message("SureClearAlarmClocks"))) {
+        if (!PopTools.askSure(getTitle(), Languages.message("SureClearAlarmClocks"))) {
             return;
         }
         tableData.clear();

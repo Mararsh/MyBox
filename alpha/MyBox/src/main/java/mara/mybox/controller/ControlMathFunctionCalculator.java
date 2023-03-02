@@ -286,7 +286,7 @@ public class ControlMathFunctionCalculator extends BaseController {
                 }
                 num *= Math.ceil((split.to - split.from) / split.interval()) + 1;
             }
-            return num <= 5000 || PopTools.askSure(myController, null,
+            return num <= 5000 || PopTools.askSure( null,
                     message("SureContinueGenerateLotsData") + "\n"
                     + message("DataSize") + " ~= " + num);
         } catch (Exception e) {

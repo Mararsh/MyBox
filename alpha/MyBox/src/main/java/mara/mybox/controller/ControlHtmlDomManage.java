@@ -8,9 +8,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
 import mara.mybox.data.HtmlNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.StyleTools;
@@ -32,7 +33,9 @@ public class ControlHtmlDomManage extends BaseHtmlDomTreeController {
     @FXML
     protected ControlHtmlDomNode nodeController;
     @FXML
-    protected VBox elementBox;
+    protected TextArea codesArea;
+    @FXML
+    protected Tab attributesTab, codesTab;
 
     public void setEditor(ControlHtmlEditor htmlEditor) {
         try {
@@ -270,7 +273,7 @@ public class ControlHtmlDomManage extends BaseHtmlDomTreeController {
     protected void clearDom() {
         super.clearDom();
         nodeController.load(null);
-        elementBox.setDisable(true);
+        tabPane.setDisable(true);
     }
 
     /*
@@ -278,30 +281,55 @@ public class ControlHtmlDomManage extends BaseHtmlDomTreeController {
      */
     public void editNode(TreeItem<HtmlNode> item) {
         currentItem = item;
-        if (item == null) {
-            elementBox.setDisable(true);
+        if (currentItem == null) {
+            tabPane.setDisable(true);
             return;
         }
-        nodeController.load(item.getValue().getElement());
-        elementBox.setDisable(false);
+        Element element = currentItem.getValue().getElement();
+        nodeController.load(element);
+        codesArea.setText(element.html());
+        tabPane.setDisable(false);
     }
 
     @FXML
-    public void okNode() {
+    public void okAttrs() {
         if (currentItem == null) {
             return;
         }
-        Element e = nodeController.pickValues();
-        if (e == null) {
-            popError(message("Invalid"));
+        okNode(nodeController.pickValues());
+    }
+
+    public void okNode(Element element) {
+        if (currentItem == null || element == null) {
             return;
         }
-        currentItem.setValue(new HtmlNode(e));
+        currentItem.setValue(new HtmlNode(element));
+        editNode(currentItem);
+        htmlEditor.domChanged(true);
     }
 
     @FXML
-    public void recoverNode() {
+    public void recoverAttrs() {
         nodeController.recover();
+    }
+
+    @FXML
+    public void okCodes() {
+        if (currentItem == null) {
+            return;
+        }
+        Element element = currentItem.getValue().getElement();
+        element.html(codesArea.getText());
+        okNode(element);
+    }
+
+    @FXML
+    public void recoverCodes() {
+        if (currentItem == null) {
+            return;
+        }
+        Element element = currentItem.getValue().getElement();
+        codesArea.setText(element.outerHtml());
     }
 
     /*

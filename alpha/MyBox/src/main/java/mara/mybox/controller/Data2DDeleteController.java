@@ -96,11 +96,11 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
     @Override
     public void handleAllTask() {
         if (!data2D.needFilter()) {
-            if (!PopTools.askSure(this, baseTitle, message("SureDeleteAll"))) {
+            if (!PopTools.askSure(getTitle(), message("SureDeleteAll"))) {
                 return;
             }
         } else {
-            if (!PopTools.askSure(this, baseTitle, message("SureDelete"))) {
+            if (!PopTools.askSure(getTitle(), message("SureDelete"))) {
                 return;
             }
         }

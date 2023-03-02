@@ -265,7 +265,7 @@ public class DataFileExcelController extends BaseData2DFileController {
             return;
         }
         String currentSheetName = dataFileExcel.getSheet();
-        if (!PopTools.askSure(this, baseTitle, currentSheetName, message("SureDelete"))) {
+        if (!PopTools.askSure(getTitle(), currentSheetName, message("SureDelete"))) {
             return;
         }
         synchronized (this) {

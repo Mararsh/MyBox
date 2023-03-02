@@ -183,9 +183,11 @@ public class TableFileBackup extends BaseTable<FileBackup> {
                 recordError(task, e.toString() + "\n" + tableName);
             }
             count = clear.size() + invalid.size();
-            recordInfo(task, message("Invalid") + ": " + clear.size() + " + " + invalid.size());
-            clearBackups(task, conn, clear);
-            deleteData(conn, invalid);
+            if (count > 0) {
+                recordInfo(task, message("Invalid") + ": " + clear.size() + " + " + invalid.size());
+                clearBackups(task, conn, clear);
+                deleteData(conn, invalid);
+            }
             conn.setAutoCommit(true);
         } catch (Exception e) {
             recordError(task, e.toString() + "\n" + tableName);

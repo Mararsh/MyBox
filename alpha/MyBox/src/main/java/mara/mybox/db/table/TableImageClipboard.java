@@ -118,9 +118,11 @@ public class TableImageClipboard extends BaseTable<ImageClipboard> {
                 recordError(task, e.toString() + "\n" + tableName);
             }
             count = clear.size() + invalid.size();
-            recordInfo(task, message("Invalid") + ": " + clear.size() + " + " + invalid.size());
-            clearImageClipboards(task, conn, clear);
-            deleteData(conn, invalid);
+            if (count > 0) {
+                recordInfo(task, message("Invalid") + ": " + clear.size() + " + " + invalid.size());
+                clearImageClipboards(task, conn, clear);
+                deleteData(conn, invalid);
+            }
             conn.setAutoCommit(true);
         } catch (Exception e) {
             recordError(task, e.toString() + "\n" + tableName);

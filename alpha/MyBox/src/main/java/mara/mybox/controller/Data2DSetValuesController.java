@@ -71,7 +71,7 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
             if (isAllPages() && !tableController.checkBeforeNextAction()) {
                 return false;
             }
-            return PopTools.askSure(this, baseTitle, message("SureOverwriteColumns") + "\n" + checkedColsNames);
+            return PopTools.askSure(getTitle(), message("SureOverwriteColumns") + "\n" + checkedColsNames);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;

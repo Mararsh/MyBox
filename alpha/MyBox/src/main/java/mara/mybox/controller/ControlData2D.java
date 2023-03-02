@@ -777,9 +777,9 @@ public class ControlData2D extends BaseController {
         } else {
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle(getMyStage().getTitle());
-            alert.setHeaderText(getMyStage().getTitle());
-            alert.setContentText(Languages.message("NeedSaveBeforeAction"));
+            alert.setTitle(getTitle());
+            alert.setHeaderText(getTitle());
+            alert.setContentText(message("NeedSaveBeforeAction"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             ButtonType buttonSave = new ButtonType(Languages.message("Save"));
             ButtonType buttonNotSave = new ButtonType(Languages.message("NotSave"));

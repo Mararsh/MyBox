@@ -139,9 +139,9 @@ public abstract class BaseController_Attributes {
     public String getBaseTitle() {
         if (baseTitle == null && getMyStage() != null) {
             baseTitle = myStage.getTitle();
-            if (baseTitle == null) {
-                baseTitle = Languages.message("AppTitle");
-            }
+        }
+        if (baseTitle == null) {
+            baseTitle = Languages.message("AppTitle");
         }
         return baseTitle;
     }
@@ -154,11 +154,7 @@ public abstract class BaseController_Attributes {
     }
 
     public String getTitle() {
-        if (getMyStage() != null) {
-            return myStage.getTitle();
-        } else {
-            return getBaseTitle();
-        }
+        return getBaseTitle();
     }
 
     public void setTitle(String title) {

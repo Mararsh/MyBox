@@ -578,7 +578,7 @@ public class SettingsController extends BaseController {
                     || newPath.trim().equals(AppVariables.MyboxDataPath)) {
                 return;
             }
-            if (!PopTools.askSure(this, getBaseTitle(), message("ChangeDataPathConfirm"))) {
+            if (!PopTools.askSure(getTitle(), message("ChangeDataPathConfirm"))) {
                 return;
             }
             popInformation(message("CopyingFilesFromTo"));
@@ -724,7 +724,7 @@ public class SettingsController extends BaseController {
 
     @FXML
     protected void clearFileHistories(ActionEvent event) {
-        if (!PopTools.askSure(this, getBaseTitle(), message("SureClear"))) {
+        if (!PopTools.askSure(getTitle(), message("SureClear"))) {
             return;
         }
         new TableVisitHistory().clear();
@@ -1045,7 +1045,7 @@ public class SettingsController extends BaseController {
 
     @FXML
     protected void clearImageHistories(ActionEvent event) {
-        if (!PopTools.askSure(this, getBaseTitle(), message("SureClear"))) {
+        if (!PopTools.askSure(getTitle(), message("SureClear"))) {
             return;
         }
         new TableImageEditHistory().clearAll();

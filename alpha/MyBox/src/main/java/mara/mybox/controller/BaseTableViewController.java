@@ -888,7 +888,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             return;
         }
         if (deleteConfirmCheck != null && deleteConfirmCheck.isSelected()) {
-            if (!PopTools.askSure(this, getBaseTitle(), message("SureDelete"))) {
+            if (!PopTools.askSure(getTitle(), message("SureDelete"))) {
                 return;
             }
         }
@@ -947,7 +947,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         if (!checkBeforeNextAction()) {
             return;
         }
-        if (!PopTools.askSure(this, getBaseTitle(), message("SureClearData"))) {
+        if (!PopTools.askSure(getTitle(), message("SureClearData"))) {
             return;
         }
         synchronized (this) {
@@ -1002,7 +1002,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
     public void deleteAllRows() {
         isSettingValues = true;
-        if (!PopTools.askSure(this, getBaseTitle(), message("SureClearTable"))) {
+        if (!PopTools.askSure(getTitle(), message("SureClearTable"))) {
             return;
         }
         tableData.clear();

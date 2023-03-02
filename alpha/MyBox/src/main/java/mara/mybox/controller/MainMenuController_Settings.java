@@ -34,7 +34,7 @@ import mara.mybox.value.UserConfig;
 public abstract class MainMenuController_Settings extends MainMenuController_Media {
 
     @FXML
-    protected Menu settingsMenu;
+    protected Menu settingsMenu, languagesMenu;
     @FXML
     protected ToggleGroup langGroup;
     @FXML
@@ -49,8 +49,6 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     protected Rectangle colorCustomizeRect;
     @FXML
     protected ImageView smallIconView, normalIconView, bigIconView;
-    @FXML
-    protected MenuItem languagesSperatorMenuItem;
 
     @Override
     public void initControls() {
@@ -96,12 +94,6 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     protected void checkLanguage() {
         Languages.refreshBundle();
         List<MenuItem> items = new ArrayList();
-        items.addAll(settingsMenu.getItems());
-        int pos1 = items.indexOf(englishMenuItem);
-        int pos2 = items.indexOf(languagesSperatorMenuItem);
-        for (int i = pos2 - 1; i > pos1; --i) {
-            items.remove(i);
-        }
         List<String> languages = Languages.userLanguages();
         if (languages != null && !languages.isEmpty()) {
             String lang = Languages.getLanguage();
@@ -119,7 +111,7 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
                         parentController.reload();
                     }
                 });
-                items.add(pos1 + 1 + i, langItem);
+                items.add(langItem);
                 if (name.equals(lang)) {
                     isSettingValues = true;
                     langItem.setSelected(true);
@@ -127,8 +119,12 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
                 }
             }
         }
-        settingsMenu.getItems().clear();
-        settingsMenu.getItems().addAll(items);
+        languagesMenu.getItems().clear();
+        if (!items.isEmpty()) {
+            languagesMenu.getItems().setAll(items);
+        }
+        languagesMenu.getItems().add(chineseMenuItem);
+        languagesMenu.getItems().add(englishMenuItem);
 
         if (AppVariables.currentBundle == Languages.BundleZhCN) {
             chineseMenuItem.setSelected(true);

@@ -712,12 +712,12 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         }
         boolean isRoot = isRoot(node);
         if (isRoot) {
-            if (!PopTools.askSure(this, getBaseTitle(), message("Delete"), message("SureDeleteAll"))) {
+            if (!PopTools.askSure(getTitle(), message("Delete"), message("SureDeleteAll"))) {
                 return;
             }
         } else {
             String chainName = chainName(targetItem);
-            if (!PopTools.askSure(this, getBaseTitle(), chainName, message("Delete"))) {
+            if (!PopTools.askSure(getTitle(), chainName, message("Delete"))) {
                 return;
             }
         }

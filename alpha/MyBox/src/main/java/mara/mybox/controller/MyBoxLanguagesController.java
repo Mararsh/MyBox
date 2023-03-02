@@ -16,7 +16,9 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -26,10 +28,10 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
@@ -42,6 +44,7 @@ import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -53,6 +56,7 @@ public class MyBoxLanguagesController extends BaseController {
     protected ObservableList<LanguageItem> tableData;
     protected String langName;
     protected ChangeListener<Boolean> getListener;
+    protected boolean changed;
 
     @FXML
     protected ListView<String> listView;
@@ -79,6 +83,9 @@ public class MyBoxLanguagesController extends BaseController {
             initListView();
 
             saveButton.disableProperty().bind(Bindings.isEmpty(tableData));
+            copyButton.disableProperty().bind(Bindings.isNull(tableView.getSelectionModel().selectedItemProperty()));
+
+            changed = false;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -202,7 +209,7 @@ public class MyBoxLanguagesController extends BaseController {
                 @Override
                 public void handle(MouseEvent event) {
                     if (event.getButton() == MouseButton.SECONDARY) {
-                        popMenu(tableView, event);
+                        popCopyMenu(event);
                     }
                 }
             });
@@ -284,9 +291,9 @@ public class MyBoxLanguagesController extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                setTitle(baseTitle + " - " + langName);
                 if (error == null) {
                     tableView.refresh();
+                    tableChanged(name == null);
                 } else {
                     popError(error);
                 }
@@ -295,60 +302,39 @@ public class MyBoxLanguagesController extends BaseController {
         start(task);
     }
 
-    protected void popMenu(TableView<LanguageItem> view, MouseEvent event) {
-        if (view.getSelectionModel().getSelectedItem() == null) {
-            return;
-        }
-        List<MenuItem> items = new ArrayList<>();
-        MenuItem menu;
-        menu = new MenuItem(Languages.message("CopyEnglish"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            copyEnglish();
-        });
-        items.add(menu);
-
-        menu = new MenuItem(Languages.message("CopyChinese"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            copyChinese();
-        });
-        items.add(menu);
-
-        items.add(new SeparatorMenuItem());
-        menu = new MenuItem(Languages.message("PopupClose"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = null;
-        });
-        items.add(menu);
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-        }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        popMenu.getItems().addAll(items);
-        popMenu.show(view, event.getScreenX(), event.getScreenY());
-    }
-
     @FXML
     @Override
     public void addAction() {
-        TextInputDialog dialog = new TextInputDialog("");
-        dialog.setTitle(Languages.message("ManageLanguages"));
-        dialog.setHeaderText(Languages.message("InputLangaugeName"));
-        dialog.setContentText("");
-        dialog.getEditor().setPrefWidth(200);
-        Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-        stage.setAlwaysOnTop(true);
-        stage.toFront();
+        if (changed) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle(getTitle());
+            alert.setHeaderText(getTitle());
+            alert.setContentText(Languages.message("NeedSaveBeforeAction"));
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            ButtonType buttonSave = new ButtonType(Languages.message("Save"));
+            ButtonType buttonNotSave = new ButtonType(Languages.message("NotSave"));
+            ButtonType buttonCancel = new ButtonType(Languages.message("Cancel"));
+            alert.getButtonTypes().setAll(buttonSave, buttonNotSave, buttonCancel);
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.setAlwaysOnTop(true);
+            stage.toFront();
 
-        Optional<String> result = dialog.showAndWait();
-        if (!result.isPresent() || result.get().trim().isBlank()) {
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result == null || !result.isPresent()) {
+                return;
+            }
+            if (result.get() == buttonSave) {
+                saveAction();
+                return;
+            } else if (result.get() == buttonCancel) {
+                return;
+            }
+        }
+        String name = PopTools.askValue(getTitle(), message("InputLangaugeName"), "", null);
+        if (name == null) {
             return;
         }
-        langName = result.get().trim();
+        langName = name.trim();
         langLabel.setText(langName);
         loadLanguage(null);
     }
@@ -360,12 +346,16 @@ public class MyBoxLanguagesController extends BaseController {
         if (selected == null || selected.isEmpty()) {
             return;
         }
-        if (!PopTools.askSure(this, getMyStage().getTitle(), Languages.message("SureDelete"))) {
+        if (!PopTools.askSure(getTitle(), Languages.message("SureDelete"))) {
             return;
         }
+        String lang = Languages.getLanguage();
         for (String name : selected) {
             File interfaceFile = Languages.interfaceLanguageFile(name);
             FileDeleteTools.delete(interfaceFile);
+            if (name.equals(lang)) {
+                UserConfig.deleteValue("language");
+            }
         }
         isSettingValues = true;
         listView.getItems().removeAll(selected);
@@ -404,6 +394,7 @@ public class MyBoxLanguagesController extends BaseController {
     }
 
     protected void tableChanged(boolean changed) {
+        this.changed = changed;
         setTitle(baseTitle + " - " + langName + (changed ? "*" : ""));
         langLabel.setText(langName + (changed ? "*" : ""));
     }
@@ -473,6 +464,44 @@ public class MyBoxLanguagesController extends BaseController {
         Platform.runLater(() -> {
             PopTools.alertInformation(null, message("CurrentLanguage") + ": " + name);
         });
+    }
+
+    @FXML
+    public void popCopyMenu(MouseEvent event) {
+        if (tableView.getSelectionModel().getSelectedItem() == null) {
+            return;
+        }
+        List<MenuItem> items = new ArrayList<>();
+        MenuItem menu;
+        menu = new MenuItem(Languages.message("CopyEnglish"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            copyEnglish();
+        });
+        items.add(menu);
+
+        menu = new MenuItem(Languages.message("CopyChinese"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            copyChinese();
+        });
+        items.add(menu);
+
+        items.add(new SeparatorMenuItem());
+        menu = new MenuItem(Languages.message("PopupClose"));
+        menu.setStyle("-fx-text-fill: #2e598a;");
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = null;
+        });
+        items.add(menu);
+        if (popMenu != null && popMenu.isShowing()) {
+            popMenu.hide();
+        }
+        popMenu = new ContextMenu();
+        popMenu.setAutoHide(true);
+        popMenu.getItems().addAll(items);
+        popMenu.show(tableView, event.getScreenX(), event.getScreenY());
     }
 
     @FXML

@@ -123,7 +123,7 @@ public class ControlNewDataTable extends BaseController {
                     alertWarning(message("AlreadyExisted") + ": " + tableName);
                     return true;
                 } else {
-                    if (PopTools.askSure(this, message("AlreadyExisted") + ": " + tableName,
+                    if (PopTools.askSure( message("AlreadyExisted") + ": " + tableName,
                             message("SureReplaceExistedDatabaseTable"))) {
                         if (dataTable == null) {
                             dataTable = new DataTable();

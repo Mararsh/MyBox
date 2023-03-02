@@ -361,61 +361,64 @@ License:    Apache License Version 2.0
                                 <CheckMenuItem fx:id="closeCurrentCheck" mnemonicParsing="false" onAction="#closeCurrentAction" text="%CloseCurrentWhenOpenTool" />
                                 <CheckMenuItem fx:id="recordWindowsSizeLocationCheck" mnemonicParsing="false" onAction="#RecordWindowsSizeLocationAction" text="%RecordWindowsSizeLocation" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
-
-                                <RadioMenuItem fx:id="chineseMenuItem" mnemonicParsing="false" onAction="#setChinese" text="中文">
-                                    <toggleGroup>
-                                        <ToggleGroup fx:id="langGroup" />
-                                    </toggleGroup>
-                                </RadioMenuItem>
-                                <RadioMenuItem fx:id="englishMenuItem" mnemonicParsing="false" onAction="#setEnglish" text="English" toggleGroup="$langGroup" />
-                                <SeparatorMenuItem fx:id="languagesSperatorMenuItem" mnemonicParsing="false" />
-
-                                <RadioMenuItem fx:id="font12MenuItem" mnemonicParsing="false" onAction="#setFont12" style="-fx-font-size: 12px;" text="%FontSize12">
-                                    <toggleGroup>
-                                        <ToggleGroup fx:id="fontSizeGroup" />
-                                    </toggleGroup>
-                                </RadioMenuItem>
-                                <RadioMenuItem fx:id="font15MenuItem" mnemonicParsing="false" onAction="#setFont15" style="-fx-font-size: 15px;" text="%FontSize15" toggleGroup="$fontSizeGroup" />
-                                <RadioMenuItem fx:id="font17MenuItem" mnemonicParsing="false" onAction="#setFont17" style="-fx-font-size: 17px;" text="%FontSize17" toggleGroup="$fontSizeGroup" />
-
-                                <SeparatorMenuItem mnemonicParsing="false" />
-
-                                <RadioMenuItem fx:id="smallIconMenuItem" mnemonicParsing="false" onAction="#smallIcon" text="%SmallSizeIcon">
-                                    <toggleGroup>
-                                        <ToggleGroup fx:id="iconGroup" />
-                                    </toggleGroup>
-                                    <graphic>
-                                        <ImageView fx:id="smallIconView" fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconExamples.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </RadioMenuItem>
-                                <RadioMenuItem fx:id="normalIconMenuItem" mnemonicParsing="false" onAction="#normalIcon" text="%NormalSizeIcon"  toggleGroup="$iconGroup">
-
-                                    <graphic>
-                                        <ImageView fx:id="normalIconView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconExamples.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </RadioMenuItem>
-                                <RadioMenuItem fx:id="bigIconMenuItem" mnemonicParsing="false" onAction="#bigIcon" text="%BigSizeIcon" toggleGroup="$iconGroup">
-                                    <graphic>
-                                        <ImageView fx:id="bigIconView" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconExamples.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </RadioMenuItem>
-
-                                <SeparatorMenuItem mnemonicParsing="false" />
-
-                                <Menu mnemonicParsing="false" text="%Icons">
+                                
+                                <Menu fx:id="languagesMenu" mnemonicParsing="false" text="%Languages">
                                     <items>
+                                        <RadioMenuItem fx:id="chineseMenuItem" mnemonicParsing="false" onAction="#setChinese" text="中文">
+                                            <toggleGroup>
+                                                <ToggleGroup fx:id="langGroup" />
+                                            </toggleGroup>
+                                        </RadioMenuItem>
+                                        <RadioMenuItem fx:id="englishMenuItem" mnemonicParsing="false" onAction="#setEnglish" text="English" toggleGroup="$langGroup" />
+                                        
+                                    </items>
+                                </Menu>
+                                
+                                <Menu  mnemonicParsing="false" text="%Interface">
+                                    <items>
+                                        <RadioMenuItem fx:id="font12MenuItem" mnemonicParsing="false" onAction="#setFont12" style="-fx-font-size: 12px;" text="%FontSize12">
+                                            <toggleGroup>
+                                                <ToggleGroup fx:id="fontSizeGroup" />
+                                            </toggleGroup>
+                                        </RadioMenuItem>
+                                        <RadioMenuItem fx:id="font15MenuItem" mnemonicParsing="false" onAction="#setFont15" style="-fx-font-size: 15px;" text="%FontSize15" toggleGroup="$fontSizeGroup" />
+                                        <RadioMenuItem fx:id="font17MenuItem" mnemonicParsing="false" onAction="#setFont17" style="-fx-font-size: 17px;" text="%FontSize17" toggleGroup="$fontSizeGroup" />
+
+                                        <SeparatorMenuItem mnemonicParsing="false" />
+                                        
+                                        <RadioMenuItem fx:id="smallIconMenuItem" mnemonicParsing="false" onAction="#smallIcon" text="%SmallSizeIcon">
+                                            <toggleGroup>
+                                                <ToggleGroup fx:id="iconGroup" />
+                                            </toggleGroup>
+                                            <graphic>
+                                                <ImageView fx:id="smallIconView" fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconExamples.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </RadioMenuItem>
+                                        <RadioMenuItem fx:id="normalIconMenuItem" mnemonicParsing="false" onAction="#normalIcon" text="%NormalSizeIcon"  toggleGroup="$iconGroup">
+                                            <graphic>
+                                                <ImageView fx:id="normalIconView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconExamples.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </RadioMenuItem>
+                                        <RadioMenuItem fx:id="bigIconMenuItem" mnemonicParsing="false" onAction="#bigIcon" text="%BigSizeIcon" toggleGroup="$iconGroup">
+                                            <graphic>
+                                                <ImageView fx:id="bigIconView" fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconExamples.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </RadioMenuItem>
+                                        
+                                        <SeparatorMenuItem mnemonicParsing="false" />
+
                                         <RadioMenuItem fx:id="redMenuItem" mnemonicParsing="false" onAction="#setRed" text="%MyBoxColorRedDark">
                                             <toggleGroup>
                                                 <ToggleGroup fx:id="colorGroup" />
@@ -457,9 +460,9 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#inputColors" text="%CustomizeColors" />
 
                                         <SeparatorMenuItem mnemonicParsing="false" />
-                                        <CheckMenuItem fx:id="controlTextCheck" mnemonicParsing="false" onAction="#setControlDisplayText" text="%DisplayControlText" />
-                                        <SeparatorMenuItem mnemonicParsing="false" />
                                         <CheckMenuItem fx:id="hidpiIconsCheck" mnemonicParsing="false" onAction="#hidpiIcons" text="%HidpiIcons" />
+                                        <CheckMenuItem fx:id="controlTextCheck" mnemonicParsing="false" onAction="#setControlDisplayText" text="%DisplayControlText" />
+
                                     </items>
                                 </Menu>
 

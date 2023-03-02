@@ -477,7 +477,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
         if (imageController.sourceFile == null) {
             return;
         }
-        if (!PopTools.askSure(this, getBaseTitle(), message("SureClear"))) {
+        if (!PopTools.askSure(getTitle(), message("SureClear"))) {
             return;
         }
         task = new SingletonTask<Void>(this) {

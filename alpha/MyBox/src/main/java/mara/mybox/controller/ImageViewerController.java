@@ -807,7 +807,7 @@ public class ImageViewerController extends BaseImageController {
             return false;
         }
         if (deleteConfirmCheck != null && deleteConfirmCheck.isSelected()) {
-            if (!PopTools.askSure(this, getMyStage().getTitle(), message("SureDelete"))) {
+            if (!PopTools.askSure(getTitle(), message("SureDelete"))) {
                 return false;
             }
         }
