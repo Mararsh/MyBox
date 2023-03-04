@@ -60,10 +60,16 @@ public class TableImageClipboard extends BaseTable<ImageClipboard> {
         try (PreparedStatement statement = conn.prepareStatement(FileQuery)) {
             conn.setAutoCommit(true);
             for (String file : files) {
+                if (task != null && task.isCancelled()) {
+                    return;
+                }
                 recordInfo(task, message("Check") + ": " + file);
                 statement.setString(1, file);
                 try (ResultSet results = statement.executeQuery()) {
                     while (results.next()) {
+                        if (task != null && task.isCancelled()) {
+                            return;
+                        }
                         ImageClipboard data = readData(results);
                         recordInfo(task, message("Delete") + ": " + data.getThumbnailFile());
                         FileDeleteTools.delete(data.getThumbnailFile());
@@ -76,8 +82,14 @@ public class TableImageClipboard extends BaseTable<ImageClipboard> {
             recordError(task, e.toString() + "\n" + tableName);
         }
         recordInfo(task, DeleteFile);
+        if (task != null && task.isCancelled()) {
+            return;
+        }
         try (PreparedStatement statement = conn.prepareStatement(DeleteFile)) {
             for (String file : files) {
+                if (task != null && task.isCancelled()) {
+                    return;
+                }
                 recordInfo(task, message("Clear") + ": " + file);
                 statement.setString(1, file);
                 statement.executeUpdate();
@@ -97,6 +109,9 @@ public class TableImageClipboard extends BaseTable<ImageClipboard> {
             try (PreparedStatement query = conn.prepareStatement(queryAllStatement());
                     ResultSet results = query.executeQuery()) {
                 while (results.next()) {
+                    if (task != null && task.isCancelled()) {
+                        return -1;
+                    }
                     ImageClipboard data = readData(results);
                     File imageFile = data.getImageFile();
                     if (imageFile == null) {
@@ -121,6 +136,9 @@ public class TableImageClipboard extends BaseTable<ImageClipboard> {
             if (count > 0) {
                 recordInfo(task, message("Invalid") + ": " + clear.size() + " + " + invalid.size());
                 clearImageClipboards(task, conn, clear);
+                if (task != null && task.isCancelled()) {
+                    return -1;
+                }
                 deleteData(conn, invalid);
             }
             conn.setAutoCommit(true);

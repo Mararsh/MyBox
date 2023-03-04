@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import mara.mybox.data.HtmlNode;
 import mara.mybox.dev.MyBoxLog;
@@ -17,21 +18,30 @@ import org.jsoup.nodes.Element;
 public class HtmlDomAddController extends BaseChildController {
 
     protected ControlHtmlEditor editor;
-    protected int targetIndex;
+    protected TreeItem<HtmlNode> targetItem;
 
     @FXML
     protected ControlHtmlDomNode nodeController;
+    @FXML
+    protected Label hierarchyLabel;
 
     public HtmlDomAddController() {
         baseTitle = message("AddNode");
     }
 
-    public void setParamters(ControlHtmlEditor editor, int rowIndex) {
+    public void setParamters(ControlHtmlEditor editor, TreeItem<HtmlNode> targetItem) {
         try {
+            if (targetItem == null) {
+                popError(message("SelectToHandle"));
+                close();
+                return;
+            }
             this.editor = editor;
-            targetIndex = rowIndex;
+            this.targetItem = targetItem;
 
             nodeController.load(null);
+
+            hierarchyLabel.setText(editor.domController.label(targetItem));
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -43,20 +53,18 @@ public class HtmlDomAddController extends BaseChildController {
     @Override
     public void okAction() {
         try {
-            Element e = nodeController.pickValues();
-            if (e == null) {
+            Element element = nodeController.pickValues();
+            if (element == null) {
                 popError(message("Invalid"));
                 return;
             }
             closeStage();
-            TreeItem<HtmlNode> targetItem = editor.domController.domTree.getTreeItem(targetIndex);
             if (targetItem == null) {
                 editor.popError(message("InvalidParameters"));
                 return;
             }
-            targetItem.getValue().getElement().appendChild(e);
-            editor.domController.createTreeNode(targetItem, -1, e);
-            editor.domController.domTree.scrollTo(targetIndex);
+            editor.domController.addElement(targetItem, element);
+            editor.domChanged(true);
             editor.popInformation(message("Created"));
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -68,14 +76,14 @@ public class HtmlDomAddController extends BaseChildController {
     /*
         static methods
      */
-    public static HtmlDomAddController open(ControlHtmlEditor editor, int rowIndex) {
+    public static HtmlDomAddController open(ControlHtmlEditor editor, TreeItem<HtmlNode> targetItem) {
         if (editor == null) {
             return null;
         }
         HtmlDomAddController controller = (HtmlDomAddController) WindowTools.openChildStage(
                 editor.getMyWindow(), Fxmls.HtmlDomAddFxml);
         if (controller != null) {
-            controller.setParamters(editor, rowIndex);
+            controller.setParamters(editor, targetItem);
             controller.requestMouse();
         }
         return controller;

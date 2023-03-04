@@ -22,7 +22,6 @@ public class AppValues {
 
     public static final String Indent = "    ";
     public static final int IOBufferLength = 8024;
-    public static final String HttpsProtocal = "TLSv1.2";
 
     public static final short InvalidShort = Short.MAX_VALUE;
     public static final long InvalidLong = Long.MAX_VALUE;

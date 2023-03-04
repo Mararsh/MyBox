@@ -457,7 +457,15 @@ License:    Apache License Version 2.0
                                                 <Rectangle fx:id="colorCustomizeRect" arcHeight="5.0" arcWidth="5.0" fill="#DDDDDD" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
                                             </graphic>
                                         </RadioMenuItem>
-                                        <MenuItem mnemonicParsing="false" onAction="#inputColors" text="%CustomizeColors" />
+                                        <MenuItem mnemonicParsing="false" onAction="#inputColors" text="%CustomizeColors">
+                                            <graphic>
+                                                <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconRename.png" />
+                                                    </image>
+                                                </ImageView>                                            
+                                            </graphic>
+                                        </MenuItem>
 
                                         <SeparatorMenuItem mnemonicParsing="false" />
                                         <CheckMenuItem fx:id="hidpiIconsCheck" mnemonicParsing="false" onAction="#hidpiIcons" text="%HidpiIcons" />

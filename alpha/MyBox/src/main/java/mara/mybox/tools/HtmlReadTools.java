@@ -36,7 +36,7 @@ import org.jsoup.select.Elements;
  * @License Apache License Version 2.0
  */
 public class HtmlReadTools {
-    
+
     public final static String httpUserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0) Gecko/20100101 Firefox/6.0";
 
 
@@ -127,7 +127,7 @@ public class HtmlReadTools {
             return null;
         }
     }
-    
+
     public static String url2html(String urlAddress) {
         try {
             if (urlAddress == null) {
@@ -153,7 +153,7 @@ public class HtmlReadTools {
         }
         return null;
     }
-    
+
     public static Document url2doc(String urlAddress) {
         try {
             String html = url2html(urlAddress);
@@ -165,7 +165,7 @@ public class HtmlReadTools {
         }
         return null;
     }
-    
+
     public static Document file2doc(File file) {
         try {
             if (file == null || !file.exists()) {
@@ -180,7 +180,7 @@ public class HtmlReadTools {
         }
         return null;
     }
-    
+
     public static String baseURI(String urlAddress) {
         try {
             Document doc = url2doc(urlAddress);
@@ -193,7 +193,7 @@ public class HtmlReadTools {
             return null;
         }
     }
-    
+
     public static File url2image(String address, String name) {
         try {
             if (address == null) {
@@ -229,20 +229,20 @@ public class HtmlReadTools {
             return null;
         }
     }
-    
+
     public static void requestHead(BaseController controller, String link) {
         if (controller == null || link == null) {
             return;
         }
         Task infoTask = new DownloadTask() {
-            
+
             @Override
             protected boolean initValues() {
                 readHead = true;
                 address = link;
                 return super.initValues();
             }
-            
+
             @Override
             protected void whenSucceeded() {
                 if (head == null) {
@@ -252,7 +252,7 @@ public class HtmlReadTools {
                 String table = requestHeadTable(url, head);
                 HtmlTableController.open(table);
             }
-            
+
             @Override
             protected void whenFailed() {
                 if (error != null) {
@@ -261,16 +261,16 @@ public class HtmlReadTools {
                     controller.popFailed();
                 }
             }
-            
+
         };
         controller.start(infoTask);
     }
-    
+
     public static HttpURLConnection getConnection(URL url) {
         try {
             if ("https".equals(url.getProtocol())) {
                 HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-                SSLContext sc = SSLContext.getInstance(AppValues.HttpsProtocal);
+                SSLContext sc = SSLContext.getDefault();
                 sc.init(null, null, null);
                 conn.setSSLSocketFactory(sc.getSocketFactory());
                 return conn;
@@ -282,7 +282,7 @@ public class HtmlReadTools {
             return null;
         }
     }
-    
+
     public static Map<String, String> requestHead(URL url) {
         try {
             if (!url.getProtocol().startsWith("http")) {
@@ -297,7 +297,7 @@ public class HtmlReadTools {
             return null;
         }
     }
-    
+
     public static Map<String, String> requestHead(HttpURLConnection connection) {
         try {
             Map<String, String> head = new HashMap();
@@ -322,11 +322,11 @@ public class HtmlReadTools {
             return null;
         }
     }
-    
+
     public static String requestHeadTable(URL url) {
         return requestHeadTable(url, HtmlReadTools.requestHead(url));
     }
-    
+
     public static String requestHeadTable(URL url, Map<String, String> head) {
         try {
             if (head == null) {
@@ -375,7 +375,7 @@ public class HtmlReadTools {
             MyBoxLog.debug(e);
             return null;
         }
-        
+
     }
 
     /*
@@ -388,7 +388,7 @@ public class HtmlReadTools {
         }
         return doc.title();
     }
-    
+
     public static String head(String html) {
         Document doc = Jsoup.parse(html);
         if (doc == null || doc.head() == null) {
@@ -396,7 +396,7 @@ public class HtmlReadTools {
         }
         return doc.head().outerHtml();
     }
-    
+
     public static Charset charset(String html) {
         try {
             Document doc = Jsoup.parse(html);
@@ -409,11 +409,11 @@ public class HtmlReadTools {
             return null;
         }
     }
-    
+
     public static String body(String html) {
         return body(html, true);
     }
-    
+
     public static String body(String html, boolean withTag) {
         try {
             Element body = Jsoup.parse(html).body();
@@ -422,7 +422,7 @@ public class HtmlReadTools {
             return null;
         }
     }
-    
+
     public static String toc(String html, int indentSize) {
         try {
             if (html == null) {
@@ -448,7 +448,7 @@ public class HtmlReadTools {
             return null;
         }
     }
-    
+
     public static void toc(Element element, String indent, StringBuilder s) {
         try {
             if (element == null || s == null || indent == null) {
@@ -483,7 +483,7 @@ public class HtmlReadTools {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public static List<Link> links(URL baseURL, String html) {
         if (html == null) {
             return null;
@@ -504,7 +504,7 @@ public class HtmlReadTools {
         }
         return links;
     }
-    
+
     public static List<Link> links(Link addressLink, File path, Link.FilenameType nameType) {
         try {
             if (addressLink == null || path == null) {
@@ -538,7 +538,7 @@ public class HtmlReadTools {
             return null;
         }
     }
-    
+
     public static List<StringTable> Tables(String html, String name) {
         try {
             if (html == null || html.isBlank()) {
@@ -592,7 +592,7 @@ public class HtmlReadTools {
             return null;
         }
     }
-    
+
     public static String removeNode(String html, String id) {
         try {
             if (html == null || id == null || id.isBlank()) {
@@ -611,5 +611,5 @@ public class HtmlReadTools {
             return html;
         }
     }
-    
+
 }

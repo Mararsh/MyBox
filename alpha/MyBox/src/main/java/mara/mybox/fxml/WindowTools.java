@@ -472,17 +472,31 @@ public class WindowTools {
         try {
             recordInfo(task, message("ClearExpiredData") + "...");
 
+            if (task != null && task.isCancelled()) {
+                return;
+            }
             recordInfo(task, message("Clear") + ": " + AppVariables.MyBoxTempPath);
             FileDeleteTools.clearDir(AppVariables.MyBoxTempPath);
 
+            if (task != null && task.isCancelled()) {
+                return;
+            }
             try (Connection conn = DerbyBase.getConnection()) {
-
+                if (task != null && task.isCancelled()) {
+                    return;
+                }
                 new TableImageClipboard().clearInvalid(task, conn);
-
+                if (task != null && task.isCancelled()) {
+                    return;
+                }
                 new TableImageEditHistory().clearInvalid(task, conn);
-
+                if (task != null && task.isCancelled()) {
+                    return;
+                }
                 new TableFileBackup().clearInvalid(task, conn);
-
+                if (task != null && task.isCancelled()) {
+                    return;
+                }
                 new TableData2DDefinition().clearInvalid(task, conn, true);
 
             } catch (Exception e) {

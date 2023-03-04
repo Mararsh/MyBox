@@ -17,6 +17,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.IndexRange;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
@@ -42,6 +43,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableRowSelectionCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.NumberTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -211,7 +213,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
             @Override
             protected boolean handle() {
-                try ( Connection conn = DerbyBase.getConnection()) {
+                try (Connection conn = DerbyBase.getConnection()) {
                     countPagination(conn, page);
                     data = readPageData(conn);
                 } catch (Exception e) {
@@ -1314,10 +1316,11 @@ public abstract class BaseTableViewController<P> extends BaseController {
             }
             isSettingValues = true;
             pageSelector.setDisable(false);
+            IndexRange range = NumberTools.scrollRange(UserConfig.selectorScrollSize(),
+                    (int) pagesNumber, (int) currentPage);
             List<String> pages = new ArrayList<>();
-            for (long i = Math.max(1, currentPage - 20);
-                    i <= Math.min(pagesNumber, currentPage + 20); i++) {
-                pages.add(i + "");
+            for (long i = range.getStart(); i < range.getEnd(); i++) {
+                pages.add((i + 1) + "");
             }
             pageSelector.getItems().clear();
             pageSelector.getItems().addAll(pages);

@@ -39,7 +39,7 @@ License:    Apache License Version 2.0
                             <content>
                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                                     <content>
-                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="20.0">
+                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="10.0">
                                             <children>
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                                     <children>
@@ -149,6 +149,16 @@ License:    Apache License Version 2.0
                                                         <CheckBox fx:id="splitPaneSensitiveCheck" mnemonicParsing="false" onAction="#splitPaneSensitive" text="%Sensitive" />
                                                     </children>
                                                 </HBox>
+                                    <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="66.0" spacing="10.0">
+                                       <children>
+                                          <Label text="%SelectorScrollSize">
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                          </Label>
+                                          <ComboBox fx:id="scrollSizeSelector" editable="true" prefWidth="100.0" />
+                                       </children>
+                                    </HBox>
                                                 <VBox minHeight="-Infinity" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                     <children>
                                                         <Label text="%Message" />
@@ -181,7 +191,7 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </children>
                                             <padding>
-                                                <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                             </padding>
                                         </VBox>
                                     </content>
@@ -466,7 +476,7 @@ License:    Apache License Version 2.0
                                                 <fx:include fx:id="render" source="ControlImageRender.fxml" />
                                             </children>
                                             <padding>
-                                                <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                             </padding>
                                         </VBox>
                                     </content>

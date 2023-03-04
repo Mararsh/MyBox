@@ -83,7 +83,7 @@ public class SettingsController extends BaseController {
     @FXML
     protected VBox localBox, dataBox;
     @FXML
-    protected ComboBox<String> fontSizeBox, iconSizeBox,
+    protected ComboBox<String> fontSizeBox, iconSizeBox, scrollSizeSelector,
             strokeWidthBox, anchorWidthBox, gridWidthSelector, gridIntervalSelector, gridOpacitySelector,
             popSizeSelector, popDurationSelector;
     @FXML
@@ -392,6 +392,29 @@ public class SettingsController extends BaseController {
                 public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
                     UserConfig.setString("PopWarnColor", popWarnColorController.rgb());
                     popSuccessful();
+                }
+            });
+
+            scrollSizeSelector.getItems().addAll(Arrays.asList(
+                    "100", "500", "1000", "20", "50", "200", Integer.MAX_VALUE + "")
+            );
+            scrollSizeSelector.setValue(UserConfig.selectorScrollSize() + "");
+            scrollSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> vv, String ov, String nv) {
+                    if (nv != null && !nv.isEmpty()) {
+                        try {
+                            int v = Integer.parseInt(nv);
+                            if (v > 0) {
+                                UserConfig.setInt("SelectorScrollSize", v);
+                                ValidationTools.setEditorNormal(scrollSizeSelector);
+                            } else {
+                                ValidationTools.setEditorBadStyle(scrollSizeSelector);
+                            }
+                        } catch (Exception e) {
+                            ValidationTools.setEditorBadStyle(scrollSizeSelector);
+                        }
+                    }
                 }
             });
 

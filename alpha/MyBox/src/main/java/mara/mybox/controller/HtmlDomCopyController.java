@@ -1,6 +1,6 @@
 package mara.mybox.controller;
 
-import javafx.collections.ObservableList;
+import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TreeItem;
@@ -22,8 +22,11 @@ public class HtmlDomCopyController extends BaseChildController {
 
     protected ControlHtmlEditor editor;
     protected Element targetElement;
-    protected int targetIndex, count;
-    protected TreeTableView<HtmlNode> sourceTree, targetTree;
+    protected int count;
+    protected TreeTableView<HtmlNode> sourceTree, targetTree, editorTree;
+    protected String copyiedHtml, targetLocation;
+    protected TreeItem<HtmlNode> targetItem, editorItem;
+    protected Element editorElement;
 
     @FXML
     protected ControlHtmlDomSource sourceController;
@@ -36,15 +39,16 @@ public class HtmlDomCopyController extends BaseChildController {
         baseTitle = message("CopyNodes");
     }
 
-    public void setParamters(ControlHtmlEditor editor, int rowIndex) {
+    public void setParamters(ControlHtmlEditor editor, TreeItem<HtmlNode> sourceItem) {
         try {
             this.editor = editor;
             if (invalidTarget()) {
                 return;
             }
-            Element root = editor.domController.domTree.getRoot().getValue().getElement();
-            sourceController.load(root, rowIndex);
-            targetController.load(root);
+            editorTree = editor.domController.domTree;
+            Element root = editorTree.getRoot().getValue().getElement();
+            sourceController.load(root, sourceItem);
+            targetController.loadElement(root);
 
             sourceTree = sourceController.domTree;
             targetTree = targetController.domTree;
@@ -69,13 +73,14 @@ public class HtmlDomCopyController extends BaseChildController {
             if (invalidTarget()) {
                 return false;
             }
-            targetIndex = targetTree.getSelectionModel().getSelectedIndex();
-            if (targetIndex < 0) {
+            targetItem = targetTree.getSelectionModel().getSelectedItem();
+            if (targetItem == null) {
                 popError(message("SelectNodeCopyInto"));
                 return false;
             }
-            targetElement = targetTree.getTreeItem(targetIndex).getValue().getElement();
+            targetElement = targetItem.getValue().getElement();
             count = 0;
+            copyiedHtml = null;
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -93,23 +98,18 @@ public class HtmlDomCopyController extends BaseChildController {
             task.cancel();
         }
         task = new SingletonTask<Void>(this) {
+
             @Override
             protected boolean handle() {
-                try {
-                    return checkCopy(sourceTree.getRoot());
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
+                return makeValues();
             }
 
             @Override
             protected void whenSucceeded() {
                 if (count > 0) {
-                    editor.domController.load(targetTree.getRoot().getValue().getElement().html());
-                    editor.domChanged(true);
-                    editor.domController.domTree.scrollTo(targetIndex);
                     closeStage();
+                    editor.domController.updateTreeItem(editorItem, editorElement);
+                    editor.domChanged(true);
                 }
                 editor.popInformation(message("Copied") + ": " + count);
             }
@@ -117,14 +117,26 @@ public class HtmlDomCopyController extends BaseChildController {
         start(task);
     }
 
-    public boolean checkCopy(TreeItem<HtmlNode> sourceItem) {
+    protected boolean makeValues() {
         try {
-            if (task == null || task.isCancelled()) {
-                return true;
+            count = 0;
+            editorElement = null;
+            copyiedHtml = null;
+
+            targetLocation = targetController.hierarchyNumber(targetItem);
+            if (targetLocation == null) {
+                error = message("SelectNodeCopyInto");
+                return false;
             }
-            HtmlNode node = sourceItem.getValue();
-            if (node.getSelected().get()) {
-                Element sourceElement = node.getElement();
+            editorItem = editor.domController.find(targetLocation);
+            if (editorItem == null) {
+                error = message("SelectNodeCopyInto");
+                return false;
+            }
+
+            List<TreeItem<HtmlNode>> selected = sourceController.selected();
+            for (TreeItem<HtmlNode> item : selected) {
+                Element sourceElement = item.getValue().getElement();
                 String html;
                 if (nodeAndDescendantsRadio.isSelected()) {
                     html = sourceElement.outerHtml();
@@ -135,45 +147,51 @@ public class HtmlDomCopyController extends BaseChildController {
                 } else {
                     html = sourceElement.shallowClone().html();
                 }
-                if (targetController.beforeRadio.isSelected()) {
-                    targetElement.before(html);
-
-                } else if (targetController.afterRadio.isSelected()) {
-                    targetElement.after(html);
-
+                if (copyiedHtml == null) {
+                    copyiedHtml = html;
                 } else {
-                    targetElement.append(html);
-
+                    copyiedHtml += "\n" + html;
                 }
                 count++;
             }
-            ObservableList<TreeItem<HtmlNode>> children = sourceItem.getChildren();
-            if (children != null) {
-                for (TreeItem<HtmlNode> child : children) {
-                    checkCopy(child);
-                }
+            if (copyiedHtml == null || copyiedHtml.isBlank()) {
+                return false;
             }
-            return true;
+            TreeItem<HtmlNode> eParent = editorItem.getParent();
+            if (targetController.beforeRadio.isSelected()) {
+                targetElement.before(copyiedHtml);
+                editorElement = targetElement.parent();
+                editorItem = eParent;
+
+            } else if (targetController.afterRadio.isSelected()) {
+                targetElement.after(copyiedHtml);
+                editorElement = targetElement.parent();
+                editorItem = eParent;
+
+            } else {
+                targetElement.append(copyiedHtml);
+                editorElement = targetElement;
+
+            }
+            return editorElement != null;
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
+            error = e.toString();
             return false;
         }
     }
 
+
     /*
         static methods
      */
-    public static HtmlDomCopyController open(ControlHtmlEditor editor, int rowIndex) {
+    public static HtmlDomCopyController open(ControlHtmlEditor editor, TreeItem<HtmlNode> sourceItem) {
         if (editor == null) {
             return null;
         }
         HtmlDomCopyController controller = (HtmlDomCopyController) WindowTools.openChildStage(
                 editor.getMyWindow(), Fxmls.HtmlDomCopyFxml);
         if (controller != null) {
-            controller.setParamters(editor, rowIndex);
+            controller.setParamters(editor, sourceItem);
             controller.requestMouse();
         }
         return controller;

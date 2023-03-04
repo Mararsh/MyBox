@@ -28,9 +28,6 @@ public class HtmlNode {
         setElement(element);
     }
 
-    public HtmlNode copy() {
-        return new HtmlNode(element.clone());
-    }
 
     /*
         set
@@ -110,15 +107,15 @@ public class HtmlNode {
         return selected;
     }
 
-    public String getSerialNumber() {
-        return serialNumber(element);
+    public String getHierarchyNumber() {
+        return hierarchyNumber(element);
     }
 
     public String getLabel() {
-        return getSerialNumber() + " " + getTag();
+        return getHierarchyNumber() + " " + getTag();
     }
 
-    public static String serialNumber(Element e) {
+    public static String hierarchyNumber(Element e) {
         if (e == null) {
             return "";
         }
@@ -126,7 +123,7 @@ public class HtmlNode {
         if (parent == null) {
             return "";
         }
-        String p = serialNumber(parent);
+        String p = hierarchyNumber(parent);
         return (p == null || p.isBlank() ? "" : p + ".") + (parent.children().indexOf(e) + 1);
     }
 

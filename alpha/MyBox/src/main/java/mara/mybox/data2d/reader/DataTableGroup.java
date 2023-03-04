@@ -125,7 +125,7 @@ public class DataTableGroup {
         tableTmpData = tmpData.getTableData2D();
         ok = false;
         if (conn == null) {
-            try ( Connection dconn = DerbyBase.getConnection()) {
+            try (Connection dconn = DerbyBase.getConnection()) {
                 conn = dconn;
                 ok = scan();
                 stopScan();
@@ -323,7 +323,7 @@ public class DataTableGroup {
             if (task != null) {
                 task.setInfo(sql);
             }
-            try ( ResultSet query = conn.prepareStatement(sql).executeQuery()) {
+            try (ResultSet query = conn.prepareStatement(sql).executeQuery()) {
                 Data2DRow tmpRow, lastRow = null;
                 Map<String, Object> groupMap = new HashMap<>();
                 boolean groupChanged;
@@ -409,7 +409,7 @@ public class DataTableGroup {
             if (task != null) {
                 task.setInfo(sql);
             }
-            try ( ResultSet results = conn.prepareStatement(sql).executeQuery()) {
+            try (ResultSet results = conn.prepareStatement(sql).executeQuery()) {
                 if (results.next()) {
                     maxValue = results.getDouble("dmax");
                     minValue = results.getDouble("dmin");
@@ -565,7 +565,7 @@ public class DataTableGroup {
         if (task != null) {
             task.setInfo(sql);
         }
-        try ( ResultSet query = conn.prepareStatement(sql).executeQuery()) {
+        try (ResultSet query = conn.prepareStatement(sql).executeQuery()) {
             Data2DRow tmpRow;
             while (query.next()) {
                 if (task == null || task.isCancelled()) {
@@ -614,7 +614,7 @@ public class DataTableGroup {
             if (task != null) {
                 task.setInfo(sql);
             }
-            try ( ResultSet query = conn.prepareStatement(sql).executeQuery()) {
+            try (ResultSet query = conn.prepareStatement(sql).executeQuery()) {
                 long timeValue, lastTimeValue = Long.MAX_VALUE;
                 boolean groupChanged;
                 long zeroYear = DateTools.zeroYear();
@@ -721,7 +721,7 @@ public class DataTableGroup {
             if (task != null) {
                 task.setInfo(sql);
             }
-            try ( ResultSet query = conn.prepareStatement(sql).executeQuery()) {
+            try (ResultSet query = conn.prepareStatement(sql).executeQuery()) {
                 String expValue, lastExpValue = null;
                 boolean groupChanged;
                 conn.setAutoCommit(false);
@@ -778,7 +778,7 @@ public class DataTableGroup {
             if (task != null) {
                 task.setInfo(sql);
             }
-            try ( ResultSet query = conn.prepareStatement(sql).executeQuery()) {
+            try (ResultSet query = conn.prepareStatement(sql).executeQuery()) {
                 if (query.next()) {
                     total = query.getLong(1);
                 }
@@ -803,7 +803,7 @@ public class DataTableGroup {
                 task.setInfo(sql);
             }
             long rowIndex = 0, from, to, interval = Math.round(splitInterval);
-            try ( ResultSet query = conn.prepareStatement(sql).executeQuery()) {
+            try (ResultSet query = conn.prepareStatement(sql).executeQuery()) {
                 Data2DRow tmpRow;
                 conn.setAutoCommit(false);
                 while (query.next() && task != null && !task.isCancelled()) {
@@ -883,7 +883,7 @@ public class DataTableGroup {
                 if (task != null) {
                     task.setInfo(sql);
                 }
-                try ( ResultSet query = conn.prepareStatement(sql).executeQuery()) {
+                try (ResultSet query = conn.prepareStatement(sql).executeQuery()) {
                     Data2DRow tmpRow;
                     conn.setAutoCommit(false);
                     while (query.next() && task != null && !task.isCancelled()) {
@@ -954,7 +954,7 @@ public class DataTableGroup {
                 if (task != null) {
                     task.setInfo(sql);
                 }
-                try ( ResultSet query = conn.prepareStatement(sql).executeQuery()) {
+                try (ResultSet query = conn.prepareStatement(sql).executeQuery()) {
                     Data2DRow tmpRow;
                     conn.setAutoCommit(false);
                     while (query.next() && task != null && !task.isCancelled()) {
@@ -1243,7 +1243,7 @@ public class DataTableGroup {
         }
         String sql = "SELECT * from " + tableGroupParameters.getTableName()
                 + " WHERE group_index=" + index;
-        try ( PreparedStatement statement = qconn.prepareStatement(sql)) {
+        try (PreparedStatement statement = qconn.prepareStatement(sql)) {
             Data2DRow row = tableGroupParameters.query(qconn, statement);
             Object v = row.getColumnValue("group_parameters");
             return v == null ? null : (String) v;
@@ -1263,9 +1263,9 @@ public class DataTableGroup {
         }
         String sql = "SELECT group_parameters from " + tableGroupParameters.getTableName()
                 + " ORDER BY group_index ASC "
-                + " OFFSET " + range.getStart() + " ROWS FETCH NEXT " + (range.getLength() + 1) + " ROWS ONLY ";
-        try ( PreparedStatement statement = qconn.prepareStatement(sql);
-                 ResultSet results = statement.executeQuery()) {
+                + " OFFSET " + range.getStart() + " ROWS FETCH NEXT " + range.getLength() + " ROWS ONLY ";
+        try (PreparedStatement statement = qconn.prepareStatement(sql);
+                ResultSet results = statement.executeQuery()) {
             int index = range.getStart() + 1;
             while (results.next()) {
                 String p = results.getString("group_parameters");
@@ -1291,7 +1291,7 @@ public class DataTableGroup {
         if (task != null) {
             task.setInfo(sql);
         }
-        try ( ResultSet query = qconn.prepareStatement(sql).executeQuery()) {
+        try (ResultSet query = qconn.prepareStatement(sql).executeQuery()) {
             while (query.next() && task != null && !task.isCancelled()) {
                 if (parameterValue == null) {
                     parameterValue = query.getString(2);

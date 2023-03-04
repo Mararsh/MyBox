@@ -39,7 +39,7 @@ public class BaseHtmlDomTreeController extends BaseController {
     @FXML
     protected TreeTableView<HtmlNode> domTree;
     @FXML
-    protected TreeTableColumn<HtmlNode, String> sequenceColumn, tagColumn, textColumn, idColumn,
+    protected TreeTableColumn<HtmlNode, String> hierarchyColumn, tagColumn, textColumn, idColumn,
             classnameColumn, dataColumn, rvalueColumn;
 
     @Override
@@ -47,7 +47,7 @@ public class BaseHtmlDomTreeController extends BaseController {
         try {
             super.initControls();
 
-            sequenceColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("serialNumber"));
+            hierarchyColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("hierarchyNumber"));
             tagColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("tag"));
             textColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("textStart"));
             idColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("id"));
@@ -80,15 +80,17 @@ public class BaseHtmlDomTreeController extends BaseController {
 
     }
 
-    public void load(String html) {
+    public TreeItem<HtmlNode> loadHtml(String html) {
         try {
             if (html == null) {
                 clearDom();
+                return null;
             } else {
-                load(Jsoup.parse(html));
+                return loadElement(Jsoup.parse(html));
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return null;
         }
     }
 
@@ -100,23 +102,11 @@ public class BaseHtmlDomTreeController extends BaseController {
         }
     }
 
-    public TreeItem<HtmlNode> load(Element element) {
+    public TreeItem<HtmlNode> loadElement(Element element) {
         try {
             clearDom();
-            if (element == null) {
-                return null;
-            }
-            TreeItem<HtmlNode> root = new TreeItem(new HtmlNode(element));
-            root.setExpanded(true);
+            TreeItem<HtmlNode> root = makeTreeItem(element);
             domTree.setRoot(root);
-
-            Elements children = element.children();
-            if (children == null || children.isEmpty()) {
-                return root;
-            }
-            for (Element child : children) {
-                createTreeNode(root, -1, child);
-            }
             return root;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -124,24 +114,119 @@ public class BaseHtmlDomTreeController extends BaseController {
         }
     }
 
-    // element is not changed
-    public void createTreeNode(TreeItem<HtmlNode> parent, int childIndex, Element element) {
+    public TreeItem<HtmlNode> makeTreeItem(Element element) {
         try {
-            TreeItem<HtmlNode> elementNode = new TreeItem(new HtmlNode(element));
-            elementNode.setExpanded(true);
-            ObservableList<TreeItem<HtmlNode>> parentChildren = parent.getChildren();
-            if (childIndex >= 0 && childIndex < parentChildren.size() - 1) {
-                parentChildren.add(childIndex, elementNode);
-            } else {
-                parentChildren.add(elementNode);
+            if (element == null) {
+                return null;
             }
+            TreeItem<HtmlNode> elementItem = new TreeItem(new HtmlNode(element));
+            elementItem.setExpanded(true);
             count++;
             Elements elementChildren = element.children();
             if (elementChildren != null) {
                 for (Element child : elementChildren) {
-                    createTreeNode(elementNode, -1, child);
+                    addTreeItem(elementItem, child);
                 }
             }
+            return elementItem;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public TreeItem<HtmlNode> addTreeItem(TreeItem<HtmlNode> parent, Element element) {
+        return addTreeItem(parent, -1, element);
+    }
+
+    public TreeItem<HtmlNode> addTreeItem(TreeItem<HtmlNode> parent, int index, Element element) {
+        try {
+            if (parent == null || element == null) {
+                return null;
+            }
+            TreeItem<HtmlNode> elementItem = makeTreeItem(element);
+            if (elementItem == null) {
+                return null;
+            }
+            ObservableList<TreeItem<HtmlNode>> parentChildren = parent.getChildren();
+            if (index >= 0 && index < parentChildren.size() - 1) {
+                parentChildren.add(index, elementItem);
+            } else {
+                parentChildren.add(elementItem);
+            }
+            return elementItem;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public TreeItem<HtmlNode> addElement(TreeItem<HtmlNode> parent, Element element) {
+        return addElement(parent, -1, element);
+    }
+
+    public TreeItem<HtmlNode> addElement(TreeItem<HtmlNode> parent, int index, Element element) {
+        try {
+            if (parent == null || element == null) {
+                return null;
+            }
+            Element parentElement = parent.getValue().getElement();
+            if (index >= 0 && index < parentElement.childrenSize()) {
+                parentElement.insertChildren(index, element);
+            } else {
+                parentElement.appendChild(element);
+            }
+            return updateTreeItem(parent, parentElement);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public TreeItem<HtmlNode> updateTreeItem(TreeItem<HtmlNode> item) {
+        try {
+            return updateTreeItem(item, item.getValue().getElement());
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public TreeItem<HtmlNode> updateTreeItem(TreeItem<HtmlNode> item, Element element) {
+        try {
+            if (item == null || element == null) {
+                return null;
+            }
+            TreeItem<HtmlNode> parent = item.getParent();
+            if (parent == null) {
+                return loadElement(element);
+            }
+            int index = parent.getChildren().indexOf(item);
+            if (index < 0) {
+                return null;
+            }
+            count = 0;
+            TreeItem<HtmlNode> elementItem = makeTreeItem(element);
+            if (elementItem == null) {
+                return null;
+            }
+            parent.getChildren().set(index, elementItem);
+            focus(elementItem);
+            return elementItem;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public void focus(TreeItem<HtmlNode> item) {
+        if (item == null) {
+            return;
+        }
+        try {
+            domTree.getSelectionModel().select(item);
+            int index = domTree.getRow(item);
+            domTree.scrollTo(index > 3 ? index - 3 : index);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -162,24 +247,84 @@ public class BaseHtmlDomTreeController extends BaseController {
         return validItem;
     }
 
-    public void updateDom(TreeItem<HtmlNode> item) {
+    public String tag(TreeItem<HtmlNode> item) {
         try {
-            TreeItem<HtmlNode> validItem = validItem(item);
-            if (validItem == null) {
-                return;
+            return item.getValue().getTag();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public String hierarchyNumber(TreeItem<HtmlNode> item) {
+        if (item == null) {
+            return "";
+        }
+        TreeItem<HtmlNode> parent = item.getParent();
+        if (parent == null) {
+            return "";
+        }
+        String p = hierarchyNumber(parent);
+        return (p == null || p.isBlank() ? "" : p + ".") + (parent.getChildren().indexOf(item) + 1);
+    }
+
+    public String label(TreeItem<HtmlNode> item) {
+        if (item == null) {
+            return "";
+        }
+        return hierarchyNumber(item) + " " + tag(item);
+    }
+
+    public boolean isSameLocation(TreeItem<HtmlNode> item1, TreeItem<HtmlNode> item2) {
+        if (item1 == null || item2 == null) {
+            return false;
+        }
+        String s1 = hierarchyNumber(item1);
+        String s2 = hierarchyNumber(item2);
+        return s1.equals(s2);
+    }
+
+    // true when item1 is a descendant of item2
+    public boolean isSameOrDescendantLocation(TreeItem<HtmlNode> item1, TreeItem<HtmlNode> item2) {
+        try {
+            if (item1 == null || item2 == null) {
+                return false;
             }
-            Element element = item.getValue().getElement();
-            element.children().clear();
-            List< TreeItem<HtmlNode>> children = item.getChildren();
-            if (children == null || children.isEmpty()) {
-                return;
-            }
-            for (TreeItem<HtmlNode> child : children) {
-                element.children().add(child.getValue().getElement());
-                updateDom(child);
-            }
+            String s1 = hierarchyNumber(item1);
+            String s2 = hierarchyNumber(item2);
+            return s1.contains(s2);
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public TreeItem<HtmlNode> find(String number) {
+        return find(domTree.getRoot(), number);
+    }
+
+    public TreeItem<HtmlNode> find(TreeItem<HtmlNode> parent, String number) {
+        try {
+            if (parent == null || number == null || number.isBlank()) {
+                return parent;
+            }
+            String[] numbers = number.split("\\.", -1);
+            if (numbers == null || numbers.length == 0) {
+                return null;
+            }
+            int index;
+            TreeItem<HtmlNode> item = parent;
+            for (String n : numbers) {
+                index = Integer.parseInt(n);
+                List<TreeItem<HtmlNode>> children = item.getChildren();
+                if (index < 1 || index > children.size()) {
+                    return null;
+                }
+                item = children.get(index - 1);
+            }
+            return item;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
     }
 
@@ -191,6 +336,11 @@ public class BaseHtmlDomTreeController extends BaseController {
     @FXML
     public void unfoldAction() {
         setExpanded(domTree.getSelectionModel().getSelectedItem(), true);
+    }
+
+    @FXML
+    public void refreshAction() {
+        updateTreeItem(domTree.getRoot());
     }
 
     public void setExpanded(TreeItem<HtmlNode> item, boolean unfold) {
@@ -217,8 +367,7 @@ public class BaseHtmlDomTreeController extends BaseController {
             return;
         }
         List<MenuItem> items = new ArrayList<>();
-        MenuItem menuItem = new MenuItem(StringTools.menuPrefix(
-                item.getValue().getSerialNumber() + "  " + item.getValue().getTag()));
+        MenuItem menuItem = new MenuItem(StringTools.menuPrefix(label(item)));
         menuItem.setStyle("-fx-text-fill: #2e598a;");
         items.add(menuItem);
         items.add(new SeparatorMenuItem());
@@ -232,6 +381,12 @@ public class BaseHtmlDomTreeController extends BaseController {
         menuItem = new MenuItem(message("Fold"), StyleTools.getIconImageView("iconMinus.png"));
         menuItem.setOnAction((ActionEvent menuItemEvent) -> {
             setExpanded(item, false);
+        });
+        items.add(menuItem);
+
+        menuItem = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
+        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
+            updateTreeItem(item);
         });
         items.add(menuItem);
 
@@ -357,6 +512,7 @@ public class BaseHtmlDomTreeController extends BaseController {
 
     @FXML
     protected void clearDom() {
+        count = 0;
         domTree.setRoot(null);
     }
 

@@ -642,7 +642,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
         if (!tabPane.getTabs().contains(domTab)) {
             return;
         }
-        domController.load(html);
+        domController.loadHtml(html);
         domChanged(updated);
     }
 

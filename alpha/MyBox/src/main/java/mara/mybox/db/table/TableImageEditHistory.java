@@ -275,10 +275,16 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
         try (PreparedStatement statement = conn.prepareStatement(FileQuery)) {
             conn.setAutoCommit(true);
             for (String file : files) {
+                if (task != null && task.isCancelled()) {
+                    return;
+                }
                 recordInfo(task, message("Check") + ": " + file);
                 statement.setString(1, file);
                 try (ResultSet results = statement.executeQuery()) {
                     while (results.next()) {
+                        if (task != null && task.isCancelled()) {
+                            return;
+                        }
                         ImageEditHistory data = readData(results);
                         recordInfo(task, message("Delete") + ": " + data.getHistoryLocation());
                         FileDeleteTools.delete(data.getHistoryLocation());
@@ -291,8 +297,14 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
             recordError(task, e.toString() + "\n" + tableName);
         }
         recordInfo(task, DeleteFile);
+        if (task != null && task.isCancelled()) {
+            return;
+        }
         try (PreparedStatement statement = conn.prepareStatement(DeleteFile)) {
             for (String file : files) {
+                if (task != null && task.isCancelled()) {
+                    return;
+                }
                 recordInfo(task, message("Clear") + ": " + file);
                 statement.setString(1, file);
                 statement.executeUpdate();
@@ -312,6 +324,9 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
             try (PreparedStatement query = conn.prepareStatement(queryAllStatement());
                     ResultSet results = query.executeQuery()) {
                 while (results.next()) {
+                    if (task != null && task.isCancelled()) {
+                        return -1;
+                    }
                     ImageEditHistory data = readData(results);
                     String image = data.getImage();
                     if (image == null) {
@@ -342,6 +357,9 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
             if (count > 0) {
                 recordInfo(task, message("Invalid") + ": " + clear.size() + " + " + invalid.size());
                 clearHistories(task, conn, clear);
+                if (task != null && task.isCancelled()) {
+                    return -1;
+                }
                 deleteData(conn, invalid);
             }
             conn.setAutoCommit(true);

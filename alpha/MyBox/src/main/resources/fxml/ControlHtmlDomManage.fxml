@@ -8,6 +8,7 @@ License:    Apache License Version 2.0
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -17,6 +18,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlHtmlDomManage">
@@ -40,7 +42,7 @@ License:    Apache License Version 2.0
                         </FlowPane>
                         <TreeTableView fx:id="domTree" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                             <columns>
-                                <TreeTableColumn fx:id="sequenceColumn" prefWidth="120.0" text="%HierarchyNumber" />
+                                <TreeTableColumn fx:id="hierarchyColumn" prefWidth="120.0" text="%HierarchyNumber" />
                                 <TreeTableColumn fx:id="tagColumn" text="Tag" />
                                 <TreeTableColumn fx:id="textColumn" prefWidth="100.0" text="text" />
                                 <TreeTableColumn fx:id="idColumn" text="id" />
@@ -97,9 +99,10 @@ License:    Apache License Version 2.0
                               <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                            </padding>
                            <children>
-                              <FlowPane alignment="TOP_RIGHT" hgap="2.0" prefWrapLength="800.0" vgap="2.0">
+                              <HBox alignment="CENTER_LEFT" spacing="2.0">
                                  <children>
-                                    <Button fx:id="recoverCodesButton" layoutX="696.0" layoutY="10.0" mnemonicParsing="false" onAction="#recoverCodes">
+                                    <Label fx:id="tagLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
+                                    <Button fx:id="recoverCodesButton" mnemonicParsing="false" onAction="#recoverCodes">
                                        <graphic>
                                           <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                              <image>
@@ -118,7 +121,7 @@ License:    Apache License Version 2.0
                                        </graphic>
                                     </Button>
                                  </children>
-                              </FlowPane>
+                              </HBox>
                               <TextArea fx:id="codesArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
                            </children>
                         </VBox>

@@ -125,10 +125,16 @@ public class TableFileBackup extends BaseTable<FileBackup> {
         try (PreparedStatement statement = conn.prepareStatement(FileQuery)) {
             conn.setAutoCommit(true);
             for (String file : files) {
+                if (task != null && task.isCancelled()) {
+                    return;
+                }
                 recordInfo(task, message("Check") + ": " + file);
                 statement.setString(1, file);
                 try (ResultSet results = statement.executeQuery()) {
                     while (results.next()) {
+                        if (task != null && task.isCancelled()) {
+                            return;
+                        }
                         FileBackup data = readData(results);
                         recordInfo(task, message("Delete") + ": " + data.getBackup());
                         FileDeleteTools.delete(data.getBackup());
@@ -141,8 +147,14 @@ public class TableFileBackup extends BaseTable<FileBackup> {
             recordError(task, e.toString() + "\n" + tableName);
         }
         recordInfo(task, DeleteFile);
+        if (task != null && task.isCancelled()) {
+            return;
+        }
         try (PreparedStatement statement = conn.prepareStatement(DeleteFile)) {
             for (String file : files) {
+                if (task != null && task.isCancelled()) {
+                    return;
+                }
                 recordInfo(task, message("Clear") + ": " + file);
                 statement.setString(1, file);
                 statement.executeUpdate();
@@ -162,6 +174,9 @@ public class TableFileBackup extends BaseTable<FileBackup> {
             try (PreparedStatement query = conn.prepareStatement(queryAllStatement());
                     ResultSet results = query.executeQuery()) {
                 while (results.next()) {
+                    if (task != null && task.isCancelled()) {
+                        return -1;
+                    }
                     FileBackup data = readData(results);
                     File file = data.getFile();
                     if (file == null) {
@@ -186,6 +201,9 @@ public class TableFileBackup extends BaseTable<FileBackup> {
             if (count > 0) {
                 recordInfo(task, message("Invalid") + ": " + clear.size() + " + " + invalid.size());
                 clearBackups(task, conn, clear);
+                if (task != null && task.isCancelled()) {
+                    return -1;
+                }
                 deleteData(conn, invalid);
             }
             conn.setAutoCommit(true);

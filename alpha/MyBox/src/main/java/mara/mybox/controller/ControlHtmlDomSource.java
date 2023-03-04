@@ -1,6 +1,9 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
@@ -16,6 +19,8 @@ import org.jsoup.nodes.Element;
  * @License Apache License Version 2.0
  */
 public class ControlHtmlDomSource extends BaseHtmlDomTreeController {
+
+    private List<TreeItem<HtmlNode>> selected;
 
     @FXML
     protected TreeTableColumn<HtmlNode, Boolean> selectColumn;
@@ -42,16 +47,48 @@ public class ControlHtmlDomSource extends BaseHtmlDomTreeController {
         }
     }
 
-    public void load(Element element, int rowIndex) {
+    public void load(Element element, TreeItem<HtmlNode> item) {
         try {
-            super.load(element);
+            super.loadElement(element);
 
-            TreeItem<HtmlNode> target = domTree.getTreeItem(rowIndex);
-            if (target != null) {
-                target.getValue().getSelected().set(true);
-                domTree.scrollTo(rowIndex);
+            if (item != null) {
+                TreeItem<HtmlNode> sourceItem = find(hierarchyNumber(item));
+                if (sourceItem != null) {
+                    focus(sourceItem);
+                    sourceItem.getValue().getSelected().set(true);
+                }
             }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
 
+    }
+
+    public List<TreeItem<HtmlNode>> selected() {
+        selected = new ArrayList<>();
+        checkSelected(domTree.getRoot());
+        return selected;
+    }
+
+    private void checkSelected(TreeItem<HtmlNode> item) {
+        try {
+            if (item == null) {
+                return;
+            }
+            HtmlNode node = item.getValue();
+            if (node == null) {
+                return;
+            }
+            if (node.getSelected().get()) {
+                selected.add(item);
+            }
+            ObservableList<TreeItem<HtmlNode>> children = item.getChildren();
+            if (children == null) {
+                return;
+            }
+            for (TreeItem<HtmlNode> child : children) {
+                checkSelected(child);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

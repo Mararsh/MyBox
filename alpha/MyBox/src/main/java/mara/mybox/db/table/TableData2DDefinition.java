@@ -309,6 +309,9 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             List<Data2DDefinition> invalid = new ArrayList<>();
             try (ResultSet results = conn.prepareStatement(sql).executeQuery()) {
                 while (results.next()) {
+                    if (task != null && task.isCancelled()) {
+                        return -1;
+                    }
                     Data2DDefinition data = readData(results);
                     try {
                         File file = data.getFile();
@@ -328,6 +331,9 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             deleteData(conn, invalid);
             conn.commit();
 
+            if (task != null && task.isCancelled()) {
+                return -1;
+            }
             conn.setAutoCommit(true);
             invalid.clear();
             sql = "SELECT * FROM Data2D_Definition WHERE data_type ="
@@ -335,6 +341,9 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
 //            recordInfo(task, sql);
             try (ResultSet results = conn.prepareStatement(sql).executeQuery()) {
                 while (results.next()) {
+                    if (task != null && task.isCancelled()) {
+                        return -1;
+                    }
                     Data2DDefinition data = readData(results);
                     if (DerbyBase.exist(conn, data.getSheet()) == 0) {
                         invalid.add(data);
@@ -356,6 +365,9 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
 //                recordInfo(task, sql);
                 try (ResultSet results = conn.prepareStatement(sql).executeQuery()) {
                     while (results.next()) {
+                        if (task != null && task.isCancelled()) {
+                            return -1;
+                        }
                         Data2DDefinition data = readData(results);
                         invalid.add(data);
                         recordInfo(task, message("Delete") + ": " + data.getSheet());
@@ -365,6 +377,9 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
                 }
                 count += invalid.size();
                 for (Data2DDefinition d : invalid) {
+                    if (task != null && task.isCancelled()) {
+                        return -1;
+                    }
                     deleteUserTable(conn, d.getSheet());
                 }
                 conn.commit();

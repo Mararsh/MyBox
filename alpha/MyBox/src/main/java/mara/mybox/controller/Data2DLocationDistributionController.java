@@ -501,7 +501,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
 
                 IndexRange range = playController.currentRange();
                 List<String> labels = new ArrayList<>();
-                for (int i = range.getStart(); i <= range.getEnd(); i++) {
+                for (int i = range.getStart(); i < range.getEnd(); i++) {
                     labels.add((i + 1) + "  " + mapController.mapPoints.get(i).getLabel());
                 }
                 playController.setList(labels);

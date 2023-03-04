@@ -33,7 +33,6 @@ import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.NetworkTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.UrlTools;
-import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -176,7 +175,7 @@ public class NetworkQueryAddressController extends HtmlTableController {
                     try {
                         host = url.getHost();
 
-                        SSLContext context = SSLContext.getInstance(AppValues.HttpsProtocal);
+                        SSLContext context = SSLContext.getDefault();
                         context.init(null, null, null);
                         SSLSocket socket = (SSLSocket) context.getSocketFactory()
                                 .createSocket(host, 443);

@@ -29,6 +29,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.tools.NumberTools;
 import mara.mybox.tools.ScheduleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TmpFileTools;
@@ -42,7 +43,7 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlPlay extends BaseController {
 
-    protected int total, currentIndex, fromFrame, toFrame, maxList = 100;
+    protected int total, currentIndex, fromFrame, toFrame;
     protected long timeValue;
     protected List<String> frameNames;
     protected SimpleBooleanProperty stopped;
@@ -172,26 +173,8 @@ public class ControlPlay extends BaseController {
 
     // 0-based, include end
     public IndexRange currentRange() {
-        return range(total, fromFrame, toFrame, currentIndex);
-    }
-
-    public IndexRange range(int total, int from, int to, int index) {
-        int s = total;
-        if (s < 1) {
-            return null;
-        }
-        int f = Math.max(from, index - maxList / 2);
-        if (f < 0 || f >= s) {
-            f = 0;
-        }
-        int t = Math.min(to, f + maxList - 1);
-        if (t < 0 || t >= s) {
-            t = s - 1;
-        }
-        if (f > t) {
-            return null;
-        }
-        return new IndexRange(f, t);
+        return NumberTools.scrollRange(UserConfig.selectorScrollSize(),
+                total, fromFrame, toFrame + 1, currentIndex);
     }
 
     public void setList(List<String> list) {
@@ -215,13 +198,13 @@ public class ControlPlay extends BaseController {
     }
 
     public void refreshList() {
-        IndexRange range = range(total, fromFrame, toFrame, currentIndex);
+        IndexRange range = currentRange();
         if (range == null) {
             frameSelector.getItems().clear();
             return;
         }
         List<String> labels = new ArrayList<>();
-        for (int i = range.getStart(); i <= range.getEnd(); i++) {
+        for (int i = range.getStart(); i < range.getEnd(); i++) {
             labels.add((i + 1) + "");
         }
         isSettingValues = true;

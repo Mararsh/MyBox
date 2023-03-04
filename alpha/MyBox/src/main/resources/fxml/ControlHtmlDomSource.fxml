@@ -33,7 +33,7 @@ License:    Apache License Version 2.0
         </HBox>
         <TreeTableView fx:id="domTree" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
             <columns>
-                <TreeTableColumn fx:id="sequenceColumn" prefWidth="160.0" text="%HierarchyNumber" />
+                <TreeTableColumn fx:id="hierarchyColumn" prefWidth="160.0" text="%HierarchyNumber" />
             <TreeTableColumn fx:id="selectColumn" minWidth="-1.0" prefWidth="50.0" text="%Select" />
                 <TreeTableColumn fx:id="tagColumn" text="Tag" />
                 <TreeTableColumn fx:id="textColumn" prefWidth="100.0" text="text" />

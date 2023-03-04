@@ -109,7 +109,9 @@ public class ControlHtmlDomNode extends BaseChildController {
         } else {
             element.tagName(tag);
         }
-        element.text(textInput.getText());
+        if (!"script".equalsIgnoreCase(tag) && !"style".equalsIgnoreCase(tag)) {
+            element.text(textInput.getText());
+        }
         element.clearAttributes();
         for (Attribute a : attributesData) {
             element.attr(a.getKey(), a.getValue());

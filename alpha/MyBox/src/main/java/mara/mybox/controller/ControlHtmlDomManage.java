@@ -5,7 +5,7 @@ import java.util.List;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Menu;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
@@ -36,6 +36,8 @@ public class ControlHtmlDomManage extends BaseHtmlDomTreeController {
     protected TextArea codesArea;
     @FXML
     protected Tab attributesTab, codesTab;
+    @FXML
+    protected Label tagLabel;
 
     public void setEditor(ControlHtmlEditor htmlEditor) {
         try {
@@ -56,148 +58,110 @@ public class ControlHtmlDomManage extends BaseHtmlDomTreeController {
         editNode(item);
     }
 
-    public void add(TreeItem<HtmlNode> inItem) {
+    public void add(TreeItem<HtmlNode> item) {
+        HtmlDomAddController.open(htmlEditor, item);
+    }
+
+    public void delete(TreeItem<HtmlNode> inItem) {
         TreeItem<HtmlNode> item = validItem(inItem);
         if (item == null) {
             popError(message("NoData"));
             return;
         }
-        HtmlDomAddController.open(htmlEditor, domTree.getRow(item));
+        TreeItem<HtmlNode> parent = item.getParent();
+        if (parent == null) {
+            clearDom();
+        } else {
+            item.getValue().getElement().remove();
+            updateTreeItem(parent);
+        }
+        htmlEditor.domChanged(true);
     }
 
-    public void copy(TreeItem<HtmlNode> inItem) {
+    public void copy(TreeItem<HtmlNode> item) {
+        HtmlDomCopyController.open(htmlEditor, item);
+    }
+
+    public void duplicate(TreeItem<HtmlNode> inItem) {
         TreeItem<HtmlNode> item = validItem(inItem);
         if (item == null) {
             popError(message("NoData"));
             return;
         }
-        HtmlDomCopyController.open(htmlEditor, domTree.getRow(item));
-    }
-
-    public void cut(TreeItem<HtmlNode> item) {
-        TreeItem<HtmlNode> validItem = validItem(item);
-        if (validItem == null) {
-            popError(message("NoData"));
-            return;
-        }
-        copiedItem = validItem;
-        delete(validItem);
-    }
-
-    public void delete(TreeItem<HtmlNode> item) {
-        TreeItem<HtmlNode> validItem = validItem(item);
-        if (validItem == null) {
-            popError(message("NoData"));
-            return;
-        }
-        TreeItem<HtmlNode> parent = validItem.getParent();
+        TreeItem<HtmlNode> parent = item.getParent();
         if (parent == null) {
+            popError(message("NoData"));
             return;
         }
-        int pos = parent.getChildren().indexOf(validItem);
-        if (pos < 0) {
-            return;
-        }
-        parent.getChildren().remove(pos);
-        parent.getValue().getElement().children().remove(pos);
+        Element element = item.getValue().getElement();
+        element.after(element.outerHtml());
+        updateTreeItem(parent);
         htmlEditor.domChanged(true);
     }
 
-    public void duplicate(TreeItem<HtmlNode> item) {
-        TreeItem<HtmlNode> validItem = validItem(item);
-        if (validItem == null) {
+    public void up(TreeItem<HtmlNode> inItem) {
+        TreeItem<HtmlNode> item = validItem(inItem);
+        if (item == null) {
             popError(message("NoData"));
             return;
         }
-        TreeItem<HtmlNode> parent = validItem.getParent();
+        TreeItem<HtmlNode> parent = item.getParent();
         if (parent == null) {
+            popError(message("NoData"));
             return;
         }
-        int pos = parent.getChildren().indexOf(validItem);
-        if (pos < 0) {
+        int index = parent.getChildren().indexOf(item);
+        if (index < 1) {
             return;
         }
-        HtmlNode newNode = validItem.getValue().copy();
-        TreeItem<HtmlNode> newItem = new TreeItem<>(newNode);
-        parent.getChildren().add(pos + 1, newItem);
-        parent.getValue().getElement().children().add(pos + 1, newNode.getElement());
-        domTree.getSelectionModel().select(newItem);
+        TreeItem<HtmlNode> previousItem = parent.getChildren().get(index - 1);
+        if (previousItem == null) {
+            return;
+        }
+        Element thisElement = item.getValue().getElement();
+        Element previousElement = previousItem.getValue().getElement();
+        if (previousElement == null) {
+            return;
+        }
+        previousElement.remove();
+        thisElement.after(previousElement);
+        updateTreeItem(item, previousElement);
+        updateTreeItem(previousItem, thisElement);
         htmlEditor.domChanged(true);
     }
 
-    public void up(TreeItem<HtmlNode> item) {
-        TreeItem<HtmlNode> validItem = validItem(item);
-        if (validItem == null) {
+    public void down(TreeItem<HtmlNode> inItem) {
+        TreeItem<HtmlNode> item = validItem(inItem);
+        if (item == null) {
             popError(message("NoData"));
             return;
         }
-        TreeItem<HtmlNode> parent = validItem.getParent();
+        TreeItem<HtmlNode> parent = item.getParent();
         if (parent == null) {
             return;
         }
-        int pos = parent.getChildren().indexOf(validItem);
-        if (pos <= 0) {
+        int index = parent.getChildren().indexOf(item);
+        if (index >= parent.getChildren().size() - 1) {
             return;
         }
-        Element thisElement = validItem.getValue().getElement();
-        TreeItem<HtmlNode> upItem = parent.getChildren().get(pos - 1);
-        Element upElement = upItem.getValue().getElement();
-        parent.getChildren().set(pos, upItem);
-        parent.getChildren().set(pos - 1, validItem);
-        parent.getValue().getElement().children().set(pos, upElement);
-        parent.getValue().getElement().children().set(pos - 1, thisElement);
-        domTree.getSelectionModel().select(validItem);
+        TreeItem<HtmlNode> nextItem = parent.getChildren().get(index + 1);
+        if (nextItem == null) {
+            return;
+        }
+        Element thisElement = item.getValue().getElement();
+        Element nextElement = nextItem.getValue().getElement();
+        if (nextElement == null) {
+            return;
+        }
+        thisElement.remove();
+        nextElement.after(thisElement);
+        updateTreeItem(item, nextElement);
+        updateTreeItem(nextItem, thisElement);
         htmlEditor.domChanged(true);
     }
 
-    public void down(TreeItem<HtmlNode> item) {
-        TreeItem<HtmlNode> validItem = validItem(item);
-        if (validItem == null) {
-            popError(message("NoData"));
-            return;
-        }
-        TreeItem<HtmlNode> parent = validItem.getParent();
-        if (parent == null) {
-            return;
-        }
-        int pos = parent.getChildren().indexOf(validItem);
-        if (pos == parent.getChildren().size() - 1) {
-            return;
-        }
-        Element thisElement = validItem.getValue().getElement();
-        TreeItem<HtmlNode> downItem = parent.getChildren().get(pos + 1);
-        Element downElement = downItem.getValue().getElement();
-        parent.getChildren().set(pos + 1, validItem);
-        parent.getChildren().set(pos, downItem);
-        parent.getValue().getElement().children().set(pos + 1, thisElement);
-        parent.getValue().getElement().children().set(pos, downElement);
-        domTree.getSelectionModel().select(validItem);
-        htmlEditor.domChanged(true);
-    }
-
-    public void moveTo(TreeItem<HtmlNode> item) {
-        TreeItem<HtmlNode> validItem = validItem(item);
-        if (validItem == null) {
-            popError(message("NoData"));
-            return;
-        }
-        TreeItem<HtmlNode> parent = validItem.getParent();
-        if (parent == null) {
-            return;
-        }
-        int pos = parent.getChildren().indexOf(validItem);
-        if (pos == parent.getChildren().size() - 1) {
-            return;
-        }
-        Element thisElement = validItem.getValue().getElement();
-        TreeItem<HtmlNode> downItem = parent.getChildren().get(pos + 1);
-        Element downElement = downItem.getValue().getElement();
-        parent.getChildren().set(pos + 1, validItem);
-        parent.getChildren().set(pos, downItem);
-        parent.getValue().getElement().children().set(pos + 1, thisElement);
-        parent.getValue().getElement().children().set(pos, downElement);
-        domTree.getSelectionModel().select(validItem);
-        htmlEditor.domChanged(true);
+    public void move(TreeItem<HtmlNode> item) {
+        HtmlDomMoveController.open(htmlEditor, item);
     }
 
     @Override
@@ -206,56 +170,49 @@ public class ControlHtmlDomManage extends BaseHtmlDomTreeController {
         if (item == null) {
             return items;
         }
-        Menu modifyMenu = new Menu(message("ModifyTree"), StyleTools.getIconImageView("iconTree.png"));
-        items.add(modifyMenu);
-
         MenuItem menuItem = new MenuItem(message("AddNode"), StyleTools.getIconImageView("iconAdd.png"));
         menuItem.setOnAction((ActionEvent menuItemEvent) -> {
             add(item);
         });
-        modifyMenu.getItems().add(menuItem);
-
-        menuItem = new MenuItem(message("CopyNodes"), StyleTools.getIconImageView("iconCopy.png"));
-        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
-            copy(item);
-        });
-        modifyMenu.getItems().add(menuItem);
-
-        menuItem = new MenuItem(message("Duplicate"), StyleTools.getIconImageView("iconCopy.png"));
-        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
-            duplicate(item);
-        });
-        modifyMenu.getItems().add(menuItem);
+        items.add(menuItem);
 
         menuItem = new MenuItem(message("DeleteNode"), StyleTools.getIconImageView("iconDelete.png"));
         menuItem.setOnAction((ActionEvent menuItemEvent) -> {
             delete(item);
         });
-        modifyMenu.getItems().add(menuItem);
+        items.add(menuItem);
 
-        menuItem = new MenuItem(message("Crop"), StyleTools.getIconImageView("iconCrop.png"));
-        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
-            cut(item);
-        });
-        modifyMenu.getItems().add(menuItem);
+        if (domTree.getTreeItemLevel(item) > 1) {
+            menuItem = new MenuItem(message("CopyNodes"), StyleTools.getIconImageView("iconCopy.png"));
+            menuItem.setOnAction((ActionEvent menuItemEvent) -> {
+                copy(item);
+            });
+            items.add(menuItem);
 
-        menuItem = new MenuItem(message("MoveUp"), StyleTools.getIconImageView("iconUp.png"));
-        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
-            up(item);
-        });
-        modifyMenu.getItems().add(menuItem);
+            menuItem = new MenuItem(message("DuplicateNode"), StyleTools.getIconImageView("iconCopy.png"));
+            menuItem.setOnAction((ActionEvent menuItemEvent) -> {
+                duplicate(item);
+            });
+            items.add(menuItem);
 
-        menuItem = new MenuItem(message("MoveDown"), StyleTools.getIconImageView("iconDown.png"));
-        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
-            down(item);
-        });
-        modifyMenu.getItems().add(menuItem);
+            menuItem = new MenuItem(message("MoveUp"), StyleTools.getIconImageView("iconUp.png"));
+            menuItem.setOnAction((ActionEvent menuItemEvent) -> {
+                up(item);
+            });
+            items.add(menuItem);
 
-        menuItem = new MenuItem(message("MoveNodes"), StyleTools.getIconImageView("iconDown.png"));
-        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
-            moveTo(item);
-        });
-        modifyMenu.getItems().add(menuItem);
+            menuItem = new MenuItem(message("MoveDown"), StyleTools.getIconImageView("iconDown.png"));
+            menuItem.setOnAction((ActionEvent menuItemEvent) -> {
+                down(item);
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("MoveNodes"), StyleTools.getIconImageView("iconRef.png"));
+            menuItem.setOnAction((ActionEvent menuItemEvent) -> {
+                move(item);
+            });
+            items.add(menuItem);
+        }
 
         menuItem = new MenuItem(message("EditNode"), StyleTools.getIconImageView("iconEdit.png"));
         menuItem.setOnAction((ActionEvent menuItemEvent) -> {
@@ -272,8 +229,7 @@ public class ControlHtmlDomManage extends BaseHtmlDomTreeController {
     @Override
     protected void clearDom() {
         super.clearDom();
-        nodeController.load(null);
-        tabPane.setDisable(true);
+        clearNode();
     }
 
     /*
@@ -282,12 +238,12 @@ public class ControlHtmlDomManage extends BaseHtmlDomTreeController {
     public void editNode(TreeItem<HtmlNode> item) {
         currentItem = item;
         if (currentItem == null) {
-            tabPane.setDisable(true);
+            clearNode();
             return;
         }
         Element element = currentItem.getValue().getElement();
         nodeController.load(element);
-        codesArea.setText(element.html());
+        setCodes();
         tabPane.setDisable(false);
     }
 
@@ -303,9 +259,10 @@ public class ControlHtmlDomManage extends BaseHtmlDomTreeController {
         if (currentItem == null || element == null) {
             return;
         }
-        currentItem.setValue(new HtmlNode(element));
+        updateTreeItem(currentItem, element);
         editNode(currentItem);
         htmlEditor.domChanged(true);
+        htmlEditor.popInformation(message("UpdateSuccessfully"));
     }
 
     @FXML
@@ -323,13 +280,26 @@ public class ControlHtmlDomManage extends BaseHtmlDomTreeController {
         okNode(element);
     }
 
-    @FXML
-    public void recoverCodes() {
+    public void setCodes() {
         if (currentItem == null) {
             return;
         }
         Element element = currentItem.getValue().getElement();
-        codesArea.setText(element.outerHtml());
+        tagLabel.setText(element.tagName());
+        codesArea.setText(element.html());
+    }
+
+    @FXML
+    public void recoverCodes() {
+        setCodes();
+    }
+
+    protected void clearNode() {
+        currentItem = null;
+        nodeController.load(null);
+        tagLabel.setText("");
+        codesArea.clear();
+        tabPane.setDisable(true);
     }
 
     /*

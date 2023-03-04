@@ -4,6 +4,7 @@ import java.util.List;
 import javafx.util.converter.DefaultStringConverter;
 import mara.mybox.controller.ControlData2DLoad;
 import mara.mybox.db.data.Data2DColumn;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -29,18 +30,27 @@ public class TableDataCell extends TableAutoCommitCell<List<String>, String> {
     }
 
     protected boolean setCellValue(String inValue) {
-        String value = inValue;
-        if (value != null && supportMultipleLine) {
-            value = value.replaceAll("\\\\n", "\n");
+        try {
+            String value = inValue;
+            if (value != null && supportMultipleLine) {
+                value = value.replaceAll("\\\\n", "\n");
+            }
+            boolean changed = changed(value);
+            commit(value, valid(value), changed);
+            return changed;
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+            return false;
         }
-        boolean changed = changed(value);
-        commit(value, valid(value), changed);
-        return changed;
     }
 
     @Override
     public boolean valid(String value) {
-        return dataColumn.validValue(value) && dataControl.getData2D().validValue(value);
+        try {
+            return dataColumn.validValue(value) && dataControl.getData2D().validValue(value);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
