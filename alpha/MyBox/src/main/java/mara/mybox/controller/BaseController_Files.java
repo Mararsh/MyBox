@@ -617,13 +617,15 @@ public abstract class BaseController_Files extends BaseController_Attributes {
     }
 
     public File defaultTargetPath(int type) {
-        File savedPath = VisitHistoryTools.getSavedPath(type);
-        String defaultPathName = UserConfig.getString(baseName + "TargetPath", savedPath != null ? savedPath.getAbsolutePath() : null);
-        if (defaultPathName != null) {
-            return new File(defaultPathName);
-        } else {
-            return AppPaths.defaultPath();
+        File defaultPath = UserConfig.getPath(baseName + "TargetPath");
+        if (defaultPath != null) {
+            return defaultPath;
         }
+        File savedPath = VisitHistoryTools.getSavedPath(type);
+        if (savedPath != null) {
+            return savedPath;
+        }
+        return AppPaths.defaultPath();
     }
 
     public List<FileChooser.ExtensionFilter> defaultFilter(int type) {

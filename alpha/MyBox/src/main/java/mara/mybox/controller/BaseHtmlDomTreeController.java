@@ -34,8 +34,6 @@ import org.jsoup.select.Elements;
  */
 public class BaseHtmlDomTreeController extends BaseController {
 
-    protected int count;
-
     @FXML
     protected TreeTableView<HtmlNode> domTree;
     @FXML
@@ -121,7 +119,6 @@ public class BaseHtmlDomTreeController extends BaseController {
             }
             TreeItem<HtmlNode> elementItem = new TreeItem(new HtmlNode(element));
             elementItem.setExpanded(true);
-            count++;
             Elements elementChildren = element.children();
             if (elementChildren != null) {
                 for (Element child : elementChildren) {
@@ -205,7 +202,6 @@ public class BaseHtmlDomTreeController extends BaseController {
             if (index < 0) {
                 return null;
             }
-            count = 0;
             TreeItem<HtmlNode> elementItem = makeTreeItem(element);
             if (elementItem == null) {
                 return null;
@@ -512,7 +508,6 @@ public class BaseHtmlDomTreeController extends BaseController {
 
     @FXML
     protected void clearDom() {
-        count = 0;
         domTree.setRoot(null);
     }
 

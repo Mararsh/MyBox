@@ -10,10 +10,10 @@
 	<div class="paragraph">
 		<p>在Windows操作系统下：</p>
 			<ul  class="inside">
-				<li>确保jdk和maven已正确安装。</li>
+				<li>确保所需版本的<a href="http://jdk.java.net/" target=_blank>jdk</a>和<a href="https://maven.apache.org/" target=_blank>maven</a>已正确安装。</li>
 				<li>下载Mybox源码。</li>
 				<li>在可写可读目录下解包。</li>
-				<li>修改Mybox源码中的文件“MyBox/pack/win/make-win-exe.bat”, 设置以下参数为你的环境下的目录: jpackagePath、jdkPath</li>
+				<li>修改Mybox源码中的文件“MyBox/pack/win/make-win-exe.bat”, 设置参数JAVA_HOME为你的环境下的jdk目录。</li>
 				<li>双击执行脚本“MyBox/pack/win/make-win-exe.bat”。</li>				
 				<li>生成的可执行文件是“MyBox/pack/win/app/MyBox/MyBox.exe”。</li>				
 			</ul>
@@ -23,10 +23,10 @@
 	<div class="paragraph">
 		<p>在Linux操作系统下：</p>
 			<ul  class="inside">
-				<li>确保jdk和maven已正确安装。</li>
+				<li>确保所需版本的<a href="http://jdk.java.net/" target=_blank>jdk</a>和<a href="https://maven.apache.org/" target=_blank>maven</a>已正确安装。</li>
 				<li>下载Mybox源码。</li>
 				<li>在可写可读目录下解包。</li>
-				<li>修改Mybox源码中的文件“MyBox/pack/linux/make-linux-bin.sh”, 设置以下参数为你的环境下的目录: jpackagePath、jdkPath</li>
+				<li>修改Mybox源码中的文件“MyBox/pack/linux/make-linux-bin.sh”, 设置参数JAVA_HOME为你的环境下的jdk目录。</li>
 				<li>打开一个命令终端，进入源码目录：“cd  MyBox/pack/linux/”</li>	
 				<li>修改脚本的执行权限： “chmod 755 make-linux-bin.sh”</li>	
 				<li>执行脚本“./make-linux-bin.sh”。</li>				
@@ -38,17 +38,16 @@
 	<div class="paragraph">
 		<p>在Mac操作系统下：</p>
 			<ul  class="inside">
-				<li>确保jdk和maven已正确安装。</li>
+				<li>确保所需版本的<a href="http://jdk.java.net/" target=_blank>jdk</a>和<a href="https://maven.apache.org/" target=_blank>maven</a>已正确安装。</li>
 				<li>下载Mybox源码。</li>
 				<li>在可写可读目录下解包。</li>
-				<li>修改Mybox源码中的文件“MyBox/pack/mac/make-mac-dmg.sh”, 设置以下参数为你的环境下的目录: jpackagePath、jdkPath</li>
+				<li>修改Mybox源码中的文件“MyBox/pack/mac/make-mac-dmg.sh”, 设置参数JAVA_HOME为你的环境下的jdk目录。</li>
 				<li>打开一个命令终端，进入源码目录：“cd  MyBox/pack/mac/”</li>	
 				<li>修改脚本的执行权限： “chmod 755 make-mac-dmg.sh”</li>	
 				<li>执行脚本“./make-mac-dmg.sh”。</li>				
 				<li>生成的安装包是“MyBox/pack/mac/app/MyBox-$version.dmg”。</li>		
 			</ul>
 	</div>
-
-<a href="https://github.com/Mararsh/yard"><img src="home.jpg" width=60px></a>	
+</br>
 </body> 
 </html>

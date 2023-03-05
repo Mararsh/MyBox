@@ -8,10 +8,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileDeleteTools;
-import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.Languages;
 
 /**
  * @Author Mara
@@ -26,7 +23,7 @@ public class FilesDeleteController extends BaseBatchFileController {
     protected CheckBox deleteEmptyCheck;
 
     public FilesDeleteController() {
-        baseTitle = Languages.message("FilesDelete");
+        baseTitle = message("FilesDelete");
     }
 
     @Override
@@ -57,28 +54,28 @@ public class FilesDeleteController extends BaseBatchFileController {
     public String handleFile(File srcFile, File targetPath) {
         try {
             if (srcFile == null || !srcFile.isFile()) {
-                return Languages.message("Skip");
+                return message("Skip");
             }
             boolean ok;
             String msg;
             if (deleteRadio.isSelected()) {
                 ok = FileDeleteTools.delete(srcFile);
-                msg = Languages.message("FileDeletedSuccessfully") + ": " + srcFile.getAbsolutePath();
+                msg = message("FileDeletedSuccessfully") + ": " + srcFile.getAbsolutePath();
             } else {
                 ok = Desktop.getDesktop().moveToTrash(srcFile);
-                msg = Languages.message("FileMoveToTrashSuccessfully") + ": " + srcFile.getAbsolutePath();
+                msg = message("FileMoveToTrashSuccessfully") + ": " + srcFile.getAbsolutePath();
             }
             if (ok) {
                 if (verboseCheck == null || verboseCheck.isSelected()) {
                     updateLogs(msg);
                 }
-                return Languages.message("Successful");
+                return message("Successful");
             } else {
-                return Languages.message("Failed");
+                return message("Failed");
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return Languages.message("Failed");
+            return message("Failed");
         }
     }
 
@@ -114,13 +111,13 @@ public class FilesDeleteController extends BaseBatchFileController {
                 if (deleteRadio.isSelected()) {
                     if (FileDeleteTools.deleteDir(sourcePath)) {
                         if (verboseCheck == null || verboseCheck.isSelected()) {
-                            updateLogs(Languages.message("DirectoryDeletedSuccessfully") + ": " + sourcePath.getAbsolutePath());
+                            updateLogs(message("DirectoryDeletedSuccessfully") + ": " + sourcePath.getAbsolutePath());
                         }
                     }
                 } else {
                     if (Desktop.getDesktop().moveToTrash(sourcePath)) {
                         if (verboseCheck == null || verboseCheck.isSelected()) {
-                            updateLogs(Languages.message("DirectoryMoveToTrashSuccessfully") + ": " + sourcePath.getAbsolutePath());
+                            updateLogs(message("DirectoryMoveToTrashSuccessfully") + ": " + sourcePath.getAbsolutePath());
                         }
                     }
                 }

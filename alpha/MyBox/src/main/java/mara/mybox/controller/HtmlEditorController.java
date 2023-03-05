@@ -25,8 +25,10 @@ public class HtmlEditorController extends WebAddressController {
     @Override
     public void initValues() {
         try {
-            webViewController = editController.webViewController;
             super.initValues();
+            webViewController = editController.webViewController;
+            webView = webViewController.webView;
+            webEngine = webViewController.webEngine;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
