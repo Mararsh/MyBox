@@ -257,7 +257,7 @@ public class StyleButton {
         }
         if (id.startsWith("open")) {
             if (id.startsWith("openPath")) {
-                return new StyleData(id, message("Directory"), "", "iconOpen2.png");
+                return new StyleData(id, message("OpenDirectory"), "", "iconOpenPath.png");
             }
             switch (id) {
                 case "openWindowButton":
@@ -275,7 +275,7 @@ public class StyleButton {
             }
         }
         if (id.startsWith("input")) {
-            return new StyleData(id, message("Input"), "", "iconRename.png");
+            return new StyleData(id, message("Input"), "", "iconInput.png");
         }
         if (id.startsWith("suggestion")) {
             return new StyleData(id, message("CodeCompletionSuggestions"), "CTRL+1 / ALT+1", "iconInput.png");
@@ -462,7 +462,7 @@ public class StyleButton {
             return new StyleData(id, message("TurnOver"), "", "iconTurnOver.png");
         }
         if (id.startsWith("rename")) {
-            return new StyleData(id, message("Rename"), "", "iconRename.png");
+            return new StyleData(id, message("Rename"), "", "iconInput.png");
         }
         if (id.startsWith("header")) {
             return new StyleData(id, "", "", "iconHeader.png");

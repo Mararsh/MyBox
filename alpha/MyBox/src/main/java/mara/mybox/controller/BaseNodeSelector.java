@@ -603,7 +603,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             });
             modifyTreeMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("RenameNode"), StyleTools.getIconImageView("iconRename.png"));
+            menu = new MenuItem(message("RenameNode"), StyleTools.getIconImageView("iconInput.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 renameNode(targetItem);
             });

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableView;
 import mara.mybox.data.HtmlNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -14,13 +15,52 @@ import org.jsoup.nodes.Element;
 
 /**
  * @Author Mara
- * @CreateDate 2023-2-18
+ * @CreateDate 2023-3-6
  * @License Apache License Version 2.0
  */
-public class HtmlDomMoveController extends HtmlDomCopyController {
+public class HtmlDomDeleteController extends BaseChildController {
 
-    public HtmlDomMoveController() {
-        baseTitle = message("MoveNodes");
+    protected ControlHtmlEditor editor;
+    protected TreeTableView<HtmlNode> sourceTree;
+    protected BaseHtmlDomTreeController manageController;
+    protected int count;
+
+    @FXML
+    protected ControlHtmlDomSource sourceController;
+
+    public HtmlDomDeleteController() {
+        baseTitle = message("DeleteNodes");
+    }
+
+    public void setParamters(ControlHtmlEditor editor, TreeItem<HtmlNode> sourceItem) {
+        try {
+            this.editor = editor;
+            if (invalidTarget()) {
+                return;
+            }
+            manageController = editor.domController;
+            Element root = manageController.domTree.getRoot().getValue().getElement();
+            sourceController.load(root, sourceItem);
+            sourceController.setLabel(message("Select"));
+            sourceTree = sourceController.domTree;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            closeStage();
+        }
+    }
+
+    public boolean invalidTarget() {
+        if (editor == null || editor.getMyStage() == null || !editor.getMyStage().isShowing()) {
+            popError(message("Invalid"));
+            closeStage();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean checkParameters() {
+        return !invalidTarget();
     }
 
     @FXML
@@ -36,69 +76,40 @@ public class HtmlDomMoveController extends HtmlDomCopyController {
 
             @Override
             protected boolean handle() {
-                return move();
+                return delete();
             }
 
             @Override
             protected void whenSucceeded() {
                 if (count > 0) {
                     closeStage();
-                    editor.domController.refreshAction();
-                    editor.domController.focus(editorItem);
+                    manageController.refreshAction();
                     editor.domChanged(true);
                 }
-                editor.popInformation(message("Moved") + ": " + count);
+                editor.popInformation(message("Deleted") + ": " + count);
             }
         };
         start(task);
     }
 
-    public boolean move() {
+    protected boolean delete() {
         try {
             count = 0;
-
-            String targetNumber = targetController.hierarchyNumber(targetItem);
-            if (targetNumber == null) {
-                error = message("SelectNodeCopyInto");
-                return false;
-            }
-            editorItem = manageController.find(targetNumber);
-            if (editorItem == null) {
-                error = message("SelectNodeCopyInto");
-                return false;
-            }
             List<TreeItem<HtmlNode>> sourcesItems = sourceController.selected();
-            Element editElement = editorItem.getValue().getElement();
             List<TreeItem<HtmlNode>> manageItems = new ArrayList<>();
             for (TreeItem<HtmlNode> sourceItem : sourcesItems) {
                 String sourceNumber = sourceController.hierarchyNumber(sourceItem);
-                if (targetNumber.startsWith(sourceNumber)) {
-                    continue;
-                }
                 TreeItem<HtmlNode> manageItem = manageController.find(sourceNumber);
                 manageItems.add(manageItem);
             }
             for (TreeItem<HtmlNode> manageItem : manageItems) {
                 Element selectedElement = manageItem.getValue().getElement();
-                if (targetController.beforeRadio.isSelected()) {
-                    editElement.before(selectedElement);
-
-                } else if (targetController.afterRadio.isSelected()) {
-                    editElement.after(selectedElement);
-                    editElement = selectedElement;
-
-                } else {
-                    editElement.appendChild(selectedElement);
-
-                }
+                selectedElement.remove();
                 count++;
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            if (task != null) {
-                task.setError(e.toString());
-            }
+            error = e.toString();
             return false;
         }
     }
@@ -107,12 +118,12 @@ public class HtmlDomMoveController extends HtmlDomCopyController {
     /*
         static methods
      */
-    public static HtmlDomMoveController open(ControlHtmlEditor editor, TreeItem<HtmlNode> sourceItem) {
+    public static HtmlDomDeleteController open(ControlHtmlEditor editor, TreeItem<HtmlNode> sourceItem) {
         if (editor == null) {
             return null;
         }
-        HtmlDomMoveController controller = (HtmlDomMoveController) WindowTools.openChildStage(
-                editor.getMyWindow(), Fxmls.HtmlDomMoveFxml);
+        HtmlDomDeleteController controller = (HtmlDomDeleteController) WindowTools.openChildStage(
+                editor.getMyWindow(), Fxmls.HtmlDomDeleteFxml);
         if (controller != null) {
             controller.setParamters(editor, sourceItem);
             controller.requestMouse();

@@ -28,7 +28,7 @@ License:    Apache License Version 2.0
                     <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                             <children>
-                                <fx:include fx:id="list" source="ControlDataClipboardTable.fxml" />
+                                <fx:include fx:id="list" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlDataClipboardTable.fxml" VBox.vgrow="ALWAYS" />
                             </children>
                         </VBox>
                     </content>

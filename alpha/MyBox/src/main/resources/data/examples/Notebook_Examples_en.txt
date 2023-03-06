@@ -392,7 +392,9 @@ Tags:Need supplementary;;;0xfff2dfff;;;Like;;;0x0d3928ff
     <li>Notice charset when convert between bytes and string.</li>
     <li>Condition to determine whether reach end of file should be "len &gt; 0". If use "len != -1", endless loop may happen if zero byte is read.</li>
     <li>Call "System.gc()" before delete/move/rename file, to avoid failure due to cache.</li>
-    <li>When handle information in tree, like files system, endless loop should be avoided. The target node should not be the source node nor its descendants.</li>
+    <li>When handle information in tree, like files system, endless loop should be avoided. 
+If the operation will change source node, the target node should not be the source node nor its descendants.</li>
+    <li>If delete list by indices, delete items from the end index to the start index.</li>
     <li>When class has many parameters, do not write many constructors to initialized different sets of parameters. Better coding is static creator and chain assignment by return “this” in all “set” methods.</li>
     <li>Anonymous class is very useful for scenario like lots of duplicated codes with only difference that  several methods have difference implements.</li>
     <li>Generic is very useful for scenario like lots of duplicated codes with only differernce of data type.</li>
@@ -419,59 +421,6 @@ Tags:Need supplementary;;;0xfff2dfff;;;Like;;;0x0d3928ff
 
 ##MyBox#
 Notebook > Notebook > Note Examples > Coding
-MyBox
-
-##MyBox#
-Notebook > Notebook > Note Examples > Coding > MyBox
-Packing Steps of MyBox on windows
-<p>On Windows:</p>
-			<ol  class="inside">
-				<li>Make sure jdk and maven installed.</li>
-				<li>Dowbload source codes of Mybox.</li>
-				<li>Unpack it under a path which your acount can read and write.</li>
-				<li>Modify file "MyBox/pack/win/make-win-exe.bat" and set following parametes as your env: jpackagePath, jdkPath</li>
-				<li>Double-click to execute the script "MyBox/pack/win/make-win-exe.bat".</li>
-				<li>Generated launcher is "MyBox/pack/win/app/MyBox/MyBox.exe".</li>
-			</ol>
-
-##MyBox#
-Notebook > Notebook > Note Examples > Coding > MyBox
-Packing Steps of MyBox on linux
-<p>On Linux:</p>
-			<ul  class="inside">
-			    <li>Make sure jdk and maven installed.</li>
-				<li>Dowbload source codes of Mybox.</li>
-				<li>Unpack it under a path which your acount can read and write.</li>
-				<li>Modify file "MyBox/pack/linux/make-linux-bin.sh" and set following parametes as your env: jpackagePath, jdkPath</li>
-				<li>Open a command teminal window, and enter the path of source codes of MyBox:</li>
-				      <PRE><CODE>cd  MyBox/pack/linux/</CODE></PRE>
-				<li>Execute:</li>
-				      <PRE><CODE>chmod 755 make-linux-bin.sh</CODE></PRE>
-				<li>Execute:</li>
-				      <PRE><CODE>./make-linux-bin.sh</CODE></PRE>
-				<li>Generated launcher is "MyBox/pack/linux/app/MyBox/bin/MyBox".</li>
-			</ul>
-
-##MyBox#
-Notebook > Notebook > Note Examples > Coding > MyBox
-Packing Steps of MyBox on mac
-<p>On Mac:</p>
-			<ul  class="inside">
-				<li>Make sure jdk and maven installed.</li>
-				<li>Dowbload source codes of Mybox.</li>
-				<li>Unpack it under a path which your acount can read and write.</li>
-				<li>Modify file "MyBox/pack/mac/make-mac-dmg.sh" and set following parametes as your env: jpackagePath, jdkPath</li>
-				<li>Open a command teminal window, and enter the path of source codes of MyBox：</li>
-				      <PRE><CODE>cd  MyBox/pack/mac</CODE></PRE>
-				<li>Execute：</li>
-				      <PRE><CODE>chmod 755 make-mac-dmg.sh</CODE></PRE>
-				<li>Execute：</li>
-				      <PRE><CODE>./make-mac-dmg.sh</CODE></PRE>
-				<li>Generated launcher is "MyBox/pack/mac/app/MyBox-$version.dmg".</li>
-			</ul>
-
-##MyBox#
-Notebook > Notebook > Note Examples > Coding > MyBox
 Colors of MyBox icons
 <table><tbody>
 <tr style="font-weight:bold; "><th>Color</th><th>Color - RGBA</th><th>Color - RGB</th><th>Name</th><th>Value</th><th>sRGB</th><th>HSB</th></tr>

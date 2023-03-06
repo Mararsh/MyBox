@@ -287,7 +287,7 @@ public class BaseHtmlDomTreeController extends BaseController {
             }
             String s1 = hierarchyNumber(item1);
             String s2 = hierarchyNumber(item2);
-            return s1.contains(s2);
+            return s1.startsWith(s2);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;

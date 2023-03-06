@@ -183,7 +183,7 @@ public class ControlNamedValues extends BaseSysTableController<NamedValues> {
             });
             items.add(menu);
 
-            menu = new MenuItem(message("Rename"), StyleTools.getIconImageView("iconRename.png"));
+            menu = new MenuItem(message("Rename"), StyleTools.getIconImageView("iconInput.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 renameAction();
             });

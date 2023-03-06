@@ -78,6 +78,10 @@ public class ControlHtmlDomManage extends BaseHtmlDomTreeController {
         htmlEditor.domChanged(true);
     }
 
+    public void deleteNodes(TreeItem<HtmlNode> item) {
+        HtmlDomDeleteController.open(htmlEditor, item);
+    }
+
     public void copy(TreeItem<HtmlNode> item) {
         HtmlDomCopyController.open(htmlEditor, item);
     }
@@ -182,6 +186,12 @@ public class ControlHtmlDomManage extends BaseHtmlDomTreeController {
         });
         items.add(menuItem);
 
+        menuItem = new MenuItem(message("DeleteNodes"), StyleTools.getIconImageView("iconDelete.png"));
+        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
+            deleteNodes(item);
+        });
+        items.add(menuItem);
+
         if (domTree.getTreeItemLevel(item) > 1) {
             menuItem = new MenuItem(message("CopyNodes"), StyleTools.getIconImageView("iconCopy.png"));
             menuItem.setOnAction((ActionEvent menuItemEvent) -> {
@@ -212,6 +222,8 @@ public class ControlHtmlDomManage extends BaseHtmlDomTreeController {
                 move(item);
             });
             items.add(menuItem);
+
+            items.add(new SeparatorMenuItem());
         }
 
         menuItem = new MenuItem(message("EditNode"), StyleTools.getIconImageView("iconEdit.png"));

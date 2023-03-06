@@ -1,23 +1,22 @@
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-    </head>
-<html>
- <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>笔记本</title>
-  <style type="text/css">
-            .center { text-align:center;  max-width:95%; }
+<!DOCTYPE html><HTML>
+    <HEAD>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <TITLE>笔记本</TITLE>
+        <style type="text/css">
+            body {width: 900px;  margin:0 auto; } 
 table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;}
 th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;}
 th { font-weight:bold;  text-align:center;}
 tr { height: 1.2em;  }
+img { max-width: 100%;}
+.center { text-align:center;  max-width:95%; }
 .valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;}
 .boldText { font-weight:bold;  }
 .valueText { color:#2e598a;  }
 
         </style>
-  <script>
+    </HEAD>
+ <script>
     function nodeClicked(id) {
       var obj = document.getElementById(id);
       var objv = obj.style.display;
@@ -40,931 +39,499 @@ tr { height: 1.2em;  }
        }
     }
   </script>
- </head>
- <body contenteditable="false">
-  <div>
-   <div><input type="checkbox" checked onclick="showClass('TreeNode', this.checked);">展开 <input type="checkbox"  checked onclick="showClass('SerialNumber', this.checked);">顺序号 <input type="checkbox" checked onclick="showClass('NodeTag', this.checked);">标签 <input type="checkbox" checked onclick="showClass('nodeValue', this.checked);">值
-   </div>
-   <hr>
-   <div style="padding: 2px;">
-    &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item327')"><span class="SerialNumber" style="display: none;">&nbsp;&nbsp;</span>笔记本</a>
-   </div>
-   <div class="TreeNode" id="item327" style="">
-    <div style="padding: 2px;">
-     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber" style="display: none;">1&nbsp;&nbsp;</span>笔记本封面
-    </div>
-    <div class="nodeValue">
-     <div style="padding: 0 0 0 72px;">
-      <div class="valueBox">
-       笔记是html格式的信息片段<br> 笔记本是一组笔记和笔记本的集合。<br> 笔记本形成一棵树。
-      </div>
-     </div>
-    </div>
-    <div style="padding: 2px;">
-     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item727')"><span class="SerialNumber" style="display: none;">2&nbsp;&nbsp;</span>笔记示例</a>
-    </div>
-    <div class="TreeNode" id="item727" style="">
-     <div style="padding: 2px;">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item728')"><span class="SerialNumber" style="display: none;">2.1&nbsp;&nbsp;</span>网址</a> <span class="NodeTag" style=""> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #FFF2DF; color: #000000;">待补充</span> </span>
-     </div>
-     <div class="TreeNode" id="item728" style="">
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber" style="display: none;">2.1.1&nbsp;&nbsp;</span>搜索 <span class="NodeTag" style=""> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #EDD1D8; color: #000000;">待确定</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #0D3928; color: #FFFFFF;">喜欢</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #003472; color: #FFFFFF;">重要</span> </span>
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox"><a target="_blank" href="https://www.wikipedia.org/">wikipedia</a><br> <a target="_blank" href="https://www.answers.com/">answers</a><br> <a target="_blank" href="https://www.thefreedictionary.com/">thefreedictionary</a><br> <a target="_blank" href="https://www.ipaddress.com/">ipaddress</a><br> <a target="_blank" href="https://www.bing.com/">bing</a><br> <a target="_blank" href="https://www.google.com/">google</a><br> <a target="_blank" href="https://www.yahoo.com/">yahoo</a><br> <a target="_blank" href="https://www.baidu.com/">baidu</a><br>
-        </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber" style="display: none;">2.1.2&nbsp;&nbsp;</span>生活-中文 <span class="NodeTag" style=""> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #EDD1D8; color: #000000;">待确定</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">紧急</span> </span>
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox"><a target="_blank" href="http://gjzwfw.www.gov.cn/index.html">国家政务服务平台</a><br> <a target="_blank" href="https://www.boc.cn/">中国银行</a><br> <a target="_blank" href="http://www.icbc.com.cn">工商银行</a><br> <a target="_blank" href="http://www.cmbchina.com">招商银行</a><br> <a target="_blank" href="http://www.bankcomm.com">交通银行</a><br>
-        </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber" style="display: none;">2.1.3&nbsp;&nbsp;</span>论文和数据-英语 <span class="NodeTag" style=""> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #FFF2DF; color: #000000;">待补充</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #003472; color: #FFFFFF;">重要</span> </span>
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox"><a target="_blank" href="https://www.cn-ki.net/">iData</a><br> <a target="_blank" href="https://sci-hub.se/">sci-hub</a><br> <a target="_blank" href="http://dspace.mit.edu/">dspace</a><br> <a target="_blank" href="http://www.city-data.com/">city-Data</a><br> <a target="_blank" href="https://www.oalib.com/">oalib</a><br> <a target="_blank" href="https://www.jisc.ac.uk/">jisc</a><br> <a target="_blank" href="http://findarticles.com/">findarticles</a><br> <a target="_blank" href="https://www.intechopen.com/">intechopen</a><br> <a target="_blank" href="https://openstax.org/">openstax</a><br> <a target="_blank" href="http://libgen.rs/">Library Genesis</a><br> <a target="_blank" href="http://www.oecd.org/">OECD</a><br> <a target="_blank" href="https://ec.europa.eu/eurostat/data/database">Eurostat</a><br> <a target="_blank" href="https://www.worldvaluessurvey.org/wvs.jsp">worldvaluessurvey</a><br> <a target="_blank" href="https://www.ieee.org/">IEEE</a><br>
-        </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber" style="display: none;">2.1.4&nbsp;&nbsp;</span>论文和数据-中文 <span class="NodeTag" style=""> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #FFF2DF; color: #000000;">待补充</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #003472; color: #FFFFFF;">重要</span> </span>
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox"><a target="_blank" href="http://www.stats.gov.cn">国家数据</a><br> <a target="_blank" href="http://www.pbc.gov.cn/diaochatongjisi/116219/index.html">中国人民银行数据库</a><br> <a target="_blank" href="http://www.geodata.cn/index.html">国家地球系统科学数据中心</a><br> <a target="_blank" href="http://data.cma.cn">中国气象数据网</a><br> <a target="_blank" href="https://moon.bao.ac.cn">中国探月工程数据发布与信息服务系统</a><br> <a target="_blank" href="http://www.nlc.cn">中国国家数字图书馆</a><br> <a target="_blank" href="http://43.248.49.97/">海关统计数据在线查询平台</a><br> <a target="_blank" href="http://www.cnsda.org">中国学术调查数据资料库</a><br> <a target="_blank" href="http://www.sgst.cn">上海研发公共服务平台</a><br> <a target="_blank" href="https://ctext.org">中国哲学书电子化计划</a><br> <a target="_blank" href="http://www.ucdrs.superlib.net/">全国图书馆论文搜索网</a><br> <a target="_blank" href="http://libweb.zju.edu.cn">浙江大学图书馆</a><br> <a target="_blank" href="https://www.hzlib.net">杭州图书馆</a><br> <a target="_blank" href="http://www.gzlib.org">贵州数字图书馆</a><br> <a target="_blank" href="https://www.sxlib.com">绍兴图书馆</a><br> <a target="_blank" href="http://www.gxlib.org.cn">广西图书馆</a><br> <a target="_blank" href="https://www.cnki.net">中国知网</a><br> <a target="_blank" href="http://www.wanfangdata.com.cn/index.html">万方数据</a><br> <a target="_blank" href="https://zm-digicol.dpm.org.cn">故宫博物院藏品</a><br> <a target="_blank" href="http://www.biftmuseum.com">北京服装学院民族服饰博物馆</a><br>
-        </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber" style="display: none;">2.1.5&nbsp;&nbsp;</span>学习-英语 <span class="NodeTag" style=""> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #FFF2DF; color: #000000;">待补充</span> </span>
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox"><a target="_blank" href="https://www.bilibili.com/video/BV1zx411g7gq">MIT 18.06 Linear Algebra</a><br> <a target="_blank" href="https://www.bilibili.com/video/BV1Js411n7zv">MIT 18.01 Calculus</a><br> <a target="_blank" href="https://www.bilibili.com/video/BV1es411H7YH">MIT 6.042J Discrete Mathematics</a><br> <a target="_blank" href="https://open.163.com/newview/movie/courseintro?newurl=M8FH262HJ">Learning From Data</a><br>
-        </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber" style="display: none;">2.1.6&nbsp;&nbsp;</span>学习-中文 <span class="NodeTag" style=""> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #FFF2DF; color: #000000;">待补充</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #003472; color: #FFFFFF;">重要</span> </span>
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox"><a target="_blank" href="https://github.com/QSCTech/zju-icicles">浙江大学课程</a><br> <a target="_blank" href="https://github.com/PKUanonym/REKCARC-TSC-UHT">清华大学计算机系课程</a><br> <a target="_blank" href="https://github.com/BUCTBASE/BUCTBASE">北京化工大学课程资料整理开源项目</a><br> <a target="_blank" href="https://github.com/bljx/BFU-leaf">北京林业大学信息学院课程攻略</a><br> <a target="_blank" href="https://github.com/TheBloodthirster/BUAA_Course_Sharing">北京航空航天大学(北航)课程作业资料共享计划</a><br> <a target="_blank" href="https://github.com/ningzimu/See_you_in_BUPT">北京邮电大学计算机考研信息汇总</a><br> <a target="_blank" href="http://math.ecnu.edu.cn/~jypan/Teaching/NA/index.html">数值分析</a><br> <a target="_blank" href="https://www.bilibili.com/video/BV1pW411J7s8">形象展示傅里叶变换</a><br> <a target="_blank" href="https://www.bilibili.com/video/BV1BW411n7gw">北京大学 离散数学</a><br> <a target="_blank" href="https://www.bilibili.com/video/BV1ux411G7zm">中国古代史（史前魏晋南北朝）（阎步克教授/北京大学）</a><br> <a target="_blank" href="https://www.bilibili.com/video/BV1Dt411p7ce">高中语文-文言文全套精讲</a><br>
-        </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber" style="display: none;">2.1.7&nbsp;&nbsp;</span>网文-中文 <span class="NodeTag" style=""> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #0D3928; color: #FFFFFF;">喜欢</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #FFF2DF; color: #000000;">待补充</span> </span>
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox"><a target="_blank" href="https://www.kunnu.com">鲲弩小说</a><br> <a target="_blank" href="https://www.jjwxc.net">晋江文学城</a><br> <a target="_blank" href="http://yunqi.qq.com">云起书院</a><br> <a target="_blank" href="https://www.qidian.com">起点中文网</a><br> <a target="_blank" href="http://chuangshi.qq.com">创世中文网</a><br> <a target="_blank" href="http://www.zhulang.com">逐浪网</a><br> <a target="_blank" href="http://yc.ireader.com.cn">掌阅小说网</a><br> <a target="_blank" href="https://www.17k.com">17k小说网</a><br> <a target="_blank" href="https://www.xxsy.net">潇湘书院</a><br>
-        </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber" style="display: none;">2.1.8&nbsp;&nbsp;</span>娱乐-中文 <span class="NodeTag" style=""> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #0D3928; color: #FFFFFF;">喜欢</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #FFF2DF; color: #000000;">待补充</span> </span>
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox"><a target="_blank" href="https://www.qingting.fm">蜻蜓FM</a><br> <a target="_blank" href="https://www.bilibili.com">哔哩哔哩</a><br> <a target="_blank" href="https://www.youku.com">优酷</a><br> <a target="_blank" href="https://www.missevan.com">猫耳</a><br> <a target="_blank" href="http://nga.178.com">NGA</a><br> <a target="_blank" href="https://weibo.com">微博</a><br> <a target="_blank" href="https://bbs.tianya.cn/">天涯</a><br> <a target="_blank" href="https://www.lofter.com/">lofter</a><br> <a target="_blank" href="https://www.qingting.fm/channels/138236/">小喇叭</a><br> <a target="_blank" href="https://www.bilibili.com/video/BV1Px411P761">牡丹亭（1986年）张继青</a><br> <a target="_blank" href="https://www.bilibili.com/video/BV1rs411n7Dd">白蛇传-杜近芳 叶盛兰（杜近芳 叶少兰）</a><br> <a target="_blank" href="https://www.bilibili.com/video/BV11x411j7As">梁祝-范瑞娟 傅全香</a><br>
-        </div>
-       </div>
-      </div>
-     </div>
-     <div style="padding: 2px;">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item737')"><span class="SerialNumber" style="display: none;">2.2&nbsp;&nbsp;</span>我的数据</a> <span class="NodeTag" style=""> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #FFF2DF; color: #000000;">待补充</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #003472; color: #FFFFFF;">重要</span> </span>
-     </div>
-     <div class="TreeNode" id="item737" style="">
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber" style="display: none;">2.2.1&nbsp;&nbsp;</span>我的视力
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <p>基弧：84</p>
-         <table>
-          <tbody>
-           <tr>
-            <th>时间</th>
-            <th>左眼</th>
-            <th>右眼</th>
-           </tr>
-           <tr>
-            <td>2020.8</td>
-            <td>300</td>
-            <td>350</td>
-           </tr>
-           <tr>
-            <td>2019.7</td>
-            <td>300</td>
-            <td>350</td>
-           </tr>
-           <tr>
-            <td>2018.5</td>
-            <td>300</td>
-            <td>350</td>
-           </tr>
-          </tbody>
-         </table>
-        </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber" style="display: none;">2.2.2&nbsp;&nbsp;</span>我的体重
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <table>
-          <tbody>
-           <tr>
-            <th>时间</th>
-            <th>体重（公斤）</th>
-           </tr>
-           <tr>
-            <td>2020.7</td>
-            <td>53.7</td>
-           </tr>
-           <tr>
-            <td>2019.3</td>
-            <td>55.2</td>
-           </tr>
-           <tr>
-            <td>2018.6</td>
-            <td>54.5</td>
-           </tr>
-          </tbody>
-         </table>
-        </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber" style="display: none;">2.2.3&nbsp;&nbsp;</span>我的身高
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <table>
-          <tbody>
-           <tr>
-            <th>时间</th>
-            <th>身高（厘米）</th>
-           </tr>
-           <tr>
-            <td>2020.7</td>
-            <td>164</td>
-           </tr>
-           <tr>
-            <td>2019.3</td>
-            <td>165</td>
-           </tr>
-           <tr>
-            <td>2018.6</td>
-            <td>164</td>
-           </tr>
-          </tbody>
-         </table>
-        </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber" style="display: none;">2.2.4&nbsp;&nbsp;</span>我的月经
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <table>
-          <tbody>
-           <tr>
-            <td>年/月</td>
-            <td>1</td>
-            <td>2</td>
-            <td>3</td>
-            <td>4</td>
-            <td>5</td>
-            <td>6</td>
-            <td>7</td>
-            <td>8</td>
-            <td>9</td>
-            <td>10</td>
-            <td>11</td>
-            <td>12</td>
-           </tr>
-           <tr>
-            <td>2021</td>
-            <td>2,30</td>
-            <td></td>
-            <td>2</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-           </tr>
-           <tr>
-            <td>2020</td>
-            <td>28</td>
-            <td>27</td>
-            <td>23</td>
-            <td>21</td>
-            <td>19</td>
-            <td></td>
-            <td>7,26</td>
-            <td>19</td>
-            <td>15</td>
-            <td>12</td>
-            <td>8</td>
-            <td>9</td>
-           </tr>
-           <tr>
-            <td>2019</td>
-            <td>10</td>
-            <td>7</td>
-            <td>7</td>
-            <td>2,30</td>
-            <td>26</td>
-            <td>25</td>
-            <td>23</td>
-            <td>17</td>
-            <td>14</td>
-            <td>12</td>
-            <td>19</td>
-            <td>26</td>
-           </tr>
-          </tbody>
-         </table>
-        </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber" style="display: none;">2.2.5&nbsp;&nbsp;</span>我的存款
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <table>
-          <tbody>
-           <tr>
-            <th>时间</th>
-            <th>总计</th>
-            <th>中国银行</th>
-            <th>招商银行</th>
-            <th>工商银行</th>
-           </tr>
-           <tr>
-            <td>2020.1</td>
-            <td>300</td>
-            <td>100</td>
-            <td>100</td>
-            <td>100</td>
-           </tr>
-           <tr>
-            <td>2019.1</td>
-            <td>300</td>
-            <td>100</td>
-            <td>100</td>
-            <td>100</td>
-           </tr>
-           <tr>
-            <td>2018.1</td>
-            <td>300</td>
-            <td>100</td>
-            <td>100</td>
-            <td>100</td>
-           </tr>
-          </tbody>
-         </table>
-        </div>
-       </div>
-      </div>
-     </div>
-     <div style="padding: 2px;">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item743')"><span class="SerialNumber" style="display: none;">2.3&nbsp;&nbsp;</span>常识</a>
-     </div>
-     <div class="TreeNode" id="item743" style="">
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber" style="display: none;">2.3.1&nbsp;&nbsp;</span>上衣的尺寸
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <table>
-          <tbody>
-           <tr>
-            <td>尺码</td>
-            <td>衣长</td>
-            <td>肩宽</td>
-            <td>袖长</td>
-            <td>胸围</td>
-            <td>腰围</td>
-           </tr>
-           <tr>
-            <td>160/76A(0)</td>
-            <td>69</td>
-            <td>37</td>
-            <td>80</td>
-            <td>88</td>
-            <td>86</td>
-           </tr>
-           <tr>
-            <td>160/84A(2)</td>
-            <td>69</td>
-            <td>38</td>
-            <td>81</td>
-            <td>90</td>
-            <td>88</td>
-           </tr>
-           <tr>
-            <td>160/88A(4)</td>
-            <td>70</td>
-            <td>39</td>
-            <td>82</td>
-            <td>93</td>
-            <td>91</td>
-           </tr>
-           <tr>
-            <td>165/88A(6)</td>
-            <td>70</td>
-            <td>39</td>
-            <td>83</td>
-            <td>95</td>
-            <td>93</td>
-           </tr>
-           <tr>
-            <td>165/92A(8)</td>
-            <td>71</td>
-            <td>40</td>
-            <td>83</td>
-            <td>98</td>
-            <td>96</td>
-           </tr>
-           <tr>
-            <td>165/96A(10)</td>
-            <td>72</td>
-            <td>41</td>
-            <td>84</td>
-            <td>100</td>
-            <td>98</td>
-           </tr>
-           <tr>
-            <td>165/100A(12)</td>
-            <td>73</td>
-            <td>42</td>
-            <td>84</td>
-            <td>104</td>
-            <td>102</td>
-           </tr>
-           <tr>
-            <td>170/100A(14)</td>
-            <td>74</td>
-            <td>43</td>
-            <td>85</td>
-            <td>108</td>
-            <td>106</td>
-           </tr>
-           <tr>
-            <td>170/104A(16)</td>
-            <td>75</td>
-            <td>43</td>
-            <td>86</td>
-            <td>112</td>
-            <td>110</td>
-           </tr>
-          </tbody>
-         </table>
-        </div>
-       </div>
-      </div>
-     </div>
-     <div style="padding: 2px;">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item745')"><span class="SerialNumber" style="display: none;">2.4&nbsp;&nbsp;</span>通讯录</a> <span class="NodeTag" style=""> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #FFF2DF; color: #000000;">待补充</span> </span>
-     </div>
-     <div class="TreeNode" id="item745" style="">
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber" style="display: none;">2.4.1&nbsp;&nbsp;</span>亲友 <span class="NodeTag" style=""> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #003472; color: #FFFFFF;">重要</span> </span>
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <table>
-          <tbody>
-           <tr>
-            <th>关系</th>
-            <th>手机</th>
-            <th>邮箱</th>
-            <th>地址</th>
-            <th>生日</th>
-            <th>备注</th>
-           </tr>
-           <tr>
-            <td>妈妈</td>
-            <td>123456789</td>
-            <td>123@aa.com</td>
-            <td>美丽岛</td>
-            <td>1960.1.1</td>
-            <td></td>
-           </tr>
-           <tr>
-            <td>爸爸</td>
-            <td>123456789</td>
-            <td>123@aa.com</td>
-            <td>美丽岛</td>
-            <td>1961.3.1</td>
-            <td></td>
-           </tr>
-           <tr>
-            <td>姐姐</td>
-            <td>123456789</td>
-            <td>123@aa.com</td>
-            <td>美丽岛</td>
-            <td>1984.3.8</td>
-            <td></td>
-           </tr>
-          </tbody>
-         </table>
-        </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber" style="display: none;">2.4.2&nbsp;&nbsp;</span>工作
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <table>
-          <tbody>
-           <tr>
-            <th>关系</th>
-            <th>姓名</th>
-            <th>手机</th>
-            <th>邮箱</th>
-            <th>地址</th>
-            <th>备注</th>
-           </tr>
-           <tr>
-            <td>经理</td>
-            <td>A</td>
-            <td>123456789</td>
-            <td>123@aa.com</td>
-            <td>飘渺峰</td>
-            <td></td>
-           </tr>
-           <tr>
-            <td>同事</td>
-            <td>B</td>
-            <td>123456789</td>
-            <td>123@aa.com</td>
-            <td>飘渺峰</td>
-            <td></td>
-           </tr>
-           <tr>
-            <td>同事</td>
-            <td>C</td>
-            <td>123456789</td>
-            <td>123@aa.com</td>
-            <td>飘渺峰</td>
-            <td></td>
-           </tr>
-          </tbody>
-         </table>
-        </div>
-       </div>
-      </div>
-     </div>
-     <div style="padding: 2px;">
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item748')"><span class="SerialNumber" style="display: none;">2.5&nbsp;&nbsp;</span>编程</a> <span class="NodeTag" style=""> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #FFF2DF; color: #000000;">待补充</span> </span>
-     </div>
-     <div class="TreeNode" id="item748" style="">
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber" style="display: none;">2.5.1&nbsp;&nbsp;</span>编程的网址 <span class="NodeTag" style=""> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #EDD1D8; color: #000000;">待确定</span> </span>
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox"><a target="_blank" href="https://sourceforge.net">sourceforge</a><br> <a target="_blank" href="https://stackoverflow.com">stackoverflow</a><br> <a target="_blank" href="https://github.com">github</a><br><br> <a target="_blank" href="https://docs.oracle.com/en/java/javase/15/docs/api/index.html">Java API</a><br> <a target="_blank" href="https://openjfx.io/javadoc/15/">JavaFx API</a><br> <a target="_blank" href="https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html">JavaFX CSS Reference Guide</a><br> <a target="_blank" href="https://docs.oracle.com/javafx/2/get_started/css.htm">Getting Started with JavaFX</a><br><br> <a target="_blank" href="https://openjfx.io/">OpenJFX Community Site</a><br><br> <a target="_blank" href="https://fxdocs.github.io/docs/html5/">JavaFX Documentation Project</a><br><br> <a target="_blank" href="http://tutorials.jenkov.com/javafx/index.html">JavaFX Tutorial</a><br><br> <a target="_blank" href="https://icons8.com/">icons8</a><br> <a target="_blank" href="https://mvnrepository.com/">mvnrepository</a><br>
-        </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber" style="display: none;">2.5.2&nbsp;&nbsp;</span>sftp到sourceforge（上传大文件）
-      </div>
-      <div class="nodeValue">
-       <div style="padding: 0 0 0 120px;">
-        <div class="valueBox">
-         <pre><code>
-C:\Users\mara&gt;sftp mararsh@frs.sourceforge.net
+
+<DIV>
+<DIV>
+    <INPUT type="checkbox" checked onclick="showClass('TreeNode', this.checked);">展开</INPUT>
+    <INPUT type="checkbox" checked onclick="showClass('SerialNumber', this.checked);">层次号</INPUT>
+    <INPUT type="checkbox" checked onclick="showClass('NodeTag', this.checked);">标签</INPUT>
+    <INPUT type="checkbox" checked onclick="showClass('nodeValue', this.checked);">值</INPUT>
+</DIV>
+<HR>
+    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item310')"><SPAN class="SerialNumber">&nbsp;&nbsp;</SPAN>笔记本</a>
+    </DIV>
+    <DIV class="TreeNode" id='item310'>
+        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">1&nbsp;&nbsp;</SPAN>笔记本封面
+        </DIV>
+        <DIV class="nodeValue"><DIV style="padding: 0 0 0 72px;"><DIV class="valueBox">
+        笔记是html格式的信息片段<br>
+笔记本是一组笔记和笔记本的集合。<br>
+笔记本形成一棵树。
+        </DIV></DIV></DIV>
+        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item744')"><SPAN class="SerialNumber">2&nbsp;&nbsp;</SPAN>笔记示例</a>
+        </DIV>
+        <DIV class="TreeNode" id='item744'>
+            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item745')"><SPAN class="SerialNumber">2.1&nbsp;&nbsp;</SPAN>网址</a>
+                    <SPAN class="NodeTag">
+                    &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #FFF2DF; color: #000000;">待补充</SPAN>
+                    </SPAN>
+            </DIV>
+            <DIV class="TreeNode" id='item745'>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">2.1.1&nbsp;&nbsp;</SPAN>搜索
+                        <SPAN class="NodeTag">
+                        &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #EDD1D8; color: #000000;">待确定</SPAN>
+                        &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #0D3928; color: #FFFFFF;">喜欢</SPAN>
+                        &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #003472; color: #FFFFFF;">重要</SPAN>
+                        </SPAN>
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                <a target=_blank href="https://www.wikipedia.org/">wikipedia</a><br>
+<a target=_blank href="https://www.answers.com/">answers</a><br>
+<a target=_blank href="https://www.thefreedictionary.com/">thefreedictionary</a><br>
+<a target=_blank href="https://www.ipaddress.com/">ipaddress</a><br>
+<a target=_blank href="https://www.bing.com/">bing</a><br>
+<a target=_blank href="https://www.google.com/">google</a><br>
+<a target=_blank href="https://www.yahoo.com/">yahoo</a><br>
+<a target=_blank href="https://www.baidu.com/">baidu</a><br>
+                </DIV></DIV></DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">2.1.2&nbsp;&nbsp;</SPAN>生活-中文
+                        <SPAN class="NodeTag">
+                        &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #EDD1D8; color: #000000;">待确定</SPAN>
+                        &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #C32136; color: #FFFFFF;">紧急</SPAN>
+                        </SPAN>
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                <a target=_blank href="http://gjzwfw.www.gov.cn/index.html">国家政务服务平台</a><br>
+<a target=_blank href="https://www.boc.cn/">中国银行</a><br>
+<a target=_blank href="http://www.icbc.com.cn">工商银行</a><br>
+<a target=_blank href="http://www.cmbchina.com">招商银行</a><br>
+<a target=_blank href="http://www.bankcomm.com">交通银行</a><br>
+                </DIV></DIV></DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">2.1.3&nbsp;&nbsp;</SPAN>论文和数据-英语
+                        <SPAN class="NodeTag">
+                        &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #FFF2DF; color: #000000;">待补充</SPAN>
+                        &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #003472; color: #FFFFFF;">重要</SPAN>
+                        </SPAN>
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                <a target=_blank href="https://www.cn-ki.net/">iData</a><br>
+<a target=_blank href="https://sci-hub.se/">sci-hub</a><br>
+<a target=_blank href="http://dspace.mit.edu/">dspace</a><br>
+<a target=_blank href="http://www.city-data.com/">city-Data</a><br>
+<a target=_blank href="https://www.oalib.com/">oalib</a><br>
+<a target=_blank href="https://www.jisc.ac.uk/">jisc</a><br>
+<a target=_blank href="http://findarticles.com/">findarticles</a><br>
+<a target=_blank href="https://www.intechopen.com/">intechopen</a><br>
+<a target=_blank href="https://openstax.org/">openstax</a><br>
+<a target=_blank href="http://libgen.rs/">Library Genesis</a><br>
+<a target=_blank href="http://www.oecd.org/">OECD</a><br>
+<a target=_blank href="https://ec.europa.eu/eurostat/data/database">Eurostat</a><br>
+<a target=_blank href="https://www.worldvaluessurvey.org/wvs.jsp">worldvaluessurvey</a><br>
+<a target=_blank href="https://www.ieee.org/">IEEE</a><br>
+                </DIV></DIV></DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">2.1.4&nbsp;&nbsp;</SPAN>论文和数据-中文
+                        <SPAN class="NodeTag">
+                        &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #FFF2DF; color: #000000;">待补充</SPAN>
+                        &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #003472; color: #FFFFFF;">重要</SPAN>
+                        </SPAN>
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                <a target=_blank href="http://www.stats.gov.cn">国家数据</a><br>
+<a target=_blank href="http://www.pbc.gov.cn/diaochatongjisi/116219/index.html">中国人民银行数据库</a><br>
+<a target=_blank href="http://www.geodata.cn/index.html">国家地球系统科学数据中心</a><br>
+<a target=_blank href="http://data.cma.cn">中国气象数据网</a><br>
+<a target=_blank href="https://moon.bao.ac.cn">中国探月工程数据发布与信息服务系统</a><br>
+<a target=_blank href="http://www.nlc.cn">中国国家数字图书馆</a><br>
+<a target=_blank href="http://43.248.49.97/">海关统计数据在线查询平台</a><br>
+<a target=_blank href="http://www.cnsda.org">中国学术调查数据资料库</a><br>
+<a target=_blank href="http://www.sgst.cn">上海研发公共服务平台</a><br>
+<a target=_blank href="https://ctext.org">中国哲学书电子化计划</a><br>
+<a target=_blank href="http://www.ucdrs.superlib.net/">全国图书馆论文搜索网</a><br>
+<a target=_blank href="http://libweb.zju.edu.cn">浙江大学图书馆</a><br>
+<a target=_blank href="https://www.hzlib.net">杭州图书馆</a><br>
+<a target=_blank href="http://www.gzlib.org">贵州数字图书馆</a><br>
+<a target=_blank href="https://www.sxlib.com">绍兴图书馆</a><br>
+<a target=_blank href="http://www.gxlib.org.cn">广西图书馆</a><br>
+<a target=_blank href="https://www.cnki.net">中国知网</a><br>
+<a target=_blank href="http://www.wanfangdata.com.cn/index.html">万方数据</a><br>
+<a target=_blank href="https://zm-digicol.dpm.org.cn">故宫博物院藏品</a><br>
+<a target=_blank href="http://www.biftmuseum.com">北京服装学院民族服饰博物馆</a><br>
+                </DIV></DIV></DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">2.1.5&nbsp;&nbsp;</SPAN>学习-英语
+                        <SPAN class="NodeTag">
+                        &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #FFF2DF; color: #000000;">待补充</SPAN>
+                        </SPAN>
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                <a target=_blank href="https://www.bilibili.com/video/BV1zx411g7gq">MIT 18.06 Linear Algebra</a><br>
+<a target=_blank href="https://www.bilibili.com/video/BV1Js411n7zv">MIT 18.01 Calculus</a><br>
+<a target=_blank href="https://www.bilibili.com/video/BV1es411H7YH">MIT 6.042J Discrete Mathematics</a><br>
+<a target=_blank href="https://open.163.com/newview/movie/courseintro?newurl=M8FH262HJ">Learning From Data</a><br>
+                </DIV></DIV></DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">2.1.6&nbsp;&nbsp;</SPAN>学习-中文
+                        <SPAN class="NodeTag">
+                        &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #FFF2DF; color: #000000;">待补充</SPAN>
+                        &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #003472; color: #FFFFFF;">重要</SPAN>
+                        </SPAN>
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                <a target=_blank href="https://github.com/QSCTech/zju-icicles">浙江大学课程</a><br>
+<a target=_blank href="https://github.com/PKUanonym/REKCARC-TSC-UHT">清华大学计算机系课程</a><br>
+<a target=_blank href="https://github.com/BUCTBASE/BUCTBASE">北京化工大学课程资料整理开源项目</a><br>
+<a target=_blank href="https://github.com/bljx/BFU-leaf">北京林业大学信息学院课程攻略</a><br>
+<a target=_blank href="https://github.com/TheBloodthirster/BUAA_Course_Sharing">北京航空航天大学(北航)课程作业资料共享计划</a><br>
+<a target=_blank href="https://github.com/ningzimu/See_you_in_BUPT">北京邮电大学计算机考研信息汇总</a><br>
+<a target=_blank href="http://math.ecnu.edu.cn/~jypan/Teaching/NA/index.html">数值分析</a><br>
+<a target=_blank href="https://www.bilibili.com/video/BV1pW411J7s8">形象展示傅里叶变换</a><br>
+<a target=_blank href="https://www.bilibili.com/video/BV1BW411n7gw">北京大学 离散数学</a><br>
+<a target=_blank href="https://www.bilibili.com/video/BV1ux411G7zm">中国古代史（史前魏晋南北朝）（阎步克教授/北京大学）</a><br>
+<a target=_blank href="https://www.bilibili.com/video/BV1Dt411p7ce">高中语文-文言文全套精讲</a><br>
+                </DIV></DIV></DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">2.1.7&nbsp;&nbsp;</SPAN>网文-中文
+                        <SPAN class="NodeTag">
+                        &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #0D3928; color: #FFFFFF;">喜欢</SPAN>
+                        &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #FFF2DF; color: #000000;">待补充</SPAN>
+                        </SPAN>
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                <a target=_blank href="https://www.kunnu.com">鲲弩小说</a><br>
+<a target=_blank href="https://www.jjwxc.net">晋江文学城</a><br>
+<a target=_blank href="http://yunqi.qq.com">云起书院</a><br>
+<a target=_blank href="https://www.qidian.com">起点中文网</a><br>
+<a target=_blank href="http://chuangshi.qq.com">创世中文网</a><br>
+<a target=_blank href="http://www.zhulang.com">逐浪网</a><br>
+<a target=_blank href="http://yc.ireader.com.cn">掌阅小说网</a><br>
+<a target=_blank href="https://www.17k.com">17k小说网</a><br>
+<a target=_blank href="https://www.xxsy.net">潇湘书院</a><br>
+                </DIV></DIV></DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">2.1.8&nbsp;&nbsp;</SPAN>娱乐-中文
+                        <SPAN class="NodeTag">
+                        &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #0D3928; color: #FFFFFF;">喜欢</SPAN>
+                        &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #FFF2DF; color: #000000;">待补充</SPAN>
+                        </SPAN>
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                <a target=_blank href="https://tv.cctv.com/2022/08/27/VIDARmuWi2Ebs0b0NSsA1Ao7220827.shtml">诗画中国</a><br>
+<a target=_blank href="http://www.radio.cn/pc-portal/sanji/zhibo_2.html?channelname=0&name=1395534&title=radio">小喇叭</a><br>
+<a target=_blank href="http://www.radio.cn/pc-portal/sanji/zhibo_2.html?channelname=0&name=1395682&title=radio">品味书香</a><br>
+<a target=_blank href="https://www.qingting.fm">蜻蜓FM</a><br>
+<a target=_blank href="https://www.bilibili.com">哔哩哔哩</a><br>
+<a target=_blank href="https://www.youku.com">优酷</a><br>
+<a target=_blank href="https://www.missevan.com">猫耳</a><br>
+<a target=_blank href="http://nga.178.com">NGA</a><br>
+<a target=_blank href="https://weibo.com">微博</a><br>
+<a target=_blank href="https://bbs.tianya.cn/">天涯</a><br>
+<a target=_blank href="https://www.lofter.com/">lofter</a><br>
+<a target=_blank href="https://www.bilibili.com/video/BV1Px411P761">牡丹亭（1986年）张继青</a><br>
+<a target=_blank href="https://www.bilibili.com/video/BV1rs411n7Dd">白蛇传-杜近芳 叶盛兰（杜近芳 叶少兰）</a><br>
+<a target=_blank href="https://www.bilibili.com/video/BV11x411j7As">梁祝-范瑞娟 傅全香</a><br>
+                </DIV></DIV></DIV>
+            </DIV>
+            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item754')"><SPAN class="SerialNumber">2.2&nbsp;&nbsp;</SPAN>我的数据</a>
+                    <SPAN class="NodeTag">
+                    &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #FFF2DF; color: #000000;">待补充</SPAN>
+                    &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #003472; color: #FFFFFF;">重要</SPAN>
+                    </SPAN>
+            </DIV>
+            <DIV class="TreeNode" id='item754'>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">2.2.1&nbsp;&nbsp;</SPAN>我的视力
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                <p>基弧：84</p>
+<table>
+    <tr><th> 时间 </th><th> 左眼 </th><th> 右眼 </th></tr>
+    <tr><td> 2020.8 </td><td> 300 </td><td> 350 </td></tr>
+    <tr><td> 2019.7 </td><td> 300 </td><td> 350 </td></tr>
+    <tr><td> 2018.5 </td><td> 300 </td><td> 350 </td></tr>
+</table>
+                </DIV></DIV></DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">2.2.2&nbsp;&nbsp;</SPAN>我的体重
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                <table>
+    <tr><th> 时间 </th><th> 体重（公斤） </th></tr>
+    <tr><td> 2020.7 </td><td> 53.7 </td></tr>
+    <tr><td> 2019.3 </td><td> 55.2 </td></tr>
+    <tr><td> 2018.6 </td><td> 54.5 </td></tr>
+</table>
+                </DIV></DIV></DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">2.2.3&nbsp;&nbsp;</SPAN>我的身高
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                <table>
+    <tr><th> 时间 </th><th> 身高（厘米） </th></tr>
+    <tr><td> 2020.7 </td><td> 164 </td></tr>
+    <tr><td> 2019.3 </td><td> 165 </td></tr>
+    <tr><td> 2018.6 </td><td> 164 </td></tr>
+</table>
+                </DIV></DIV></DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">2.2.4&nbsp;&nbsp;</SPAN>我的月经
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                </style>
+            <table>
+                <tbody><tr><td>年/月</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td></tr>
+                <tr><td>2021</td><td>2,30</td><td> </td><td>2</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+                <tr><td>2020</td><td>28</td><td>27</td><td>23</td><td>21</td><td>19</td><td> </td><td>7,26</td><td>19</td><td>15</td><td>12</td><td>8</td><td>9</td></tr>
+                <tr><td>2019</td><td>10</td><td>7</td><td>7</td><td>2,30</td><td>26</td><td>25</td><td>23</td><td>17</td><td>14</td><td>12</td><td>19</td><td>26</td></tr>
+            </tbody>
+</table>
+                </DIV></DIV></DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">2.2.5&nbsp;&nbsp;</SPAN>我的存款
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                <table>
+    <tr><th> 时间 </th><th> 总计 </th><th> 中国银行 </th><th> 招商银行 </th><th> 工商银行 </th></tr>
+    <tr><td> 2020.1 </td><td> 300 </td><td> 100 </td><td> 100 </td><td> 100 </td></tr>
+    <tr><td> 2019.1 </td><td> 300 </td><td> 100 </td><td> 100 </td><td> 100 </td></tr>
+    <tr><td> 2018.1 </td><td> 300 </td><td> 100 </td><td> 100 </td><td> 100 </td></tr>
+</table>
+                </DIV></DIV></DIV>
+            </DIV>
+            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item760')"><SPAN class="SerialNumber">2.3&nbsp;&nbsp;</SPAN>常识</a>
+            </DIV>
+            <DIV class="TreeNode" id='item760'>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">2.3.1&nbsp;&nbsp;</SPAN>上衣的尺寸
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                <table>
+                <tr><td>尺码</td><td>衣长</td><td>肩宽</td><td>袖长</td><td>胸围</td><td>腰围</td></tr>
+                <tr><td>160/76A(0)</td><td>69</td><td>37</td><td>80</td><td>88</td><td>86</td></tr>
+                <tr><td>160/84A(2)</td><td>69</td><td>38</td><td>81</td><td>90</td><td>88</td></tr>
+                <tr><td>160/88A(4)</td><td>70</td><td>39</td><td>82</td><td>93</td><td>91</td></tr>
+                <tr><td>165/88A(6)</td><td>70</td><td>39</td><td>83</td><td>95</td><td>93</td></tr>
+                <tr><td>165/92A(8)</td><td>71</td><td>40</td><td>83</td><td>98</td><td>96</td></tr>
+                <tr><td>165/96A(10)</td><td>72</td><td>41</td><td>84</td><td>100</td><td>98</td></tr>
+                <tr><td>165/100A(12)</td><td>73</td><td>42</td><td>84</td><td>104</td><td>102</td></tr>
+                <tr><td>170/100A(14)</td><td>74</td><td>43</td><td>85</td><td>108</td><td>106</td></tr>
+                <tr><td>170/104A(16)</td><td>75</td><td>43</td><td>86</td><td>112</td><td>110</td></tr>
+            </table>
+                </DIV></DIV></DIV>
+            </DIV>
+            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item762')"><SPAN class="SerialNumber">2.4&nbsp;&nbsp;</SPAN>通讯录</a>
+                    <SPAN class="NodeTag">
+                    &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #FFF2DF; color: #000000;">待补充</SPAN>
+                    </SPAN>
+            </DIV>
+            <DIV class="TreeNode" id='item762'>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">2.4.1&nbsp;&nbsp;</SPAN>亲友
+                        <SPAN class="NodeTag">
+                        &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #003472; color: #FFFFFF;">重要</SPAN>
+                        </SPAN>
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                <table>
+    <tbody><tr><th> 关系 </th><th> 手机 </th><th> 邮箱 </th><th> 地址 </th><th> 生日 </th><th> 备注 </th></tr>
+    <tr><td> 妈妈 </td><td> 123456789 </td><td> 123@aa.com </td><td> 美丽岛 </td><td> 1960.1.1 </td><td> </td></tr>
+    <tr><td> 爸爸 </td><td> 123456789 </td><td> 123@aa.com </td><td> 美丽岛 </td><td> 1961.3.1 </td><td> </td></tr>
+    <tr><td> 姐姐 </td><td> 123456789 </td><td> 123@aa.com </td><td> 美丽岛 </td><td> 1984.3.8 </td><td> </td></tr>
+</tbody></table>
+                </DIV></DIV></DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">2.4.2&nbsp;&nbsp;</SPAN>工作
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                <table>
+    <tr><th> 关系 </th><th> 姓名 </th><th> 手机 </th><th> 邮箱 </th><th> 地址 </th><th> 备注 </th></tr>
+    <tr><td> 经理 </td><td> A </td><td> 123456789 </td><td> 123@aa.com </td><td> 飘渺峰 </td><td> </td></tr>
+    <tr><td> 同事 </td><td> B </td><td> 123456789 </td><td> 123@aa.com </td><td> 飘渺峰 </td><td> </td></tr>
+    <tr><td> 同事 </td><td> C </td><td> 123456789 </td><td> 123@aa.com </td><td> 飘渺峰 </td><td> </td></tr>
+</table>
+                </DIV></DIV></DIV>
+            </DIV>
+            <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item765')"><SPAN class="SerialNumber">2.5&nbsp;&nbsp;</SPAN>编程</a>
+                    <SPAN class="NodeTag">
+                    &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #FFF2DF; color: #000000;">待补充</SPAN>
+                    </SPAN>
+            </DIV>
+            <DIV class="TreeNode" id='item765'>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">2.5.1&nbsp;&nbsp;</SPAN>编程的网址
+                        <SPAN class="NodeTag">
+                        &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #EDD1D8; color: #000000;">待确定</SPAN>
+                        </SPAN>
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                <a target=_blank href="https://sourceforge.net">sourceforge</a><br>
+<a target=_blank href="https://stackoverflow.com">stackoverflow</a><br>
+<a target=_blank href="https://github.com">github</a><br><br>
+<a target=_blank href="https://docs.oracle.com/en/java/javase/15/docs/api/index.html">Java API</a><br>
+<a target=_blank href="https://openjfx.io/javadoc/15/">JavaFx API</a><br>
+<a target=_blank href="https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html">JavaFX CSS Reference Guide</a><br>
+<a target=_blank href="https://docs.oracle.com/javafx/2/get_started/css.htm">Getting Started with JavaFX</a><br><br>
+<a target=_blank href="https://openjfx.io/">OpenJFX Community Site</a><br><br>
+<a target=_blank href="https://fxdocs.github.io/docs/html5/">JavaFX Documentation Project</a><br><br>
+<a target=_blank href="http://tutorials.jenkov.com/javafx/index.html">JavaFX Tutorial</a><br><br>
+<a target=_blank href="https://icons8.com/">icons8</a><br>
+<a target=_blank href="https://mvnrepository.com/">mvnrepository</a><br>
+                </DIV></DIV></DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">2.5.2&nbsp;&nbsp;</SPAN>sftp到sourceforge（上传大文件）
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                <PRE><CODE>
+C:\Users\mara>sftp mararsh@frs.sourceforge.net
 Password:
 Connected to mararsh@frs.sourceforge.net.
-sftp&gt; cd /home/frs/project/mara-mybox
-sftp&gt; ls
-sftp&gt; cd v6.4.2
-sftp&gt; lcd  D:\releases\Mybox\2021-03-21-v6.4.2
-sftp&gt; put D:\releases\Mybox\2021-03-21-v6.4.2\MyBox-6.4.2-linux.tar.gz
-</code></pre>
-        </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item751')"><span class="SerialNumber" style="display: none;">2.5.3&nbsp;&nbsp;</span>javafx</a>
-      </div>
-      <div class="TreeNode" id="item751" style="">
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber" style="display: none;">2.5.3.1&nbsp;&nbsp;</span>关于javafx一句话事项 <span class="NodeTag" style=""> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #0D3928; color: #FFFFFF;">喜欢</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #FFF2DF; color: #000000;">待补充</span> </span>
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <ol>
-           <li>总是假设用户对编程一无所知。</li>
-           <li>不要指望用户会看用户手册，一些人连屏幕上的提示都不会读或想（包括我）。</li>
-           <li>必要的提示信息可以帮助用户理解程序的意图。</li>
-           <li>二义性的提示不如没有提示。</li>
-           <li>总是响应用户的操作，如弹出信息、发出声音、或更新界面。</li>
-           <li>尽可能多地提供选择，并设置缺省选择。</li>
-           <li>记住用户的输入或选择，下次自动填写或设置。</li>
-           <li>保持界面干净的同时，减少用户的输入或选择。</li>
-           <li>只要有地方放单选钮/多选纽，就不用下拉框。</li>
-           <li>选择的层级不应超过3。</li>
-           <li>界面控件较多时，考虑目前流行的布局：左右幕布式收放、上下风箱式开闭、页签堆叠。</li>
-           <li>用户屏幕分辨率可能从1K到4K，所以MyBox多数界面的设计尺寸小于1100*720。</li>
-           <li>善用“会折行”的容器，如FlowPane，以兼顾小屏和大屏。</li>
-           <li>只能在JavaFx线程中修改界面控件。在控件的事件处理中若要修改控件本身，则应用Platform.runLater来执行。</li>
-           <li>对于耗时的操作应当显示进度信息。</li>
-           <li>耗时的操作不应在JavaFx线程中执行，否则会阻塞界面的更新。</li>
-           <li>后端线程要时时检查task是否已被取消，尤其在循环中或耗时操作前后。</li>
-           <li>鼠标事件监听时，event.getX()和event.getY()返回的是相对于event.getSource()（监听控件）的坐标。如：在ImageView上监听鼠标点击，则取到的是相对于图像的坐标。</li>
-           <li>以下场景可能触发多次迭代调用：同时监听onMouseEntered和 onMouseExited，然后在事件处理中改变鼠标的焦点（如弹出上下文菜单）或改变控件本身尺寸。</li>
-           <li>当双击鼠标时，总是先触发单击事件、然后继续触发双击事件，因此需要注意事件处理中可能重复或冲突的操作。</li>
-           <li>对于多选表格，用getSelectedIndices()监听变化。若用selectedItemProperty()监听则可能遗漏状态变化。</li>
-          </ol>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item753')"><span class="SerialNumber" style="display: none;">2.5.3.2&nbsp;&nbsp;</span>示例</a>
-       </div>
-       <div class="TreeNode" id="item753" style="">
-        <div style="padding: 2px;">
-         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber" style="display: none;">2.5.3.2.1&nbsp;&nbsp;</span>ChangeListener<string> 
-         </string>
-        </div>
-        <div class="nodeValue">
-         <div style="padding: 0 0 0 168px;">
-          <div class="valueBox">
-           <pre><code>
-input.textProperty().addListener(new ChangeListener
-             
-             
-             <string>() {
+sftp> cd /home/frs/project/mara-mybox
+sftp> ls
+sftp> cd v6.4.2
+sftp> lcd  D:\releases\Mybox\2021-03-21-v6.4.2
+sftp> put D:\releases\Mybox\2021-03-21-v6.4.2\MyBox-6.4.2-linux.tar.gz
+</CODE></PRE>
+访问文件：  https://sourceforge.net/projects/mara-mybox/files/
+                </DIV></DIV></DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">2.5.3&nbsp;&nbsp;</SPAN>sftp到sourceforge（上传网站文件）
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                <PRE><CODE>
+C:\Users\mara>sftp mararsh@frs.sourceforge.net
+Password:
+Connected to mararsh@frs.sourceforge.net.
+sftp> cd /home/project-web/mara-mybox/htdocs
+sftp> ls
+sftp> lcd  D:\GitHub\MyBox\docs
+sftp> put *.*
+</CODE></PRE>
+访问网站：  https://mara-mybox.sourceforge.io/index.html
+                </DIV></DIV></DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item769')"><SPAN class="SerialNumber">2.5.4&nbsp;&nbsp;</SPAN>javafx</a>
+                </DIV>
+                <DIV class="TreeNode" id='item769'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">2.5.4.1&nbsp;&nbsp;</SPAN>关于javafx一句话事项
+                            <SPAN class="NodeTag">
+                            &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #0D3928; color: #FFFFFF;">喜欢</SPAN>
+                            &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #FFF2DF; color: #000000;">待补充</SPAN>
+                            </SPAN>
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    <ol>
+    <li>总是假设用户对编程一无所知。</li>
+    <li>不要指望用户会看用户手册，一些人连屏幕上的提示都不会读或想（包括我）。</li>
+    <li>必要的提示信息可以帮助用户理解程序的意图。</li>
+    <li>二义性的提示不如没有提示。</li>
+    <li>总是响应用户的操作，如弹出信息、发出声音、或更新界面。</li>
+    <li>尽可能多地提供选择，并设置缺省选择。</li>
+    <li>记住用户的输入或选择，下次自动填写或设置。</li>
+    <li>保持界面干净的同时，减少用户的输入或选择。</li>
+    <li>只要有地方放单选钮/多选纽，就不用下拉框。</li>
+    <li>选择的层级不应超过3。</li>
+    <li>界面控件较多时，考虑目前流行的布局：左右幕布式收放、上下风箱式开闭、页签堆叠。</li>
+    <li>用户屏幕分辨率可能从1K到4K，所以MyBox多数界面的设计尺寸小于1100*720。</li>
+    <li>善用“会折行”的容器，如FlowPane，以兼顾小屏和大屏。</li>
+    <li>只能在JavaFx线程中修改界面控件。在控件的事件处理中若要修改控件本身，则应用Platform.runLater来执行。</li>
+    <li>对于耗时的操作应当显示进度信息。</li>
+    <li>耗时的操作不应在JavaFx线程中执行，否则会阻塞界面的更新。</li>
+    <li>后端线程要时时检查task是否已被取消，尤其在循环中或耗时操作前后。</li>
+    <li>鼠标事件监听时，event.getX()和event.getY()返回的是相对于event.getSource()（监听控件）的坐标。如：在ImageView上监听鼠标点击，则取到的是相对于图像的坐标。</li>
+    <li>以下场景可能触发多次迭代调用：同时监听onMouseEntered和 onMouseExited，然后在事件处理中改变鼠标的焦点（如弹出上下文菜单）或改变控件本身尺寸。</li>
+    <li>当双击鼠标时，总是先触发单击事件、然后继续触发双击事件，因此需要注意事件处理中可能重复或冲突的操作。</li>
+    <li>对于多选表格，用getSelectedIndices()监听变化。若用selectedItemProperty()监听则可能遗漏状态变化。</li>
+</ol>
+                    </DIV></DIV></DIV>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item771')"><SPAN class="SerialNumber">2.5.4.2&nbsp;&nbsp;</SPAN>示例</a>
+                    </DIV>
+                    <DIV class="TreeNode" id='item771'>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">2.5.4.2.1&nbsp;&nbsp;</SPAN>ChangeListener<String>
+                        </DIV>
+                        <DIV class="nodeValue"><DIV style="padding: 0 0 0 168px;"><DIV class="valueBox">
+                        <PRE><CODE>
+input.textProperty().addListener(new ChangeListener<String>() {
      @Override
-     public void changed(ObservableValue<!--? extends String--> observable, String oldValue, String newValue) {
+     public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                checkInput();
      }
 });
-
-             
-             
-             </string></code></pre>
-          </div>
-         </div>
-        </div>
-        <div style="padding: 2px;">
-         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber" style="display: none;">2.5.3.2.2&nbsp;&nbsp;</span>setOnMouseClicked
-        </div>
-        <div class="nodeValue">
-         <div style="padding: 0 0 0 168px;">
-          <div class="valueBox">
-           <pre><code>
-control.setOnMouseClicked(new EventHandler
-             
-             
-             <mouseevent>() {
+</CODE></PRE>
+                        </DIV></DIV></DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">2.5.4.2.2&nbsp;&nbsp;</SPAN>setOnMouseClicked
+                        </DIV>
+                        <DIV class="nodeValue"><DIV style="padding: 0 0 0 168px;"><DIV class="valueBox">
+                        <PRE><CODE>
+control.setOnMouseClicked(new EventHandler<MouseEvent>() {
      @Override
      public void handle(MouseEvent event) {
             controlPane();
      }
 });
-
-             
-             
-             </mouseevent></code></pre>
-          </div>
-         </div>
-        </div>
-        <div style="padding: 2px;">
-         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber" style="display: none;">2.5.3.2.3&nbsp;&nbsp;</span>disableProperty().bind
-        </div>
-        <div class="nodeValue">
-         <div style="padding: 0 0 0 168px;">
-          <div class="valueBox">
-           <pre><code>
+</CODE></PRE>
+                        </DIV></DIV></DIV>
+                        <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">2.5.4.2.3&nbsp;&nbsp;</SPAN>disableProperty().bind
+                        </DIV>
+                        <DIV class="nodeValue"><DIV style="padding: 0 0 0 168px;"><DIV class="valueBox">
+                        <PRE><CODE>
 startButton.disableProperty().bind(
        Bindings.isEmpty(targetPathInput.textProperty())
        .or(targetPathInput.styleProperty().isEqualTo(badStyle))
        .or(optionsValid.not())
 );
-</code></pre>
-          </div>
-         </div>
-        </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item757')"><span class="SerialNumber" style="display: none;">2.5.4&nbsp;&nbsp;</span>java</a>
-      </div>
-      <div class="TreeNode" id="item757" style="">
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber" style="display: none;">2.5.4.1&nbsp;&nbsp;</span>关于java一句话事项 <span class="NodeTag" style=""> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #0D3928; color: #FFFFFF;">喜欢</span> &nbsp;&nbsp;<span style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #FFF2DF; color: #000000;">待补充</span> </span>
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <ol>
-           <li>总是假设最极端的输入和最离奇的错误操作。</li>
-           <li>假设用户硬件配置（cpu/内存/硬盘）略低于平均水平。</li>
-           <li>文件读写用BufferedInputStream和BufferedOutputStream。</li>
-           <li>访问资源用try-with-resource语句。</li>
-           <li>读写文件或数据时始终考虑内存不够的情形。</li>
-           <li>读写文本文件时，注意字符集。</li>
-           <li>字符串与字节转换时，注意字符集。</li>
-           <li>读文件时判断结束的条件应是“len &gt; 0”。如果用“len != -1”则在读取零字节时陷入死循环。</li>
-           <li>删除/移动/重命名文件前调用“System.gc()”，以免因缓存而失败。</li>
-           <li>当类的参数比较多时，不要写很多构造方法来初始化不同参数集，而是用静态方法创建、然后各个set方法返回this，来实现链式赋值。</li>
-           <li>匿名类非常适合以下场景：大量重复代码，只有少数方法的实现不同。</li>
-           <li>泛型非常适合以下场景：大量重复代码，只有数据类型不同。</li>
-           <li>需要大量实例化的类中尽可能少地定义实例变量和实例方法。</li>
-           <li>循环里尽可能不执行浮点计算。如果可以，把浮点计算转换为整型计算。</li>
-           <li>监听数据变化时，需要判断是否真的发生变化，可以设置最小变化阈值以避免频繁处理。</li>
-           <li>若修改JVM参数，或想粗暴清理应用环境时，需要重启应用。</li>
-           <li>注意索引参数是基于0（0-based）还是基于1（1-based），尤其是对第三方库。自己写的方法最好注明。一般默认基于0，若是基于1则必须注明。</li>
-           <li>一般地，用户界面上的索引起始于1，而代码数据的索引起始于0。</li>
-           <li>一般地，用户界面上的范围（开始-结束）包含结束值，而代码数据的范围（开始-结束）不包含结束值。</li>
-           <li>Double.MIN_VALUE是最小正double（最接近于零的正数）。-Double.MAX_VALUE 是最小double。</li>
-           <li>若处理货币，应当用整型保存各个货币单位。</li>
-           <li>BigDecimal比double慢很多。大多数情况下double的精度够用。</li>
-           <li>若是判断数字范围，应当用 if (abs(x - 7.3) &lt; TOLERANCE) 而不是 if (x == 7.3)。</li>
-           <li>final static常量必须在编译时刻可以确定。</li>
-           <li>JDBC读取数值时，若数据库值为null，则ResultSet.getDouble/getFloat/getInt/getShort返回0。如果需要区分空值和零，则需用ResultSet.getObject。 <a target="_blank" href="https://docs.oracle.com/en/java/javase/18/docs/api/java.sql/java/sql/ResultSet.html#getDouble(java.lang.String)">ResultSet.html#getDouble</a></li>
-           <li>从Java18开始，Charset.defaultCharset()总是UTF-8。这会影响到ProcessBuilder的命令和结果的解析。 <a target="_blank" href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Process.html#inputReader()">Process</a> <a target="_blank" href="https://bugs.openjdk.org/browse/JDK-8266075">JDK-8266075</a></li>
-          </ol>
-         </div>
-        </div>
-       </div>
-      </div>
-      <div style="padding: 2px;">
-       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item759')"><span class="SerialNumber" style="display: none;">2.5.5&nbsp;&nbsp;</span>MyBox</a>
-      </div>
-      <div class="TreeNode" id="item759" style="">
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber" style="display: none;">2.5.5.1&nbsp;&nbsp;</span>MyBox打包步骤-windows
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <p>在Windows操作系统下：</p>
-          <ol class="inside">
-           <li>确保jdk和maven已正确安装。</li>
-           <li>下载Mybox源码。</li>
-           <li>在可写可读目录下解包。</li>
-           <li>修改Mybox源码中的文件“MyBox/pack/win/make-win-exe.bat”, 设置以下参数为你的环境下的目录: jpackagePath、jdkPath</li>
-           <li>双击执行脚本“MyBox/pack/win/make-win-exe.bat”。</li>
-           <li>生成的可执行文件是“MyBox/pack/win/app/MyBox/MyBox.exe”。</li>
-          </ol>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber" style="display: none;">2.5.5.2&nbsp;&nbsp;</span>MyBox打包步骤-linux
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <p>在Linux操作系统下：</p>
-          <ol class="inside">
-           <li>确保jdk和maven已正确安装。</li>
-           <li>下载Mybox源码。</li>
-           <li>在可写可读目录下解包。</li>
-           <li>修改Mybox源码中的文件“MyBox/pack/linux/make-linux-bin.sh”, 设置以下参数为你的环境下的目录: jpackagePath、jdkPath</li>
-           <li>打开一个命令终端，进入源码目录：</li>
-           <pre><code>cd  MyBox/pack/linux/</code></pre>
-           <li>修改脚本的执行权限：</li>
-           <pre><code>chmod 755 make-linux-bin.sh</code></pre>
-           <li>执行脚本：</li>
-           <pre><code>./make-linux-bin.sh</code></pre>
-           <li>生成的可执行文件是“MyBox/pack/linux/app/MyBox/bin/MyBox”。</li>
-          </ol>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber" style="display: none;">2.5.5.3&nbsp;&nbsp;</span>MyBox打包步骤-mac
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <p>在Mac操作系统下：</p>
-          <ol class="inside">
-           <li>确保jdk和maven已正确安装。</li>
-           <li>下载Mybox源码。</li>
-           <li>在可写可读目录下解包。</li>
-           <li>修改Mybox源码中的文件“MyBox/pack/mac/make-mac-dmg.sh”, 设置以下参数为你的环境下的目录: jpackagePath、jdkPath</li>
-           <li>打开一个命令终端，进入源码目录：</li>
-           <pre><code>cd  MyBox/pack/mac</code></pre>
-           <li>修改脚本的执行权限：</li>
-           <pre><code>chmod 755 make-mac-dmg.sh</code></pre>
-           <li>执行脚本：</li>
-           <pre><code>./make-mac-dmg.sh</code></pre>
-           <li>生成的安装包是“MyBox/pack/mac/app/MyBox-$version.dmg”。</li>
-          </ol>
-         </div>
-        </div>
-       </div>
-       <div style="padding: 2px;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="SerialNumber" style="display: none;">2.5.5.4&nbsp;&nbsp;</span>MyBox图标的颜色
-       </div>
-       <div class="nodeValue">
-        <div style="padding: 0 0 0 144px;">
-         <div class="valueBox">
-          <table>
-           <tbody>
-            <tr style="font-weight:bold; ">
-             <th>色彩</th>
-             <th>色彩 - RGBA</th>
-             <th>色彩 - RGB</th>
-             <th>名字</th>
-             <th>值</th>
-             <th>sRGB</th>
-             <th>HSB</th>
-            </tr>
-            <tr>
-             <td align="center">
-              <div style="width: 50px;  background-color:#C32136; ">
-               &nbsp;&nbsp;&nbsp;
-              </div></td>
-             <td>0XC32136FF</td>
-             <td>#C32136</td>
-             <td>枣红</td>
-             <td>-3989194</td>
-             <td>195 33 54 100%</td>
-             <td>352 83% 76%</td>
-            </tr>
-            <tr>
-             <td align="center">
-              <div style="width: 50px;  background-color:#FBD5CF; ">
-               &nbsp;&nbsp;&nbsp;
-              </div></td>
-             <td>0XFBD5CFFF</td>
-             <td>#FBD5CF</td>
-             <td>浅粉</td>
-             <td>-272945</td>
-             <td>251 213 207 100%</td>
-             <td>8 18% 98%</td>
-            </tr>
-            <tr>
-             <td align="center">
-              <div style="width: 50px;  background-color:#FF0097; ">
-               &nbsp;&nbsp;&nbsp;
-              </div></td>
-             <td>0XFF0097FF</td>
-             <td>#FF0097</td>
-             <td>洋红</td>
-             <td>-65385</td>
-             <td>255 0 151 100%</td>
-             <td>324 100% 100%</td>
-            </tr>
-            <tr>
-             <td align="center">
-              <div style="width: 50px;  background-color:#EDD1D8; ">
-               &nbsp;&nbsp;&nbsp;
-              </div></td>
-             <td>0XEDD1D8FF</td>
-             <td>#EDD1D8</td>
-             <td>藕色</td>
-             <td>-1191464</td>
-             <td>237 209 216 100%</td>
-             <td>345 12% 93%</td>
-            </tr>
-            <tr>
-             <td align="center">
-              <div style="width: 50px;  background-color:#4C8DAE; ">
-               &nbsp;&nbsp;&nbsp;
-              </div></td>
-             <td>0X4C8DAEFF</td>
-             <td>#4C8DAE</td>
-             <td>群青</td>
-             <td>-11760210</td>
-             <td>76 141 174 100%</td>
-             <td>200 56% 68%</td>
-            </tr>
-            <tr>
-             <td align="center">
-              <div style="width: 50px;  background-color:#D6ECF0; ">
-               &nbsp;&nbsp;&nbsp;
-              </div></td>
-             <td>0XD6ECF0FF</td>
-             <td>#D6ECF0</td>
-             <td>月白</td>
-             <td>-2691856</td>
-             <td>214 236 240 100%</td>
-             <td>189 11% 94%</td>
-            </tr>
-            <tr>
-             <td align="center">
-              <div style="width: 50px;  background-color:#003472; ">
-               &nbsp;&nbsp;&nbsp;
-              </div></td>
-             <td>0X003472FF</td>
-             <td>#003472</td>
-             <td>花青</td>
-             <td>-16763790</td>
-             <td>0 52 114 100%</td>
-             <td>213 100% 45%</td>
-            </tr>
-            <tr>
-             <td align="center">
-              <div style="width: 50px;  background-color:#E3F9FD; ">
-               &nbsp;&nbsp;&nbsp;
-              </div></td>
-             <td>0XE3F9FDFF</td>
-             <td>#E3F9FD</td>
-             <td>莹白</td>
-             <td>-1836547</td>
-             <td>227 249 253 100%</td>
-             <td>189 10% 99%</td>
-            </tr>
-            <tr>
-             <td align="center">
-              <div style="width: 50px;  background-color:#CA6924; ">
-               &nbsp;&nbsp;&nbsp;
-              </div></td>
-             <td>0XCA6924FF</td>
-             <td>#CA6924</td>
-             <td>琥珀</td>
-             <td>-3512028</td>
-             <td>202 105 36 100%</td>
-             <td>25 82% 79%</td>
-            </tr>
-            <tr>
-             <td align="center">
-              <div style="width: 50px;  background-color:#FFF2DF; ">
-               &nbsp;&nbsp;&nbsp;
-              </div></td>
-             <td>0XFFF2DFFF</td>
-             <td>#FFF2DF</td>
-             <td>白粉</td>
-             <td>-3361</td>
-             <td>255 242 223 100%</td>
-             <td>36 13% 100%</td>
-            </tr>
-            <tr>
-             <td align="center">
-              <div style="width: 50px;  background-color:#0D3928; ">
-               &nbsp;&nbsp;&nbsp;
-              </div></td>
-             <td>0X0D3928FF</td>
-             <td>#0D3928</td>
-             <td>墨绿</td>
-             <td>-15910616</td>
-             <td>13 57 40 100%</td>
-             <td>157 77% 22%</td>
-            </tr>
-            <tr>
-             <td align="center">
-              <div style="width: 50px;  background-color:#E0F0E9; ">
-               &nbsp;&nbsp;&nbsp;
-              </div></td>
-             <td>0XE0F0E9FF</td>
-             <td>#E0F0E9</td>
-             <td>素</td>
-             <td>-2035479</td>
-             <td>224 240 233 100%</td>
-             <td>154 7% 94%</td>
-            </tr>
-           </tbody>
-          </table>
-         </div>
-        </div>
-       </div>
-      </div>
-     </div>
-    </div>
-   </div>
-   <hr>
-   <p style="font-size:0.8em">* 网页可编辑时，链接和控件可能不响应。</p>
-  </div>
- </body>
-</html>
-</html>
+</CODE></PRE>
+                        </DIV></DIV></DIV>
+                    </DIV>
+                </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:nodeClicked('item775')"><SPAN class="SerialNumber">2.5.5&nbsp;&nbsp;</SPAN>java</a>
+                </DIV>
+                <DIV class="TreeNode" id='item775'>
+                    <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">2.5.5.1&nbsp;&nbsp;</SPAN>关于java一句话事项
+                            <SPAN class="NodeTag">
+                            &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #0D3928; color: #FFFFFF;">喜欢</SPAN>
+                            &nbsp;&nbsp;<SPAN style="border-radius:4px; padding: 2px; font-size:0.8em;  background-color: #FFF2DF; color: #000000;">待补充</SPAN>
+                            </SPAN>
+                    </DIV>
+                    <DIV class="nodeValue"><DIV style="padding: 0 0 0 144px;"><DIV class="valueBox">
+                    <ol>
+    <li>总是假设最极端的输入和最离奇的错误操作。</li>
+    <li>假设用户硬件配置（cpu/内存/硬盘）略低于平均水平。</li>
+    <li>文件读写用BufferedInputStream和BufferedOutputStream。</li>
+    <li>访问资源用try-with-resource语句。</li>
+    <li>读写文件或数据时始终考虑内存不够的情形。</li>
+    <li>读写文本文件时，注意字符集。</li>
+    <li>字符串与字节转换时，注意字符集。</li>
+    <li>读文件时判断结束的条件应是“len &gt; 0”。如果用“len != -1”则在读取零字节时陷入死循环。</li>
+    <li>删除/移动/重命名文件前调用“System.gc()”，以免因缓存而失败。</li>
+    <li>处理树形信息（例如文件系统）时要避免无限循环：当操作会修改源节点时，目标节点不能是源节点或者其后代。</li>
+    <li>若按序号删除列表，则应从后向前删除。</li>
+    <li>当类的参数比较多时，不要写很多构造方法来初始化不同参数集，而是用静态方法创建、然后各个set方法返回this，来实现链式赋值。</li>
+    <li>匿名类非常适合以下场景：大量重复代码，只有少数方法的实现不同。</li>
+    <li>泛型非常适合以下场景：大量重复代码，只有数据类型不同。</li>
+    <li>需要大量实例化的类中尽可能少地定义实例变量和实例方法。</li>
+    <li>循环里尽可能不执行浮点计算。如果可以，把浮点计算转换为整型计算。</li>
+    <li>监听数据变化时，需要判断是否真的发生变化，可以设置最小变化阈值以避免频繁处理。</li>
+    <li>若修改JVM参数，或想粗暴清理应用环境时，需要重启应用。</li>
+    <li>注意索引参数是基于0（0-based）还是基于1（1-based），尤其是对第三方库。自己写的方法最好注明。一般默认基于0，若是基于1则必须注明。</li>
+    <li>一般地，用户界面上的索引起始于1，而代码数据的索引起始于0。</li>
+    <li>一般地，用户界面上的范围（开始-结束）包含结束值，而代码数据的范围（开始-结束）不包含结束值。</li>
+    <li>Double.MIN_VALUE是最小正double（最接近于零的正数）。-Double.MAX_VALUE 是最小double。</li>
+    <li>若处理货币，应当用整型保存各个货币单位。</li>
+    <li>BigDecimal比double慢很多。大多数情况下double的精度够用。</li>
+    <li>若是判断数字范围，应当用 if (abs(x - 7.3) &lt; TOLERANCE) 而不是 if (x == 7.3)。</li>
+    <li>final static常量必须在编译时刻可以确定。</li>
+    <li>JDBC读取数值时，若数据库值为null，则ResultSet.getDouble/getFloat/getInt/getShort返回0。如果需要区分空值和零，则需用ResultSet.getObject。
+        <a target=_blank href="https://docs.oracle.com/en/java/javase/18/docs/api/java.sql/java/sql/ResultSet.html#getDouble(java.lang.String)">ResultSet.html#getDouble</a>
+    </li>
+    <li>从Java18开始，Charset.defaultCharset()总是UTF-8。这会影响到ProcessBuilder的命令和结果的解析。
+        <a target=_blank href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Process.html#inputReader()">Process</a> 
+        <a target=_blank href="https://bugs.openjdk.org/browse/JDK-8266075">JDK-8266075</a>
+     </li>
+</ol>
+                    </DIV></DIV></DIV>
+                </DIV>
+                <DIV style="padding: 2px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<SPAN class="SerialNumber">2.5.6&nbsp;&nbsp;</SPAN>MyBox图标的颜色
+                </DIV>
+                <DIV class="nodeValue"><DIV style="padding: 0 0 0 120px;"><DIV class="valueBox">
+                <table><tbody>
+    <TR  style="font-weight:bold; "><TH>名字</TH><TH>色彩</TH><TH>色彩 - RGBA</TH><TH>色彩 - RGB</TH><TH>值</TH><TH>sRGB</TH><TH>HSB</TH></TR>
+    <TR><TD>枣红</TD><TD align="center"><DIV style="width: 50px;  background-color:#C32136; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0XC32136FF </TD><TD>#C32136 </TD><TD>-3989194</TD><TD>195 33 54 100%</TD><TD>352 83% 76%</TD></TR>
+    <TR><TD>浅粉</TD><TD align="center"><DIV style="width: 50px;  background-color:#FBD5CF; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0XFBD5CFFF </TD><TD>#FBD5CF </TD><TD>-272945</TD><TD>251 213 207 100%</TD><TD>8 18% 98%</TD></TR>
+    <TR><TD>花青</TD><TD align="center"><DIV style="width: 50px;  background-color:#003472; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0X003472FF </TD><TD>#003472 </TD><TD>-16763790</TD><TD>0 52 114 100%</TD><TD>213 100% 45%</TD></TR>
+    <TR><TD>莹白</TD><TD align="center"><DIV style="width: 50px;  background-color:#E3F9FD; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0XE3F9FDFF </TD><TD>#E3F9FD </TD><TD>-1836547</TD><TD>227 249 253 100%</TD><TD>189 10% 99%</TD></TR>
+    <TR><TD>群青</TD><TD align="center"><DIV style="width: 50px;  background-color:#4C8DAE; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0X4C8DAEFF </TD><TD>#4C8DAE </TD><TD>-11760210</TD><TD>76 141 174 100%</TD><TD>200 56% 68%</TD></TR>
+    <TR><TD>月白</TD><TD align="center"><DIV style="width: 50px;  background-color:#D6ECF0; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0XD6ECF0FF </TD><TD>#D6ECF0 </TD><TD>-2691856</TD><TD>214 236 240 100%</TD><TD>189 11% 94%</TD></TR>
+    <TR><TD>洋红</TD><TD align="center"><DIV style="width: 50px;  background-color:#FF0097; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0XFF0097FF </TD><TD>#FF0097 </TD><TD>-65385</TD><TD>255 0 151 100%</TD><TD>324 100% 100%</TD></TR>
+    <TR><TD>藕色</TD><TD align="center"><DIV style="width: 50px;  background-color:#EDD1D8; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0XEDD1D8FF </TD><TD>#EDD1D8 </TD><TD>-1191464</TD><TD>237 209 216 100%</TD><TD>345 12% 93%</TD></TR>
+    <TR><TD>玄色</TD><TD align="center"><DIV style="width: 50px;  background-color:#622A1D; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0X622A1DFF </TD><TD>#622A1D </TD><TD>-10343907</TD><TD>98 42 29 100%</TD><TD>11 70% 38%</TD></TR>
+    <TR><TD>金色</TD><TD align="center"><DIV style="width: 50px;  background-color:#EACD76; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0XEACD76FF </TD><TD>#EACD76 </TD><TD>-1389194</TD><TD>234 205 118 100%</TD><TD>45 50% 92%</TD></TR>
+    <TR><TD>墨绿</TD><TD align="center"><DIV style="width: 50px;  background-color:#0D3928; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0X0D3928FF </TD><TD>#0D3928 </TD><TD>-15910616</TD><TD>13 57 40 100%</TD><TD>157 77% 22%</TD></TR>
+    <TR><TD>素色</TD><TD align="center"><DIV style="width: 50px;  background-color:#E0F0E9; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0XE0F0E9FF </TD><TD>#E0F0E9 </TD><TD>-2035479</TD><TD>224 240 233 100%</TD><TD>154 7% 94%</TD></TR>
+    <TR><TD>定制的深色</TD><TD align="center"><DIV style="width: 50px;  background-color:#8B008B; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0X8B008BFF </TD><TD>#8B008B </TD><TD>-7667573</TD><TD>139 0 139 100%</TD><TD>300 100% 55%</TD></TR>
+    <TR><TD>定制的浅色</TD><TD align="center"><DIV style="width: 50px;  background-color:#F8F8FF; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0XF8F8FFFF </TD><TD>#F8F8FF </TD><TD>-460545</TD><TD>248 248 255 100%</TD><TD>240 3% 100%</TD></TR>
+    <TR><TD>黑</TD><TD align="center"><DIV style="width: 50px;  background-color:#000000; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0X000000FF </TD><TD>#000000 </TD><TD>-16777216</TD><TD>0 0 0 100%</TD><TD>0 0% 0%</TD></TR>
+    <TR><TD>白</TD><TD align="center"><DIV style="width: 50px;  background-color:#FFFFFF; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0XFFFFFFFF </TD><TD>#FFFFFF </TD><TD>-1</TD><TD>255 255 255 100%</TD><TD>0 0% 100%</TD></TR>
+    <TR><TD>透明</TD><TD align="center"><DIV style="width: 50px;  background-color:#000000; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0X00000000 </TD><TD>#000000 </TD><TD>0</TD><TD>0 0 0 0%</TD><TD>0 0% 0%</TD></TR>
+    <TR  style="font-weight:bold; "><TH>名字</TH><TH>色彩</TH><TH>色彩 - RGBA</TH><TH>色彩 - RGB</TH><TH>值</TH><TH>sRGB</TH><TH>HSB</TH></TR>
+</tbody></table>
+                </DIV></DIV></DIV>
+            </DIV>
+        </DIV>
+    </DIV>
+
+<HR>
+<P style="font-size:0.8em">* 网页可编辑时，链接和控件可能不响应。</P>
+</HTML>

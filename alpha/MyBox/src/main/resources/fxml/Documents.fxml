@@ -69,15 +69,15 @@ License:    Apache License Version 2.0
                                 <Insets bottom="20.0" />
                             </VBox.margin>
                         </Label>
-                  <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#openFolder">
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../buttons/Red/iconOpen.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
+                        <Button fx:id="openPathButton" mnemonicParsing="false" onAction="#openPath">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconOpenPath.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                     </children>
                     <VBox.margin>
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

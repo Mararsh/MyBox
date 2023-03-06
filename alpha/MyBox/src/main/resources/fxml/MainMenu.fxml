@@ -140,7 +140,7 @@ License:    Apache License Version 2.0
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#openImageViewer" text="%ImageViewer" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufacture" text="%EditImage" />
-                                <MenuItem mnemonicParsing="false" onAction="#openSVGEditor" text="%SVGEditor" />
+                                <!--<MenuItem mnemonicParsing="false" onAction="#openSVGEditor" text="%SVGEditor" />-->
                                 <Menu mnemonicParsing="false" text="%ImageManufacture">
                                     <items>                                       
                                         <MenuItem mnemonicParsing="false" onAction="#ImagesEditor" text="%ImagesEditor" />
@@ -461,7 +461,7 @@ License:    Apache License Version 2.0
                                             <graphic>
                                                 <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
-                                                        <Image url="@../buttons/Red/iconRename.png" />
+                                                        <Image url="@../buttons/Red/iconInput.png" />
                                                     </image>
                                                 </ImageView>                                            
                                             </graphic>

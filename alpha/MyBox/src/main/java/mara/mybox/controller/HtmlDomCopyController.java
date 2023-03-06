@@ -21,10 +21,10 @@ import org.jsoup.nodes.Element;
 public class HtmlDomCopyController extends BaseChildController {
 
     protected ControlHtmlEditor editor;
+    protected BaseHtmlDomTreeController manageController;
     protected Element targetElement;
     protected int count;
     protected TreeTableView<HtmlNode> sourceTree, targetTree, editorTree;
-    protected String copyiedHtml, targetLocation;
     protected TreeItem<HtmlNode> targetItem, editorItem;
     protected Element editorElement;
 
@@ -45,7 +45,8 @@ public class HtmlDomCopyController extends BaseChildController {
             if (invalidTarget()) {
                 return;
             }
-            editorTree = editor.domController.domTree;
+            manageController = editor.domController;
+            editorTree = manageController.domTree;
             Element root = editorTree.getRoot().getValue().getElement();
             sourceController.load(root, sourceItem);
             targetController.loadElement(root);
@@ -80,7 +81,6 @@ public class HtmlDomCopyController extends BaseChildController {
             }
             targetElement = targetItem.getValue().getElement();
             count = 0;
-            copyiedHtml = null;
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -108,7 +108,7 @@ public class HtmlDomCopyController extends BaseChildController {
             protected void whenSucceeded() {
                 if (count > 0) {
                     closeStage();
-                    editor.domController.updateTreeItem(editorItem, editorElement);
+                    manageController.updateTreeItem(editorItem, editorElement);
                     editor.domChanged(true);
                 }
                 editor.popInformation(message("Copied") + ": " + count);
@@ -121,14 +121,14 @@ public class HtmlDomCopyController extends BaseChildController {
         try {
             count = 0;
             editorElement = null;
-            copyiedHtml = null;
+            String copyiedHtml = null;
 
-            targetLocation = targetController.hierarchyNumber(targetItem);
+            String targetLocation = targetController.hierarchyNumber(targetItem);
             if (targetLocation == null) {
                 error = message("SelectNodeCopyInto");
                 return false;
             }
-            editorItem = editor.domController.find(targetLocation);
+            editorItem = manageController.find(targetLocation);
             if (editorItem == null) {
                 error = message("SelectNodeCopyInto");
                 return false;

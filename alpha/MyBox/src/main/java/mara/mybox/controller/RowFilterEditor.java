@@ -31,6 +31,7 @@ public class RowFilterEditor extends TreeNodeEditor {
     protected TextField maxInput;
 
     public RowFilterEditor() {
+        TipsLabelKey = "RowFilterTips";
         defaultExt = "js";
     }
 

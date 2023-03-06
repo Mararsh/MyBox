@@ -48,13 +48,12 @@ License:    Apache License Version 2.0
         <FlowPane hgap="2.0" vgap="2.0">
             <children>
                 <Label minHeight="-Infinity" text="%Position" wrapText="true" />
-                <RadioButton fx:id="beforeRadio" mnemonicParsing="false" selected="true" text="%Before">
-                    <toggleGroup>
+                <RadioButton fx:id="inRadio" mnemonicParsing="false" selected="true" text="%In">
+               <toggleGroup>
                         <ToggleGroup fx:id="positionGroup" />
-                    </toggleGroup>
-                </RadioButton>
+               </toggleGroup></RadioButton>
                 <RadioButton fx:id="afterRadio" mnemonicParsing="false" text="%After" toggleGroup="$positionGroup" />
-                <RadioButton fx:id="inRadio" mnemonicParsing="false" text="%In" toggleGroup="$positionGroup" />
+                <RadioButton fx:id="beforeRadio" mnemonicParsing="false" text="%Before" toggleGroup="$positionGroup" />
             </children>
         </FlowPane>
     </children>

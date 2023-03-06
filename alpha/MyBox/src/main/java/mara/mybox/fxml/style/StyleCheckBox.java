@@ -76,6 +76,9 @@ public class StyleCheckBox {
         if (id.startsWith("nodesList")) {
             return new StyleData(id, "", message("List"), "", "iconList.png");
         }
+        if (id.startsWith("openPath")) {
+            return new StyleData(id, "", message("OpenDirectory"), "", "iconOpenPath.png");
+        }
         switch (id) {
             case "tableSubdirCheck":
                 return new StyleData("tableSubdirCheck", "", message("HandleSubDirectories"), "", "iconFolder.png");
@@ -92,7 +95,7 @@ public class StyleCheckBox {
             case "pdfMemBox":
                 return new StyleData("pdfMemBox", "", message("PdfMemComments"), "", "");
             case "openCheck":
-                return new StyleData("openCheck", "", message("OpenWhenComplete"), "", "iconOpen2.png");
+                return new StyleData("openCheck", "", message("OpenWhenComplete"), "", "iconOpenPath.png");
             case "selectAreaCheck":
                 return new StyleData("selectAreaCheck", "", message("SelectArea"), "CTRL+t / ALT+t", "iconTarget.png");
             case "bookmarksCheck":

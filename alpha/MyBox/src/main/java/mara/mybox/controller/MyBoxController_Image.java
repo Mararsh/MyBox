@@ -74,7 +74,8 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
-                imageViewer, EditImage, EditSVG,
+                imageViewer, EditImage,
+                //                EditSVG,
                 imageManufactureMenu(), manufactureBatchMenu(),
                 ImageAnalyse, ImagesPlay, imagesBrowser, new SeparatorMenuItem(),
                 ManageColors, QueryColor, colorSpaceMenu(), new SeparatorMenuItem(),

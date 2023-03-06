@@ -393,7 +393,8 @@ Tags:喜欢;;;0x0d3928ff;;;待补充;;;0xfff2dfff
     <li>字符串与字节转换时，注意字符集。</li>
     <li>读文件时判断结束的条件应是“len &gt; 0”。如果用“len != -1”则在读取零字节时陷入死循环。</li>
     <li>删除/移动/重命名文件前调用“System.gc()”，以免因缓存而失败。</li>
-    <li>处理树形信息（例如文件系统）时要避免无限循环：目标节点不能是源节点或者其后代。</li>
+    <li>处理树形信息（例如文件系统）时要避免无限循环：当操作会修改源节点时，目标节点不能是源节点或者其后代。</li>
+    <li>若按序号删除列表，则应从后向前删除。</li>
     <li>当类的参数比较多时，不要写很多构造方法来初始化不同参数集，而是用静态方法创建、然后各个set方法返回this，来实现链式赋值。</li>
     <li>匿名类非常适合以下场景：大量重复代码，只有少数方法的实现不同。</li>
     <li>泛型非常适合以下场景：大量重复代码，只有数据类型不同。</li>
@@ -418,61 +419,9 @@ Tags:喜欢;;;0x0d3928ff;;;待补充;;;0xfff2dfff
      </li>
 </ol>
 
+
 ##MyBox#
 笔记本 > 笔记示例 > 编程
-MyBox
-
-##MyBox#
-笔记本 > 笔记示例 > 编程 > MyBox
-MyBox打包步骤-windows
-<p>在Windows操作系统下：</p>
-			<ol  class="inside">
-				<li>确保jdk和maven已正确安装。</li>
-				<li>下载Mybox源码。</li>
-				<li>在可写可读目录下解包。</li>
-				<li>修改Mybox源码中的文件“MyBox/pack/win/make-win-exe.bat”, 设置以下参数为你的环境下的目录: jpackagePath、jdkPath</li>
-				<li>双击执行脚本“MyBox/pack/win/make-win-exe.bat”。</li>
-				<li>生成的可执行文件是“MyBox/pack/win/app/MyBox/MyBox.exe”。</li>
-			</ol>
-
-##MyBox#
-笔记本 > 笔记示例 > 编程 > MyBox
-MyBox打包步骤-linux
-<p>在Linux操作系统下：</p>
-			<ol  class="inside">
-				<li>确保jdk和maven已正确安装。</li>
-				<li>下载Mybox源码。</li>
-				<li>在可写可读目录下解包。</li>
-				<li>修改Mybox源码中的文件“MyBox/pack/linux/make-linux-bin.sh”, 设置以下参数为你的环境下的目录: jpackagePath、jdkPath</li>
-				<li>打开一个命令终端，进入源码目录：</li>
-				      <PRE><CODE>cd  MyBox/pack/linux/</CODE></PRE>
-				<li>修改脚本的执行权限：</li>
-				      <PRE><CODE>chmod 755 make-linux-bin.sh</CODE></PRE>
-				<li>执行脚本：</li>
-				      <PRE><CODE>./make-linux-bin.sh</CODE></PRE>
-				<li>生成的可执行文件是“MyBox/pack/linux/app/MyBox/bin/MyBox”。</li>
-			</ol>
-
-##MyBox#
-笔记本 > 笔记示例 > 编程 > MyBox
-MyBox打包步骤-mac
-<p>在Mac操作系统下：</p>
-			<ol  class="inside">
-				<li>确保jdk和maven已正确安装。</li>
-				<li>下载Mybox源码。</li>
-				<li>在可写可读目录下解包。</li>
-				<li>修改Mybox源码中的文件“MyBox/pack/mac/make-mac-dmg.sh”, 设置以下参数为你的环境下的目录: jpackagePath、jdkPath</li>
-				<li>打开一个命令终端，进入源码目录：</li>
-				      <PRE><CODE>cd  MyBox/pack/mac</CODE></PRE>
-				<li>修改脚本的执行权限：</li>
-				      <PRE><CODE>chmod 755 make-mac-dmg.sh</CODE></PRE>
-				<li>执行脚本：</li>
-				      <PRE><CODE>./make-mac-dmg.sh</CODE></PRE>
-				<li>生成的安装包是“MyBox/pack/mac/app/MyBox-$version.dmg”。</li>
-			</ol>
-
-##MyBox#
-笔记本 > 笔记示例 > 编程 > MyBox
 MyBox图标的颜色
 <table><tbody>
     <TR  style="font-weight:bold; "><TH>名字</TH><TH>色彩</TH><TH>色彩 - RGBA</TH><TH>色彩 - RGB</TH><TH>值</TH><TH>sRGB</TH><TH>HSB</TH></TR>

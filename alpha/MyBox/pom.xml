@@ -226,11 +226,11 @@
             <artifactId>nashorn-core</artifactId>
             <version>15.4</version>
         </dependency>
-        <dependency>
+        <!--        <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-all</artifactId>
             <version>1.16</version>
-        </dependency>
+        </dependency>-->
         <!--        <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>

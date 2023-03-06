@@ -41,7 +41,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
     @FXML
     protected ControlPathInput targetPathInputController;
     @FXML
-    protected Button openFolderButton, clearBoardButton;
+    protected Button openPathButton, clearBoardButton;
     @FXML
     protected CheckBox saveCheck, copyCheck;
     @FXML
@@ -150,7 +150,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
                 }
             });
 
-            openFolderButton.disableProperty().bind(targetPathInputController.valid.not());
+            openPathButton.disableProperty().bind(targetPathInputController.valid.not());
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -177,7 +177,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
     }
 
     @FXML
-    public void openFolder() {
+    public void openPath() {
         view(targetPathInputController.file);
     }
 

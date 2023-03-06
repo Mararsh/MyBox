@@ -1566,7 +1566,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
     }
 
     @FXML
-    protected void openFolder() {
+    protected void openPath() {
         try {
             browseURI(targetPathInputController.file.toURI());
         } catch (Exception e) {

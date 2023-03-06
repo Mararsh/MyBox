@@ -43,6 +43,7 @@ public class Fxmls {
     public static final String HtmlDomCopyFxml = "/fxml/HtmlDomCopy.fxml";
     public static final String HtmlDomAddFxml = "/fxml/HtmlDomAdd.fxml";
     public static final String HtmlDomMoveFxml = "/fxml/HtmlDomMove.fxml";
+    public static final String HtmlDomDeleteFxml = "/fxml/HtmlDomDelete.fxml";
     public static final String HtmlToMarkdownFxml = "/fxml/HtmlToMarkdown.fxml";
     public static final String HtmlToTextFxml = "/fxml/HtmlToText.fxml";
     public static final String HtmlToPdfFxml = "/fxml/HtmlToPdf.fxml";
