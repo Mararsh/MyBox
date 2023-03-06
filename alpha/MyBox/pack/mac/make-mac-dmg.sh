@@ -1,9 +1,6 @@
-# Unzip source package. Edit this script to change directories as your env.
+# Unzip source package. Edit this script to change JAVA_HOME as your env.
 # In terminal window, enter path "MyBox/pack/mac", and run this script.
 export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk-19.0.2.jdk/Contents/Home"
-export CLASSPATH=".;$JAVA_HOME/lib" 
-export PATH="$JAVA_HOME/bin;$PATH"
-export jpackagePath="%JAVA_HOME%/bin"
 
 rm -rf app/*
 rm -rf jar/*
@@ -14,7 +11,7 @@ mvn clean
 mvn -P mac package
 cd pack/mac
 mv ../../target/MyBox.jar  jar/   &&  \
-$jpackagePath/jpackage  --type dmg --vendor Mara  --verbose  --runtime-image $JAVA_HOME  --dest app  --name  MyBox  --input jar --main-jar  MyBox.jar  --icon res/MyBox.icns
+$JAVA_HOME/bin/jpackage  --type dmg --vendor Mara  --verbose  --runtime-image $JAVA_HOME  --dest app  --name  MyBox  --input jar --main-jar  MyBox.jar  --icon res/MyBox.icns
 mv jar/MyBox.jar  .
 gzip MyBox.jar 
 mv MyBox.jar.gz  MyBox-mac.jar.gz

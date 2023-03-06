@@ -59,7 +59,7 @@
 | 平台 | 链接 | 大小 | 启动文件 |
 | --- | --- | --- |  --- |
 | win10 x64 | [MyBox-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-win10-x64.zip)  | 260MB- | MyBox.exe |
-| CentOS 7 x64 | [MyBox-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-CentOS7-x64.tar.gz)  | 280MB-  | bin/MyBox  |
+| CentOS 7 x64 | [MyBox-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-CentOS7-x64.tar.gz)  | 280MB-  | MyBox  |
 | mac x64| [MyBox-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-mac.dmg)  | 280MB-  |  MyBox.app   |
 
 双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。        

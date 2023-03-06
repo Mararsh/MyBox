@@ -59,7 +59,7 @@ Self-contain packages include all files and need not java env nor installation.
 | Platform | Link | Size  | Launcher |        
 | --- | --- | ---  | ---  |
 | win10 x64 | [MyBox-win-x64.zip](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-win10-x64.zip)  | 260MB- | MyBox.exe |
-| CentOS 7 x64 | [MyBox-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-CentOS7-x64.tar.gz)  | 280MB-  | bin/MyBox  |
+| CentOS 7 x64 | [MyBox-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-CentOS7-x64.tar.gz)  | 280MB-  | MyBox  |
 | mac | [MyBox-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-mac.dmg)  | 280MB-  |  MyBox.app   |        
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.        
