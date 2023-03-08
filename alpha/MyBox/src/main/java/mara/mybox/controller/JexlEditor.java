@@ -377,14 +377,14 @@ public class JexlEditor extends JShellEditor {
     }
 
     @FXML
-    protected void popScriptHistories(MouseEvent mouseEvent) {
+    protected void popScriptHistories(Event event) {
         if (UserConfig.getBoolean("JexlScriptHistoriesPopWhenMouseHovering", false)) {
-            PopTools.popStringValues(this, valueInput, mouseEvent, "JexlScriptHistories", false, true);
+            showScriptHistories(event);
         }
     }
 
     @FXML
-    protected void showScriptHistories(ActionEvent event) {
+    protected void showScriptHistories(Event event) {
         PopTools.popStringValues(this, valueInput, event, "JexlScriptHistories", false, true);
     }
 

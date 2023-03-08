@@ -9,6 +9,7 @@ import java.util.Optional;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -346,7 +347,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
 
             @Override
             protected boolean handle() {
-                try ( Connection conn = DerbyBase.getConnection()) {
+                try (Connection conn = DerbyBase.getConnection()) {
                     loadedParent = tableTreeNode.readData(conn, loadedParent);
                     nodeController.currentNode = tableTreeNode.readData(conn, nodeController.currentNode);
                     nodeController.parentNode = tableTreeNode.readData(conn, nodeController.parentNode);
@@ -844,8 +845,15 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     }
 
     @FXML
-    protected void popFindHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, findInput, mouseEvent, baseName + category + "Histories");
+    protected void showFindHistories(Event event) {
+        PopTools.popStringValues(this, findInput, event, baseName + category + "Histories", false, true);
+    }
+
+    @FXML
+    public void popFindHistories(Event event) {
+        if (UserConfig.getBoolean(baseName + category + "HistoriesPopWhenMouseHovering", false)) {
+            showFindHistories(event);
+        }
     }
 
     @Override

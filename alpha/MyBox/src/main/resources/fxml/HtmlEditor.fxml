@@ -42,7 +42,7 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button fx:id="historyButton" mnemonicParsing="false" onMouseEntered="#popAddressHistories">
+                        <Button fx:id="historyButton" mnemonicParsing="false" onAction="#showAddressHistories" onMouseEntered="#popAddressHistories">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>

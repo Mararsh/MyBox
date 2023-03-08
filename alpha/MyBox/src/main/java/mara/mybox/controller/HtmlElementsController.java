@@ -6,6 +6,7 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -24,6 +25,7 @@ import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.HtmlWriteTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
@@ -216,8 +218,15 @@ public class HtmlElementsController extends WebAddressController {
     }
 
     @FXML
-    protected void popElementHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, elementInput, mouseEvent, key, true);
+    protected void showElementHistories(Event event) {
+        PopTools.popStringValues(this, elementInput, event, key, true, true);
+    }
+
+    @FXML
+    public void popElementHistories(Event event) {
+        if (UserConfig.getBoolean(key + "PopWhenMouseHovering", false)) {
+            showElementHistories(event);
+        }
     }
 
 }

@@ -64,7 +64,7 @@ License:    Apache License Version 2.0
                     </graphic>
                 </Button>
                 <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                <Button fx:id="styleButton" mnemonicParsing="false" onMouseEntered="#popStyles">
+                <Button fx:id="styleButton" mnemonicParsing="false"  onAction="#showStyles"    onMouseEntered="#popStyles" >
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>

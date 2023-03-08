@@ -317,14 +317,14 @@ public class JShellEditor extends TreeNodeEditor {
     }
 
     @FXML
-    protected void popHistories(MouseEvent mouseEvent) {
+    protected void popHistories(Event event) {
         if (UserConfig.getBoolean("JShellHistoriesPopWhenMouseHovering", false)) {
-            PopTools.popStringValues(this, valueInput, mouseEvent, "JShellHistories", false, true);
+            showHistories(event);
         }
     }
 
     @FXML
-    protected void showHistories(ActionEvent event) {
+    protected void showHistories(Event event) {
         PopTools.popStringValues(this, valueInput, event, "JShellHistories", false, true);
     }
 

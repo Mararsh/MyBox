@@ -719,8 +719,15 @@ public class ControlHtmlEditor extends BaseWebViewController {
     }
 
     @FXML
-    public void popRichEditorStyle(MouseEvent mouseEvent) {
-        PopTools.popHtmlStyle(mouseEvent, richEditorController);
+    protected void showRichEditorStyle(Event event) {
+        PopTools.popHtmlStyle(event, richEditorController);
+    }
+
+    @FXML
+    protected void popRichEditorStyle(Event event) {
+        if (UserConfig.getBoolean("HtmlStylesPopWhenMouseHovering", false)) {
+            showRichEditorStyle(event);
+        }
     }
 
     @FXML

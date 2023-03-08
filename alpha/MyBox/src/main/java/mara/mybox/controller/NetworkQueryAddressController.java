@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
@@ -87,8 +88,15 @@ public class NetworkQueryAddressController extends HtmlTableController {
     }
 
     @FXML
-    protected void popAddressHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, addressInput, mouseEvent, key, true);
+    protected void showAddressHistories(Event event) {
+        PopTools.popStringValues(this, addressInput, event, key, false, true);
+    }
+
+    @FXML
+    protected void popAddressHistories(Event event) {
+        if (UserConfig.getBoolean(key + "PopWhenMouseHovering", false)) {
+            showAddressHistories(event);
+        }
     }
 
     protected void checkType() {

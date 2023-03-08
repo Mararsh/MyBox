@@ -4,7 +4,7 @@ import java.text.MessageFormat;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -15,7 +15,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.BytesEditInformation;
 import mara.mybox.data.FileEditInformation.Edit_Type;
@@ -687,18 +686,39 @@ public class ControlFindReplace extends BaseController {
     }
 
     @FXML
-    public void popFindExample(ActionEvent event) {
+    protected void showFindExample(Event event) {
         PopTools.popRegexExamples(this, findArea, event);
     }
 
     @FXML
-    public void popFindHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, findArea, mouseEvent, baseName + "FindString");
+    protected void popFindExample(Event event) {
+        if (UserConfig.getBoolean("RegexExamplesPopWhenMouseHovering", false)) {
+            showFindExample(event);
+        }
     }
 
     @FXML
-    public void popReplaceHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, replaceArea, mouseEvent, baseName + "ReplaceString");
+    protected void showFindHistories(Event event) {
+        PopTools.popStringValues(this, findArea, event, baseName + "FindString", false, true);
+    }
+
+    @FXML
+    public void popFindHistories(Event event) {
+        if (UserConfig.getBoolean(baseName + "FindStringPopWhenMouseHovering", false)) {
+            showFindHistories(event);
+        }
+    }
+
+    @FXML
+    protected void showReplaceHistories(Event event) {
+        PopTools.popStringValues(this, findArea, event, baseName + "ReplaceString", false, true);
+    }
+
+    @FXML
+    public void popReplaceHistories(Event event) {
+        if (UserConfig.getBoolean(baseName + "ReplaceStringPopWhenMouseHovering", false)) {
+            showReplaceHistories(event);
+        }
     }
 
 }

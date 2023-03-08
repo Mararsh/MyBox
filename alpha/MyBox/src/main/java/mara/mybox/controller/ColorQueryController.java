@@ -1,11 +1,11 @@
 package mara.mybox.controller;
 
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.table.TableStringValues;
@@ -126,13 +126,27 @@ public class ColorQueryController extends BaseController {
     }
 
     @FXML
-    public void popExamples(MouseEvent mouseEvent) {
-        PopTools.popColorExamples(this, colorInput, mouseEvent);
+    protected void showExamples(Event event) {
+        PopTools.popColorExamples(this, colorInput, event);
     }
 
     @FXML
-    protected void popColorHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, colorInput, mouseEvent, "ColorQueryColorHistories", true);
+    public void popExamples(Event event) {
+        if (UserConfig.getBoolean("ColorExamplesPopWhenMouseHovering", false)) {
+            showExamples(event);
+        }
+    }
+
+    @FXML
+    protected void showHistories(Event event) {
+        PopTools.popStringValues(this, colorInput, event, "ColorQueryColorHistories", false, true);
+    }
+
+    @FXML
+    protected void popColorHistories(Event event) {
+        if (UserConfig.getBoolean("ColorQueryColorHistoriesPopWhenMouseHovering", false)) {
+            showHistories(event);
+        }
     }
 
     @FXML

@@ -1215,7 +1215,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                table.editHtml();
+                table.htmlTable();
             }
         };
         start(htmlTask, false, message("LoadingTableData"));

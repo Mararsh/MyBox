@@ -1,8 +1,8 @@
 package mara.mybox.controller;
 
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
-import javafx.scene.input.MouseEvent;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
@@ -13,6 +13,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -78,8 +79,15 @@ public class JavaScriptController extends TreeManageController {
     }
 
     @FXML
-    public void popHtmlStyle(MouseEvent mouseEvent) {
-        PopTools.popHtmlStyle(mouseEvent, outputController);
+    protected void showHtmlStyle(Event event) {
+        PopTools.popHtmlStyle(event, outputController);
+    }
+
+    @FXML
+    protected void popHtmlStyle(Event event) {
+        if (UserConfig.getBoolean("HtmlStylesPopWhenMouseHovering", false)) {
+            showHtmlStyle(event);
+        }
     }
 
     @FXML

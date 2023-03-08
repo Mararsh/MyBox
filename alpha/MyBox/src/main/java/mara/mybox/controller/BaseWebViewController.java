@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.charset.Charset;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -15,6 +16,7 @@ import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WebViewTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -181,6 +183,10 @@ public class BaseWebViewController extends BaseController {
         return getBaseTitle() + "  " + webViewController.title();
     }
 
+    public void initStyle(String style) {
+        webViewController.initStyle(style);
+    }
+
     protected void updateStageTitle() {
         if (getMyStage() == null) {
             return;
@@ -300,8 +306,15 @@ public class BaseWebViewController extends BaseController {
     }
 
     @FXML
-    public void popHtmlStyle(MouseEvent mouseEvent) {
-        PopTools.popHtmlStyle(mouseEvent, webViewController);
+    protected void showHtmlStyle(Event event) {
+        PopTools.popHtmlStyle(event, webViewController);
+    }
+
+    @FXML
+    protected void popHtmlStyle(Event event) {
+        if (UserConfig.getBoolean("HtmlStylesPopWhenMouseHovering", false)) {
+            showHtmlStyle(event);
+        }
     }
 
     @FXML

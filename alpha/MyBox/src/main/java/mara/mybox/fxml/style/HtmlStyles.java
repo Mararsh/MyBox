@@ -10,12 +10,11 @@ import static mara.mybox.value.Languages.message;
 public class HtmlStyles {
 
     public enum HtmlStyle {
-        Default, Console, Blackboard, Ago, Book, Grey
+        TableStyle, Default, Console, Blackboard, Ago, Book, Grey
     }
 
-    public static final String BaseStyle
-            = "body {width: 900px;  margin:0 auto; } \n"
-            + "table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;}\n"
+    public static final String TableStyle
+            = "table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;}\n"
             + "th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;}\n"
             + "th { font-weight:bold;  text-align:center;}\n"
             + "tr { height: 1.2em;  }\n"
@@ -23,6 +22,8 @@ public class HtmlStyles {
             + ".center { text-align:center;  max-width:95%; }\n"
             + ".valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;}\n"
             + ".boldText { font-weight:bold;  }\n";
+    public static final String BaseStyle
+            = TableStyle + "body {width: 900px;  margin:0 auto; } \n";
     public static final String DefaultStyle
             = BaseStyle
             + ".valueText { color:#2e598a;  }\n";
@@ -74,6 +75,8 @@ public class HtmlStyles {
 
     public static String styleValue(HtmlStyles.HtmlStyle style) {
         switch (style) {
+            case TableStyle:
+                return HtmlStyles.TableStyle;
             case Default:
                 return HtmlStyles.DefaultStyle;
             case Console:

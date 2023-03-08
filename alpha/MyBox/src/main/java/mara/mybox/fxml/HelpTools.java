@@ -60,6 +60,11 @@ public class HelpTools {
             table.newLinkRow("", "https://www.w3.org/TR/css-color-4/#lab-to-rgb");
             table.newLinkRow("ChromaticAdaptation", "http://brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html");
             table.newLinkRow("ChromaticityDiagram", "http://demonstrations.wolfram.com/CIEChromaticityDiagram/");
+            table.newLinkRow("ArtHuesWheel", "https://redyellowblue.org/ryb-color-model/");
+            table.newLinkRow("", "https://stackoverflow.com/questions/4945457/conversion-between-rgb-and-ryb-color-spaces");
+            table.newLinkRow("", "https://math.stackexchange.com/questions/305395/ryb-and-rgb-color-space-conversion");
+            table.newLinkRow("", "http://bahamas10.github.io/ryb/about.html");
+            table.newLinkRow("", "https://blog.csdn.net/weixin_44938037/article/details/90599711");
 
             File htmFile = HtmlWriteTools.writeHtml(table.html());
             return htmFile;

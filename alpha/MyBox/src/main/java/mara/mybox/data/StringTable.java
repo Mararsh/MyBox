@@ -80,6 +80,10 @@ public class StringTable {
         return tableDiv(this);
     }
 
+    public String body() {
+        return body(this);
+    }
+
     public void editHtml() {
         HtmlWriteTools.editHtml(tableHtml(this));
     }

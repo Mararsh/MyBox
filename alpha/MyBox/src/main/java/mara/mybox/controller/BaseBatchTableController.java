@@ -9,6 +9,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -21,7 +22,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
@@ -1052,8 +1052,15 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
     }
 
     @FXML
-    public void popRegexExample(MouseEvent mouseEvent) {
-        PopTools.popRegexExamples(this, tableFiltersInput, mouseEvent);
+    protected void showRegexExample(Event event) {
+        PopTools.popRegexExamples(this, tableFiltersInput, event);
+    }
+
+    @FXML
+    protected void popRegexExample(Event event) {
+        if (UserConfig.getBoolean("RegexExamplesPopWhenMouseHovering", false)) {
+            showRegexExample(event);
+        }
     }
 
 }

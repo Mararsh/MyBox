@@ -203,10 +203,6 @@ public class FilesCompareController extends BaseController {
             return;
         }
         new RecentVisitMenu(this, event) {
-            @Override
-            public List<VisitHistory> recentFiles() {
-                return recentSourceFiles();
-            }
 
             @Override
             public List<VisitHistory> recentPaths() {
@@ -242,10 +238,6 @@ public class FilesCompareController extends BaseController {
             return;
         }
         new RecentVisitMenu(this, event) {
-            @Override
-            public List<VisitHistory> recentFiles() {
-                return recentSourceFiles();
-            }
 
             @Override
             public List<VisitHistory> recentPaths() {

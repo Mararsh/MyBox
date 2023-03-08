@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.TextField;
@@ -13,6 +14,7 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -59,8 +61,15 @@ public class ColorPaletteInputController extends BaseChildController {
     }
 
     @FXML
-    protected void popColorHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, colorInput, mouseEvent, "ColorQueryColorHistories", true);
+    protected void showHistories(Event event) {
+        PopTools.popStringValues(this, colorInput, event, "ColorQueryColorHistories", false, true);
+    }
+
+    @FXML
+    protected void popColorHistories(Event event) {
+        if (UserConfig.getBoolean("ColorQueryColorHistoriesPopWhenMouseHovering", false)) {
+            showHistories(event);
+        }
     }
 
     @FXML

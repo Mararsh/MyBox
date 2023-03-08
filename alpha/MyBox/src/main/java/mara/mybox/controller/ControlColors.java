@@ -61,8 +61,10 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableColorCell;
+import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
@@ -748,7 +750,6 @@ public class ControlColors extends BaseSysTableController<ColorData> {
             };
             start(task);
         }
-
     }
 
     public void exportHtml(String type) {
@@ -873,7 +874,8 @@ public class ControlColors extends BaseSysTableController<ColorData> {
                 }
                 table.add(row);
             }
-            table.editHtml();
+            String html = HtmlWriteTools.html(title, table.body());
+            WebBrowserController.openHtml(html, HtmlStyles.styleValue("TableStyle"), true);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -881,8 +883,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
     }
 
     @Override
-    public void sourceFileChanged(File file
-    ) {
+    public void sourceFileChanged(File file) {
         PaletteTools.importPalette(this, tableColorPaletteName, tableColorPalette, tableColor,
                 file, isAllColors() ? null : currentPalette.getName(), false);
     }

@@ -122,18 +122,6 @@ License:    Apache License Version 2.0
                                 </HBox>
                                 <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" tabClosingPolicy="ALL_TABS" VBox.vgrow="ALWAYS">
                                     <tabs>
-                                        <Tab fx:id="domTab" text="DOM">
-                                            <content>
-                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                                    <padding>
-                                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                                    </padding>
-                                                    <children>
-                                                        <fx:include fx:id="dom" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlHtmlDomManage.fxml" VBox.vgrow="ALWAYS" />
-                                                    </children>
-                                                </VBox>
-                                            </content>
-                                        </Tab>
                                         <Tab fx:id="codesTab" text="%HtmlCodes">
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
@@ -169,13 +157,25 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </Tab>
+                                        <Tab fx:id="domTab" text="DOM">
+                                            <content>
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                    <padding>
+                                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                    </padding>
+                                                    <children>
+                                                        <fx:include fx:id="dom" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlHtmlDomManage.fxml" VBox.vgrow="ALWAYS" />
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </Tab>
                                         <Tab fx:id="richEditorTab" text="%RichText">
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
                                                     <children>
                                                         <HBox alignment="CENTER_RIGHT" spacing="2.0">
                                                             <children>
-                                                                <Button fx:id="styleRichButton" mnemonicParsing="false" onMouseEntered="#popRichEditorStyle">
+                                                                <Button fx:id="styleRichButton" mnemonicParsing="false"  onAction="#showRichEditorStyle"     onMouseEntered="#popRichEditorStyle">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
@@ -293,7 +293,7 @@ License:    Apache License Version 2.0
                                                     <children>
                                                         <HBox alignment="CENTER_RIGHT" spacing="2.0">
                                                             <children>
-                                                                <Button fx:id="styleViewButton" mnemonicParsing="false" onMouseEntered="#popHtmlStyle">
+                                                                <Button fx:id="styleViewButton" mnemonicParsing="false"  onAction="#showHtmlStyle"     onMouseEntered="#popHtmlStyle">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                             <image>

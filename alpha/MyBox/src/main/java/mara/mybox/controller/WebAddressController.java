@@ -8,11 +8,11 @@ import java.util.Date;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.WebHistory;
 import mara.mybox.db.table.TableStringValues;
@@ -99,7 +99,7 @@ public class WebAddressController extends BaseWebViewController {
 
             @Override
             protected boolean handle() {
-                try ( Connection conn = DerbyBase.getConnection()) {
+                try (Connection conn = DerbyBase.getConnection()) {
                     TableStringValues.add(conn, "WebAddressHistories", address);
 
                     WebHistory his = new WebHistory();
@@ -177,8 +177,15 @@ public class WebAddressController extends BaseWebViewController {
     }
 
     @FXML
-    protected void popAddressHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, addressInput, mouseEvent, "WebAddressHistories", true);
+    protected void showAddressHistories(Event event) {
+        PopTools.popStringValues(this, addressInput, event, "WebAddressHistories", false, true);
+    }
+
+    @FXML
+    protected void popAddressHistories(Event event) {
+        if (UserConfig.getBoolean("WebAddressHistoriesPopWhenMouseHovering", false)) {
+            showAddressHistories(event);
+        }
     }
 
     @Override

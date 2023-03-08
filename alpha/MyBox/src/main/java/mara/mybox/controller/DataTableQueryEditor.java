@@ -162,14 +162,14 @@ public class DataTableQueryEditor extends TreeNodeEditor {
     }
 
     @FXML
-    protected void popHistories(MouseEvent mouseEvent) {
+    protected void popHistories(Event event) {
         if (UserConfig.getBoolean("DataTableQueryHistoriesPopWhenMouseHovering", false)) {
-            PopTools.popStringValues(this, valueInput, mouseEvent, "DataTableQueryHistories", false, true);
+            showHistories(event);
         }
     }
 
     @FXML
-    protected void showHistories(ActionEvent event) {
+    protected void showHistories(Event event) {
         PopTools.popStringValues(this, valueInput, event, "DataTableQueryHistories", false, true);
     }
 

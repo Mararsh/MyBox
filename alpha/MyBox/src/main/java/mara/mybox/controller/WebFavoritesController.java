@@ -71,6 +71,14 @@ public class WebFavoritesController extends TreeManageController {
     /*
         static methods
      */
+    public static WebFavoritesController open() {
+        WebFavoritesController controller = (WebFavoritesController) WindowTools.openStage(Fxmls.WebFavoritesFxml);
+        if (controller != null) {
+            controller.requestMouse();
+        }
+        return controller;
+    }
+
     public static WebFavoritesController oneOpen() {
         WebFavoritesController controller = null;
         List<Window> windows = new ArrayList<>();

@@ -28,7 +28,7 @@ License:    Apache License Version 2.0
                         <ToggleGroup fx:id="delimiterGroup" />
                </toggleGroup></RadioButton>
                 <TextField fx:id="delimiterInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                <Button fx:id="exampleButton" mnemonicParsing="false" onMouseEntered="#popRegexExample">
+                <Button fx:id="exampleButton" mnemonicParsing="false"   onAction="#popRegexExample"   onMouseEntered="#popRegexExample" >
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>

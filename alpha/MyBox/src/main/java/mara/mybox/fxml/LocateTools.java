@@ -99,6 +99,11 @@ public class LocateTools {
         window.show((Node) event.getSource(), event.getScreenX(), event.getScreenY());
     }
 
+    public static void locateEvent(Event event, PopupWindow window) {
+        Point2D everntCoord = LocateTools.getScreenCoordinate(event);
+        window.show((Node) event.getSource(), everntCoord.getX(), everntCoord.getY() + LocateTools.PopOffsetY);
+    }
+
     public static void locateMouse(Node owner, PopupWindow window) {
         Point point = SystemTools.getMousePoint();
         window.show(owner, point.getX(), point.getY());

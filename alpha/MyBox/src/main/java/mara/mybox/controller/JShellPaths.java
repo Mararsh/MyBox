@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.List;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.ContextMenu;
@@ -79,8 +80,15 @@ public class JShellPaths extends BaseController {
     }
 
     @FXML
-    protected void popHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, pathInput, mouseEvent, "JarPathHistories");
+    protected void showHistories(Event event) {
+        PopTools.popStringValues(this, pathInput, event, "JarPathHistories", false, true);
+    }
+
+    @FXML
+    protected void popHistories(Event event) {
+        if (UserConfig.getBoolean("JavaScriptHistoriesPopWhenMouseHovering", false)) {
+            showHistories(event);
+        }
     }
 
     @FXML

@@ -704,6 +704,10 @@ public class ControlWebView extends BaseController {
         return title;
     }
 
+    public void initStyle(String style) {
+        this.initStyle = style;
+    }
+
     /*
         source
      */
@@ -1405,7 +1409,7 @@ public class ControlWebView extends BaseController {
 
             }
 
-            Menu codesMenu = new Menu(message("Edit"), StyleTools.getIconImageView("iconEdit.png"));
+            Menu codesMenu = new Menu(message("Analyse"), StyleTools.getIconImageView("iconAnalyse.png"));
             items.add(codesMenu);
             if (!(this instanceof ControlHtmlRichEditor)) {
                 CheckMenuItem editableMenu = new CheckMenuItem(message("Editable"), StyleTools.getIconImageView("iconEdit.png"));
@@ -1618,7 +1622,7 @@ public class ControlWebView extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                table.editHtml();
+                table.htmlTable();
             }
 
         };
@@ -1697,7 +1701,7 @@ public class ControlWebView extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                table.editHtml();
+                table.htmlTable();
             }
 
         };
@@ -1843,7 +1847,7 @@ public class ControlWebView extends BaseController {
                 protected void whenSucceeded() {
                     popSaved();
                     recordFileWritten(file);
-                    HtmlEditorController.openFile(file);
+                    WebBrowserController.openFile(file);
                 }
             };
             start(task);

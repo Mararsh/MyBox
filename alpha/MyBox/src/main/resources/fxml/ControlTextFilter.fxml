@@ -20,33 +20,33 @@ License:    Apache License Version 2.0
     <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
     </padding>
-   <children>
-      <VBox fx:id="filtersTypeBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
-         <children>
-            <RadioButton fx:id="filterIncludeRadio" mnemonicParsing="false" selected="true" text="%IncludeOne" wrapText="true" VBox.vgrow="NEVER">
-               <toggleGroup>
-                  <ToggleGroup fx:id="filterGroup" />
-               </toggleGroup>
-            </RadioButton>
-            <RadioButton mnemonicParsing="false" text="%IncludeAll" toggleGroup="$filterGroup" wrapText="true" />
-            <RadioButton mnemonicParsing="false" text="%NotIncludeAll" toggleGroup="$filterGroup" wrapText="true" />
-            <RadioButton mnemonicParsing="false" text="%NotIncludeAny" toggleGroup="$filterGroup" wrapText="true" />
-            <RadioButton mnemonicParsing="false" text="%MatchRegularExpression" toggleGroup="$filterGroup" wrapText="true" />
-            <RadioButton mnemonicParsing="false" text="%NotMatchRegularExpression" toggleGroup="$filterGroup" wrapText="true" />
-            <RadioButton mnemonicParsing="false" text="%IncludeRegularExpression" toggleGroup="$filterGroup" wrapText="true" />
-            <RadioButton mnemonicParsing="false" text="%NotIncludeRegularExpression" toggleGroup="$filterGroup" wrapText="true" />
-         </children>
-      </VBox>
-      <TextField fx:id="filterInput" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER" />
-      <Button fx:id="exampleFilterButton" mnemonicParsing="false" onMouseEntered="#popFilterExample">
-         <graphic>
-            <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../buttons/Red/iconExamples.png" />
-               </image>
-            </ImageView>
-         </graphic>
-      </Button>
-      <CheckBox fx:id="filterLineNumberCheck" maxWidth="1.7976931348623157E308" mnemonicParsing="false" selected="true" text="%LineNumber" VBox.vgrow="NEVER" />
-   </children>
+    <children>
+        <VBox fx:id="filtersTypeBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+            <children>
+                <RadioButton fx:id="filterIncludeRadio" mnemonicParsing="false" selected="true" text="%IncludeOne" wrapText="true" VBox.vgrow="NEVER">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="filterGroup" />
+                    </toggleGroup>
+                </RadioButton>
+                <RadioButton mnemonicParsing="false" text="%IncludeAll" toggleGroup="$filterGroup" wrapText="true" />
+                <RadioButton mnemonicParsing="false" text="%NotIncludeAll" toggleGroup="$filterGroup" wrapText="true" />
+                <RadioButton mnemonicParsing="false" text="%NotIncludeAny" toggleGroup="$filterGroup" wrapText="true" />
+                <RadioButton mnemonicParsing="false" text="%MatchRegularExpression" toggleGroup="$filterGroup" wrapText="true" />
+                <RadioButton mnemonicParsing="false" text="%NotMatchRegularExpression" toggleGroup="$filterGroup" wrapText="true" />
+                <RadioButton mnemonicParsing="false" text="%IncludeRegularExpression" toggleGroup="$filterGroup" wrapText="true" />
+                <RadioButton mnemonicParsing="false" text="%NotIncludeRegularExpression" toggleGroup="$filterGroup" wrapText="true" />
+            </children>
+        </VBox>
+        <TextField fx:id="filterInput" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER" />
+        <Button fx:id="exampleFilterButton" mnemonicParsing="false"  onAction="#showFilterExample" onMouseEntered="#popFilterExample">
+            <graphic>
+                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../buttons/Red/iconExamples.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
+        <CheckBox fx:id="filterLineNumberCheck" maxWidth="1.7976931348623157E308" mnemonicParsing="false" selected="true" text="%LineNumber" VBox.vgrow="NEVER" />
+    </children>
 </VBox>

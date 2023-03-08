@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
@@ -9,16 +10,16 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara_
@@ -127,8 +128,15 @@ public class TextClipboardPopController extends TextInMyBoxClipboardController {
     }
 
     @FXML
-    public void popStyles(MouseEvent mouseEvent) {
-        PopTools.popWindowStyles(this, baseStyle, mouseEvent);
+    protected void showStyles(Event event) {
+        PopTools.popWindowStyles(this, baseStyle, event);
+    }
+
+    @FXML
+    protected void popStyles(Event event) {
+        if (UserConfig.getBoolean("WindowStylesPopWhenMouseHovering", false)) {
+            showStyles(event);
+        }
     }
 
     @FXML

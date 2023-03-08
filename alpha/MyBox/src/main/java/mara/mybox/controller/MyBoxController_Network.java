@@ -32,14 +32,12 @@ public abstract class MyBoxController_Network extends MyBoxController_File {
 
         MenuItem WebFavorites = new MenuItem(Languages.message("WebFavorites"));
         WebFavorites.setOnAction((ActionEvent event1) -> {
-            WebFavoritesController.oneOpen();
-            closeStage();
+            loadScene(Fxmls.WebFavoritesFxml);
         });
 
         MenuItem WebHistories = new MenuItem(Languages.message("WebHistories"));
         WebHistories.setOnAction((ActionEvent event1) -> {
-            WebHistoriesController.oneOpen();
-            closeStage();
+            loadScene(Fxmls.WebHistoriesFxml);
         });
 
         MenuItem ConvertUrl = new MenuItem(Languages.message("ConvertUrl"));

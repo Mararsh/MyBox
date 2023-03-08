@@ -92,8 +92,13 @@ public class ControlColorPaletteSelector extends BaseController {
 
                 @Override
                 protected boolean handle() {
-                    defaultPalette = tableColorPaletteName.defaultPalette();
-                    palettes = tableColorPaletteName.query();
+                    try (Connection conn = DerbyBase.getConnection()) {
+                        defaultPalette = tableColorPaletteName.defaultPalette(conn);
+                        palettes = tableColorPaletteName.readAll(conn);
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
                     return true;
                 }
 
@@ -141,7 +146,7 @@ public class ControlColorPaletteSelector extends BaseController {
 
                 @Override
                 protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
+                    try (Connection conn = DerbyBase.getConnection()) {
                         if (tableColorPaletteName.find(conn, name) != null) {
                             error = "AlreadyExisted";
                             return false;

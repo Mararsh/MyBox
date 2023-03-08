@@ -181,7 +181,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
         new RecentVisitMenu(this, event) {
             @Override
             public List<VisitHistory> recentFiles() {
-                List<VisitHistory> recent = recentSourceFiles();
+                List<VisitHistory> recent = recentOpenedFiles();
                 List<VisitHistory> recentMedia = VisitHistoryTools.getRecentStreamMedia();
                 recent.addAll(recentMedia);
                 return recent;
@@ -419,8 +419,8 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
                     file = TmpFileTools.getTempFile(".txt");
                     ProcessBuilder pb = new ProcessBuilder(makeCommand(parameters)).redirectErrorStream(true);
                     Process process = pb.start();
-                    try ( BufferedReader inReader = process.inputReader(Charset.defaultCharset());
-                             BufferedWriter writer = new BufferedWriter(new FileWriter(file, Charset.forName("UTF-8"), false))) {
+                    try (BufferedReader inReader = process.inputReader(Charset.defaultCharset());
+                            BufferedWriter writer = new BufferedWriter(new FileWriter(file, Charset.forName("UTF-8"), false))) {
                         String line;
                         while ((line = inReader.readLine()) != null) {
                             writer.write(line + "\n");

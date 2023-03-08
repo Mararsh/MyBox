@@ -70,7 +70,7 @@ License:    Apache License Version 2.0
                                                                 </HBox>
                                                                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                                     <children>
-                                                                        <Button fx:id="historyFindButton" mnemonicParsing="false" onMouseEntered="#popFindHistories">
+                                                                        <Button fx:id="historyFindButton" mnemonicParsing="false"   onAction="#showFindHistories" onMouseEntered="#popFindHistories" >
                                                                             <graphic>
                                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                     <image>

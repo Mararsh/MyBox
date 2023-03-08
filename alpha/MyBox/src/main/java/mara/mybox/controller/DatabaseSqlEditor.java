@@ -123,11 +123,11 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
             @Override
             protected boolean handle() {
                 data = null;
-                try ( Connection conn = DerbyBase.getConnection();
-                         Statement statement = conn.createStatement()) {
+                try (Connection conn = DerbyBase.getConnection();
+                        Statement statement = conn.createStatement()) {
                     for (String sql : sqls) {
                         try {
-                            TableStringValues.add(conn, "SQLHistories" + (internal ? "Internal" : ""), sql);
+                            TableStringValues.add(conn, hisName(), sql);
                             outputArea.appendText(DateTools.nowString() + "  " + sql + "\n");
                             if (statement.execute(sql)) {
                                 int count = statement.getUpdateCount();
@@ -183,17 +183,20 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
         PopTools.popSqlExamples(this, valueInput, null, false, event);
     }
 
+    protected String hisName() {
+        return "SQLHistories" + (internal ? "Internal" : "");
+    }
+
     @FXML
-    protected void popHistories(MouseEvent mouseEvent) {
-        String name = "SQLHistories" + (internal ? "Internal" : "");
-        if (UserConfig.getBoolean(name + "PopWhenMouseHovering", false)) {
-            PopTools.popStringValues(this, valueInput, mouseEvent, name, false, true);
+    protected void popHistories(Event event) {
+        if (UserConfig.getBoolean(hisName() + "PopWhenMouseHovering", false)) {
+            showHistories(event);
         }
     }
 
     @FXML
-    protected void showHistories(ActionEvent event) {
-        PopTools.popStringValues(this, valueInput, event, "SQLHistories" + (internal ? "Internal" : ""), false, true);
+    protected void showHistories(Event event) {
+        PopTools.popStringValues(this, valueInput, event, hisName(), false, true);
     }
 
     @FXML

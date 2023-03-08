@@ -5,6 +5,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -14,7 +15,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -286,7 +286,7 @@ public class ControlMathFunctionCalculator extends BaseController {
                 }
                 num *= Math.ceil((split.to - split.from) / split.interval()) + 1;
             }
-            return num <= 5000 || PopTools.askSure( null,
+            return num <= 5000 || PopTools.askSure(null,
                     message("SureContinueGenerateLotsData") + "\n"
                     + message("DataSize") + " ~= " + num);
         } catch (Exception e) {
@@ -364,8 +364,15 @@ public class ControlMathFunctionCalculator extends BaseController {
     }
 
     @FXML
-    public void popHtmlStyle(MouseEvent mouseEvent) {
-        PopTools.popHtmlStyle(mouseEvent, outputController);
+    protected void showHtmlStyle(Event event) {
+        PopTools.popHtmlStyle(event, outputController);
+    }
+
+    @FXML
+    protected void popHtmlStyle(Event event) {
+        if (UserConfig.getBoolean("HtmlStylesPopWhenMouseHovering", false)) {
+            showHtmlStyle(event);
+        }
     }
 
     @FXML
@@ -391,7 +398,7 @@ public class ControlMathFunctionCalculator extends BaseController {
             count = 0;
             File csvFile = getPathTempFile(AppPaths.getGeneratedPath(), functionName(), ".csv");
             List<Data2DColumn> db2Columns = new ArrayList<>();
-            try ( CSVPrinter printer = CsvTools.csvPrinter(csvFile)) {
+            try (CSVPrinter printer = CsvTools.csvPrinter(csvFile)) {
                 csvPrinter = printer;
                 String resultName = resultName();
                 row = new ArrayList<>();

@@ -6,6 +6,7 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -14,12 +15,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.FileEditInformation.StringFilterType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Languages;
@@ -208,7 +208,15 @@ public class ControlTextFilter extends BaseController {
     }
 
     @FXML
-    public void popFilterExample(MouseEvent mouseEvent) {
-        PopTools.popRegexExamples(this, filterInput, mouseEvent);
+    protected void showFilterExample(Event event) {
+        PopTools.popRegexExamples(this, filterInput, event);
     }
+
+    @FXML
+    protected void popFilterExample(Event event) {
+        if (UserConfig.getBoolean("RegexExamplesPopWhenMouseHovering", false)) {
+            showFilterExample(event);
+        }
+    }
+
 }

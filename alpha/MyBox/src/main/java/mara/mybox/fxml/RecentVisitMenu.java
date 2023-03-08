@@ -77,10 +77,10 @@ public abstract class RecentVisitMenu {
             });
             popMenu.getItems().add(menu);
 
-            List<VisitHistory> his = recentFiles();
-            if (his != null && !his.isEmpty()) {
+            List<VisitHistory> opened = recentFiles();
+            if (opened != null && !opened.isEmpty()) {
                 List<String> files = new ArrayList<>();
-                for (VisitHistory h : his) {
+                for (VisitHistory h : opened) {
                     String fname = h.getResourceValue();
                     if (!files.contains(fname)) {
                         files.add(fname);
@@ -101,6 +101,7 @@ public abstract class RecentVisitMenu {
                 }
             }
 
+//            recentWrittenFiles
             if (examples != null && !examples.isEmpty()) {
                 popMenu.getItems().add(new SeparatorMenuItem());
                 menu = new MenuItem(message("Examples"));
@@ -153,7 +154,7 @@ public abstract class RecentVisitMenu {
     public abstract void handleFile(String fname);
 
     public List<VisitHistory> recentFiles() {
-        return recentSourceFiles();
+        return recentOpenedFiles();
     }
 
     public List<VisitHistory> recentPaths() {
@@ -186,19 +187,24 @@ public abstract class RecentVisitMenu {
         return paths;
     }
 
-    public List<VisitHistory> recentSourceFiles() {
+    public List<VisitHistory> recentOpenedFiles() {
         int fileNumber = AppVariables.fileRecentNumber * 3 / 4;
-        return VisitHistoryTools.getRecentReadWrite(SourceFileType, fileNumber);
+        return VisitHistoryTools.getRecentFileRead(SourceFileType, fileNumber);
+    }
+
+    public List<VisitHistory> recentWrittenFiles() {
+        int fileNumber = AppVariables.fileRecentNumber / 4 + 1;
+        return VisitHistoryTools.getRecentFileWrite(SourceFileType, fileNumber);
     }
 
     public List<VisitHistory> recentTargetFiles() {
         int fileNumber = AppVariables.fileRecentNumber * 3 / 4;
-        return VisitHistoryTools.getRecentReadWrite(TargetFileType, fileNumber);
+        return VisitHistoryTools.getRecentFileWrite(TargetFileType, fileNumber);
     }
 
     public List<VisitHistory> recentAddFiles() {
         int fileNumber = AppVariables.fileRecentNumber * 3 / 4;
-        return VisitHistoryTools.getRecentReadWrite(AddFileType, fileNumber);
+        return VisitHistoryTools.getRecentFileWrite(AddFileType, fileNumber);
     }
 
     public List<VisitHistory> recentSourcePathsBesidesFiles() {

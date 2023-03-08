@@ -33,6 +33,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -1574,8 +1575,15 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
     }
 
     @FXML
-    protected void popAddressHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, addressInput, mouseEvent, "DownloadHtmlsHistories");
+    protected void showAddressHistories(Event event) {
+        PopTools.popStringValues(this, addressInput, event, "DownloadHtmlsHistories", false, true);
+    }
+
+    @FXML
+    protected void popAddressHistories(Event event) {
+        if (UserConfig.getBoolean("DownloadHtmlsHistoriesPopWhenMouseHovering", false)) {
+            showAddressHistories(event);
+        }
     }
 
     @Override

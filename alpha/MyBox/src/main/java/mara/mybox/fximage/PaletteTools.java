@@ -30,6 +30,7 @@ import mara.mybox.fxml.style.StyleData;
 import mara.mybox.fxml.style.StyleData.StyleColor;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Colors.color;
+import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -80,6 +81,15 @@ public class PaletteTools {
                 File file = FxFileTools.getInternalFile("/data/examples/ColorsWeb.csv", "data", "ColorsWeb.csv");
                 importPalette(parent, tableColorPaletteName, tableColorPalette, tableColor,
                         file, message("WebCommonColors"), true);
+            });
+            menus.add(menu);
+
+            menu = new MenuItem(message("ArtHues24"));
+            menu.setOnAction((ActionEvent event) -> {
+                String lang = Languages.getLangName();
+                File file = FxFileTools.getInternalFile("/data/examples/ColorsRYB24_" + lang + ".csv", "data", "ColorsRYB24_" + lang + ".csv");
+                importPalette(parent, tableColorPaletteName, tableColorPalette, tableColor,
+                        file, message("ArtHues24"), true);
             });
             menus.add(menu);
 
@@ -137,7 +147,7 @@ public class PaletteTools {
                 data.add(new ColorData(FxColorTools.color2rgba(Color.BLACK), message("Black")));
                 data.add(new ColorData(FxColorTools.color2rgba(Color.WHITE), message("White")));
                 data.add(new ColorData(0, message("Transparent")));
-                try ( Connection conn = DerbyBase.getConnection()) {
+                try (Connection conn = DerbyBase.getConnection()) {
                     tableColor.writeData(conn, data, false);
                     ColorPaletteName palette = tableColorPaletteName.findAndCreate(conn, message("MyBoxColors"));
                     tableColorPalette.write(conn, palette.getCpnid(), data, true);
@@ -174,7 +184,7 @@ public class PaletteTools {
                 data.add(new ColorData(FxColorTools.color2rgba(Color.BLACK), message("Black")));
                 data.add(new ColorData(FxColorTools.color2rgba(Color.WHITE), message("White")));
                 data.add(new ColorData(0, message("Transparent")));
-                try ( Connection conn = DerbyBase.getConnection()) {
+                try (Connection conn = DerbyBase.getConnection()) {
                     tableColor.writeData(conn, data, false);
                     if (paletteName != null && !paletteName.isBlank()) {
                         ColorPaletteName palette = tableColorPaletteName.findAndCreate(conn, paletteName);

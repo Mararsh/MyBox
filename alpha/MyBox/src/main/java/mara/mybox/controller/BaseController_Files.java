@@ -223,6 +223,8 @@ public abstract class BaseController_Files extends BaseController_Attributes {
                 UserConfig.setString(conn, baseName + "TargetFile", fname);
                 VisitHistoryTools.writeFile(conn, fileType, fname);
                 VisitHistoryTools.writeFile(conn, FileType.All, fname);
+                VisitHistoryTools.readFile(conn, fileType, fname);
+                VisitHistoryTools.readFile(conn, FileType.All, fname);
             }
             if (path != null) {
                 UserConfig.setString(conn, "LastPath", path);
@@ -231,6 +233,8 @@ public abstract class BaseController_Files extends BaseController_Attributes {
                 UserConfig.setString(conn, VisitHistoryTools.getPathKey(FileType.All), path);
                 VisitHistoryTools.writePath(conn, pathType, path);
                 VisitHistoryTools.writePath(conn, FileType.All, path);
+                VisitHistoryTools.readPath(conn, pathType, path);
+                VisitHistoryTools.readPath(conn, FileType.All, path);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);

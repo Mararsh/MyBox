@@ -244,7 +244,7 @@ public class ControlFileSelecter extends BaseController {
                     return null;
                 } else {
                     int fileNumber = AppVariables.fileRecentNumber * 3 / 4;
-                    return VisitHistoryTools.getRecentReadWrite(getSourceFileType(), fileNumber);
+                    return VisitHistoryTools.getRecentFileRead(getSourceFileType(), fileNumber);
                 }
             }
 

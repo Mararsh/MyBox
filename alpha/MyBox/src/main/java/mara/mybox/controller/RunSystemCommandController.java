@@ -4,11 +4,11 @@ import java.io.BufferedWriter;
 import java.nio.charset.Charset;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
@@ -108,7 +108,7 @@ public class RunSystemCommandController extends RunCommandController {
     public void plusAction() {
         try {
             if (process != null && process.isAlive()) {
-                try ( BufferedWriter writer = process.outputWriter()) {
+                try (BufferedWriter writer = process.outputWriter()) {
                     writer.append(cmdInput.getText());
                 } catch (Exception e) {
                     popError(e.toString());
@@ -132,8 +132,15 @@ public class RunSystemCommandController extends RunCommandController {
     }
 
     @FXML
-    protected void popCmdHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, cmdInput, mouseEvent, "RunSystemCommandHistories", true);
+    protected void showCmdHistories(Event event) {
+        PopTools.popStringValues(this, cmdInput, event, "RunSystemCommandHistories", true, true);
+    }
+
+    @FXML
+    protected void popCmdHistories(Event event) {
+        if (UserConfig.getBoolean("RunSystemCommandHistoriesPopWhenMouseHovering", false)) {
+            showCmdHistories(event);
+        }
     }
 
 }

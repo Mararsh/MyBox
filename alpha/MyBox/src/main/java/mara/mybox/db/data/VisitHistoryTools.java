@@ -261,7 +261,7 @@ public class VisitHistoryTools {
         Files
      */
     public static boolean readFile(int fileType, String value) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return readFile(conn, fileType, value);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -274,7 +274,7 @@ public class VisitHistoryTools {
     }
 
     public static boolean writeFile(int fileType, String value) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return writeFile(conn, fileType, value);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -308,24 +308,6 @@ public class VisitHistoryTools {
             return null;
         }
         List<VisitHistory> records = TableVisitHistory.find(ResourceType.File, fileType, number);
-        return records;
-    }
-
-    public static List<VisitHistory> getRecentReadWrite(int fileType, int number) {
-        if (number <= 0) {
-            return null;
-        }
-        List<VisitHistory> read = getRecentFileRead(fileType, number / 2 + 1);
-        List<VisitHistory> write = getRecentFileWrite(fileType, number / 4 + 1);
-        List<VisitHistory> records;
-        if (read != null) {
-            records = read;
-            if (write != null) {
-                records.addAll(write);
-            }
-        } else {
-            records = write;
-        }
         return records;
     }
 
@@ -407,7 +389,7 @@ public class VisitHistoryTools {
         Paths
      */
     public static boolean readPath(int fileType, String value) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return readPath(conn, fileType, value);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -420,7 +402,7 @@ public class VisitHistoryTools {
     }
 
     public static boolean writePath(int fileType, String value) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return writePath(conn, fileType, value);
         } catch (Exception e) {
             MyBoxLog.error(e);

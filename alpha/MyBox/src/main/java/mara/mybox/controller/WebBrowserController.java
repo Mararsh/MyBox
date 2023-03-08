@@ -157,6 +157,15 @@ public class WebBrowserController extends BaseController {
         return controller;
     }
 
+    public WebAddressController loadContents(String contents, String style, boolean focus) {
+        WebAddressController controller = newTab(focus);
+        if (contents != null) {
+            controller.initStyle(style);
+            controller.loadContents(contents);
+        }
+        return controller;
+    }
+
     public WebAddressController loadFile(File file) {
         WebAddressController controller = newTab(true);
         controller.loadFile(file);
@@ -225,6 +234,14 @@ public class WebBrowserController extends BaseController {
     /*
         static methods
      */
+    public static WebBrowserController open() {
+        WebBrowserController controller = (WebBrowserController) WindowTools.openStage(Fxmls.WebBrowserFxml);
+        if (controller != null) {
+            controller.requestMouse();
+        }
+        return controller;
+    }
+
     public static WebBrowserController oneOpen() {
         WebBrowserController controller = null;
         List<Window> windows = new ArrayList<>();
@@ -266,6 +283,14 @@ public class WebBrowserController extends BaseController {
         WebBrowserController controller = oneOpen();
         if (controller != null && contents != null) {
             return controller.loadContents(contents, focus);
+        }
+        return null;
+    }
+
+    public static WebAddressController openHtml(String contents, String style, boolean focus) {
+        WebBrowserController controller = oneOpen();
+        if (controller != null && contents != null) {
+            return controller.loadContents(contents, style, focus);
         }
         return null;
     }

@@ -500,7 +500,7 @@ public class ControlImageFormat extends BaseController {
             @Override
             public List<VisitHistory> recentFiles() {
                 int fileNumber = AppVariables.fileRecentNumber * 3 / 4;
-                return VisitHistoryTools.getRecentReadWrite(VisitHistory.FileType.Icc, fileNumber);
+                return VisitHistoryTools.getRecentFileRead(VisitHistory.FileType.Icc, fileNumber);
             }
 
             @Override

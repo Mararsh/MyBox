@@ -6,7 +6,7 @@ import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -14,7 +14,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.db.table.TableStringValues;
@@ -186,7 +185,7 @@ public class HtmlFindController extends WebAddressController {
             }
             String string = findInput.getText();
             if (string == null || string.isBlank()) {
-                parentController.popError(message("InvalidParameters") + ": " + message("Find"));
+                popError(message("InvalidParameters") + ": " + message("Find"));
                 return;
             }
             TableStringValues.add("HtmlFindHistories", string);
@@ -394,8 +393,15 @@ public class HtmlFindController extends WebAddressController {
     }
 
     @FXML
-    public void popFindExample(ActionEvent event) {
+    protected void showFindExample(Event event) {
         PopTools.popRegexExamples(this, findInput, event);
+    }
+
+    @FXML
+    protected void popFindExample(Event event) {
+        if (UserConfig.getBoolean("RegexExamplesPopWhenMouseHovering", false)) {
+            showFindExample(event);
+        }
     }
 
     @FXML
@@ -406,8 +412,15 @@ public class HtmlFindController extends WebAddressController {
     }
 
     @FXML
-    protected void popFindHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, findInput, mouseEvent, "HtmlFindHistories", true);
+    protected void showFindHistories(Event event) {
+        PopTools.popStringValues(this, findInput, event, "HtmlFindHistories", false, true);
+    }
+
+    @FXML
+    public void popFindHistories(Event event) {
+        if (UserConfig.getBoolean("HtmlFindHistoriesPopWhenMouseHovering", false)) {
+            showFindHistories(event);
+        }
     }
 
     @Override

@@ -93,7 +93,7 @@ License:    Apache License Version 2.0
                             <children>
                                 <HBox alignment="CENTER_LEFT" spacing="2.0">
                                     <children>
-                                        <Button fx:id="styleViewButton" mnemonicParsing="false" onMouseEntered="#popHtmlStyle">
+                                        <Button fx:id="styleViewButton" mnemonicParsing="false"  onAction="#showHtmlStyle"     onMouseEntered="#popHtmlStyle">
                                             <graphic>
                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -184,7 +184,7 @@ License:    Apache License Version 2.0
                             <children>
                                 <HBox alignment="CENTER_LEFT" spacing="2.0">
                                     <children>
-                                        <Button fx:id="styleRichButton" mnemonicParsing="false" onMouseEntered="#popRichEditorStyle">
+                                        <Button fx:id="styleRichButton" mnemonicParsing="false"  onAction="#showRichEditorStyle"     onMouseEntered="#popRichEditorStyle">
                                             <graphic>
                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                     <image>

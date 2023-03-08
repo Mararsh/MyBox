@@ -23,12 +23,12 @@ public abstract class MainMenuController_Network extends MainMenuController_File
 
     @FXML
     protected void webFavorites(ActionEvent event) {
-        WebFavoritesController.oneOpen();
+        loadScene(Fxmls.WebFavoritesFxml);
     }
 
     @FXML
     protected void webHistories(ActionEvent event) {
-        WebHistoriesController.oneOpen();
+        loadScene(Fxmls.WebHistoriesFxml);
     }
 
     @FXML
