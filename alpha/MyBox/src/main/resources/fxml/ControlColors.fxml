@@ -36,7 +36,7 @@ License:    Apache License Version 2.0
                             <children>
                                 <FlowPane alignment="CENTER_RIGHT" hgap="2.0" vgap="2.0">
                                     <children>
-                                        <Button fx:id="examplesButton" mnemonicParsing="false" onMouseEntered="#popExamplesMenu">
+                                        <Button fx:id="examplesButton" mnemonicParsing="false"   onMouseEntered="#popExamplesMenu">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -45,29 +45,11 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
-                                        <Button fx:id="deletePaletteButton" mnemonicParsing="false" onAction="#deletePalette">
+                                        <Button fx:id="functionsButton" mnemonicParsing="false" onMouseEntered="#popFunctionsMenu">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
-                                                        <Image url="@../buttons/Red/iconDelete.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="copyPaletteButton" layoutX="320.0" layoutY="10.0" mnemonicParsing="false" onAction="#copyPalette">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconCopy.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Button fx:id="renamePaletteButton" mnemonicParsing="false" onAction="#renamePalette">
-                                            <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconInput.png" />
+                                                        <Image url="@../buttons/Red/iconFunction.png" />
                                                     </image>
                                                 </ImageView>
                                             </graphic>
@@ -97,11 +79,15 @@ License:    Apache License Version 2.0
                                     </image>
                                 </ImageView>
                                 <Label fx:id="paletteLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />                              
-                                <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/Red/iconDoubleRight.png" />
-                                    </image>
-                                </ImageView>
+                                <CheckBox fx:id="rightPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/Red/iconDoubleRight.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </CheckBox>
                             </children>
                         </HBox> 
                         <FlowPane fx:id="buttonsPane" alignment="TOP_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="2000.0" vgap="2.0">
@@ -142,7 +128,7 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="importButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
+                                <Button fx:id="importButton" mnemonicParsing="false" onAction="#pickSourceFile" onMouseEntered="#popSourceFile">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -214,16 +200,15 @@ License:    Apache License Version 2.0
                                                         <TableColumn fx:id="colorNameColumn" prefWidth="150.0" text="%Name" />
                                                         <TableColumn fx:id="rgbaColumn" prefWidth="100.0" text="RGBA" />
                                                         <TableColumn fx:id="rgbColumn" prefWidth="100.0" text="RGB" />
-                                                        <TableColumn fx:id="colorValueColumn" prefWidth="100.0" text="%Value" />
                                                         <TableColumn fx:id="sRGBColumn" prefWidth="150.0" text="sRGB" />
                                                         <TableColumn fx:id="HSBColumn" prefWidth="140.0" text="HSB" />
+                                                        <TableColumn fx:id="CalculatedCMYKColumn" prefWidth="120.0" text="Calculated CMYK" />
                                                         <TableColumn fx:id="AdobeRGBColumn" prefWidth="100.0" text="Adobe RGB" />
                                                         <TableColumn fx:id="AppleRGBColumn" prefWidth="100.0" text="Apple RGB" />
                                                         <TableColumn fx:id="ECIRGBColumn" prefWidth="100.0" text="ECI RGB" />
                                                         <TableColumn fx:id="sRGBLinearColumn" prefWidth="100.0" text="sRGB Linear" />
                                                         <TableColumn fx:id="AdobeRGBLinearColumn" prefWidth="100.0" text="Adobe RGB Linear" />
                                                         <TableColumn fx:id="AppleRGBLinearColumn" prefWidth="100.0" text="Apple RGB Linear" />
-                                                        <TableColumn fx:id="CalculatedCMYKColumn" prefWidth="120.0" text="Calculated CMYK" />
                                                         <TableColumn fx:id="ECICMYKColumn" prefWidth="120.0" text="ECI CMYK" />
                                                         <TableColumn fx:id="AdobeCMYKColumn" prefWidth="120.0" text="Adobe CMYK" />
                                                         <TableColumn fx:id="XYZColumn" prefWidth="240.0" text="XYZ" />
@@ -231,6 +216,7 @@ License:    Apache License Version 2.0
                                                         <TableColumn fx:id="LCHabColumn" prefWidth="150.0" text="LCH(ab)" />
                                                         <TableColumn fx:id="CIELuvColumn" prefWidth="150.0" text="CIE-L*uv" />
                                                         <TableColumn fx:id="LCHuvColumn" prefWidth="150.0" text="LCH(uv)" />
+                                                        <TableColumn fx:id="colorValueColumn" prefWidth="100.0" text="%Value" />
                                                         <TableColumn fx:id="dataColumn" prefWidth="150.0" text="%Data" />
                                                     </columns>
                                                 </TableView>                                              

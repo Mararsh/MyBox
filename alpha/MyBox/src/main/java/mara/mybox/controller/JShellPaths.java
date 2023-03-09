@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -86,7 +87,7 @@ public class JShellPaths extends BaseController {
 
     @FXML
     protected void popHistories(Event event) {
-        if (UserConfig.getBoolean("JavaScriptHistoriesPopWhenMouseHovering", false)) {
+        if (UserConfig.getBoolean("JarPathHistoriesPopWhenMouseHovering", false)) {
             showHistories(event);
         }
     }
@@ -198,7 +199,7 @@ public class JShellPaths extends BaseController {
     }
 
     @FXML
-    protected void popExamplesMenu(MouseEvent mouseEvent) {
+    protected void showExamplesMenu(Event event) {
         try {
             if (popMenu != null && popMenu.isShowing()) {
                 popMenu.hide();
@@ -209,10 +210,20 @@ public class JShellPaths extends BaseController {
             MenuItem menu;
 
             menu = new MenuItem(message("MyBoxClassPaths"));
-            menu.setOnAction((ActionEvent event) -> {
+            menu.setOnAction((ActionEvent e) -> {
                 pathInput.setText(System.getProperty("java.class.path"));
             });
             popMenu.getItems().add(menu);
+
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
+            hoverMenu.setSelected(UserConfig.getBoolean("JShellPathsPopWhenMouseHovering", false));
+            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("JShellPathsPopWhenMouseHovering", hoverMenu.isSelected());
+                }
+            });
+            popMenu.getItems().add(hoverMenu);
 
             popMenu.getItems().add(new SeparatorMenuItem());
             menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
@@ -225,9 +236,16 @@ public class JShellPaths extends BaseController {
             });
             popMenu.getItems().add(menu);
 
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateBelow((Region) event.getSource(), popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void popExamplesMenu(Event event) {
+        if (UserConfig.getBoolean("JShellPathsPopWhenMouseHovering", false)) {
+            showExamplesMenu(event);
         }
     }
 

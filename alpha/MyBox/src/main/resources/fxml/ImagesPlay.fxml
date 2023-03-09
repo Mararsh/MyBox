@@ -56,7 +56,7 @@ License:    Apache License Version 2.0
                                                         </FlowPane>
                                                         <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="32.0" spacing="5.0">
                                                             <children>
-                                                                <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
+                                                                <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#pickSourceFile" onMouseEntered="#popSourceFile">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                             <image>

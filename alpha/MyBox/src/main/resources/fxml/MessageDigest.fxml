@@ -51,7 +51,7 @@ License:    Apache License Version 2.0
                                           <HBox fx:id="fileBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                               <children>
                                                   <TextField fx:id="sourceFileInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                  <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
+                                                  <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#pickSourceFile" onMouseEntered="#popSourceFile">
                                                       <graphic>
                                                           <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                               <image>

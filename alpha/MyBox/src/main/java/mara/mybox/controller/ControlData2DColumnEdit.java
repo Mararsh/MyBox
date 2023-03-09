@@ -5,9 +5,11 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
@@ -16,7 +18,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -36,6 +37,7 @@ import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.TimeFormats;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -400,21 +402,21 @@ public class ControlData2DColumnEdit extends BaseChildController {
     }
 
     @FXML
-    public void popExamples(MouseEvent mouseEvent) {
+    public void showExamples(Event event) {
         if (doubleRadio.isSelected() || floatRadio.isSelected()) {
             List<String> values = new ArrayList<>();
             values.add(message("GroupInThousands"));
             values.add(message("GroupInTenThousands"));
             values.add(message("ScientificNotation"));
             values.add(message("None"));
-            popExamples(mouseEvent, values, message("DecimalFormat"), HelpTools.decimalFormatLink());
+            popExamples(event, values, message("DecimalFormat"), HelpTools.decimalFormatLink());
 
         } else if (longRadio.isSelected() || intRadio.isSelected() || shortRadio.isSelected()) {
             List<String> values = new ArrayList<>();
             values.add(message("GroupInThousands"));
             values.add(message("GroupInTenThousands"));
             values.add(message("None"));
-            popExamples(mouseEvent, values, message("DecimalFormat"), HelpTools.decimalFormatLink());
+            popExamples(event, values, message("DecimalFormat"), HelpTools.decimalFormatLink());
 
         } else if (datetimeRadio.isSelected()) {
             List<String> values = new ArrayList<>();
@@ -430,7 +432,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             values.add(TimeFormats.DateE);
             values.add(TimeFormats.MonthE);
             values.add(TimeFormats.DatetimeZoneE);
-            popExamples(mouseEvent, values, message("DateFormat"), HelpTools.simpleDateFormatLink());
+            popExamples(event, values, message("DateFormat"), HelpTools.simpleDateFormatLink());
 
         } else if (dateRadio.isSelected()) {
             List<String> values = new ArrayList<>();
@@ -439,7 +441,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             values.add(TimeFormats.Year);
             values.add(TimeFormats.DateE);
             values.add(TimeFormats.MonthE);
-            popExamples(mouseEvent, values, message("DateFormat"), HelpTools.simpleDateFormatLink());
+            popExamples(event, values, message("DateFormat"), HelpTools.simpleDateFormatLink());
 
         } else if (eraRadio.isSelected()) {
             List<String> values = new ArrayList<>();
@@ -453,13 +455,20 @@ public class ControlData2DColumnEdit extends BaseChildController {
             values.add("G" + TimeFormats.DateA);
             values.add("G" + TimeFormats.MonthA);
             values.add("G" + TimeFormats.YearA);
-            popExamples(mouseEvent, values, message("DateFormat"), HelpTools.simpleDateFormatLink());
+            popExamples(event, values, message("DateFormat"), HelpTools.simpleDateFormatLink());
 
         }
 
     }
 
-    public void popExamples(MouseEvent mouseEvent, List<String> values, String linkName, String linkAddress) {
+    @FXML
+    public void popExamples(Event event) {
+        if (UserConfig.getBoolean("Data2DColumnEditPopWhenMouseHovering", true)) {
+            showExamples(event);
+        }
+    }
+
+    public void popExamples(Event event, List<String> values, String linkName, String linkAddress) {
         try {
             if (values == null || values.isEmpty()) {
                 return;
@@ -503,6 +512,16 @@ public class ControlData2DColumnEdit extends BaseChildController {
             popMenu.getItems().add(menu);
             popMenu.getItems().add(new SeparatorMenuItem());
 
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
+            hoverMenu.setSelected(UserConfig.getBoolean("Data2DColumnEditPopWhenMouseHovering", true));
+            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("Data2DColumnEditPopWhenMouseHovering", hoverMenu.isSelected());
+                }
+            });
+            popMenu.getItems().add(hoverMenu);
+
             menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
@@ -512,7 +531,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 }
             });
             popMenu.getItems().add(menu);
-            LocateTools.locateMouse(mouseEvent, popMenu);
+            LocateTools.locateEvent(event, popMenu);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

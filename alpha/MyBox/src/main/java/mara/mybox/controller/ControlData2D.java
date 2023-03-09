@@ -685,7 +685,7 @@ public class ControlData2D extends BaseController {
                 popMenu.getItems().add(new SeparatorMenuItem());
             }
 
-            CheckMenuItem passPop = new CheckMenuItem(message("PopWhenMouseHovering"));
+            CheckMenuItem passPop = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
             passPop.setSelected(UserConfig.getBoolean(interfaceName + "FunctionsPopWhenMouseHovering", true));
             passPop.setOnAction(new EventHandler<ActionEvent>() {
                 @Override

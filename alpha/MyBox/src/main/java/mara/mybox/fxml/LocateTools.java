@@ -11,6 +11,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.PopupWindow;
 import javafx.stage.Stage;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.SystemTools;
 
 /**
@@ -208,8 +209,13 @@ public class LocateTools {
     }
 
     public static Point2D getScreenCoordinate(Event event) {
-        Region region = (Region) (event.getTarget());
-        return region.localToScreen(0, 0);
+        try {
+            Node node = (Node) (event.getTarget());
+            return node.localToScreen(0, 0);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
 }

@@ -244,7 +244,7 @@ public class JShellEditor extends TreeNodeEditor {
 
             CheckBox popCheck = new CheckBox();
             popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
-            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
             popCheck.setSelected(UserConfig.getBoolean(interfaceName + "SyntaxPopWhenMouseHovering", false));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override

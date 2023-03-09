@@ -2,13 +2,11 @@ package mara.mybox.controller;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.input.MouseEvent;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
@@ -144,18 +142,14 @@ public class DataTableQueryEditor extends TreeNodeEditor {
     }
 
     @FXML
-    protected void popExamplesMenu(MouseEvent mouseEvent) {
+    protected void popExamplesMenu(Event event) {
         if (UserConfig.getBoolean("SqlExamplesPopWhenMouseHovering", false)) {
-            examplesMenu(mouseEvent);
+            showExamplesMenu(event);
         }
     }
 
     @FXML
-    protected void showExamplesMenu(ActionEvent event) {
-        examplesMenu(event);
-    }
-
-    protected void examplesMenu(Event event) {
+    protected void showExamplesMenu(Event event) {
         PopTools.popSqlExamples(this, valueInput,
                 dataTable != null ? dataTable.getSheet() : null,
                 true, event);

@@ -142,8 +142,8 @@ public class ColorPalettePopupController extends BaseChildController {
 
                 @Override
                 protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
-                        ColorPaletteName defaultPalette = tableColorPaletteName.defaultPalette(conn);
+                    try (Connection conn = DerbyBase.getConnection()) {
+                        ColorPaletteName defaultPalette = PaletteTools.defaultPalette(conn);
                         if (defaultPalette == null) {
                             return false;
                         }
@@ -325,8 +325,7 @@ public class ColorPalettePopupController extends BaseChildController {
             items.add(menu);
 
             items.add(new SeparatorMenuItem());
-            items.addAll(PaletteTools.paletteExamplesMenu(parentController == null ? myController : parentController,
-                    tableColorPaletteName, tableColorPalette, tableColor));
+            items.addAll(PaletteTools.paletteExamplesMenu(parentController == null ? myController : parentController));
 
             items.add(new SeparatorMenuItem());
 

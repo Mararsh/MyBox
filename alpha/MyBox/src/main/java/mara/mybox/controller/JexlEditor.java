@@ -159,7 +159,7 @@ public class JexlEditor extends JShellEditor {
 
             CheckBox popCheck = new CheckBox();
             popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
-            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
             popCheck.setSelected(UserConfig.getBoolean(interfaceName + "ScriptExamplesPopWhenMouseHovering", false));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -441,7 +441,7 @@ public class JexlEditor extends JShellEditor {
 
             CheckBox popCheck = new CheckBox();
             popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
-            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
             popCheck.setSelected(UserConfig.getBoolean(interfaceName + "ContextExamplesPopWhenMouseHovering", false));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override

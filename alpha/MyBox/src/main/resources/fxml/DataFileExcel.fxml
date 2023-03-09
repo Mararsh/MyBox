@@ -168,7 +168,7 @@ License:    Apache License Version 2.0
                                                                 <RadioButton fx:id="saveJustRadio" mnemonicParsing="false" text="%JustSaveAs" toggleGroup="$saveAsGroup" />
                                                             </children>
                                                         </VBox>
-                                                        <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
+                                                        <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#pickSaveAs" onMouseEntered="#popSaveAs">
                                                             <graphic>
                                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
@@ -194,7 +194,7 @@ License:    Apache License Version 2.0
                                                 <Image url="@../buttons/Red/iconDoubleLeft.png" />
                                             </image>
                                         </ImageView>
-                                        <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
+                                        <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#pickSourceFile" onMouseEntered="#popSourceFile">
                                             <graphic>
                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                     <image>

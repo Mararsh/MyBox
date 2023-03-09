@@ -4,10 +4,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import mara.mybox.controller.BaseController_Files;
 import mara.mybox.db.data.VisitHistory;
@@ -20,19 +22,18 @@ import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
- * @CreateDate
  * @License Apache License Version 2.0
  */
 public abstract class RecentVisitMenu {
 
     protected final BaseController_Files controller;
-    protected final MouseEvent event;
+    protected final Event event;
     protected List<String> examples;
     protected int SourceFileType, SourcePathType, AddFileType, AddPathType, TargetFileType, TargetPathType;
     protected List<FileChooser.ExtensionFilter> sourceExtensionFilter;
     protected String baseName, defaultPath;
 
-    public RecentVisitMenu(BaseController_Files controller, MouseEvent event) {
+    public RecentVisitMenu(BaseController_Files controller, Event event) {
         this.controller = controller;
         this.event = event;
         this.baseName = controller.getBaseName();
@@ -77,6 +78,16 @@ public abstract class RecentVisitMenu {
             });
             popMenu.getItems().add(menu);
 
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
+            hoverMenu.setSelected(UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true));
+            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("RecentVisitMenuPopWhenMouseHovering", hoverMenu.isSelected());
+                }
+            });
+            popMenu.getItems().add(hoverMenu);
+
             List<VisitHistory> opened = recentFiles();
             if (opened != null && !opened.isEmpty()) {
                 List<String> files = new ArrayList<>();
@@ -101,7 +112,6 @@ public abstract class RecentVisitMenu {
                 }
             }
 
-//            recentWrittenFiles
             if (examples != null && !examples.isEmpty()) {
                 popMenu.getItems().add(new SeparatorMenuItem());
                 menu = new MenuItem(message("Examples"));
@@ -130,9 +140,6 @@ public abstract class RecentVisitMenu {
                 }
             }
 
-            if (popMenu.getItems().isEmpty()) {
-                return;
-            }
             controller.setPopMenu(popMenu);
             popMenu.getItems().add(new SeparatorMenuItem());
             menu = new MenuItem(message("PopupClose"));
@@ -143,7 +150,7 @@ public abstract class RecentVisitMenu {
             });
             popMenu.getItems().add(menu);
 
-            LocateTools.locateMouse(event, popMenu);
+            LocateTools.locateEvent(event, popMenu);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

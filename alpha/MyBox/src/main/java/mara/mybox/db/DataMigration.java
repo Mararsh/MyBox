@@ -36,7 +36,6 @@ import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.db.table.TableAlarmClock;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
-import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.db.table.TableConvolutionKernel;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableData2DCell;
@@ -51,6 +50,7 @@ import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.DevTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.PaletteTools;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.DateTools;
@@ -982,8 +982,7 @@ public class DataMigration {
             try (Statement statement = conn.createStatement();
                     ResultSet results = statement.executeQuery(sql)) {
                 conn.setAutoCommit(false);
-                TableColorPaletteName tableColorPaletteName = new TableColorPaletteName();
-                ColorPaletteName defaultPalette = tableColorPaletteName.defaultPalette(conn);
+                ColorPaletteName defaultPalette = PaletteTools.defaultPalette(conn);
                 long paletteid = defaultPalette.getCpnid();
 
                 TableColorPalette tableColorPalette = new TableColorPalette();

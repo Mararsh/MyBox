@@ -172,14 +172,14 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
     }
 
     @FXML
-    protected void popExamplesMenu(MouseEvent mouseEvent) {
+    protected void popExamplesMenu(Event event) {
         if (UserConfig.getBoolean("SqlExamplesPopWhenMouseHovering", false)) {
-            PopTools.popSqlExamples(this, valueInput, null, false, mouseEvent);
+            showExamplesMenu(event);
         }
     }
 
     @FXML
-    protected void showExamplesMenu(ActionEvent event) {
+    protected void showExamplesMenu(Event event) {
         PopTools.popSqlExamples(this, valueInput, null, false, event);
     }
 
@@ -220,7 +220,7 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
 
             CheckBox popCheck = new CheckBox();
             popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
-            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
             String pname = "TableNamesPopWhenMouseHovering" + (internal ? "Internal" : "");
             popCheck.setSelected(UserConfig.getBoolean(pname, false));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
@@ -280,7 +280,7 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
 
             CheckBox popCheck = new CheckBox();
             popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
-            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
             popCheck.setSelected(UserConfig.getBoolean("TableDefinitionPopWhenMouseHovering", false));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override

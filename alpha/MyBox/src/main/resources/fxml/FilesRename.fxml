@@ -70,7 +70,7 @@ License:    Apache License Version 2.0
                                                                         <Label text="%OldString" />
                                                                         <TextField fx:id="oldStringInput" prefWidth="200.0" />
                                                       <CheckBox fx:id="regexCheck" mnemonicParsing="false" text="%RegularExpression" />
-                                                      <Button fx:id="exampleRegexButton" mnemonicParsing="false"   onAction="#popRegexExample"   onMouseEntered="#popRegexExample" >
+                                                      <Button fx:id="exampleRegexButton" mnemonicParsing="false"   onAction="#showRegexExample"   onMouseEntered="#popRegexExample" >
                                                          <graphic>
                                                             <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                <image>

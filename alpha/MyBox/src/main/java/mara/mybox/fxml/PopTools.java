@@ -377,8 +377,8 @@ public class PopTools {
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopWhenMouseHovering"));
-            hoverMenu.setSelected(UserConfig.getBoolean("HtmlStylesPopWhenMouseHovering", true));
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
+            hoverMenu.setSelected(UserConfig.getBoolean("HtmlStylesPopWhenMouseHovering", false));
             hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -478,8 +478,8 @@ public class PopTools {
             }
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopWhenMouseHovering"));
-            hoverMenu.setSelected(UserConfig.getBoolean("WindowStylesPopWhenMouseHovering", true));
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
+            hoverMenu.setSelected(UserConfig.getBoolean("WindowStylesPopWhenMouseHovering", false));
             hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -612,7 +612,7 @@ public class PopTools {
             if (checkPop) {
                 CheckBox popCheck = new CheckBox();
                 popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
-                NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+                NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
                 popCheck.setSelected(UserConfig.getBoolean(name + "PopWhenMouseHovering", false));
                 popCheck.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
@@ -885,7 +885,7 @@ public class PopTools {
 
             CheckBox popCheck = new CheckBox();
             popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
-            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
             popCheck.setSelected(UserConfig.getBoolean("RegexExamplesPopWhenMouseHovering", false));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -976,7 +976,7 @@ public class PopTools {
 
             CheckBox popCheck = new CheckBox();
             popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
-            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
             popCheck.setSelected(UserConfig.getBoolean("ColorExamplesPopWhenMouseHovering", false));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -1059,7 +1059,7 @@ public class PopTools {
 
             CheckBox popCheck = new CheckBox();
             popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
-            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
             popCheck.setSelected(UserConfig.getBoolean("SqlExamplesPopWhenMouseHovering", false));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -1202,7 +1202,7 @@ public class PopTools {
 
             CheckBox popCheck = new CheckBox();
             popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
-            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
             popCheck.setSelected(UserConfig.getBoolean(name + "PopWhenMouseHovering", false));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override

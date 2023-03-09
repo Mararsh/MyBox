@@ -709,16 +709,18 @@ public class ColorData extends BaseData {
         return orderNumner;
     }
 
-    public void setOrderNumner(float orderNumner) {
+    public ColorData setOrderNumner(float orderNumner) {
         this.orderNumner = orderNumner;
+        return this;
     }
 
     public long getPaletteid() {
         return paletteid;
     }
 
-    public void setPaletteid(long paletteid) {
+    public ColorData setPaletteid(long paletteid) {
         this.paletteid = paletteid;
+        return this;
     }
 
 }

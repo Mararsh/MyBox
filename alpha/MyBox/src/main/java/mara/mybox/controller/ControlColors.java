@@ -101,8 +101,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
     @FXML
     protected TableColumn<ColorData, Float> orderColumn;
     @FXML
-    protected Button deletePaletteButton, renamePaletteButton, addPaletteButton,
-            copyPaletteButton, addColorsButton, trimButton;
+    protected Button addColorsButton, trimButton;
     @FXML
     protected CheckBox mergeCheck, allColumnsCheck;
     @FXML
@@ -120,6 +119,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
 
     public ControlColors() {
         baseTitle = message("ManageColors");
+        TipsLabelKey = message("ColorsManageTips");
     }
 
     @Override
@@ -169,7 +169,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
                 @Override
                 public void handle(MouseEvent event) {
                     if (event != null && event.getButton() == MouseButton.SECONDARY) {
-                        popPaletteMenu(event);
+                        popFunctionsMenu(event);
                     }
                 }
             });
@@ -181,9 +181,6 @@ public class ControlColors extends BaseSysTableController<ColorData> {
                         }
                         currentPalette = palettesController.palettesList.getSelectionModel().getSelectedItem();
                         boolean isAll = isAllColors();
-                        deletePaletteButton.setDisable(isAll);
-                        renamePaletteButton.setDisable(isAll);
-                        copyPaletteButton.setDisable(isAll);
                         trimButton.setDisable(isAll);
                         if (!isAll) {
                             UserConfig.setString(baseName + "Palette", currentPalette.getName());
@@ -201,7 +198,6 @@ public class ControlColors extends BaseSysTableController<ColorData> {
                     });
 
             refreshPalettes();
-            hideRightPane();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -316,10 +312,11 @@ public class ControlColors extends BaseSysTableController<ColorData> {
             isSettingValues = true;
             tableView.getColumns().clear();
             tableView.getColumns().addAll(rowsSelectionColumn, colorNameColumn,
-                    colorColumn, rgbaColumn, rgbColumn, colorValueColumn);
+                    colorColumn);
             if (!isAllColors()) {
                 tableView.getColumns().add(orderColumn);
             }
+            tableView.getColumns().addAll(rgbaColumn, rgbColumn);
             if (mergeCheck.isSelected()) {
                 if (allColumnsCheck.isSelected()) {
                     dataColumn.setCellValueFactory(new PropertyValueFactory<>("colorDisplay"));
@@ -327,14 +324,15 @@ public class ControlColors extends BaseSysTableController<ColorData> {
                     dataColumn.setCellValueFactory(new PropertyValueFactory<>("colorSimpleDisplay"));
                 }
                 tableView.getColumns().addAll(dataColumn);
-
-            } else if (allColumnsCheck.isSelected()) {
-                tableView.getColumns().addAll(sRGBColumn, HSBColumn,
-                        AdobeRGBColumn, AppleRGBColumn, ECIRGBColumn,
-                        sRGBLinearColumn, AdobeRGBLinearColumn, AppleRGBLinearColumn, CalculatedCMYKColumn,
-                        ECICMYKColumn, AdobeCMYKColumn, XYZColumn, CIELabColumn, LCHabColumn, CIELuvColumn, LCHuvColumn);
             } else {
-                tableView.getColumns().addAll(sRGBColumn, HSBColumn);
+                tableView.getColumns().addAll(sRGBColumn, HSBColumn, CalculatedCMYKColumn);
+                if (allColumnsCheck.isSelected()) {
+                    tableView.getColumns().addAll(AdobeRGBColumn, AppleRGBColumn, ECIRGBColumn,
+                            sRGBLinearColumn, AdobeRGBLinearColumn, AppleRGBLinearColumn,
+                            ECICMYKColumn, AdobeCMYKColumn,
+                            XYZColumn, CIELabColumn, LCHabColumn, CIELuvColumn, LCHuvColumn);
+                }
+                tableView.getColumns().add(colorValueColumn);
             }
             isSettingValues = false;
 
@@ -347,13 +345,8 @@ public class ControlColors extends BaseSysTableController<ColorData> {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeStyleTools.setTooltip(deletePaletteButton, message("DeletePalette"));
-            NodeStyleTools.setTooltip(renamePaletteButton, message("RenamePalette"));
-            NodeStyleTools.setTooltip(addPaletteButton, message("AddPalette"));
-            NodeStyleTools.setTooltip(copyPaletteButton, message("CopyPalette"));
             NodeStyleTools.setTooltip(addColorsButton, message("AddColors"));
             NodeStyleTools.setTooltip(trimButton, message("TrimOrderInPalette"));
-            NodeStyleTools.setTooltip(tipsView, message("ColorsManageTips") + "\n\n" + message("TableTips"));
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -372,12 +365,13 @@ public class ControlColors extends BaseSysTableController<ColorData> {
                 || currentPalette.getName().equals(palettesController.allColors.getName());
     }
 
-    protected void popPaletteMenu(MouseEvent event) {
+    @FXML
+    public void popFunctionsMenu(MouseEvent event) {
         if (isSettingValues) {
             return;
         }
         ColorPaletteName palette = palettesController.palettesList.getSelectionModel().getSelectedItem();
-        boolean isALl = palette.getName().equals(palettesController.allColors.getName());
+        boolean isAll = palette.getName().equals(palettesController.allColors.getName());
         List<MenuItem> items = new ArrayList<>();
         MenuItem menu = new MenuItem(StringTools.menuPrefix(palette.getName()));
         menu.setStyle("-fx-text-fill: #2e598a;");
@@ -394,21 +388,27 @@ public class ControlColors extends BaseSysTableController<ColorData> {
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             deletePalette();
         });
-        menu.setDisable(isALl);
+        menu.setDisable(isAll);
         items.add(menu);
 
         menu = new MenuItem(message("RenamePalette"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             renamePalette();
         });
-        menu.setDisable(isALl);
+        menu.setDisable(isAll);
         items.add(menu);
 
         menu = new MenuItem(message("CopyPalette"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             copyPalette();
         });
-        menu.setDisable(isALl);
+        menu.setDisable(isAll);
+        items.add(menu);
+
+        menu = new MenuItem(message("DeleteAllPalettes"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            deleteAllPalettes();
+        });
         items.add(menu);
 
         items.add(new SeparatorMenuItem());
@@ -442,6 +442,8 @@ public class ControlColors extends BaseSysTableController<ColorData> {
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(items);
+        LocateTools.locateEvent(event, popMenu);
+
         popMenu.show(tableView, event.getScreenX(), event.getScreenY());
 
     }
@@ -477,6 +479,32 @@ public class ControlColors extends BaseSysTableController<ColorData> {
             };
             start(task);
         }
+    }
+
+    @FXML
+    protected void deleteAllPalettes() {
+        if (task != null && !task.isQuit()) {
+            return;
+        }
+        if (!PopTools.askSure(getTitle(), message("DeleteAllPalettes"))) {
+            return;
+        }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                return tableColorPaletteName.clearData() >= 0;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                refreshPalettes();
+                popSuccessful();
+
+            }
+
+        };
+        start(task);
     }
 
     @FXML
@@ -584,7 +612,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
 
     @FXML
     protected void popExamplesMenu(MouseEvent mouseEvent) {
-        PaletteTools.popPaletteExamplesMenu(this, mouseEvent, tableColorPaletteName, tableColorPalette, tableColor);
+        PaletteTools.popPaletteExamplesMenu(this, mouseEvent);
     }
 
     /*
@@ -884,8 +912,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
 
     @Override
     public void sourceFileChanged(File file) {
-        PaletteTools.importPalette(this, tableColorPaletteName, tableColorPalette, tableColor,
-                file, isAllColors() ? null : currentPalette.getName(), false);
+        PaletteTools.importPalette(this, file, isAllColors() ? null : currentPalette.getName(), false);
     }
 
     @FXML
@@ -1026,7 +1053,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
         ColorData color = selectedItem();
         copyButton.setDisable(color == null);
         if (color != null) {
-            showRightPane();
+//            showRightPane();
             colorArea.setText(color.display());
         }
         super.checkButtons();
@@ -1236,7 +1263,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
             MyBoxLog.debug(e.toString());
         }
         isSettingValues = false;
-        showRightPane();
+//        showRightPane();
     }
 
     public void rectEntered(Rectangle rect) {

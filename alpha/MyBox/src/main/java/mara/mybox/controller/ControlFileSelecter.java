@@ -5,11 +5,11 @@ import java.util.List;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.DirectoryChooser;
 import mara.mybox.db.data.VisitHistory;
@@ -229,7 +229,7 @@ public class ControlFileSelecter extends BaseController {
     }
 
     @FXML
-    public void popRecentFiles(MouseEvent event) {
+    public void showRecentFilesMenu(Event event) {
         if (checkQuit && !checkBeforeNextAction()) {
             return;
         }
@@ -298,6 +298,22 @@ public class ControlFileSelecter extends BaseController {
             }
 
         }.pop();
+    }
+
+    @FXML
+    public void pickRecentFiles(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            selectFile();
+        } else {
+            showRecentFilesMenu(event);
+        }
+    }
+
+    @FXML
+    public void popRecentFiles(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            showRecentFilesMenu(event);
+        }
     }
 
     public void input(String string) {

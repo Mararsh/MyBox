@@ -5,7 +5,6 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.table.TableStringValues;
@@ -73,8 +72,15 @@ public class ColorPaletteInputController extends BaseChildController {
     }
 
     @FXML
-    public void popExamples(MouseEvent mouseEvent) {
-        PopTools.popColorExamples(this, colorInput, mouseEvent);
+    protected void showExamples(Event event) {
+        PopTools.popColorExamples(this, colorInput, event);
+    }
+
+    @FXML
+    public void popExamples(Event event) {
+        if (UserConfig.getBoolean("ColorExamplesPopWhenMouseHovering", false)) {
+            showExamples(event);
+        }
     }
 
     public ColorData getInputColor() {

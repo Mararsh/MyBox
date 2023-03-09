@@ -18,7 +18,7 @@
          <children>
               <FlowPane fx:id="buttonsPane" alignment="CENTER_LEFT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="100.0" vgap="2.0" HBox.hgrow="ALWAYS">
                   <children>
-                      <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
+                      <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#pickSourceFile" onMouseEntered="#popSourceFile">
                           <graphic>
                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                   <image>

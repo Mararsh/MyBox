@@ -199,7 +199,7 @@ License:    Apache License Version 2.0
                 <Label text="%FilesSelector" />
                 <ComboBox fx:id="nameFiltersSelector" prefWidth="400.0" />
                 <TextField fx:id="tableFiltersInput" maxWidth="1.7976931348623157E308" promptText="%SeparateBySpace" HBox.hgrow="ALWAYS" />
-                <Button fx:id="exampleRegexButton" mnemonicParsing="false"   onAction="#popRegexExample"   onMouseEntered="#popRegexExample" >
+                <Button fx:id="exampleRegexButton" mnemonicParsing="false"   onAction="#showRegexExample"   onMouseEntered="#popRegexExample" >
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>

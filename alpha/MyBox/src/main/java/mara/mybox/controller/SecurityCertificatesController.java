@@ -6,22 +6,22 @@ import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Window;
 import mara.mybox.data.CertificateEntry;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableTimeCell;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.SecurityTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -119,7 +119,7 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
     }
 
     @Override
-    public RecentVisitMenu makeSourceFileRecentVisitMenu(MouseEvent event) {
+    public RecentVisitMenu makeSourceFileRecentVisitMenu(Event event) {
         RecentVisitMenu menu = super.makeSourceFileRecentVisitMenu(event);
         List<String> examples = new ArrayList<>();
         examples.add(SecurityTools.keystore());
