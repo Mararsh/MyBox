@@ -73,53 +73,79 @@ public class PaletteTools {
         try {
             List<MenuItem> menus = new ArrayList<>();
 
-            MenuItem menu;
-
-            menu = new MenuItem(message("ArtHuesWheel24"));
-            menu.setOnAction((ActionEvent event) -> {
+            MenuItem menu = new MenuItem(message("ArtHuesWheel24"));
+            menu.setOnAction((ActionEvent e) -> {
                 String lang = Languages.getLangName();
-                File file = FxFileTools.getInternalFile("/data/examples/ColorsRYB24_" + lang + ".csv", "data", "ColorsRYB24_" + lang + ".csv");
-                importPalette(parent, file, message("ArtHuesWheel24"), true);
+                File file = FxFileTools.getInternalFile("/data/examples/ColorsRYB24_" + lang + ".csv",
+                        "data", "ColorsRYB24_" + lang + ".csv");
+                importFile(parent, file, message("ArtHuesWheel24"), true);
             });
             menus.add(menu);
 
             menu = new MenuItem(message("OpticalHuesWheel24"));
-            menu.setOnAction((ActionEvent event) -> {
-                importOpticalHuesWheel24(parent);
+            menu.setOnAction((ActionEvent e) -> {
+                importData(parent, opticalHuesWheel(15), message("OpticalHuesWheel24"));
             });
             menus.add(menu);
 
             menu = new MenuItem(message("WebCommonColors"));
-            menu.setOnAction((ActionEvent event) -> {
+            menu.setOnAction((ActionEvent e) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ColorsWeb.csv", "data", "ColorsWeb.csv");
-                importPalette(parent, file, message("WebCommonColors"), true);
+                importFile(parent, file, message("WebCommonColors"), true);
             });
             menus.add(menu);
 
             menu = new MenuItem(message("ChineseTraditionalColors"));
-            menu.setOnAction((ActionEvent event) -> {
+            menu.setOnAction((ActionEvent e) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ColorsChinese.csv", "data", "ColorsChinese.csv");
-                importPalette(parent, file, message("ChineseTraditionalColors"), true);
+                importFile(parent, file, message("ChineseTraditionalColors"), true);
             });
             menus.add(menu);
 
             menu = new MenuItem(message("JapaneseTraditionalColors"));
-            menu.setOnAction((ActionEvent event) -> {
+            menu.setOnAction((ActionEvent e) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ColorsJapanese.csv", "data", "ColorsJapanese.csv");
-                importPalette(parent, file, message("JapaneseTraditionalColors"), true);
+                importFile(parent, file, message("JapaneseTraditionalColors"), true);
             });
             menus.add(menu);
 
             menu = new MenuItem(message("HexaColors"));
-            menu.setOnAction((ActionEvent event) -> {
+            menu.setOnAction((ActionEvent e) -> {
                 File file = FxFileTools.getInternalFile("/data/examples/ColorsColorhexa.csv", "data", "ColorsColorhexa.csv");
-                importPalette(parent, file, message("HexaColors"), true);
+                importFile(parent, file, message("HexaColors"), true);
+            });
+            menus.add(menu);
+
+            menu = new MenuItem(message("OpticalHuesWheel360"));
+            menu.setOnAction((ActionEvent e) -> {
+                importData(parent, opticalHuesWheel(1), message("OpticalHuesWheel360"));
+            });
+            menus.add(menu);
+
+            menu = new MenuItem(message("ArtPaints"));
+            menu.setOnAction((ActionEvent e) -> {
+                File file = FxFileTools.getInternalFile("/data/examples/ColorsArtPaints.csv", "data", "ColorsArtPaints.csv");
+                importFile(parent, file, message("ArtPaints"), true);
             });
             menus.add(menu);
 
             menu = new MenuItem(message("MyBoxColors"));
-            menu.setOnAction((ActionEvent event) -> {
-                importMyBoxColors(parent);
+            menu.setOnAction((ActionEvent e) -> {
+                List<ColorData> colors = new ArrayList<>();
+                for (StyleColor style : StyleData.StyleColor.values()) {
+                    colors.add(new ColorData(color(style, true).getRGB(), message("MyBoxColor" + style.name() + "Dark")));
+                    colors.add(new ColorData(color(style, false).getRGB(), message("MyBoxColor" + style.name() + "Light")));
+                }
+                colors.add(new ColorData(FxColorTools.color2rgba(Color.WHITE), message("White")));
+                colors.add(new ColorData(FxColorTools.color2rgba(Color.BLACK), message("Black")));
+                colors.add(new ColorData(0, message("Transparent")));
+                importData(parent, colors, message("MyBoxColors"));
+            });
+            menus.add(menu);
+
+            menu = new MenuItem(message("GrayScale"));
+            menu.setOnAction((ActionEvent e) -> {
+                importData(parent, greyScales(), message("GrayScale"));
             });
             menus.add(menu);
 
@@ -131,23 +157,21 @@ public class PaletteTools {
         }
     }
 
-    public synchronized static void importOpticalHuesWheel24(BaseController parent) {
-        if (parent == null || (parent.getTask() != null && !parent.getTask().isQuit())) {
+    public static void importData(BaseController parent, List<ColorData> colors, String name) {
+        if (parent == null || (parent.getTask() != null && !parent.getTask().isQuit())
+                || colors == null || colors.isEmpty()) {
             return;
         }
         SingletonTask task = new SingletonTask<Void>(parent) {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    ColorPaletteName palette = new TableColorPaletteName().findAndCreate(conn, message("OpticalHuesWheel24"));
+                    ColorPaletteName palette = new TableColorPaletteName().findAndCreate(conn, name);
                     if (palette == null) {
                         return false;
                     }
-                    List<ColorData> colors = opticalHuesWheel24();
-                    if (colors == null) {
-                        return false;
-                    }
-                    writePalette(conn, colors, palette);
+                    new TableColor().writeData(conn, colors, false);
+                    new TableColorPalette().write(conn, palette.getCpnid(), colors, true);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -157,54 +181,22 @@ public class PaletteTools {
 
             @Override
             protected void whenSucceeded() {
-                afterPaletteChanged(parent, message("OpticalHuesWheel24"));
+                afterPaletteChanged(parent, name);
             }
         };
         parent.setTask(task);
         parent.start(task);
     }
 
-    public synchronized static void importMyBoxColors(BaseController parent) {
-        if (parent == null || (parent.getTask() != null && !parent.getTask().isQuit())) {
-            return;
-        }
-        SingletonTask task = new SingletonTask<Void>(parent) {
-            @Override
-            protected boolean handle() {
-                List<ColorData> colors = new ArrayList<>();
-                for (StyleColor style : StyleData.StyleColor.values()) {
-                    colors.add(new ColorData(color(style, true).getRGB(), message("MyBoxColor" + style.name() + "Dark")));
-                    colors.add(new ColorData(color(style, false).getRGB(), message("MyBoxColor" + style.name() + "Light")));
-                }
-                colors.add(new ColorData(FxColorTools.color2rgba(Color.BLACK), message("Black")));
-                colors.add(new ColorData(FxColorTools.color2rgba(Color.WHITE), message("White")));
-                colors.add(new ColorData(0, message("Transparent")));
-                try (Connection conn = DerbyBase.getConnection()) {
-                    ColorPaletteName palette = new TableColorPaletteName().findAndCreate(conn, message("MyBoxColors"));
-                    writePalette(conn, colors, palette);
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-                return true;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                afterPaletteChanged(parent, message("MyBoxColors"));
-            }
-        };
-        parent.setTask(task);
-        parent.start(task);
-    }
-
-    public synchronized static void importPalette(BaseController parent,
+    public static void importFile(BaseController parent,
             File file, String paletteName, boolean reOrder) {
         if (parent == null || (parent.getTask() != null && !parent.getTask().isQuit())
                 || file == null || !file.exists()) {
             return;
         }
         SingletonTask task = new SingletonTask<Void>(parent) {
+            List<ColorData> colors;
+
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
@@ -212,81 +204,47 @@ public class PaletteTools {
                     if (palette == null) {
                         return false;
                     }
-                    List<ColorData> colors = ColorDataTools.readCSV(file, reOrder);
-                    if (colors == null) {
-                        return false;
-                    }
-                    writePalette(conn, colors, palette);
+                    colors = ColorDataTools.readCSV(file, reOrder);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
                 }
-                return true;
+                return colors != null && !colors.isEmpty();
             }
 
             @Override
             protected void whenSucceeded() {
-                afterPaletteChanged(parent, paletteName);
+                importData(parent, colors, paletteName);
             }
         };
         parent.setTask(task);
         parent.start(task);
     }
 
-    public synchronized static boolean writePalette(Connection conn, List<ColorData> colors, ColorPaletteName palette) {
-        if (conn == null || palette == null || colors == null || colors.isEmpty()) {
-            return false;
-        }
-        try {
-            new TableColor().writeData(conn, colors, false);
-            new TableColorPalette().write(conn, palette.getCpnid(), colors, true);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-        return true;
-    }
-
-    public static void afterPaletteChanged(BaseController parent, String paletteName) {
-        UserConfig.setString("ColorPalettePopupPalette", paletteName);
-        List<Window> windows = new ArrayList<>();
-        windows.addAll(Window.getWindows());
-        for (Window window : windows) {
-            Object object = window.getUserData();
-            if (object != null && object instanceof ColorPalettePopupController) {
-                try {
-                    ColorPalettePopupController controller = (ColorPalettePopupController) object;
-                    controller.loadColors();
-                    break;
-                } catch (Exception e) {
-                }
-            }
-        }
-        if (parent == null) {
-            return;
-        }
-        if (parent instanceof ControlColors) {
-            ControlColors controller = (ControlColors) parent;
-            UserConfig.setString(controller.getBaseName() + "Palette", paletteName);
-            controller.refreshPalettes();
-            parent.popSuccessful();
-        } else if (parent instanceof ColorSet) {
-            ColorSet controller = (ColorSet) parent;
-            controller.showColorPalette();
-        }
-
-    }
-
-    public static List<ColorData> opticalHuesWheel24() {
+    public static List<ColorData> opticalHuesWheel(int step) {
         try {
             List<ColorData> colors = new ArrayList<>();
-            for (int hue = 0; hue < 360; hue += 15) {
-                ColorData color = new ColorData(FxColorTools.hsb2rgba(hue, 1f, 1f));
+            for (int hue = 0; hue < 360; hue += step) {
+                ColorData color = new ColorData(FxColorTools.hsb2rgba(hue, 1f, 1f), message("Hue") + ": " + hue);
                 colors.add(color);
             }
             colors.add(new ColorData(FxColorTools.color2rgba(Color.WHITE), message("White")));
             colors.add(new ColorData(FxColorTools.color2rgba(Color.BLACK), message("Black")));
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.TRANSPARENT), message("Transparent")));
+            colors.add(new ColorData(0, message("Transparent")));
+            return colors;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static List<ColorData> greyScales() {
+        try {
+            List<ColorData> colors = new ArrayList<>();
+            for (int b = 100; b >= 0; b--) {
+                ColorData color = new ColorData(FxColorTools.hsb2rgba(0, 0f, b / 100f), message("Brightness") + ": " + b);
+                colors.add(color);
+            }
             return colors;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -321,10 +279,11 @@ public class PaletteTools {
                 if (colors == null) {
                     return null;
                 }
-                colors.add(new ColorData(FxColorTools.color2rgba(Color.BLACK), message("Black")));
                 colors.add(new ColorData(FxColorTools.color2rgba(Color.WHITE), message("White")));
+                colors.add(new ColorData(FxColorTools.color2rgba(Color.BLACK), message("Black")));
                 colors.add(new ColorData(0, message("Transparent")));
-                writePalette(conn, colors, palette);
+                new TableColor().writeData(conn, colors, false);
+                tableColorPalette.write(conn, palette.getCpnid(), colors, true);
                 conn.commit();
             }
             conn.setAutoCommit(ac);
@@ -333,6 +292,36 @@ public class PaletteTools {
             MyBoxLog.error(e);
             return null;
         }
+    }
+
+    public static void afterPaletteChanged(BaseController parent, String paletteName) {
+        UserConfig.setString("ColorPalettePopupPalette", paletteName);
+        List<Window> windows = new ArrayList<>();
+        windows.addAll(Window.getWindows());
+        for (Window window : windows) {
+            Object object = window.getUserData();
+            if (object != null && object instanceof ColorPalettePopupController) {
+                try {
+                    ColorPalettePopupController controller = (ColorPalettePopupController) object;
+                    controller.loadColors();
+                    break;
+                } catch (Exception e) {
+                }
+            }
+        }
+        if (parent == null) {
+            return;
+        }
+        if (parent instanceof ControlColors) {
+            ControlColors controller = (ControlColors) parent;
+            UserConfig.setString(controller.getBaseName() + "Palette", paletteName);
+            controller.refreshPalettes();
+            parent.popSuccessful();
+        } else if (parent instanceof ColorSet) {
+            ColorSet controller = (ColorSet) parent;
+            controller.showColorPalette();
+        }
+
     }
 
 }

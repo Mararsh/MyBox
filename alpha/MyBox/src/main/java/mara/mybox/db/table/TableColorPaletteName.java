@@ -3,6 +3,8 @@ package mara.mybox.db.table;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Date;
+import java.util.List;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColorPaletteName;
 import mara.mybox.db.data.ColumnDefinition;
@@ -34,6 +36,8 @@ public class TableColorPaletteName extends BaseTable<ColorPaletteName> {
     public final TableColorPaletteName defineColumns() {
         addColumn(new ColumnDefinition("cpnid", ColumnType.Long, true, true).setAuto(true));
         addColumn(new ColumnDefinition("palette_name", ColumnType.String, true).setLength(StringMaxLength));
+        addColumn(new ColumnDefinition("visit_time", ColumnType.Datetime, true));
+        orderColumns = "visit_time DESC";
         return this;
     }
 
@@ -60,19 +64,28 @@ public class TableColorPaletteName extends BaseTable<ColorPaletteName> {
         if (conn == null || name == null || name.isBlank()) {
             return null;
         }
+        ColorPaletteName palette = null;
         try (PreparedStatement statement = conn.prepareStatement(QueryName)) {
             statement.setString(1, name);
             statement.setMaxRows(1);
             conn.setAutoCommit(true);
             try (ResultSet results = statement.executeQuery()) {
                 if (results.next()) {
-                    return readData(results);
+                    palette = readData(results);
                 }
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-        return null;
+        if (palette != null) {
+            try {
+                palette.setVisitTime(new Date());
+                updateData(conn, palette);
+            } catch (Exception e) {
+                MyBoxLog.error(e);
+            }
+        }
+        return palette;
     }
 
     public ColorPaletteName findAndCreate(String name) {
@@ -104,6 +117,11 @@ public class TableColorPaletteName extends BaseTable<ColorPaletteName> {
             return null;
         }
     }
+
+    public List<ColorPaletteName> recentVisited(Connection conn) {
+        return query(conn, queryAllStatement(), 10);
+    }
+
 
     /*
         get/set

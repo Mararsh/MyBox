@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.sql.Connection;
 import java.util.List;
 import javafx.fxml.FXML;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColorData;
@@ -12,7 +13,7 @@ import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -20,42 +21,55 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-4-4
  * @License Apache License Version 2.0
  */
-public class ColorCopyController extends ControlColorPaletteSelector {
+public class ColorCopyController extends BaseChildController {
 
     protected TableColor tableColor;
     protected TableColorPalette tableColorPalette;
     protected List<Color> colors;
 
+    @FXML
+    protected ControlColorPaletteSelector palettesController;
+
     public ColorCopyController() {
-        baseTitle = Languages.message("SelectColorPalette");
+        baseTitle = message("SelectColorPalette");
     }
 
-    @Override
-    public void setValues(ColorsManageController colorsManager) {
+    public void setParameters(ColorsManageController colorsManager) {
         try {
-            super.setValues(colorsManager);
+            palettesController.setManager(colorsManager);
             if (!colorsManager.colorsController.isAllColors()) {
-                ignore = colorsManager.colorsController.currentPalette.getName();
+                palettesController.ignore = colorsManager.colorsController.currentPalette.getName();
             }
-            okButton.disableProperty().bind(palettesList.getSelectionModel().selectedItemProperty().isNull());
             loadPalettes();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
 
-    public void setValues(ColorsManageController colorsManager, List<Color> colors) {
+    public void setParameters(ColorsManageController colorsManager, List<Color> colors) {
         try {
             if (colors == null || colors.isEmpty()) {
                 cancelAction();
                 return;
             }
             this.colors = colors;
-
-            super.setValues(colorsManager);
-            tableColor = colorsManager.colorsController.tableColor;
-            tableColorPalette = colorsManager.colorsController.tableColorPalette;
+            palettesController.setManager(colorsManager);
             loadPalettes();
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    public void loadPalettes() {
+        try {
+            checkManage();
+            palettesController.loadPalettes();
+            palettesController.palettesList.setOnMouseClicked((MouseEvent event) -> {
+                if (event.getClickCount() > 1) {
+                    okAction();
+                }
+            });
+            okButton.disableProperty().bind(palettesController.palettesList.getSelectionModel().selectedItemProperty().isNull());
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -64,12 +78,9 @@ public class ColorCopyController extends ControlColorPaletteSelector {
     @FXML
     @Override
     public void okAction() {
-        if (colorsManager == null || !colorsManager.getMyStage().isShowing()) {
-            colorsManager = ColorsManageController.oneOpen();
-        }
-        ColorPaletteName palette = palettesList.getSelectionModel().getSelectedItem();
+        ColorPaletteName palette = palettesController.palettesList.getSelectionModel().getSelectedItem();
         if (palette == null) {
-            popError(Languages.message("SelectPaletteCopyColors"));
+            popError(message("SelectPaletteCopyColors"));
             return;
         }
         if (colors == null) {
@@ -79,91 +90,100 @@ public class ColorCopyController extends ControlColorPaletteSelector {
         }
     }
 
+    protected ColorsManageController checkManage() {
+        try {
+            ColorsManageController colorsManager = palettesController.colorsManager();
+            tableColor = colorsManager.colorsController.tableColor;
+            tableColorPalette = colorsManager.colorsController.tableColorPalette;
+            return colorsManager;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     protected void copyColors(ColorPaletteName palette) {
+        ColorsManageController colorsManager = checkManage();
         List<ColorData> selectedColors = colorsManager.colorsController.selectedItems();
         if (selectedColors == null || selectedColors.isEmpty()) {
-            popError(Languages.message("SelectColorsCopy"));
+            popError(message("SelectColorsCopy"));
             return;
         }
-        synchronized (this) {
-            if (task != null) {
-                task.cancel();
-                task = null;
-            }
-            task = new SingletonTask<Void>(this) {
-                private int count;
-
-                @Override
-                protected boolean handle() {
-                    List<ColorPalette> cpList
-                            = colorsManager.colorsController.tableColorPalette.write(palette.getCpnid(), selectedColors, false);
-                    if (cpList == null) {
-                        return false;
-                    }
-                    count = cpList.size();
-                    return count >= 0;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    afterCopied(palette, count);
-                }
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+            private int count;
+
+            @Override
+            protected boolean handle() {
+                List<ColorPalette> cpList = tableColorPalette.write(palette.getCpnid(), selectedColors, false);
+                if (cpList == null) {
+                    return false;
+                }
+                count = cpList.size();
+                return count >= 0;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                afterCopied(palette, count);
+            }
+        };
+        start(task);
     }
 
     protected void addColors(ColorPaletteName palette) {
-        synchronized (this) {
-            if (task != null) {
-                task.cancel();
-                task = null;
-            }
-            task = new SingletonTask<Void>(this) {
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
 
-                private int count;
+            private int count;
 
-                @Override
-                protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
-                        List<ColorData> colorsList = tableColor.writeColors(conn, colors, false);
-                        if (colorsList == null) {
-                            return false;
-                        }
-                        if (!colorsList.isEmpty()) {
-                            List<ColorPalette> cpList = tableColorPalette.write(conn, palette.getCpnid(), colorsList, false);
-                            if (cpList == null) {
-                                return false;
-                            }
-                            count = cpList.size();
-                            UserConfig.setString(baseName + "Palette", palette.getName());
-                        }
-                    } catch (Exception e) {
-                        error = e.toString();
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    List<ColorData> colorsList = tableColor.writeColors(conn, colors, false);
+                    if (colorsList == null) {
                         return false;
                     }
-                    return count >= 0;
+                    if (!colorsList.isEmpty()) {
+                        List<ColorPalette> cpList = tableColorPalette.write(conn, palette.getCpnid(), colorsList, false);
+                        if (cpList == null) {
+                            return false;
+                        }
+                        count = cpList.size();
+                        UserConfig.setString(baseName + "Palette", palette.getName());
+                    }
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
                 }
+                return count >= 0;
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    afterCopied(palette, count);
-                }
+            @Override
+            protected void whenSucceeded() {
+                afterCopied(palette, count);
+            }
 
-            };
-            start(task);
-        }
-
+        };
+        start(task);
     }
 
     protected void afterCopied(ColorPaletteName palette, int count) {
-        if (colorsManager == null || !colorsManager.getMyStage().isShowing()) {
-            colorsManager = ColorsManageController.oneOpen();
-        } else {
-            colorsManager.colorsController.loadPaletteLast(palette);
-            colorsManager.requestMouse();
-        }
-        colorsManager.popInformation(Languages.message("Copied") + ": " + count);
+        ColorsManageController colorsManager = checkManage();
+        colorsManager.colorsController.loadPaletteLast(palette);
+        colorsManager.requestMouse();
+        closeStage();
+        colorsManager.popInformation(message("Copied") + ": " + count);
+    }
+
+    @FXML
+    @Override
+    public void cancelAction() {
         closeStage();
     }
+
 }

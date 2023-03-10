@@ -234,6 +234,7 @@ public class ControlFileSelecter extends BaseController {
             return;
         }
         if (AppVariables.fileRecentNumber <= 0) {
+            selectFile();
             return;
         }
         new RecentVisitMenu(this, event) {

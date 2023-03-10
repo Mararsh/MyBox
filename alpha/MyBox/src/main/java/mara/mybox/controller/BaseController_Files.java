@@ -346,6 +346,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
 
     public void showSourceFilesMenu(Event event) {
         if (AppVariables.fileRecentNumber <= 0) {
+            selectSourceFile();
             return;
         }
         RecentVisitMenu menu = makeSourceFileRecentVisitMenu(event);
@@ -557,6 +558,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
     @FXML
     public void showSourcePathMenu(Event event) {
         if (AppVariables.fileRecentNumber <= 0) {
+            selectSourcePath();
             return;
         }
         new RecentVisitMenu(this, event) {

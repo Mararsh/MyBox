@@ -78,16 +78,6 @@ public abstract class RecentVisitMenu {
             });
             popMenu.getItems().add(menu);
 
-            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
-            hoverMenu.setSelected(UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true));
-            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("RecentVisitMenuPopWhenMouseHovering", hoverMenu.isSelected());
-                }
-            });
-            popMenu.getItems().add(hoverMenu);
-
             List<VisitHistory> opened = recentFiles();
             if (opened != null && !opened.isEmpty()) {
                 List<String> files = new ArrayList<>();
@@ -140,8 +130,18 @@ public abstract class RecentVisitMenu {
                 }
             }
 
-            controller.setPopMenu(popMenu);
             popMenu.getItems().add(new SeparatorMenuItem());
+
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
+            hoverMenu.setSelected(UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true));
+            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("RecentVisitMenuPopWhenMouseHovering", hoverMenu.isSelected());
+                }
+            });
+            popMenu.getItems().add(hoverMenu);
+
             menu = new MenuItem(message("PopupClose"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent event1) -> {
@@ -150,7 +150,9 @@ public abstract class RecentVisitMenu {
             });
             popMenu.getItems().add(menu);
 
+            controller.setPopMenu(popMenu);
             LocateTools.locateEvent(event, popMenu);
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

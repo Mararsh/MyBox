@@ -6,6 +6,7 @@ import mara.mybox.controller.BaseController;
 import mara.mybox.data.ImageItem;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.MarkdownTools;
 import mara.mybox.tools.TextFileTools;
@@ -198,7 +199,9 @@ public class HelpTools {
                                 "<Img src='" + file.toURI().toString() + "' width=" + item.getWidth() + ">",
                                 comments);
                     }
-                    htmFile = HtmlWriteTools.writeHtml(table.html());
+                    String html = HtmlWriteTools.html(table.getTitle(), "utf-8",
+                            HtmlStyles.styleValue("TableStyle"), table.body());
+                    htmFile = HtmlWriteTools.writeHtml(html);
                 } catch (Exception e) {
                     MyBoxLog.error(e.toString());
                 }

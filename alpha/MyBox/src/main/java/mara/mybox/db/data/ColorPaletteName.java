@@ -1,5 +1,6 @@
 package mara.mybox.db.data;
 
+import java.util.Date;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -11,10 +12,12 @@ public class ColorPaletteName extends BaseData {
 
     protected long cpnid;
     protected String name;
+    protected Date visitTime;
 
     private void init() {
         cpnid = -1;
         name = null;
+        visitTime = new Date();
     }
 
     public ColorPaletteName() {
@@ -45,6 +48,9 @@ public class ColorPaletteName extends BaseData {
                 case "palette_name":
                     data.setName(value == null ? null : (String) value);
                     return true;
+                case "visit_time":
+                    data.setVisitTime(value == null ? null : (Date) value);
+                    return true;
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -61,6 +67,8 @@ public class ColorPaletteName extends BaseData {
                 return data.getCpnid();
             case "palette_name":
                 return data.getName();
+            case "visit_time":
+                return data.getVisitTime();
         }
         return null;
     }
@@ -87,6 +95,15 @@ public class ColorPaletteName extends BaseData {
 
     public ColorPaletteName setName(String name) {
         this.name = name;
+        return this;
+    }
+
+    public Date getVisitTime() {
+        return visitTime;
+    }
+
+    public ColorPaletteName setVisitTime(Date visitTime) {
+        this.visitTime = visitTime;
         return this;
     }
 

@@ -158,6 +158,9 @@ public class DataMigration {
                 if (lastVersion < 6007000) {
                     updateIn67(conn);
                 }
+                if (lastVersion < 6007001) {
+                    updateIn671(conn);
+                }
             }
             TableStringValues.add(conn, "InstalledVersions", AppValues.AppVersion);
             conn.setAutoCommit(true);
@@ -165,6 +168,18 @@ public class DataMigration {
             MyBoxLog.debug(e.toString());
         }
         return true;
+    }
+
+    private static void updateIn671(Connection conn) {
+        try (Statement statement = conn.createStatement()) {
+            MyBoxLog.info("Updating tables in 6.7.1...");
+
+            conn.setAutoCommit(true);
+            statement.executeUpdate("ALTER TABLE Color_Palette_Name ADD COLUMN visit_time TIMESTAMP ");
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     private static void updateIn67(Connection conn) {

@@ -78,7 +78,7 @@ public class ColorsManageController extends BaseController {
             return null;
         }
         ColorCopyController addController = (ColorCopyController) WindowTools.openStage(Fxmls.ColorCopyFxml);
-        addController.setValues(manageController, colors);
+        addController.setParameters(manageController, colors);
         addController.requestMouse();
         return manageController;
     }
