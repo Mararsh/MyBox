@@ -250,7 +250,12 @@ public class HtmlWriteTools {
                     e.remove();
                 }
             }
-            doc.charset(charset);
+            Element meta1 = new Element("meta")
+                    .attr("http-equiv", "Content-Type")
+                    .attr("content", "text/html; charset=" + charset.name());
+            Element meta2 = new Element("meta")
+                    .attr("charset", charset.name());
+            doc.head().appendChild(meta1).appendChild(meta2);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -269,7 +274,7 @@ public class HtmlWriteTools {
             if (charset == null) {
                 charset = Charset.forName("utf-8");
             }
-            doc.charset(charset);
+            setCharset(doc, charset);
             return html;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -296,10 +301,8 @@ public class HtmlWriteTools {
             }
             if (ignoreOriginal) {
                 doc.head().empty();
-                doc.charset(charset);
-            } else {
-                setCharset(doc, charset);
             }
+            setCharset(doc, charset);
             doc.head().appendChild(new Element("style").text(css));
             return doc.outerHtml();
         } catch (Exception e) {

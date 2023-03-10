@@ -163,7 +163,7 @@ public class ImageItem {
             icons.addAll(Arrays.asList("Add", "Analyse", "Cancel", "Cat", "Clear", "Clipboard", "Copy",
                     "Data", "Default", "Delete", "Delimiter", "Demo", "DoubleLeft", "Edit", "Examples", "Export",
                     "Function", "Go", "Import", "Menu", "NewItem", "OK", "Open", "Panes", "Play", "Query",
-                    "Random", "Recover", "Refresh", "Sampled", "Save", "Style", "Tips", "Undo"));
+                    "Random", "Recover", "Refresh", "Sampled", "Save", "Style", "Tips", "Undo", "Window"));
             for (String name : icons) {
                 item = new ImageItem()
                         .setName("icon" + name + "_100.png")

@@ -24,7 +24,8 @@ public class HtmlStyles {
             + " .boldText { font-weight:bold;  } \n";
     public static final String BaseStyle
             = TableStyle
-            + " body {width: 900px; } \n";
+            + " body { width: 900px; } \n"
+            + " img { max-width: 900px; } \n";
     public static final String DefaultStyle
             = BaseStyle
             + " .valueText { color:#2e598a;  } \n";
