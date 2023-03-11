@@ -398,7 +398,7 @@ public class ColumnDefinition extends BaseData {
                 return null;
             }
             String savedName = DerbyBase.savedName(columnName);
-            if (results.findColumn(savedName) < 0) {
+            if (savedName == null || results.findColumn(savedName) < 0) {
                 return null;
             }
             Object o = results.getObject(savedName);
@@ -428,7 +428,7 @@ public class ColumnDefinition extends BaseData {
                 case Latitude:
                     double d;
                     try {
-                        d = Double.valueOf(s);
+                        d = Double.parseDouble(s);
                         if (DoubleTools.invalidDouble(d)) {
                             d = Double.NaN;
                         }
@@ -439,7 +439,7 @@ public class ColumnDefinition extends BaseData {
                 case Float:
                     float f;
                     try {
-                        f = Float.valueOf(s);
+                        f = Float.parseFloat(s);
                         if (FloatTools.invalidFloat(f)) {
                             f = Float.NaN;
                         }
@@ -450,7 +450,7 @@ public class ColumnDefinition extends BaseData {
                 case Long:
                     long l;
                     try {
-                        l = Long.valueOf(s);
+                        l = Long.parseLong(s);
                     } catch (Exception e) {
                         l = AppValues.InvalidLong;
                     }
@@ -458,7 +458,7 @@ public class ColumnDefinition extends BaseData {
                 case Integer:
                     int i;
                     try {
-                        i = Integer.valueOf(s);
+                        i = Integer.parseInt(s);
                     } catch (Exception e) {
                         i = AppValues.InvalidInteger;
                     }
@@ -466,7 +466,7 @@ public class ColumnDefinition extends BaseData {
                 case Short:
                     short ss;
                     try {
-                        ss = Short.valueOf(s);
+                        ss = Short.parseShort(s);
                     } catch (Exception e) {
                         ss = AppValues.InvalidShort;
                     }

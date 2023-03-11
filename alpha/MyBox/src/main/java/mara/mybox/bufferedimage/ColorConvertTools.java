@@ -229,4 +229,60 @@ public class ColorConvertTools {
         return Color.getHSBColor(hsb[0], hsb[1] * scale, hsb[2]);
     }
 
+    // https://blog.csdn.net/weixin_44938037/article/details/90599711
+    public static Color ryb2rgb(float angle) {
+        float hue = ryb2hue(angle);
+        return Color.getHSBColor(hue / 360, 1, 1);
+    }
+
+    public static float ryb2hue(float angle) {
+        float a = angle % 360;
+        float hue;
+        if (a < 30) {
+            hue = 2 * a / 3;
+        } else if (a < 90) {
+            hue = a / 3 + 10;
+        } else if (a < 120) {
+            hue = 2 * a / 3 - 20;
+        } else if (a < 180) {
+            hue = a - 60;
+        } else if (a < 210) {
+            hue = 2 * a - 240;
+        } else if (a < 270) {
+            hue = a - 30;
+        } else if (a < 300) {
+            hue = 2 * a - 300;
+        } else {
+            hue = a;
+        }
+        return hue;
+    }
+
+    public static float hue2ryb(double hue) {
+        return hue2ryb((float) hue);
+    }
+
+    public static float hue2ryb(float hue) {
+        float h = hue % 360;
+        float a;
+        if (h < 20) {
+            a = 1.5f * h;
+        } else if (h < 40) {
+            a = 3 * h - 30;
+        } else if (h < 60) {
+            a = 1.5f * h + 30;
+        } else if (h < 120) {
+            a = h + 60;
+        } else if (h < 180) {
+            a = h / 2 + 120;
+        } else if (h < 240) {
+            a = h + 30;
+        } else if (h < 300) {
+            a = h / 2 + 150;
+        } else {
+            a = h;
+        }
+        return a;
+    }
+
 }

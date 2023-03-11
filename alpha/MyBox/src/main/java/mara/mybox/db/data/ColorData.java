@@ -11,8 +11,10 @@ import mara.mybox.color.SRGB;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppValues;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -30,14 +32,16 @@ public class ColorData extends BaseData {
     protected float[] adobeRGBValues, appleRGBValues, eciRGBValues, eciCmykValues, adobeCmykValues;
     protected double[] cmyk, xyzValues, cieLabValues, lchabValues, cieLuvValues, lchuvValues;
     protected boolean isSettingValues;
-    protected long paletteid;
-    protected float orderNumner;
+    protected long paletteid, cpid;
+    protected float orderNumner, ryb;
 
     // rgba is saved as upper-case in db
     private void init() {
         colorValue = AppValues.InvalidInteger;
         orderNumner = Float.MAX_VALUE;
+        ryb = -1;
         paletteid = -1;
+        cpid = -1;
     }
 
     public ColorData() {
@@ -96,7 +100,6 @@ public class ColorData extends BaseData {
             rgba = FxColorTools.color2rgba(color);
             rgb = FxColorTools.color2rgb(color);
             colorValue = FxColorTools.color2Value(color);
-
             if (colorName == null
                     && !value.startsWith("#")
                     && !value.startsWith("0x") && !value.startsWith("0X")
@@ -108,13 +111,11 @@ public class ColorData extends BaseData {
         }
     }
 
-    public ColorData calculate() {
-        if (srgb != null) {
-            return this;
-        }
-        if (colorName == null) {
-            colorName = "";
-        }
+    public boolean needCalculate() {
+        return color == null || srgb == null;
+    }
+
+    public boolean calculateBase() {
         if (colorValue != AppValues.InvalidInteger) {
             color = FxColorTools.value2color(colorValue);
             rgba = FxColorTools.color2rgba(color);
@@ -132,15 +133,31 @@ public class ColorData extends BaseData {
             rgba = FxColorTools.color2rgba(color);
             colorValue = FxColorTools.color2Value(color);
         } else {
+            return false;
+        }
+        return true;
+    }
+
+    public ColorData calculate() {
+        if (!needCalculate()) {
+            return this;
+        }
+        if (colorName == null) {
+            colorName = "";
+        }
+        if (!calculateBase()) {
             return this;
         }
         srgb = Math.round(color.getRed() * 255) + " "
                 + Math.round(color.getGreen() * 255) + " "
                 + Math.round(color.getBlue() * 255) + " "
                 + Math.round(color.getOpacity() * 100) + "%";
+
         hsb = Math.round(color.getHue()) + " "
                 + Math.round(color.getSaturation() * 100) + "% "
                 + Math.round(color.getBrightness() * 100) + "%";
+
+        ryb = ryb();
 
         adobeRGBValues = SRGB.srgb2profile(ImageColorSpace.adobeRGBProfile(), color);
         adobeRGB = Math.round(adobeRGBValues[0] * 255) + " "
@@ -222,13 +239,14 @@ public class ColorData extends BaseData {
             colorDisplay += rgba + "\n" + rgb + "\n" + colorValue + "\n"
                     + "sRGB: " + srgb + "\n"
                     + "HSB: " + hsb + "\n"
+                    + message("RYBAngle") + ": " + FloatTools.toInt(ryb()) + "°\n"
+                    + message("CalculatedCMYK") + ": " + calculatedCMYK + "\n"
                     + "Adobe RGB: " + adobeRGB + "\n"
                     + "Apple RGB: " + appleRGB + "\n"
                     + "ECI RGB: " + eciRGB + "\n"
                     + "sRGB Linear: " + SRGBLinear + "\n"
                     + "Adobe RGB Linear: " + adobeRGBLinear + "\n"
                     + "Apple RGB Linear: " + appleRGBLinear + "\n"
-                    + "Calculated CMYK: " + calculatedCMYK + "\n"
                     + "ECI CMYK: " + eciCMYK + "\n"
                     + "Adobe CMYK Uncoated FOGRA29: " + adobeCMYK + "\n"
                     + "XYZ: " + xyz + "\n"
@@ -253,9 +271,18 @@ public class ColorData extends BaseData {
             }
             colorSimpleDisplay += colorValue + "\n" + rgba + "\n" + rgb + "\n"
                     + "sRGB: " + srgb + "\n"
-                    + "HSB: " + hsb;
+                    + "HSB: " + hsb
+                    + message("RYBAngle") + ": " + FloatTools.toInt(ryb()) + "°\n"
+                    + message("CalculatedCMYK") + ": " + calculatedCMYK + "\n";
         }
         return colorSimpleDisplay;
+    }
+
+    public float ryb() {
+        if (ryb >= 0 || color == null && !calculateBase()) {
+            return ryb;
+        }
+        return ColorConvertTools.hue2ryb(color.getHue());
     }
 
     /*
@@ -288,6 +315,9 @@ public class ColorData extends BaseData {
                     return true;
                 case "hsb":
                     data.setHsb(value == null ? null : (String) value);
+                    return true;
+                case "ryb":
+                    data.setRyb(value == null ? -1 : (float) value);
                     return true;
                 case "lchuv":
                     data.setLchuv(value == null ? null : (String) value);
@@ -355,6 +385,8 @@ public class ColorData extends BaseData {
                 return data.getSrgb();
             case "hsb":
                 return data.getHsb();
+            case "ryb":
+                return data.getRyb();
             case "adobeRGB":
                 return data.getAdobeRGB();
             case "appleRGB":
@@ -720,6 +752,24 @@ public class ColorData extends BaseData {
 
     public ColorData setPaletteid(long paletteid) {
         this.paletteid = paletteid;
+        return this;
+    }
+
+    public float getRyb() {
+        return ryb;
+    }
+
+    public ColorData setRyb(float ryb) {
+        this.ryb = ryb;
+        return this;
+    }
+
+    public long getCpid() {
+        return cpid;
+    }
+
+    public ColorData setCpid(long cpid) {
+        this.cpid = cpid;
         return this;
     }
 

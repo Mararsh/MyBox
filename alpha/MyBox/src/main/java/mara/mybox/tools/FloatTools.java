@@ -33,12 +33,12 @@ public class FloatTools {
     public static int compare(String s1, String s2, boolean desc) {
         float f1, f2;
         try {
-            f1 = Float.valueOf(s1.replaceAll(",", ""));
+            f1 = Float.parseFloat(s1.replaceAll(",", ""));
         } catch (Exception e) {
             f1 = Float.NaN;
         }
         try {
-            f2 = Float.valueOf(s2.replaceAll(",", ""));
+            f2 = Float.parseFloat(s2.replaceAll(",", ""));
         } catch (Exception e) {
             f2 = Float.NaN;
         }
@@ -75,9 +75,17 @@ public class FloatTools {
                 numberFormat();
             }
             numberFormat.setMaximumFractionDigits(scale);
-            return Float.valueOf(numberFormat.format(v));
+            return Float.parseFloat(numberFormat.format(v));
         } catch (Exception e) {
             return v;
+        }
+    }
+
+    public static int toInt(float v) {
+        try {
+            return (int) scale(v, 0);
+        } catch (Exception e) {
+            return (int) v;
         }
     }
 

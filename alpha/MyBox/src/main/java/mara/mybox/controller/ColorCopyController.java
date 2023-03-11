@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
@@ -117,7 +118,7 @@ public class ColorCopyController extends BaseChildController {
 
             @Override
             protected boolean handle() {
-                List<ColorPalette> cpList = tableColorPalette.write(palette.getCpnid(), selectedColors, false);
+                List<ColorPalette> cpList = tableColorPalette.write(palette.getCpnid(), selectedColors, false, false);
                 if (cpList == null) {
                     return false;
                 }
@@ -134,6 +135,9 @@ public class ColorCopyController extends BaseChildController {
     }
 
     protected void addColors(ColorPaletteName palette) {
+        if (colors == null || palette == null) {
+            return;
+        }
         if (task != null) {
             task.cancel();
         }
@@ -143,19 +147,18 @@ public class ColorCopyController extends BaseChildController {
 
             @Override
             protected boolean handle() {
+                List<ColorData> colorsList = new ArrayList<>();
+                for (Color color : colors) {
+                    colorsList.add(new ColorData(color).calculate());
+                }
                 try (Connection conn = DerbyBase.getConnection()) {
-                    List<ColorData> colorsList = tableColor.writeColors(conn, colors, false);
-                    if (colorsList == null) {
+                    List<ColorPalette> cpList
+                            = tableColorPalette.write(conn, palette.getCpnid(), colorsList, false, false);
+                    if (cpList == null) {
                         return false;
                     }
-                    if (!colorsList.isEmpty()) {
-                        List<ColorPalette> cpList = tableColorPalette.write(conn, palette.getCpnid(), colorsList, false);
-                        if (cpList == null) {
-                            return false;
-                        }
-                        count = cpList.size();
-                        UserConfig.setString(baseName + "Palette", palette.getName());
-                    }
+                    count = cpList.size();
+                    UserConfig.setString(baseName + "Palette", palette.getName());
                 } catch (Exception e) {
                     error = e.toString();
                     return false;

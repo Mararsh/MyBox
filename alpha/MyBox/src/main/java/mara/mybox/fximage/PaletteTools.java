@@ -11,6 +11,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.paint.Color;
 import javafx.stage.Window;
+import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.ColorPalettePopupController;
 import mara.mybox.controller.ColorSet;
@@ -73,79 +74,81 @@ public class PaletteTools {
         try {
             List<MenuItem> menus = new ArrayList<>();
 
-            MenuItem menu = new MenuItem(message("ArtHuesWheel24"));
+            MenuItem menu = new MenuItem(message("ArtHuesWheel") + "-" + message("Colors24"));
             menu.setOnAction((ActionEvent e) -> {
-                String lang = Languages.getLangName();
-                File file = FxFileTools.getInternalFile("/data/examples/ColorsRYB24_" + lang + ".csv",
-                        "data", "ColorsRYB24_" + lang + ".csv");
-                importFile(parent, file, message("ArtHuesWheel24"), true);
-            });
-            menus.add(menu);
-
-            menu = new MenuItem(message("OpticalHuesWheel24"));
-            menu.setOnAction((ActionEvent e) -> {
-                importData(parent, opticalHuesWheel(15), message("OpticalHuesWheel24"));
+                importPalette(parent, message("ArtHuesWheel") + "-" + message("Colors24"));
             });
             menus.add(menu);
 
             menu = new MenuItem(message("WebCommonColors"));
             menu.setOnAction((ActionEvent e) -> {
-                File file = FxFileTools.getInternalFile("/data/examples/ColorsWeb.csv", "data", "ColorsWeb.csv");
-                importFile(parent, file, message("WebCommonColors"), true);
+                importPalette(parent, message("WebCommonColors"));
             });
             menus.add(menu);
 
             menu = new MenuItem(message("ChineseTraditionalColors"));
             menu.setOnAction((ActionEvent e) -> {
-                File file = FxFileTools.getInternalFile("/data/examples/ColorsChinese.csv", "data", "ColorsChinese.csv");
-                importFile(parent, file, message("ChineseTraditionalColors"), true);
+                importPalette(parent, message("ChineseTraditionalColors"));
             });
             menus.add(menu);
 
             menu = new MenuItem(message("JapaneseTraditionalColors"));
             menu.setOnAction((ActionEvent e) -> {
-                File file = FxFileTools.getInternalFile("/data/examples/ColorsJapanese.csv", "data", "ColorsJapanese.csv");
-                importFile(parent, file, message("JapaneseTraditionalColors"), true);
+                importPalette(parent, message("JapaneseTraditionalColors"));
             });
             menus.add(menu);
 
             menu = new MenuItem(message("HexaColors"));
             menu.setOnAction((ActionEvent e) -> {
-                File file = FxFileTools.getInternalFile("/data/examples/ColorsColorhexa.csv", "data", "ColorsColorhexa.csv");
-                importFile(parent, file, message("HexaColors"), true);
+                importPalette(parent, message("HexaColors"));
             });
             menus.add(menu);
 
-            menu = new MenuItem(message("OpticalHuesWheel360"));
+            menu = new MenuItem(message("ArtHuesWheel") + "-" + message("Colors12"));
             menu.setOnAction((ActionEvent e) -> {
-                importData(parent, opticalHuesWheel(1), message("OpticalHuesWheel360"));
+                importPalette(parent, message("ArtHuesWheel") + "-" + message("Colors12"));
+            });
+            menus.add(menu);
+
+            menu = new MenuItem(message("ArtHuesWheel") + "-" + message("Colors360"));
+            menu.setOnAction((ActionEvent e) -> {
+                importPalette(parent, message("ArtHuesWheel") + "-" + message("Colors360"));
+            });
+            menus.add(menu);
+
+            menu = new MenuItem(message("OpticalHuesWheel") + "-" + message("Colors12"));
+            menu.setOnAction((ActionEvent e) -> {
+                importPalette(parent, message("OpticalHuesWheel") + "-" + message("Colors12"));
+            });
+            menus.add(menu);
+
+            menu = new MenuItem(message("OpticalHuesWheel") + "-" + message("Colors24"));
+            menu.setOnAction((ActionEvent e) -> {
+                importPalette(parent, message("OpticalHuesWheel") + "-" + message("Colors24"));
+            });
+            menus.add(menu);
+
+            menu = new MenuItem(message("OpticalHuesWheel") + "-" + message("Colors360"));
+            menu.setOnAction((ActionEvent e) -> {
+                importPalette(parent, message("OpticalHuesWheel") + "-" + message("Colors360"));
             });
             menus.add(menu);
 
             menu = new MenuItem(message("ArtPaints"));
             menu.setOnAction((ActionEvent e) -> {
-                File file = FxFileTools.getInternalFile("/data/examples/ColorsArtPaints.csv", "data", "ColorsArtPaints.csv");
-                importFile(parent, file, message("ArtPaints"), true);
+                importPalette(parent, message("ArtPaints"));
             });
             menus.add(menu);
 
             menu = new MenuItem(message("MyBoxColors"));
             menu.setOnAction((ActionEvent e) -> {
-                List<ColorData> colors = new ArrayList<>();
-                for (StyleColor style : StyleData.StyleColor.values()) {
-                    colors.add(new ColorData(color(style, true).getRGB(), message("MyBoxColor" + style.name() + "Dark")));
-                    colors.add(new ColorData(color(style, false).getRGB(), message("MyBoxColor" + style.name() + "Light")));
-                }
-                colors.add(new ColorData(FxColorTools.color2rgba(Color.WHITE), message("White")));
-                colors.add(new ColorData(FxColorTools.color2rgba(Color.BLACK), message("Black")));
-                colors.add(new ColorData(0, message("Transparent")));
-                importData(parent, colors, message("MyBoxColors"));
+                importPalette(parent, message("MyBoxColors"));
             });
             menus.add(menu);
 
             menu = new MenuItem(message("GrayScale"));
             menu.setOnAction((ActionEvent e) -> {
-                importData(parent, greyScales(), message("GrayScale"));
+                importPalette(parent, message("GrayScale"));
             });
             menus.add(menu);
 
@@ -157,21 +160,89 @@ public class PaletteTools {
         }
     }
 
-    public static void importData(BaseController parent, List<ColorData> colors, String name) {
+    public static void importPalette(BaseController parent, String paletteName) {
         if (parent == null || (parent.getTask() != null && !parent.getTask().isQuit())
-                || colors == null || colors.isEmpty()) {
+                || paletteName == null) {
             return;
         }
         SingletonTask task = new SingletonTask<Void>(parent) {
             @Override
             protected boolean handle() {
+                List<ColorData> colors;
+                if (message("WebCommonColors").equals(paletteName)) {
+                    File file = FxFileTools.getInternalFile("/data/examples/ColorsWeb.csv",
+                            "data", "ColorsWeb.csv", true);
+                    colors = ColorDataTools.readCSV(file, true);
+
+                } else if (message("ArtPaints").equals(paletteName)) {
+                    File file = FxFileTools.getInternalFile("/data/examples/ColorsArtPaints.csv",
+                            "data", "ColorsArtPaints.csv", true);
+                    colors = ColorDataTools.readCSV(file, true);
+
+                } else if (message("ChineseTraditionalColors").equals(paletteName)) {
+                    File file = FxFileTools.getInternalFile("/data/examples/ColorsChinese.csv",
+                            "data", "ColorsChinese.csv", true);
+                    colors = ColorDataTools.readCSV(file, true);
+
+                } else if (message("JapaneseTraditionalColors").equals(paletteName)) {
+                    File file = FxFileTools.getInternalFile("/data/examples/ColorsJapanese.csv",
+                            "data", "ColorsJapanese.csv", true);
+                    colors = ColorDataTools.readCSV(file, true);
+
+                } else if (message("HexaColors").equals(paletteName)) {
+                    File file = FxFileTools.getInternalFile("/data/examples/ColorsColorhexa.csv",
+                            "data", "ColorsColorhexa.csv", true);
+                    colors = ColorDataTools.readCSV(file, true);
+
+                } else if (message("MyBoxColors").equals(paletteName)) {
+                    colors = new ArrayList<>();
+                    for (StyleColor style : StyleData.StyleColor.values()) {
+                        colors.add(new ColorData(color(style, true).getRGB(), message("MyBoxColor" + style.name() + "Dark")));
+                        colors.add(new ColorData(color(style, false).getRGB(), message("MyBoxColor" + style.name() + "Light")));
+                    }
+                    colors.addAll(speicalColors());
+
+                } else if ((message("ArtHuesWheel") + "-" + message("Colors12")).equals(paletteName)) {
+                    String lang = Languages.getLangName();
+                    File file = FxFileTools.getInternalFile("/data/examples/ColorsRYB12_" + lang + ".csv",
+                            "data", "ColorsRYB12_" + lang + ".csv", true);
+                    colors = ColorDataTools.readCSV(file, true);
+                    colors.addAll(speicalColors());
+
+                } else if ((message("ArtHuesWheel") + "-" + message("Colors360")).equals(paletteName)) {
+                    colors = artHuesWheel(1);
+
+                } else if ((message("OpticalHuesWheel") + "-" + message("Colors12")).equals(paletteName)) {
+                    colors = opticalHuesWheel(30);
+
+                } else if ((message("OpticalHuesWheel") + "-" + message("Colors24")).equals(paletteName)) {
+                    colors = opticalHuesWheel(15);
+
+                } else if ((message("OpticalHuesWheel") + "-" + message("Colors360")).equals(paletteName)) {
+                    colors = opticalHuesWheel(1);
+
+                } else if (message("GrayScale").equals(paletteName)) {
+                    colors = greyScales();
+
+                } else {
+                    String lang = Languages.getLangName();
+                    File file = FxFileTools.getInternalFile("/data/examples/ColorsRYB24_" + lang + ".csv",
+                            "data", "ColorsRYB24_" + lang + ".csv", true);
+                    colors = ColorDataTools.readCSV(file, true);
+                    colors.addAll(speicalColors());
+
+                }
+                if (colors == null || colors.isEmpty()) {
+                    return false;
+                }
                 try (Connection conn = DerbyBase.getConnection()) {
-                    ColorPaletteName palette = new TableColorPaletteName().findAndCreate(conn, name);
+                    ColorPaletteName palette = new TableColorPaletteName().findAndCreate(conn, paletteName);
                     if (palette == null) {
                         return false;
                     }
-                    new TableColor().writeData(conn, colors, false);
-                    new TableColorPalette().write(conn, palette.getCpnid(), colors, true);
+                    TableColorPalette tableColorPalette = new TableColorPalette();
+                    tableColorPalette.clear(conn, palette.getCpnid());
+                    tableColorPalette.write(conn, palette.getCpnid(), colors, true, false);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -181,7 +252,7 @@ public class PaletteTools {
 
             @Override
             protected void whenSucceeded() {
-                afterPaletteChanged(parent, name);
+                afterPaletteChanged(parent, paletteName);
             }
         };
         parent.setTask(task);
@@ -195,26 +266,33 @@ public class PaletteTools {
             return;
         }
         SingletonTask task = new SingletonTask<Void>(parent) {
-            List<ColorData> colors;
 
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    ColorPaletteName palette = new TableColorPaletteName().findAndCreate(conn, paletteName);
-                    if (palette == null) {
+                    List<ColorData> colors = ColorDataTools.readCSV(file, reOrder);
+                    if (colors == null || colors.isEmpty()) {
                         return false;
                     }
-                    colors = ColorDataTools.readCSV(file, reOrder);
+                    if (paletteName == null || paletteName.isBlank()) {
+                        new TableColor().writeData(conn, colors, true);
+                    } else {
+                        ColorPaletteName palette = new TableColorPaletteName().findAndCreate(conn, paletteName);
+                        if (palette == null) {
+                            return false;
+                        }
+                        new TableColorPalette().write(conn, palette.getCpnid(), colors, true, false);
+                    }
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
                 }
-                return colors != null && !colors.isEmpty();
+                return true;
             }
 
             @Override
             protected void whenSucceeded() {
-                importData(parent, colors, paletteName);
+                afterPaletteChanged(parent, paletteName);
             }
         };
         parent.setTask(task);
@@ -225,12 +303,30 @@ public class PaletteTools {
         try {
             List<ColorData> colors = new ArrayList<>();
             for (int hue = 0; hue < 360; hue += step) {
-                ColorData color = new ColorData(FxColorTools.hsb2rgba(hue, 1f, 1f), message("Hue") + ": " + hue);
-                colors.add(color);
+                Color color = Color.hsb(hue, 1f, 1f);
+                ColorData data = new ColorData(color).calculate();
+                data.setColorName(message("Hue") + ":" + Math.round(data.getColor().getHue()));
+                colors.add(data);
             }
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.WHITE), message("White")));
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.BLACK), message("Black")));
-            colors.add(new ColorData(0, message("Transparent")));
+            colors.addAll(speicalColors());
+            return colors;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static List<ColorData> artHuesWheel(int step) {
+        try {
+            List<ColorData> colors = new ArrayList<>();
+            for (int angle = 0; angle < 360; angle += step) {
+                java.awt.Color color = ColorConvertTools.ryb2rgb(angle);
+                ColorData data = new ColorData(color.getRGB()).calculate();
+                data.setColorName(message("RYBAngle") + ":" + angle + " "
+                        + message("Hue") + ":" + Math.round(data.getColor().getHue()));
+                colors.add(data);
+            }
+            colors.addAll(speicalColors());
             return colors;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -241,9 +337,12 @@ public class PaletteTools {
     public static List<ColorData> greyScales() {
         try {
             List<ColorData> colors = new ArrayList<>();
-            for (int b = 100; b >= 0; b--) {
-                ColorData color = new ColorData(FxColorTools.hsb2rgba(0, 0f, b / 100f), message("Brightness") + ": " + b);
-                colors.add(color);
+            for (int v = 255; v >= 0; v--) {
+                float c = v / 255f;
+                Color color = new Color(c, c, c, 1);
+                ColorData data = new ColorData(color).calculate();
+                data.setColorName(message("Brightness") + ":" + Math.round(color.getBrightness() * 255));
+                colors.add(data);
             }
             return colors;
         } catch (Exception e) {
@@ -252,8 +351,22 @@ public class PaletteTools {
         }
     }
 
+    public static List<ColorData> speicalColors() {
+        try {
+            List<ColorData> colors = new ArrayList<>();
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.WHITE), message("White")));
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.BLACK), message("Black")));
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.GRAY), message("Gray")));
+            colors.add(new ColorData(0, message("Transparent")));
+            return colors;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public static String defaultPaletteName() {
-        return message("ArtHuesWheel24");
+        return message("ArtHuesWheel") + "-" + message("Colors24");
     }
 
     public static ColorPaletteName defaultPalette(Connection conn) {
@@ -279,11 +392,8 @@ public class PaletteTools {
                 if (colors == null) {
                     return null;
                 }
-                colors.add(new ColorData(FxColorTools.color2rgba(Color.WHITE), message("White")));
-                colors.add(new ColorData(FxColorTools.color2rgba(Color.BLACK), message("Black")));
-                colors.add(new ColorData(0, message("Transparent")));
-                new TableColor().writeData(conn, colors, false);
-                tableColorPalette.write(conn, palette.getCpnid(), colors, true);
+                colors.addAll(speicalColors());
+                tableColorPalette.write(conn, palette.getCpnid(), colors, true, false);
                 conn.commit();
             }
             conn.setAutoCommit(ac);
@@ -295,6 +405,9 @@ public class PaletteTools {
     }
 
     public static void afterPaletteChanged(BaseController parent, String paletteName) {
+        if (paletteName == null || paletteName.isBlank()) {
+            return;
+        }
         UserConfig.setString("ColorPalettePopupPalette", paletteName);
         List<Window> windows = new ArrayList<>();
         windows.addAll(Window.getWindows());

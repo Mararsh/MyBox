@@ -174,7 +174,7 @@ public class DoubleTools {
 
     public static double scale(double v, int scale) {
         try {
-            return Double.valueOf(scaleString(v, scale));
+            return Double.parseDouble(scaleString(v, scale));
         } catch (Exception e) {
             return v;
         }

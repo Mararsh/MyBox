@@ -175,7 +175,10 @@ public class DataMigration {
             MyBoxLog.info("Updating tables in 6.7.1...");
 
             conn.setAutoCommit(true);
+            statement.executeUpdate("ALTER TABLE Color ADD COLUMN ryb FLOAT ");
+            statement.executeUpdate("ALTER TABLE Color_Palette ADD COLUMN description VARCHAR(" + StringMaxLength + ")");
             statement.executeUpdate("ALTER TABLE Color_Palette_Name ADD COLUMN visit_time TIMESTAMP ");
+            statement.executeUpdate("DROP INDEX Color_Palette_unique_index");
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -1010,7 +1013,8 @@ public class DataMigration {
                     double orderNumber = results.getDouble("palette_index");
                     if (orderNumber > 0) {
                         color.setOrderNumner((float) orderNumber);
-                        tableColorPalette.findAndCreate(conn, paletteid, color, true);
+                        color.setPaletteid(paletteid);
+                        tableColorPalette.findAndCreate(conn, color, true, true);
                     }
                 }
             } catch (Exception e) {

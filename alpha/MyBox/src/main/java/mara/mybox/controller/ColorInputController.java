@@ -128,9 +128,10 @@ public class ColorInputController extends BaseController {
                             }
                             tableColor.write(conn, color, true);
                             if (paletteid >= 0) {
-                                tableColorPalette.findAndCreate(conn, paletteid, color, false);
+                                color.setPaletteid(paletteid);
+                                tableColorPalette.findAndCreate(conn, color, false, false);
                             }
-                            TableStringValues.add("ColorInputHistories", value);
+                            TableStringValues.add(conn, "ColorInputHistories", value);
                         }
                         conn.commit();
                     } catch (Exception e) {

@@ -383,7 +383,7 @@ public class ColorPalettePopupController extends BaseChildController {
         SingletonTask addTask = new SingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
-                return tableColorPalette.findAndCreate(currentPalette.getCpnid(), colorData, false) != null;
+                return tableColorPalette.findAndCreate(currentPalette.getCpnid(), colorData) != null;
             }
 
             @Override

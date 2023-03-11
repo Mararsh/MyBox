@@ -41,6 +41,7 @@ public class TableColor extends BaseTable<ColorData> {
         addColumn(new ColumnDefinition("rgb", ColumnType.Color, true).setLength(16));
         addColumn(new ColumnDefinition("srgb", ColumnType.String).setLength(128));
         addColumn(new ColumnDefinition("hsb", ColumnType.String).setLength(128));
+        addColumn(new ColumnDefinition("ryb", ColumnType.Float));
         addColumn(new ColumnDefinition("adobeRGB", ColumnType.String).setLength(128));
         addColumn(new ColumnDefinition("appleRGB", ColumnType.String).setLength(128));
         addColumn(new ColumnDefinition("eciRGB", ColumnType.String).setLength(128));
@@ -73,7 +74,7 @@ public class TableColor extends BaseTable<ColorData> {
 
     public ColorData read(int value) {
         ColorData data = null;
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             data = read(conn, value);
         } catch (Exception e) {
@@ -87,11 +88,11 @@ public class TableColor extends BaseTable<ColorData> {
             return null;
         }
         ColorData data = null;
-        try ( PreparedStatement statement = conn.prepareStatement(QueryValue)) {
+        try (PreparedStatement statement = conn.prepareStatement(QueryValue)) {
             statement.setInt(1, value);
             statement.setMaxRows(1);
             conn.setAutoCommit(true);
-            try ( ResultSet results = statement.executeQuery()) {
+            try (ResultSet results = statement.executeQuery()) {
                 if (results != null && results.next()) {
                     data = readData(results);
                 }
@@ -137,7 +138,7 @@ public class TableColor extends BaseTable<ColorData> {
 
     public ColorData findAndCreate(int value, String name) {
         ColorData data = null;
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             data = findAndCreate(conn, value, name);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -165,7 +166,7 @@ public class TableColor extends BaseTable<ColorData> {
     }
 
     public ColorData findAndCreate(String web, String name) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return findAndCreate(conn, web, name);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -187,7 +188,7 @@ public class TableColor extends BaseTable<ColorData> {
     }
 
     public ColorData write(String rgba, boolean replace) {
-        try ( Connection conn = DerbyBase.getConnection();) {
+        try (Connection conn = DerbyBase.getConnection();) {
             return write(conn, rgba, null, replace);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -229,7 +230,7 @@ public class TableColor extends BaseTable<ColorData> {
         if (data == null) {
             return null;
         }
-        try ( Connection conn = DerbyBase.getConnection();) {
+        try (Connection conn = DerbyBase.getConnection();) {
             return write(conn, data, replace);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -244,7 +245,7 @@ public class TableColor extends BaseTable<ColorData> {
         }
         ColorData exist = read(conn, data.getColorValue());
         if (exist != null) {
-            if (replace) {
+            if (replace || data.needCalculate()) {
                 return updateData(conn, data.calculate());
             } else {
                 return exist;
@@ -258,7 +259,7 @@ public class TableColor extends BaseTable<ColorData> {
         if (colors == null || colors.isEmpty()) {
             return null;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return writeColors(conn, colors, replace);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -293,7 +294,7 @@ public class TableColor extends BaseTable<ColorData> {
         if (dataList == null) {
             return null;
         }
-        try ( Connection conn = DerbyBase.getConnection();) {
+        try (Connection conn = DerbyBase.getConnection();) {
             return writeData(conn, dataList, replace);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -341,8 +342,8 @@ public class TableColor extends BaseTable<ColorData> {
         if (name == null) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection();
+                Statement statement = conn.createStatement()) {
             ColorData exist = read(conn, value);
             if (exist != null) {
                 String sql = "UPDATE Color SET "
@@ -368,7 +369,7 @@ public class TableColor extends BaseTable<ColorData> {
         if (web == null) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection();) {
+        try (Connection conn = DerbyBase.getConnection();) {
             return delete(conn, web);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -381,7 +382,7 @@ public class TableColor extends BaseTable<ColorData> {
         if (conn == null || web == null) {
             return false;
         }
-        try ( PreparedStatement delete = conn.prepareStatement(Delete)) {
+        try (PreparedStatement delete = conn.prepareStatement(Delete)) {
             int value = FxColorTools.web2Value(web);
             if (value == AppValues.InvalidInteger) {
                 return false;
@@ -399,8 +400,8 @@ public class TableColor extends BaseTable<ColorData> {
         if (webList == null || webList.isEmpty()) {
             return count;
         }
-        try ( Connection conn = DerbyBase.getConnection();
-                 PreparedStatement delete = conn.prepareStatement(Delete)) {
+        try (Connection conn = DerbyBase.getConnection();
+                PreparedStatement delete = conn.prepareStatement(Delete)) {
             boolean ac = conn.getAutoCommit();
             conn.setAutoCommit(false);
             for (String web : webList) {

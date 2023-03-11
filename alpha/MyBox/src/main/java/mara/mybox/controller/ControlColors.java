@@ -28,6 +28,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
@@ -44,6 +45,8 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Callback;
+import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColorData;
@@ -66,6 +69,7 @@ import mara.mybox.fxml.cell.TableColorCell;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
@@ -99,9 +103,10 @@ public class ControlColors extends BaseSysTableController<ColorData> {
     protected TableColumn<ColorData, String> colorNameColumn, dataColumn, rgbaColumn, rgbColumn,
             sRGBColumn, HSBColumn, AdobeRGBColumn, AppleRGBColumn, ECIRGBColumn,
             sRGBLinearColumn, AdobeRGBLinearColumn, AppleRGBLinearColumn, CalculatedCMYKColumn,
-            ECICMYKColumn, AdobeCMYKColumn, XYZColumn, CIELabColumn, LCHabColumn, CIELuvColumn, LCHuvColumn;
+            ECICMYKColumn, AdobeCMYKColumn, descColumn,
+            XYZColumn, CIELabColumn, LCHabColumn, CIELuvColumn, LCHuvColumn;
     @FXML
-    protected TableColumn<ColorData, Float> orderColumn;
+    protected TableColumn<ColorData, Float> orderColumn, rybColumn;
     @FXML
     protected Button addColorsButton, trimButton;
     @FXML
@@ -263,6 +268,36 @@ public class ControlColors extends BaseSysTableController<ColorData> {
 
             rgbaColumn.setCellValueFactory(new PropertyValueFactory<>("rgba"));
             rgbColumn.setCellValueFactory(new PropertyValueFactory<>("rgb"));
+
+            rybColumn.setCellValueFactory(new PropertyValueFactory<>("ryb"));
+            rybColumn.setCellFactory(new Callback<TableColumn<ColorData, Float>, TableCell<ColorData, Float>>() {
+                @Override
+                public TableCell<ColorData, Float> call(TableColumn<ColorData, Float> param) {
+                    try {
+                        TableCell<ColorData, Float> cell = new TableCell<ColorData, Float>() {
+                            @Override
+                            public void updateItem(Float item, boolean empty) {
+                                super.updateItem(item, empty);
+                                setGraphic(null);
+                                if (empty || item == null) {
+                                    setText(null);
+                                    return;
+                                }
+                                float angle = item;
+                                if (angle < 0 || angle >= 360) {
+                                    Color color = tableData.get(getIndex()).getColor();
+                                    angle = ColorConvertTools.hue2ryb(color.getHue());
+                                }
+                                setText(FloatTools.toInt(angle) + "°");
+                            }
+                        };
+                        return cell;
+                    } catch (Exception e) {
+                        return null;
+                    }
+                }
+            });
+
             sRGBColumn.setCellValueFactory(new PropertyValueFactory<>("srgb"));
             HSBColumn.setCellValueFactory(new PropertyValueFactory<>("hsb"));
             AdobeRGBColumn.setCellValueFactory(new PropertyValueFactory<>("adobeRGB"));
@@ -279,6 +314,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
             LCHabColumn.setCellValueFactory(new PropertyValueFactory<>("lchab"));
             CIELuvColumn.setCellValueFactory(new PropertyValueFactory<>("cieLuv"));
             LCHuvColumn.setCellValueFactory(new PropertyValueFactory<>("lchuv"));
+            descColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -292,15 +328,21 @@ public class ControlColors extends BaseSysTableController<ColorData> {
 
             exportButton.disableProperty().bind(Bindings.isEmpty(tableData));
 
-            allColumnsCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
-                checkColumns();
-                loadTableData();
-            });
+            allColumnsCheck.setSelected(UserConfig.getBoolean("ColorsDisplayAllColumns", false));
+            allColumnsCheck.selectedProperty().addListener(
+                    (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
+                        UserConfig.setBoolean("ColorsDisplayAllColumns", allColumnsCheck.isSelected());
+                        checkColumns();
+                        loadTableData();
+                    });
 
-            mergeCheck.selectedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
-                checkColumns();
-                loadTableData();
-            });
+            mergeCheck.setSelected(UserConfig.getBoolean("ColorsDisplayMerge", false));
+            mergeCheck.selectedProperty().addListener(
+                    (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
+                        UserConfig.setBoolean("ColorsDisplayMerge", mergeCheck.isSelected());
+                        checkColumns();
+                        loadTableData();
+                    });
 
             checkColumns();
 
@@ -327,7 +369,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
                 }
                 tableView.getColumns().addAll(dataColumn);
             } else {
-                tableView.getColumns().addAll(sRGBColumn, HSBColumn, CalculatedCMYKColumn);
+                tableView.getColumns().addAll(sRGBColumn, HSBColumn, rybColumn, CalculatedCMYKColumn);
                 if (allColumnsCheck.isSelected()) {
                     tableView.getColumns().addAll(AdobeRGBColumn, AppleRGBColumn, ECIRGBColumn,
                             sRGBLinearColumn, AdobeRGBLinearColumn, AppleRGBLinearColumn,
@@ -953,7 +995,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
 
                     @Override
                     protected boolean handle() {
-                        deletedCount = tableColorPalette.delete(currentPalette.getCpnid(), (ColorData) (clickedRect.getUserData()));
+                        deletedCount = tableColorPalette.delete((ColorData) (clickedRect.getUserData()));
                         return deletedCount >= 0;
                     }
 
@@ -1021,8 +1063,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
        Data
      */
     @Override
-    public long readDataSize(Connection conn
-    ) {
+    public long readDataSize(Connection conn) {
         if (isAllColors()) {
             return tableColor.size(conn);
         } else {
@@ -1031,8 +1072,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
     }
 
     @Override
-    public List<ColorData> readPageData(Connection conn
-    ) {
+    public List<ColorData> readPageData(Connection conn) {
         if (isAllColors()) {
             return tableColor.queryConditions(conn, null, null, startRowOfCurrentPage, pageSize);
         } else {
@@ -1055,7 +1095,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
         if (isAllColors()) {
             return tableColor.deleteData(data);
         } else {
-            return tableColorPalette.delete(currentPalette.getCpnid(), data);
+            return tableColorPalette.delete(data);
         }
     }
 
@@ -1105,8 +1145,9 @@ public class ControlColors extends BaseSysTableController<ColorData> {
                         if (colorData == null) {
                             return false;
                         }
+                        colorData.setPaletteid(currentPalette.getCpnid());
                         if (!isAllColors()) {
-                            tableColorPalette.findAndCreate(conn, currentPalette.getCpnid(), colorData, false);
+                            tableColorPalette.findAndCreate(conn, colorData, false, false);
                         }
                     } catch (Exception e) {
                         error = e.toString();
@@ -1365,7 +1406,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
                             ColorData data = colors.get(i);
                             data.setOrderNumner(f0 + offset * i);
                         }
-                        tableColorPalette.write(currentPalette.getCpnid(), colors, true);
+                        tableColorPalette.write(currentPalette.getCpnid(), colors, true, false);
                     } catch (Exception e) {
                         error = e.toString();
                         return false;

@@ -202,7 +202,8 @@ License:    Apache License Version 2.0
                                                         <TableColumn fx:id="rgbColumn" prefWidth="100.0" text="RGB" />
                                                         <TableColumn fx:id="sRGBColumn" prefWidth="150.0" text="sRGB" />
                                                         <TableColumn fx:id="HSBColumn" prefWidth="140.0" text="HSB" />
-                                                        <TableColumn fx:id="CalculatedCMYKColumn" prefWidth="120.0" text="Calculated CMYK" />
+                                                        <TableColumn fx:id="rybColumn" prefWidth="100.0" text="%RYBAngle" />
+                                                        <TableColumn fx:id="CalculatedCMYKColumn" prefWidth="120.0" text="%CalculatedCMYK" />
                                                         <TableColumn fx:id="AdobeRGBColumn" prefWidth="100.0" text="Adobe RGB" />
                                                         <TableColumn fx:id="AppleRGBColumn" prefWidth="100.0" text="Apple RGB" />
                                                         <TableColumn fx:id="ECIRGBColumn" prefWidth="100.0" text="ECI RGB" />
@@ -218,6 +219,7 @@ License:    Apache License Version 2.0
                                                         <TableColumn fx:id="LCHuvColumn" prefWidth="150.0" text="LCH(uv)" />
                                                         <TableColumn fx:id="colorValueColumn" prefWidth="100.0" text="%Value" />
                                                         <TableColumn fx:id="dataColumn" prefWidth="150.0" text="%Data" />
+                                                        <TableColumn fx:id="descColumn" prefWidth="200.0" text="%Description" />
                                                     </columns>
                                                 </TableView>                                              
                                             </children>
