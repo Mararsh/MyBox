@@ -1,6 +1,7 @@
 package mara.mybox.bufferedimage;
 
 import java.awt.Color;
+import mara.mybox.db.data.ColorData;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -232,7 +233,19 @@ public class ColorConvertTools {
     // https://blog.csdn.net/weixin_44938037/article/details/90599711
     public static Color ryb2rgb(float angle) {
         float hue = ryb2hue(angle);
-        return Color.getHSBColor(hue / 360, 1, 1);
+        float brightness = ryb2brightness(angle);
+        return Color.getHSBColor(hue / 360, 1, brightness / 100);
+    }
+
+    public static Color rybComplementary(ColorData data) {
+        if (data == null || data.getColor() == null) {
+            return null;
+        }
+        float ryb = data.getRyb();
+        if (ryb < 0) {
+            return null;
+        }
+        return ryb2rgb(ryb + 180);
     }
 
     public static float ryb2hue(float angle) {
@@ -240,22 +253,58 @@ public class ColorConvertTools {
         float hue;
         if (a < 30) {
             hue = 2 * a / 3;
+
         } else if (a < 90) {
             hue = a / 3 + 10;
+
         } else if (a < 120) {
             hue = 2 * a / 3 - 20;
+
         } else if (a < 180) {
             hue = a - 60;
+
         } else if (a < 210) {
             hue = 2 * a - 240;
+
         } else if (a < 270) {
             hue = a - 30;
+
         } else if (a < 300) {
             hue = 2 * a - 300;
+
         } else {
             hue = a;
         }
         return hue;
+    }
+
+//    b = maxB - (maxB -minB) * (a - minA)/(maxA - minA)
+//    b = minB + (maxB -minB) * (a - minA) /(maxA - minA)
+    public static float ryb2brightness(float angle) {
+        float a = angle % 360;
+        float b;
+        if (a <= 13) {
+            b = 100 - 10 * a / 13;
+
+        } else if (a <= 60) {
+            b = 90 + 10 * (a - 13) / 47;
+
+        } else if (a <= 120) {
+            b = 100;
+
+        } else if (a <= 180) {
+            b = 100 - 5 * (a - 120) / 6;
+
+        } else if (a <= 240) {
+            b = 50 + 5 * (a - 180) / 6;
+
+        } else if (a <= 300) {
+            b = 100 - 5 * (a - 240) / 6;
+
+        } else {
+            b = 50 + 5 * (a - 300) / 6;
+        }
+        return b;
     }
 
     public static float hue2ryb(double hue) {
@@ -267,18 +316,25 @@ public class ColorConvertTools {
         float a;
         if (h < 20) {
             a = 1.5f * h;
+
         } else if (h < 40) {
             a = 3 * h - 30;
+
         } else if (h < 60) {
             a = 1.5f * h + 30;
+
         } else if (h < 120) {
             a = h + 60;
+
         } else if (h < 180) {
             a = h / 2 + 120;
+
         } else if (h < 240) {
             a = h + 30;
+
         } else if (h < 300) {
             a = h / 2 + 150;
+
         } else {
             a = h;
         }

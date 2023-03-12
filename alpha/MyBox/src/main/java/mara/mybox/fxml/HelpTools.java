@@ -25,16 +25,15 @@ public class HelpTools {
         try {
             String lang = Languages.getLangName();
             File htmlFile = new File(AppVariables.MyboxDataPath + "/doc/readme-" + lang + ".htm");
-            if (!htmlFile.exists()) {
-                File mdFile = FxFileTools.getInternalFile("/doc/" + lang + "/README.md",
-                        "doc", "README-" + lang + ".md");
-                String html = MarkdownTools.md2html(mdFile);
-                if (html == null) {
-                    return;
-                }
-                html = html.replaceAll("href=\"", "target=_blank href=\"");
-                TextFileTools.writeFile(htmlFile, html);
+            File mdFile = FxFileTools.getInternalFile("/doc/" + lang + "/README.md",
+                    "doc", "README-" + lang + ".md", true);
+            String html = MarkdownTools.md2html(mdFile);
+            if (html == null) {
+                return;
             }
+            html = html.replaceAll("href=\"", "target=_blank href=\"");
+            html = html.replaceAll("href=\"", "target=_blank href=\"");
+            TextFileTools.writeFile(htmlFile, html);
             PopTools.browseURI(controller, htmlFile.toURI());
             SoundTools.miao5();
         } catch (Exception e) {

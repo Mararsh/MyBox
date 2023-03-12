@@ -180,7 +180,12 @@ public class BaseWebViewController extends BaseController {
     }
 
     public String title() {
-        return getBaseTitle() + "  " + webViewController.title();
+        String title = webViewController.title();
+        if (title == null) {
+            return getBaseTitle();
+        } else {
+            return getBaseTitle() + "  " + title;
+        }
     }
 
     public void initStyle(String style) {

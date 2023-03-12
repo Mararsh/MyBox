@@ -187,6 +187,9 @@ public class HtmlTableController extends BaseWebViewController {
         webViewController.tables(html, title);
     }
 
+    @Override
+    public void pageLoaded() {
+    }
 
     /*
         get/set

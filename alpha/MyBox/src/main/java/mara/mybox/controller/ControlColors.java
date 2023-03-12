@@ -28,9 +28,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.effect.DropShadow;
@@ -45,8 +43,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.util.Callback;
-import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColorData;
@@ -69,7 +65,6 @@ import mara.mybox.fxml.cell.TableColorCell;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
@@ -98,15 +93,17 @@ public class ControlColors extends BaseSysTableController<ColorData> {
     @FXML
     protected TableColumn<ColorData, Integer> colorValueColumn;
     @FXML
-    protected TableColumn<ColorData, Color> colorColumn;
+    protected TableColumn<ColorData, Color> colorColumn, invertColumn, complementaryColumn;
     @FXML
-    protected TableColumn<ColorData, String> colorNameColumn, dataColumn, rgbaColumn, rgbColumn,
+    protected TableColumn<ColorData, String> colorNameColumn, dataColumn,
+            rgbaColumn, rgbColumn, hueColumn, rybColumn, saturationColumn, brightnessColumn,
             sRGBColumn, HSBColumn, AdobeRGBColumn, AppleRGBColumn, ECIRGBColumn,
             sRGBLinearColumn, AdobeRGBLinearColumn, AppleRGBLinearColumn, CalculatedCMYKColumn,
             ECICMYKColumn, AdobeCMYKColumn, descColumn,
-            XYZColumn, CIELabColumn, LCHabColumn, CIELuvColumn, LCHuvColumn;
+            XYZColumn, CIELabColumn, LCHabColumn, CIELuvColumn, LCHuvColumn,
+            invertRGBColumn, complementaryRGBColumn;
     @FXML
-    protected TableColumn<ColorData, Float> orderColumn, rybColumn;
+    protected TableColumn<ColorData, Float> orderColumn;
     @FXML
     protected Button addColorsButton, trimButton;
     @FXML
@@ -120,7 +117,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
     @FXML
     protected FlowPane buttonsPane, colorsPane;
     @FXML
-    protected TextArea colorArea;
+    protected HtmlTableController infoController;
     @FXML
     protected VBox colorsBox;
 
@@ -191,8 +188,12 @@ public class ControlColors extends BaseSysTableController<ColorData> {
                         trimButton.setDisable(isAll);
                         if (!isAll) {
                             UserConfig.setString(baseName + "Palette", currentPalette.getName());
+                            setTitle(baseTitle + " - " + currentPalette.getName());
+                        } else {
+                            setTitle(baseTitle + " - " + message("AllColors"));
                         }
                         refreshPalette();
+
                     });
 
             paletteTabPane.getSelectionModel().selectedItemProperty().addListener(
@@ -205,6 +206,8 @@ public class ControlColors extends BaseSysTableController<ColorData> {
                     });
 
             refreshPalettes();
+
+            infoController.initStyle(HtmlStyles.styleValue("TableStyle") + "\n body { width: 400px; } \n");
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -220,6 +223,14 @@ public class ControlColors extends BaseSysTableController<ColorData> {
 
             colorColumn.setCellValueFactory(new PropertyValueFactory<>("color"));
             colorColumn.setCellFactory(new TableColorCell<>());
+
+            invertColumn.setCellValueFactory(new PropertyValueFactory<>("invertColor"));
+            invertColumn.setCellFactory(new TableColorCell<>());
+            invertRGBColumn.setCellValueFactory(new PropertyValueFactory<>("invertRGB"));
+
+            complementaryColumn.setCellValueFactory(new PropertyValueFactory<>("complementaryColor"));
+            complementaryColumn.setCellFactory(new TableColorCell<>());
+            complementaryRGBColumn.setCellValueFactory(new PropertyValueFactory<>("complementaryRGB"));
 
             colorValueColumn.setCellValueFactory(new PropertyValueFactory<>("colorValue"));
 
@@ -269,34 +280,10 @@ public class ControlColors extends BaseSysTableController<ColorData> {
             rgbaColumn.setCellValueFactory(new PropertyValueFactory<>("rgba"));
             rgbColumn.setCellValueFactory(new PropertyValueFactory<>("rgb"));
 
-            rybColumn.setCellValueFactory(new PropertyValueFactory<>("ryb"));
-            rybColumn.setCellFactory(new Callback<TableColumn<ColorData, Float>, TableCell<ColorData, Float>>() {
-                @Override
-                public TableCell<ColorData, Float> call(TableColumn<ColorData, Float> param) {
-                    try {
-                        TableCell<ColorData, Float> cell = new TableCell<ColorData, Float>() {
-                            @Override
-                            public void updateItem(Float item, boolean empty) {
-                                super.updateItem(item, empty);
-                                setGraphic(null);
-                                if (empty || item == null) {
-                                    setText(null);
-                                    return;
-                                }
-                                float angle = item;
-                                if (angle < 0 || angle >= 360) {
-                                    Color color = tableData.get(getIndex()).getColor();
-                                    angle = ColorConvertTools.hue2ryb(color.getHue());
-                                }
-                                setText(FloatTools.toInt(angle) + "°");
-                            }
-                        };
-                        return cell;
-                    } catch (Exception e) {
-                        return null;
-                    }
-                }
-            });
+            rybColumn.setCellValueFactory(new PropertyValueFactory<>("rybAngle"));
+            hueColumn.setCellValueFactory(new PropertyValueFactory<>("hue"));
+            saturationColumn.setCellValueFactory(new PropertyValueFactory<>("saturation"));
+            brightnessColumn.setCellValueFactory(new PropertyValueFactory<>("brightness"));
 
             sRGBColumn.setCellValueFactory(new PropertyValueFactory<>("srgb"));
             HSBColumn.setCellValueFactory(new PropertyValueFactory<>("hsb"));
@@ -369,7 +356,8 @@ public class ControlColors extends BaseSysTableController<ColorData> {
                 }
                 tableView.getColumns().addAll(dataColumn);
             } else {
-                tableView.getColumns().addAll(sRGBColumn, HSBColumn, rybColumn, CalculatedCMYKColumn);
+                tableView.getColumns().addAll(sRGBColumn, HSBColumn, hueColumn, saturationColumn,
+                        brightnessColumn, rybColumn, CalculatedCMYKColumn);
                 if (allColumnsCheck.isSelected()) {
                     tableView.getColumns().addAll(AdobeRGBColumn, AppleRGBColumn, ECIRGBColumn,
                             sRGBLinearColumn, AdobeRGBLinearColumn, AppleRGBLinearColumn,
@@ -378,6 +366,8 @@ public class ControlColors extends BaseSysTableController<ColorData> {
                 }
                 tableView.getColumns().add(colorValueColumn);
             }
+            tableView.getColumns().addAll(invertColumn, invertRGBColumn,
+                    complementaryColumn, complementaryRGBColumn);
             isSettingValues = false;
 
         } catch (Exception e) {
@@ -865,7 +855,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
                     title += "_" + message("Page") + (currentPage + 1);
                     displayHtml(title, rows);
                 } else {
-                    String atitle = title + "_" + message("All");
+                    String atitle = title;
                     synchronized (this) {
                         if (task != null && !task.isQuit()) {
                             return;
@@ -914,6 +904,9 @@ public class ControlColors extends BaseSysTableController<ColorData> {
             }
             StringTable table = new StringTable(names, title, 1);
             for (ColorData data : rows) {
+                if (data.needConvert()) {
+                    data.convert();
+                }
                 List<String> row = new ArrayList<>();
                 for (TableColumn column : tableView.getColumns()) {
                     if (column.equals(colorValueColumn)) {
@@ -926,6 +919,14 @@ public class ControlColors extends BaseSysTableController<ColorData> {
                         row.add(data.getSrgb());
                     } else if (column.equals(HSBColumn)) {
                         row.add(data.getHsb());
+                    } else if (column.equals(hueColumn)) {
+                        row.add(data.getHue());
+                    } else if (column.equals(saturationColumn)) {
+                        row.add(data.getSaturation());
+                    } else if (column.equals(brightnessColumn)) {
+                        row.add(data.getBrightness());
+                    } else if (column.equals(rybColumn)) {
+                        row.add(data.getRybAngle());
                     } else if (column.equals(AdobeRGBColumn)) {
                         row.add(data.getAdobeRGB());
                     } else if (column.equals(AppleRGBColumn)) {
@@ -960,11 +961,21 @@ public class ControlColors extends BaseSysTableController<ColorData> {
                         } else {
                             row.add(ColorData.htmlSimpleValue(data));
                         }
+                    } else if (column.equals(invertColumn)) {
+                        row.add("<DIV style=\"width: 50px;  background-color:"
+                                + FxColorTools.color2rgb(data.getInvertColor()) + "; \">&nbsp;&nbsp;&nbsp;</DIV>");
+                    } else if (column.equals(invertRGBColumn)) {
+                        row.add(data.getInvertRGB());
+                    } else if (column.equals(complementaryColumn)) {
+                        row.add("<DIV style=\"width: 50px;  background-color:"
+                                + FxColorTools.color2rgb(data.getComplementaryColor()) + "; \">&nbsp;&nbsp;&nbsp;</DIV>");
+                    } else if (column.equals(complementaryRGBColumn)) {
+                        row.add(data.getComplementaryRGB());
                     }
                 }
                 table.add(row);
             }
-            String html = HtmlWriteTools.html(title, table.body());
+            String html = HtmlWriteTools.html(title, HtmlStyles.styleValue("TableStyle"), table.body());
             WebBrowserController.openHtml(html, HtmlStyles.styleValue("TableStyle"), true);
 
         } catch (Exception e) {
@@ -1025,7 +1036,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
     public void resetView(boolean changed) {
         super.resetView(changed);
         colorsPane.getChildren().clear();
-        colorArea.clear();
+        infoController.clear();
     }
 
     @FXML
@@ -1087,8 +1098,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
     }
 
     @Override
-    protected int deleteData(List<ColorData> data
-    ) {
+    protected int deleteData(List<ColorData> data) {
         if (data == null || data.isEmpty()) {
             return 0;
         }
@@ -1114,7 +1124,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
         copyButton.setDisable(color == null);
         if (color != null) {
 //            showRightPane();
-            colorArea.setText(color.display());
+            infoController.displayHtml(color.html());
         }
         super.checkButtons();
     }
@@ -1173,7 +1183,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
     public void makeColorsPane() {
         synchronized (this) {
             colorsPane.getChildren().clear();
-            colorArea.clear();
+            infoController.clear();
             colorsPaneLabel.setVisible(!isAllColors());
             if (tableData == null || tableData.isEmpty()) {
                 return;
@@ -1318,7 +1328,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
             rect.setHeight(rectSize * 1.6);
             rect.setStroke(Color.RED);
             clickedRect = rect;
-            colorArea.setText(data.display());
+            infoController.displayHtml(data.html());
             deleteButton.setDisable(false);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

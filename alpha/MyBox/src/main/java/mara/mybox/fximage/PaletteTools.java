@@ -207,7 +207,6 @@ public class PaletteTools {
                     File file = FxFileTools.getInternalFile("/data/examples/ColorsRYB12_" + lang + ".csv",
                             "data", "ColorsRYB12_" + lang + ".csv", true);
                     colors = ColorDataTools.readCSV(file, true);
-                    colors.addAll(speicalColors());
 
                 } else if ((message("ArtHuesWheel") + "-" + message("Colors360")).equals(paletteName)) {
                     colors = artHuesWheel(1);
@@ -229,7 +228,6 @@ public class PaletteTools {
                     File file = FxFileTools.getInternalFile("/data/examples/ColorsRYB24_" + lang + ".csv",
                             "data", "ColorsRYB24_" + lang + ".csv", true);
                     colors = ColorDataTools.readCSV(file, true);
-                    colors.addAll(speicalColors());
 
                 }
                 if (colors == null || colors.isEmpty()) {
@@ -308,7 +306,6 @@ public class PaletteTools {
                 data.setColorName(message("Hue") + ":" + Math.round(data.getColor().getHue()));
                 colors.add(data);
             }
-            colors.addAll(speicalColors());
             return colors;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -326,7 +323,6 @@ public class PaletteTools {
                         + message("Hue") + ":" + Math.round(data.getColor().getHue()));
                 colors.add(data);
             }
-            colors.addAll(speicalColors());
             return colors;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -392,7 +388,6 @@ public class PaletteTools {
                 if (colors == null) {
                     return null;
                 }
-                colors.addAll(speicalColors());
                 tableColorPalette.write(conn, palette.getCpnid(), colors, true, false);
                 conn.commit();
             }

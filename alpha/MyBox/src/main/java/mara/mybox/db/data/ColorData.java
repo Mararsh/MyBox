@@ -1,5 +1,8 @@
 package mara.mybox.db.data;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.bufferedimage.ImageColorSpace;
@@ -8,10 +11,13 @@ import mara.mybox.color.AppleRGB;
 import mara.mybox.color.CIEColorSpace;
 import mara.mybox.color.RGBColorSpace;
 import mara.mybox.color.SRGB;
+import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FloatTools;
+import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
@@ -24,9 +30,10 @@ import static mara.mybox.value.Languages.message;
 public class ColorData extends BaseData {
 
     protected int colorValue;
-    protected javafx.scene.paint.Color color;
-    protected String rgba, rgb, colorName, colorDisplay, colorSimpleDisplay;
-    protected String srgb, hsb, adobeRGB, appleRGB, eciRGB, SRGBLinear, adobeRGBLinear,
+    protected javafx.scene.paint.Color color, invertColor, complementaryColor;
+    protected String rgba, rgb, colorName, colorDisplay, colorSimpleDisplay, vSeparator;
+    protected String srgb, hsb, hue, rybAngle, saturation, brightness, invertRGB, complementaryRGB,
+            adobeRGB, appleRGB, eciRGB, SRGBLinear, adobeRGBLinear,
             appleRGBLinear, calculatedCMYK, eciCMYK, adobeCMYK, xyz, cieLab,
             lchab, cieLuv, lchuv;
     protected float[] adobeRGBValues, appleRGBValues, eciRGBValues, eciCmykValues, adobeCmykValues;
@@ -42,6 +49,7 @@ public class ColorData extends BaseData {
         ryb = -1;
         paletteid = -1;
         cpid = -1;
+        vSeparator = " ";
     }
 
     public ColorData() {
@@ -115,6 +123,10 @@ public class ColorData extends BaseData {
         return color == null || srgb == null;
     }
 
+    public boolean needConvert() {
+        return ryb < 0 || hsb == null || invertRGB == null;
+    }
+
     public boolean calculateBase() {
         if (colorValue != AppValues.InvalidInteger) {
             color = FxColorTools.value2color(colorValue);
@@ -148,81 +160,109 @@ public class ColorData extends BaseData {
         if (!calculateBase()) {
             return this;
         }
-        srgb = Math.round(color.getRed() * 255) + " "
-                + Math.round(color.getGreen() * 255) + " "
-                + Math.round(color.getBlue() * 255) + " "
+        srgb = Math.round(color.getRed() * 255) + vSeparator
+                + Math.round(color.getGreen() * 255) + vSeparator
+                + Math.round(color.getBlue() * 255) + vSeparator
                 + Math.round(color.getOpacity() * 100) + "%";
 
-        hsb = Math.round(color.getHue()) + " "
-                + Math.round(color.getSaturation() * 100) + "% "
-                + Math.round(color.getBrightness() * 100) + "%";
-
-        ryb = ryb();
-
         adobeRGBValues = SRGB.srgb2profile(ImageColorSpace.adobeRGBProfile(), color);
-        adobeRGB = Math.round(adobeRGBValues[0] * 255) + " "
-                + Math.round(adobeRGBValues[1] * 255) + " "
+        adobeRGB = Math.round(adobeRGBValues[0] * 255) + vSeparator
+                + Math.round(adobeRGBValues[1] * 255) + vSeparator
                 + Math.round(adobeRGBValues[2] * 255);
 
         appleRGBValues = SRGB.srgb2profile(ImageColorSpace.appleRGBProfile(), color);
-        appleRGB = Math.round(appleRGBValues[0] * 255) + " "
-                + Math.round(appleRGBValues[1] * 255) + " "
+        appleRGB = Math.round(appleRGBValues[0] * 255) + vSeparator
+                + Math.round(appleRGBValues[1] * 255) + vSeparator
                 + Math.round(appleRGBValues[2] * 255);
 
         eciRGBValues = SRGB.srgb2profile(ImageColorSpace.eciRGBProfile(), color);
-        eciRGB = Math.round(eciRGBValues[0] * 255) + " "
-                + Math.round(eciRGBValues[1] * 255) + " "
+        eciRGB = Math.round(eciRGBValues[0] * 255) + vSeparator
+                + Math.round(eciRGBValues[1] * 255) + vSeparator
                 + Math.round(eciRGBValues[2] * 255);
 
-        SRGBLinear = Math.round(RGBColorSpace.linearSRGB(color.getRed()) * 255) + " "
-                + Math.round(RGBColorSpace.linearSRGB(color.getGreen()) * 255) + " "
+        SRGBLinear = Math.round(RGBColorSpace.linearSRGB(color.getRed()) * 255) + vSeparator
+                + Math.round(RGBColorSpace.linearSRGB(color.getGreen()) * 255) + vSeparator
                 + Math.round(RGBColorSpace.linearSRGB(color.getBlue()) * 255);
 
-        adobeRGBLinear = Math.round(AdobeRGB.linearAdobeRGB(adobeRGBValues[0]) * 255) + " "
-                + Math.round(AdobeRGB.linearAdobeRGB(adobeRGBValues[1]) * 255) + " "
+        adobeRGBLinear = Math.round(AdobeRGB.linearAdobeRGB(adobeRGBValues[0]) * 255) + vSeparator
+                + Math.round(AdobeRGB.linearAdobeRGB(adobeRGBValues[1]) * 255) + vSeparator
                 + Math.round(AdobeRGB.linearAdobeRGB(adobeRGBValues[2]) * 255);
 
-        appleRGBLinear = Math.round(AppleRGB.linearAppleRGB(appleRGBValues[0]) * 255) + " "
-                + Math.round(AppleRGB.linearAppleRGB(appleRGBValues[1]) * 255) + " "
+        appleRGBLinear = Math.round(AppleRGB.linearAppleRGB(appleRGBValues[0]) * 255) + vSeparator
+                + Math.round(AppleRGB.linearAppleRGB(appleRGBValues[1]) * 255) + vSeparator
                 + Math.round(AppleRGB.linearAppleRGB(appleRGBValues[2]) * 255);
 
         cmyk = SRGB.rgb2cmyk(color);
-        calculatedCMYK = Math.round(cmyk[0] * 100) + " " + Math.round(cmyk[1] * 100) + " "
-                + Math.round(cmyk[2] * 100) + " " + Math.round(cmyk[3] * 100);
+        calculatedCMYK = Math.round(cmyk[0] * 100) + vSeparator
+                + Math.round(cmyk[1] * 100) + vSeparator
+                + Math.round(cmyk[2] * 100) + vSeparator
+                + Math.round(cmyk[3] * 100);
 
         eciCmykValues = SRGB.srgb2profile(ImageColorSpace.eciCmykProfile(), color);
-        eciCMYK = Math.round(eciCmykValues[0] * 100) + " " + Math.round(eciCmykValues[1] * 100) + " "
-                + Math.round(eciCmykValues[2] * 100) + " " + Math.round(eciCmykValues[3] * 100);
+        eciCMYK = Math.round(eciCmykValues[0] * 100) + vSeparator
+                + Math.round(eciCmykValues[1] * 100) + vSeparator
+                + Math.round(eciCmykValues[2] * 100) + vSeparator
+                + Math.round(eciCmykValues[3] * 100);
 
         adobeCmykValues = SRGB.srgb2profile(ImageColorSpace.adobeCmykProfile(), color);
-        adobeCMYK = Math.round(adobeCmykValues[0] * 100) + " " + Math.round(adobeCmykValues[1] * 100) + " "
-                + Math.round(adobeCmykValues[2] * 100) + " " + Math.round(adobeCmykValues[3] * 100);
+        adobeCMYK = Math.round(adobeCmykValues[0] * 100) + vSeparator
+                + Math.round(adobeCmykValues[1] * 100) + vSeparator
+                + Math.round(adobeCmykValues[2] * 100) + vSeparator
+                + Math.round(adobeCmykValues[3] * 100);
 
         xyzValues = SRGB.toXYZd50(ColorConvertTools.converColor(color));
-        xyz = DoubleTools.scale(xyzValues[0], 6) + " "
-                + DoubleTools.scale(xyzValues[1], 6) + " "
+        xyz = DoubleTools.scale(xyzValues[0], 6) + vSeparator
+                + DoubleTools.scale(xyzValues[1], 6) + vSeparator
                 + DoubleTools.scale(xyzValues[2], 6);
 
         cieLabValues = CIEColorSpace.XYZd50toCIELab(xyzValues[0], xyzValues[1], xyzValues[2]);
-        cieLab = DoubleTools.scale(cieLabValues[0], 2) + " "
-                + DoubleTools.scale(cieLabValues[1], 2) + " "
+        cieLab = DoubleTools.scale(cieLabValues[0], 2) + vSeparator
+                + DoubleTools.scale(cieLabValues[1], 2) + vSeparator
                 + DoubleTools.scale(cieLabValues[2], 2);
 
         lchabValues = CIEColorSpace.LabtoLCHab(cieLabValues);
-        lchab = DoubleTools.scale(lchabValues[0], 2) + " "
-                + DoubleTools.scale(lchabValues[1], 2) + " "
+        lchab = DoubleTools.scale(lchabValues[0], 2) + vSeparator
+                + DoubleTools.scale(lchabValues[1], 2) + vSeparator
                 + DoubleTools.scale(lchabValues[2], 2);
 
         cieLuvValues = CIEColorSpace.XYZd50toCIELuv(xyzValues[0], xyzValues[1], xyzValues[2]);
-        cieLuv = DoubleTools.scale(cieLuvValues[0], 2) + " "
-                + DoubleTools.scale(cieLuvValues[1], 2) + " "
+        cieLuv = DoubleTools.scale(cieLuvValues[0], 2) + vSeparator
+                + DoubleTools.scale(cieLuvValues[1], 2) + vSeparator
                 + DoubleTools.scale(cieLuvValues[2], 2);
 
         lchuvValues = CIEColorSpace.LuvtoLCHuv(cieLuvValues);
-        lchuv = DoubleTools.scale(lchuvValues[0], 2) + " "
-                + DoubleTools.scale(lchuvValues[1], 2) + " "
+        lchuv = DoubleTools.scale(lchuvValues[0], 2) + vSeparator
+                + DoubleTools.scale(lchuvValues[1], 2) + vSeparator
                 + DoubleTools.scale(lchuvValues[2], 2);
 
+        return this;
+    }
+
+    public ColorData convert() {
+        if (!needConvert()) {
+            return this;
+        }
+        if (needCalculate()) {
+            calculate();
+        }
+        if (color == null) {
+            return this;
+        }
+        long h = Math.round(color.getHue());
+        long s = Math.round(color.getSaturation() * 100);
+        long b = Math.round(color.getBrightness() * 100);
+        hsb = h + vSeparator + s + "%" + vSeparator + b + "%";
+        hue = StringTools.fillLeftZero(h, 3);
+        saturation = StringTools.fillLeftZero(s, 3);
+        brightness = StringTools.fillLeftZero(b, 3);
+
+        ryb = ColorConvertTools.hue2ryb(h);
+        rybAngle = StringTools.fillLeftZero(FloatTools.toInt(ryb), 3);
+
+        invertColor = color.invert();
+        complementaryColor = ColorConvertTools.converColor(ColorConvertTools.rybComplementary(this));
+        invertRGB = invertColor.toString().toUpperCase();
+        complementaryRGB = complementaryColor.toString().toUpperCase();
         return this;
     }
 
@@ -233,13 +273,13 @@ public class ColorData extends BaseData {
             } else {
                 colorDisplay = "";
             }
-            if (srgb == null) {
-                calculate();
+            if (needConvert()) {
+                convert();
             }
             colorDisplay += rgba + "\n" + rgb + "\n" + colorValue + "\n"
                     + "sRGB: " + srgb + "\n"
                     + "HSB: " + hsb + "\n"
-                    + message("RYBAngle") + ": " + FloatTools.toInt(ryb()) + "°\n"
+                    + message("RYBAngle") + ": " + rybAngle + "°\n"
                     + message("CalculatedCMYK") + ": " + calculatedCMYK + "\n"
                     + "Adobe RGB: " + adobeRGB + "\n"
                     + "Apple RGB: " + appleRGB + "\n"
@@ -266,24 +306,164 @@ public class ColorData extends BaseData {
             } else {
                 colorSimpleDisplay = "";
             }
-            if (srgb == null) {
-                calculate();
+            if (needConvert()) {
+                convert();
             }
             colorSimpleDisplay += colorValue + "\n" + rgba + "\n" + rgb + "\n"
                     + "sRGB: " + srgb + "\n"
-                    + "HSB: " + hsb
-                    + message("RYBAngle") + ": " + FloatTools.toInt(ryb()) + "°\n"
+                    + "HSB: " + hsb + "\n"
+                    + message("RYBAngle") + ": " + rybAngle + "°\n"
                     + message("CalculatedCMYK") + ": " + calculatedCMYK + "\n";
         }
         return colorSimpleDisplay;
     }
 
-    public float ryb() {
-        if (ryb >= 0 || color == null && !calculateBase()) {
-            return ryb;
+    public String html() {
+        if (needConvert()) {
+            convert();
         }
-        return ColorConvertTools.hue2ryb(color.getHue());
+        ColorData invertData = new ColorData(invertColor).setvSeparator(vSeparator).convert();
+        ColorData complementaryData = new ColorData(complementaryColor).setvSeparator(vSeparator).convert();
+        List<String> names = new ArrayList<>();
+        names.addAll(Arrays.asList(message("Data"), message("Color"),
+                message("RGBInvertColor"), message("RYBComplementaryColor")));
+        StringTable table = new StringTable(names, message("Color"));
+        List<String> row = new ArrayList<>();
+        row.add(message("Color"));
+        row.add("<DIV style=\"width: 50px;  background-color:" + getRgb() + "; \">&nbsp;&nbsp;&nbsp;</DIV>");
+        row.add("<DIV style=\"width: 50px;  background-color:" + invertData.getRgb() + "; \">&nbsp;&nbsp;&nbsp;</DIV>");
+        row.add("<DIV style=\"width: 50px;  background-color:" + complementaryData.getRgb() + "; \">&nbsp;&nbsp;&nbsp;</DIV>");
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList(message("Value"), getColorValue() + "", invertData.getColorValue() + "", complementaryData.getColorValue() + ""));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("RGBA", getRgba(), invertData.getRgba(), complementaryData.getRgba()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("RGB", getRgb(), invertData.getRgb(), complementaryData.getRgb()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("sRGB", getSrgb(), invertData.getSrgb(), complementaryData.getSrgb()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("HSB", getHsb(), invertData.getHsb(), complementaryData.getHsb()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList(message("Hue"), getHue(), invertData.getHue(), complementaryData.getHue()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList(message("Saturation"), getSaturation(), invertData.getSaturation(), complementaryData.getSaturation()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList(message("Brightness"), getBrightness(), invertData.getBrightness(), complementaryData.getBrightness()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList(message("RYBAngle"), getRybAngle(), invertData.getRybAngle(), complementaryData.getRybAngle()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList(message("CalculatedCMYK"), getCalculatedCMYK(), invertData.getCalculatedCMYK(), complementaryData.getCalculatedCMYK()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("Adobe RGB", getAdobeRGB(), invertData.getAdobeRGB(), complementaryData.getAdobeRGB()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("Apple RGB", getAppleRGB(), invertData.getAppleRGB(), complementaryData.getAppleRGB()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("ECI RGB", getEciRGB(), invertData.getEciRGB(), complementaryData.getEciRGB()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("sRGB Linear", getSRGBLinear(), invertData.getSRGBLinear(), complementaryData.getSRGBLinear()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("Adobe RGB Linear", getAdobeRGBLinear(), invertData.getAdobeRGBLinear(), complementaryData.getAdobeRGBLinear()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("Apple RGB Linear", getAppleRGBLinear(), invertData.getAppleRGBLinear(), complementaryData.getAppleRGBLinear()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("ECI CMYK", getEciCMYK(), invertData.getEciCMYK(), complementaryData.getEciCMYK()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("Adobe CMYK Uncoated FOGRA29", getXyz(), invertData.getXyz(), complementaryData.getXyz()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("XYZ", getAppleRGBLinear(), invertData.getAppleRGBLinear(), complementaryData.getAppleRGBLinear()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("CIE-L*ab", getCieLab(), invertData.getCieLab(), complementaryData.getCieLab()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("LCH(ab)", getLchab(), invertData.getLchab(), complementaryData.getLchab()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("CIE-L*uv", getCieLuv(), invertData.getCieLuv(), complementaryData.getCieLuv()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList("LCH(uv)", getLchuv(), invertData.getLchuv(), complementaryData.getLchuv()));
+        table.add(row);
+        return HtmlWriteTools.html(message("Color"), HtmlStyles.styleValue("TableStyle"), table.body());
     }
+
+    /*
+       customzied get/set
+     */
+    public Color getColor() {
+        if (color == null) {
+            if (rgba != null) {
+                setWeb(rgba);
+            } else if (rgb != null) {
+                setWeb(rgb);
+            }
+        }
+        return color;
+    }
+
+    public ColorData setRgba(String rgba) {
+        this.rgba = rgba;
+        if (color == null) {
+            setWeb(rgba);
+        }
+        return this;
+    }
+
+    public String getRgba() {
+        if (rgba == null && rgb != null) {
+            setWeb(rgb);
+        }
+        if (rgba != null) {
+            return rgba.toUpperCase();
+        } else {
+            return null;
+        }
+    }
+
+    public ColorData setRgb(String rgb) {
+        if (rgb == null) {
+            return this;
+        }
+        this.rgb = rgb;
+        if (color == null) {
+            setWeb(rgb);
+        }
+        return this;
+    }
+
+    public String getRgb() {
+        if (rgb == null && rgba != null) {
+            setWeb(rgba);
+        }
+        return rgb;
+    }
+
+    public String getRybAngle() {
+        if (needConvert()) {
+            convert();
+        }
+        return rybAngle;
+    }
+
 
     /*
         Static methods
@@ -434,54 +614,6 @@ public class ColorData extends BaseData {
     /*
         get/set
      */
-    public Color getColor() {
-        if (color == null) {
-            if (rgba != null) {
-                setWeb(rgba);
-            } else if (rgb != null) {
-                setWeb(rgb);
-            }
-        }
-        return color;
-    }
-
-    public ColorData setRgba(String rgba) {
-        this.rgba = rgba;
-        if (color == null) {
-            setWeb(rgba);
-        }
-        return this;
-    }
-
-    public String getRgba() {
-        if (rgba == null && rgb != null) {
-            setWeb(rgb);
-        }
-        if (rgba != null) {
-            return rgba.toUpperCase();
-        } else {
-            return null;
-        }
-    }
-
-    public ColorData setRgb(String rgb) {
-        if (rgb == null) {
-            return this;
-        }
-        this.rgb = rgb;
-        if (color == null) {
-            setWeb(rgb);
-        }
-        return this;
-    }
-
-    public String getRgb() {
-        if (rgb == null && rgba != null) {
-            setWeb(rgba);
-        }
-        return rgb;
-    }
-
     public void setColor(Color color) {
         this.color = color;
     }
@@ -755,10 +887,6 @@ public class ColorData extends BaseData {
         return this;
     }
 
-    public float getRyb() {
-        return ryb;
-    }
-
     public ColorData setRyb(float ryb) {
         this.ryb = ryb;
         return this;
@@ -770,6 +898,51 @@ public class ColorData extends BaseData {
 
     public ColorData setCpid(long cpid) {
         this.cpid = cpid;
+        return this;
+    }
+
+    public Color getInvertColor() {
+        return invertColor;
+    }
+
+    public Color getComplementaryColor() {
+        return complementaryColor;
+    }
+
+    public String getHue() {
+        return hue;
+    }
+
+    public String getSaturation() {
+        return saturation;
+    }
+
+    public String getBrightness() {
+        return brightness;
+    }
+
+    public String getInvertRGB() {
+        return invertRGB;
+    }
+
+    public String getComplementaryRGB() {
+        return complementaryRGB;
+    }
+
+    public boolean isIsSettingValues() {
+        return isSettingValues;
+    }
+
+    public float getRyb() {
+        return ryb;
+    }
+
+    public String getvSeparator() {
+        return vSeparator;
+    }
+
+    public ColorData setvSeparator(String vSeparator) {
+        this.vSeparator = vSeparator;
         return this;
     }
 
