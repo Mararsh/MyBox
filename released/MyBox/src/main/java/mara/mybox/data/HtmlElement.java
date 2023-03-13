@@ -39,8 +39,10 @@ public class HtmlElement {
             }
             if (tag.equalsIgnoreCase("a")) {
                 href = element.getAttribute("href");
+                name = element.getTextContent();
             } else if (tag.equalsIgnoreCase("img")) {
                 href = element.getAttribute("src");
+                name = element.getAttribute("alt");
             }
             if (href == null) {
                 return;

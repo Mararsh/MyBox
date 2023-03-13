@@ -283,6 +283,17 @@ Examples > Novels > Chinese
 潇湘书院
 https://www.xxsy.net
 
+Examples > Entertainment > Chinese
+诗画中国
+https://tv.cctv.com/2022/08/27/VIDARmuWi2Ebs0b0NSsA1Ao7220827.shtml
+
+Examples > Entertainment > Chinese
+小喇叭
+http://www.radio.cn/pc-portal/sanji/zhibo_2.html?channelname=0&name=1395534&title=radio
+
+Examples > Entertainment > Chinese
+品味书香
+http://www.radio.cn/pc-portal/sanji/zhibo_2.html?channelname=0&name=1395682&title=radio
 
 Examples > Entertainment > Chinese
 蜻蜓FM
@@ -315,10 +326,6 @@ https://bbs.tianya.cn
 Examples > Entertainment > Chinese
 lofter
 https://www.lofter.com
-
-Examples > Entertainment > Chinese
-小喇叭
-https://www.qingting.fm/channels/138236
 
 Examples > Entertainment > Chinese
 牡丹亭（1986年）张继青

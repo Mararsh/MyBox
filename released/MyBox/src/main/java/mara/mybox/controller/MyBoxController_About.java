@@ -21,9 +21,9 @@ public abstract class MyBoxController_About extends MyBoxController_Settings {
     protected void showAboutMenu(MouseEvent event) {
         hideMenu(event);
 
-        MenuItem About = new MenuItem(Languages.message("About"));
-        About.setOnAction((ActionEvent event1) -> {
-            HelpTools.about();
+        MenuItem ReadMe = new MenuItem(Languages.message("ReadMe"));
+        ReadMe.setOnAction((ActionEvent event1) -> {
+            HelpTools.readMe(myController);
         });
 
         MenuItem FunctionsList = new MenuItem(Languages.message("FunctionsList"));
@@ -39,7 +39,7 @@ public abstract class MyBoxController_About extends MyBoxController_Settings {
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
-                About, Shortcuts, FunctionsList
+                ReadMe, Shortcuts, FunctionsList
         );
 
         popMenu.getItems().add(new SeparatorMenuItem());

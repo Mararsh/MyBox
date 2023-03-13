@@ -73,7 +73,7 @@ public class FilesDeleteJavaTempController extends BaseController {
     }
 
     @FXML
-    public void openFolder() {
+    public void openPath() {
         browseURI(path.toURI());
     }
 

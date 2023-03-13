@@ -17,7 +17,7 @@ License:    Apache License Version 2.0
     <children>
         <HBox fx:id="addressBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
             <children>
-                <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
+                <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#pickSourceFile" onMouseEntered="#popSourceFile">
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -26,7 +26,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="historyButton" mnemonicParsing="false" onMouseEntered="#popAddressHistories">
+                <Button fx:id="historyButton" mnemonicParsing="false"  onAction="#showAddressHistories" onMouseEntered="#popAddressHistories">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -45,15 +45,15 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-            <Button fx:id="menuHtmlButton" mnemonicParsing="false" onAction="#menuAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconMenu.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
+                <Button fx:id="menuHtmlButton" mnemonicParsing="false" onAction="#menuAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconMenu.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
                 <Button fx:id="operationsButton" layoutX="282.0" layoutY="10.0" mnemonicParsing="false" onMouseEntered="#popOperationsMenu">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

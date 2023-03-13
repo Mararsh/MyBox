@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import javafx.scene.shape.Line;
-import mara.mybox.bufferedimage.PixelsBlend.ImagesBlendMode;
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
 import mara.mybox.data.DoubleLines;
@@ -29,7 +28,7 @@ public class PenTools {
 
     public static BufferedImage drawEllipse(BufferedImage srcImage, DoubleEllipse ellipse,
             Color strokeColor, int strokeWidth, boolean dotted, boolean isFill, Color fillColor,
-            ImagesBlendMode blendMode, float opacity, boolean orderReversed, boolean ignoreTransparent) {
+            float opacity, PixelsBlend blender) {
         try {
             if (ellipse == null || strokeColor == null || !ellipse.isValid()) {
                 return srcImage;
@@ -79,7 +78,7 @@ public class PenTools {
                         }
                     }
                 } else {
-                    target = ImageBlend.blend(foreImage, srcImage, 0, 0, blendMode, opacity, orderReversed, ignoreTransparent);
+                    target = PixelsBlend.blend(foreImage, srcImage, 0, 0, blender);
                 }
             }
             if (isFill) {
@@ -112,7 +111,7 @@ public class PenTools {
                         }
                     }
                 } else {
-                    target = ImageBlend.blend(foreImage, backImage, 0, 0, blendMode, opacity, orderReversed, ignoreTransparent);
+                    target = PixelsBlend.blend(foreImage, backImage, 0, 0, blender);
                 }
             }
             return target;
@@ -124,7 +123,7 @@ public class PenTools {
 
     public static BufferedImage drawCircle(BufferedImage srcImage, DoubleCircle circle,
             Color strokeColor, int strokeWidth, boolean dotted, boolean isFill, Color fillColor,
-            ImagesBlendMode blendMode, float opacity, boolean orderReversed, boolean ignoreTransparent) {
+            float opacity, PixelsBlend blender) {
         try {
             if (circle == null || strokeColor == null || !circle.isValid()) {
                 return srcImage;
@@ -173,7 +172,7 @@ public class PenTools {
                         }
                     }
                 } else {
-                    target = ImageBlend.blend(foreImage, srcImage, 0, 0, blendMode, opacity, orderReversed, ignoreTransparent);
+                    target = PixelsBlend.blend(foreImage, srcImage, 0, 0, blender);
                 }
             }
             if (isFill) {
@@ -206,7 +205,7 @@ public class PenTools {
                         }
                     }
                 } else {
-                    target = ImageBlend.blend(foreImage, backImage, 0, 0, blendMode, opacity, orderReversed, ignoreTransparent);
+                    target = PixelsBlend.blend(foreImage, backImage, 0, 0, blender);
                 }
             }
             return target;
@@ -218,7 +217,7 @@ public class PenTools {
 
     public static BufferedImage drawPolyline(BufferedImage srcImage, DoublePolyline polylineData,
             Color strokeColor, int strokeWidth, boolean dotted,
-            ImagesBlendMode blendMode, float opacity, boolean orderReversed, boolean ignoreTransparent) {
+            float opacity, PixelsBlend blender) {
         try {
             if (polylineData == null || strokeColor == null || polylineData.getSize() < 2 || strokeWidth < 1) {
                 return srcImage;
@@ -264,7 +263,7 @@ public class PenTools {
                 }
                 return target;
             } else {
-                return ImageBlend.blend(foreImage, srcImage, 0, 0, blendMode, opacity, orderReversed, ignoreTransparent);
+                return PixelsBlend.blend(foreImage, srcImage, 0, 0, blender);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -326,7 +325,7 @@ public class PenTools {
 
     public static BufferedImage drawPolygon(BufferedImage srcImage, DoublePolygon polygonData,
             Color strokeColor, int strokeWidth, boolean dotted, boolean isFill, Color fillColor,
-            ImagesBlendMode blendMode, float opacity, boolean orderReversed, boolean ignoreTransparent) {
+            float opacity, PixelsBlend blender) {
         try {
             if (polygonData == null || strokeColor == null || polygonData.getSize() <= 2) {
                 return srcImage;
@@ -374,7 +373,7 @@ public class PenTools {
                     }
 
                 } else {
-                    target = ImageBlend.blend(foreImage, srcImage, 0, 0, blendMode, opacity, orderReversed, ignoreTransparent);
+                    target = PixelsBlend.blend(foreImage, srcImage, 0, 0, blender);
                 }
             }
             if (isFill) {
@@ -407,7 +406,7 @@ public class PenTools {
                         }
                     }
                 } else {
-                    target = ImageBlend.blend(foreImage, backImage, 0, 0, blendMode, opacity, orderReversed, ignoreTransparent);
+                    target = PixelsBlend.blend(foreImage, backImage, 0, 0, blender);
                 }
             }
             return target;
@@ -419,7 +418,7 @@ public class PenTools {
 
     public static BufferedImage drawRectangle(BufferedImage srcImage, DoubleRectangle rect,
             Color strokeColor, int strokeWidth, int arcWidth, boolean dotted, boolean isFill, Color fillColor,
-            ImagesBlendMode blendMode, float opacity, boolean orderReversed, boolean ignoreTransparent) {
+            float opacity, PixelsBlend blender) {
         try {
             if (rect == null || strokeColor == null || !rect.isValid()) {
                 return srcImage;
@@ -474,7 +473,7 @@ public class PenTools {
                         }
                     }
                 } else {
-                    target = ImageBlend.blend(foreImage, srcImage, 0, 0, blendMode, opacity, orderReversed, ignoreTransparent);
+                    target = PixelsBlend.blend(foreImage, srcImage, 0, 0, blender);
                 }
             }
             if (isFill) {
@@ -513,7 +512,7 @@ public class PenTools {
                     }
 
                 } else {
-                    target = ImageBlend.blend(foreImage, backImage, 0, 0, blendMode, opacity, orderReversed, ignoreTransparent);
+                    target = PixelsBlend.blend(foreImage, backImage, 0, 0, blender);
                 }
             }
             return target;
@@ -525,7 +524,7 @@ public class PenTools {
 
     public static BufferedImage drawLines(BufferedImage srcImage, DoublePolyline polylineData,
             Color strokeColor, int strokeWidth, boolean dotted,
-            ImagesBlendMode blendMode, float opacity, boolean orderReversed, boolean ignoreTransparent) {
+            float opacity, PixelsBlend blender) {
         try {
             if (polylineData == null || strokeColor == null || polylineData.getSize() < 2 || strokeWidth < 1) {
                 return srcImage;
@@ -583,7 +582,7 @@ public class PenTools {
 
                 return target;
             } else {
-                return ImageBlend.blend(foreImage, srcImage, 0, 0, blendMode, opacity, orderReversed, ignoreTransparent);
+                return PixelsBlend.blend(foreImage, srcImage, 0, 0, blender);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -593,7 +592,7 @@ public class PenTools {
 
     public static BufferedImage drawLines(BufferedImage srcImage, DoubleLines penData,
             Color strokeColor, int strokeWidth, boolean dotted,
-            ImagesBlendMode blendMode, float opacity, boolean orderReversed, boolean ignoreTransparent) {
+            float opacity, PixelsBlend blender) {
         try {
             if (penData == null || strokeColor == null || penData.getPointsSize() == 0 || strokeWidth < 1) {
                 return srcImage;
@@ -653,7 +652,7 @@ public class PenTools {
                 }
                 return target;
             } else {
-                return ImageBlend.blend(foreImage, srcImage, 0, 0, blendMode, opacity, orderReversed, ignoreTransparent);
+                return PixelsBlend.blend(foreImage, srcImage, 0, 0, blender);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

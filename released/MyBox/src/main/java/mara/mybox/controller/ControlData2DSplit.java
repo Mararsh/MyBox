@@ -285,7 +285,7 @@ public class ControlData2DSplit extends BaseTableViewController<ValueRange> {
         if (column == null) {
             return;
         }
-        int index = tableView.getSelectionModel().getSelectedIndex();
+        int index = selectedIndix();
         if (index < 0) {
             return;
         }
@@ -309,7 +309,7 @@ public class ControlData2DSplit extends BaseTableViewController<ValueRange> {
     @Override
     public void deleteAction() {
         try {
-            List<ValueRange> selected = tableView.getSelectionModel().getSelectedItems();
+            List<ValueRange> selected = selectedItems();
             if (selected == null || selected.isEmpty()) {
                 clearAction();
                 return;

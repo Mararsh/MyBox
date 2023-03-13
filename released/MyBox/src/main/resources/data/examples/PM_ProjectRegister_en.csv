@@ -1,0 +1,3 @@
+Configuration ID,Name,Last status,Manager,Approver,Start time,Closed time,Comments
+P-MyBox-2022-D036,Data Grouping in MyBox,Completed,mara,mara,2022-10-2 11:30:42,2023-1-21 12:13:12,Looks current six grouping ways are enough
+P-MyBox-2023-K002,Improve algorithm of compressing image colors in MyBox,Design,mara,mara,2023-1-23 9:00:12,,Results should be subset of original colors and no new colors created

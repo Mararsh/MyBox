@@ -95,6 +95,15 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
+                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconClear.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
                 <CheckBox fx:id="tableSubdirCheck" mnemonicParsing="false" selected="true">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -175,7 +184,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="exampleRegexButton" mnemonicParsing="false" onMouseEntered="#popRegexExample">
+                <Button fx:id="exampleRegexButton" mnemonicParsing="false"   onAction="#showRegexExample"   onMouseEntered="#popRegexExample" >
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>

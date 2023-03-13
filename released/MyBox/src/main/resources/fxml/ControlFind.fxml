@@ -35,7 +35,7 @@ License:    Apache License Version 2.0
                         </HBox>
                         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                             <children>
-                                <Button fx:id="historyFindButton" layoutX="91.0" layoutY="10.0" mnemonicParsing="false" onMouseEntered="#popFindHistories">
+                                <Button fx:id="historyFindButton" layoutX="91.0" layoutY="10.0" mnemonicParsing="false"   onAction="#showFindHistories" onMouseEntered="#popFindHistories" >
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -81,7 +81,7 @@ License:    Apache License Version 2.0
                                 <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                     <children>
                                         <CheckBox fx:id="regexCheck" mnemonicParsing="false" text="%RegularExpression" />
-                                        <Button fx:id="exampleFindButton" mnemonicParsing="false" onAction="#popFindExample">
+                                        <Button fx:id="exampleFindButton" mnemonicParsing="false"  onAction="#showFindExample"   onMouseEntered="#popFindExample" >
                                             <graphic>
                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                     <image>

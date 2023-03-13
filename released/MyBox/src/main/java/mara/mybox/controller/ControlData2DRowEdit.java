@@ -184,7 +184,7 @@ public class ControlData2DRowEdit extends BaseController {
 
             if (column.isEditable()) {
                 Button dateButton = new Button();
-                dateButton.setGraphic(StyleTools.getIconImage("iconExamples.png"));
+                dateButton.setGraphic(StyleTools.getIconImageView("iconExamples.png"));
                 NodeStyleTools.setTooltip(dateButton, new Tooltip(message("Example")));
                 dateButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
@@ -237,7 +237,7 @@ public class ControlData2DRowEdit extends BaseController {
 
             if (column.isEditable()) {
                 Button paletteButton = new Button();
-                paletteButton.setGraphic(StyleTools.getIconImage("iconPalette.png"));
+                paletteButton.setGraphic(StyleTools.getIconImageView("iconPalette.png"));
                 NodeStyleTools.setTooltip(paletteButton, new Tooltip(message("ColorPalette")));
                 paletteButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override

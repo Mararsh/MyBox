@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageText">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlImageText">
     <children>
         <TabPane tabClosingPolicy="UNAVAILABLE">
             <tabs>
@@ -141,34 +141,10 @@
                                         </FlowPane>
                                     </children>
                                 </VBox>
-                                <VBox fx:id="blendBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                <VBox  spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                     <children>
-                                        <FlowPane fx:id="modePane" hgap="5.0" layoutX="10.0" layoutY="389.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
-                                            <children>
-                                                <Label fx:id="blendLabel" text="%BlendMode" />
-                                                <ComboBox fx:id="blendSelector" prefWidth="200.0" />
-                                            </children>
-                                        </FlowPane>
-                                        <FlowPane fx:id="opacityPane" hgap="5.0" layoutX="10.0" layoutY="161.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
-                                            <children>
-                                                <Label text="%Opacity">
-                                                    <FlowPane.margin>
-                                                        <Insets />
-                                                    </FlowPane.margin>
-                                                </Label>
-                                                <ComboBox fx:id="opacitySelector" editable="true" prefWidth="100.0" />
-                                            </children>
-                                        </FlowPane>
-                                        <FlowPane hgap="2.0" vgap="2.0">
-                                            <children>
-                                                <CheckBox fx:id="blendTopCheck" mnemonicParsing="false" selected="true" text="%OnTop" />
-                                                <CheckBox fx:id="ignoreTransparentCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%IgnoreTransparent" wrapText="true" />
-                                            </children>
-                                        </FlowPane>
+                                        <fx:include fx:id="blend" source="ControlImagesBlend.fxml" />
                                     </children>
-                                    <padding>
-                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                    </padding>
                                 </VBox>
                             </children>
                             <padding>
@@ -219,21 +195,21 @@
                                                 <ComboBox fx:id="bordersOpacitySelector" editable="true" prefWidth="100.0" />
                                             </children>
                                         </FlowPane>
-                              <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
-                                 <children>
-                                    <Label text="%Margins" />
-                                    <TextField fx:id="bordersMarginInput" prefWidth="80.0" text="2" />
-                                    <Button fx:id="goBordersButton" mnemonicParsing="false" onAction="#goBorders">
-                                       <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconGo.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
-                                 </children>
-                              </FlowPane>
+                                        <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+                                            <children>
+                                                <Label text="%Margins" />
+                                                <TextField fx:id="bordersMarginInput" prefWidth="80.0" text="2" />
+                                                <Button fx:id="goBordersButton" mnemonicParsing="false" onAction="#goBorders">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconGo.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                            </children>
+                                        </FlowPane>
                                     </children>
                                 </VBox>
                             </children>

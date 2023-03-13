@@ -1,11 +1,8 @@
 package mara.mybox.tools;
 
-import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
-import com.vladsch.flexmark.parser.ParserEmulationProfile;
 import com.vladsch.flexmark.util.data.MutableDataHolder;
-import com.vladsch.flexmark.util.data.MutableDataSet;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -14,18 +11,18 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import mara.mybox.controller.HtmlEditorController;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.Link;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.style.HtmlStyles;
-import static mara.mybox.tools.HtmlReadTools.charsetInHead;
-import static mara.mybox.tools.HtmlReadTools.tag;
 import static mara.mybox.value.AppValues.Indent;
 import mara.mybox.value.Languages;
 import org.jsoup.Jsoup;
-import org.w3c.dom.Document;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -41,12 +38,8 @@ public class HtmlWriteTools {
      */
     public static File writeHtml(String html) {
         try {
-            File htmFile = TmpFileTools.getTempFile(".htm");
-            Charset charset = charsetInHead(tag(html, "head", true));
-            if (charset == null) {
-                charset = Charset.forName("UTF-8");
-                html = setCharset(html, charset);
-            }
+            File htmFile = TmpFileTools.getTempFile(".html");
+            Charset charset = HtmlReadTools.charset(html);
             TextFileTools.writeFile(htmFile, html, charset);
             return htmFile;
         } catch (Exception e) {
@@ -58,7 +51,7 @@ public class HtmlWriteTools {
     public static void editHtml(String html) {
         try {
             File htmFile = writeHtml(html);
-            ControllerTools.openHtmlEditor(null, htmFile);
+            HtmlEditorController.openFile(htmFile);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -122,10 +115,20 @@ public class HtmlWriteTools {
     }
 
     public static String style(String html, String styleValue) {
-        return html(HtmlReadTools.htmlTitle(html),
-                HtmlReadTools.charsetName(html),
-                styleValue,
-                HtmlReadTools.body(html, true));
+        try {
+            Document doc = Jsoup.parse(html);
+            if (doc == null) {
+                return null;
+            }
+            Charset charset = doc.charset();
+            if (charset == null) {
+                charset = Charset.forName("UTF-8");
+            }
+            return html(doc.title(), charset.name(), styleValue,
+                    HtmlReadTools.body(html, true));
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static String addStyle(String html, String style) {
@@ -133,17 +136,12 @@ public class HtmlWriteTools {
             if (html == null || style == null) {
                 return "InvalidData";
             }
-            String preHtml = HtmlReadTools.preHtml(html);
-            String head = HtmlReadTools.tag(html, "head", false);
-            String body = HtmlReadTools.body(html, true);
-            html = preHtml + "<html>\n"
-                    + "    <head>\n"
-                    + head + "\n"
-                    + "        <style type=\"text/css\">\n"
-                    + style + "        </style>\n"
-                    + "    </head>\n"
-                    + body + "\n</html>";
-            return html;
+            Document doc = Jsoup.parse(html);
+            if (doc == null) {
+                return null;
+            }
+            doc.head().appendChild(new Element("style").text(style));
+            return doc.outerHtml();
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
@@ -165,7 +163,7 @@ public class HtmlWriteTools {
                 .replaceAll("©", "&copy;")
                 .replaceAll("®", "&reg;")
                 .replaceAll("™", "&trade;")
-                .replaceAll("\n", "<BR>\n");
+                .replaceAll("\r\n|\n|\r", "<BR>\n");
     }
 
     public static String textToHtml(String text) {
@@ -208,15 +206,7 @@ public class HtmlWriteTools {
             if (md == null || md.isBlank()) {
                 return null;
             }
-            MutableDataHolder htmlOptions = new MutableDataSet();
-            htmlOptions.setFrom(ParserEmulationProfile.valueOf("PEGDOWN"));
-            htmlOptions.set(Parser.EXTENSIONS, Arrays.asList(
-                    TablesExtension.create()
-            ));
-            htmlOptions.set(HtmlRenderer.INDENT_SIZE, 4)
-                    .set(TablesExtension.TRIM_CELL_WHITESPACE, false)
-                    .set(TablesExtension.DISCARD_EXTRA_COLUMNS, true)
-                    .set(TablesExtension.APPEND_MISSING_COLUMNS, true);
+            MutableDataHolder htmlOptions = MarkdownTools.htmlOptions();
             Parser htmlParser = Parser.builder(htmlOptions).build();
             HtmlRenderer htmlRender = HtmlRenderer.builder(htmlOptions).build();
             return md2html(md, htmlParser, htmlRender);
@@ -226,76 +216,98 @@ public class HtmlWriteTools {
         }
     }
 
-    public static String setCharset(File htmlFile, Charset charset, boolean must) {
+    public static String setCharset(String html, Charset charset) {
         try {
-            if (htmlFile == null || charset == null) {
+            Document doc = Jsoup.parse(html);
+            if (doc == null) {
                 return "InvalidData";
             }
-            Charset fileCharset = TextFileTools.charset(htmlFile);
-            String html = TextFileTools.readTexts(htmlFile, fileCharset);
-            String head = HtmlReadTools.tag(html, "head", false);
-            if (head == null) {
-                if (!must && fileCharset.equals(charset)) {
-                    return "NeedNot";
-                }
-            } else {
-                Charset headCharset = HtmlReadTools.charsetInHead(head);
-                if (!must && fileCharset.equals(charset) && (headCharset == null || charset.equals(headCharset))) {
-                    return "NeedNot";
-                }
-            }
-            return setCharset(html, charset);
+            setCharset(doc, charset);
+            return doc.outerHtml();
         } catch (Exception e) {
-            MyBoxLog.error(e, charset.displayName());
+            MyBoxLog.error(e);
             return null;
         }
     }
 
-    public static String setCharset(String html, Charset charset) {
+    public static boolean setCharset(Document doc, Charset charset) {
         try {
-            if (html == null || charset == null) {
+            if (doc == null) {
+                return false;
+            }
+            if (charset == null) {
+                charset = Charset.forName("utf-8");
+            }
+            Elements children = doc.head().children();
+            for (Element e : children) {
+                if (!e.tagName().equalsIgnoreCase("meta")) {
+                    continue;
+                }
+                if (e.hasAttr("charset")) {
+                    e.remove();
+                }
+                if ("Content-Type".equalsIgnoreCase(e.attr("http-equiv")) && e.hasAttr("content")) {
+                    e.remove();
+                }
+            }
+            Element meta1 = new Element("meta")
+                    .attr("http-equiv", "Content-Type")
+                    .attr("content", "text/html; charset=" + charset.name());
+            Element meta2 = new Element("meta")
+                    .attr("charset", charset.name());
+            doc.head().appendChild(meta1).appendChild(meta2);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public static String setEquiv(File htmlFile, Charset charset, String key, String value) {
+        try {
+            if (htmlFile == null || key == null || value == null) {
                 return "InvalidData";
             }
-            String head = HtmlReadTools.tag(html, "head", false);
-            String preHtml = HtmlReadTools.preHtml(html);
-            String name = charset.name().toLowerCase();
-            if (head == null) {
-                html = preHtml + "<html>\n" + "    <head>\n" + "        <meta http-equiv=\"Content-Type\" content=\"text/html;charset="
-                        + name + "\" />\n" + "    </head>\n" + html + "\n" + "</html>";
-            } else {
-                String newHead;
-                Charset headCharset = HtmlReadTools.charsetInHead(head);
-                if (headCharset != null) {
-                    newHead = FindReplaceString.replaceFirst(head, headCharset.name(), name, 0, false, true, false);
-                } else {
-                    newHead = head + "\n<meta http-equiv=\"Content-Type\" content=\"text/html;charset=" + name + "\"/>";
-                }
-                html = preHtml + "<html>\n" + "    <head>\n" + newHead + "\n"
-                        + "    </head>\n" + HtmlReadTools.body(html, true) + "\n" + "</html>";
+            String html = TextFileTools.readTexts(htmlFile, charset);
+            Document doc = Jsoup.parse(html);
+            if (doc == null) {
+                return "InvalidData";
             }
-            return html;
+            if (!"Content-Type".equalsIgnoreCase(key)) {
+                setCharset(doc, charset);
+            }
+            Elements children = doc.head().children();
+            for (Element e : children) {
+                if (!e.tagName().equalsIgnoreCase("meta") || !e.hasAttr("http-equiv")) {
+                    continue;
+                }
+                if (key.equalsIgnoreCase(e.attr("http-equiv")) && e.hasAttr("content")) {
+                    e.remove();
+                }
+            }
+            Element meta1 = new Element("meta")
+                    .attr("http-equiv", key)
+                    .attr("content", value);
+            doc.head().appendChild(meta1);
+            return doc.outerHtml();
         } catch (Exception e) {
-            MyBoxLog.error(e, charset.displayName());
+            MyBoxLog.error(e);
             return null;
         }
     }
 
     public static String ignoreHead(String html) {
         try {
-            if (html == null) {
+            Document doc = Jsoup.parse(html);
+            if (doc == null) {
                 return "InvalidData";
             }
-            String head = HtmlReadTools.tag(html, "head", false);
-            String preHtml = HtmlReadTools.preHtml(html);
-            String charset = "utf-8";
-            if (head != null) {
-                Charset headCharset = HtmlReadTools.charsetInHead(head);
-                if (headCharset != null) {
-                    charset = headCharset.name();
-                }
+            doc.head().empty();
+            Charset charset = doc.charset();
+            if (charset == null) {
+                charset = Charset.forName("utf-8");
             }
-            html = preHtml + "<html>\n" + "    <head>\n" + "        <meta http-equiv=\"Content-Type\" content=\"text/html;charset="
-                    + charset + "\" />\n" + "    </head>\n" + HtmlReadTools.body(html, true) + "\n" + "</html>";
+            setCharset(doc, charset);
             return html;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -303,12 +315,8 @@ public class HtmlWriteTools {
         }
     }
 
-//    public static String textToHtml(String text) {
-//        String body = "" + FindReplaceString.replaceAll(text, "\n", "</br>");
-//        return html(null, body);
-//    }
-    public static String toUTF8(File htmlFile, boolean must) {
-        return setCharset(htmlFile, Charset.forName("utf-8"), must);
+    public static String toUTF8(File htmlFile) {
+        return setCharset(TextFileTools.readTexts(htmlFile), Charset.forName("utf-8"));
     }
 
     public static String setStyle(File htmlFile, Charset charset, String css, boolean ignoreOriginal) {
@@ -316,26 +324,20 @@ public class HtmlWriteTools {
             if (htmlFile == null || css == null) {
                 return "InvalidData";
             }
+            String html = TextFileTools.readTexts(htmlFile, charset);
+            Document doc = Jsoup.parse(html);
+            if (doc == null) {
+                return "InvalidData";
+            }
             if (charset == null) {
                 charset = TextFileTools.charset(htmlFile);
             }
-            String html = TextFileTools.readTexts(htmlFile, charset);
-            String preHtml = HtmlReadTools.preHtml(html);
-            String head;
             if (ignoreOriginal) {
-                head = "        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + charset.name() + "\" />\n";
-            } else {
-                head = HtmlReadTools.tag(html, "head", false);
-                if (head == null) {
-                    head = "        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=" + charset.name() + "\" />\n";
-                }
+                doc.head().empty();
             }
-            String body = HtmlReadTools.body(html, true);
-            html = preHtml + "<html>\n    <head>\n"
-                    + head + "\n        <style type=\"text/css\">\n"
-                    + css + "        </style>\n    </head>\n"
-                    + body + "\n</html>";
-            return html;
+            setCharset(doc, charset);
+            doc.head().appendChild(new Element("style").text(css));
+            return doc.outerHtml();
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
@@ -432,7 +434,7 @@ public class HtmlWriteTools {
         }
     }
 
-    public static int replace(Document doc, String findString,
+    public static int replace(org.w3c.dom.Document doc, String findString,
             boolean reg, boolean caseInsensitive, String color, String bgColor, String font) {
         if (doc == null) {
             return 0;

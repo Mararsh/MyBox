@@ -385,7 +385,7 @@ public class GeographyCodeTools {
     public static GeographyCode gaodeCode(String urlString, GeographyCode geographyCode) {
         try {
             URL url = new URL(urlString);
-            File xmlFile = HtmlReadTools.url2File(url.toString());
+            File xmlFile = HtmlReadTools.download(url.toString());
 //            MyBoxLog.debug(FileTools.readTexts(xmlFile));
             Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xmlFile);
             NodeList nodes = doc.getElementsByTagName("formatted_address");
@@ -1977,7 +1977,7 @@ public class GeographyCodeTools {
                     + "&coordsys=" + sourceCS.gaodeConvertService()
                     + "&output=xml&key=" + UserConfig.getString("GaoDeMapServiceKey", AppValues.GaoDeMapServiceKey);
             URL url = new URL(urlString);
-            File xmlFile = HtmlReadTools.url2File(url.toString());
+            File xmlFile = HtmlReadTools.download(url.toString());
             Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xmlFile);
             NodeList nodes = doc.getElementsByTagName("info");
             if (nodes == null || nodes.getLength() == 0) {

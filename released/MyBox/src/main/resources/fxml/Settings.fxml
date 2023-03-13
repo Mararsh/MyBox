@@ -39,7 +39,7 @@ License:    Apache License Version 2.0
                             <content>
                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                                     <content>
-                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="20.0">
+                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="10.0">
                                             <children>
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
                                                     <children>
@@ -68,11 +68,6 @@ License:    Apache License Version 2.0
                                                         </Label>
                                                         <ComboBox fx:id="iconSizeBox" editable="true" prefWidth="100.0" />
                                                         <Label text="px" />
-                                                        <CheckBox fx:id="hidpiIconsCheck" mnemonicParsing="false" text="%HidpiIcons">
-                                                            <HBox.margin>
-                                                                <Insets left="40.0" />
-                                                            </HBox.margin>
-                                                        </CheckBox>
                                                     </children>
                                                 </HBox>
                                                 <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="70.0" spacing="10.0" VBox.vgrow="NEVER">
@@ -103,29 +98,42 @@ License:    Apache License Version 2.0
                                                         </RadioButton>
                                                         <RadioButton fx:id="orangeRadio" layoutX="124.0" layoutY="15.0" mnemonicParsing="false" toggleGroup="$controlColorGroup">
                                                             <graphic>
-                                                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#CA6924" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+                                                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#622A1D" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
                                                             </graphic>
                                                         </RadioButton>
-                                                        <RadioButton fx:id="darkGreenRadio" layoutX="342.0" layoutY="10.0" mnemonicParsing="false" toggleGroup="$controlColorGroup">
+                                                        <RadioButton fx:id="greenRadio" layoutX="342.0" layoutY="10.0" mnemonicParsing="false" toggleGroup="$controlColorGroup">
                                                             <graphic>
                                                                 <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#0D3928" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
                                                             </graphic>
                                                         </RadioButton> 
-                                                        <CheckBox fx:id="controlsTextCheck" mnemonicParsing="false" text="%DisplayControlText">
-                                                            <HBox.margin>
-                                                                <Insets left="50.0" />
-                                                            </HBox.margin>
-                                                        </CheckBox>
+                                                        <RadioButton fx:id="colorCustomizeRadio" mnemonicParsing="false" toggleGroup="$controlColorGroup">
+                                                            <graphic>
+                                                                <Rectangle fx:id="colorCustomizeRect" arcHeight="5.0" arcWidth="5.0" fill="#DDDDDD" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+                                                            </graphic>
+                                                        </RadioButton>
+                                                        <Button fx:id="inputButton" mnemonicParsing="false" onAction="#inputColorAction">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconInput.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
                                                     </children>
                                                 </HBox>
-                                                <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="192.0" spacing="10.0">
                                                     <children>
-                                                        <Label text="%InterfaceStyle">
+                                                        <CheckBox fx:id="hidpiIconsCheck" mnemonicParsing="false" text="%HidpiIcons">
                                                             <HBox.margin>
                                                                 <Insets />
                                                             </HBox.margin>
-                                                        </Label>
-                                                        <ComboBox fx:id="styleBox" prefWidth="272.0" />
+                                                        </CheckBox> 
+                                                        <CheckBox fx:id="controlsTextCheck" mnemonicParsing="false" text="%DisplayControlText">
+                                                            <HBox.margin>
+                                                                <Insets />
+                                                            </HBox.margin>
+                                                        </CheckBox>
                                                     </children>
                                                 </HBox>
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
@@ -141,6 +149,16 @@ License:    Apache License Version 2.0
                                                         <CheckBox fx:id="splitPaneSensitiveCheck" mnemonicParsing="false" onAction="#splitPaneSensitive" text="%Sensitive" />
                                                     </children>
                                                 </HBox>
+                                    <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="66.0" spacing="10.0">
+                                       <children>
+                                          <Label text="%SelectorScrollSize">
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                          </Label>
+                                          <ComboBox fx:id="scrollSizeSelector" editable="true" prefWidth="100.0" />
+                                       </children>
+                                    </HBox>
                                                 <VBox minHeight="-Infinity" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                     <children>
                                                         <Label text="%Message" />
@@ -173,7 +191,7 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </children>
                                             <padding>
-                                                <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                             </padding>
                                         </VBox>
                                     </content>
@@ -182,357 +200,357 @@ License:    Apache License Version 2.0
                         </Tab>
                         <Tab fx:id="baseTab" text="%Base">
                             <content>
-                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                           <content>
-                                      <VBox fx:id="localBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="20.0">
-                                          <children>
-                                              <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
-                                                  <children>
-                                                      <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="180.0" spacing="10.0">
-                                                          <children>
-                                                              <Label text="%JvmXmx" />
-                                                              <TextField fx:id="jvmInput" prefWidth="100.0" />
-                                                              <Label text="MB" />
-                                                              <Button fx:id="defaultJVMButton" mnemonicParsing="false" onAction="#defaultJVM">
-                                                                  <graphic>
-                                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                          <image>
-                                                                              <Image url="@../buttons/Red/iconDefault.png" />
-                                                                          </image>
-                                                                      </ImageView>
-                                                                  </graphic>
-                                                              </Button>
-                                                              <Button fx:id="settingsJVMButton" mnemonicParsing="false" onAction="#setJVM">
-                                                                  <graphic>
-                                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                          <image>
-                                                                              <Image url="@../buttons/Red/iconOK.png" />
-                                                                          </image>
-                                                                      </ImageView>
-                                                                  </graphic>
-                                                              </Button>
-                                                              <Label text="%RestartWhenChange" />
-                                                          </children>
-                                                      </HBox>
-                                                      <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                                          <children>
-                                                              <Label text="%JvmXmx" visible="false" />
-                                                              <Label fx:id="currentJvmLabel" text="Label" />
-                                                          </children>
-                                                      </HBox>
-                                                  </children>
-                                              </VBox>
-                                              <VBox layoutX="20.0" layoutY="30.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                                  <children>
-                                                      <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="180.0" spacing="10.0">
-                                                          <children>
-                                                              <Label text="%WebConnectTimeout" />
-                                                              <TextField fx:id="webConnectTimeoutInput" prefWidth="160.0" />
-                                                              <Button fx:id="okWebConnectTimeoutButton" mnemonicParsing="false" onAction="#okWebConnectTimeout">
-                                                                  <graphic>
-                                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                          <image>
-                                                                              <Image url="@../buttons/Red/iconOK.png" />
-                                                                          </image>
-                                                                      </ImageView>
-                                                                  </graphic>
-                                                              </Button>
-                                                          </children>
-                                                      </HBox>
-                                                      <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="15.0" spacing="10.0">
-                                                          <children>
-                                                              <Label text="%WebReadTimeout" />
-                                                              <TextField fx:id="webReadTimeoutInput" prefWidth="160.0" />
-                                                              <Button fx:id="okWebReadTimeoutButton1" mnemonicParsing="false" onAction="#okWebReadTimeout">
-                                                                  <graphic>
-                                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                          <image>
-                                                                              <Image url="@../buttons/Red/iconOK.png" />
-                                                                          </image>
-                                                                      </ImageView>
-                                                                  </graphic>
-                                                              </Button>
-                                                          </children>
-                                                      </HBox>
-                                                  </children>
-                                              </VBox>
-                                          </children>
-                                          <padding>
-                                              <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
-                                          </padding>
-                                      </VBox>
-                           </content>
-                        </ScrollPane>
+                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                                    <content>
+                                        <VBox fx:id="localBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="20.0">
+                                            <children>
+                                                <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="180.0" spacing="10.0">
+                                                            <children>
+                                                                <Label text="%JvmXmx" />
+                                                                <TextField fx:id="jvmInput" prefWidth="100.0" />
+                                                                <Label text="MB" />
+                                                                <Button fx:id="defaultJVMButton" mnemonicParsing="false" onAction="#defaultJVM">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconDefault.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                                <Button fx:id="settingsJVMButton" mnemonicParsing="false" onAction="#setJVM">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconOK.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                                <Label text="%RestartWhenChange" />
+                                                            </children>
+                                                        </HBox>
+                                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                            <children>
+                                                                <Label text="%JvmXmx" visible="false" />
+                                                                <Label fx:id="currentJvmLabel" text="Label" />
+                                                            </children>
+                                                        </HBox>
+                                                    </children>
+                                                </VBox>
+                                                <VBox layoutX="20.0" layoutY="30.0" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                    <children>
+                                                        <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="180.0" spacing="10.0">
+                                                            <children>
+                                                                <Label text="%WebConnectTimeout" />
+                                                                <TextField fx:id="webConnectTimeoutInput" prefWidth="160.0" />
+                                                                <Button fx:id="okWebConnectTimeoutButton" mnemonicParsing="false" onAction="#okWebConnectTimeout">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconOK.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                            </children>
+                                                        </HBox>
+                                                        <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="15.0" spacing="10.0">
+                                                            <children>
+                                                                <Label text="%WebReadTimeout" />
+                                                                <TextField fx:id="webReadTimeoutInput" prefWidth="160.0" />
+                                                                <Button fx:id="okWebReadTimeoutButton1" mnemonicParsing="false" onAction="#okWebReadTimeout">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconOK.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                            </children>
+                                                        </HBox>
+                                                    </children>
+                                                </VBox>
+                                            </children>
+                                            <padding>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
+                                            </padding>
+                                        </VBox>
+                                    </content>
+                                </ScrollPane>
                             </content>
                         </Tab>
                         <Tab fx:id="dataTab" text="%Data">
                             <content>
-                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                           <content>
-                                      <VBox fx:id="dataBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="20.0">
-                                          <padding>
-                                              <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
-                                          </padding>
-                                          <children>
-                                              <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
-                                                  <children>
-                                                      <Label text="%DataDirectory" />
-                                                      <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                                          <children>
-                                                              <TextField fx:id="dataDirInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                              <Button fx:id="settingsDataPathButton" mnemonicParsing="false" onAction="#selectDataPath">
-                                                                  <graphic>
-                                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                          <image>
-                                                                              <Image url="@../buttons/Red/iconOpen.png" />
-                                                                          </image>
-                                                                      </ImageView>
-                                                                  </graphic>
-                                                              </Button>
-                                                          </children>
-                                                      </HBox>
-                                                      <Label fx:id="currentDataPathLabel" text="%CurrentValue" />
-                                                      <CheckBox fx:id="clearCurrentRootCheck" mnemonicParsing="false" text="label" />
-                                                      <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                                          <children>
-                                                              <Button fx:id="settingsChangeRootButton" mnemonicParsing="false" onAction="#changeDataPath">
-                                                                  <graphic>
-                                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                          <image>
-                                                                              <Image url="@../buttons/Red/iconOK.png" />
-                                                                          </image>
-                                                                      </ImageView>
-                                                                  </graphic>
-                                                              </Button>
-                                                              <Label text="%RestartWhenChange" />
-                                                          </children>
-                                                      </HBox>
-                                                  </children>
-                                              </VBox>
-                                              <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
-                                                  <children>
-                                                      <HBox fx:id="derbyBox" alignment="CENTER_LEFT" spacing="5.0">
-                                                          <children>
-                                                              <Label text="Derby" />
-                                                              <RadioButton fx:id="embeddedRadio" mnemonicParsing="false" selected="true" text="%EmbeddedMode">
-                                                                  <toggleGroup>
-                                                                      <ToggleGroup fx:id="derbyGroup" />
-                                                                  </toggleGroup>
-                                                              </RadioButton>
-                                                              <RadioButton fx:id="networkRadio" mnemonicParsing="false" text="%NetworkModeOnlyLocal" toggleGroup="$derbyGroup" />
-                                                          </children>
-                                                      </HBox>
-                                                      <Label fx:id="derbyStatus" text="Label">
-                                                          <VBox.margin>
-                                                              <Insets left="30.0" />
-                                                          </VBox.margin>
-                                                      </Label>
-                                          <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                             <children>
-                                                <Label text="%BatchSize" />
-                                                <TextField fx:id="batchInput" prefWidth="200.0" />
-                                             </children>
-                                          </HBox>
-                                                  </children>
-                                              </VBox>
-                                              <HBox fx:id="fileHisBox" alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                                                  <children>
-                                                      <Label text="%RecentFileHistories" />
-                                                      <TextField fx:id="fileRecentInput" prefWidth="70.0" text="15" />
-                                                      <Button fx:id="settingsRecentOKButton" mnemonicParsing="false" onAction="#setFileRecentAction">
-                                                          <graphic>
-                                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                  <image>
-                                                                      <Image url="@../buttons/Red/iconOK.png" />
-                                                                  </image>
-                                                              </ImageView>
-                                                          </graphic>
-                                                      </Button>
-                                                      <Button fx:id="settingsRecentNotButton" mnemonicParsing="false" onAction="#noFileHistories">
-                                                          <graphic>
-                                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                  <image>
-                                                                      <Image url="@../buttons/Red/iconCancel.png" />
-                                                                  </image>
-                                                              </ImageView>
-                                                          </graphic>
-                                                      </Button>
-                                                      <Button fx:id="settingsRecentClearButton" mnemonicParsing="false" onAction="#clearFileHistories">
-                                                          <graphic>
-                                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                  <image>
-                                                                      <Image url="@../buttons/Red/iconClear.png" />
-                                                                  </image>
-                                                              </ImageView>
-                                                          </graphic>
-                                                      </Button>
-                                                  </children>
-                                              </HBox>
-                                              <CheckBox fx:id="stopAlarmCheck" mnemonicParsing="false" selected="true" text="%StopAlarmsExit" />
-                                          </children>
-                                      </VBox>
-                           </content>
-                        </ScrollPane>
+                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                                    <content>
+                                        <VBox fx:id="dataBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="20.0">
+                                            <padding>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
+                                            </padding>
+                                            <children>
+                                                <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <Label text="%DataDirectory" />
+                                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                            <children>
+                                                                <TextField fx:id="dataDirInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                                <Button fx:id="settingsDataPathButton" mnemonicParsing="false" onAction="#selectDataPath">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconOpen.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                            </children>
+                                                        </HBox>
+                                                        <Label fx:id="currentDataPathLabel" text="%CurrentValue" />
+                                                        <CheckBox fx:id="clearCurrentRootCheck" mnemonicParsing="false" text="label" />
+                                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                            <children>
+                                                                <Button fx:id="settingsChangeRootButton" mnemonicParsing="false" onAction="#changeDataPath">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconOK.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                                <Label text="%RestartWhenChange" />
+                                                            </children>
+                                                        </HBox>
+                                                    </children>
+                                                </VBox>
+                                                <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <HBox fx:id="derbyBox" alignment="CENTER_LEFT" spacing="5.0">
+                                                            <children>
+                                                                <Label text="Derby" />
+                                                                <RadioButton fx:id="embeddedRadio" mnemonicParsing="false" selected="true" text="%EmbeddedMode">
+                                                                    <toggleGroup>
+                                                                        <ToggleGroup fx:id="derbyGroup" />
+                                                                    </toggleGroup>
+                                                                </RadioButton>
+                                                                <RadioButton fx:id="networkRadio" mnemonicParsing="false" text="%NetworkModeOnlyLocal" toggleGroup="$derbyGroup" />
+                                                            </children>
+                                                        </HBox>
+                                                        <Label fx:id="derbyStatus" text="Label">
+                                                            <VBox.margin>
+                                                                <Insets left="30.0" />
+                                                            </VBox.margin>
+                                                        </Label>
+                                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                            <children>
+                                                                <Label text="%BatchSize" />
+                                                                <TextField fx:id="batchInput" prefWidth="200.0" />
+                                                            </children>
+                                                        </HBox>
+                                                    </children>
+                                                </VBox>
+                                                <HBox fx:id="fileHisBox" alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <Label text="%RecentFileHistories" />
+                                                        <TextField fx:id="fileRecentInput" prefWidth="70.0" text="15" />
+                                                        <Button fx:id="settingsRecentOKButton" mnemonicParsing="false" onAction="#setFileRecentAction">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconOK.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                        <Button fx:id="settingsRecentNotButton" mnemonicParsing="false" onAction="#noFileHistories">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconCancel.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                        <Button fx:id="settingsRecentClearButton" mnemonicParsing="false" onAction="#clearFileHistories">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconClear.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                    </children>
+                                                </HBox>
+                                                <CheckBox fx:id="stopAlarmCheck" mnemonicParsing="false" selected="true" text="%StopAlarmsExit" />
+                                            </children>
+                                        </VBox>
+                                    </content>
+                                </ScrollPane>
                             </content>
                         </Tab>
                         <Tab fx:id="pdfTab" text="PDF">
                             <content>
-                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                           <content>
-                                      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="20.0">
-                                          <children>
-                                              <HBox fx:id="pdfMemBox" alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                                                  <children>
-                                                      <Label text="%MaxMainMemPDF" />
-                                                      <RadioButton fx:id="pdfMem500MRadio" mnemonicParsing="false" onAction="#PdfMem500MB" selected="true" text="500M">
-                                                          <toggleGroup>
-                                                              <ToggleGroup fx:id="pdfMemGroup" />
-                                                          </toggleGroup>
-                                                      </RadioButton>
-                                                      <RadioButton fx:id="pdfMem1GRadio" mnemonicParsing="false" onAction="#PdfMem1GB" text="1G" toggleGroup="$pdfMemGroup" />
-                                                      <RadioButton fx:id="pdfMem2GRadio" mnemonicParsing="false" onAction="#PdfMem2GB" text="2G" toggleGroup="$pdfMemGroup" />
-                                                      <RadioButton fx:id="pdfMemUnlimitRadio" mnemonicParsing="false" onAction="#pdfMemUnlimit" text="%Unlimit" toggleGroup="$pdfMemGroup" />
-                                                  </children>
-                                              </HBox>
-                                              <Label text="%PdfMemComments" />
-                                          </children>
-                                          <padding>
-                                              <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
-                                          </padding>
-                                      </VBox>
-                           </content>
-                        </ScrollPane>
+                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                                    <content>
+                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="20.0">
+                                            <children>
+                                                <HBox fx:id="pdfMemBox" alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <Label text="%MaxMainMemPDF" />
+                                                        <RadioButton fx:id="pdfMem500MRadio" mnemonicParsing="false" onAction="#PdfMem500MB" selected="true" text="500M">
+                                                            <toggleGroup>
+                                                                <ToggleGroup fx:id="pdfMemGroup" />
+                                                            </toggleGroup>
+                                                        </RadioButton>
+                                                        <RadioButton fx:id="pdfMem1GRadio" mnemonicParsing="false" onAction="#PdfMem1GB" text="1G" toggleGroup="$pdfMemGroup" />
+                                                        <RadioButton fx:id="pdfMem2GRadio" mnemonicParsing="false" onAction="#PdfMem2GB" text="2G" toggleGroup="$pdfMemGroup" />
+                                                        <RadioButton fx:id="pdfMemUnlimitRadio" mnemonicParsing="false" onAction="#pdfMemUnlimit" text="%Unlimit" toggleGroup="$pdfMemGroup" />
+                                                    </children>
+                                                </HBox>
+                                                <Label text="%PdfMemComments" />
+                                            </children>
+                                            <padding>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
+                                            </padding>
+                                        </VBox>
+                                    </content>
+                                </ScrollPane>
                             </content>
                         </Tab>
                         <Tab fx:id="imageTab" text="%Image">
                             <content>
-                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                           <content>
-                                      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
-                                          <children>
-                                              <FlowPane hgap="2.0" vgap="2.0">
-                                                  <children>
-                                                      <Label text="%Stroke" />
-                                                      <Label text="%Color" />
-                                                      <fx:include fx:id="strokeColorSet" source="ColorSet.fxml" />
-                                                      <Label text="%Width" />
-                                                      <ComboBox fx:id="strokeWidthBox" editable="true" prefWidth="100.0" />
-                                                  </children>
-                                              </FlowPane>
-                                              <FlowPane hgap="2.0" vgap="2.0">
-                                                  <children>
-                                                      <Label text="%Anchor" />
-                                                      <Label text="%Color" />
-                                                      <fx:include fx:id="anchorColorSet" source="ColorSet.fxml" />
-                                                      <Label text="%Width" />
-                                                      <ComboBox fx:id="anchorWidthBox" editable="true" prefWidth="100.0" />
-                                                      <CheckBox fx:id="anchorSolidCheck" mnemonicParsing="false" text="%Solid" />
-                                                  </children>
-                                              </FlowPane>
-                                              <FlowPane hgap="2.0" vgap="2.0">
-                                                  <children>
-                                                      <Label text="%GridLines" />
-                                                      <Label text="%Color" />
-                                                      <fx:include fx:id="gridColorSet" source="ColorSet.fxml" />
-                                                      <Label text="%Width" />
-                                                      <ComboBox fx:id="gridWidthSelector" editable="true" prefWidth="100.0" />
-                                                      <Label text="%Interval" />
-                                                      <ComboBox fx:id="gridIntervalSelector" editable="true" prefWidth="100.0" />
-                                                      <Label layoutX="302.0" layoutY="17.0" text="%Opacity" />
-                                                      <ComboBox fx:id="gridOpacitySelector" editable="true" layoutX="348.0" layoutY="13.0" prefWidth="100.0" />
-                                                  </children>
-                                              </FlowPane>
-                                              <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                                  <children>
-                                                      <Label text="%AlphaColor" wrapText="true" />
-                                                      <fx:include fx:id="alphaColorSet" source="ColorSet.fxml" />
-                                                      <Label fx:id="alphaLabel" text="%AlphaReplaceComments" />
-                                                  </children>
-                                              </HBox>
-                                              <HBox fx:id="imageHisBox1" alignment="CENTER_LEFT" layoutX="20.0" layoutY="211.0" spacing="10.0">
-                                                  <children>
-                                                      <Label text="%ThumbnailWidth" />
-                                                      <TextField fx:id="thumbnailWidthInput" prefWidth="80.0" />
-                                                  </children>
-                                              </HBox>
-                                    <fx:include fx:id="render" source="ControlImageRender.fxml" />
-                                          </children>
-                                          <padding>
-                                              <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
-                                          </padding>
-                                      </VBox>
-                           </content>
-                        </ScrollPane>
+                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                                    <content>
+                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                            <children>
+                                                <FlowPane hgap="2.0" vgap="2.0">
+                                                    <children>
+                                                        <Label text="%Stroke" />
+                                                        <Label text="%Color" />
+                                                        <fx:include fx:id="strokeColorSet" source="ColorSet.fxml" />
+                                                        <Label text="%Width" />
+                                                        <ComboBox fx:id="strokeWidthBox" editable="true" prefWidth="100.0" />
+                                                    </children>
+                                                </FlowPane>
+                                                <FlowPane hgap="2.0" vgap="2.0">
+                                                    <children>
+                                                        <Label text="%Anchor" />
+                                                        <Label text="%Color" />
+                                                        <fx:include fx:id="anchorColorSet" source="ColorSet.fxml" />
+                                                        <Label text="%Width" />
+                                                        <ComboBox fx:id="anchorWidthBox" editable="true" prefWidth="100.0" />
+                                                        <CheckBox fx:id="anchorSolidCheck" mnemonicParsing="false" text="%Solid" />
+                                                    </children>
+                                                </FlowPane>
+                                                <FlowPane hgap="2.0" vgap="2.0">
+                                                    <children>
+                                                        <Label text="%GridLines" />
+                                                        <Label text="%Color" />
+                                                        <fx:include fx:id="gridColorSet" source="ColorSet.fxml" />
+                                                        <Label text="%Width" />
+                                                        <ComboBox fx:id="gridWidthSelector" editable="true" prefWidth="100.0" />
+                                                        <Label text="%Interval" />
+                                                        <ComboBox fx:id="gridIntervalSelector" editable="true" prefWidth="100.0" />
+                                                        <Label layoutX="302.0" layoutY="17.0" text="%Opacity" />
+                                                        <ComboBox fx:id="gridOpacitySelector" editable="true" layoutX="348.0" layoutY="13.0" prefWidth="100.0" />
+                                                    </children>
+                                                </FlowPane>
+                                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                                    <children>
+                                                        <Label text="%AlphaColor" wrapText="true" />
+                                                        <fx:include fx:id="alphaColorSet" source="ColorSet.fxml" />
+                                                        <Label fx:id="alphaLabel" text="%AlphaReplaceComments" />
+                                                    </children>
+                                                </HBox>
+                                                <HBox fx:id="imageHisBox1" alignment="CENTER_LEFT" layoutX="20.0" layoutY="211.0" spacing="10.0">
+                                                    <children>
+                                                        <Label text="%ThumbnailWidth" />
+                                                        <TextField fx:id="thumbnailWidthInput" prefWidth="80.0" />
+                                                    </children>
+                                                </HBox>
+                                                <fx:include fx:id="render" source="ControlImageRender.fxml" />
+                                            </children>
+                                            <padding>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                            </padding>
+                                        </VBox>
+                                    </content>
+                                </ScrollPane>
                             </content>
                         </Tab>
                         <Tab fx:id="mapTab" text="%Map">
                             <content>
-                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                           <content>
-                                      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                          <children>
-                                              <Label text="%MapKeysComments" wrapText="true">
-                                                  <VBox.margin>
-                                                      <Insets bottom="10.0" />
-                                                  </VBox.margin>
-                                              </Label>
-                                              <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
-                                                  <children>
-                                                      <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                                          <children>
-                                                              <Label text="%TianDiTuWebKey" />
-                                                              <TextField fx:id="tiandituWebKeyInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                          </children>
-                                                      </HBox>
-                                                      <Hyperlink onAction="#link" text="https://console.tianditu.gov.cn/api/key" />
-                                                  </children>
-                                              </VBox>
-                                              <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
-                                                  <children>
-                                                      <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                                          <children>
-                                                              <Label text="%GaoDeWebKey" />
-                                                              <TextField fx:id="gaodeWebKeyInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                          </children>
-                                                      </HBox>
-                                                      <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                                                          <children>
-                                                              <Label text="%GaoDeWebServiceKey" />
-                                                              <TextField fx:id="gaodeServiceKeyInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                          </children>
-                                                      </HBox>
-                                                      <Hyperlink onAction="#link" text="https://lbs.amap.com/dev/index" />
-                                                  </children>
-                                              </VBox>
-                                              <HBox alignment="CENTER_RIGHT" spacing="5.0">
-                                                  <children>
-                                                      <Button fx:id="defaultMapButton" mnemonicParsing="false" onAction="#defaultMapAction">
-                                                          <graphic>
-                                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                  <image>
-                                                                      <Image url="@../buttons/Red/iconDefault.png" />
-                                                                  </image>
-                                                              </ImageView>
-                                                          </graphic>
-                                                      </Button>
-                                                      <Button fx:id="okMapButton" mnemonicParsing="false" onAction="#setMapKeysAction">
-                                                          <graphic>
-                                                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                  <image>
-                                                                      <Image url="@../buttons/Red/iconOK.png" />
-                                                                  </image>
-                                                              </ImageView>
-                                                          </graphic>
-                                                      </Button>
-                                                  </children>
-                                              </HBox>
-                                          </children>
-                                          <padding>
-                                              <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
-                                          </padding>
-                                      </VBox>
-                           </content>
-                        </ScrollPane>
+                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                                    <content>
+                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                            <children>
+                                                <Label text="%MapKeysComments" wrapText="true">
+                                                    <VBox.margin>
+                                                        <Insets bottom="10.0" />
+                                                    </VBox.margin>
+                                                </Label>
+                                                <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                            <children>
+                                                                <Label text="%TianDiTuWebKey" />
+                                                                <TextField fx:id="tiandituWebKeyInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                            </children>
+                                                        </HBox>
+                                                        <Hyperlink onAction="#link" text="https://console.tianditu.gov.cn/api/key" />
+                                                    </children>
+                                                </VBox>
+                                                <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                            <children>
+                                                                <Label text="%GaoDeWebKey" />
+                                                                <TextField fx:id="gaodeWebKeyInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                            </children>
+                                                        </HBox>
+                                                        <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
+                                                            <children>
+                                                                <Label text="%GaoDeWebServiceKey" />
+                                                                <TextField fx:id="gaodeServiceKeyInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                            </children>
+                                                        </HBox>
+                                                        <Hyperlink onAction="#link" text="https://lbs.amap.com/dev/index" />
+                                                    </children>
+                                                </VBox>
+                                                <HBox alignment="CENTER_RIGHT" spacing="5.0">
+                                                    <children>
+                                                        <Button fx:id="defaultMapButton" mnemonicParsing="false" onAction="#defaultMapAction">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconDefault.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                        <Button fx:id="okMapButton" mnemonicParsing="false" onAction="#setMapKeysAction">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconOK.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                    </children>
+                                                </HBox>
+                                            </children>
+                                            <padding>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
+                                            </padding>
+                                        </VBox>
+                                    </content>
+                                </ScrollPane>
                             </content>
                         </Tab>
                     </tabs>
@@ -543,40 +561,40 @@ License:    Apache License Version 2.0
             </padding>
         </VBox>
     </center>
-   <bottom>
-          <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="10.0" BorderPane.alignment="CENTER">
-              <children>
-                  <Button fx:id="settingsClearButton" mnemonicParsing="false" onAction="#clearSettings">
-                      <graphic>
-                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                              <image>
-                                  <Image url="@../buttons/Red/iconClear.png" />
-                              </image>
-                          </ImageView>
-                      </graphic>
-                  </Button>
-                  <Button fx:id="settingsOpenButton" mnemonicParsing="false" onAction="#openDataPath">
-                      <graphic>
-                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                              <image>
-                                  <Image url="@../buttons/Red/iconOpen.png" />
-                              </image>
-                          </ImageView>
-                      </graphic>
-                  </Button>
-                  <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeAction">
-                      <graphic>
-                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                              <image>
-                                  <Image url="@../buttons/Red/iconClose.png" />
-                              </image>
-                          </ImageView>
-                      </graphic>
-                  </Button>
-              </children>
-         <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-         </padding>
-          </HBox>
-   </bottom>
+    <bottom>
+        <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="10.0" BorderPane.alignment="CENTER">
+            <children>
+                <Button fx:id="settingsClearButton" mnemonicParsing="false" onAction="#clearSettings">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconClear.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="settingsOpenButton" mnemonicParsing="false" onAction="#openDataPath">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconOpen.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="closeButton" mnemonicParsing="false" onAction="#closeAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconClose.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+        </HBox>
+    </bottom>
 </BorderPane>

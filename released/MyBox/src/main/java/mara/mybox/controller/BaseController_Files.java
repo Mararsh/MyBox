@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -15,6 +16,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.RecentVisitMenu;
@@ -140,7 +142,22 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         if (AppPaths.reservedPath(fname)) {
             return;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
+            recordFileRead(conn, file, pathType, fileType);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void recordFileRead(Connection conn, File file, int pathType, int fileType) {
+        try {
+            if (conn == null || file == null) {
+                return;
+            }
+            String fname = file.getAbsolutePath();
+            if (AppPaths.reservedPath(fname)) {
+                return;
+            }
             String path;
             if (file.isDirectory()) {
                 path = file.getPath();
@@ -148,15 +165,18 @@ public abstract class BaseController_Files extends BaseController_Attributes {
                 path = file.getParent();
                 UserConfig.setString(conn, baseName + "SourceFile", fname);
                 VisitHistoryTools.readFile(conn, fileType, fname);
+                VisitHistoryTools.readFile(conn, FileType.All, fname);
             }
             if (path != null) {
                 UserConfig.setString(conn, "LastPath", path);
                 UserConfig.setString(conn, baseName + "SourcePath", path);
-                UserConfig.setString(conn, VisitHistoryTools.getPathKey(fileType), path);
+                UserConfig.setString(conn, VisitHistoryTools.getPathKey(pathType), path);
+                UserConfig.setString(conn, VisitHistoryTools.getPathKey(FileType.All), path);
                 VisitHistoryTools.readPath(conn, pathType, path);
+                VisitHistoryTools.readPath(conn, FileType.All, path);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -172,7 +192,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         recordFileWritten(file, fileType, fileType);
     }
 
-    public void recordFileWritten(File file, int TargetPathType, int TargetFileType) {
+    public void recordFileWritten(File file, int pathType, int fileType) {
         if (file == null) {
             return;
         }
@@ -180,20 +200,42 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         if (AppPaths.reservedPath(fname)) {
             return;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
+            recordFileWritten(conn, file, pathType, fileType);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void recordFileWritten(Connection conn, File file, int pathType, int fileType) {
+        try {
+            if (conn == null || file == null) {
+                return;
+            }
+            String fname = file.getAbsolutePath();
+            if (AppPaths.reservedPath(fname)) {
+                return;
+            }
             String path;
             if (file.isDirectory()) {
                 path = file.getPath();
             } else {
                 path = file.getParent();
                 UserConfig.setString(conn, baseName + "TargetFile", fname);
-                VisitHistoryTools.writeFile(conn, TargetFileType, fname);
+                VisitHistoryTools.writeFile(conn, fileType, fname);
+                VisitHistoryTools.writeFile(conn, FileType.All, fname);
+                VisitHistoryTools.readFile(conn, fileType, fname);
+                VisitHistoryTools.readFile(conn, FileType.All, fname);
             }
             if (path != null) {
                 UserConfig.setString(conn, "LastPath", path);
                 UserConfig.setString(conn, baseName + "TargetPath", path);
-                UserConfig.setString(conn, VisitHistoryTools.getPathKey(TargetPathType), path);
-                VisitHistoryTools.writePath(conn, TargetPathType, path);
+                UserConfig.setString(conn, VisitHistoryTools.getPathKey(pathType), path);
+                UserConfig.setString(conn, VisitHistoryTools.getPathKey(FileType.All), path);
+                VisitHistoryTools.writePath(conn, pathType, path);
+                VisitHistoryTools.writePath(conn, FileType.All, path);
+                VisitHistoryTools.readPath(conn, pathType, path);
+                VisitHistoryTools.readPath(conn, FileType.All, path);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -212,21 +254,8 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         if (AppPaths.reservedPath(fname)) {
             return;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
-            String path;
-            if (file.isDirectory()) {
-                path = file.getPath();
-            } else {
-                path = file.getParent();
-                UserConfig.setString(conn, baseName + "SourceFile", fname);
-                VisitHistoryTools.readFile(conn, AddFileType, fname);
-            }
-            if (path != null) {
-                UserConfig.setString(conn, "LastPath", path);
-                UserConfig.setString(conn, baseName + "SourcePath", path);
-                UserConfig.setString(conn, VisitHistoryTools.getPathKey(SourcePathType), path);
-                VisitHistoryTools.readPath(conn, SourcePathType, path);
-            }
+        try (Connection conn = DerbyBase.getConnection()) {
+            recordFileRead(conn, file, SourcePathType, AddFileType);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -236,26 +265,9 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         if (files == null || files.isEmpty()) {
             return;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             for (File file : files) {
-                String fname = file.getAbsolutePath();
-                if (AppPaths.reservedPath(fname)) {
-                    continue;
-                }
-                String path;
-                if (file.isDirectory()) {
-                    path = file.getPath();
-                } else {
-                    path = file.getParent();
-                    UserConfig.setString(conn, baseName + "SourceFile", fname);
-                    VisitHistoryTools.readFile(conn, AddFileType, fname);
-                }
-                if (path != null) {
-                    UserConfig.setString(conn, "LastPath", path);
-                    UserConfig.setString(conn, baseName + "SourcePath", path);
-                    UserConfig.setString(conn, VisitHistoryTools.getPathKey(SourcePathType), path);
-                    VisitHistoryTools.readPath(conn, SourcePathType, path);
-                }
+                recordFileRead(conn, file, SourcePathType, AddFileType);
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -332,9 +344,9 @@ public abstract class BaseController_Files extends BaseController_Attributes {
 
     }
 
-    @FXML
-    public void popSourceFile(MouseEvent event) {
+    public void showSourceFilesMenu(Event event) {
         if (AppVariables.fileRecentNumber <= 0) {
+            selectSourceFile();
             return;
         }
         RecentVisitMenu menu = makeSourceFileRecentVisitMenu(event);
@@ -343,7 +355,23 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         }
     }
 
-    public RecentVisitMenu makeSourceFileRecentVisitMenu(MouseEvent event) {
+    @FXML
+    public void pickSourceFile(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            selectSourceFile();
+        } else {
+            showSourceFilesMenu(event);
+        }
+    }
+
+    @FXML
+    public void popSourceFile(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            showSourceFilesMenu(event);
+        }
+    }
+
+    public RecentVisitMenu makeSourceFileRecentVisitMenu(Event event) {
         RecentVisitMenu menu = new RecentVisitMenu(this, event) {
 
             @Override
@@ -528,8 +556,9 @@ public abstract class BaseController_Files extends BaseController_Attributes {
     }
 
     @FXML
-    public void popSourcePath(MouseEvent event) {
+    public void showSourcePathMenu(Event event) {
         if (AppVariables.fileRecentNumber <= 0) {
+            selectSourcePath();
             return;
         }
         new RecentVisitMenu(this, event) {
@@ -567,8 +596,24 @@ public abstract class BaseController_Files extends BaseController_Attributes {
     }
 
     @FXML
-    public void popSaveAs(MouseEvent event) { //
+    public void popSourcePath(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            showSourcePathMenu(event);
+        }
+    }
+
+    @FXML
+    public void pickSourcePath(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            selectSourcePath();
+        } else {
+            showSourcePathMenu(event);
+        }
+    }
+
+    public void showSaveAsMenu(Event event) { //
         if (AppVariables.fileRecentNumber <= 0) {
+            saveAsAction();
             return;
         }
         new RecentVisitMenu(this, event) {
@@ -600,6 +645,22 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         }.pop();
     }
 
+    @FXML
+    public void popSaveAs(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            showSaveAsMenu(event);
+        }
+    }
+
+    @FXML
+    public void pickSaveAs(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            saveAsAction();
+        } else {
+            showSaveAsMenu(event);
+        }
+    }
+
     public String defaultTargetName(String prefix) {
         String defaultName = prefix != null ? prefix : "";
         if (sourceFile != null) {
@@ -610,13 +671,15 @@ public abstract class BaseController_Files extends BaseController_Attributes {
     }
 
     public File defaultTargetPath(int type) {
-        File savedPath = VisitHistoryTools.getSavedPath(type);
-        String defaultPathName = UserConfig.getString(baseName + "TargetPath", savedPath != null ? savedPath.getAbsolutePath() : null);
-        if (defaultPathName != null) {
-            return new File(defaultPathName);
-        } else {
-            return AppPaths.defaultPath();
+        File defaultPath = UserConfig.getPath(baseName + "TargetPath");
+        if (defaultPath != null) {
+            return defaultPath;
         }
+        File savedPath = VisitHistoryTools.getSavedPath(type);
+        if (savedPath != null) {
+            return savedPath;
+        }
+        return AppPaths.defaultPath();
     }
 
     public List<FileChooser.ExtensionFilter> defaultFilter(int type) {

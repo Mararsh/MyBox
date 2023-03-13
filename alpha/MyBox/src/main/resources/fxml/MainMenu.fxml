@@ -90,6 +90,7 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#openHtmlToPdf" text="%HtmlToPdf" />
                                         <MenuItem mnemonicParsing="false" onAction="#openHtmlSetCharset" text="%HtmlSetCharset" />
                                         <MenuItem mnemonicParsing="false" onAction="#openHtmlSetStyle" text="%HtmlSetStyle" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openHtmlSetEquiv" text="%HtmlSetEquiv" />
                                         <SeparatorMenuItem mnemonicParsing="false" />
                                         <MenuItem mnemonicParsing="false" onAction="#openHtmlMergeAsHtml" text="%HtmlMergeAsHtml" />
                                         <MenuItem mnemonicParsing="false" onAction="#openHtmlMergeAsMarkdown" text="%HtmlMergeAsMarkdown" />

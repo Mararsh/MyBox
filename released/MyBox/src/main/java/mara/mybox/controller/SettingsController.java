@@ -27,6 +27,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
 import mara.mybox.MyBox;
@@ -50,6 +51,7 @@ import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.Colors;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -81,7 +83,7 @@ public class SettingsController extends BaseController {
     @FXML
     protected VBox localBox, dataBox;
     @FXML
-    protected ComboBox<String> styleBox, fontSizeBox, iconSizeBox,
+    protected ComboBox<String> fontSizeBox, iconSizeBox, scrollSizeSelector,
             strokeWidthBox, anchorWidthBox, gridWidthSelector, gridIntervalSelector, gridOpacitySelector,
             popSizeSelector, popDurationSelector;
     @FXML
@@ -92,7 +94,9 @@ public class SettingsController extends BaseController {
     @FXML
     protected RadioButton chineseRadio, englishRadio, embeddedRadio, networkRadio,
             pdfMem500MRadio, pdfMem1GRadio, pdfMem2GRadio, pdfMemUnlimitRadio,
-            redRadio, orangeRadio, pinkRadio, lightBlueRadio, blueRadio, darkGreenRadio;
+            redRadio, orangeRadio, pinkRadio, lightBlueRadio, blueRadio, greenRadio, colorCustomizeRadio;
+    @FXML
+    protected Rectangle colorCustomizeRect;
     @FXML
     protected ColorSet strokeColorSetController, anchorColorSetController, gridColorSetController, alphaColorSetController,
             popBgColorController, popInfoColorController, popErrorColorController, popWarnColorController;
@@ -120,10 +124,6 @@ public class SettingsController extends BaseController {
             initImageTab();
             initMapTab();
 
-            isSettingValues = true;
-            initSettingValues();
-            isSettingValues = false;
-
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -133,14 +133,22 @@ public class SettingsController extends BaseController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
+
+            isSettingValues = true;
+            initSettingValues();
+            isSettingValues = false;
+
             NodeStyleTools.setTooltip(hidpiIconsCheck, new Tooltip(message("HidpiIconsComments")));
-            NodeStyleTools.setTooltip(redRadio, new Tooltip(message("MyBoxDarkRed")));
-            NodeStyleTools.setTooltip(pinkRadio, new Tooltip(message("MyBoxDarkPink")));
-            NodeStyleTools.setTooltip(orangeRadio, new Tooltip(message("MyBoxOrange")));
-            NodeStyleTools.setTooltip(lightBlueRadio, new Tooltip(message("MyBoxDarkGreyBlue")));
-            NodeStyleTools.setTooltip(blueRadio, new Tooltip(message("MyBoxDarkBlue")));
-            NodeStyleTools.setTooltip(darkGreenRadio, new Tooltip(message("MyBoxDarkGreen")));
+            NodeStyleTools.setTooltip(redRadio, new Tooltip(message("MyBoxColorRedDark")));
+            NodeStyleTools.setTooltip(pinkRadio, new Tooltip(message("MyBoxColorPinkDark")));
+            NodeStyleTools.setTooltip(orangeRadio, new Tooltip(message("MyBoxColorOrangeDark")));
+            NodeStyleTools.setTooltip(lightBlueRadio, new Tooltip(message("MyBoxColorLightBlueDark")));
+            NodeStyleTools.setTooltip(blueRadio, new Tooltip(message("MyBoxColorBlueDark")));
+            NodeStyleTools.setTooltip(greenRadio, new Tooltip(message("MyBoxColorGreenDark")));
+            NodeStyleTools.setTooltip(colorCustomizeRadio, new Tooltip(message("Customize")));
             NodeStyleTools.setTooltip(imageHisBox, new Tooltip(message("ImageHisComments")));
+
+            colorCustomizeRect.setFill(Colors.customizeColorDark());
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -156,39 +164,6 @@ public class SettingsController extends BaseController {
             recentFileNumber = UserConfig.getInt("FileRecentNumber", 20);
             fileRecentInput.setText(recentFileNumber + "");
 
-            String style = UserConfig.getString("InterfaceStyle", AppValues.DefaultStyle);
-            switch (style) {
-                case AppValues.DefaultStyle:
-                    styleBox.getSelectionModel().select(message("DefaultStyle"));
-                    break;
-                case AppValues.caspianStyle:
-                    styleBox.getSelectionModel().select(message("caspianStyle"));
-                    break;
-                case AppValues.WhiteOnBlackStyle:
-                    styleBox.getSelectionModel().select(message("WhiteOnBlackStyle"));
-                    break;
-                case AppValues.PinkOnBlackStyle:
-                    styleBox.getSelectionModel().select(message("PinkOnBlackStyle"));
-                    break;
-                case AppValues.YellowOnBlackStyle:
-                    styleBox.getSelectionModel().select(message("YellowOnBlackStyle"));
-                    break;
-                case AppValues.GreenOnBlackStyle:
-                    styleBox.getSelectionModel().select(message("GreenOnBlackStyle"));
-                    break;
-                case AppValues.WhiteOnBlueStyle:
-                    styleBox.getSelectionModel().select(message("WhiteOnBlueStyle"));
-                    break;
-                case AppValues.WhiteOnGreenStyle:
-                    styleBox.getSelectionModel().select(message("WhiteOnGreenStyle"));
-                    break;
-                case AppValues.WhiteOnPurpleStyle:
-                    styleBox.getSelectionModel().select(message("WhiteOnVioletredStyle"));
-                    break;
-                default:
-                    break;
-            }
-
             switch (AppVariables.ControlColor) {
                 case Pink:
                     pinkRadio.setSelected(true);
@@ -202,10 +177,12 @@ public class SettingsController extends BaseController {
                 case Orange:
                     orangeRadio.setSelected(true);
                     break;
-                case DarkGreen:
-                    darkGreenRadio.setSelected(true);
+                case Green:
+                    greenRadio.setSelected(true);
                     break;
-                case Red:
+                case Customize:
+                    colorCustomizeRadio.setSelected(true);
+                    break;
                 default:
                     redRadio.setSelected(true);
 
@@ -300,20 +277,6 @@ public class SettingsController extends BaseController {
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
                     UserConfig.setBoolean("RecordWindowsSizeLocation", recordWindowsSizeLocationCheck.isSelected());
                     AppVariables.recordWindowsSizeLocation = recordWindowsSizeLocationCheck.isSelected();
-                }
-            });
-
-            styleBox.getItems().addAll(Arrays.asList(message("DefaultStyle"), message("caspianStyle"),
-                    message("WhiteOnBlackStyle"), message("PinkOnBlackStyle"),
-                    message("YellowOnBlackStyle"), message("GreenOnBlackStyle"),
-                    message("WhiteOnBlueStyle"), message("WhiteOnGreenStyle"),
-                    message("WhiteOnVioletredStyle")));
-            styleBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    if (newValue != null && !newValue.isEmpty()) {
-                        checkStyle(newValue);
-                    }
                 }
             });
 
@@ -432,6 +395,29 @@ public class SettingsController extends BaseController {
                 }
             });
 
+            scrollSizeSelector.getItems().addAll(Arrays.asList(
+                    "100", "500", "1000", "20", "50", "200", Integer.MAX_VALUE + "")
+            );
+            scrollSizeSelector.setValue(UserConfig.selectorScrollSize() + "");
+            scrollSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> vv, String ov, String nv) {
+                    if (nv != null && !nv.isEmpty()) {
+                        try {
+                            int v = Integer.parseInt(nv);
+                            if (v > 0) {
+                                UserConfig.setInt("SelectorScrollSize", v);
+                                ValidationTools.setEditorNormal(scrollSizeSelector);
+                            } else {
+                                ValidationTools.setEditorBadStyle(scrollSizeSelector);
+                            }
+                        } catch (Exception e) {
+                            ValidationTools.setEditorBadStyle(scrollSizeSelector);
+                        }
+                    }
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -445,52 +431,26 @@ public class SettingsController extends BaseController {
         }
     }
 
-    protected void checkStyle(String s) {
-        try {
-            if (message("DefaultStyle").equals(s)) {
-                setStyle(AppValues.MyBoxStyle);
-            } else if (message("caspianStyle").equals(s)) {
-                setStyle(AppValues.caspianStyle);
-            } else if (message("WhiteOnBlackStyle").equals(s)) {
-                setStyle(AppValues.WhiteOnBlackStyle);
-            } else if (message("PinkOnBlackStyle").equals(s)) {
-                setStyle(AppValues.PinkOnBlackStyle);
-            } else if (message("YellowOnBlackStyle").equals(s)) {
-                setStyle(AppValues.YellowOnBlackStyle);
-            } else if (message("GreenOnBlackStyle").equals(s)) {
-                setStyle(AppValues.GreenOnBlackStyle);
-            } else if (message("WhiteOnBlueStyle").equals(s)) {
-                setStyle(AppValues.WhiteOnBlueStyle);
-            } else if (message("WhiteOnGreenStyle").equals(s)) {
-                setStyle(AppValues.WhiteOnGreenStyle);
-            } else if (message("WhiteOnVioletredStyle").equals(s)) {
-                setStyle(AppValues.WhiteOnPurpleStyle);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-
-    }
-
     protected void checkControlsColor() {
         try {
             if (isSettingValues) {
                 return;
             }
             if (pinkRadio.isSelected()) {
-                StyleTools.setConfigStyleColor("Pink");
+                StyleTools.setConfigStyleColor(this, "Pink");
             } else if (lightBlueRadio.isSelected()) {
-                StyleTools.setConfigStyleColor("LightBlue");
+                StyleTools.setConfigStyleColor(this, "LightBlue");
             } else if (blueRadio.isSelected()) {
-                StyleTools.setConfigStyleColor("Blue");
+                StyleTools.setConfigStyleColor(this, "Blue");
             } else if (orangeRadio.isSelected()) {
-                StyleTools.setConfigStyleColor("Orange");
-            } else if (darkGreenRadio.isSelected()) {
-                StyleTools.setConfigStyleColor("DarkGreen");
+                StyleTools.setConfigStyleColor(this, "Orange");
+            } else if (greenRadio.isSelected()) {
+                StyleTools.setConfigStyleColor(this, "Green");
+            } else if (colorCustomizeRadio.isSelected()) {
+                StyleTools.setConfigStyleColor(this, "Customize");
             } else {
-                StyleTools.setConfigStyleColor("Red");
+                StyleTools.setConfigStyleColor(this, "Red");
             }
-            refreshInterfaceAll();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -526,6 +486,11 @@ public class SettingsController extends BaseController {
     @FXML
     protected void popColorSet() {
         UserConfig.setBoolean("PopColorSetWhenMouseHovering", popColorSetCheck.isSelected());
+    }
+
+    @FXML
+    protected void inputColorAction() {
+        SettingCustomColorsController.open(this);
     }
 
     @FXML
@@ -608,7 +573,8 @@ public class SettingsController extends BaseController {
 
     @FXML
     protected void defaultJVM() {
-        long defaultJVM = Runtime.getRuntime().maxMemory() / (1024 * 1024);
+        OperatingSystemMXBean osmxb = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+        long defaultJVM = osmxb.getTotalMemorySize() / (4 * 1024 * 1024);
         jvmInput.setText(defaultJVM + "");
     }
 
@@ -636,7 +602,7 @@ public class SettingsController extends BaseController {
                     || newPath.trim().equals(AppVariables.MyboxDataPath)) {
                 return;
             }
-            if (!PopTools.askSure(this, getBaseTitle(), message("ChangeDataPathConfirm"))) {
+            if (!PopTools.askSure(getTitle(), message("ChangeDataPathConfirm"))) {
                 return;
             }
             popInformation(message("CopyingFilesFromTo"));
@@ -782,7 +748,7 @@ public class SettingsController extends BaseController {
 
     @FXML
     protected void clearFileHistories(ActionEvent event) {
-        if (!PopTools.askSure(this, getBaseTitle(), message("SureClear"))) {
+        if (!PopTools.askSure(getTitle(), message("SureClear"))) {
             return;
         }
         new TableVisitHistory().clear();
@@ -1035,7 +1001,7 @@ public class SettingsController extends BaseController {
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     float v = 0.1f;
                     try {
-                        v = Float.valueOf(newValue);
+                        v = Float.parseFloat(newValue);
                     } catch (Exception e) {
                     }
                     UserConfig.setString("GridLinesOpacity", v + "");
@@ -1050,7 +1016,7 @@ public class SettingsController extends BaseController {
                         Paint oldValue, Paint newValue) {
                     if (!Color.WHITE.equals((Color) newValue)) {
                         alphaLabel.setText(message("AlphaReplaceComments"));
-                        alphaLabel.setStyle(NodeStyleTools.darkRedText);
+                        alphaLabel.setStyle(NodeStyleTools.darkRedTextStyle());
                     } else {
                         alphaLabel.setText("");
                         popSuccessful();
@@ -1086,7 +1052,7 @@ public class SettingsController extends BaseController {
 
     private void checkRecentFile() {
         try {
-            int v = Integer.valueOf(fileRecentInput.getText());
+            int v = Integer.parseInt(fileRecentInput.getText());
             if (v >= 0) {
                 recentFileNumber = v;
                 fileRecentInput.setStyle(null);
@@ -1103,10 +1069,10 @@ public class SettingsController extends BaseController {
 
     @FXML
     protected void clearImageHistories(ActionEvent event) {
-        if (!PopTools.askSure(this, getBaseTitle(), message("SureClear"))) {
+        if (!PopTools.askSure(getTitle(), message("SureClear"))) {
             return;
         }
-        new TableImageEditHistory().clear();
+        new TableImageEditHistory().clearAll();
         popSuccessful();
     }
 

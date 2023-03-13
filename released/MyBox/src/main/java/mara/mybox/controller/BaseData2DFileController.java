@@ -118,7 +118,7 @@ public abstract class BaseData2DFileController extends BaseData2DController {
                 }
             });
 
-            backupController.setControls(this, baseName);
+            backupController.setParameters(this, baseName);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

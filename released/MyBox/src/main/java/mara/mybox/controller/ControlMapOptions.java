@@ -23,7 +23,6 @@ import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -67,6 +66,11 @@ public class ControlMapOptions extends BaseController {
     public ControlMapOptions() {
         baseTitle = Languages.message("MapOptions");
         TipsLabelKey = "MapComments";
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Image);
     }
 
     public void setParameters(ControlMap mapController) {
@@ -160,7 +164,15 @@ public class ControlMapOptions extends BaseController {
                             if (markerCircleRadio.isSelected()) {
                                 file = mapOptions.circleImage();
                             } else if (markerImageRadio.isSelected()) {
-                                file = mapOptions.getMarkerImageFile();
+                                String v = markerImageInput.getText();
+                                if (v == null || v.isBlank()) {
+                                    file = mapOptions.pointImage();
+                                } else {
+                                    file = new File(v);
+                                    if (!file.exists() || !file.isFile()) {
+                                        file = mapOptions.pointImage();
+                                    }
+                                }
                             } else {
                                 file = mapOptions.pointImage();
                             }
@@ -461,9 +473,9 @@ public class ControlMapOptions extends BaseController {
             File file = mapOptions.getMarkerImageFile();
             if (file == null || !file.exists() || !file.isFile()) {
                 markerPointRadio.setSelected(true);
-            } else if (mapOptions.circleImage().equals(file)) {
+            } else if (file.equals(mapOptions.circleImage())) {
                 markerCircleRadio.setSelected(true);
-            } else if (mapOptions.pointImage().equals(file)) {
+            } else if (file.equals(mapOptions.pointImage())) {
                 markerPointRadio.setSelected(true);
             } else {
                 markerImageRadio.setSelected(true);
@@ -669,11 +681,19 @@ public class ControlMapOptions extends BaseController {
             if (isSettingValues) {
                 return;
             }
-            File file = FxFileTools.selectFile(this, VisitHistory.FileType.Image);
-            if (file == null) {
+            selectMarkerImage(FxFileTools.selectFile(this));
+        } catch (Exception e) {
+//            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void selectMarkerImage(File file) {
+        try {
+            if (isSettingValues || file == null || !file.exists()) {
                 return;
             }
             markerImageInput.setText(file.getAbsolutePath());
+            recordFileOpened(file);
         } catch (Exception e) {
 //            MyBoxLog.error(e.toString());
         }
@@ -698,14 +718,10 @@ public class ControlMapOptions extends BaseController {
                     selectMarkerImage();
                     return;
                 }
-                markerImageInput.setText(file.getAbsolutePath());
+                selectMarkerImage(file);
             }
 
-        }
-                .setSourceFileType(VisitHistory.FileType.Image)
-                .setSourcePathType(VisitHistory.FileType.Image)
-                .setSourceExtensionFilter(FileFilters.ImageExtensionFilter)
-                .pop();
+        }.pop();
     }
 
     @FXML

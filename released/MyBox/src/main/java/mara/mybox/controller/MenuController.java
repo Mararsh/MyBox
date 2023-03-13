@@ -21,6 +21,7 @@ import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -183,8 +184,15 @@ public class MenuController extends BaseChildController {
     }
 
     @FXML
-    public void popStyles(MouseEvent mouseEvent) {
-        PopTools.popWindowStyles(this, baseStyle, mouseEvent);
+    protected void showStyles(Event event) {
+        PopTools.popWindowStyles(this, baseStyle, event);
+    }
+
+    @FXML
+    protected void popStyles(Event event) {
+        if (UserConfig.getBoolean("WindowStylesPopWhenMouseHovering", false)) {
+            showStyles(event);
+        }
     }
 
     @Override

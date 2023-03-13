@@ -49,6 +49,7 @@ public class Fxmls {
     public static final String HtmlToPdfFxml = "/fxml/HtmlToPdf.fxml";
     public static final String HtmlSetCharsetFxml = "/fxml/HtmlSetCharset.fxml";
     public static final String HtmlSetStyleFxml = "/fxml/HtmlSetStyle.fxml";
+    public static final String HtmlSetEquivFxml = "/fxml/HtmlSetEquiv.fxml";
     public static final String HtmlSnapFxml = "/fxml/HtmlSnap.fxml";
     public static final String HtmlExtractTablesFxml = "/fxml/HtmlExtractTables.fxml";
     public static final String HtmlMergeAsHtmlFxml = "/fxml/HtmlMergeAsHtml.fxml";

@@ -33,11 +33,10 @@ import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
-import mara.mybox.fxml.WindowTools;
+import static mara.mybox.fxml.WindowTools.openScene;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -669,7 +668,7 @@ public class ImageViewerController extends BaseImageController {
                         recordFileWritten(sourceFile);
                         if (srcFile == null) {
                             if (savedImage != imageView.getImage()) {
-                                ControllerTools.openImageViewer(sourceFile);
+                                openFile(sourceFile);
                             } else {
                                 sourceFileChanged(sourceFile);
                             }
@@ -769,10 +768,10 @@ public class ImageViewerController extends BaseImageController {
                         sourceFileChanged(targetFile);
 
                     } else if (saveAsType == SaveAsType.Open) {
-                        ControllerTools.openImageViewer(targetFile);
+                        openFile(targetFile);
 
                     } else if (saveAsType == SaveAsType.Edit) {
-                        ControllerTools.openImageManufacture(targetFile);
+                        ImageManufactureController.openFile(targetFile);
 
                     }
                 }
@@ -808,7 +807,7 @@ public class ImageViewerController extends BaseImageController {
             return false;
         }
         if (deleteConfirmCheck != null && deleteConfirmCheck.isSelected()) {
-            if (!PopTools.askSure(this, getMyStage().getTitle(), message("SureDelete"))) {
+            if (!PopTools.askSure(getTitle(), message("SureDelete"))) {
                 return false;
             }
         }
@@ -898,9 +897,51 @@ public class ImageViewerController extends BaseImageController {
     /*
         static methods
      */
-    public static ImageViewerController load(Image image) {
-        ImageViewerController controller = (ImageViewerController) WindowTools.openStage(Fxmls.ImageViewerFxml);
-        controller.loadImage(image);
+    public static ImageViewerController openFile(Stage stage, File file) {
+        try {
+            ImageViewerController controller = (ImageViewerController) openScene(stage, Fxmls.ImageViewerFxml);
+            if (controller != null) {
+                controller.requestMouse();
+                if (file != null) {
+                    controller.loadImageFile(file);
+                }
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static ImageViewerController open() {
+        return open(null);
+    }
+
+    public static ImageViewerController open(Stage stage) {
+        return openFile(null, null);
+    }
+
+    public static ImageViewerController openFile(File file) {
+        return openFile(null, file);
+    }
+
+    public static ImageViewerController openFileName(String file) {
+        return openFile(null, new File(file));
+    }
+
+    public static ImageViewerController openImage(Image image) {
+        ImageViewerController controller = open();
+        if (controller != null) {
+            controller.loadImage(image);
+        }
+        return controller;
+    }
+
+    public static ImageViewerController openImageInfo(ImageInformation info) {
+        ImageViewerController controller = open();
+        if (controller != null) {
+            controller.loadImageInfo(info);
+        }
         return controller;
     }
 

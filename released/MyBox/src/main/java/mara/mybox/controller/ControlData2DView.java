@@ -17,6 +17,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -230,7 +231,7 @@ public class ControlData2DView extends BaseController {
                     } else {
                         value = data2D.column(col).format(value);
                     }
-                    value = value.replaceAll("\n", "<BR>");
+                    value = StringTools.replaceHtmlLineBreak(value);
                     String style = data2D.cellStyle(styleFilter, i, data2D.columnName(col));
                     if (style != null && !style.isBlank()) {
                         style = style.replace("-fx-font-size:", "font-size:")
@@ -283,7 +284,7 @@ public class ControlData2DView extends BaseController {
                     } else {
                         value = data2D.column(col).format(value);
                     }
-                    value = value.replaceAll("\n", "<BR>");
+                    value = StringTools.replaceHtmlLineBreak(value);
                     String style = data2D.cellStyle(styleFilter, r, data2D.columnName(col));
                     if (style != null && !style.isBlank()) {
                         style = style.replace("-fx-font-size:", "font-size:")
@@ -356,7 +357,7 @@ public class ControlData2DView extends BaseController {
                 if (v == null) {
                     continue;
                 }
-                s.append(v.replaceAll("\n", "\\\\n")).append("\n");
+                s.append(StringTools.replaceLineBreak(v, "\\\\n")).append("\n");
             }
             s.append("\n");
             textArea.setText(s.toString());

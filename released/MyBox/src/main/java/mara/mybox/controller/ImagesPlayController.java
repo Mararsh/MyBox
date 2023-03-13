@@ -493,7 +493,7 @@ public class ImagesPlayController extends BaseImagesListController {
             fromInput.setStyle(null);
         } else {
             try {
-                int v = Integer.valueOf(value);
+                int v = Integer.parseInt(value);
                 if (v < 0) {
                     fromInput.setStyle(UserConfig.badStyle());
                 } else {
@@ -511,7 +511,7 @@ public class ImagesPlayController extends BaseImagesListController {
             toInput.setStyle(null);
         } else {
             try {
-                int v = Integer.valueOf(value);
+                int v = Integer.parseInt(value);
                 if (v < 0) {
                     t = -1;
                     toInput.setStyle(null);
@@ -643,6 +643,7 @@ public class ImagesPlayController extends BaseImagesListController {
                     imageView.setImage(image);
                     refinePane();
                     updateLabelsTitle();
+                    playController.refreshList();
                 }
             });
 

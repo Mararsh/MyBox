@@ -111,7 +111,7 @@ public class ControlNamedValues extends BaseSysTableController<NamedValues> {
         }
         super.checkButtons();
         boolean isEmpty = tableData == null || tableData.isEmpty();
-        boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
+        boolean none = isNoneSelected();
         clearDataButton.setDisable(isEmpty);
         deleteDataButton.setDisable(none);
         renameDataButton.setDisable(none);
@@ -121,7 +121,7 @@ public class ControlNamedValues extends BaseSysTableController<NamedValues> {
     @FXML
     @Override
     public void editAction() {
-        NamedValues selected = tableView.getSelectionModel().getSelectedItem();
+        NamedValues selected = selectedItem();
         if (selected != null) {
             uesNotify.set(!uesNotify.get());
         }
@@ -134,7 +134,7 @@ public class ControlNamedValues extends BaseSysTableController<NamedValues> {
 
     @FXML
     public void renameAction() {
-        int index = tableView.getSelectionModel().getSelectedIndex();
+        int index = selectedIndix();
         if (index < 0) {
             return;
         }
@@ -177,20 +177,20 @@ public class ControlNamedValues extends BaseSysTableController<NamedValues> {
         try {
             List<MenuItem> items = new ArrayList<>();
 
-            MenuItem menu = new MenuItem(message("Use"), StyleTools.getIconImage("iconYes.png"));
+            MenuItem menu = new MenuItem(message("Use"), StyleTools.getIconImageView("iconYes.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 useAction();
             });
             items.add(menu);
 
-            menu = new MenuItem(message("Rename"), StyleTools.getIconImage("iconRename.png"));
+            menu = new MenuItem(message("Rename"), StyleTools.getIconImageView("iconInput.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 renameAction();
             });
             menu.setDisable(renameDataButton.isDisable());
             items.add(menu);
 
-            menu = new MenuItem(message("Delete"), StyleTools.getIconImage("iconDelete.png"));
+            menu = new MenuItem(message("Delete"), StyleTools.getIconImageView("iconDelete.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 deleteAction();
             });

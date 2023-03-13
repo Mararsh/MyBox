@@ -31,6 +31,7 @@ public class RowFilterEditor extends TreeNodeEditor {
     protected TextField maxInput;
 
     public RowFilterEditor() {
+        TipsLabelKey = "RowFilterTips";
         defaultExt = "js";
     }
 
@@ -158,14 +159,14 @@ public class RowFilterEditor extends TreeNodeEditor {
     }
 
     @FXML
-    protected void popScriptHistories(MouseEvent event) {
+    protected void popScriptHistories(Event event) {
         if (UserConfig.getBoolean(interfaceName + "HistoriesPopWhenMouseHovering", false)) {
-            PopTools.popStringValues(this, valueInput, event, interfaceName + "Histories", false, true);
+            showScriptHistories(event);
         }
     }
 
     @FXML
-    protected void showScriptHistories(ActionEvent event) {
+    protected void showScriptHistories(Event event) {
         PopTools.popStringValues(this, valueInput, event, interfaceName + "Histories", false, true);
     }
 

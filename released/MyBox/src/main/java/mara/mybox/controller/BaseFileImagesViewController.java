@@ -215,7 +215,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
         }
         String value = pageSelector.getEditor().getText();
         try {
-            int v = Integer.valueOf(value) - 1;
+            int v = Integer.parseInt(value) - 1;
             if (v >= 0 && v < framesNumber) {
                 setCurrentPage(v);
                 loadPage();

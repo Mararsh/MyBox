@@ -2,6 +2,7 @@ package mara.mybox.value;
 
 import java.awt.Color;
 import mara.mybox.bufferedimage.ColorConvertTools;
+import mara.mybox.fxml.style.StyleData.StyleColor;
 
 /**
  * @Author Mara
@@ -10,24 +11,53 @@ import mara.mybox.bufferedimage.ColorConvertTools;
  */
 public class Colors {
 
-    public static Color MyBoxDarkRed = ColorConvertTools.rgba2color("0xC32136FF");
-    public static Color MyBoxLightRed = ColorConvertTools.rgba2color("0xFBD5CFFF");
+    public static final Color TRANSPARENT = new Color(0, 0, 0, 0);
 
-    public static Color MyBoxDarkPink = ColorConvertTools.rgba2color("0xFF0097FF");
-    public static Color MyBoxLightPink = ColorConvertTools.rgba2color("0xEDD1D8FF");
+    public static Color color(StyleColor inStyle, boolean dark) {
+        StyleColor style = inStyle;
+        String color;
+        if (style == null) {
+            style = StyleColor.Red;
+        }
+        switch (style) {
+            case Blue:
+                color = dark ? "0x003472FF" : "0xE3F9FDFF";
+                break;
+            case LightBlue:
+                color = dark ? "0x4C8DAEFF" : "0xD6ECF0FF";
+                break;
+            case Pink:
+                color = dark ? "0xFF0097FF" : "0xEDD1D8FF";
+                break;
+            case Orange:
+                color = dark ? "0x622A1DFF" : "0xEACD76FF";
+                break;
+            case Green:
+                color = dark ? "0x0D3928FF" : "0xE0F0E9FF";
+                break;
+            case Customize:
+                color = dark ? customizeColorDarkValue() : customizeColorLightValue();
+                break;
+            default:
+                color = dark ? "0xC32136FF" : "0xFBD5CFFF";
+        }
+        return ColorConvertTools.rgba2color(color);
+    }
 
-    public static Color MyBoxDarkGreyBlue = ColorConvertTools.rgba2color("0x4C8DAEFF");
-    public static Color MyBoxGreyBlue = ColorConvertTools.rgba2color("0xD6ECF0FF");
+    public static String customizeColorDarkValue() {
+        return UserConfig.getString("CustomizeColorDark", "0x8B008BFF");
+    }
 
-    public static Color MyBoxDarkBlue = ColorConvertTools.rgba2color("0x003472FF");
-    public static Color MyBoxLightBlue = ColorConvertTools.rgba2color("0xE3F9FDFF");
+    public static javafx.scene.paint.Color customizeColorDark() {
+        return javafx.scene.paint.Color.web(customizeColorDarkValue());
+    }
 
-    public static Color MyBoxOrange = ColorConvertTools.rgba2color("0xCA6924FF");
-    public static Color MyBoxLightOrange = ColorConvertTools.rgba2color("0xFFF2DFFF");
+    public static String customizeColorLightValue() {
+        return UserConfig.getString("CustomizeColorLight", "0xF8F8FFFF");
+    }
 
-    public static Color MyBoxDarkGreen = ColorConvertTools.rgba2color("0x0D3928FF");
-    public static Color MyBoxLightGreen = ColorConvertTools.rgba2color("0xE0F0E9FF");
-
-    public static Color TRANSPARENT = new Color(0, 0, 0, 0);
+    public static javafx.scene.paint.Color customizeColorLight() {
+        return javafx.scene.paint.Color.web(customizeColorLightValue());
+    }
 
 }

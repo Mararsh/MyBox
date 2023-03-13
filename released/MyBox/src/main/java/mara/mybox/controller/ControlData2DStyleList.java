@@ -66,7 +66,7 @@ public class ControlData2DStyleList extends BaseSysTableController<Data2DStyle> 
             tableData2DStyle = new TableData2DStyle();
             tableDefinition = tableData2DStyle;
             tableName = tableDefinition.getTableName();
-            idColumn = tableDefinition.getIdColumn();
+            idColumnName = tableDefinition.getIdColumnName();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -113,7 +113,7 @@ public class ControlData2DStyleList extends BaseSysTableController<Data2DStyle> 
         if (manageController == null) {
             return;
         }
-        Data2DStyle selected = tableView.getSelectionModel().getSelectedItem();
+        Data2DStyle selected = selectedItem();
         if (selected == null) {
             return;
         }

@@ -96,7 +96,7 @@ License:    Apache License Version 2.0
                                                                     </HBox>
                                                                     <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
                                                                         <children>
-                                                                            <Button fx:id="historyFindButton" mnemonicParsing="false" onMouseEntered="#popFindHistories">
+                                                                            <Button fx:id="historyFindButton" mnemonicParsing="false"   onAction="#showFindHistories" onMouseEntered="#popFindHistories" >
                                                                                 <graphic>
                                                                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                         <image>
@@ -380,7 +380,7 @@ License:    Apache License Version 2.0
                                                                   </ImageView>
                                                               </graphic>
                                                           </Button>
-                                                          <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
+                                                          <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#pickSourceFile" onMouseEntered="#popSourceFile">
                                                               <graphic>
                                                                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                       <image>
@@ -431,7 +431,7 @@ License:    Apache License Version 2.0
                                                             </ImageView>
                                                          </graphic>
                                                       </Button>
-                                                      <Button fx:id="styleButton" mnemonicParsing="false" onMouseEntered="#popHtmlStyle">
+                                                      <Button fx:id="styleButton" mnemonicParsing="false"  onAction="#showHtmlStyle"     onMouseEntered="#popHtmlStyle">
                                                          <graphic>
                                                             <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                <image>

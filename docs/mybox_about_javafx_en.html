@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+ <head>
+  <title>Notebook &gt; Notebook &gt; Notebook &gt; Note Examples &gt; Coding &gt; javafx &gt; Items in one sentence about javafx</title>
+  <style type="text/css">
+             body { margin:0 auto; } 
+ table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;} 
+ th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;} 
+ th { font-weight:bold;  text-align:center;} 
+ tr { height: 1.2em;  } 
+ .center { text-align:center;  max-width:95%; } 
+ .valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;} 
+ .boldText { font-weight:bold;  } 
+ body { width: 900px; } 
+ img { max-width: 900px; } 
+ .valueText { color:#2e598a;  } 
+
+        </style>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="UTF-8">
+  <meta http-equiv="cache-control" content="no-cache">
+ </head>
+ <body>
+  <h1 align="center">Items in one sentence about javafx</h1>
+  <ol>
+   <li>Always assume user knows nothing about programming.</li>
+   <li>Do not expect user will open user guide. Someone, including me, even will not look at nor think about prompts on the screen.</li>
+   <li>Necessary prompts can help user understand intention of the program.</li>
+   <li>Ambiguous prompt is worse than no prompt.</li>
+   <li>Always response for user, like pop information, make sound, or update interface.</li>
+   <li>Provide most options and set default choice.</li>
+   <li>Remember user’s inputs or seletions and fill in or set values automatically in next time.</li>
+   <li>Less inputs or selections meanwhile keep interfaces clean.</li>
+   <li>Use radio or check buttons instead of drop-down list if there is enough place in interface.</li>
+   <li>No more than 3 levels to select.</li>
+   <li>When too many controls in interface, consider popular layout: Left-right areas like curtain, vertical accordion menus, tabs to switch targets</li>
+   <li>User’ screen resolution may be from 1k to 4k, so the design size of most MyBox interfaces is smaller than 1100 * 720.</li>
+   <li>Make use of auto-wrap container like FlowPane, to work for both small screen and large screen.</li>
+   <li>Controls can be updated only in JavaFx thread. Use Platform.runLater to change control when handle event in its listener.</li>
+   <li>Progress should be shown when operation costs much time.</li>
+   <li>Time-consume operation should not be run in JavaFx thread to avoid blocking interface.</li>
+   <li>Backgournd task should always check whether task is canceled, especially in loop or before/after long-run statements.</li>
+   <li>When listen mouse events, event.getX() and event.getY() return the coordinate of event.getSource() which is the control owns the events. Example, when listen on ImageView, the coordinate is related to the image.</li>
+   <li>Iterative calls may happen when listen both onMouseEntered and onMouseExited and change focus in handling of the events(like pop menu) or change control’s size.</li>
+   <li>When double click mouse, single-click event is tiggerred at first and then double-click event is triggerred. So need avoid duplicated or conflicted handlings against same event.</li>
+   <li>For table's multiple selections, use getSelectedIndices() to listen changes, Some changes may be missed if use selectedItemProperty().</li>
+  </ol>
+ </body>
+</html>

@@ -143,7 +143,7 @@ public class DerbyBase {
     }
 
     public static boolean startEmbededDriver() {
-        try ( Connection conn = DriverManager.getConnection("jdbc:derby:" + dbHome() + create)) {
+        try (Connection conn = DriverManager.getConnection("jdbc:derby:" + dbHome() + create)) {
             return true;
         } catch (Exception e) {
             status = DerbyStatus.EmbeddedFailed;
@@ -154,7 +154,7 @@ public class DerbyBase {
 
     // https://db.apache.org/derby/docs/10.4/devguide/rdevcsecure26537.html
     public static void shutdownEmbeddedDerby() {
-        try ( Connection conn = DriverManager.getConnection("jdbc:derby:;shutdown=true")) {
+        try (Connection conn = DriverManager.getConnection("jdbc:derby:;shutdown=true")) {
         } catch (Exception e) {
             status = DerbyStatus.NotConnected;
 //            MyBoxLog.console(e);
@@ -246,7 +246,7 @@ public class DerbyBase {
     }
 
     public static boolean isServerStarted(int uPort) {
-        try ( Connection conn = DriverManager.getConnection(
+        try (Connection conn = DriverManager.getConnection(
                 "jdbc:derby://" + host + ":" + uPort + "/" + dbHome() + login)) {
             port = uPort;
             status = DerbyStatus.Nerwork;
@@ -283,8 +283,8 @@ public class DerbyBase {
             List<String> tables = new ArrayList<>();
             String sql = "SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='T'";
             conn.setAutoCommit(true);
-            try ( Statement statement = conn.createStatement();
-                     ResultSet resultSet = statement.executeQuery(sql)) {
+            try (Statement statement = conn.createStatement();
+                    ResultSet resultSet = statement.executeQuery(sql)) {
                 while (resultSet.next()) {
                     String savedName = resultSet.getString("TABLENAME");
                     String referredName = fixedIdentifier(savedName);
@@ -307,8 +307,8 @@ public class DerbyBase {
                     + " where t.TABLEID=c.REFERENCEID AND tablename='" + tablename.toUpperCase() + "'"
                     + " order by columnnumber";
             conn.setAutoCommit(true);
-            try ( Statement statement = conn.createStatement();
-                     ResultSet resultSet = statement.executeQuery(sql)) {
+            try (Statement statement = conn.createStatement();
+                    ResultSet resultSet = statement.executeQuery(sql)) {
                 while (resultSet.next()) {
                     String savedName = resultSet.getString("columnname");
                     String referredName = fixedIdentifier(savedName);
@@ -332,8 +332,8 @@ public class DerbyBase {
                     + " where t.TABLEID=c.REFERENCEID AND tablename='" + tablename.toUpperCase() + "'"
                     + " order by columnnumber";
             conn.setAutoCommit(true);
-            try ( Statement statement = conn.createStatement();
-                     ResultSet resultSet = statement.executeQuery(sql)) {
+            try (Statement statement = conn.createStatement();
+                    ResultSet resultSet = statement.executeQuery(sql)) {
                 while (resultSet.next()) {
                     String savedName = resultSet.getString("columnname");
                     String referredName = fixedIdentifier(savedName);
@@ -354,8 +354,8 @@ public class DerbyBase {
             List<String> indexes = new ArrayList<>();
             String sql = "SELECT CONGLOMERATENAME FROM SYS.SYSCONGLOMERATES";
             conn.setAutoCommit(true);
-            try ( Statement statement = conn.createStatement();
-                     ResultSet resultSet = statement.executeQuery(sql)) {
+            try (Statement statement = conn.createStatement();
+                    ResultSet resultSet = statement.executeQuery(sql)) {
                 while (resultSet.next()) {
                     String savedName = resultSet.getString("CONGLOMERATENAME");
                     String referredName = fixedIdentifier(savedName);
@@ -376,8 +376,8 @@ public class DerbyBase {
             List<String> tables = new ArrayList<>();
             String sql = "SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE='V'";
             conn.setAutoCommit(true);
-            try ( Statement statement = conn.createStatement();
-                     ResultSet resultSet = statement.executeQuery(sql)) {
+            try (Statement statement = conn.createStatement();
+                    ResultSet resultSet = statement.executeQuery(sql)) {
                 while (resultSet.next()) {
                     String savedName = resultSet.getString("TABLENAME");
                     String referredName = fixedIdentifier(savedName);
@@ -395,7 +395,7 @@ public class DerbyBase {
 
     public static boolean initTables(MyBoxLoadingController loadingController) {
         MyBoxLog.console("Protocol: " + protocol + dbHome());
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + create)) {
+        try (Connection conn = DriverManager.getConnection(protocol + dbHome() + create)) {
             initTables(loadingController, conn);
             initIndexs(conn);
             initViews(conn);
@@ -548,91 +548,84 @@ public class DerbyBase {
             List<String> indexes = indexes(conn);
             MyBoxLog.debug("Indexes: " + indexes.size());
             if (!indexes.contains("Geography_Code_level_index".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
+                try (Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableGeographyCode.Create_Index_levelIndex);
                 } catch (Exception e) {
 //                    MyBoxLog.error(e);
                 }
             }
             if (!indexes.contains("Geography_Code_code_index".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
+                try (Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableGeographyCode.Create_Index_codeIndex);
                 } catch (Exception e) {
 //                    MyBoxLog.error(e);
                 }
             }
             if (!indexes.contains("Geography_Code_gcid_index".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
+                try (Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableGeographyCode.Create_Index_gcidIndex);
                 } catch (Exception e) {
 //                    MyBoxLog.error(e);
                 }
             }
             if (!indexes.contains("MyBox_Log_index".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
+                try (Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableMyBoxLog.Create_Index);
                 } catch (Exception e) {
 //                    MyBoxLog.error(e);
                 }
             }
             if (!indexes.contains("File_Backup_index".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
+                try (Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableFileBackup.Create_Index);
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                 }
             }
             if (!indexes.contains("Tag_unique_index".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
+                try (Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableTag.Create_Unique_Index);
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                 }
             }
             if (!indexes.contains("Color_rgba_unique_index".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
+                try (Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableColor.Create_RGBA_Unique_Index);
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                 }
             }
             if (!indexes.contains("Color_Palette_Name_unique_index".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
+                try (Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableColorPaletteName.Create_Unique_Index);
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                 }
             }
-            if (!indexes.contains("Color_Palette_unique_index".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
-                    statement.executeUpdate(TableColorPalette.Create_Unique_Index);
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
-            }
             if (!indexes.contains("Web_History_time_index".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
+                try (Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableWebHistory.Create_Time_Index);
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                 }
             }
             if (!indexes.contains("Tree_Node_parent_index".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
+                try (Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableTreeNode.Create_Parent_Index);
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                 }
             }
             if (!indexes.contains("Tree_Node_title_index".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
+                try (Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableTreeNode.Create_Title_Index);
                 } catch (Exception e) {
                     MyBoxLog.error(e);
                 }
             }
             if (!indexes.contains("Tree_Node_Tag_unique_index".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
+                try (Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableTreeNodeTag.Create_Unique_Index);
                 } catch (Exception e) {
                     MyBoxLog.error(e);
@@ -650,14 +643,14 @@ public class DerbyBase {
             List<String> views = views(conn);
             MyBoxLog.debug("Views: " + views.size());
             if (!views.contains("Data2D_Column_View".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
+                try (Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableData2DColumn.CreateView);
                 } catch (Exception e) {
 //                    MyBoxLog.error(e);
                 }
             }
             if (!views.contains("Color_Palette_View".toLowerCase())) {
-                try ( Statement statement = conn.createStatement()) {
+                try (Statement statement = conn.createStatement()) {
                     statement.executeUpdate(TableColorPalette.CreateView);
                 } catch (Exception e) {
 //                    MyBoxLog.error(e);
@@ -671,7 +664,7 @@ public class DerbyBase {
     }
 
     public static boolean initTableValues() {
-        try ( Connection conn = DriverManager.getConnection(protocol + dbHome() + create)) {
+        try (Connection conn = DriverManager.getConnection(protocol + dbHome() + create)) {
             if (TableGeographyCode.China(conn) == null) {
                 GeographyCodeTools.importPredefined(conn);
             }
@@ -683,7 +676,7 @@ public class DerbyBase {
     }
 
     public static int size(String sql) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return size(conn, sql);
         } catch (Exception e) {
@@ -697,7 +690,7 @@ public class DerbyBase {
         try {
             boolean ac = conn.getAutoCommit();
             conn.setAutoCommit(true);
-            try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
+            try (ResultSet results = conn.createStatement().executeQuery(sql)) {
                 if (results != null && results.next()) {
                     size = results.getInt(1);
                 }
@@ -714,7 +707,7 @@ public class DerbyBase {
     }
 
     public static boolean isTableEmpty(String tableName) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             String sql = "SELECT * FROM " + tableName + " FETCH FIRST ROW ONLY";
             conn.setReadOnly(true);
             return isEmpty(conn, sql);
@@ -728,7 +721,7 @@ public class DerbyBase {
         try {
             boolean isEmpty = true;
             conn.setAutoCommit(true);
-            try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
+            try (ResultSet results = conn.createStatement().executeQuery(sql)) {
                 isEmpty = results == null || !results.next();
             } catch (Exception e) {
                 MyBoxLog.error(e, sql);
@@ -741,7 +734,7 @@ public class DerbyBase {
     }
 
     public static ResultSet query(String sql) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return query(conn, sql);
         } catch (Exception e) {
@@ -751,7 +744,7 @@ public class DerbyBase {
     }
 
     public static ResultSet query(Connection conn, String sql) {
-        try ( Statement statement = conn.createStatement()) {
+        try (Statement statement = conn.createStatement()) {
             conn.setAutoCommit(true);
             return statement.executeQuery(sql);
         } catch (Exception e) {
@@ -761,7 +754,7 @@ public class DerbyBase {
     }
 
     public static int update(String sql) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return update(conn, sql);
         } catch (Exception e) {
             MyBoxLog.error(e, sql);
@@ -770,7 +763,7 @@ public class DerbyBase {
     }
 
     public static int update(Connection conn, String sql) {
-        try ( Statement statement = conn.createStatement()) {
+        try (Statement statement = conn.createStatement()) {
             return statement.executeUpdate(sql);
         } catch (Exception e) {
             MyBoxLog.error(e, sql);
@@ -782,7 +775,7 @@ public class DerbyBase {
         if (conn == null || referredName == null) {
             return -1;
         }
-        try ( ResultSet resultSet = conn.getMetaData().getColumns(null, "MARA",
+        try (ResultSet resultSet = conn.getMetaData().getColumns(null, "MARA",
                 DerbyBase.savedName(referredName), "%")) {
             if (resultSet.next()) {
                 return 1;
@@ -809,7 +802,7 @@ public class DerbyBase {
         }
         File f = new File(file);
         FileDeleteTools.delete(f);
-        try ( Connection conn = DerbyBase.getConnection();) {
+        try (Connection conn = DerbyBase.getConnection();) {
             PreparedStatement ps = conn.prepareStatement("CALL SYSCS_UTIL.SYSCS_EXPORT_TABLE (?,?,?,?,?,?)");
             ps.setString(1, null);
             ps.setString(2, table.toUpperCase());
@@ -833,7 +826,7 @@ public class DerbyBase {
         if (!f.exists()) {
             return;
         }
-        try ( Connection conn = DerbyBase.getConnection();) {
+        try (Connection conn = DerbyBase.getConnection();) {
             PreparedStatement ps = conn.prepareStatement("CALL SYSCS_UTIL.SYSCS_IMPORT_TABLE (?,?,?,?,?,?,?)");
             ps.setString(1, null);
             ps.setString(2, table.toUpperCase());

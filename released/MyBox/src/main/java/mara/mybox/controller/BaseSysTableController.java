@@ -9,7 +9,6 @@ import javafx.scene.control.Label;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.value.FileFilters;
@@ -57,7 +56,7 @@ public abstract class BaseSysTableController<P> extends BaseTableViewController<
         tableDefinition = t;
         if (tableDefinition != null) {
             tableName = tableDefinition.getTableName();
-            idColumn = tableDefinition.getIdColumn();
+            idColumnName = tableDefinition.getIdColumnName();
         }
     }
 
@@ -166,7 +165,7 @@ public abstract class BaseSysTableController<P> extends BaseTableViewController<
                 @Override
                 protected void whenSucceeded() {
                     popSuccessful();
-                    ControllerTools.openTextEditer(null, file);
+                    TextEditorController.open(file);
                 }
             };
             start(task);

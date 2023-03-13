@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+ <head>
+  <title>笔记本 &gt; 笔记示例 &gt; 编程 &gt; javafx &gt; 关于javafx一句话事项</title>
+  <style type="text/css">
+             body { margin:0 auto; } 
+ table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;} 
+ th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;} 
+ th { font-weight:bold;  text-align:center;} 
+ tr { height: 1.2em;  } 
+ .center { text-align:center;  max-width:95%; } 
+ .valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;} 
+ .boldText { font-weight:bold;  } 
+ body {width: 900px; } 
+ .valueText { color:#2e598a;  } 
+
+        </style>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="UTF-8">
+  <meta http-equiv="cache-control" content="no-cache">
+ </head>
+ <body>
+  <h1 align="center">关于javafx一句话事项</h1>
+  <ol>
+   <li>总是假设用户对编程一无所知。</li>
+   <li>不要指望用户会看用户手册，一些人连屏幕上的提示都不会读或想（包括我）。</li>
+   <li>必要的提示信息可以帮助用户理解程序的意图。</li>
+   <li>二义性的提示不如没有提示。</li>
+   <li>总是响应用户的操作，如弹出信息、发出声音、或更新界面。</li>
+   <li>尽可能多地提供选择，并设置缺省选择。</li>
+   <li>记住用户的输入或选择，下次自动填写或设置。</li>
+   <li>保持界面干净的同时，减少用户的输入或选择。</li>
+   <li>只要有地方放单选钮/多选纽，就不用下拉框。</li>
+   <li>选择的层级不应超过3。</li>
+   <li>界面控件较多时，考虑目前流行的布局：左右幕布式收放、上下风箱式开闭、页签堆叠。</li>
+   <li>用户屏幕分辨率可能从1K到4K，所以MyBox多数界面的设计尺寸小于1100*720。</li>
+   <li>善用“会折行”的容器，如FlowPane，以兼顾小屏和大屏。</li>
+   <li>只能在JavaFx线程中修改界面控件。在控件的事件处理中若要修改控件本身，则应用Platform.runLater来执行。</li>
+   <li>对于耗时的操作应当显示进度信息。</li>
+   <li>耗时的操作不应在JavaFx线程中执行，否则会阻塞界面的更新。</li>
+   <li>后端线程要时时检查task是否已被取消，尤其在循环中或耗时操作前后。</li>
+   <li>鼠标事件监听时，event.getX()和event.getY()返回的是相对于event.getSource()（监听控件）的坐标。如：在ImageView上监听鼠标点击，则取到的是相对于图像的坐标。</li>
+   <li>以下场景可能触发多次迭代调用：同时监听onMouseEntered和 onMouseExited，然后在事件处理中改变鼠标的焦点（如弹出上下文菜单）或改变控件本身尺寸。</li>
+   <li>当双击鼠标时，总是先触发单击事件、然后继续触发双击事件，因此需要注意事件处理中可能重复或冲突的操作。</li>
+   <li>对于多选表格，用getSelectedIndices()监听变化。若用selectedItemProperty()监听则可能遗漏状态变化。</li>
+  </ol>
+ </body>
+</html>

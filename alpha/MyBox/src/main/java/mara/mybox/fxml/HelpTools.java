@@ -24,7 +24,7 @@ public class HelpTools {
     public static void readMe(BaseController controller) {
         try {
             String lang = Languages.getLangName();
-            File htmlFile = new File(AppVariables.MyboxDataPath + "/doc/readme-" + lang + ".htm");
+            File htmlFile = new File(AppVariables.MyboxDataPath + "/doc/readme-" + lang + ".html");
             File mdFile = FxFileTools.getInternalFile("/doc/" + lang + "/README.md",
                     "doc", "README-" + lang + ".md", true);
             String html = MarkdownTools.md2html(mdFile);

@@ -3,17 +3,19 @@ package mara.mybox.controller;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.TextTools;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -147,6 +149,12 @@ public class ControlTextDelimiter extends BaseController {
             }
             exampleButton.setVisible(isRead && canRegx);
 
+            if (!canRegx) {
+                NodeStyleTools.setTooltip(sharpRadio, message("DelimeterSharpComments"));
+            } else {
+                NodeStyleTools.removeTooltip(sharpRadio);
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -272,8 +280,15 @@ public class ControlTextDelimiter extends BaseController {
     }
 
     @FXML
-    public void popRegexExample(MouseEvent mouseEvent) {
-        PopTools.popRegexExamples(this, delimiterInput, mouseEvent);
+    protected void showRegexExample(Event event) {
+        PopTools.popRegexExamples(this, delimiterInput, event);
+    }
+
+    @FXML
+    protected void popRegexExample(Event event) {
+        if (UserConfig.getBoolean("RegexExamplesPopWhenMouseHovering", false)) {
+            showRegexExample(event);
+        }
     }
 
     @Override

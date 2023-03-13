@@ -95,15 +95,15 @@ public class JavaScriptEditor extends TreeNodeEditor {
     }
 
     @FXML
-    protected void popHistories(MouseEvent mouseEvent) {
-        if (UserConfig.getBoolean(interfaceName + "HistoriesPopWhenMouseHovering", false)) {
-            PopTools.popStringValues(this, valueInput, mouseEvent, interfaceName + "Histories", false, true);
+    protected void popHistories(Event event) {
+        if (UserConfig.getBoolean("JavaScriptHistoriesPopWhenMouseHovering", false)) {
+            showHistories(event);
         }
     }
 
     @FXML
-    protected void showHistories(ActionEvent event) {
-        PopTools.popStringValues(this, valueInput, event, interfaceName + "Histories", false, true);
+    protected void showHistories(Event event) {
+        PopTools.popStringValues(this, valueInput, event, "JavaScriptHistories", false, true);
     }
 
     @Override

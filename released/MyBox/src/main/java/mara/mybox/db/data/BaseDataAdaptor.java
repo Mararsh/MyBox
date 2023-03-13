@@ -34,6 +34,7 @@ import mara.mybox.db.table.TableWebHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Languages;
 
@@ -541,7 +542,7 @@ public class BaseDataAdaptor {
         if (display == null) {
             return null;
         }
-        return display.replaceAll("\n", "<BR>");
+        return StringTools.replaceLineBreak(display, "<BR>");
     }
 
     public static String htmlDataList(BaseTable table, List<BaseData> dataList, List<String> columns) {

@@ -16,7 +16,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -54,7 +54,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeStyleTools.setTooltip(eightNeighborCheck, new Tooltip(Languages.message("EightNeighborCheckComments")));
+            NodeStyleTools.setTooltip(eightNeighborCheck, new Tooltip(message("EightNeighborCheckComments")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -63,7 +63,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
     protected void initSplitPane() {
         try {
             String mv = UserConfig.getString(baseName + "ScopePanePosition", "0.5");
-            splitPane.setDividerPositions(Double.parseDouble(mv));
+            splitPane.setDividerPositions(Double.valueOf(mv));
 
             splitPane.getDividers().get(0).positionProperty().addListener(
                     (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
@@ -90,10 +90,10 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
             });
 
             opacitySelector.getItems().addAll(
-                    Arrays.asList(Languages.message("ScopeTransparency0.5"), Languages.message("ScopeTransparency0"), Languages.message("ScopeTransparency1"),
-                            Languages.message("ScopeTransparency0.2"), Languages.message("ScopeTransparency0.8"), Languages.message("ScopeTransparency0.3"),
-                            Languages.message("ScopeTransparency0.6"), Languages.message("ScopeTransparency0.7"), Languages.message("ScopeTransparency0.9"),
-                            Languages.message("ScopeTransparency0.4"))
+                    Arrays.asList(message("ScopeTransparency0.5"), message("ScopeTransparency0"), message("ScopeTransparency1"),
+                            message("ScopeTransparency0.2"), message("ScopeTransparency0.8"), message("ScopeTransparency0.3"),
+                            message("ScopeTransparency0.6"), message("ScopeTransparency0.7"), message("ScopeTransparency0.9"),
+                            message("ScopeTransparency0.4"))
             );
             opacitySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
@@ -102,7 +102,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
                         if (newVal == null) {
                             return;
                         }
-                        float f = Float.valueOf(newVal.substring(0, 3));
+                        float f = Float.parseFloat(newVal.substring(0, 3));
                         if (f >= 0 && f <= 1.0) {
                             opacity = 1 - f;
                             scopeView.setOpacity(opacity);
@@ -117,7 +117,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
                 }
             });
 
-            opacitySelector.getSelectionModel().select(UserConfig.getString(baseName + "ScopeTransparency", Languages.message("ScopeTransparency0.5")));
+            opacitySelector.getSelectionModel().select(UserConfig.getString(baseName + "ScopeTransparency", message("ScopeTransparency0.5")));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

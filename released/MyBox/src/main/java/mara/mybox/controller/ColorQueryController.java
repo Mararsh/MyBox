@@ -1,11 +1,11 @@
 package mara.mybox.controller;
 
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.table.TableStringValues;
@@ -85,54 +85,46 @@ public class ColorQueryController extends BaseController {
                 popError(message("InvalidParameters") + ": " + message("Color"));
                 return;
             }
-            ColorData c = new ColorData(value).calculate();
+            String separator = separatorInput.getText();
+            if (separator == null || separator.isEmpty()) {
+                separator = ", ";
+            }
+            UserConfig.setString(baseName + "Separator", separator);
+            ColorData c = new ColorData(value).setvSeparator(separator).convert();
             if (c.getSrgb() == null) {
                 popError(message("InvalidParameters") + ": " + message("Color"));
                 return;
             }
             TableStringValues.add("ColorQueryColorHistories", value);
             color = c;
-            String separator = separatorInput.getText();
-            if (separator == null || separator.isEmpty()) {
-                separator = ", ";
-            }
-            UserConfig.setString(baseName + "Separator", separator);
-            htmlController.initTable(message("Color"));
-            htmlController.addData(message("Color"),
-                    "<DIV style=\"width: 50px;  background-color:" + color.getRgb() + "; \">&nbsp;&nbsp;&nbsp;</DIV>");
-            htmlController.addData(message("Value"), color.getColorValue() + "");
-            htmlController.addData("RGBA", color.getRgba().replaceAll(" ", separator));
-            htmlController.addData("RGB", color.getRgb().replaceAll(" ", separator));
-            htmlController.addData("sRGB", color.getSrgb().replaceAll(" ", separator));
-            htmlController.addData("HSB", color.getHsb().replaceAll(" ", separator));
-            htmlController.addData("Adobe RGB", color.getAdobeRGB().replaceAll(" ", separator));
-            htmlController.addData("Apple RGB", color.getAppleRGB().replaceAll(" ", separator));
-            htmlController.addData("ECI RGB", color.getEciRGB().replaceAll(" ", separator));
-            htmlController.addData("sRGB Linear", color.getSRGBLinear().replaceAll(" ", separator));
-            htmlController.addData("Adobe RGB Linear", color.getAdobeRGBLinear().replaceAll(" ", separator));
-            htmlController.addData("Apple RGB Linear", color.getAppleRGBLinear().replaceAll(" ", separator));
-            htmlController.addData("Calculated CMYK", color.getCalculatedCMYK().replaceAll(" ", separator));
-            htmlController.addData("ECI CMYK", color.getEciCMYK().replaceAll(" ", separator));
-            htmlController.addData("Adobe CMYK Uncoated FOGRA29", color.getAdobeCMYK().replaceAll(" ", separator));
-            htmlController.addData("XYZ", color.getXyz().replaceAll(" ", separator));
-            htmlController.addData("CIE-L*ab", color.getCieLab().replaceAll(" ", separator));
-            htmlController.addData("LCH(ab)", color.getLchab().replaceAll(" ", separator));
-            htmlController.addData("CIE-L*uv", color.getCieLuv().replaceAll(" ", separator));
-            htmlController.addData("LCH(uv)", color.getLchuv().replaceAll(" ", separator));
-            htmlController.displayHtml();
+            htmlController.displayHtml(color.html());
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
     @FXML
-    public void popExamples(MouseEvent mouseEvent) {
-        PopTools.popColorExamples(this, colorInput, mouseEvent);
+    protected void showExamples(Event event) {
+        PopTools.popColorExamples(this, colorInput, event);
     }
 
     @FXML
-    protected void popColorHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, colorInput, mouseEvent, "ColorQueryColorHistories", true);
+    public void popExamples(Event event) {
+        if (UserConfig.getBoolean("ColorExamplesPopWhenMouseHovering", false)) {
+            showExamples(event);
+        }
+    }
+
+    @FXML
+    protected void showHistories(Event event) {
+        PopTools.popStringValues(this, colorInput, event, "ColorQueryColorHistories", false, true);
+    }
+
+    @FXML
+    protected void popColorHistories(Event event) {
+        if (UserConfig.getBoolean("ColorQueryColorHistoriesPopWhenMouseHovering", false)) {
+            showHistories(event);
+        }
     }
 
     @FXML

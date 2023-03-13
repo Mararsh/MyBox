@@ -223,6 +223,15 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </Button>
+                                                                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconClear.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
                                                                 <CheckBox fx:id="deleteConfirmCheck" mnemonicParsing="false" text="%ConfirmWhenDelete" />
                                                                 <Label fx:id="langLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                                                 <ImageView fx:id="rightTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -337,13 +346,13 @@ License:    Apache License Version 2.0
                                             </content>
                                         </Tab>
                                         <Tab fx:id="mapTab" text="%Map">
-                                 <content>
-                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                       <children>
-                                                      <fx:include fx:id="map" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="GeographyCodeMap.fxml" VBox.vgrow="ALWAYS" />
-                                       </children>
-                                    </VBox>
-                                 </content>
+                                            <content>
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                                    <children>
+                                                        <fx:include fx:id="map" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="GeographyCodeMap.fxml" VBox.vgrow="ALWAYS" />
+                                                    </children>
+                                                </VBox>
+                                            </content>
                                         </Tab>
                                         <Tab fx:id="settingsTab" text="%Settings">
                                             <content>

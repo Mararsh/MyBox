@@ -9,6 +9,7 @@ import java.util.Optional;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -346,7 +347,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
 
             @Override
             protected boolean handle() {
-                try ( Connection conn = DerbyBase.getConnection()) {
+                try (Connection conn = DerbyBase.getConnection()) {
                     loadedParent = tableTreeNode.readData(conn, loadedParent);
                     nodeController.currentNode = tableTreeNode.readData(conn, nodeController.currentNode);
                     nodeController.parentNode = tableTreeNode.readData(conn, nodeController.parentNode);
@@ -577,7 +578,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             MenuItem menu;
 
             if (pasteButton != null) {
-                menu = new MenuItem(message("Paste"), StyleTools.getIconImage("iconPaste.png"));
+                menu = new MenuItem(message("Paste"), StyleTools.getIconImageView("iconPaste.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     pasteAction();
                 });
@@ -585,14 +586,14 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
                 items.add(menu);
             }
 
-            menu = new MenuItem(message("Move"), StyleTools.getIconImage("iconRef.png"));
+            menu = new MenuItem(message("Move"), StyleTools.getIconImageView("iconRef.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 moveAction();
             });
             menu.setDisable(moveDataButton.isDisabled());
             items.add(menu);
 
-            menu = new MenuItem(message("Copy"), StyleTools.getIconImage("iconCopy.png"));
+            menu = new MenuItem(message("Copy"), StyleTools.getIconImageView("iconCopy.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 copyAction();
             });
@@ -620,8 +621,8 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             return;
         }
         super.checkButtons();
-        boolean isEmpty = tableData == null || tableData.isEmpty();
-        boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
+
+        boolean none = isNoneSelected();
         deleteButton.setDisable(none);
         copyButton.setDisable(none);
         moveDataButton.setDisable(none);
@@ -645,7 +646,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     @FXML
     @Override
     public void editAction() {
-        editNode(tableView.getSelectionModel().getSelectedItem());
+        editNode(selectedItem());
     }
 
     public void editNode(TreeNode node) {
@@ -669,7 +670,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     @FXML
     @Override
     public void pasteAction() {
-        pasteNode(tableView.getSelectionModel().getSelectedItem());
+        pasteNode(selectedItem());
     }
 
     public void pasteNode(TreeNode node) {
@@ -844,8 +845,15 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     }
 
     @FXML
-    protected void popFindHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, findInput, mouseEvent, baseName + category + "Histories");
+    protected void showFindHistories(Event event) {
+        PopTools.popStringValues(this, findInput, event, baseName + category + "Histories", false, true);
+    }
+
+    @FXML
+    public void popFindHistories(Event event) {
+        if (UserConfig.getBoolean(baseName + category + "HistoriesPopWhenMouseHovering", false)) {
+            showFindHistories(event);
+        }
     }
 
     @Override

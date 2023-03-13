@@ -812,7 +812,7 @@ public class ControlDataConvert extends BaseController {
             PdfViewController.open(pdfFile);
         }
         if (htmlFile != null && htmlFile.exists()) {
-            WebBrowserController.oneOpen(htmlFile);
+            WebBrowserController.openFile(htmlFile);
         }
         if (dataClipboardFile != null && dataClipboardFile.exists()) {
             DataInMyBoxClipboardController.oneOpen();

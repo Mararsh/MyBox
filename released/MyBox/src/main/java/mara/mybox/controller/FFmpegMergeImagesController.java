@@ -192,7 +192,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
         try {
             StringBuilder s = new StringBuilder();
             File lastFile = null;
-            boolean selected = tableView.getSelectionModel().getSelectedItem() != null;
+            boolean selected = tableController.selectedItem() != null;
             for (int i = 0; i < tableData.size(); ++i) {
                 if (task == null || task.isCancelled()) {
                     updateLogs(message("TaskCancelled"), true);
@@ -245,7 +245,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
     protected File handleAudios() {
         try {
             StringBuilder s = new StringBuilder();
-            boolean selected = audiosTableController.tableView.getSelectionModel().getSelectedItem() != null;
+            boolean selected = audiosTableController.selectedItem() != null;
             for (int i = 0; i < audiosData.size(); ++i) {
                 if (task == null || task.isCancelled()) {
                     updateLogs(message("TaskCancelled"), true);

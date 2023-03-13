@@ -116,10 +116,12 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
             this.parentController = parent;
             if (use) {
                 useClipButton.disableProperty().bind(tableView.getSelectionModel().selectedItemProperty().isNull());
+                sourceColumn.setVisible(false);
+                timeColumn.setVisible(false);
             } else {
                 buttonsPane.getChildren().remove(useClipButton);
-                copyToSystemClipboardButton.disableProperty().bind(tableView.getSelectionModel().selectedItemProperty().isNull());
             }
+            copyToSystemClipboardButton.disableProperty().bind(tableView.getSelectionModel().selectedItemProperty().isNull());
             refreshAction();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -201,7 +203,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
     @Override
     public List<ImageClipboard> readPageData(Connection conn) {
         try {
-            ((TableImageClipboard) tableDefinition).clearInvalid(conn);
+            ((TableImageClipboard) tableDefinition).clearInvalid(task, conn);
             return tableDefinition.queryConditions(conn, queryConditions, orderColumns, startRowOfCurrentPage, pageSize);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -246,7 +248,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
     @FXML
     @Override
     public void editAction() {
-        ImageClipboard clip = tableView.getSelectionModel().getSelectedItem();
+        ImageClipboard clip = selectedItem();
         if (clip == null) {
             return;
         }
@@ -278,7 +280,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
     @FXML
     @Override
     public void copyToSystemClipboard() {
-        ImageClipboard clip = tableView.getSelectionModel().getSelectedItem();
+        ImageClipboard clip = selectedItem();
         if (clip == null) {
             return;
         }
@@ -313,36 +315,45 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
 
     @FXML
     public void examplesAction() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
 
-                private List<ImageClipboard> clips;
+            private List<ImageClipboard> clips;
 
-                @Override
-                protected boolean handle() {
-                    List<Image> predefinedItems = ImageItem.internalImages();
-                    clips = new ArrayList<>();
-                    for (Image image : predefinedItems) {
+            @Override
+            protected boolean handle() {
+                clips = new ArrayList<>();
+                for (ImageItem item : ImageItem.predefined()) {
+                    if (task == null || task.isCancelled()) {
+                        return true;
+                    }
+                    Image image = item.readImage();
+                    if (image != null) {
                         ImageClipboard clip = ImageClipboard.create(image, ImageClipboard.ImageSource.Example);
                         if (clip == null) {
                             continue;
                         }
                         clips.add(clip);
+                        task.setInfo(item.getName());
                     }
-                    tableDefinition.insertList(clips);
-                    return true;
-                }
 
-                @Override
-                protected void whenSucceeded() {
-                    refreshAction();
                 }
-            };
-            start(task);
-        }
+                tableDefinition.insertList(clips);
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+            }
+
+            @Override
+            protected void finalAction() {
+                refreshAction();
+            }
+        };
+        start(task);
     }
 
     @FXML

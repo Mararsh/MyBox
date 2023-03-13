@@ -21,7 +21,16 @@ License:    Apache License Version 2.0
         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
             <children>
                 <Label maxWidth="1.7976931348623157E308" text="%ColorInputLabel" HBox.hgrow="ALWAYS" />
-                <Button fx:id="examplesButton" mnemonicParsing="false" onMouseEntered="#popExamples">
+                <Button fx:id="queryButton" mnemonicParsing="false" onAction="#queryAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconQuery.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="examplesButton" mnemonicParsing="false" onAction="#showExamples" onMouseEntered="#popExamples">
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -30,16 +39,16 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-            <ColorPicker fx:id="colorPicker" />
-            <Button fx:id="queryButton" mnemonicParsing="false" onAction="#queryAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconQuery.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
+                <Button fx:id="historyButton" mnemonicParsing="false" onAction="#showHistories" onMouseEntered="#popHistories">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconHistory.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <ColorPicker fx:id="colorPicker" />
                 <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

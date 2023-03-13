@@ -254,7 +254,7 @@ public abstract class BaseData2DController extends BaseController {
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            CheckMenuItem pMenu = new CheckMenuItem(message("PopWhenMouseHovering"), StyleTools.getIconImage("iconPop.png"));
+            CheckMenuItem pMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
             pMenu.setSelected(UserConfig.getBoolean("Data2DExamplesPopWhenMouseHovering", true));
             pMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -264,7 +264,7 @@ public abstract class BaseData2DController extends BaseController {
             });
             popMenu.getItems().add(pMenu);
 
-            MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
+            MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -322,7 +322,7 @@ public abstract class BaseData2DController extends BaseController {
 
             @Override
             protected boolean handle() {
-                try ( Connection conn = DerbyBase.getConnection()) {
+                try (Connection conn = DerbyBase.getConnection()) {
                     List<Data2DColumn> columns = new ArrayList<>();
                     columns.add(new Data2DColumn("skey", ColumnDefinition.ColumnType.String, true, true));
                     columns.add(new Data2DColumn("Date", ColumnDefinition.ColumnType.String));
@@ -342,8 +342,8 @@ public abstract class BaseData2DController extends BaseController {
                     long recoveryCount = 0;
                     parseTask.setInfo("D:/下载/time_series_covid19_recovered_global.csv");
                     File srcFile = new File("D:/下载/time_series_covid19_recovered_global.csv");
-                    try ( PreparedStatement countryInsert = conn.prepareStatement(tableCountry.insertStatement());
-                             CSVParser parser = CsvTools.csvParser(srcFile, ",", true)) {
+                    try (PreparedStatement countryInsert = conn.prepareStatement(tableCountry.insertStatement());
+                            CSVParser parser = CsvTools.csvParser(srcFile, ",", true)) {
                         List<String> header = parser.getHeaderNames();
                         for (CSVRecord record : parser) {
                             String country = record.get("Country/Region");
@@ -385,10 +385,10 @@ public abstract class BaseData2DController extends BaseController {
                     long deadCount = 0;
                     parseTask.setInfo("D:/下载/time_series_covid19_deaths_global.csv");
                     srcFile = new File("D:/下载/time_series_covid19_deaths_global.csv");
-                    try ( PreparedStatement countryQuery = conn.prepareStatement("SELECT * FROM CSSEGISandData WHERE skey=?");
-                             PreparedStatement countryInsert = conn.prepareStatement(tableCountry.insertStatement());
-                             PreparedStatement countryUpdate = conn.prepareStatement(tableCountry.updateStatement());
-                             CSVParser parser = CsvTools.csvParser(srcFile, ",", true)) {
+                    try (PreparedStatement countryQuery = conn.prepareStatement("SELECT * FROM CSSEGISandData WHERE skey=?");
+                            PreparedStatement countryInsert = conn.prepareStatement(tableCountry.insertStatement());
+                            PreparedStatement countryUpdate = conn.prepareStatement(tableCountry.updateStatement());
+                            CSVParser parser = CsvTools.csvParser(srcFile, ",", true)) {
                         List<String> header = parser.getHeaderNames();
                         for (CSVRecord record : parser) {
                             String country = record.get("Country/Region");
@@ -448,10 +448,10 @@ public abstract class BaseData2DController extends BaseController {
                     long confirmedCount = 0;
                     parseTask.setInfo("D:/下载/time_series_covid19_confirmed_global.csv");
                     srcFile = new File("D:/下载/time_series_covid19_confirmed_global.csv");
-                    try ( PreparedStatement countryQuery = conn.prepareStatement("SELECT * FROM CSSEGISandData WHERE skey=?");
-                             PreparedStatement countryInsert = conn.prepareStatement(tableCountry.insertStatement());
-                             PreparedStatement countryUpdate = conn.prepareStatement(tableCountry.updateStatement());
-                             CSVParser parser = CsvTools.csvParser(srcFile, ",", true)) {
+                    try (PreparedStatement countryQuery = conn.prepareStatement("SELECT * FROM CSSEGISandData WHERE skey=?");
+                            PreparedStatement countryInsert = conn.prepareStatement(tableCountry.insertStatement());
+                            PreparedStatement countryUpdate = conn.prepareStatement(tableCountry.updateStatement());
+                            CSVParser parser = CsvTools.csvParser(srcFile, ",", true)) {
                         List<String> header = parser.getHeaderNames();
                         for (CSVRecord record : parser) {
                             String country = record.get("Country/Region");
@@ -508,7 +508,7 @@ public abstract class BaseData2DController extends BaseController {
                         parseTask.setInfo(e.toString());
                     }
 
-                    try ( Statement delete = conn.createStatement()) {
+                    try (Statement delete = conn.createStatement()) {
                         String sql = "DELETE FROM CSSEGISandData WHERE Confirmed='0' AND  Recovered='0' AND  Dead='0' ";
                         parseTask.setInfo(sql);
                         int count = delete.executeUpdate(sql);

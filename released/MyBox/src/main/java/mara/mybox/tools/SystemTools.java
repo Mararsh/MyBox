@@ -53,7 +53,7 @@ public class SystemTools {
 
     public static void currentThread() {
         Thread thread = Thread.currentThread();
-        MyBoxLog.debug(thread.getId() + " " + thread.getName() + " " + thread.getState());
+        MyBoxLog.debug(thread.threadId() + " " + thread.getName() + " " + thread.getState());
         for (StackTraceElement element : thread.getStackTrace()) {
             MyBoxLog.debug(element.toString());
         }
@@ -132,7 +132,7 @@ public class SystemTools {
             ProcessBuilder pb = new ProcessBuilder(command).redirectErrorStream(true);
             final Process process = pb.start();
             StringBuilder s = new StringBuilder();
-            try ( BufferedReader inReader = process.inputReader(charset)) {
+            try (BufferedReader inReader = process.inputReader(charset)) {
                 String line;
                 while ((line = inReader.readLine()) != null) {
                     s.append(line).append("\n");
@@ -152,8 +152,8 @@ public class SystemTools {
             }
             ProcessBuilder pb = new ProcessBuilder(command).redirectErrorStream(true);
             final Process process = pb.start();
-            try ( BufferedReader inReader = process.inputReader(charset);
-                     BufferedWriter writer = new BufferedWriter(new FileWriter(file, Charset.forName("UTF-8"), false))) {
+            try (BufferedReader inReader = process.inputReader(charset);
+                    BufferedWriter writer = new BufferedWriter(new FileWriter(file, Charset.forName("UTF-8"), false))) {
                 String line;
                 while ((line = inReader.readLine()) != null) {
                     writer.write(line + "\n");

@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import mara.mybox.controller.MyBoxLanguagesController.LanguageItem;
@@ -21,6 +22,8 @@ public class MyBoxLanguageInputController extends BaseChildController {
     protected MyBoxLanguagesController languagesController;
     protected SimpleBooleanProperty notify;
 
+    @FXML
+    protected Tab englishTab, chineseTab;
     @FXML
     protected TextField keyInput;
     @FXML
@@ -56,6 +59,22 @@ public class MyBoxLanguageInputController extends BaseChildController {
 
     public String getInput() {
         return inputArea.getText();
+    }
+
+    @FXML
+    @Override
+    public void copyAction() {
+        if (englishTab.isSelected()) {
+            inputArea.setText(englishArea.getText());
+        } else {
+            inputArea.setText(chineseArea.getText());
+        }
+    }
+
+    @FXML
+    @Override
+    public void clearAction() {
+        inputArea.clear();
     }
 
     @FXML

@@ -172,10 +172,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
 
     @FXML
     public void popImage() {
-        if (imagePopController != null && imagePopController.getMyWindow().isShowing()) {
-            return;
-        }
-        imagePopController = ImagePopController.openView(this, imageView);
+        ImagePopController.openView(this, imageView);
     }
 
     public void applyKernel(ConvolutionKernel kernel) {

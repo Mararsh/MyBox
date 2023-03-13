@@ -27,7 +27,6 @@ import mara.mybox.bufferedimage.ImageCombine.ArrayType;
 import mara.mybox.bufferedimage.ImageCombine.CombineSizeType;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
@@ -479,7 +478,7 @@ public class ImagesSpliceController extends ImageViewerController {
 
     @FXML
     protected void newWindow(ActionEvent event) {
-        ControllerTools.openImageViewer(image);
+        ImageViewerController.openImage(image);
     }
 
     @FXML

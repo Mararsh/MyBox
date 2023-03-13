@@ -86,7 +86,7 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
         }
         super.checkButtons();
         boolean isEmpty = tableData == null || tableData.isEmpty();
-        boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
+        boolean none = isNoneSelected();
         clearMatricesButton.setDisable(isEmpty);
         deleteMatricesButton.setDisable(none);
         renameMatrixButton.setDisable(none);
@@ -97,7 +97,7 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
     @FXML
     public void matrixAAction() {
         try {
-            Data2DDefinition selected = tableView.getSelectionModel().getSelectedItem();
+            Data2DDefinition selected = selectedItem();
             if (selected == null) {
                 return;
             }
@@ -111,7 +111,7 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
     @FXML
     public void matrixBAction() {
         try {
-            Data2DDefinition selected = tableView.getSelectionModel().getSelectedItem();
+            Data2DDefinition selected = selectedItem();
             if (selected == null) {
                 return;
             }
@@ -129,8 +129,8 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
 
     @FXML
     public void renameAction() {
-        int index = tableView.getSelectionModel().getSelectedIndex();
-        Data2DDefinition selected = tableView.getSelectionModel().getSelectedItem();
+        int index = selectedIndix();
+        Data2DDefinition selected = selectedItem();
         if (selected == null) {
             return;
         }
@@ -178,28 +178,28 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
 
-            menu = new MenuItem(message("SetAsMatrixA"), StyleTools.getIconImage("iconA.png"));
+            menu = new MenuItem(message("SetAsMatrixA"), StyleTools.getIconImageView("iconA.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 matrixAAction();
             });
             menu.setDisable(matrixAButton.isDisable());
             items.add(menu);
 
-            menu = new MenuItem(message("SetAsMatrixB"), StyleTools.getIconImage("iconB.png"));
+            menu = new MenuItem(message("SetAsMatrixB"), StyleTools.getIconImageView("iconB.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 matrixBAction();
             });
             menu.setDisable(matrixBButton.isDisable());
             items.add(menu);
 
-            menu = new MenuItem(message("Rename"), StyleTools.getIconImage("iconRename.png"));
+            menu = new MenuItem(message("Rename"), StyleTools.getIconImageView("iconInput.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 renameAction();
             });
             menu.setDisable(renameMatrixButton.isDisable());
             items.add(menu);
 
-            menu = new MenuItem(message("Delete"), StyleTools.getIconImage("iconDelete.png"));
+            menu = new MenuItem(message("Delete"), StyleTools.getIconImageView("iconDelete.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 deleteAction();
             });

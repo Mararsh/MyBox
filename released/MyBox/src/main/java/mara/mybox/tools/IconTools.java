@@ -123,7 +123,7 @@ public class IconTools {
             if (address == null || targetFile == null) {
                 return null;
             }
-            File iconFile = HtmlReadTools.url2File(address);
+            File iconFile = HtmlReadTools.download(address);
             if (iconFile == null || !iconFile.exists()) {
                 return null;
             }
@@ -145,7 +145,7 @@ public class IconTools {
             if (address == null) {
                 return null;
             }
-            String html = HtmlReadTools.readURL(address);
+            String html = HtmlReadTools.url2html(address);
             Pattern[] ICON_PATTERNS = new Pattern[]{
                 Pattern.compile("rel=[\"']shortcut icon[\"'][^\r\n>]+?((?<=href=[\"']).+?(?=[\"']))"),
                 Pattern.compile("((?<=href=[\"']).+?(?=[\"']))[^\r\n<]+?rel=[\"']shortcut icon[\"']")};

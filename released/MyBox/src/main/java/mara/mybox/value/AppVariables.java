@@ -47,12 +47,12 @@ public class AppVariables {
     public static boolean isChinese, closeCurrentWhenOpenTool, recordWindowsSizeLocation, controlDisplayText,
             hidpiIcons, ignoreDbUnavailable, popErrorLogs, saveDebugLogs, detailedDebugLogs,
             isTesting, handlingExit;
-    public static StyleData.StyleColor ControlColor;
     public static TextClipboardMonitor textClipboardMonitor;
     public static ImageClipboardMonitor imageClipboardMonitor;
     public static Timer exitTimer;
     public static SimpleBooleanProperty errorNotify;
     public static Map<RenderingHints.Key, Object> imageRenderHints;
+    public static StyleData.StyleColor ControlColor;
 
     public static void initAppVaribles() {
         try {

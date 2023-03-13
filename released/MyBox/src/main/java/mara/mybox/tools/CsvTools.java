@@ -8,6 +8,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVFormat.Builder;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.DuplicateHeaderMode;
 
 /**
  * @Author Mara
@@ -29,7 +30,7 @@ public class CsvTools {
                 .setTrim(true)
                 .setNullString("")
                 .setCommentMarker(d.equals(CommentsMarker + "") ? null : CommentsMarker)
-                .setAllowDuplicateHeaderNames(false);
+                .setDuplicateHeaderMode(DuplicateHeaderMode.DISALLOW);
     }
 
     public static CSVFormat csvFormat(String delimiter, boolean hasHeader) {

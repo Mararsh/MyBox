@@ -2,13 +2,11 @@ package mara.mybox.controller;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.input.MouseEvent;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data2d.DataTable;
@@ -17,6 +15,7 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -108,7 +107,7 @@ public class DataTableQueryEditor extends TreeNodeEditor {
             popError(message("InvalidParameters") + ": SQL");
             return;
         }
-        String query = s.replaceAll("\n", " ");
+        String query = StringTools.replaceLineBreak(s);
         if (task != null) {
             task.cancel();
         }
@@ -143,32 +142,28 @@ public class DataTableQueryEditor extends TreeNodeEditor {
     }
 
     @FXML
-    protected void popExamplesMenu(MouseEvent mouseEvent) {
+    protected void popExamplesMenu(Event event) {
         if (UserConfig.getBoolean("SqlExamplesPopWhenMouseHovering", false)) {
-            examplesMenu(mouseEvent);
+            showExamplesMenu(event);
         }
     }
 
     @FXML
-    protected void showExamplesMenu(ActionEvent event) {
-        examplesMenu(event);
-    }
-
-    protected void examplesMenu(Event event) {
+    protected void showExamplesMenu(Event event) {
         PopTools.popSqlExamples(this, valueInput,
                 dataTable != null ? dataTable.getSheet() : null,
                 true, event);
     }
 
     @FXML
-    protected void popHistories(MouseEvent mouseEvent) {
+    protected void popHistories(Event event) {
         if (UserConfig.getBoolean("DataTableQueryHistoriesPopWhenMouseHovering", false)) {
-            PopTools.popStringValues(this, valueInput, mouseEvent, "DataTableQueryHistories", false, true);
+            showHistories(event);
         }
     }
 
     @FXML
-    protected void showHistories(ActionEvent event) {
+    protected void showHistories(Event event) {
         PopTools.popStringValues(this, valueInput, event, "DataTableQueryHistories", false, true);
     }
 

@@ -190,6 +190,11 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
             loadScene(Fxmls.HtmlSetStyleFxml);
         });
 
+        MenuItem HtmlSetEquiv = new MenuItem(message("HtmlSetEquiv"));
+        HtmlSetStyle.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.HtmlSetEquivFxml);
+        });
+
         MenuItem HtmlSnap = new MenuItem(message("HtmlSnap"));
         HtmlSnap.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.HtmlSnapFxml);
@@ -237,7 +242,7 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
 
         htmlMenu.getItems().addAll(
                 htmlEditor, WebFind, WebElements, HtmlSnap, HtmlExtractTables, new SeparatorMenuItem(),
-                htmlToMarkdown, HtmlToText, HtmlToPdf, HtmlSetCharset, HtmlSetStyle, new SeparatorMenuItem(),
+                htmlToMarkdown, HtmlToText, HtmlToPdf, HtmlSetCharset, HtmlSetStyle, HtmlSetEquiv, new SeparatorMenuItem(),
                 HtmlMergeAsHtml, HtmlMergeAsMarkdown, HtmlMergeAsPDF, HtmlMergeAsText, HtmlFrameset
         );
 

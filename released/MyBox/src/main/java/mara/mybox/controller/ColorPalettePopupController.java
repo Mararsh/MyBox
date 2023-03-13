@@ -132,8 +132,8 @@ public class ColorPalettePopupController extends BaseChildController {
 
     public void loadColors() {
         synchronized (this) {
-            if ((task != null && !task.isQuit())) {
-                return;
+            if (task != null) {
+                task.cancel();
             }
             thisPane.setDisable(true);
             task = new SingletonTask<Void>(this) {
@@ -142,8 +142,8 @@ public class ColorPalettePopupController extends BaseChildController {
 
                 @Override
                 protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
-                        ColorPaletteName defaultPalette = tableColorPaletteName.defaultPalette(conn);
+                    try (Connection conn = DerbyBase.getConnection()) {
+                        ColorPaletteName defaultPalette = PaletteTools.defaultPalette(conn);
                         if (defaultPalette == null) {
                             return false;
                         }
@@ -158,7 +158,7 @@ public class ColorPalettePopupController extends BaseChildController {
                         paletteName = currentPalette.getName();
                         UserConfig.setString("ColorPalettePopupPalette", paletteName);
                         colors = tableColorPalette.colors(conn, currentPalette.getCpnid());
-                        palettes = tableColorPaletteName.readAll(conn);
+                        palettes = tableColorPaletteName.recentVisited(conn);
                     } catch (Exception e) {
                         error = e.toString();
                         return false;
@@ -202,7 +202,6 @@ public class ColorPalettePopupController extends BaseChildController {
             };
             start(task, false);
         }
-
     }
 
     public Rectangle makeColorRect(ColorData data) {
@@ -289,7 +288,13 @@ public class ColorPalettePopupController extends BaseChildController {
 
             items.add(new SeparatorMenuItem());
 
-            MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
+            MenuItem menu = new MenuItem(message("Select..."));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                ColorPaletteSelectorController.open(this);
+            });
+            items.add(menu);
+
+            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 if (popMenu != null && popMenu.isShowing()) {
@@ -325,8 +330,7 @@ public class ColorPalettePopupController extends BaseChildController {
             items.add(menu);
 
             items.add(new SeparatorMenuItem());
-            items.addAll(PaletteTools.paletteExamplesMenu(parentController == null ? myController : parentController,
-                    tableColorPaletteName, tableColorPalette, tableColor));
+            items.addAll(PaletteTools.paletteExamplesMenu(parentController == null ? myController : parentController));
 
             items.add(new SeparatorMenuItem());
 
@@ -342,7 +346,7 @@ public class ColorPalettePopupController extends BaseChildController {
 
             items.add(new SeparatorMenuItem());
 
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
+            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 if (popMenu != null && popMenu.isShowing()) {
@@ -379,15 +383,22 @@ public class ColorPalettePopupController extends BaseChildController {
         SingletonTask addTask = new SingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
-                return tableColorPalette.findAndCreate(currentPalette.getCpnid(), colorData, false) != null;
+                return tableColorPalette.findAndCreate(currentPalette.getCpnid(), colorData) != null;
             }
 
             @Override
             protected void whenSucceeded() {
-                PaletteTools.afterPaletteChanged(parentController, currentPalette.getName());
+                loadPalette(currentPalette.getName());
             }
         };
         start(addTask, false);
+    }
+
+    public void loadPalette(String palette) {
+        if (palette == null) {
+            return;
+        }
+        PaletteTools.afterPaletteChanged(parentController, palette);
     }
 
     @FXML

@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
@@ -24,6 +25,7 @@ import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -101,8 +103,7 @@ public class WebHistoriesController extends BaseSysTableController<WebHistory> {
         }
         super.checkButtons();
 
-        boolean isEmpty = tableData == null || tableData.isEmpty();
-        boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
+        boolean none = isNoneSelected();
         goButton.setDisable(none);
     }
 
@@ -192,9 +193,17 @@ public class WebHistoriesController extends BaseSysTableController<WebHistory> {
     }
 
     @FXML
-    protected void popFindHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, findInput, mouseEvent, "WebHistoriesFindHistories", true);
+    protected void showFindHistories(Event event) {
+        PopTools.popStringValues(this, findInput, event, "WebHistoriesFindHistories", false, true);
     }
+
+    @FXML
+    public void popFindHistories(Event event) {
+        if (UserConfig.getBoolean("WebHistoriesFindHistoriesPopWhenMouseHovering", false)) {
+            showFindHistories(event);
+        }
+    }
+
 
     /*
         table
@@ -207,16 +216,24 @@ public class WebHistoriesController extends BaseSysTableController<WebHistory> {
     @FXML
     @Override
     public void goAction() {
-        WebHistory selected = tableView.getSelectionModel().getSelectedItem();
+        WebHistory selected = selectedItem();
         if (selected == null) {
             return;
         }
-        WebBrowserController.oneOpen(selected.getAddress(), true);
+        WebBrowserController.openAddress(selected.getAddress(), true);
     }
 
     /*
         static methods
      */
+    public static WebHistoriesController open() {
+        WebHistoriesController controller = (WebHistoriesController) WindowTools.openStage(Fxmls.WebHistoriesFxml);
+        if (controller != null) {
+            controller.requestMouse();
+        }
+        return controller;
+    }
+
     public static WebHistoriesController oneOpen() {
         WebHistoriesController controller = null;
         List<Window> windows = new ArrayList<>();

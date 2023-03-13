@@ -1,41 +1,75 @@
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-    </head>
-<html>
  <head>
-  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="UTF-8">
+  <meta http-equiv="cache-control" content="no-cache">
  </head>
  <body contenteditable="false" style="width: 900px; margin:0 auto;">
   <h1>Development Logs</h1>
+  <p>2023-3-13 v6.7.1</p>
+  <ul>
+   <li>Added: 
+    <ul>
+     <li>Edit mode of html: DOM.</li>
+     <li>Manufacture image: blend colors against selected scope.</li>
+     <li>Set http-equiv in batch.</li>
+     <li>Can customized colors of buttons.</li>
+    </ul></li>
+   <li>Improved: 
+    <ul>
+     <li>Manufacture image: select whether replace hue/saturation/brightness when replace colors.</li>
+     <li>New attributes of color: RYB angle, RGB invert, and RYB complementary. And more examples of color palettes.</li>
+     <li>Can set scroll size for selectors.</li>
+     <li>Link menus work before html page is loaded completely.</li>
+     <li>Parse html with jsoup.</li>
+     <li>Option about whether pop menu/window when hover over buttons.</li>
+     <li>Links in ReadMe refer to latest versions.</li>
+     <li>Set JAVA_HOME in packing scripts.</li>
+    </ul></li>
+   <li>Removed: 
+    <ul>
+     <li>Not support setting interface styles any more.</li>
+     <li>Remove unuseful sliders in some interfaces.</li>
+     <li>Names of packages do not contain version number any more.</li>
+    </ul></li>
+   <li>Both Java and JavaFx are upgraded to v19.</li>
+   <li>Solved problems: 
+    <ul>
+     <li>All file backups may be cleared when add file backup.</li>
+     <li>Fail to load map when image file of points is not existed.</li>
+     <li>Fail to add address as favorite.</li>
+     <li>Visit histories of paths do not work in some interfaces.</li>
+     <li>Handle location incorrectly when paste images in batch.</li>
+     <li>Shorcuts dot not work when edit colors of image.</li>
+     <li>Edit histories are not saved for Javascript.</li>
+    </ul></li>
+  </ul>
+  <p><a target="_blank" href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.1">Closed requirements/bugs in this version</a></p>
   <p>2023-1-21 v6.7</p>
-	  <ul>
-	   <li>Added features: 
-		<ul>
-		 <li>Group data by same values of century/year/month/day/hour/minute/second of a time column.</li>
-		 <li>Group data by same results of row expressions.</li>
-		 <li>Charset can be set for “Run System Command”.</li>
-		 <li>Document “Stories of Images”.</li>
-		</ul></li>
-	   <li>Improved codes: 
-		<ul>
-		 <li>Grouping parameters are saved in database instead of in memory.</li>
-		 <li>In data formats, hour/minute/second are always long values.</li>
-		 <li>Rename internal images.</li>
-		</ul></li>
-	   <li>Solved problems: 
-		<ul>
-		 <li>When group by value ranges of time column, ranges should be displayed as time rather than as long.</li>
-		 <li>When group by conditions, all values should be imported in temprory table, or else results may be wrong.</li>
-		 <li>When group by rows number, split number is wrongly picked as split size.</li>
-		</ul></li>
-	  </ul>
-	  <p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7">Closed requirements/bugs in this version</a></p>
-	  <p>Happy and healthy Chinese New Year!</p>
- <p>2022-12-26 v6.6.3</p>
+  <ul>
+   <li>Added features: 
+    <ul>
+     <li>Group data by same values of century/year/month/day/hour/minute/second of a time column.</li>
+     <li>Group data by same results of row expressions.</li>
+     <li>Charset can be set for “Run System Command”.</li>
+     <li>Document “Stories of Images”.</li>
+    </ul></li>
+   <li>Improved codes: 
+    <ul>
+     <li>Grouping parameters are saved in database instead of in memory.</li>
+     <li>In data formats, hour/minute/second are always long values.</li>
+     <li>Rename internal images.</li>
+    </ul></li>
+   <li>Solved problems: 
+    <ul>
+     <li>When group by value ranges of time column, ranges should be displayed as time rather than as long.</li>
+     <li>When group by conditions, all values should be imported in temprory table, or else results may be wrong.</li>
+     <li>When group by rows number, split number is wrongly picked as split size.</li>
+    </ul></li>
+  </ul>
+  <p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7">Closed requirements/bugs in this version</a></p>
+  <p>Happy and healthy Chinese New Year!</p>
+  <p>2022-12-26 v6.6.3</p>
   <ul>
    <li>Improve codes: 
     <ul>
@@ -433,5 +467,4 @@
   <p>2018-06-12 v1.0 Convert each page of PDF file to an image with options of format, density, color, compression, and quality. And user can pause/continue the conversion.</p>
   <p><a href="https://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+no%3Amilestone">Closed requirements/bugs not in any version</a></p>
  </body>
-</html>
 </html>

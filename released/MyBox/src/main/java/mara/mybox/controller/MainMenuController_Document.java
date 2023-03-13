@@ -148,6 +148,11 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
     }
 
     @FXML
+    protected void openHtmlSetEquiv(ActionEvent event) {
+        loadScene(Fxmls.HtmlSetEquivFxml);
+    }
+
+    @FXML
     protected void openHtmlSnap(ActionEvent event) {
         loadScene(Fxmls.HtmlSnapFxml);
     }

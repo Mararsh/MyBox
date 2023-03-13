@@ -38,7 +38,7 @@ public class HtmlWriteTools {
      */
     public static File writeHtml(String html) {
         try {
-            File htmFile = TmpFileTools.getTempFile(".htm");
+            File htmFile = TmpFileTools.getTempFile(".html");
             Charset charset = HtmlReadTools.charset(html);
             TextFileTools.writeFile(htmFile, html, charset);
             return htmFile;
@@ -260,6 +260,39 @@ public class HtmlWriteTools {
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
+        }
+    }
+
+    public static String setEquiv(File htmlFile, Charset charset, String key, String value) {
+        try {
+            if (htmlFile == null || key == null || value == null) {
+                return "InvalidData";
+            }
+            String html = TextFileTools.readTexts(htmlFile, charset);
+            Document doc = Jsoup.parse(html);
+            if (doc == null) {
+                return "InvalidData";
+            }
+            if (!"Content-Type".equalsIgnoreCase(key)) {
+                setCharset(doc, charset);
+            }
+            Elements children = doc.head().children();
+            for (Element e : children) {
+                if (!e.tagName().equalsIgnoreCase("meta") || !e.hasAttr("http-equiv")) {
+                    continue;
+                }
+                if (key.equalsIgnoreCase(e.attr("http-equiv")) && e.hasAttr("content")) {
+                    e.remove();
+                }
+            }
+            Element meta1 = new Element("meta")
+                    .attr("http-equiv", key)
+                    .attr("content", value);
+            doc.head().appendChild(meta1);
+            return doc.outerHtml();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
     }
 

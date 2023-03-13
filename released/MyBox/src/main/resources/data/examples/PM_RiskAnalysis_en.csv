@@ -1,0 +1,3 @@
+Configuration ID,Task ID,Type,Risk Item,Probability,Severity,Priority,Description,Effects,Contingency Actions,Analyzer,Analysis Time
+A-Q-0054,T-01705,Quality,Not enough testings,7,6,2,Test part of data types and part of operations,There may be bugs,Enhance auto-testing,mara,2023-1-3 11:30:42
+A-T-0182,T-01732,Technique,Not enough knowledges,8,9,8,The principle of color processing is not well understood,The results are highly biased,Read more information,mara,2023-2-11 11:30:42

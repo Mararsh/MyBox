@@ -108,6 +108,10 @@ public class LoadingController extends BaseLogs {
         updateLogs(info, true);
     }
 
+    public String getInfo() {
+        return logsTextArea.getText();
+    }
+
     public boolean isRunning() {
         return timer != null;
     }

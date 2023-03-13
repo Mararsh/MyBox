@@ -129,6 +129,9 @@ Tags:喜欢;;;0x0d3928ff;;;待补充;;;0xfff2dfff
 笔记本 > 笔记示例 > 网址
 娱乐-中文
 Tags:喜欢;;;0x0d3928ff;;;待补充;;;0xfff2dfff
+<a target=_blank href="https://tv.cctv.com/2022/08/27/VIDARmuWi2Ebs0b0NSsA1Ao7220827.shtml">诗画中国</a><br>
+<a target=_blank href="http://www.radio.cn/pc-portal/sanji/zhibo_2.html?channelname=0&name=1395534&title=radio">小喇叭</a><br>
+<a target=_blank href="http://www.radio.cn/pc-portal/sanji/zhibo_2.html?channelname=0&name=1395682&title=radio">品味书香</a><br>
 <a target=_blank href="https://www.qingting.fm">蜻蜓FM</a><br>
 <a target=_blank href="https://www.bilibili.com">哔哩哔哩</a><br>
 <a target=_blank href="https://www.youku.com">优酷</a><br>
@@ -137,7 +140,6 @@ Tags:喜欢;;;0x0d3928ff;;;待补充;;;0xfff2dfff
 <a target=_blank href="https://weibo.com">微博</a><br>
 <a target=_blank href="https://bbs.tianya.cn/">天涯</a><br>
 <a target=_blank href="https://www.lofter.com/">lofter</a><br>
-<a target=_blank href="https://www.qingting.fm/channels/138236/">小喇叭</a><br>
 <a target=_blank href="https://www.bilibili.com/video/BV1Px411P761">牡丹亭（1986年）张继青</a><br>
 <a target=_blank href="https://www.bilibili.com/video/BV1rs411n7Dd">白蛇传-杜近芳 叶盛兰（杜近芳 叶少兰）</a><br>
 <a target=_blank href="https://www.bilibili.com/video/BV11x411j7As">梁祝-范瑞娟 傅全香</a><br>
@@ -284,6 +286,23 @@ sftp> cd v6.4.2
 sftp> lcd  D:\releases\Mybox\2021-03-21-v6.4.2
 sftp> put D:\releases\Mybox\2021-03-21-v6.4.2\MyBox-6.4.2-linux.tar.gz
 </CODE></PRE>
+访问文件：  https://sourceforge.net/projects/mara-mybox/files/
+
+
+##MyBox#
+笔记本 > 笔记示例 > 编程
+sftp到sourceforge（上传网站文件）
+<PRE><CODE>
+C:\Users\mara>sftp mararsh@frs.sourceforge.net
+Password:
+Connected to mararsh@frs.sourceforge.net.
+sftp> cd /home/project-web/mara-mybox/htdocs
+sftp> ls
+sftp> lcd  D:\GitHub\MyBox\docs
+sftp> put *.*
+</CODE></PRE>
+访问网站：  https://mara-mybox.sourceforge.io/index.html
+
 
 ##MyBox#
 笔记本 > 笔记示例 > 编程
@@ -374,6 +393,8 @@ Tags:喜欢;;;0x0d3928ff;;;待补充;;;0xfff2dfff
     <li>字符串与字节转换时，注意字符集。</li>
     <li>读文件时判断结束的条件应是“len &gt; 0”。如果用“len != -1”则在读取零字节时陷入死循环。</li>
     <li>删除/移动/重命名文件前调用“System.gc()”，以免因缓存而失败。</li>
+    <li>处理树形信息（例如文件系统）时要避免无限循环：当操作会修改源节点时，目标节点不能是源节点或者其后代。</li>
+    <li>若按序号删除列表，则应从后向前删除。</li>
     <li>当类的参数比较多时，不要写很多构造方法来初始化不同参数集，而是用静态方法创建、然后各个set方法返回this，来实现链式赋值。</li>
     <li>匿名类非常适合以下场景：大量重复代码，只有少数方法的实现不同。</li>
     <li>泛型非常适合以下场景：大量重复代码，只有数据类型不同。</li>
@@ -398,74 +419,28 @@ Tags:喜欢;;;0x0d3928ff;;;待补充;;;0xfff2dfff
      </li>
 </ol>
 
+
 ##MyBox#
 笔记本 > 笔记示例 > 编程
-MyBox
-
-##MyBox#
-笔记本 > 笔记示例 > 编程 > MyBox
-MyBox打包步骤-windows
-<p>在Windows操作系统下：</p>
-			<ol  class="inside">
-				<li>确保jdk和maven已正确安装。</li>
-				<li>下载Mybox源码。</li>
-				<li>在可写可读目录下解包。</li>
-				<li>修改Mybox源码中的文件“MyBox/pack/win/make-win-exe.bat”, 设置以下参数为你的环境下的目录: jpackagePath、jdkPath</li>
-				<li>双击执行脚本“MyBox/pack/win/make-win-exe.bat”。</li>
-				<li>生成的可执行文件是“MyBox/pack/win/app/MyBox/MyBox.exe”。</li>
-			</ol>
-
-##MyBox#
-笔记本 > 笔记示例 > 编程 > MyBox
-MyBox打包步骤-linux
-<p>在Linux操作系统下：</p>
-			<ol  class="inside">
-				<li>确保jdk和maven已正确安装。</li>
-				<li>下载Mybox源码。</li>
-				<li>在可写可读目录下解包。</li>
-				<li>修改Mybox源码中的文件“MyBox/pack/linux/make-linux-bin.sh”, 设置以下参数为你的环境下的目录: jpackagePath、jdkPath</li>
-				<li>打开一个命令终端，进入源码目录：</li>
-				      <PRE><CODE>cd  MyBox/pack/linux/</CODE></PRE>
-				<li>修改脚本的执行权限：</li>
-				      <PRE><CODE>chmod 755 make-linux-bin.sh</CODE></PRE>
-				<li>执行脚本：</li>
-				      <PRE><CODE>./make-linux-bin.sh</CODE></PRE>
-				<li>生成的可执行文件是“MyBox/pack/linux/app/MyBox/bin/MyBox”。</li>
-			</ol>
-
-##MyBox#
-笔记本 > 笔记示例 > 编程 > MyBox
-MyBox打包步骤-mac
-<p>在Mac操作系统下：</p>
-			<ol  class="inside">
-				<li>确保jdk和maven已正确安装。</li>
-				<li>下载Mybox源码。</li>
-				<li>在可写可读目录下解包。</li>
-				<li>修改Mybox源码中的文件“MyBox/pack/mac/make-mac-dmg.sh”, 设置以下参数为你的环境下的目录: jpackagePath、jdkPath</li>
-				<li>打开一个命令终端，进入源码目录：</li>
-				      <PRE><CODE>cd  MyBox/pack/mac</CODE></PRE>
-				<li>修改脚本的执行权限：</li>
-				      <PRE><CODE>chmod 755 make-mac-dmg.sh</CODE></PRE>
-				<li>执行脚本：</li>
-				      <PRE><CODE>./make-mac-dmg.sh</CODE></PRE>
-				<li>生成的安装包是“MyBox/pack/mac/app/MyBox-$version.dmg”。</li>
-			</ol>
-
-##MyBox#
-笔记本 > 笔记示例 > 编程 > MyBox
 MyBox图标的颜色
-<table>
-                <tbody><tr style="font-weight:bold; "><th>色彩</th><th>色彩 - RGBA</th><th>色彩 - RGB</th><th>名字</th><th>值</th><th>sRGB</th><th>HSB</th></tr>
-                <tr><td align="center"><div style="width: 50px;  background-color:#C32136; ">&nbsp;&nbsp;&nbsp;</div></td><td>0XC32136FF </td><td>#C32136 </td><td>枣红</td><td>-3989194</td><td>195 33 54 100%</td><td>352 83% 76%</td></tr>
-                <tr><td align="center"><div style="width: 50px;  background-color:#FBD5CF; ">&nbsp;&nbsp;&nbsp;</div></td><td>0XFBD5CFFF </td><td>#FBD5CF </td><td>浅粉</td><td>-272945</td><td>251 213 207 100%</td><td>8 18% 98%</td></tr>
-                <tr><td align="center"><div style="width: 50px;  background-color:#FF0097; ">&nbsp;&nbsp;&nbsp;</div></td><td>0XFF0097FF </td><td>#FF0097 </td><td>洋红</td><td>-65385</td><td>255 0 151 100%</td><td>324 100% 100%</td></tr>
-                <tr><td align="center"><div style="width: 50px;  background-color:#EDD1D8; ">&nbsp;&nbsp;&nbsp;</div></td><td>0XEDD1D8FF </td><td>#EDD1D8 </td><td>藕色</td><td>-1191464</td><td>237 209 216 100%</td><td>345 12% 93%</td></tr>
-                <tr><td align="center"><div style="width: 50px;  background-color:#4C8DAE; ">&nbsp;&nbsp;&nbsp;</div></td><td>0X4C8DAEFF </td><td>#4C8DAE </td><td>群青</td><td>-11760210</td><td>76 141 174 100%</td><td>200 56% 68%</td></tr>
-                <tr><td align="center"><div style="width: 50px;  background-color:#D6ECF0; ">&nbsp;&nbsp;&nbsp;</div></td><td>0XD6ECF0FF </td><td>#D6ECF0 </td><td>月白</td><td>-2691856</td><td>214 236 240 100%</td><td>189 11% 94%</td></tr>
-                <tr><td align="center"><div style="width: 50px;  background-color:#003472; ">&nbsp;&nbsp;&nbsp;</div></td><td>0X003472FF </td><td>#003472 </td><td>花青</td><td>-16763790</td><td>0 52 114 100%</td><td>213 100% 45%</td></tr>
-                <tr><td align="center"><div style="width: 50px;  background-color:#E3F9FD; ">&nbsp;&nbsp;&nbsp;</div></td><td>0XE3F9FDFF </td><td>#E3F9FD </td><td>莹白</td><td>-1836547</td><td>227 249 253 100%</td><td>189 10% 99%</td></tr>
-                <tr><td align="center"><div style="width: 50px;  background-color:#CA6924; ">&nbsp;&nbsp;&nbsp;</div></td><td>0XCA6924FF </td><td>#CA6924 </td><td>琥珀</td><td>-3512028</td><td>202 105 36 100%</td><td>25 82% 79%</td></tr>
-                <tr><td align="center"><div style="width: 50px;  background-color:#FFF2DF; ">&nbsp;&nbsp;&nbsp;</div></td><td>0XFFF2DFFF </td><td>#FFF2DF </td><td>白粉</td><td>-3361</td><td>255 242 223 100%</td><td>36 13% 100%</td></tr>
-                <tr><td align="center"><div style="width: 50px;  background-color:#0D3928; ">&nbsp;&nbsp;&nbsp;</div></td><td>0X0D3928FF </td><td>#0D3928 </td><td>墨绿</td><td>-15910616</td><td>13 57 40 100%</td><td>157 77% 22%</td></tr>
-                <tr><td align="center"><div style="width: 50px;  background-color:#E0F0E9; ">&nbsp;&nbsp;&nbsp;</div></td><td>0XE0F0E9FF </td><td>#E0F0E9 </td><td>素</td><td>-2035479</td><td>224 240 233 100%</td><td>154 7% 94%</td></tr>
-            </tbody></table>
+<table><tbody>
+    <TR  style="font-weight:bold; "><TH>名字</TH><TH>色彩</TH><TH>色彩 - RGBA</TH><TH>色彩 - RGB</TH><TH>值</TH><TH>sRGB</TH><TH>HSB</TH></TR>
+    <TR><TD>枣红</TD><TD align="center"><DIV style="width: 50px;  background-color:#C32136; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0XC32136FF </TD><TD>#C32136 </TD><TD>-3989194</TD><TD>195 33 54 100%</TD><TD>352 83% 76%</TD></TR>
+    <TR><TD>浅粉</TD><TD align="center"><DIV style="width: 50px;  background-color:#FBD5CF; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0XFBD5CFFF </TD><TD>#FBD5CF </TD><TD>-272945</TD><TD>251 213 207 100%</TD><TD>8 18% 98%</TD></TR>
+    <TR><TD>花青</TD><TD align="center"><DIV style="width: 50px;  background-color:#003472; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0X003472FF </TD><TD>#003472 </TD><TD>-16763790</TD><TD>0 52 114 100%</TD><TD>213 100% 45%</TD></TR>
+    <TR><TD>莹白</TD><TD align="center"><DIV style="width: 50px;  background-color:#E3F9FD; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0XE3F9FDFF </TD><TD>#E3F9FD </TD><TD>-1836547</TD><TD>227 249 253 100%</TD><TD>189 10% 99%</TD></TR>
+    <TR><TD>群青</TD><TD align="center"><DIV style="width: 50px;  background-color:#4C8DAE; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0X4C8DAEFF </TD><TD>#4C8DAE </TD><TD>-11760210</TD><TD>76 141 174 100%</TD><TD>200 56% 68%</TD></TR>
+    <TR><TD>月白</TD><TD align="center"><DIV style="width: 50px;  background-color:#D6ECF0; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0XD6ECF0FF </TD><TD>#D6ECF0 </TD><TD>-2691856</TD><TD>214 236 240 100%</TD><TD>189 11% 94%</TD></TR>
+    <TR><TD>洋红</TD><TD align="center"><DIV style="width: 50px;  background-color:#FF0097; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0XFF0097FF </TD><TD>#FF0097 </TD><TD>-65385</TD><TD>255 0 151 100%</TD><TD>324 100% 100%</TD></TR>
+    <TR><TD>藕色</TD><TD align="center"><DIV style="width: 50px;  background-color:#EDD1D8; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0XEDD1D8FF </TD><TD>#EDD1D8 </TD><TD>-1191464</TD><TD>237 209 216 100%</TD><TD>345 12% 93%</TD></TR>
+    <TR><TD>玄色</TD><TD align="center"><DIV style="width: 50px;  background-color:#622A1D; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0X622A1DFF </TD><TD>#622A1D </TD><TD>-10343907</TD><TD>98 42 29 100%</TD><TD>11 70% 38%</TD></TR>
+    <TR><TD>金色</TD><TD align="center"><DIV style="width: 50px;  background-color:#EACD76; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0XEACD76FF </TD><TD>#EACD76 </TD><TD>-1389194</TD><TD>234 205 118 100%</TD><TD>45 50% 92%</TD></TR>
+    <TR><TD>墨绿</TD><TD align="center"><DIV style="width: 50px;  background-color:#0D3928; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0X0D3928FF </TD><TD>#0D3928 </TD><TD>-15910616</TD><TD>13 57 40 100%</TD><TD>157 77% 22%</TD></TR>
+    <TR><TD>素色</TD><TD align="center"><DIV style="width: 50px;  background-color:#E0F0E9; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0XE0F0E9FF </TD><TD>#E0F0E9 </TD><TD>-2035479</TD><TD>224 240 233 100%</TD><TD>154 7% 94%</TD></TR>
+    <TR><TD>定制的深色</TD><TD align="center"><DIV style="width: 50px;  background-color:#8B008B; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0X8B008BFF </TD><TD>#8B008B </TD><TD>-7667573</TD><TD>139 0 139 100%</TD><TD>300 100% 55%</TD></TR>
+    <TR><TD>定制的浅色</TD><TD align="center"><DIV style="width: 50px;  background-color:#F8F8FF; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0XF8F8FFFF </TD><TD>#F8F8FF </TD><TD>-460545</TD><TD>248 248 255 100%</TD><TD>240 3% 100%</TD></TR>
+    <TR><TD>黑</TD><TD align="center"><DIV style="width: 50px;  background-color:#000000; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0X000000FF </TD><TD>#000000 </TD><TD>-16777216</TD><TD>0 0 0 100%</TD><TD>0 0% 0%</TD></TR>
+    <TR><TD>白</TD><TD align="center"><DIV style="width: 50px;  background-color:#FFFFFF; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0XFFFFFFFF </TD><TD>#FFFFFF </TD><TD>-1</TD><TD>255 255 255 100%</TD><TD>0 0% 100%</TD></TR>
+    <TR><TD>透明</TD><TD align="center"><DIV style="width: 50px;  background-color:#000000; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0X00000000 </TD><TD>#000000 </TD><TD>0</TD><TD>0 0 0 0%</TD><TD>0 0% 0%</TD></TR>
+    <TR  style="font-weight:bold; "><TH>名字</TH><TH>色彩</TH><TH>色彩 - RGBA</TH><TH>色彩 - RGB</TH><TH>值</TH><TH>sRGB</TH><TH>HSB</TH></TR>
+</tbody></table>

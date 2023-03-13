@@ -679,13 +679,13 @@ public class ControlData2D extends BaseController {
             popMenu.getItems().add(new SeparatorMenuItem());
 
             if (data2D.isDataFile() || data2D.isUserTable() || data2D.isClipboard()) {
-                Menu examplesMenu = new Menu(message("Examples"), StyleTools.getIconImage("iconExamples.png"));
+                Menu examplesMenu = new Menu(message("Examples"), StyleTools.getIconImageView("iconExamples.png"));
                 examplesMenu.getItems().addAll(Data2DExampleTools.examplesMenu(this));
                 popMenu.getItems().add(examplesMenu);
                 popMenu.getItems().add(new SeparatorMenuItem());
             }
 
-            CheckMenuItem passPop = new CheckMenuItem(message("PopWhenMouseHovering"));
+            CheckMenuItem passPop = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
             passPop.setSelected(UserConfig.getBoolean(interfaceName + "FunctionsPopWhenMouseHovering", true));
             passPop.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -696,7 +696,7 @@ public class ControlData2D extends BaseController {
             popMenu.getItems().add(passPop);
 
             popMenu.getItems().add(new SeparatorMenuItem());
-            MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
+            MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -777,9 +777,9 @@ public class ControlData2D extends BaseController {
         } else {
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle(getMyStage().getTitle());
-            alert.setHeaderText(getMyStage().getTitle());
-            alert.setContentText(Languages.message("NeedSaveBeforeAction"));
+            alert.setTitle(getTitle());
+            alert.setHeaderText(getTitle());
+            alert.setContentText(message("NeedSaveBeforeAction"));
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             ButtonType buttonSave = new ButtonType(Languages.message("Save"));
             ButtonType buttonNotSave = new ButtonType(Languages.message("NotSave"));

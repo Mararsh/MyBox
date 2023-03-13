@@ -40,11 +40,16 @@ public class Fxmls {
     public static final String PdfSplitBatchFxml = "/fxml/PdfSplitBatch.fxml";
 
     public static final String HtmlEditorFxml = "/fxml/HtmlEditor.fxml";
+    public static final String HtmlDomCopyFxml = "/fxml/HtmlDomCopy.fxml";
+    public static final String HtmlDomAddFxml = "/fxml/HtmlDomAdd.fxml";
+    public static final String HtmlDomMoveFxml = "/fxml/HtmlDomMove.fxml";
+    public static final String HtmlDomDeleteFxml = "/fxml/HtmlDomDelete.fxml";
     public static final String HtmlToMarkdownFxml = "/fxml/HtmlToMarkdown.fxml";
     public static final String HtmlToTextFxml = "/fxml/HtmlToText.fxml";
     public static final String HtmlToPdfFxml = "/fxml/HtmlToPdf.fxml";
     public static final String HtmlSetCharsetFxml = "/fxml/HtmlSetCharset.fxml";
     public static final String HtmlSetStyleFxml = "/fxml/HtmlSetStyle.fxml";
+    public static final String HtmlSetEquivFxml = "/fxml/HtmlSetEquiv.fxml";
     public static final String HtmlSnapFxml = "/fxml/HtmlSnap.fxml";
     public static final String HtmlExtractTablesFxml = "/fxml/HtmlExtractTables.fxml";
     public static final String HtmlMergeAsHtmlFxml = "/fxml/HtmlMergeAsHtml.fxml";
@@ -127,6 +132,7 @@ public class Fxmls {
     public static final String ImageManufactureBatchShadowFxml = "/fxml/ImageManufactureBatchShadow.fxml";
     public static final String ImageManufactureBatchTransformFxml = "/fxml/ImageManufactureBatchTransform.fxml";
     public static final String ImageManufactureBatchMarginsFxml = "/fxml/ImageManufactureBatchMargins.fxml";
+    public static final String SVGEditorFxml = "/fxml/SVGEditor.fxml";
 
     public static final String ImageConverterBatchFxml = "/fxml/ImageConverterBatch.fxml";
     public static final String ImagesSpliceFxml = "/fxml/ImagesSplice.fxml";
@@ -147,6 +153,7 @@ public class Fxmls {
     public static final String ColorCopyFxml = "/fxml/ColorCopy.fxml";
     public static final String ColorQueryFxml = "/fxml/ColorQuery.fxml";
     public static final String ColorPaletteInputFxml = "/fxml/ColorPaletteInput.fxml";
+    public static final String ColorPaletteSelectorFxml = "/fxml/ColorPaletteSelector.fxml";
 
     public static final String IccProfileEditorFxml = "/fxml/IccProfileEditor.fxml";
     public static final String ChromaticityDiagramFxml = "/fxml/ChromaticityDiagram.fxml";
@@ -382,6 +389,7 @@ public class Fxmls {
     public static final String AddressInputFxml = "/fxml/AddressInput.fxml";
     public static final String TableAddRowsFxml = "/fxml/TableAddRows.fxml";
     public static final String DateInputFxml = "/fxml/DateInput.fxml";
+    public static final String SettingCustomColorsFxml = "/fxml/SettingCustomColors.fxml";
 
     public static final String MenuFxml = "/fxml/Menu.fxml";
     public static final String MenuTextEditFxml = "/fxml/MenuTextEdit.fxml";

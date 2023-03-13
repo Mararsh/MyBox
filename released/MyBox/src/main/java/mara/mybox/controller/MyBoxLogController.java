@@ -15,9 +15,9 @@ import javafx.stage.Window;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.dev.MyBoxLog.LogType;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableDateCell;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -90,9 +90,9 @@ public class MyBoxLogController extends BaseDataManageController<MyBoxLog> {
                 return;
             }
             if (this.isSelected()) {
-                setStyle(NodeStyleTools.selectedData);
+                setStyle(NodeStyleTools.selectedDataStyle());
             } else if (item.getLogType() == LogType.Error) {
-                setStyle(NodeStyleTools.errorData);
+                setStyle(NodeStyleTools.errorDataStyle());
             } else {
                 setStyle(null);
             }
@@ -183,7 +183,7 @@ public class MyBoxLogController extends BaseDataManageController<MyBoxLog> {
     @FXML
     @Override
     public void viewAction() {
-        List<MyBoxLog> selected = tableView.getSelectionModel().getSelectedItems();
+        List<MyBoxLog> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
         }
@@ -193,7 +193,7 @@ public class MyBoxLogController extends BaseDataManageController<MyBoxLog> {
 
     @FXML
     public void messageAction() {
-        List<MyBoxLog> selected = tableView.getSelectionModel().getSelectedItems();
+        List<MyBoxLog> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
         }

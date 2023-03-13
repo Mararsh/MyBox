@@ -9,7 +9,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.Slider;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import mara.mybox.bufferedimage.TransformTools;
@@ -33,8 +32,6 @@ public class ImageManufactureBatchTransformController extends BaseImageManufactu
     protected ToggleGroup transformGroup;
     @FXML
     protected ComboBox<String> shearBox, angleBox;
-    @FXML
-    protected Slider angleSlider;
 
     private static class TransformType {
 
@@ -102,14 +99,6 @@ public class ImageManufactureBatchTransformController extends BaseImageManufactu
             });
             shearBox.getSelectionModel().select(0);
 
-            angleSlider.valueProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                    rotateAngle = newValue.intValue();
-                    angleBox.getEditor().setText(rotateAngle + "");
-                }
-            });
-
             rotateAngle = UserConfig.getInt(baseName + "Rotate", 0);
             angleBox.getItems().addAll(Arrays.asList("90", "180", "45", "30", "60", "15", "75", "120", "135"));
             angleBox.setVisibleRowCount(10);
@@ -130,7 +119,6 @@ public class ImageManufactureBatchTransformController extends BaseImageManufactu
     private void checkTransformType() {
         shearBox.setDisable(true);
         angleBox.setDisable(true);
-        angleSlider.setDisable(true);
         shearBox.getEditor().setStyle(null);
         angleBox.getEditor().setStyle(null);
 
@@ -149,7 +137,6 @@ public class ImageManufactureBatchTransformController extends BaseImageManufactu
         } else if (Languages.message("RotateAngle").equals(selected.getText())) {
             transformType = TransformType.Rotate;
             angleBox.setDisable(false);
-            angleSlider.setDisable(false);
             checkAngle();
 
         }
@@ -167,8 +154,7 @@ public class ImageManufactureBatchTransformController extends BaseImageManufactu
 
     private void checkAngle() {
         try {
-            rotateAngle = Integer.valueOf(angleBox.getValue());
-            angleSlider.setValue(rotateAngle);
+            rotateAngle = Integer.parseInt(angleBox.getValue());
             UserConfig.setInt(baseName + "Rotate", rotateAngle);
             ValidationTools.setEditorNormal(angleBox);
         } catch (Exception e) {

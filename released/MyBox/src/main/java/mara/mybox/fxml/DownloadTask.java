@@ -72,8 +72,7 @@ public class DownloadTask<Void> extends BaseTask<Void> {
         try {
             if ("https".equals(url.getProtocol())) {
                 HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-                SSLContext sc = SSLContext.getInstance(AppValues.HttpsProtocal);
-                sc.init(null, null, null);
+                SSLContext sc = SSLContext.getDefault();
                 conn.setSSLSocketFactory(sc.getSocketFactory());
                 return conn;
             } else {
@@ -119,8 +118,8 @@ public class DownloadTask<Void> extends BaseTask<Void> {
             connection.connect();
             tmpFile = new File(targetFile.getAbsolutePath() + ".downloading");
             progress();
-            try ( BufferedInputStream inStream = new BufferedInputStream(connection.getInputStream());
-                     RandomAccessFile tmpFileStream = new RandomAccessFile(tmpFile, "rw")) {
+            try (BufferedInputStream inStream = new BufferedInputStream(connection.getInputStream());
+                    RandomAccessFile tmpFileStream = new RandomAccessFile(tmpFile, "rw")) {
                 currentSize = tmpFile.length();
                 if (currentSize > 0) {
                     inStream.skip(currentSize);

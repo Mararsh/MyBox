@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -393,8 +394,8 @@ public class MenuImageBaseController extends MenuController {
 
     @FXML
     @Override
-    public void popSourceFile(MouseEvent mouseEvent) {
-        imageController.popSourceFile(mouseEvent);
+    public void popSourceFile(Event event) {
+        imageController.popSourceFile(event);
     }
 
     @FXML

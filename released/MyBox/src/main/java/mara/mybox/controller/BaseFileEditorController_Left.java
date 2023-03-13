@@ -102,7 +102,7 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
                 }
             });
 
-            backupController.setControls(this, baseName);
+            backupController.setParameters(this, baseName);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

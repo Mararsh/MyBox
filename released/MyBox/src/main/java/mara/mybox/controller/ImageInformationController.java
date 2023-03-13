@@ -12,6 +12,7 @@ import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.ImageInformationPng;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
@@ -372,6 +373,38 @@ public class ImageInformationController extends HtmlTableController {
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    /*
+        static
+     */
+    public static ImageInformationController open() {
+        try {
+            ImageInformationController controller = (ImageInformationController) WindowTools.openStage(Fxmls.ImageInformationFxml);
+            if (controller != null) {
+                controller.requestMouse();
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static ImageInformationController open(ImageInformation info) {
+        try {
+            if (info == null) {
+                return null;
+            }
+            ImageInformationController controller = open();
+            if (controller != null) {
+                controller.loadImageFileInformation(info);
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
         }
     }
 

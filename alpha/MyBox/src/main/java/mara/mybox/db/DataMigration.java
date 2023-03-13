@@ -179,6 +179,8 @@ public class DataMigration {
             statement.executeUpdate("ALTER TABLE Color_Palette ADD COLUMN description VARCHAR(" + StringMaxLength + ")");
             statement.executeUpdate("ALTER TABLE Color_Palette_Name ADD COLUMN visit_time TIMESTAMP ");
             statement.executeUpdate("DROP INDEX Color_Palette_unique_index");
+            statement.executeUpdate("DROP VIEW Color_Palette_View");
+            statement.executeUpdate(TableColorPalette.CreateView);
 
         } catch (Exception e) {
             MyBoxLog.error(e);

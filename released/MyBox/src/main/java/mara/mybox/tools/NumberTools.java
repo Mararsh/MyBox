@@ -2,6 +2,7 @@ package mara.mybox.tools;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import javafx.scene.control.IndexRange;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import static mara.mybox.value.Languages.message;
 
@@ -93,6 +94,29 @@ public class NumberTools {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    // 0-based, exclude to and end
+    public static IndexRange scrollRange(int scrollSize, int total, int from, int to, int currentIndex) {
+        if (total < 1) {
+            return null;
+        }
+        int start = Math.max(from, currentIndex - scrollSize / 2);
+        if (start < 0 || start >= total) {
+            start = 0;
+        }
+        int end = Math.min(to, start + scrollSize);
+        if (end < 0 || end > total) {
+            end = total;
+        }
+        if (start >= end) {
+            return null;
+        }
+        return new IndexRange(start, end);
+    }
+
+    public static IndexRange scrollRange(int scrollSize, int total, int currentIndex) {
+        return scrollRange(scrollSize, total, 0, total, currentIndex);
     }
 
 }

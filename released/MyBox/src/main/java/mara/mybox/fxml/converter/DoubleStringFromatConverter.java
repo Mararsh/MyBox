@@ -1,7 +1,6 @@
 package mara.mybox.fxml.converter;
 
 import javafx.util.StringConverter;
-import mara.mybox.tools.StringTools;
 
 /**
  * @Author Mara
@@ -22,7 +21,7 @@ public class DoubleStringFromatConverter extends StringConverter<Double> {
     @Override
     public String toString(Double value) {
         try {
-            return StringTools.format(value);
+            return value.toString();
         } catch (Exception e) {
             return "";
         }

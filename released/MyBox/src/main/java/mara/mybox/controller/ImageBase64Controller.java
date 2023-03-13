@@ -125,7 +125,7 @@ public class ImageBase64Controller extends BaseController {
             return;
         }
         if (file.length() > 100 * 1024) {
-            if (!PopTools.askSure(controller, controller.baseTitle, message("GeneratedDataMayLarge"))) {
+            if (!PopTools.askSure(controller.getTitle(), message("GeneratedDataMayLarge"))) {
                 return;
             }
         }

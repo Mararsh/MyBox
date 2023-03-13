@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.IndexRange;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
@@ -332,8 +333,8 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             for (List<String> row : outputData) {
                 double lo, la;
                 try {
-                    lo = Double.valueOf(row.get(longIndex));
-                    la = Double.valueOf(row.get(laIndex));
+                    lo = Double.parseDouble(row.get(longIndex));
+                    la = Double.parseDouble(row.get(laIndex));
                     if (!GeographyCodeTools.validCoordinate(lo, la)) {
                         continue;
                     }
@@ -364,7 +365,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                 if (sizeCol != null) {
                     double v;
                     try {
-                        v = Double.valueOf(row.get(sizeIndex));
+                        v = Double.parseDouble(row.get(sizeIndex));
                     } catch (Exception e) {
                         v = 0;
                     }
@@ -395,7 +396,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
         task = new SingletonTask<Void>(this) {
 
             private List<MapPoint> mapPoints;
-            private List<String> labels;
+            private int size;
 
             @Override
             protected boolean handle() {
@@ -406,8 +407,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                     Color textColor = mapController.mapOptions.textColor();
                     boolean isBold = mapController.mapOptions.isBold();
                     mapPoints = new ArrayList<>();
-                    labels = new ArrayList<>();
-                    int index = 0;
+                    size = 0;
                     for (MapPoint dataPoint : dataPoints) {
                         if (sizeCol != null) {
                             markSize = dataPoint.getMarkSize();
@@ -424,8 +424,8 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                                 .setCs(dataPoint.getCs())
                                 .setIsBold(isBold);
                         mapPoints.add(mapPoint);
-                        labels.add(dataPoint.getLabel());
-                        if (chartMaxData > 0 && ++index >= chartMaxData) {
+                        size++;
+                        if (chartMaxData > 0 && size >= chartMaxData) {
                             break;
                         }
                     }
@@ -449,7 +449,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                     framesNumber = dataPoints.size();
                     lastFrameid = -1;
                     mapController.initPoints(mapPoints);
-                    playController.play(labels);
+                    playController.play(size);
                 }
             }
 
@@ -498,6 +498,13 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                             + point.getLongitude() + ", " + point.getLatitude() + ");");
                 }
                 lastFrameid = frameid;
+
+                IndexRange range = playController.currentRange();
+                List<String> labels = new ArrayList<>();
+                for (int i = range.getStart(); i < range.getEnd(); i++) {
+                    labels.add((i + 1) + "  " + mapController.mapPoints.get(i).getLabel());
+                }
+                playController.setList(labels);
             }
         });
     }

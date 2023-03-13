@@ -22,6 +22,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.chart.ResidualChart;
@@ -30,6 +31,7 @@ import mara.mybox.fxml.chart.XYChartMaker;
 import mara.mybox.fxml.chart.XYChartOptions;
 import mara.mybox.fxml.chart.XYChartOptions.ChartCoordinate;
 import mara.mybox.fxml.chart.XYChartOptions.LabelLocation;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -357,12 +359,12 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
 
     @FXML
     public void applyBubbleStyle() {
-        chartMaker.setBubbleStyle(bubbleStyleInput.getText().replaceAll("\n", " "));
+        chartMaker.setBubbleStyle(StringTools.replaceLineBreak(bubbleStyleInput.getText()));
     }
 
     @FXML
     public void cssGuide() {
-        WebBrowserController.oneOpen("https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html", true);
+        openLink(HelpTools.javaFxCssLink());
     }
 
     /*

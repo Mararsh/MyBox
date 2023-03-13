@@ -1,53 +1,50 @@
- <html> 
-<head> 
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<link rel="stylesheet" type="text/css" href="mybox.css">
-</head> 
-<body class="article"> 
-
-<h2 align="center">Packing Steps of MyBox</h2>
-<P class="p1">For Windows</P>
-	<div class="paragraph">
-		<p>On Windows:</p>
-			<ul  class="inside">
-				<li>Make sure <a href="http://jdk.java.net/" target=_blank>required jdk</a> and <a href="https://maven.apache.org/" target=_blank>maven</a> installed.</li>
-				<li>Download source codes of MyBox.</li>
-				<li>Unpack it under a path which your account can read and write.</li>
-				<li>Modify file "MyBox/pack/win/make-win-exe.bat" and set parameter JAVA_HOME as jdk in your env.</li>
-				<li>Double-click to execute the script "MyBox/pack/win/make-win-exe.bat".</li>				
-				<li>Generated launcher is "MyBox/pack/win/app/MyBox/MyBox.exe".</li>				
-			</ul>
-	</div>
-
-<P class="p1">For Linux</P>
-	<div class="paragraph">
-		<p>On Linux:</p>
-			<ul  class="inside">
-				<li>Make sure <a href="http://jdk.java.net/" target=_blank>required jdk</a> and <a href="https://maven.apache.org/" target=_blank>maven</a> installed.</li>
-				<li>Unpack it under a path which your account can read and write.</li>
-				<li>Modify file "MyBox/pack/linux/make-linux-bin.sh" and set parameter JAVA_HOME as jdk in your env.</li>
-				<li>Open a command terminal window, and enter the path of source codes of MyBox: "cd  MyBox/pack/linux/"</li>	
-				<li>Execute: "chmod 755 make-linux-bin.sh"</li>	
-				<li>Execute: "./make-linux-bin.sh"</li>				
-				<li>Generated launcher is "MyBox/pack/linux/app/MyBox/bin/MyBox".</li>				
-			</ul>
-	</div>
-
-<P class="p1">For Mac</P>
-	<div class="paragraph">
-		<p>On Mac:</p>
-			<ul  class="inside">
-				<li>Make sure <a href="http://jdk.java.net/" target=_blank>required jdk</a> and <a href="https://maven.apache.org/" target=_blank>maven</a> installed.</li>
-				<li>Download source codes of MyBox.</li>
-				<li>Unpack it under a path which your account can read and write.</li>
-				<li>Modify file "MyBox/pack/mac/make-mac-dmg.sh" and set parameter JAVA_HOME as jdk in your env.</li>
-				<li>Open a command terminal window, and enter the path of source codes of MyBox: "cd  MyBox/pack/mac/"</li>	
-				<li>Execute: "chmod 755 make-mac-dmg.sh"</li>	
-				<li>Execute: "./make-mac-dmg.sh"</li>				
-				<li>Generated launcher is "MyBox/pack/mac/app/MyBox-$version.dmg".</li>		
-			</ul>
-	</div>
-
-</br>	
-</body> 
+<html>
+ <head>
+  <link rel="stylesheet" type="text/css" href="mybox.css">
+  <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+  <meta charset="US-ASCII">
+  <meta http-equiv="cache-control" content="no-cache">
+ </head>
+ <body class="article">
+  <h2 align="center">Packing Steps of MyBox</h2>
+  <p class="p1">For Windows</p>
+  <div class="paragraph">
+   <p>On Windows:</p>
+   <ul class="inside">
+    <li>Make sure <a href="http://jdk.java.net/" target="_blank">required jdk</a> and <a href="https://maven.apache.org/" target="_blank">maven</a> installed.</li>
+    <li>Download source codes of MyBox.</li>
+    <li>Unpack it under a path which your account can read and write.</li>
+    <li>Modify file "MyBox/pack/win/make-win-exe.bat" and set parameter JAVA_HOME as jdk in your env.</li>
+    <li>Double-click to execute the script "MyBox/pack/win/make-win-exe.bat".</li>
+    <li>Generated launcher is "MyBox/pack/win/app/MyBox/MyBox.exe".</li>
+   </ul>
+  </div>
+  <p class="p1">For Linux</p>
+  <div class="paragraph">
+   <p>On Linux:</p>
+   <ul class="inside">
+    <li>Make sure <a href="http://jdk.java.net/" target="_blank">required jdk</a> and <a href="https://maven.apache.org/" target="_blank">maven</a> installed.</li>
+    <li>Unpack it under a path which your account can read and write.</li>
+    <li>Modify file "MyBox/pack/linux/make-linux-bin.sh" and set parameter JAVA_HOME as jdk in your env.</li>
+    <li>Open a command terminal window, and enter the path of source codes of MyBox: "cd MyBox/pack/linux/"</li>
+    <li>Execute: "chmod 755 make-linux-bin.sh"</li>
+    <li>Execute: "./make-linux-bin.sh"</li>
+    <li>Generated launcher is "MyBox/pack/linux/app/MyBox/bin/MyBox".</li>
+   </ul>
+  </div>
+  <p class="p1">For Mac</p>
+  <div class="paragraph">
+   <p>On Mac:</p>
+   <ul class="inside">
+    <li>Make sure <a href="http://jdk.java.net/" target="_blank">required jdk</a> and <a href="https://maven.apache.org/" target="_blank">maven</a> installed.</li>
+    <li>Download source codes of MyBox.</li>
+    <li>Unpack it under a path which your account can read and write.</li>
+    <li>Modify file "MyBox/pack/mac/make-mac-dmg.sh" and set parameter JAVA_HOME as jdk in your env.</li>
+    <li>Open a command terminal window, and enter the path of source codes of MyBox: "cd MyBox/pack/mac/"</li>
+    <li>Execute: "chmod 755 make-mac-dmg.sh"</li>
+    <li>Execute: "./make-mac-dmg.sh"</li>
+    <li>Generated launcher is "MyBox/pack/mac/app/MyBox-$version.dmg".</li>
+   </ul>
+  </div> <br>
+ </body>
 </html>

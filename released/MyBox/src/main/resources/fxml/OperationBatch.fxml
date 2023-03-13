@@ -17,7 +17,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" alignment="CENTER" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.OperationController">
+<VBox fx:id="thisPane" alignment="CENTER" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.OperationController">
     <children>
         <HBox fx:id="barBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
             <children>
@@ -44,16 +44,16 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <CheckBox fx:id="openCheck" mnemonicParsing="false">
+                <CheckBox fx:id="openCheck" mnemonicParsing="false" selected="true">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/Red/iconOpen2.png" />
+                                <Image url="@../buttons/Red/iconOpenPath.png" />
                             </image>
                         </ImageView>
                     </graphic>
                 </CheckBox>
-                <CheckBox fx:id="miaoCheck" mnemonicParsing="false" HBox.hgrow="NEVER">
+                <CheckBox fx:id="miaoCheck" mnemonicParsing="false" selected="true" HBox.hgrow="NEVER">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>

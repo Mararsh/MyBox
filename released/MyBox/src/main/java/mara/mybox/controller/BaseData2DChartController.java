@@ -35,6 +35,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
     protected Thread frameThread;
     protected Connection conn;
     protected List<List<String>> chartData;
+    protected List<String> groupLabels;
 
     @FXML
     protected ComboBox<String> categoryColumnSelector, valueColumnSelector;
@@ -354,7 +355,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         if (chartMaxInput != null) {
             boolean ok;
             try {
-                int v = Integer.valueOf(chartMaxInput.getText());
+                int v = Integer.parseInt(chartMaxInput.getText());
                 if (v > 0) {
                     chartMaxData = v;
                     UserConfig.setInt(baseName + "ChartMaxData", chartMaxData);
@@ -405,7 +406,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                 ok = true;
             } else {
                 try {
-                    int v = Integer.valueOf(s);
+                    int v = Integer.parseInt(s);
                     if (v > 0) {
                         chartMaxData = v;
 
@@ -443,8 +444,6 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
         framesNumber = -1;
         task = new SingletonTask<Void>(this) {
 
-            List<String> groupLabels;
-
             @Override
             protected boolean handle() {
                 try {
@@ -464,8 +463,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                     if (!group.run()) {
                         return false;
                     }
-                    groupLabels = group.getParameterValues(task);
-                    framesNumber = groupLabels.size();
+                    framesNumber = (int) group.groupsNumber();
                     return initGroups();
                 } catch (Exception e) {
                     error = e.toString();
@@ -483,7 +481,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
                 task = null;
                 if (ok) {
                     loadChartData();
-                    playController.play(groupLabels);
+                    playController.play(framesNumber);
                 }
             }
 
@@ -515,6 +513,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
+                    playController.setList(groupLabels);
                     drawFrame();
                 }
             });
@@ -528,6 +527,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             }
             outputData = group.groupData(conn, groupid, outputColumns);
             groupParameters = group.parameterValue(conn, groupid);
+            groupLabels = group.getParameterLabels(conn, playController.currentRange());
             return initFrame();
         } catch (Exception e) {
             MyBoxLog.console(e.toString());

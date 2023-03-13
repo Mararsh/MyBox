@@ -2,12 +2,11 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
@@ -215,14 +214,14 @@ public class Data2DRowExpressionController extends BaseData2DTargetsController {
     }
 
     @FXML
-    protected void popNameHistories(MouseEvent event) {
+    protected void popNameHistories(Event event) {
         if (UserConfig.getBoolean(interfaceName + "NameHistoriesPopWhenMouseHovering", false)) {
-            PopTools.popStringValues(this, nameInput, event, interfaceName + "NameHistories", true, true);
+            showNameHistories(event);
         }
     }
 
     @FXML
-    protected void showNameHistories(ActionEvent event) {
+    protected void showNameHistories(Event event) {
         PopTools.popStringValues(this, nameInput, event, interfaceName + "NameHistories", true, true);
     }
 

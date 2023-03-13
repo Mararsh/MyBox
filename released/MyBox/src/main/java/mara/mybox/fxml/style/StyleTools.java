@@ -1,6 +1,11 @@
 package mara.mybox.fxml.style;
 
-import java.util.Map;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.text.MessageFormat;
+import java.util.List;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBase;
@@ -11,10 +16,21 @@ import javafx.scene.control.Labeled;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import mara.mybox.bufferedimage.PixelsOperation;
+import mara.mybox.bufferedimage.PixelsOperationFactory;
+import mara.mybox.controller.BaseController;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.FxFileTools;
+import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleData.StyleColor;
+import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.Colors.color;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -24,8 +40,7 @@ import mara.mybox.value.UserConfig;
  */
 public class StyleTools {
 
-    public static Map<String, StyleData> ControlsList;
-    public static String ButtonsPath = "buttons/";
+    public static String ButtonsSourcePath = "buttons/";
 
     /*
         Style Data
@@ -95,7 +110,7 @@ public class StyleTools {
         }
         StyleData style = getStyleData(node);
         setTips(node, style);
-        setStyleColor(node, style, AppVariables.ControlColor);
+        setIcon(node, StyleTools.getIconImageView(style));
         //        if (mustStyle || AppVariables.ControlColor != ColorStyle.Default) {
         //            setStyleColor(node, style, AppVariables.ControlColor);
         //        }
@@ -133,9 +148,48 @@ public class StyleTools {
         return getColorStyle(UserConfig.getString("ControlColor", "red"));
     }
 
-    public static boolean setConfigStyleColor(String value) {
+    public static void setConfigStyleColor(BaseController controller, String value) {
         AppVariables.ControlColor = getColorStyle(value);
-        return UserConfig.setString("ControlColor", value);
+        UserConfig.setString("ControlColor", AppVariables.ControlColor.name());
+        if (AppVariables.ControlColor == StyleColor.Customize) {
+            SingletonTask task = new SingletonTask<Void>(controller) {
+
+                @Override
+                protected boolean handle() {
+                    try {
+                        List<String> iconNames = FxFileTools.getResourceFiles(StyleTools.ButtonsSourcePath + "Red/");
+                        if (iconNames == null || iconNames.isEmpty()) {
+                            return true;
+                        }
+                        String targetPath = AppVariables.MyboxDataPath + "/buttons/";
+                        new File(targetPath).mkdirs();
+                        for (String iconName : iconNames) {
+                            String tname = targetPath + iconName;
+                            if (new File(tname).exists()) {
+                                continue;
+                            }
+                            BufferedImage image = makeIcon(StyleColor.Customize, iconName);
+                            if (image != null) {
+                                ImageFileWriters.writeImageFile(image, "png", tname);
+                                setInfo(MessageFormat.format(message("FilesGenerated"), tname));
+                            }
+                        }
+                    } catch (Exception e) {
+                        MyBoxLog.error(e.toString());
+                    }
+                    return true;
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    WindowTools.refreshInterfaceAll();
+                }
+
+            };
+            controller.start(task);
+        } else {
+            WindowTools.refreshInterfaceAll();
+        }
     }
 
     /*
@@ -150,51 +204,41 @@ public class StyleTools {
             if (colorStyle == null) {
                 colorStyle = StyleColor.Red;
             }
-            return ButtonsPath + colorStyle.name() + "/";
+            if (colorStyle == StyleColor.Customize) {
+                return AppVariables.MyboxDataPath + "/buttons/";
+            } else {
+                return ButtonsSourcePath + colorStyle.name() + "/";
+            }
         } catch (Exception e) {
             return null;
         }
     }
 
-    public static ImageView getIconImage(StyleData style, StyleColor color) {
+    public static ImageView getIconImageView(StyleData style) {
         try {
             if (style == null || style.getIconName() == null || style.getIconName().isEmpty()) {
                 return null;
             }
-            return getIconImage(color, style.getIconName());
+            return StyleTools.getIconImageView(style.getIconName());
         } catch (Exception e) {
             MyBoxLog.error(e, style.getIconName());
             return null;
         }
     }
 
-    public static ImageView getIconImage(StyleColor style, String iconName) {
-        if (style == null || iconName == null || iconName.isBlank()) {
+    public static ImageView getIconImageView(String iconName) {
+        if (iconName == null || iconName.isBlank()) {
             return null;
         }
         try {
-            String stylePath = getIconPath(AppVariables.ControlColor);
+            String stylePath = getIconPath();
             ImageView view = null;
             if (AppVariables.hidpiIcons && iconName.endsWith(".png") && !iconName.endsWith("_100.png")) {
                 String hiName = iconName.substring(0, iconName.length() - 4) + "_100.png";
-                try {
-                    view = new ImageView(ButtonsPath + hiName);
-                } catch (Exception e) {
-                    try {
-                        view = new ImageView(stylePath + hiName);
-                    } catch (Exception ex) {
-                    }
-                }
+                view = getIconImageView(stylePath, hiName);
             }
             if (view == null) {
-                try {
-                    view = new ImageView(ButtonsPath + iconName);
-                } catch (Exception e) {
-                    try {
-                        view = new ImageView(stylePath + iconName);
-                    } catch (Exception ex) {
-                    }
-                }
+                view = getIconImageView(stylePath, iconName);
             }
             if (view != null) {
                 view.setFitWidth(AppVariables.iconSize);
@@ -206,8 +250,51 @@ public class StyleTools {
         }
     }
 
-    public static ImageView getIconImage(String iconName) {
-        return getIconImage(AppVariables.ControlColor, iconName);
+    public static ImageView getIconImageView(String stylePath, String iconName) {
+        try {
+            return new ImageView(ButtonsSourcePath + iconName);
+        } catch (Exception e) {
+            try {
+                return new ImageView(stylePath + iconName);
+            } catch (Exception ex) {
+                try {
+                    return new ImageView(ButtonsSourcePath + "Red/" + iconName);
+                } catch (Exception exx) {
+                    return null;
+                }
+            }
+        }
+    }
+
+    public static Image getIconImage(String iconName) {
+        ImageView view = getIconImageView(iconName);
+        return view == null ? null : view.getImage();
+    }
+
+    public static Image getSourceImage(String iconName) {
+        try {
+            if (iconName == null) {
+                return null;
+            }
+            ImageView view = getIconImageView(ButtonsSourcePath + "Red/", iconName);
+            return view.getImage();
+        } catch (Exception e) {
+            MyBoxLog.error(e, iconName);
+            return null;
+        }
+    }
+
+    public static BufferedImage getSourceBufferedImage(String iconName) {
+        try {
+            Image image = getSourceImage(iconName);
+            if (image == null) {
+                return null;
+            }
+            return SwingFXUtils.fromFXImage(image, null);
+        } catch (Exception e) {
+            MyBoxLog.error(e, iconName);
+            return null;
+        }
     }
 
     public static void setIcon(Node node, ImageView imageView) {
@@ -258,20 +345,64 @@ public class StyleTools {
     }
 
     public static void setStyleColor(Node node) {
-        setStyleColor(node, AppVariables.ControlColor);
-    }
-
-    public static void setStyleColor(Node node, StyleColor color) {
         StyleData StyleData = getStyleData(node);
-        setIcon(node, getIconImage(StyleData, color));
+        setIcon(node, StyleTools.getIconImageView(StyleData));
     }
 
-    public static void setStyleColor(Node node, StyleData style) {
-        setStyleColor(node, style, AppVariables.ControlColor);
+    public static BufferedImage makeIcon(StyleColor style, String iconName) {
+        try {
+            if (iconName == null) {
+                return null;
+            }
+            if (style == StyleColor.Red) {
+                return StyleTools.getSourceBufferedImage(iconName);
+            }
+            return makeIcon(iconName, color(style, true), color(style, false));
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            return null;
+        }
     }
 
-    public static void setStyleColor(Node node, StyleData style, StyleColor color) {
-        setIcon(node, getIconImage(style, color));
+    public static BufferedImage makeIcon(String iconName, Color darkColor, Color lightColor) {
+        try {
+            BufferedImage srcImage = StyleTools.getSourceBufferedImage(iconName);
+            return makeIcon(srcImage, darkColor, lightColor);
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            return null;
+        }
+    }
+
+    public static BufferedImage makeIcon(BufferedImage srcImage, Color darkColor, Color lightColor) {
+        try {
+            if (srcImage == null || darkColor == null || lightColor == null) {
+                return null;
+            }
+            PixelsOperation operation = PixelsOperationFactory.replaceColorOperation(srcImage,
+                    color(StyleColor.Red, true), darkColor, 20);
+            operation = PixelsOperationFactory.replaceColorOperation(operation.operate(),
+                    color(StyleColor.Red, false), lightColor, 20);
+            return operation.operate();
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            return null;
+        }
+    }
+
+    public static Image makeImage(String iconName,
+            javafx.scene.paint.Color darkColor, javafx.scene.paint.Color lightColor) {
+        try {
+            BufferedImage targetImage = makeIcon(iconName,
+                    FxColorTools.toAwtColor(darkColor), FxColorTools.toAwtColor(lightColor));
+            if (targetImage == null) {
+                return null;
+            }
+            return SwingFXUtils.toFXImage(targetImage, null);
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+            return null;
+        }
     }
 
     /*
@@ -347,7 +478,7 @@ public class StyleTools {
     }
 
     public static void setIconName(Node node, String iconName) {
-        setIcon(node, getIconImage(iconName));
+        setIcon(node, StyleTools.getIconImageView(iconName));
     }
 
     /*

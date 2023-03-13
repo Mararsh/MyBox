@@ -282,6 +282,17 @@ https://www.17k.com
 潇湘书院
 https://www.xxsy.net
 
+示例 > 娱乐 > 中文
+诗画中国
+https://tv.cctv.com/2022/08/27/VIDARmuWi2Ebs0b0NSsA1Ao7220827.shtml
+
+示例 > 娱乐 > 中文
+小喇叭
+http://www.radio.cn/pc-portal/sanji/zhibo_2.html?channelname=0&name=1395534&title=radio
+
+示例 > 娱乐 > 中文
+品味书香
+http://www.radio.cn/pc-portal/sanji/zhibo_2.html?channelname=0&name=1395682&title=radio
 
 示例 > 娱乐 > 中文
 蜻蜓FM
@@ -315,9 +326,7 @@ https://bbs.tianya.cn
 lofter
 https://www.lofter.com
 
-示例 > 娱乐 > 中文
-小喇叭
-https://www.qingting.fm/channels/138236
+
 
 示例 > 娱乐 > 中文
 牡丹亭（1986年）张继青

@@ -108,17 +108,17 @@ public class BaseLogs extends BaseController {
                 Platform.runLater(() -> {
                     try {
                         long ctime = new Date().getTime();
-                        if (immediate || logsNewlines > 300 || ctime - lastLogTime > 3000) {
+                        if (immediate || logsNewlines > 50 || ctime - lastLogTime > 3000) {
                             logsTextArea.appendText(newLogs.toString());
                             logsTotalLines += logsNewlines;
-                            newLogs = new StringBuffer();
                             logsNewlines = 0;
+                            lastLogTime = ctime;
+                            newLogs = new StringBuffer();
                             int extra = logsTextArea.getText().length() - logsMaxChars;
                             if (extra > 0) {
                                 logsTextArea.deleteText(0, extra);
                             }
                         }
-                        lastLogTime = ctime;
                     } catch (Exception e) {
                         MyBoxLog.debug(e.toString());
                     }

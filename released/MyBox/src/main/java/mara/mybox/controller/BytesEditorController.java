@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import java.nio.charset.Charset;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -16,7 +17,10 @@ import javafx.stage.Popup;
 import mara.mybox.data.FileEditInformation.Line_Break;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.ByteTools;
+import mara.mybox.tools.StringTools;
+import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -257,7 +261,7 @@ public class BytesEditorController extends BaseFileEditorController {
                                 return false;
                             }
                             lineText = new String(hex, sourceInformation.getCharset());
-                            lineText = lineText.replaceAll("\n|\r", " ") + "\n";
+                            lineText = StringTools.replaceLineBreak(lineText) + "\n";
                             bytes.append(lineText);
                         }
                         pairText = bytes.toString();
@@ -327,6 +331,30 @@ public class BytesEditorController extends BaseFileEditorController {
     public boolean popAction() {
         BytesPopController.open(this, mainArea);
         return true;
+    }
+
+    /*
+        static
+     */
+    public static BytesEditorController open() {
+        try {
+            BytesEditorController controller = (BytesEditorController) WindowTools.openStage(Fxmls.BytesEditorFxml);
+            if (controller != null) {
+                controller.requestMouse();
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static BytesEditorController open(File file) {
+        BytesEditorController controller = open();
+        if (controller != null) {
+            controller.openFile(file);
+        }
+        return controller;
     }
 
 }

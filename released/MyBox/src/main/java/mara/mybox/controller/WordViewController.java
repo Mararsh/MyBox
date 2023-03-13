@@ -3,8 +3,11 @@ package mara.mybox.controller;
 import java.io.File;
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
+import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
 /**
@@ -72,4 +75,29 @@ public class WordViewController extends BaseWebViewController {
     public void refreshAction() {
         loadFile(sourceFile);
     }
+
+    /*
+        static
+     */
+    public static WordViewController open() {
+        try {
+            WordViewController controller = (WordViewController) WindowTools.openStage(Fxmls.WordViewFxml);
+            if (controller != null) {
+                controller.requestMouse();
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static WordViewController openFile(File file) {
+        WordViewController controller = open();
+        if (controller != null) {
+            controller.sourceFileChanged(file);
+        }
+        return controller;
+    }
+
 }

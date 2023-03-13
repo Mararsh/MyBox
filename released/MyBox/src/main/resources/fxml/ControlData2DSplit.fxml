@@ -65,6 +65,15 @@ License:    Apache License Version 2.0
                <children>
                   <HBox alignment="CENTER_LEFT" spacing="5.0">
                      <children>
+                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconClear.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
                         <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteAction">
                            <graphic>
                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

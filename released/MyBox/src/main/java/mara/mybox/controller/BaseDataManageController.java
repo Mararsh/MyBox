@@ -28,6 +28,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -207,7 +208,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
             timer = null;
         }
         infoViewController.loadContents​(null);
-        finalTitle = queryCondition.getTitle().replaceAll("\n", " ");
+        finalTitle = StringTools.replaceLineBreak(queryCondition.getTitle());
         setQuerySQL();
         return true;
     }
@@ -401,7 +402,9 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
                 html += "<SPAN class=\"boldText\">" + message("SetConditionsComments") + "</SPAN>";
             } else {
                 html += "<SPAN class=\"boldText\">" + message("QueryConditionsName") + ":</SPAN> </BR>";
-                html += "<SPAN class=\"valueText\">" + queryCondition.getTitle().replaceAll("\n", "</BR>") + "</SPAN></BR></BR>";
+                html += "<SPAN class=\"valueText\">"
+                        + StringTools.replaceHtmlLineBreak(queryCondition.getTitle())
+                        + "</SPAN></BR></BR>";
 
                 html += "<SPAN class=\"boldText\">" + message("QueryConditions") + ":</SPAN></BR>";
                 html += "<SPAN class=\"valueText\">" + queryCondition.getWhere() + "</SPAN></BR></BR>";
@@ -440,8 +443,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
         super.checkButtons();
         clearButton.setDisable(false);
 
-        boolean isEmpty = tableData == null || tableData.isEmpty();
-        boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
+        boolean none = isNoneSelected();
         if (setButton != null) {
             setButton.setDisable(none);
         }
@@ -591,7 +593,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
             }
 
             popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
+            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent event) -> {
                 popMenu.hide();
@@ -670,7 +672,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
             }
 
             popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
+            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent event) -> {
                 popMenu.hide();
@@ -689,7 +691,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
     public void clear(String type) {
         String title, sql;
         if (message("ClearSelectedDataInPage").equals(type)) {
-            List<P> rows = tableView.getSelectionModel().getSelectedItems();
+            List<P> rows = selectedItems();
             if (rows == null || rows.isEmpty()) {
                 popError(message("NoData"));
                 return;
@@ -720,7 +722,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
             return;
         }
 
-        if (!PopTools.askSure(this, getBaseTitle(), message("SureClearConditions")
+        if (!PopTools.askSure(getTitle(), message("SureClearConditions")
                 + "\n\n" + type + "\n" + title + "\n\n" + sql + "\n\n" + message("DataDeletedComments"))) {
             return;
         }
@@ -771,7 +773,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
             return;
         }
         setClearSQL();
-        if (!PopTools.askSure(this, getBaseTitle(), message("SureClearConditions")
+        if (!PopTools.askSure(getTitle(), message("SureClearConditions")
                 + "\n\n" + clearCondition.getTitle().replaceAll("</br>", "\n")
                 + "\n\n" + clearSQL + "\n\n" + message("DataDeletedComments"))) {
             return;
@@ -882,7 +884,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
             }
 
             popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
+            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent event) -> {
                 popMenu.hide();

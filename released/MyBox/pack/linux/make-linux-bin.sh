@@ -1,8 +1,6 @@
-# Unzip source package. Edit this script to change directories as your env.
+# Unzip source package. Edit this script to change JAVA_HOME as your env.
 # In terminal window, enter path "MyBox/pack/linux", and run this script.
-version=6.7
-jpackagePath=/usr/java/jdk-18/bin
-jdkPath=/usr/java/jdk-18
+export JAVA_HOME="/usr/java/jdk-19.0.2"
 
 rm -rf app/*
 rm -rf jar/*
@@ -12,11 +10,13 @@ cd ../..
 mvn clean
 mvn -P linux package
 cd pack/linux
-mv ../../target/*.jar  jar/   &&  \
-$jpackagePath/jpackage  --type  app-image --app-version $version --vendor Mara  --verbose  --runtime-image $jdkPath  --dest app --name  MyBox  --input jar --main-jar  MyBox-$version.jar  --icon res/MyBox.png 
+mv ../../target/MyBox.jar  jar/   &&  \
+$JAVA_HOME/bin/jpackage  --type  app-image --vendor Mara  --verbose  --runtime-image $JAVA_HOME  --dest app --name  MyBox  --input jar --main-jar  MyBox.jar  --icon res/MyBox.png 
+mv jar/MyBox.jar  .
+gzip MyBox.jar 
+mv MyBox.jar.gz  MyBox-linux.jar.gz
 cd  app
-tar cfz  MyBox-$version-CentOS7-x64.tar.gz  MyBox
-mv MyBox*.gz ..
+tar cfz  MyBox-CentOS7-x64.tar.gz  MyBox
 cd ..
-mv jar/*.jar  .
+mv app/MyBox-CentOS7-x64.tar.gz  .
 rm -rf ../../target

@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.charset.Charset;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -15,6 +16,7 @@ import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WebViewTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -166,11 +168,7 @@ public class BaseWebViewController extends BaseController {
     }
 
     public void pageLoaded() {
-        try {
-            updateStageTitle();
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+        updateStageTitle();
     }
 
     public void addressChanged() {
@@ -181,17 +179,24 @@ public class BaseWebViewController extends BaseController {
         popError(message("InvalidAddress"));
     }
 
+    public String title() {
+        String title = webViewController.title();
+        if (title == null) {
+            return getBaseTitle();
+        } else {
+            return getBaseTitle() + "  " + title;
+        }
+    }
+
+    public void initStyle(String style) {
+        webViewController.initStyle(style);
+    }
+
     protected void updateStageTitle() {
-        if (myStage == null) {
+        if (getMyStage() == null) {
             return;
         }
-        String title = getBaseTitle();
-        if (sourceFile != null) {
-            title += "  " + sourceFile.getAbsolutePath();
-        } else if (webViewController != null && webViewController.address != null) {
-            title += "  " + webViewController.address;
-        }
-        myStage.setTitle(title);
+        myStage.setTitle(title());
     }
 
     protected void setWebViewLabel(String string) {
@@ -306,8 +311,15 @@ public class BaseWebViewController extends BaseController {
     }
 
     @FXML
-    public void popHtmlStyle(MouseEvent mouseEvent) {
-        PopTools.popHtmlStyle(mouseEvent, webViewController);
+    protected void showHtmlStyle(Event event) {
+        PopTools.popHtmlStyle(event, webViewController);
+    }
+
+    @FXML
+    protected void popHtmlStyle(Event event) {
+        if (UserConfig.getBoolean("HtmlStylesPopWhenMouseHovering", false)) {
+            showHtmlStyle(event);
+        }
     }
 
     @FXML
@@ -330,7 +342,7 @@ public class BaseWebViewController extends BaseController {
 
     @FXML
     public void snapAction() {
-        ImageViewerController.load(NodeTools.snap(webView));
+        ImageViewerController.openImage(NodeTools.snap(webView));
     }
 
     @Override

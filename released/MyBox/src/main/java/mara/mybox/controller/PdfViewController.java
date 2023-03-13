@@ -553,10 +553,19 @@ public class PdfViewController extends PdfViewController_Html {
         static
      */
     public static PdfViewController open(File file) {
-        PdfViewController controller = (PdfViewController) WindowTools.openStage(Fxmls.PdfViewFxml);
-        controller.sourceFileChanged(file);
-        controller.requestMouse();
-        return controller;
+        try {
+            PdfViewController controller = (PdfViewController) WindowTools.openStage(Fxmls.PdfViewFxml);
+            if (controller != null) {
+                controller.requestMouse();
+                if (file != null) {
+                    controller.sourceFileChanged(file);
+                }
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
     }
 
 }

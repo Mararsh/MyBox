@@ -18,6 +18,7 @@ import jdk.jshell.JShell;
 import jdk.jshell.SourceCodeAnalysis;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.HtmlStyles;
@@ -219,7 +220,7 @@ public class JShellEditor extends TreeNodeEditor {
 
             List<Node> topButtons = new ArrayList<>();
             Button newLineButton = new Button();
-            newLineButton.setGraphic(StyleTools.getIconImage("iconTurnOver.png"));
+            newLineButton.setGraphic(StyleTools.getIconImageView("iconTurnOver.png"));
             NodeStyleTools.setTooltip(newLineButton, new Tooltip(message("Newline")));
             newLineButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -231,7 +232,7 @@ public class JShellEditor extends TreeNodeEditor {
             topButtons.add(newLineButton);
 
             Button clearInputButton = new Button();
-            clearInputButton.setGraphic(StyleTools.getIconImage("iconClear.png"));
+            clearInputButton.setGraphic(StyleTools.getIconImageView("iconClear.png"));
             NodeStyleTools.setTooltip(clearInputButton, new Tooltip(message("ClearInputArea")));
             clearInputButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -242,8 +243,8 @@ public class JShellEditor extends TreeNodeEditor {
             topButtons.add(clearInputButton);
 
             CheckBox popCheck = new CheckBox();
-            popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
-            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+            popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
             popCheck.setSelected(UserConfig.getBoolean(interfaceName + "SyntaxPopWhenMouseHovering", false));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -287,7 +288,7 @@ public class JShellEditor extends TreeNodeEditor {
             alink.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    openLink("https://docs.oracle.com/javase/tutorial/java/index.html");
+                    openLink(HelpTools.javaLink());
                 }
             });
             controller.addNode(alink);
@@ -296,7 +297,7 @@ public class JShellEditor extends TreeNodeEditor {
             jlink.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    openLink("https://docs.oracle.com/en/java/javase/17/docs/api/index.html");
+                    openLink(HelpTools.javaAPILink());
                 }
             });
             controller.addNode(jlink);
@@ -305,7 +306,7 @@ public class JShellEditor extends TreeNodeEditor {
             blink.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    openLink("https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Math.html");
+                    openLink(HelpTools.javaMathLink());
                 }
             });
             controller.addNode(blink);
@@ -316,14 +317,14 @@ public class JShellEditor extends TreeNodeEditor {
     }
 
     @FXML
-    protected void popHistories(MouseEvent mouseEvent) {
+    protected void popHistories(Event event) {
         if (UserConfig.getBoolean("JShellHistoriesPopWhenMouseHovering", false)) {
-            PopTools.popStringValues(this, valueInput, mouseEvent, "JShellHistories", false, true);
+            showHistories(event);
         }
     }
 
     @FXML
-    protected void showHistories(ActionEvent event) {
+    protected void showHistories(Event event) {
         PopTools.popStringValues(this, valueInput, event, "JShellHistories", false, true);
     }
 

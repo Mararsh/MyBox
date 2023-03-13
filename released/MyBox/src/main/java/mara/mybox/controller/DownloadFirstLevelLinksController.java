@@ -33,6 +33,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -72,6 +73,7 @@ import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.tools.MarkdownTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -167,7 +169,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
             super.initValues();
             stopped = true;
 
-            htmlOptions = new MutableDataSet();
+            htmlOptions = MarkdownTools.htmlOptions();
             htmlParser = Parser.builder(htmlOptions).build();
             htmlRender = HtmlRenderer.builder(htmlOptions).build();
 
@@ -239,8 +241,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
             return;
         }
         super.checkButtons();
-        boolean isEmpty = tableData == null || tableData.isEmpty();
-        boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
+        boolean none = isNoneSelected();
         copyButton.setDisable(none);
         equalButton.setDisable(none);
         infoButton.setDisable(none);
@@ -517,12 +518,12 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
                 protected boolean handle() {
                     try {
                         URL url = new URL(address);
-                        File urlFile = HtmlReadTools.url2File(address);
+                        File urlFile = HtmlReadTools.download(address);
                         String html = TextFileTools.readTexts(urlFile);
                         if (html == null) {
                             return false;
                         }
-                        title = HtmlReadTools.htmlTitle(html);
+                        title = HtmlReadTools.title(html);
                         addressLink = Link.create().setUrl(url).setAddress(url.toString())
                                 .setName(title).setTitle(title).setHtml(html);
                         addressLink.setFile(urlFile.getAbsolutePath());
@@ -612,7 +613,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
     public void startAction() {
         try {
             stopped = false;
-            List<Link> selected = tableView.getSelectionModel().getSelectedItems();
+            List<Link> selected = selectedItems();
             if (selected == null || selected.isEmpty()) {
                 return;
             }
@@ -688,7 +689,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
+            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -706,7 +707,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
     }
 
     public void setPath() {
-        List<Link> selected = tableView.getSelectionModel().getSelectedItems();
+        List<Link> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
         }
@@ -733,7 +734,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
     }
 
     public void addOrderBeforeFilename() {
-        List<Link> selected = tableView.getSelectionModel().getSelectedItems();
+        List<Link> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
         }
@@ -752,7 +753,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
     }
 
     public void setFilename() {
-        List<Link> selected = tableView.getSelectionModel().getSelectedItems();
+        List<Link> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
         }
@@ -792,7 +793,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
         if (tabPane.getSelectionModel().getSelectedItem() != linksTab) {
             return;
         }
-        Link link = tableView.getSelectionModel().getSelectedItem();
+        Link link = selectedItem();
         if (link == null) {
             return;
         }
@@ -803,7 +804,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
     @FXML
     @Override
     public void infoAction() {
-        Link link = tableView.getSelectionModel().getSelectedItem();
+        Link link = selectedItem();
         if (link == null) {
             return;
         }
@@ -849,7 +850,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
 
     @FXML
     protected void openLink() {
-        Link link = tableView.getSelectionModel().getSelectedItem();
+        Link link = selectedItem();
         openLink(link);
     }
 
@@ -888,7 +889,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
                 + message("Name") + ": " + (link.getName() == null ? "" : link.getName()) + "<br>"
                 + message("Title") + ": " + (link.getTitle() == null ? "" : link.getTitle()) + "<br>"
                 + message("TargetFile") + ": " + link.getFile();
-        HtmlReadTools.htmlTable(message("Link"), s);
+        HtmlTableController.open(message("Link"), s);
     }
 
     @FXML
@@ -1166,13 +1167,13 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
                 link.setFile(file.getAbsolutePath());
 
                 updateLogs(message("Downloading") + ": " + url + " --> " + file);
-                File tmpFile = HtmlReadTools.url2File(url.toString());
+                File tmpFile = HtmlReadTools.download(url.toString());
                 if (tmpFile != null && tmpFile.exists()) {
                     FileTools.rename(tmpFile, file);
                     link.setDlTime(new Date());
                     updateLogs(message("Downloaded") + ": " + url + " --> " + file);
                     if (utf8Check.isSelected()) {
-                        String utf8 = HtmlWriteTools.toUTF8(file, false);
+                        String utf8 = HtmlWriteTools.toUTF8(file);
                         if (utf8 == null) {
                             updateLogs(message("Failed") + ": " + file);
                         } else if (!"NeedNot".equals(utf8)) {
@@ -1566,7 +1567,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
     }
 
     @FXML
-    protected void openFolder() {
+    protected void openPath() {
         try {
             browseURI(targetPathInputController.file.toURI());
         } catch (Exception e) {
@@ -1574,8 +1575,15 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
     }
 
     @FXML
-    protected void popAddressHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, addressInput, mouseEvent, "DownloadHtmlsHistories");
+    protected void showAddressHistories(Event event) {
+        PopTools.popStringValues(this, addressInput, event, "DownloadHtmlsHistories", false, true);
+    }
+
+    @FXML
+    protected void popAddressHistories(Event event) {
+        if (UserConfig.getBoolean("DownloadHtmlsHistoriesPopWhenMouseHovering", false)) {
+            showAddressHistories(event);
+        }
     }
 
     @Override
@@ -1593,7 +1601,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
                 }
             }
             if (ask) {
-                if (PopTools.askSure(this, getMyStage().getTitle(), message("TaskRunning"))) {
+                if (PopTools.askSure(getTitle(), message("TaskRunning"))) {
                     stopped = true;
                 } else {
                     return false;

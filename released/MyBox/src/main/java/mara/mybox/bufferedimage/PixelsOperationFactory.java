@@ -39,12 +39,9 @@ public class PixelsOperationFactory {
             case ReplaceColor:
                 return new ReplaceColor(image, scope);
             case Color:
-                switch (colorActionType) {
-                    case Filter:
-                        return new FilterColor(image, scope);
-                    default:
-                        return new SetColor(image, scope);
-                }
+                return new ColorSet(image, scope);
+            case Blend:
+                return new BlendColor(image, scope);
             case Opacity:
                 switch (colorActionType) {
                     case Increase:
@@ -211,7 +208,7 @@ public class PixelsOperationFactory {
     }
 
     public static PixelsOperation replaceColorOperation(BufferedImage image, Color oldColor, Color newColor, int distance) {
-        if (oldColor == null || newColor == null || distance < 0) {
+        if (oldColor == null || distance < 0) {
             return null;
         }
         try {
@@ -221,7 +218,7 @@ public class PixelsOperationFactory {
             scope.getColors().add(oldColor);
             scope.setColorDistance(distance);
             PixelsOperation pixelsOperation = PixelsOperationFactory.create(image,
-                    scope, PixelsOperation.OperationType.ReplaceColor, PixelsOperation.ColorActionType.Set);
+                    scope, OperationType.ReplaceColor, ColorActionType.Set);
             pixelsOperation.setColorPara1(oldColor);
             pixelsOperation.setColorPara2(newColor);
             return pixelsOperation;
@@ -231,13 +228,14 @@ public class PixelsOperationFactory {
         }
     }
 
+
     /*
         subclass
      */
     public static class ShowScope extends PixelsOperation {
 
         public ShowScope(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.ShowScope;
+            this.operationType = OperationType.ShowScope;
             this.image = image;
             this.scope = scope;
         }
@@ -252,7 +250,7 @@ public class PixelsOperationFactory {
     public static class Sepia extends PixelsOperation {
 
         public Sepia(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Sepia;
+            this.operationType = OperationType.Sepia;
             this.image = image;
             this.scope = scope;
         }
@@ -266,7 +264,7 @@ public class PixelsOperationFactory {
     public static class Thresholding extends PixelsOperation {
 
         public Thresholding(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Thresholding;
+            this.operationType = OperationType.Thresholding;
             this.image = image;
             this.scope = scope;
         }
@@ -279,56 +277,115 @@ public class PixelsOperationFactory {
 
     public static class ReplaceColor extends PixelsOperation {
 
+        private float paraHue, paraSaturation, paraBrightness,
+                colorHue, colorSaturation, colorBrightness;
+        private boolean directReplace;
+
         public ReplaceColor(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.ReplaceColor;
-            this.colorActionType = PixelsOperation.ColorActionType.Set;
+            this.operationType = OperationType.ReplaceColor;
+            this.colorActionType = ColorActionType.Set;
             this.image = image;
             this.scope = scope;
+            boolPara1 = boolPara2 = boolPara3 = true;
+            directReplace = false;
+        }
+
+        @Override
+        public BufferedImage operate() {
+            directReplace = (boolPara1 && boolPara2 && boolPara3)
+                    || (!boolPara1 && !boolPara2 && !boolPara3);
+            if (!directReplace) {
+                float[] hsb = ColorConvertTools.color2hsb(colorPara2);
+                paraHue = hsb[0];
+                paraSaturation = hsb[1];
+                paraBrightness = hsb[2];
+            }
+            return super.operate();
         }
 
         @Override
         protected Color operateColor(Color color) {
-            return colorPara2;
+            if (directReplace) {
+                return colorPara2;
+            }
+            float[] hsb = ColorConvertTools.color2hsb(color);
+            colorHue = boolPara1 ? paraHue : hsb[0];
+            colorSaturation = boolPara2 ? paraSaturation : hsb[1];
+            colorBrightness = boolPara3 ? paraBrightness : hsb[2];
+            return ColorConvertTools.hsb2rgb(colorHue, colorSaturation, colorBrightness);
         }
     }
 
-    public static class SetColor extends PixelsOperation {
+    public static class ColorSet extends PixelsOperation {
 
-        public SetColor(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Color;
-            this.colorActionType = PixelsOperation.ColorActionType.Set;
+        private float paraHue, paraSaturation, paraBrightness,
+                colorHue, colorSaturation, colorBrightness;
+        private boolean directReplace;
+
+        public ColorSet(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Color;
+            this.colorActionType = ColorActionType.Set;
             this.image = image;
             this.scope = scope;
+            boolPara1 = boolPara2 = boolPara3 = true;
+            directReplace = false;
+        }
 
+        @Override
+        public BufferedImage operate() {
+            directReplace = (boolPara1 && boolPara2 && boolPara3)
+                    || (!boolPara1 && !boolPara2 && !boolPara3);
+            if (!directReplace) {
+                float[] hsb = ColorConvertTools.color2hsb(colorPara1);
+                paraHue = hsb[0];
+                paraSaturation = hsb[1];
+                paraBrightness = hsb[2];
+            }
+            return super.operate();
         }
 
         @Override
         protected Color operateColor(Color color) {
-            return new Color(colorPara1.getRed(), colorPara1.getGreen(), colorPara1.getBlue(),
-                    Math.min(Math.max(intPara1, 0), 255));
+            if (directReplace) {
+                return colorPara1;
+            }
+            float[] hsb = ColorConvertTools.color2hsb(color);
+            colorHue = boolPara1 ? paraHue : hsb[0];
+            colorSaturation = boolPara2 ? paraSaturation : hsb[1];
+            colorBrightness = boolPara3 ? paraBrightness : hsb[2];
+            return ColorConvertTools.hsb2rgb(colorHue, colorSaturation, colorBrightness);
         }
     }
 
-    public static class FilterColor extends PixelsOperation {
+    public static class BlendColor extends PixelsOperation {
 
-        public FilterColor(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Color;
-            this.colorActionType = PixelsOperation.ColorActionType.Filter;
+        protected PixelsBlend blender;
+
+        public BlendColor(BufferedImage image, ImageScope scope) {
+            this.operationType = OperationType.Blend;
+            this.colorActionType = ColorActionType.Set;
             this.image = image;
             this.scope = scope;
         }
 
+        public void setBlender(PixelsBlend blender) {
+            this.blender = blender;
+        }
+
         @Override
         protected Color operateColor(Color color) {
-            return PixelsBlend.blendColors(colorPara1, color, floatPara1, skipTransparent);
+            if (blender == null) {
+                return color;
+            }
+            return blender.blend(colorPara1, color);
         }
     }
 
     public static class SetOpacity extends PixelsOperation {
 
         public SetOpacity(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Opacity;
-            this.colorActionType = PixelsOperation.ColorActionType.Set;
+            this.operationType = OperationType.Opacity;
+            this.colorActionType = ColorActionType.Set;
             this.image = image;
             this.scope = scope;
         }
@@ -343,8 +400,8 @@ public class PixelsOperationFactory {
     public static class IncreaseOpacity extends PixelsOperation {
 
         public IncreaseOpacity(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Opacity;
-            this.colorActionType = PixelsOperation.ColorActionType.Increase;
+            this.operationType = OperationType.Opacity;
+            this.colorActionType = ColorActionType.Increase;
             this.image = image;
             this.scope = scope;
         }
@@ -359,8 +416,8 @@ public class PixelsOperationFactory {
     public static class DecreaseOpacity extends PixelsOperation {
 
         public DecreaseOpacity(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Opacity;
-            this.colorActionType = PixelsOperation.ColorActionType.Decrease;
+            this.operationType = OperationType.Opacity;
+            this.colorActionType = ColorActionType.Decrease;
             this.image = image;
             this.scope = scope;
         }
@@ -375,8 +432,8 @@ public class PixelsOperationFactory {
     public static class SetPreOpacity extends PixelsOperation {
 
         public SetPreOpacity(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.PreOpacity;
-            this.colorActionType = PixelsOperation.ColorActionType.Set;
+            this.operationType = OperationType.PreOpacity;
+            this.colorActionType = ColorActionType.Set;
             this.image = image;
             this.scope = scope;
         }
@@ -392,8 +449,8 @@ public class PixelsOperationFactory {
     public static class IncreasePreOpacity extends PixelsOperation {
 
         public IncreasePreOpacity(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.PreOpacity;
-            this.colorActionType = PixelsOperation.ColorActionType.Increase;
+            this.operationType = OperationType.PreOpacity;
+            this.colorActionType = ColorActionType.Increase;
             this.image = image;
             this.scope = scope;
         }
@@ -409,8 +466,8 @@ public class PixelsOperationFactory {
     public static class DecreasePreOpacity extends PixelsOperation {
 
         public DecreasePreOpacity(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.PreOpacity;
-            this.colorActionType = PixelsOperation.ColorActionType.Decrease;
+            this.operationType = OperationType.PreOpacity;
+            this.colorActionType = ColorActionType.Decrease;
             this.image = image;
             this.scope = scope;
         }
@@ -426,8 +483,8 @@ public class PixelsOperationFactory {
     public static class SetBrightness extends PixelsOperation {
 
         public SetBrightness(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Brightness;
-            this.colorActionType = PixelsOperation.ColorActionType.Set;
+            this.operationType = OperationType.Brightness;
+            this.colorActionType = ColorActionType.Set;
             this.image = image;
             this.scope = scope;
         }
@@ -445,8 +502,8 @@ public class PixelsOperationFactory {
     public static class IncreaseBrightness extends PixelsOperation {
 
         public IncreaseBrightness(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Brightness;
-            this.colorActionType = PixelsOperation.ColorActionType.Increase;
+            this.operationType = OperationType.Brightness;
+            this.colorActionType = ColorActionType.Increase;
             this.image = image;
             this.scope = scope;
         }
@@ -464,8 +521,8 @@ public class PixelsOperationFactory {
     public static class DecreaseBrightness extends PixelsOperation {
 
         public DecreaseBrightness(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Brightness;
-            this.colorActionType = PixelsOperation.ColorActionType.Decrease;
+            this.operationType = OperationType.Brightness;
+            this.colorActionType = ColorActionType.Decrease;
             this.image = image;
             this.scope = scope;
         }
@@ -483,8 +540,8 @@ public class PixelsOperationFactory {
     public static class SetSaturation extends PixelsOperation {
 
         public SetSaturation(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Saturation;
-            this.colorActionType = PixelsOperation.ColorActionType.Set;
+            this.operationType = OperationType.Saturation;
+            this.colorActionType = ColorActionType.Set;
             this.image = image;
             this.scope = scope;
         }
@@ -502,8 +559,8 @@ public class PixelsOperationFactory {
     public static class IncreaseSaturation extends PixelsOperation {
 
         public IncreaseSaturation(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Saturation;
-            this.colorActionType = PixelsOperation.ColorActionType.Increase;
+            this.operationType = OperationType.Saturation;
+            this.colorActionType = ColorActionType.Increase;
             this.image = image;
             this.scope = scope;
         }
@@ -521,8 +578,8 @@ public class PixelsOperationFactory {
     public static class DecreaseSaturation extends PixelsOperation {
 
         public DecreaseSaturation(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Saturation;
-            this.colorActionType = PixelsOperation.ColorActionType.Decrease;
+            this.operationType = OperationType.Saturation;
+            this.colorActionType = ColorActionType.Decrease;
             this.image = image;
             this.scope = scope;
         }
@@ -540,8 +597,8 @@ public class PixelsOperationFactory {
     public static class SetHue extends PixelsOperation {
 
         public SetHue(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Hue;
-            this.colorActionType = PixelsOperation.ColorActionType.Set;
+            this.operationType = OperationType.Hue;
+            this.colorActionType = ColorActionType.Set;
             this.image = image;
             this.scope = scope;
         }
@@ -565,8 +622,8 @@ public class PixelsOperationFactory {
     public static class IncreaseHue extends PixelsOperation {
 
         public IncreaseHue(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Hue;
-            this.colorActionType = PixelsOperation.ColorActionType.Increase;
+            this.operationType = OperationType.Hue;
+            this.colorActionType = ColorActionType.Increase;
             this.image = image;
             this.scope = scope;
         }
@@ -590,8 +647,8 @@ public class PixelsOperationFactory {
     public static class DecreaseHue extends PixelsOperation {
 
         public DecreaseHue(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Hue;
-            this.colorActionType = PixelsOperation.ColorActionType.Decrease;
+            this.operationType = OperationType.Hue;
+            this.colorActionType = ColorActionType.Decrease;
             this.image = image;
             this.scope = scope;
         }
@@ -615,8 +672,8 @@ public class PixelsOperationFactory {
     public static class SetRed extends PixelsOperation {
 
         public SetRed(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Red;
-            this.colorActionType = PixelsOperation.ColorActionType.Set;
+            this.operationType = OperationType.Red;
+            this.colorActionType = ColorActionType.Set;
             this.image = image;
             this.scope = scope;
         }
@@ -631,8 +688,8 @@ public class PixelsOperationFactory {
     public static class IncreaseRed extends PixelsOperation {
 
         public IncreaseRed(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Red;
-            this.colorActionType = PixelsOperation.ColorActionType.Increase;
+            this.operationType = OperationType.Red;
+            this.colorActionType = ColorActionType.Increase;
             this.image = image;
             this.scope = scope;
         }
@@ -647,8 +704,8 @@ public class PixelsOperationFactory {
     public static class DecreaseRed extends PixelsOperation {
 
         public DecreaseRed(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Red;
-            this.colorActionType = PixelsOperation.ColorActionType.Decrease;
+            this.operationType = OperationType.Red;
+            this.colorActionType = ColorActionType.Decrease;
             this.image = image;
             this.scope = scope;
         }
@@ -663,8 +720,8 @@ public class PixelsOperationFactory {
     public static class FilterRed extends PixelsOperation {
 
         public FilterRed(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Red;
-            this.colorActionType = PixelsOperation.ColorActionType.Filter;
+            this.operationType = OperationType.Red;
+            this.colorActionType = ColorActionType.Filter;
             this.image = image;
             this.scope = scope;
         }
@@ -678,8 +735,8 @@ public class PixelsOperationFactory {
     public static class InvertRed extends PixelsOperation {
 
         public InvertRed(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Red;
-            this.colorActionType = PixelsOperation.ColorActionType.Invert;
+            this.operationType = OperationType.Red;
+            this.colorActionType = ColorActionType.Invert;
             this.image = image;
             this.scope = scope;
         }
@@ -693,8 +750,8 @@ public class PixelsOperationFactory {
     public static class SetGreen extends PixelsOperation {
 
         public SetGreen(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Green;
-            this.colorActionType = PixelsOperation.ColorActionType.Set;
+            this.operationType = OperationType.Green;
+            this.colorActionType = ColorActionType.Set;
             this.image = image;
             this.scope = scope;
         }
@@ -709,8 +766,8 @@ public class PixelsOperationFactory {
     public static class IncreaseGreen extends PixelsOperation {
 
         public IncreaseGreen(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Green;
-            this.colorActionType = PixelsOperation.ColorActionType.Increase;
+            this.operationType = OperationType.Green;
+            this.colorActionType = ColorActionType.Increase;
             this.image = image;
             this.scope = scope;
         }
@@ -725,8 +782,8 @@ public class PixelsOperationFactory {
     public static class DecreaseGreen extends PixelsOperation {
 
         public DecreaseGreen(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Green;
-            this.colorActionType = PixelsOperation.ColorActionType.Decrease;
+            this.operationType = OperationType.Green;
+            this.colorActionType = ColorActionType.Decrease;
             this.image = image;
             this.scope = scope;
         }
@@ -741,8 +798,8 @@ public class PixelsOperationFactory {
     public static class FilterGreen extends PixelsOperation {
 
         public FilterGreen(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Green;
-            this.colorActionType = PixelsOperation.ColorActionType.Filter;
+            this.operationType = OperationType.Green;
+            this.colorActionType = ColorActionType.Filter;
             this.image = image;
             this.scope = scope;
         }
@@ -756,8 +813,8 @@ public class PixelsOperationFactory {
     public static class InvertGreen extends PixelsOperation {
 
         public InvertGreen(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Green;
-            this.colorActionType = PixelsOperation.ColorActionType.Invert;
+            this.operationType = OperationType.Green;
+            this.colorActionType = ColorActionType.Invert;
             this.image = image;
             this.scope = scope;
         }
@@ -771,8 +828,8 @@ public class PixelsOperationFactory {
     public static class SetBlue extends PixelsOperation {
 
         public SetBlue(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Blue;
-            this.colorActionType = PixelsOperation.ColorActionType.Set;
+            this.operationType = OperationType.Blue;
+            this.colorActionType = ColorActionType.Set;
             this.image = image;
             this.scope = scope;
         }
@@ -787,8 +844,8 @@ public class PixelsOperationFactory {
     public static class IncreaseBlue extends PixelsOperation {
 
         public IncreaseBlue(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Blue;
-            this.colorActionType = PixelsOperation.ColorActionType.Increase;
+            this.operationType = OperationType.Blue;
+            this.colorActionType = ColorActionType.Increase;
             this.image = image;
             this.scope = scope;
         }
@@ -803,8 +860,8 @@ public class PixelsOperationFactory {
     public static class DecreaseBlue extends PixelsOperation {
 
         public DecreaseBlue(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Blue;
-            this.colorActionType = PixelsOperation.ColorActionType.Decrease;
+            this.operationType = OperationType.Blue;
+            this.colorActionType = ColorActionType.Decrease;
             this.image = image;
             this.scope = scope;
         }
@@ -819,8 +876,8 @@ public class PixelsOperationFactory {
     public static class FilterBlue extends PixelsOperation {
 
         public FilterBlue(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Blue;
-            this.colorActionType = PixelsOperation.ColorActionType.Filter;
+            this.operationType = OperationType.Blue;
+            this.colorActionType = ColorActionType.Filter;
             this.image = image;
             this.scope = scope;
         }
@@ -834,8 +891,8 @@ public class PixelsOperationFactory {
     public static class InvertBlue extends PixelsOperation {
 
         public InvertBlue(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Blue;
-            this.colorActionType = PixelsOperation.ColorActionType.Invert;
+            this.operationType = OperationType.Blue;
+            this.colorActionType = ColorActionType.Invert;
             this.image = image;
             this.scope = scope;
         }
@@ -849,8 +906,8 @@ public class PixelsOperationFactory {
     public static class SetYellow extends PixelsOperation {
 
         public SetYellow(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Yellow;
-            this.colorActionType = PixelsOperation.ColorActionType.Set;
+            this.operationType = OperationType.Yellow;
+            this.colorActionType = ColorActionType.Set;
             this.image = image;
             this.scope = scope;
         }
@@ -865,8 +922,8 @@ public class PixelsOperationFactory {
     public static class IncreaseYellow extends PixelsOperation {
 
         public IncreaseYellow(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Yellow;
-            this.colorActionType = PixelsOperation.ColorActionType.Increase;
+            this.operationType = OperationType.Yellow;
+            this.colorActionType = ColorActionType.Increase;
             this.image = image;
             this.scope = scope;
         }
@@ -882,8 +939,8 @@ public class PixelsOperationFactory {
     public static class DecreaseYellow extends PixelsOperation {
 
         public DecreaseYellow(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Yellow;
-            this.colorActionType = PixelsOperation.ColorActionType.Decrease;
+            this.operationType = OperationType.Yellow;
+            this.colorActionType = ColorActionType.Decrease;
             this.image = image;
             this.scope = scope;
         }
@@ -899,8 +956,8 @@ public class PixelsOperationFactory {
     public static class FilterYellow extends PixelsOperation {
 
         public FilterYellow(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Yellow;
-            this.colorActionType = PixelsOperation.ColorActionType.Filter;
+            this.operationType = OperationType.Yellow;
+            this.colorActionType = ColorActionType.Filter;
             this.image = image;
             this.scope = scope;
         }
@@ -914,8 +971,8 @@ public class PixelsOperationFactory {
     public static class InvertYellow extends PixelsOperation {
 
         public InvertYellow(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Yellow;
-            this.colorActionType = PixelsOperation.ColorActionType.Invert;
+            this.operationType = OperationType.Yellow;
+            this.colorActionType = ColorActionType.Invert;
             this.image = image;
             this.scope = scope;
         }
@@ -929,8 +986,8 @@ public class PixelsOperationFactory {
     public static class SetCyan extends PixelsOperation {
 
         public SetCyan(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Cyan;
-            this.colorActionType = PixelsOperation.ColorActionType.Set;
+            this.operationType = OperationType.Cyan;
+            this.colorActionType = ColorActionType.Set;
             this.image = image;
             this.scope = scope;
         }
@@ -945,8 +1002,8 @@ public class PixelsOperationFactory {
     public static class IncreaseCyan extends PixelsOperation {
 
         public IncreaseCyan(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Cyan;
-            this.colorActionType = PixelsOperation.ColorActionType.Increase;
+            this.operationType = OperationType.Cyan;
+            this.colorActionType = ColorActionType.Increase;
             this.image = image;
             this.scope = scope;
         }
@@ -963,8 +1020,8 @@ public class PixelsOperationFactory {
     public static class DecreaseCyan extends PixelsOperation {
 
         public DecreaseCyan(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Cyan;
-            this.colorActionType = PixelsOperation.ColorActionType.Decrease;
+            this.operationType = OperationType.Cyan;
+            this.colorActionType = ColorActionType.Decrease;
             this.image = image;
             this.scope = scope;
         }
@@ -981,8 +1038,8 @@ public class PixelsOperationFactory {
     public static class FilterCyan extends PixelsOperation {
 
         public FilterCyan(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Cyan;
-            this.colorActionType = PixelsOperation.ColorActionType.Filter;
+            this.operationType = OperationType.Cyan;
+            this.colorActionType = ColorActionType.Filter;
             this.image = image;
             this.scope = scope;
         }
@@ -996,8 +1053,8 @@ public class PixelsOperationFactory {
     public static class InvertCyan extends PixelsOperation {
 
         public InvertCyan(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Cyan;
-            this.colorActionType = PixelsOperation.ColorActionType.Invert;
+            this.operationType = OperationType.Cyan;
+            this.colorActionType = ColorActionType.Invert;
             this.image = image;
             this.scope = scope;
         }
@@ -1011,8 +1068,8 @@ public class PixelsOperationFactory {
     public static class SetMagenta extends PixelsOperation {
 
         public SetMagenta(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Magenta;
-            this.colorActionType = PixelsOperation.ColorActionType.Set;
+            this.operationType = OperationType.Magenta;
+            this.colorActionType = ColorActionType.Set;
             this.image = image;
             this.scope = scope;
         }
@@ -1027,8 +1084,8 @@ public class PixelsOperationFactory {
     public static class IncreaseMagenta extends PixelsOperation {
 
         public IncreaseMagenta(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Magenta;
-            this.colorActionType = PixelsOperation.ColorActionType.Increase;
+            this.operationType = OperationType.Magenta;
+            this.colorActionType = ColorActionType.Increase;
             this.image = image;
             this.scope = scope;
         }
@@ -1044,8 +1101,8 @@ public class PixelsOperationFactory {
     public static class DecreaseMagenta extends PixelsOperation {
 
         public DecreaseMagenta(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Magenta;
-            this.colorActionType = PixelsOperation.ColorActionType.Decrease;
+            this.operationType = OperationType.Magenta;
+            this.colorActionType = ColorActionType.Decrease;
             this.image = image;
             this.scope = scope;
         }
@@ -1061,8 +1118,8 @@ public class PixelsOperationFactory {
     public static class FilterMagenta extends PixelsOperation {
 
         public FilterMagenta(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Magenta;
-            this.colorActionType = PixelsOperation.ColorActionType.Filter;
+            this.operationType = OperationType.Magenta;
+            this.colorActionType = ColorActionType.Filter;
             this.image = image;
             this.scope = scope;
         }
@@ -1076,8 +1133,8 @@ public class PixelsOperationFactory {
     public static class InvertMagenta extends PixelsOperation {
 
         public InvertMagenta(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.Magenta;
-            this.colorActionType = PixelsOperation.ColorActionType.Invert;
+            this.operationType = OperationType.Magenta;
+            this.colorActionType = ColorActionType.Invert;
             this.image = image;
             this.scope = scope;
         }
@@ -1091,8 +1148,8 @@ public class PixelsOperationFactory {
     public static class SetRGB extends PixelsOperation {
 
         public SetRGB(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.RGB;
-            this.colorActionType = PixelsOperation.ColorActionType.Set;
+            this.operationType = OperationType.RGB;
+            this.colorActionType = ColorActionType.Set;
             this.image = image;
             this.scope = scope;
         }
@@ -1107,8 +1164,8 @@ public class PixelsOperationFactory {
     public static class IncreaseRGB extends PixelsOperation {
 
         public IncreaseRGB(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.RGB;
-            this.colorActionType = PixelsOperation.ColorActionType.Increase;
+            this.operationType = OperationType.RGB;
+            this.colorActionType = ColorActionType.Increase;
             this.image = image;
             this.scope = scope;
         }
@@ -1124,8 +1181,8 @@ public class PixelsOperationFactory {
     public static class DecreaseRGB extends PixelsOperation {
 
         public DecreaseRGB(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.RGB;
-            this.colorActionType = PixelsOperation.ColorActionType.Decrease;
+            this.operationType = OperationType.RGB;
+            this.colorActionType = ColorActionType.Decrease;
             this.image = image;
             this.scope = scope;
         }
@@ -1141,8 +1198,8 @@ public class PixelsOperationFactory {
     public static class InvertRGB extends PixelsOperation {
 
         public InvertRGB(BufferedImage image, ImageScope scope) {
-            this.operationType = PixelsOperation.OperationType.RGB;
-            this.colorActionType = PixelsOperation.ColorActionType.Invert;
+            this.operationType = OperationType.RGB;
+            this.colorActionType = ColorActionType.Invert;
             this.image = image;
             this.scope = scope;
         }

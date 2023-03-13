@@ -12,8 +12,8 @@ mvn -P mac package
 cd pack/mac
 mv ../../target/MyBox.jar  jar/   &&  \
 $JAVA_HOME/bin/jpackage  --type dmg --vendor Mara  --verbose  --runtime-image $JAVA_HOME  --dest app  --name  MyBox  --input jar --main-jar  MyBox.jar  --icon res/MyBox.icns
-mv jar/MyBox.jar  .
+mv jar/MyBox.jar  ./MyBox.jar
 gzip MyBox.jar 
 mv MyBox.jar.gz  MyBox-mac.jar.gz
-mv app/MyBox.dmg  MyBox-mac.dmg
+mv app/MyBox-1.0.dmg  MyBox-mac.dmg
 rm -rf ../../target

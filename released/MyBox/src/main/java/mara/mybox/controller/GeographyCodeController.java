@@ -30,9 +30,9 @@ import mara.mybox.fxml.cell.TableCoordinateSystemCell;
 import mara.mybox.fxml.cell.TableLatitudeCell;
 import mara.mybox.fxml.cell.TableLongitudeCell;
 import mara.mybox.fxml.cell.TableMessageCell;
-import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -266,7 +266,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
     @FXML
     @Override
     public void editAction() {
-        GeographyCode selected = (GeographyCode) tableView.getSelectionModel().getSelectedItem();
+        GeographyCode selected = (GeographyCode) selectedItem();
         if (selected == null) {
             return;
         }
@@ -282,17 +282,18 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
     @FXML
     @Override
     public void viewAction() {
-        GeographyCode selected = (GeographyCode) tableView.getSelectionModel().getSelectedItem();
+        GeographyCode selected = (GeographyCode) selectedItem();
         if (selected == null) {
             return;
         }
-        HtmlReadTools.htmlTable(Languages.message("GeographyCode"), BaseDataAdaptor.displayData(tableDefinition, selected, null, true));
+        HtmlTableController.open(message("GeographyCode"),
+                BaseDataAdaptor.displayData(tableDefinition, selected, null, true));
     }
 
     @FXML
     public void locationAction(ActionEvent event) {
         try {
-            GeographyCode code = (GeographyCode) tableView.getSelectionModel().getSelectedItem();
+            GeographyCode code = (GeographyCode) selectedItem();
             if (code == null) {
                 return;
             }
@@ -474,7 +475,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
     }
 
     protected void setSelectedData(boolean predefined) {
-        final List<GeographyCode> selected = tableView.getSelectionModel().getSelectedItems();
+        final List<GeographyCode> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
         }

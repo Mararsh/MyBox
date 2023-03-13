@@ -123,11 +123,11 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
             @Override
             protected boolean handle() {
                 data = null;
-                try ( Connection conn = DerbyBase.getConnection();
-                         Statement statement = conn.createStatement()) {
+                try (Connection conn = DerbyBase.getConnection();
+                        Statement statement = conn.createStatement()) {
                     for (String sql : sqls) {
                         try {
-                            TableStringValues.add(conn, "SQLHistories" + (internal ? "Internal" : ""), sql);
+                            TableStringValues.add(conn, hisName(), sql);
                             outputArea.appendText(DateTools.nowString() + "  " + sql + "\n");
                             if (statement.execute(sql)) {
                                 int count = statement.getUpdateCount();
@@ -172,28 +172,31 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
     }
 
     @FXML
-    protected void popExamplesMenu(MouseEvent mouseEvent) {
+    protected void popExamplesMenu(Event event) {
         if (UserConfig.getBoolean("SqlExamplesPopWhenMouseHovering", false)) {
-            PopTools.popSqlExamples(this, valueInput, null, false, mouseEvent);
+            showExamplesMenu(event);
         }
     }
 
     @FXML
-    protected void showExamplesMenu(ActionEvent event) {
+    protected void showExamplesMenu(Event event) {
         PopTools.popSqlExamples(this, valueInput, null, false, event);
     }
 
+    protected String hisName() {
+        return "SQLHistories" + (internal ? "Internal" : "");
+    }
+
     @FXML
-    protected void popHistories(MouseEvent mouseEvent) {
-        String name = "SQLHistories" + (internal ? "Internal" : "");
-        if (UserConfig.getBoolean(name + "PopWhenMouseHovering", false)) {
-            PopTools.popStringValues(this, valueInput, mouseEvent, name, false, true);
+    protected void popHistories(Event event) {
+        if (UserConfig.getBoolean(hisName() + "PopWhenMouseHovering", false)) {
+            showHistories(event);
         }
     }
 
     @FXML
-    protected void showHistories(ActionEvent event) {
-        PopTools.popStringValues(this, valueInput, event, "SQLHistories" + (internal ? "Internal" : ""), false, true);
+    protected void showHistories(Event event) {
+        PopTools.popStringValues(this, valueInput, event, hisName(), false, true);
     }
 
     @FXML
@@ -216,8 +219,8 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
             topButtons.add(new Label(message("TableName")));
 
             CheckBox popCheck = new CheckBox();
-            popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
-            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+            popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
             String pname = "TableNamesPopWhenMouseHovering" + (internal ? "Internal" : "");
             popCheck.setSelected(UserConfig.getBoolean(pname, false));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
@@ -276,8 +279,8 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
             topButtons.add(new Label(message("TableDefinition")));
 
             CheckBox popCheck = new CheckBox();
-            popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
-            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+            popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
             popCheck.setSelected(UserConfig.getBoolean("TableDefinitionPopWhenMouseHovering", false));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override

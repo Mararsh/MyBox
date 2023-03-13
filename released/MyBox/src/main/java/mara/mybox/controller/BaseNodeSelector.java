@@ -33,6 +33,7 @@ import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -177,7 +178,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                             setGraphic(null);
                             return;
                         }
-                        if (UserConfig.getBoolean("TreeDisplaySequenceNumber", true)) {
+                        if (UserConfig.getBoolean("TreeDisplayHierarchyNumber", true)) {
                             String serialNumber = serialNumber(getTreeItem());
                             setText(serialNumber + "  " + display(item));
                         } else {
@@ -240,7 +241,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                 @Override
 
                 protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
+                    try (Connection conn = DerbyBase.getConnection()) {
                         P rootNode = root(conn);
                         rootItem = new TreeItem(rootNode);
                         ignoreNode = getIgnoreNode();
@@ -379,7 +380,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         List<MenuItem> items = makeNodeMenu(node);
         items.add(new SeparatorMenuItem());
 
-        MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
+        MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
         menu.setStyle("-fx-text-fill: #2e598a;");
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             if (popMenu != null && popMenu.isShowing()) {
@@ -408,28 +409,28 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         boolean isRoot = targetItem == null || isRoot(targetItem.getValue());
 
         List<MenuItem> items = new ArrayList<>();
-        MenuItem menu = new MenuItem(PopTools.limitMenuName(chainName(targetItem)));
+        MenuItem menu = new MenuItem(StringTools.menuSuffix(chainName(targetItem)));
         menu.setStyle("-fx-text-fill: #2e598a;");
         items.add(menu);
         items.add(new SeparatorMenuItem());
 
-        CheckMenuItem editableMenu = new CheckMenuItem(message("SequenceNumber"), StyleTools.getIconImage("iconNumber.png"));
-        editableMenu.setSelected(UserConfig.getBoolean("TreeDisplaySequenceNumber", true));
+        CheckMenuItem editableMenu = new CheckMenuItem(message("HierarchyNumber"), StyleTools.getIconImageView("iconNumber.png"));
+        editableMenu.setSelected(UserConfig.getBoolean("TreeDisplayHierarchyNumber", true));
         editableMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                UserConfig.setBoolean("TreeDisplaySequenceNumber", editableMenu.isSelected());
+                UserConfig.setBoolean("TreeDisplayHierarchyNumber", editableMenu.isSelected());
                 treeView.refresh();
             }
         });
         items.add(editableMenu);
 
         if (manageMode) {
-            Menu clickMenu = new Menu(message("WhenClickNode"), StyleTools.getIconImage("iconSelect.png"));
+            Menu clickMenu = new Menu(message("WhenClickNode"), StyleTools.getIconImageView("iconSelect.png"));
             ToggleGroup clickGroup = new ToggleGroup();
             String currentClick = UserConfig.getString(baseName + "TreeWhenClickNode", defaultClickAction);
 
-            RadioMenuItem clickPopMenu = new RadioMenuItem(message("PopMenu"), StyleTools.getIconImage("iconMenu.png"));
+            RadioMenuItem clickPopMenu = new RadioMenuItem(message("PopMenu"), StyleTools.getIconImageView("iconMenu.png"));
             clickPopMenu.setSelected(currentClick == null || "PopMenu".equals(currentClick));
             clickPopMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -439,7 +440,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             });
             clickPopMenu.setToggleGroup(clickGroup);
 
-            RadioMenuItem editNodeMenu = new RadioMenuItem(message("Edit"), StyleTools.getIconImage("iconEdit.png"));
+            RadioMenuItem editNodeMenu = new RadioMenuItem(message("Edit"), StyleTools.getIconImageView("iconEdit.png"));
             editNodeMenu.setSelected("Edit".equals(currentClick));
             editNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -449,7 +450,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             });
             editNodeMenu.setToggleGroup(clickGroup);
 
-            RadioMenuItem pasteNodeMenu = new RadioMenuItem(message("Paste"), StyleTools.getIconImage("iconPaste.png"));
+            RadioMenuItem pasteNodeMenu = new RadioMenuItem(message("PasteNodeValueToCurrentEdit"), StyleTools.getIconImageView("iconPaste.png"));
             pasteNodeMenu.setSelected("Paste".equals(currentClick));
             pasteNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -462,7 +463,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             clickMenu.getItems().addAll(clickPopMenu, editNodeMenu, pasteNodeMenu);
 
             if (nodeExecutable) {
-                RadioMenuItem executeNodeMenu = new RadioMenuItem(message("Execute"), StyleTools.getIconImage("iconGo.png"));
+                RadioMenuItem executeNodeMenu = new RadioMenuItem(message("Execute"), StyleTools.getIconImageView("iconGo.png"));
                 executeNodeMenu.setSelected("Execute".equals(currentClick));
                 executeNodeMenu.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
@@ -474,7 +475,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                 clickMenu.getItems().add(executeNodeMenu);
             }
 
-            RadioMenuItem loadChildrenMenu = new RadioMenuItem(message("LoadChildren"), StyleTools.getIconImage("iconList.png"));
+            RadioMenuItem loadChildrenMenu = new RadioMenuItem(message("LoadChildren"), StyleTools.getIconImageView("iconList.png"));
             loadChildrenMenu.setSelected("LoadChildren".equals(currentClick));
             loadChildrenMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -484,7 +485,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             });
             loadChildrenMenu.setToggleGroup(clickGroup);
 
-            RadioMenuItem loadDescendantsMenu = new RadioMenuItem(message("LoadDescendants"), StyleTools.getIconImage("iconList.png"));
+            RadioMenuItem loadDescendantsMenu = new RadioMenuItem(message("LoadDescendants"), StyleTools.getIconImageView("iconList.png"));
             loadDescendantsMenu.setSelected("LoadDescendants".equals(currentClick));
             loadDescendantsMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -499,7 +500,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             items.add(clickMenu);
 
         } else {
-            menu = new MenuItem(message("Manage"), StyleTools.getIconImage("iconData.png"));
+            menu = new MenuItem(message("Manage"), StyleTools.getIconImageView("iconData.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 openManager();
             });
@@ -509,37 +510,37 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         items.add(new SeparatorMenuItem());
 
         if (manageMode) {
-            Menu dataMenu = new Menu(message("Data"), StyleTools.getIconImage("iconData.png"));
+            Menu dataMenu = new Menu(message("Data"), StyleTools.getIconImageView("iconData.png"));
             items.add(dataMenu);
 
-            menu = new MenuItem(message("TreeView"), StyleTools.getIconImage("iconTree.png"));
+            menu = new MenuItem(message("TreeView"), StyleTools.getIconImageView("iconHtml.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 treeView();
             });
             dataMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Examples"), StyleTools.getIconImage("iconExamples.png"));
+            menu = new MenuItem(message("Examples"), StyleTools.getIconImageView("iconExamples.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 importExamples();
             });
             dataMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Export"), StyleTools.getIconImage("iconExport.png"));
+            menu = new MenuItem(message("Export"), StyleTools.getIconImageView("iconExport.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 exportNode(targetItem);
             });
             dataMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Import"), StyleTools.getIconImage("iconImport.png"));
+            menu = new MenuItem(message("Import"), StyleTools.getIconImageView("iconImport.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 importAction();
             });
             dataMenu.getItems().add(menu);
 
-            Menu viewMenu = new Menu(message("View"), StyleTools.getIconImage("iconView.png"));
+            Menu viewMenu = new Menu(message("View"), StyleTools.getIconImageView("iconView.png"));
             items.add(viewMenu);
 
-            menu = new MenuItem(message("LoadChildren"), StyleTools.getIconImage("iconList.png"));
+            menu = new MenuItem(message("LoadChildren"), StyleTools.getIconImageView("iconList.png"));
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -548,7 +549,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             });
             viewMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("LoadDescendants"), StyleTools.getIconImage("iconList.png"));
+            menu = new MenuItem(message("LoadDescendants"), StyleTools.getIconImageView("iconList.png"));
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -557,90 +558,93 @@ public abstract class BaseNodeSelector<P> extends BaseController {
             });
             viewMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Unfold"), StyleTools.getIconImage("iconPLus.png"));
+            menu = new MenuItem(message("Unfold"), StyleTools.getIconImageView("iconPlus.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 unfoldNodes();
             });
             viewMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Fold"), StyleTools.getIconImage("iconMinus.png"));
+            menu = new MenuItem(message("Fold"), StyleTools.getIconImageView("iconMinus.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 foldNodes();
             });
             viewMenu.getItems().add(menu);
 
-            Menu modifyMenu = new Menu(message("Modify"), StyleTools.getIconImage("iconEdit.png"));
-            items.add(modifyMenu);
+            Menu modifyNodeMenu = new Menu(message("ModifyNodeValue"), StyleTools.getIconImageView("iconEdit.png"));
+            items.add(modifyNodeMenu);
 
-            menu = new MenuItem(message("Add"), StyleTools.getIconImage("iconAdd.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                addNode(targetItem);
-            });
-            modifyMenu.getItems().add(menu);
-
-            menu = new MenuItem(message("Edit"), StyleTools.getIconImage("iconEdit.png"));
+            menu = new MenuItem(message("EditNode"), StyleTools.getIconImageView("iconEdit.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 editNode(targetItem);
             });
-            modifyMenu.getItems().add(menu);
+            modifyNodeMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Paste"), StyleTools.getIconImage("iconPaste.png"));
+            menu = new MenuItem(message("PasteNodeValueToCurrentEdit"), StyleTools.getIconImageView("iconPaste.png"));
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
                     pasteNode(targetItem);
                 }
             });
-            modifyMenu.getItems().add(menu);
+            modifyNodeMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Delete"), StyleTools.getIconImage("iconDelete.png"));
+            Menu modifyTreeMenu = new Menu(message("ModifyTree"), StyleTools.getIconImageView("iconTree.png"));
+            items.add(modifyTreeMenu);
+
+            menu = new MenuItem(message("AddNode"), StyleTools.getIconImageView("iconAdd.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                addNode(targetItem);
+            });
+            modifyTreeMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("DeleteNode"), StyleTools.getIconImageView("iconDelete.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 deleteNode(targetItem);
             });
-            modifyMenu.getItems().add(menu);
+            modifyTreeMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Rename"), StyleTools.getIconImage("iconRename.png"));
+            menu = new MenuItem(message("RenameNode"), StyleTools.getIconImageView("iconInput.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 renameNode(targetItem);
             });
             menu.setDisable(isRoot);
-            modifyMenu.getItems().add(menu);
+            modifyTreeMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Copy"), StyleTools.getIconImage("iconCopy.png"));
+            menu = new MenuItem(message("CopyNodes"), StyleTools.getIconImageView("iconCopy.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 copyNode(targetItem);
             });
             menu.setDisable(isRoot);
-            modifyMenu.getItems().add(menu);
+            modifyTreeMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Move"), StyleTools.getIconImage("iconRef.png"));
+            menu = new MenuItem(message("MoveNodes"), StyleTools.getIconImageView("iconRef.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 moveNode(targetItem);
             });
             menu.setDisable(isRoot);
-            modifyMenu.getItems().add(menu);
+            modifyTreeMenu.getItems().add(menu);
 
         } else {
 
-            menu = new MenuItem(message("Add"), StyleTools.getIconImage("iconAdd.png"));
+            menu = new MenuItem(message("AddNode"), StyleTools.getIconImageView("iconAdd.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 addNode(targetItem);
             });
             items.add(menu);
 
-            menu = new MenuItem(message("Examples"), StyleTools.getIconImage("iconExamples.png"));
+            menu = new MenuItem(message("Examples"), StyleTools.getIconImageView("iconExamples.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 importExamples();
             });
             items.add(menu);
 
-            menu = new MenuItem(message("Unfold"), StyleTools.getIconImage("iconPLus.png"));
+            menu = new MenuItem(message("Unfold"), StyleTools.getIconImageView("iconPlus.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 unfoldNodes();
             });
             items.add(menu);
 
-            menu = new MenuItem(message("Fold"), StyleTools.getIconImage("iconMinus.png"));
+            menu = new MenuItem(message("Fold"), StyleTools.getIconImageView("iconMinus.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 foldNodes();
             });
@@ -708,12 +712,12 @@ public abstract class BaseNodeSelector<P> extends BaseController {
         }
         boolean isRoot = isRoot(node);
         if (isRoot) {
-            if (!PopTools.askSure(this, getBaseTitle(), message("Delete"), message("SureDeleteAll"))) {
+            if (!PopTools.askSure(getTitle(), message("Delete"), message("SureDeleteAll"))) {
                 return;
             }
         } else {
             String chainName = chainName(targetItem);
-            if (!PopTools.askSure(this, getBaseTitle(), chainName, message("Delete"))) {
+            if (!PopTools.askSure(getTitle(), chainName, message("Delete"))) {
                 return;
             }
         }
@@ -727,7 +731,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
                 @Override
                 protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
+                    try (Connection conn = DerbyBase.getConnection()) {
                         if (isRoot) {
                             clearTree(conn, node);
                             P rootNode = root(conn);
@@ -836,7 +840,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
                 @Override
                 protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
+                    try (Connection conn = DerbyBase.getConnection()) {
                         expandChildren(conn, item);
                     } catch (Exception e) {
                         error = e.toString();
@@ -896,7 +900,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
                 @Override
                 protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
+                    try (Connection conn = DerbyBase.getConnection()) {
                         loadChildren(conn, item);
                     } catch (Exception e) {
                         error = e.toString();
@@ -1058,14 +1062,14 @@ public abstract class BaseNodeSelector<P> extends BaseController {
                             .append("    <INPUT type=\"checkbox\" checked onclick=\"showClass('TreeNode', this.checked);\">")
                             .append(message("Unfold")).append("</INPUT>\n")
                             .append("    <INPUT type=\"checkbox\" checked onclick=\"showClass('SerialNumber', this.checked);\">")
-                            .append(message("SequenceNumber")).append("</INPUT>\n")
+                            .append(message("HierarchyNumber")).append("</INPUT>\n")
                             .append("    <INPUT type=\"checkbox\" checked onclick=\"showClass('NodeTag', this.checked);\">")
                             .append(message("Tags")).append("</INPUT>\n")
                             .append("    <INPUT type=\"checkbox\" checked onclick=\"showClass('nodeValue', this.checked);\">")
                             .append(message("Values")).append("</INPUT>\n")
                             .append("</DIV>\n")
                             .append("<HR>\n");
-                    try ( Connection conn = DerbyBase.getConnection()) {
+                    try (Connection conn = DerbyBase.getConnection()) {
                         treeView(conn, nodeValue, 4, "", s);
                     } catch (Exception e) {
                         error = e.toString();
@@ -1077,7 +1081,7 @@ public abstract class BaseNodeSelector<P> extends BaseController {
 
                 @Override
                 protected void whenSucceeded() {
-                    WebAddressController c = WebBrowserController.oneLoad(
+                    WebAddressController c = WebBrowserController.openHtml(
                             HtmlWriteTools.html(chainName(node), HtmlStyles.styleValue("Default"), s.toString()), true);
                 }
             };

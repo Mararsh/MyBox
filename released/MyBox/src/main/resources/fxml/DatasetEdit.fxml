@@ -83,7 +83,7 @@ License:    Apache License Version 2.0
                                     <children>
                                         <Label text="%Image" />
                                         <TextField fx:id="sourceFileInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                        <Button fx:id="selectImageButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
+                                        <Button fx:id="selectImageButton" mnemonicParsing="false" onAction="#pickSourceFile" onMouseEntered="#popSourceFile">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>

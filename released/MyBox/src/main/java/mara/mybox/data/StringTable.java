@@ -3,11 +3,11 @@ package mara.mybox.data;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import mara.mybox.controller.HtmlTableController;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.HtmlStyles;
-import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -80,12 +80,16 @@ public class StringTable {
         return tableDiv(this);
     }
 
+    public String body() {
+        return body(this);
+    }
+
     public void editHtml() {
         HtmlWriteTools.editHtml(tableHtml(this));
     }
 
     public void htmlTable() {
-        HtmlReadTools.htmlTable(title, body(this));
+        HtmlTableController.open(title, body(this));
     }
 
     public void newLinkRow(String name, String link) {
@@ -94,7 +98,7 @@ public class StringTable {
 
     public void newNameValueRow(String name, String value) {
         List<String> row = new ArrayList<>();
-        row.addAll(Arrays.asList(name != null && !name.isBlank() ? Languages.message(name) : "", value));
+        row.addAll(Arrays.asList(name != null && !name.isBlank() ? message(name) : "", value));
         add(row);
     }
 

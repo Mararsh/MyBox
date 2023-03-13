@@ -258,7 +258,7 @@ public class TreeNodeExportController extends BaseTaskController {
             }
 
             popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
+            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -775,11 +775,11 @@ public class TreeNodeExportController extends BaseTaskController {
         try {
             openTarget(null);
             if (framesetFile != null && framesetFile.exists()) {
-                WebBrowserController.oneOpen(framesetFile);
+                WebBrowserController.openFile(framesetFile);
                 return;
             }
             if (htmlFile != null && htmlFile.exists()) {
-                WebBrowserController.oneOpen(htmlFile);
+                WebBrowserController.openFile(htmlFile);
                 return;
             }
             if (xmlFile != null && xmlFile.exists()) {

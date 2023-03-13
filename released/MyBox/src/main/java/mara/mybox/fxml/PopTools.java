@@ -57,6 +57,7 @@ import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
@@ -183,12 +184,12 @@ public class PopTools {
         return value;
     }
 
-    public static boolean askSure(BaseController controller, String title, String sureString) {
-        return askSure(controller, title, null, sureString);
+    public static boolean askSure(String title, String sureString) {
+        return askSure(title, null, sureString);
     }
 
     // https://openjfx.io/javadoc/17/javafx.controls/javafx/scene/control/Dialog.html
-    public static boolean askSure(BaseController controller, String title, String header, String sureString) {
+    public static boolean askSure(String title, String header, String sureString) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(title);
         if (header != null) {
@@ -246,16 +247,6 @@ public class PopTools {
         }
     }
 
-    // https://github.com/Mararsh/MyBox/issues/1266
-    // Error popped when menu name includes "_". Not sure whether this is a bug of javafx
-    public static String limitMenuName(String name) {
-        if (name == null) {
-            return null;
-        }
-        name = name.replaceAll("_", " ");
-        return name.length() > 80 ? "..." + name.substring(name.length() - 80) : name;
-    }
-
     /*
         buttons
      */
@@ -301,37 +292,12 @@ public class PopTools {
         }
     }
 
-    public static void addButtonsPane(MenuController controller, TextInputControl input, Map<String, String> values) {
-        try {
-            List<Node> buttons = new ArrayList<>();
-            for (String name : values.keySet()) {
-                String value = values.get(name);
-                if (value == null) {
-                    continue;
-                }
-                Button button = new Button(name);
-                button.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        input.replaceText(input.getSelection(), value);
-                        controller.getThisPane().requestFocus();
-                        input.requestFocus();
-                    }
-                });
-                buttons.add(button);
-            }
-            controller.addFlowPane(buttons);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
     /*
         style
      */
-    public static ContextMenu popHtmlStyle(MouseEvent mouseEvent, ControlWebView controller) {
+    public static ContextMenu popHtmlStyle(Event event, ControlWebView controller) {
         try {
-            if (mouseEvent == null || controller == null) {
+            if (event == null || controller == null) {
                 return null;
             }
             ContextMenu cMenu = controller.getPopMenu();
@@ -411,6 +377,16 @@ public class PopTools {
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
+            hoverMenu.setSelected(UserConfig.getBoolean("HtmlStylesPopWhenMouseHovering", false));
+            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("HtmlStylesPopWhenMouseHovering", hoverMenu.isSelected());
+                }
+            });
+            popMenu.getItems().add(hoverMenu);
+
             CheckMenuItem checkMenu = new CheckMenuItem(message("ShareAllInterface"));
             checkMenu.setSelected(UserConfig.getBoolean(baseName + "ShareHtmlStyle", true));
             checkMenu.setOnAction(new EventHandler<ActionEvent>() {
@@ -423,7 +399,29 @@ public class PopTools {
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
+            menu = new MenuItem(message("CssEn"));
+            menu.setStyle("-fx-text-fill: blue;");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    controller.openLink(HelpTools.cssEnLink());
+                }
+            });
+            popMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("CssZh"));
+            menu.setStyle("-fx-text-fill: blue;");
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    controller.openLink(HelpTools.cssZhLink());
+                }
+            });
+            popMenu.getItems().add(menu);
+
+            popMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -433,7 +431,7 @@ public class PopTools {
             });
             popMenu.getItems().add(menu);
             controller.setPopMenu(popMenu);
-            LocateTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
+            LocateTools.locateCenter((Region) event.getSource(), popMenu);
             return popMenu;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -441,7 +439,7 @@ public class PopTools {
         }
     }
 
-    public static ContextMenu popWindowStyles(BaseController parent, String baseStyle, MouseEvent mouseEvent) {
+    public static ContextMenu popWindowStyles(BaseController parent, String baseStyle, Event event) {
         try {
             ContextMenu popMenu = new ContextMenu();
             popMenu.setAutoHide(true);
@@ -480,6 +478,16 @@ public class PopTools {
             }
             popMenu.getItems().add(new SeparatorMenuItem());
 
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
+            hoverMenu.setSelected(UserConfig.getBoolean("WindowStylesPopWhenMouseHovering", false));
+            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("WindowStylesPopWhenMouseHovering", hoverMenu.isSelected());
+                }
+            });
+            popMenu.getItems().add(hoverMenu);
+
             CheckMenuItem checkMenu = new CheckMenuItem(message("ShareAllInterface"));
             checkMenu.setSelected(UserConfig.getBoolean(baseName + "ShareWindowStyle", true));
             checkMenu.setOnAction(new EventHandler<ActionEvent>() {
@@ -492,7 +500,7 @@ public class PopTools {
 
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
+            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -505,7 +513,7 @@ public class PopTools {
             parent.closePopup();
             parent.setPopMenu(popMenu);
 
-            LocateTools.locateMouse(mouseEvent, popMenu);
+            LocateTools.locateEvent(event, popMenu);
             return popMenu;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -533,14 +541,13 @@ public class PopTools {
     /*
         saved values
      */
-    public static void popStringValues(BaseController parent, TextInputControl input, Event event, String name) {
-        popStringValues(parent, input, event, name, false);
-    }
-
-    public static void popStringValues(BaseController parent, TextInputControl input, Event event, String name, boolean alwaysClear) {
-        popStringValues(parent, input, event, name, false, false);
-    }
-
+//    public static void popStringValues(BaseController parent, TextInputControl input, Event event, String name) {
+//        popStringValues(parent, input, event, name, false);
+//    }
+//
+//    public static void popStringValues(BaseController parent, TextInputControl input, Event event, String name, boolean alwaysClear) {
+//        popStringValues(parent, input, event, name, false, false);
+//    }
     public static void popStringValues(BaseController parent, TextInputControl input, Event event,
             String name, boolean alwaysClear, boolean checkPop) {
         try {
@@ -563,7 +570,7 @@ public class PopTools {
                 public void handle(ActionEvent event) {
                     TableStringValues.clear(name);
                     controller.close();
-                    popStringValues(parent, input, event, name, alwaysClear);
+                    popStringValues(parent, input, event, name, alwaysClear, checkPop);
                 }
             });
             setButtons.add(clearValuesButton);
@@ -590,7 +597,7 @@ public class PopTools {
                 UserConfig.setBoolean(name + "ValuesClearAndSet", true);
             } else {
                 CheckBox clearCheck = new CheckBox();
-                clearCheck.setGraphic(StyleTools.getIconImage("iconClear.png"));
+                clearCheck.setGraphic(StyleTools.getIconImageView("iconClear.png"));
                 NodeStyleTools.setTooltip(clearCheck, new Tooltip(message("ClearAndPaste")));
                 clearCheck.setSelected(UserConfig.getBoolean(name + "ValuesClearAndSet", false));
                 clearCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -604,8 +611,8 @@ public class PopTools {
 
             if (checkPop) {
                 CheckBox popCheck = new CheckBox();
-                popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
-                NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+                popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
+                NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
                 popCheck.setSelected(UserConfig.getBoolean(name + "PopWhenMouseHovering", false));
                 popCheck.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
@@ -623,7 +630,7 @@ public class PopTools {
             List<String> values = TableStringValues.max(name, max);
             List<Node> buttons = new ArrayList<>();
             for (String value : values) {
-                Button button = new Button(value.length() > 200 ? value.substring(0, 200) + " ..." : value);
+                Button button = new Button(StringTools.start(value, 200));
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
@@ -642,7 +649,7 @@ public class PopTools {
                         if (event.getButton() == MouseButton.SECONDARY) {
                             TableStringValues.delete(name, value);
                             controller.close();
-                            popStringValues(parent, input, event, name, alwaysClear);
+                            popStringValues(parent, input, event, name, alwaysClear, checkPop);
                         }
                     }
                 });
@@ -798,7 +805,7 @@ public class PopTools {
             link.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    parent.openLink("https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/SimpleDateFormat.html");
+                    parent.openLink(HelpTools.simpleDateFormatLink());
                 }
             });
             controller.addNode(link);
@@ -836,13 +843,13 @@ public class PopTools {
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    parent.openLink("https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/SimpleDateFormat.html");
+                    parent.openLink(HelpTools.simpleDateFormatLink());
                 }
             });
             popMenu.getItems().add(menu);
             popMenu.getItems().add(new SeparatorMenuItem());
 
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
+            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -862,7 +869,10 @@ public class PopTools {
     public static void popRegexExamples(BaseController parent, TextInputControl input, Event event) {
         try {
             MenuController controller = MenuController.open(parent, input, event);
+
+            List<Node> topButtons = new ArrayList<>();
             Button clearButton = new Button(message("Clear"));
+            NodeStyleTools.setTooltip(clearButton, new Tooltip(message("ClearInputArea")));
             clearButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -871,7 +881,22 @@ public class PopTools {
                     input.requestFocus();
                 }
             });
-            controller.addNode(clearButton);
+            topButtons.add(clearButton);
+
+            CheckBox popCheck = new CheckBox();
+            popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
+            popCheck.setSelected(UserConfig.getBoolean("RegexExamplesPopWhenMouseHovering", false));
+            popCheck.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("RegexExamplesPopWhenMouseHovering", popCheck.isSelected());
+                }
+            });
+            topButtons.add(popCheck);
+            controller.addFlowPane(topButtons);
+            controller.addNode(new Separator());
+
             List<String> values = Arrays.asList("^      " + message("StartLocation"),
                     "$      " + message("EndLocation"),
                     "*      " + message("ZeroOrNTimes"),
@@ -934,17 +959,35 @@ public class PopTools {
         }
     }
 
-    public static void popColorExamples(BaseController parent, TextInputControl input, MouseEvent mouseEvent) {
+    public static void popColorExamples(BaseController parent, TextInputControl input, Event event) {
         try {
-            MenuController controller = MenuController.open(parent, input, mouseEvent.getScreenX(), mouseEvent.getScreenY());
-            Button clearButton = new Button(message("Clear"));
+            MenuController controller = MenuController.open(parent, input, event);
+
+            List<Node> topButtons = new ArrayList<>();
+
+            Button clearButton = new Button(message("ClearInputArea"));
             clearButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
                     input.clear();
                 }
             });
-            controller.addNode(clearButton);
+            topButtons.add(clearButton);
+
+            CheckBox popCheck = new CheckBox();
+            popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
+            popCheck.setSelected(UserConfig.getBoolean("ColorExamplesPopWhenMouseHovering", false));
+            popCheck.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("ColorExamplesPopWhenMouseHovering", popCheck.isSelected());
+                }
+            });
+            topButtons.add(popCheck);
+            controller.addFlowPane(topButtons);
+            controller.addNode(new Separator());
+
             List<String> values = new ArrayList<>();
             values.addAll(Arrays.asList(
                     "orange", "pink", "lightblue", "wheat",
@@ -988,7 +1031,7 @@ public class PopTools {
             List<Node> topButtons = new ArrayList<>();
             if (isTextArea) {
                 Button newLineButton = new Button();
-                newLineButton.setGraphic(StyleTools.getIconImage("iconTurnOver.png"));
+                newLineButton.setGraphic(StyleTools.getIconImageView("iconTurnOver.png"));
                 NodeStyleTools.setTooltip(newLineButton, new Tooltip(message("Newline")));
                 newLineButton.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
@@ -1002,7 +1045,7 @@ public class PopTools {
             }
 
             Button clearButton = new Button();
-            clearButton.setGraphic(StyleTools.getIconImage("iconClear.png"));
+            clearButton.setGraphic(StyleTools.getIconImageView("iconClear.png"));
             NodeStyleTools.setTooltip(clearButton, new Tooltip(message("ClearInputArea")));
             clearButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -1015,8 +1058,8 @@ public class PopTools {
             topButtons.add(clearButton);
 
             CheckBox popCheck = new CheckBox();
-            popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
-            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+            popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
             popCheck.setSelected(UserConfig.getBoolean("SqlExamplesPopWhenMouseHovering", false));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -1102,7 +1145,7 @@ public class PopTools {
 
             for (SourceCodeAnalysis.Suggestion suggestion : suggestions) {
                 String c = suggestion.continuation();
-                menu = new MenuItem(c);
+                menu = new MenuItem(StringTools.abbreviate(c, 100));
                 menu.setOnAction((ActionEvent event) -> {
                     scriptInput.replaceText(scriptInput.getSelection(), c);
                 });
@@ -1110,7 +1153,7 @@ public class PopTools {
             }
 
             popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
+            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -1135,7 +1178,7 @@ public class PopTools {
 
             List<Node> topButtons = new ArrayList<>();
             Button newLineButton = new Button();
-            newLineButton.setGraphic(StyleTools.getIconImage("iconTurnOver.png"));
+            newLineButton.setGraphic(StyleTools.getIconImageView("iconTurnOver.png"));
             NodeStyleTools.setTooltip(newLineButton, new Tooltip(message("Newline")));
             newLineButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -1147,7 +1190,7 @@ public class PopTools {
             topButtons.add(newLineButton);
 
             Button clearInputButton = new Button();
-            clearInputButton.setGraphic(StyleTools.getIconImage("iconClear.png"));
+            clearInputButton.setGraphic(StyleTools.getIconImageView("iconClear.png"));
             NodeStyleTools.setTooltip(clearInputButton, new Tooltip(message("ClearInputArea")));
             clearInputButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -1158,8 +1201,8 @@ public class PopTools {
             topButtons.add(clearInputButton);
 
             CheckBox popCheck = new CheckBox();
-            popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
-            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+            popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
             popCheck.setSelected(UserConfig.getBoolean(name + "PopWhenMouseHovering", false));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -1194,7 +1237,7 @@ public class PopTools {
             });
             controller.addNode(jlink);
 
-            Hyperlink mlink = new Hyperlink("JavaScript Tutorial - " + message("English"));
+            Hyperlink mlink = new Hyperlink(message("JavaScriptTutorial") + " - " + message("English"));
             mlink.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -1203,7 +1246,7 @@ public class PopTools {
             });
             controller.addNode(mlink);
 
-            Hyperlink alink = new Hyperlink("JavaScript Tutorial - " + message("Chinese"));
+            Hyperlink alink = new Hyperlink(message("JavaScriptTutorial") + " - " + message("Chinese"));
             alink.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -1217,7 +1260,7 @@ public class PopTools {
                 nlink.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        parent.openLink("https://docs.oracle.com/javase/10/nashorn/toc.htm");
+                        parent.openLink(HelpTools.nashornLink());
                     }
                 });
                 controller.addNode(nlink);
@@ -1267,6 +1310,49 @@ public class PopTools {
                     "var array = [ 'A', 'B', 'C', 'D' ];\n"
                     + "array.includes('#{" + colName + "})')"
             ), true, 5);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public static List<String> htmlTags() {
+        return Arrays.asList(
+                "p", "img", "a", "div", "li", "ul", "ol", "h1", "h2", "h3", "h4",
+                "button", "input", "label", "form", "table", "tr", "th", "td",
+                "font", "span", "b", "hr", "br", "frame", "pre",
+                "meta", "script", "style"
+        );
+    }
+
+    public static void popHtmlTagExamples(BaseController parent, TextInputControl input, Event event) {
+        try {
+            MenuController controller = MenuController.open(parent, input, event);
+            Button clearButton = new Button(message("ClearInputArea"));
+            clearButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    input.clear();
+                    controller.getThisPane().requestFocus();
+                    input.requestFocus();
+                }
+            });
+            controller.addNode(clearButton);
+
+            List< Node> nodes = new ArrayList<>();
+            for (String value : htmlTags()) {
+                Button button = new Button(value);
+                button.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        input.setText(value);
+                        controller.getThisPane().requestFocus();
+                        input.requestFocus();
+                    }
+                });
+                nodes.add(button);
+            }
+            controller.addFlowPane(nodes);
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

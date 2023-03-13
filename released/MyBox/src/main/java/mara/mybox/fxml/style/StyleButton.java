@@ -257,7 +257,7 @@ public class StyleButton {
         }
         if (id.startsWith("open")) {
             if (id.startsWith("openPath")) {
-                return new StyleData(id, message("Directory"), "", "iconOpen2.png");
+                return new StyleData(id, message("OpenDirectory"), "", "iconOpenPath.png");
             }
             switch (id) {
                 case "openWindowButton":
@@ -275,7 +275,7 @@ public class StyleButton {
             }
         }
         if (id.startsWith("input")) {
-            return new StyleData(id, message("Input"), "", "iconRename.png");
+            return new StyleData(id, message("Input"), "", "iconInput.png");
         }
         if (id.startsWith("suggestion")) {
             return new StyleData(id, message("CodeCompletionSuggestions"), "CTRL+1 / ALT+1", "iconInput.png");
@@ -442,7 +442,12 @@ public class StyleButton {
             return new StyleData(id, message("Width"), "", "iconXRuler.png");
         }
         if (id.startsWith("go")) {
-            return new StyleData(id, message("Go"), "", "iconGo.png");
+            switch (id) {
+                case "goButton":
+                    return new StyleData(id, message("Go"), "F1 / CTRL+e / ALT+e", "iconGo.png");
+                default:
+                    return new StyleData(id, message("Go"), "", "iconGo.png");
+            }
         }
         if (id.startsWith("preview")) {
             return new StyleData(id, message("PreviewComments"), "", "iconExamples.png");
@@ -457,7 +462,7 @@ public class StyleButton {
             return new StyleData(id, message("TurnOver"), "", "iconTurnOver.png");
         }
         if (id.startsWith("rename")) {
-            return new StyleData(id, message("Rename"), "", "iconRename.png");
+            return new StyleData(id, message("Rename"), "", "iconInput.png");
         }
         if (id.startsWith("header")) {
             return new StyleData(id, "", "", "iconHeader.png");
@@ -466,12 +471,12 @@ public class StyleButton {
             return new StyleData(id, message("List"), "", "iconList.png");
         }
         if (id.startsWith("codes")) {
-            return new StyleData(id, "", "", "iconMeta.png");
+            return new StyleData(id, message("Codes"), "", "iconMeta.png");
         }
         if (id.startsWith("fold")) {
             return new StyleData(id, message("Fold"), "", "iconMinus.png");
         }
-        if (id.startsWith("unford")) {
+        if (id.startsWith("unfold")) {
             return new StyleData(id, message("Unfold"), "", "iconTree.png");
         }
         if (id.startsWith("moveData")) {

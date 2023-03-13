@@ -35,6 +35,15 @@ License:    Apache License Version 2.0
                                     <children>
                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                                             <children>
+                                                <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconAdd.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                                 <Button fx:id="useButton" disable="true" mnemonicParsing="false" onAction="#useAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -54,11 +63,11 @@ License:    Apache License Version 2.0
                                                     </graphic>
                                                 </Button>
                                                 <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="openButton" mnemonicParsing="false" onAction="#openPath">
+                                                <Button fx:id="openPathButton" mnemonicParsing="false" onAction="#openPath">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
-                                                                <Image url="@../buttons/Red/iconOpen.png" />
+                                                                <Image url="@../buttons/Red/iconOpenPath.png" />
                                                             </image>
                                                         </ImageView> 
                                                     </graphic>
@@ -88,15 +97,15 @@ License:    Apache License Version 2.0
                                             </image>
                                         </ImageView>
                                         <Label fx:id="langLabel" maxWidth="1.7976931348623157E308" styleClass="bold-blue-label" stylesheets="@../styles/MyBox.css" HBox.hgrow="ALWAYS" />
-                                          <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction">
-                                              <graphic>
-                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                      <image>
-                                                          <Image url="@../buttons/Red/iconAdd.png" />
-                                                      </image>
-                                                  </ImageView>
-                                              </graphic>
-                                          </Button>
+                                        <Button fx:id="copyButton" disable="true" layoutX="588.0" layoutY="10.0" mnemonicParsing="false" onMouseEntered="#popCopyMenu">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconCopy.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
                                         <Button fx:id="saveButton" disable="true" layoutX="964.0" layoutY="10.0" mnemonicParsing="false" onAction="#saveAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -108,14 +117,14 @@ License:    Apache License Version 2.0
                                         </Button>
                                     </children>
                                 </HBox>
-                                    <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
-                                        <columns>
-                                            <TableColumn fx:id="keyColumn" editable="false" prefWidth="100.0" text="%Key" />
-                                            <TableColumn fx:id="valueColumn" editable="false" prefWidth="200.0" text="%Translation" />
-                                            <TableColumn fx:id="englishColumn" editable="false" prefWidth="200.0" text="%English" />
-                              <TableColumn fx:id="chineseColumn" editable="false" prefWidth="200.0" text="%Chinese" />
-                                        </columns>
-                                    </TableView>
+                                <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                                    <columns>
+                                        <TableColumn fx:id="keyColumn" editable="false" prefWidth="100.0" text="%Key" />
+                                        <TableColumn fx:id="valueColumn" editable="false" prefWidth="200.0" text="%Translation" />
+                                        <TableColumn fx:id="englishColumn" editable="false" prefWidth="200.0" text="%English" />
+                                        <TableColumn fx:id="chineseColumn" editable="false" prefWidth="200.0" text="%Chinese" />
+                                    </columns>
+                                </TableView>
                             </children>
                             <padding>
                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

@@ -46,6 +46,7 @@ import mara.mybox.data.MediaInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
@@ -443,27 +444,32 @@ public class MediaPlayerController extends BaseController {
     }
 
     public void dataChanged() {
-        try {
-            if (isSettingValues) {
-                return;
-            }
-            if (player == null && currentMedia == null) {
-                if (autoplayCheck.isSelected() && !tableData.isEmpty()) {
-                    currentIndex = 0;
-                    playCurrent();
-                }
-                return;
-            }
-            if (currentMedia != null) {
-                int index = tableData.indexOf(currentMedia);
-                if (index < 0) {
-                    initPlayer();
-                }
-            }
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    if (player == null && currentMedia == null) {
+                        if (autoplayCheck.isSelected() && !tableData.isEmpty()) {
+                            currentIndex = 0;
+                            playCurrent();
+                        }
+                        return;
+                    }
+                    if (currentMedia != null) {
+                        int index = tableData.indexOf(currentMedia);
+                        if (index < 0) {
+                            initPlayer();
+                        }
+                    }
 
-        } catch (Exception e) {
+                } catch (Exception e) {
 
-        }
+                }
+            }
+        });
     }
 
     public void load(File file) {
@@ -958,6 +964,24 @@ public class MediaPlayerController extends BaseController {
     }
 
     @FXML
+    public void zoomIn() {
+        if (isSettingValues) {
+            return;
+        }
+        mediaView.setPreserveRatio(true);
+        mediaView.setFitWidth(mediaView.getFitWidth() + 20);
+    }
+
+    @FXML
+    public void zoomOut() {
+        if (isSettingValues) {
+            return;
+        }
+        mediaView.setPreserveRatio(true);
+        mediaView.setFitWidth(mediaView.getFitWidth() - 20);
+    }
+
+    @FXML
     public void dataAction() {
         try {
             MediaListController controller
@@ -988,6 +1012,30 @@ public class MediaPlayerController extends BaseController {
         } catch (Exception e) {
         }
         super.cleanPane();
+    }
+
+    /*
+        static
+     */
+    public static MediaPlayerController open() {
+        try {
+            MediaPlayerController controller = (MediaPlayerController) WindowTools.openStage(Fxmls.MediaPlayerFxml);
+            if (controller != null) {
+                controller.requestMouse();
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static MediaPlayerController open(File file) {
+        MediaPlayerController controller = open();
+        if (controller != null) {
+            controller.loadFile(file);
+        }
+        return controller;
     }
 
 }

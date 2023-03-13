@@ -3,7 +3,6 @@ package mara.mybox.db.data;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppValues;
 
-
 /**
  * @Author Mara
  * @CreateDate 2021-3-31
@@ -13,7 +12,7 @@ public class ColorPalette extends BaseData {
 
     protected long cpid, paletteid;
     protected int colorValue;
-    protected String name;
+    protected String name, description;
     protected ColorData data;
     protected float orderNumber;
 
@@ -64,6 +63,9 @@ public class ColorPalette extends BaseData {
                 case "order_number":
                     data.setOrderNumber(value == null ? -1 : (float) value);
                     return true;
+                case "description":
+                    data.setDescription(value == null ? null : (String) value);
+                    return true;
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -86,6 +88,8 @@ public class ColorPalette extends BaseData {
                 return data.getColorValue();
             case "order_number":
                 return data.getOrderNumber();
+            case "description":
+                return data.getDescription();
         }
         return null;
     }
@@ -149,6 +153,15 @@ public class ColorPalette extends BaseData {
 
     public ColorPalette setOrderNumber(float orderNumber) {
         this.orderNumber = orderNumber;
+        return this;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public ColorPalette setDescription(String description) {
+        this.description = description;
         return this;
     }
 

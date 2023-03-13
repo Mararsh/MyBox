@@ -6,25 +6,20 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.BufferedImageTools.KeepRatioType;
 import mara.mybox.bufferedimage.ImageScope;
-import mara.mybox.bufferedimage.PixelsBlend.ImagesBlendMode;
-import mara.mybox.bufferedimage.PixelsBlendFactory;
 import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.MarginTools;
 import mara.mybox.fximage.ScaleTools;
 import mara.mybox.fximage.TransformTools;
@@ -41,8 +36,6 @@ import mara.mybox.value.UserConfig;
  */
 public class ImageManufactureClipboardController extends ImageManufactureOperationController {
 
-    protected ImagesBlendMode blendMode;
-    protected float opacity;
     protected Image clipSource, currentClip, blendedImage, finalClip, bgImage;
     protected DoubleRectangle rectangle;
     protected int keepRatioType;
@@ -52,15 +45,13 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
     @FXML
     protected Tab imagesPane, setPane;
     @FXML
-    protected ComboBox<String> blendBox, opacityBox, angleBox, ratioBox;
+    protected ComboBox<String> angleBox, ratioBox;
     @FXML
-    protected Slider angleSlider;
-    @FXML
-    protected CheckBox keepRatioCheck, enlargeCheck, clipTopCheck, ignoreTransparentCheck;
+    protected CheckBox keepRatioCheck, enlargeCheck;
     @FXML
     protected Label listLabel;
     @FXML
-    protected Button demoButton;
+    protected ControlImagesBlend blendController;
 
     @Override
     public void initControls() {
@@ -107,22 +98,10 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                 }
             });
 
-            clipTopCheck.setSelected(UserConfig.getBoolean(baseName + "ClipOnTop", true));
-            clipTopCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            blendController.setParameters(this);
+            blendController.optionChangedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setBoolean(baseName + "ClipOnTop", clipTopCheck.isSelected());
-                    if (imageController != null) {
-                        pasteClip(currentAngle);
-                    }
-                }
-            });
-
-            ignoreTransparentCheck.setSelected(UserConfig.getBoolean(baseName + "IgnoreTransparent", true));
-            ignoreTransparentCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
-                    UserConfig.setBoolean(baseName + "IgnoreTransparent", ignoreTransparentCheck.isSelected());
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     if (imageController != null) {
                         pasteClip(currentAngle);
                     }
@@ -163,54 +142,6 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             });
             ratioBox.getSelectionModel().select(0);
 
-            String mode = UserConfig.getString("ImageClipBlendMode", Languages.message("NormalMode"));
-            blendMode = PixelsBlendFactory.blendMode(mode);
-            blendBox.getItems().addAll(PixelsBlendFactory.blendModes());
-            blendBox.setValue(mode);
-            blendBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
-                    String mode = blendBox.getSelectionModel().getSelectedItem();
-                    blendMode = PixelsBlendFactory.blendMode(mode);
-                    UserConfig.setString("ImageClipBlendMode", mode);
-                    if (imageController != null) {
-                        pasteClip(rotateAngle);
-                    }
-                }
-            });
-
-            opacity = UserConfig.getInt(baseName + "ImageClipOpacity", 100) / 100f;
-            opacity = (opacity >= 0.0f && opacity <= 1.0f) ? opacity : 1.0f;
-            opacityBox.getItems().addAll(Arrays.asList("0.5", "1.0", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
-            opacityBox.setValue(opacity + "");
-            opacityBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        float f = Float.valueOf(newValue);
-                        if (opacity >= 0.0f && opacity <= 1.0f) {
-                            opacity = f;
-                            UserConfig.setInt("ImageClipOpacity", (int) (f * 100));
-                            ValidationTools.setEditorNormal(opacityBox);
-                            if (imageController != null) {
-                                pasteClip(0);
-                            }
-                        } else {
-                            ValidationTools.setEditorBadStyle(opacityBox);
-                        }
-                    } catch (Exception e) {
-                        ValidationTools.setEditorBadStyle(opacityBox);
-                    }
-                }
-            });
-
-            angleSlider.valueProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                    pasteClip(newValue.intValue());
-                }
-            });
-
             angleBox.getItems().addAll(Arrays.asList("0", "90", "180", "45", "30", "60", "15", "5", "10", "1", "75", "120", "135"));
             angleBox.setVisibleRowCount(10);
             angleBox.setValue("0");
@@ -232,8 +163,6 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
 
             okButton.setDisable(true);
             cancelButton.disableProperty().bind(okButton.disableProperty());
-            demoButton.disableProperty().bind(okButton.disableProperty());
-            angleSlider.disableProperty().bind(okButton.disableProperty());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -264,7 +193,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                 @Override
                 protected boolean handle() {
                     try {
-                        ImageClipboard clip = clipsController.tableView.getSelectionModel().getSelectedItem();
+                        ImageClipboard clip = clipsController.selectedItem();
                         if (clip == null) {
                             clip = clipsController.tableData.get(0);
                         }
@@ -346,11 +275,9 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                                 enlarged = true;
                             }
                         }
-                        blendedImage = FxImageTools.blend(
-                                finalClip, bgImage,
+                        blendedImage = blendController.blend(finalClip, bgImage,
                                 (int) imageController.scope.getRectangle().getSmallX(),
-                                (int) imageController.scope.getRectangle().getSmallY(),
-                                blendMode, opacity, !clipTopCheck.isSelected(), ignoreTransparentCheck.isSelected());
+                                (int) imageController.scope.getRectangle().getSmallY());
                         if (task == null || isCancelled()) {
                             return false;
                         }
@@ -429,14 +356,6 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
     @Override
     public void cancelAction() {
         initOperation();
-    }
-
-    @FXML
-    protected void demo() {
-        FxImageTools.blendDemoFx(imageController, demoButton, finalClip, bgImage,
-                (int) imageController.scope.getRectangle().getSmallX(),
-                (int) imageController.scope.getRectangle().getSmallY(),
-                opacity, !clipTopCheck.isSelected(), ignoreTransparentCheck.isSelected());
     }
 
     public void pasteImageInSystemClipboard() {

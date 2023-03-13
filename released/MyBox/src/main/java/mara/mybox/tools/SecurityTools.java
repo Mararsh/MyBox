@@ -16,7 +16,6 @@ import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -78,7 +77,7 @@ public class SecurityTools {
 
     public static boolean isHostCertificateInstalled(String host) {
         try {
-            SSLContext context = SSLContext.getInstance(AppValues.HttpsProtocal);
+            SSLContext context = SSLContext.getDefault();
             context.init(null, null, null);
             SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket(host, 443);
             socket.setSoTimeout(UserConfig.getInt("WebConnectTimeout", 10000));
@@ -262,7 +261,8 @@ public class SecurityTools {
         }
     }
 
-    public static String uninstallCertificate(String keyStoreFile, String passwd, List<String> aliases) throws Exception {
+    public static String uninstallCertificate(String keyStoreFile, String passwd, List<String> aliases)
+            throws Exception {
         try {
             char[] passphrase = passwd.toCharArray();
             File cacerts = new File(keyStoreFile);
@@ -291,7 +291,7 @@ public class SecurityTools {
 
     public static Certificate getCertificateByHost(String host) {
         try {
-            SSLContext context = SSLContext.getInstance(AppValues.HttpsProtocal);
+            SSLContext context = SSLContext.getDefault();
             context.init(null, null, null);
             SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket(host, 443);
             socket.setSoTimeout(UserConfig.getInt("WebConnectTimeout", 10000));
@@ -308,7 +308,7 @@ public class SecurityTools {
 
     public static Certificate[] getCertificatesByHost(String host) {
         try {
-            SSLContext context = SSLContext.getInstance(AppValues.HttpsProtocal);
+            SSLContext context = SSLContext.getDefault();
             context.init(null, null, null);
             SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket(host, 443);
             socket.setSoTimeout(UserConfig.getInt("WebConnectTimeout", 10000));

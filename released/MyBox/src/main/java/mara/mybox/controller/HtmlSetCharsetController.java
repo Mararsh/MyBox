@@ -8,10 +8,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.HtmlWriteTools;
-
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.Languages;
@@ -22,7 +19,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-10-27
  * @License Apache License Version 2.0
  */
-public class HtmlSetCharsetController extends BaseBatchFileController {
+public class HtmlSetCharsetController extends BaseBatchHtmlController {
 
     protected Charset charset;
 
@@ -58,47 +55,13 @@ public class HtmlSetCharsetController extends BaseBatchFileController {
     }
 
     @Override
-    public boolean matchType(File file) {
-        String suffix = FileNameTools.suffix(file.getName());
-        if (suffix == null) {
-            return false;
-        }
-        suffix = suffix.trim().toLowerCase();
-        return "html".equals(suffix) || "htm".equals(suffix);
+    public Charset chartset(File srcFile) {
+        return charset;
     }
 
     @Override
-    public String handleFile(File srcFile, File targetPath) {
-        try {
-            File target = makeTargetFile(srcFile, targetPath);
-            if (target == null) {
-                return Languages.message("Skip");
-            }
-            String changed = HtmlWriteTools.setCharset(srcFile, charset, true);
-            if (changed == null) {
-                return Languages.message("Failed");
-            }
-            TextFileTools.writeFile(target, changed, charset);
-            targetFileGenerated(target);
-            return Languages.message("Successful");
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return Languages.message("Failed");
-        }
-    }
-
-    @Override
-    public File makeTargetFile(File sourceFile, File targetPath) {
-        try {
-            String namePrefix = FileNameTools.prefix(sourceFile.getName());
-            String nameSuffix = "";
-            if (sourceFile.isFile()) {
-                nameSuffix = ".html";
-            }
-            return makeTargetFile(namePrefix, nameSuffix, targetPath);
-        } catch (Exception e) {
-            return null;
-        }
+    public String covertHtml(File srcFile, Charset charset) {
+        return HtmlWriteTools.setCharset(TextFileTools.readTexts(srcFile), charset);
     }
 
 }

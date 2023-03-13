@@ -15,6 +15,7 @@ import static mara.mybox.db.data.GeographyCodeTools.validCoordinate;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -153,7 +154,7 @@ public class GeographyCodeMapController extends BaseMapFramesController {
     }
 
     protected void drawGeographyCodes(List<GeographyCode> codes, String title) {
-        mapTitle = title == null ? "" : title.replaceAll("\n", " ");
+        mapTitle = title == null ? "" : StringTools.replaceLineBreak(title);
         titleLabel.setText(mapTitle);
         frameLabel.setText("");
         geographyCodes = codes;

@@ -5,7 +5,6 @@ import java.util.Arrays;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
@@ -212,7 +211,7 @@ public class FFmpegConvertMediaFilesController extends BaseBatchFFmpegController
             return;
         }
         if (Arrays.asList(FileExtensions.MediaPlayerSupports).contains(FileNameTools.suffix(file.getName()))) {
-            ControllerTools.openMediaPlayer(null, file);
+            MediaPlayerController.open(file);
 
         } else {
             openTarget(null);
@@ -225,7 +224,7 @@ public class FFmpegConvertMediaFilesController extends BaseBatchFFmpegController
         if ((ffmpegOptionsController.encoderTask != null && !ffmpegOptionsController.encoderTask.isQuit())
                 || (ffmpegOptionsController.muxerTask != null && !ffmpegOptionsController.muxerTask.isQuit())
                 || (ffmpegOptionsController.queryTask != null && !ffmpegOptionsController.queryTask.isQuit())) {
-            if (!PopTools.askSure(this, getMyStage().getTitle(), Languages.message("TaskRunning"))) {
+            if (!PopTools.askSure(getTitle(), Languages.message("TaskRunning"))) {
                 return false;
             }
             if (ffmpegOptionsController.encoderTask != null) {

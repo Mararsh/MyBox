@@ -12,6 +12,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.StringTools;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -145,7 +146,7 @@ public class WebViewTools {
             String js = "var node = document.createElement(\"style\");\n"
                     + "node.id = \"" + styleid + "\";\n"
                     + "node.type = \"text/css\";\n"
-                    + "node.innerHTML = \"" + style.replaceAll("\n", "  ") + "\";\n"
+                    + "node.innerHTML = \"" + StringTools.replaceLineBreak(style) + "\";\n"
                     + "document.getElementsByTagName(\"HEAD\").item(0).appendChild(node);";
             webEngine.executeScript(js);
         } catch (Exception e) {

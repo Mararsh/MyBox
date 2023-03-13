@@ -346,11 +346,11 @@ public class PdfAttributesBatchController extends BaseBatchPdfController {
     public boolean makeActualParameters() {
         if (changeProtectionRadio.isSelected()) {
             if (newUserPassword != null || newOwnerPassword != null) {
-                if (!PopTools.askSure(this, myStage.getTitle(), Languages.message("SureSetPasswords"))) {
+                if (!PopTools.askSure(getTitle(), Languages.message("SureSetPasswords"))) {
                     return false;
                 }
             } else {
-                if (!PopTools.askSure(this, myStage.getTitle(), Languages.message("SureUnsetPasswords"))) {
+                if (!PopTools.askSure(getTitle(), Languages.message("SureUnsetPasswords"))) {
                     return false;
                 }
             }

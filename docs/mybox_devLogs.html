@@ -1,41 +1,74 @@
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-    </head>
-<html>
  <head>
-  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="UTF-8">
+  <meta http-equiv="cache-control" content="no-cache">
  </head>
  <body contenteditable="false" style="width: 900px; margin:0 auto;">
   <h1>开发日志</h1>
+<p>2023-3-13 版本6.7.1</p>
+  <ul>
+   <li>新增： 
+    <ul>
+     <li>html编辑模式：DOM。</li>
+     <li>图片处理：对于选择的范围进行颜色混合。</li>
+     <li>批量设置网页的http-equiv。</li>
+     <li>可以定制按钮的颜色。</li>
+    </ul></li>
+   <li>改进： 
+    <ul>
+     <li>图片处理：替换颜色时可选是否替换色相/饱和度/明亮度。</li>
+     <li>颜色的新属性：RYB角度、RGB反色、和RYB补色。更多的调色盘示例。</li>
+     <li>可设置选择框的滚动尺寸。</li>
+     <li>网页加载完毕之前就能使用链接的菜单。</li>
+     <li>用jsoup解析html。</li>
+     <li>可选择在悬停按钮时是否弹出菜单/窗口。</li>
+     <li>自述文件中链接指向最新版本。</li>
+     <li>在打包脚本中设置JAVA_HOME。</li>
+    </ul></li>
+   <li>移除： 
+    <ul>
+     <li>不再支持更改界面风格。</li>
+     <li>在一些界面上移除鸡肋的滑动条。</li>
+     <li>程序包名不再包含版本号。</li>
+    </ul></li>
+   <li>Java和JavaFx均升级到v19。</li>
+   <li>解决问题： 
+    <ul>
+     <li>添加文件备份时可能自动清除所有文件备份。</li>
+     <li>当标签图片不存在时加载地图会失败。</li>
+     <li>将网址加为收藏时会失败。</li>
+     <li>一些界面上访问目录的历史未生效。</li>
+     <li>批量粘贴图片时，对于粘贴位置的处理不准确。</li>
+     <li>编辑图片颜色时快捷键未生效。</li>
+     <li>Javascript的编辑历史没有保存。</li>
+    </ul></li>
+  </ul>
+  <p><a target="_blank" href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.1">此版本关闭的需求/问题列表</a></p>
   <p>2023-1-21 版本6.7</p>
-	<ul>
-	   <li>新增： 
-		<ul>
-		 <li>数据分组方式：时间字段具有相同的世纪/年/月/日/时/分/秒时分为同组。</li>
-		 <li>数据分组方式：行表达式的值相同时分为同组。</li>
-		 <li>“运行系统命令”可设置字符集。</li>
-		 <li>文档《图片的故事》。</li>
-		</ul></li>
-	   <li>代码优化： 
-		<ul>
-		 <li>分组的参数保存在数据库中而不是在内存里。</li>
-		 <li>时间的格式中，时分秒总是长值。</li>
-		 <li>重命名内部图片。</li>
-		</ul></li>
-	   <li>解决： 
-		<ul>
-		 <li>当按时间类型的值区间分组时，参数应显示为时间而不是整数。</li>
-		 <li>按条件分组时应当把所有数值导入临时表中，否则结果可能不正确。</li>
-		 <li>按行间隔分组时，错误地把分割个数取为分割尺寸。</li>
-		</ul></li>
-	  </ul>
-	<p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7">此版本关闭的需求/问题列表</a></p>
-	<p>兔年安康！</p>
+  <ul>
+   <li>新增： 
+    <ul>
+     <li>数据分组方式：时间字段具有相同的世纪/年/月/日/时/分/秒时分为同组。</li>
+     <li>数据分组方式：行表达式的值相同时分为同组。</li>
+     <li>“运行系统命令”可设置字符集。</li>
+     <li>文档《图片的故事》。</li>
+    </ul></li>
+   <li>代码优化： 
+    <ul>
+     <li>分组的参数保存在数据库中而不是在内存里。</li>
+     <li>时间的格式中，时分秒总是长值。</li>
+     <li>重命名内部图片。</li>
+    </ul></li>
+   <li>解决： 
+    <ul>
+     <li>当按时间类型的值区间分组时，参数应显示为时间而不是整数。</li>
+     <li>按条件分组时应当把所有数值导入临时表中，否则结果可能不正确。</li>
+     <li>按行间隔分组时，错误地把分割个数取为分割尺寸。</li>
+    </ul></li>
+  </ul>
+  <p><a href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7">此版本关闭的需求/问题列表</a></p>
+  <p>兔年安康！</p>
   <p>2022-12-26 版本6.6.3</p>
   <ul>
    <li>代码优化： 
@@ -436,5 +469,4 @@
   <p>2018-06-12 版本1.0 实现功能：将PDF文件的每页转换为一张图片，包含图像密度、类型、格式等选项，并且可以暂停/继续转换过程。</p>
   <p><a href="https://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+no%3Amilestone">未定义版本的已关闭的需求/问题列表</a></p>
  </body>
-</html>
 </html>

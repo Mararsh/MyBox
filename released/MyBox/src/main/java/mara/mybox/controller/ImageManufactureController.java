@@ -1,8 +1,10 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.image.Image;
+import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -68,7 +70,7 @@ public class ImageManufactureController extends ImageManufactureController_Actio
 
     protected void initBackupsTab() {
         try {
-            backupController.setControls(this, baseName);
+            backupController.setParameters(this, baseName);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -114,9 +116,49 @@ public class ImageManufactureController extends ImageManufactureController_Actio
     /*
         static methods
      */
-    public static ImageManufactureController load(Image image) {
-        ImageManufactureController controller = (ImageManufactureController) WindowTools.openStage(Fxmls.ImageManufactureFxml);
-        controller.loadImage(image);
+    public static ImageManufactureController open() {
+        try {
+            ImageManufactureController controller = (ImageManufactureController) WindowTools.openStage(Fxmls.ImageManufactureFxml);
+            if (controller != null) {
+                controller.requestMouse();
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static ImageManufactureController openImage(Image image) {
+        ImageManufactureController controller = open();
+        if (controller != null) {
+            controller.loadImage(image);
+        }
         return controller;
     }
+
+    public static ImageManufactureController openFile(File file) {
+        ImageManufactureController controller = open();
+        if (controller != null) {
+            controller.loadImageFile(file);
+        }
+        return controller;
+    }
+
+    public static ImageManufactureController openImageInfo(ImageInformation imageInfo) {
+        ImageManufactureController controller = open();
+        if (controller != null) {
+            controller.loadImageInfo(imageInfo);
+        }
+        return controller;
+    }
+
+    public static ImageManufactureController open(File file, ImageInformation imageInfo) {
+        ImageManufactureController controller = open();
+        if (controller != null) {
+            controller.loadImage(file, imageInfo);
+        }
+        return controller;
+    }
+
 }

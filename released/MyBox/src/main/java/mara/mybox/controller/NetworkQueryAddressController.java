@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
@@ -23,7 +24,6 @@ import javax.net.ssl.SSLSocket;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.SingletonTask;
@@ -34,7 +34,6 @@ import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.NetworkTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.UrlTools;
-import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -89,8 +88,15 @@ public class NetworkQueryAddressController extends HtmlTableController {
     }
 
     @FXML
-    protected void popAddressHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, addressInput, mouseEvent, key, true);
+    protected void showAddressHistories(Event event) {
+        PopTools.popStringValues(this, addressInput, event, key, false, true);
+    }
+
+    @FXML
+    protected void popAddressHistories(Event event) {
+        if (UserConfig.getBoolean(key + "PopWhenMouseHovering", false)) {
+            showAddressHistories(event);
+        }
     }
 
     protected void checkType() {
@@ -177,7 +183,7 @@ public class NetworkQueryAddressController extends HtmlTableController {
                     try {
                         host = url.getHost();
 
-                        SSLContext context = SSLContext.getInstance(AppValues.HttpsProtocal);
+                        SSLContext context = SSLContext.getDefault();
                         context.init(null, null, null);
                         SSLSocket socket = (SSLSocket) context.getSocketFactory()
                                 .createSocket(host, 443);
@@ -269,7 +275,7 @@ public class NetworkQueryAddressController extends HtmlTableController {
 
                 @Override
                 protected void whenSucceeded() {
-                    ControllerTools.openTextEditer(null, file);
+                    TextEditorController.open(file);
                 }
 
             };

@@ -15,6 +15,10 @@ import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.Data2DDefinition.Type;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
+import static mara.mybox.fxml.WindowTools.recordError;
+import static mara.mybox.fxml.WindowTools.recordInfo;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -98,7 +102,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         if (conn == null || d2did < 0) {
             return null;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(QueryID)) {
+        try (PreparedStatement statement = conn.prepareStatement(QueryID)) {
             statement.setLong(1, d2did);
             return query(conn, statement);
         } catch (Exception e) {
@@ -111,7 +115,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         if (file == null) {
             return null;
         }
-        try ( Connection conn = DerbyBase.getConnection();) {
+        try (Connection conn = DerbyBase.getConnection();) {
             return queryFile(conn, type, file);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -123,7 +127,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         if (conn == null || file == null) {
             return null;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(Query_TypeFile)) {
+        try (PreparedStatement statement = conn.prepareStatement(Query_TypeFile)) {
             statement.setShort(1, Data2DDefinition.type(type));
             statement.setString(2, DerbyBase.stringValue(file.getAbsolutePath()));
             return query(conn, statement);
@@ -137,7 +141,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         if (conn == null || file == null) {
             return -1;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(Delete_TypeFile)) {
+        try (PreparedStatement statement = conn.prepareStatement(Delete_TypeFile)) {
             statement.setShort(1, Data2DDefinition.type(type));
             statement.setString(2, DerbyBase.stringValue(file.getAbsolutePath()));
             return statement.executeUpdate();
@@ -151,7 +155,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         if (name == null || name.isBlank()) {
             return null;
         }
-        try ( Connection conn = DerbyBase.getConnection();) {
+        try (Connection conn = DerbyBase.getConnection();) {
             return queryName(conn, type, name);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -163,7 +167,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         if (conn == null || name == null || name.isBlank()) {
             return null;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(Query_TypeName)) {
+        try (PreparedStatement statement = conn.prepareStatement(Query_TypeName)) {
             statement.setShort(1, Data2DDefinition.type(type));
             statement.setString(2, DerbyBase.stringValue(name));
             return query(conn, statement);
@@ -177,7 +181,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         if (conn == null || name == null || name.isBlank()) {
             return -1;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(Delete_TypeName)) {
+        try (PreparedStatement statement = conn.prepareStatement(Delete_TypeName)) {
             statement.setShort(1, Data2DDefinition.type(type));
             statement.setString(2, DerbyBase.stringValue(name));
             return statement.executeUpdate();
@@ -194,7 +198,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         if (sheet == null || sheet.isBlank()) {
             return queryFile(conn, type, file);
         }
-        try ( PreparedStatement statement = conn.prepareStatement(Query_TypeFileSheet)) {
+        try (PreparedStatement statement = conn.prepareStatement(Query_TypeFileSheet)) {
             statement.setShort(1, Data2DDefinition.type(type));
             statement.setString(2, DerbyBase.stringValue(file.getAbsolutePath()));
             statement.setString(3, DerbyBase.stringValue(sheet));
@@ -209,7 +213,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         if (conn == null || tname == null) {
             return null;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(Query_Table)) {
+        try (PreparedStatement statement = conn.prepareStatement(Query_Table)) {
             statement.setShort(1, Data2DDefinition.type(type));
             statement.setString(2, DerbyBase.stringValue(tname));
             return query(conn, statement);
@@ -223,7 +227,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         if (conn == null || tname == null) {
             return null;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(Query_UserTable)) {
+        try (PreparedStatement statement = conn.prepareStatement(Query_UserTable)) {
             statement.setString(1, DerbyBase.stringValue(tname));
             return query(conn, statement);
         } catch (Exception e) {
@@ -237,7 +241,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             return -1;
         }
         String fixedName = DerbyBase.fixedIdentifier(tname);
-        try ( PreparedStatement statement = conn.prepareStatement("DROP TABLE " + fixedName)) {
+        try (PreparedStatement statement = conn.prepareStatement("DROP TABLE " + fixedName)) {
             if (statement.executeUpdate() < 0) {
                 return -2;
             }
@@ -245,7 +249,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
 //            MyBoxLog.error(e);
             return -3;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(Delete_UserTable)) {
+        try (PreparedStatement statement = conn.prepareStatement(Delete_UserTable)) {
             statement.setString(1, DerbyBase.stringValue(DerbyBase.savedName(fixedName)));
             return statement.executeUpdate();
         } catch (Exception e) {
@@ -258,7 +262,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         if (conn == null || file == null) {
             return null;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(Query_TypeFile)) {
+        try (PreparedStatement statement = conn.prepareStatement(Query_TypeFile)) {
             statement.setShort(1, Data2DDefinition.type(Type.MyBoxClipboard));
             statement.setString(2, DerbyBase.stringValue(file.getAbsolutePath()));
             return query(conn, statement);
@@ -283,7 +287,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         if (conn == null || file == null) {
             return -1;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(Delete_TypeFile)) {
+        try (PreparedStatement statement = conn.prepareStatement(Delete_TypeFile)) {
             statement.setShort(1, Data2DDefinition.type(Type.MyBoxClipboard));
             statement.setString(2, DerbyBase.stringValue(file.getAbsolutePath()));
             return statement.executeUpdate();
@@ -293,23 +297,33 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         }
     }
 
-    public int clearInvalid(Connection conn, boolean clearTmpTables) {
+    public int clearInvalid(SingletonTask task, Connection conn, boolean clearTmpTables) {
         int count = 0;
         try {
+            recordInfo(task, message("Check") + ": " + tableName);
             conn.setAutoCommit(true);
+//            recordInfo(task, Delete_InvalidExcelSheet);
             update(conn, Delete_InvalidExcelSheet);
             String sql = "SELECT * FROM Data2D_Definition WHERE data_type < 4";
+//            recordInfo(task, sql);
             List<Data2DDefinition> invalid = new ArrayList<>();
-            try ( ResultSet results = conn.prepareStatement(sql).executeQuery()) {
+            try (ResultSet results = conn.prepareStatement(sql).executeQuery()) {
                 while (results.next()) {
+                    if (task != null && task.isCancelled()) {
+                        return -1;
+                    }
                     Data2DDefinition data = readData(results);
                     try {
                         File file = data.getFile();
                         if (file == null || !file.exists() || !file.isFile()) {
                             invalid.add(data);
+                            if (file != null) {
+                                recordInfo(task, message("NotFound") + ": " + file.getAbsolutePath());
+                            }
                         }
                     } catch (Exception e) {
                         invalid.add(data);
+                        recordError(task, e.toString() + "\n" + tableName);
                     }
                 }
             }
@@ -317,15 +331,23 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             deleteData(conn, invalid);
             conn.commit();
 
+            if (task != null && task.isCancelled()) {
+                return -1;
+            }
             conn.setAutoCommit(true);
             invalid.clear();
             sql = "SELECT * FROM Data2D_Definition WHERE data_type ="
                     + Data2D.type(Data2DDefinition.Type.DatabaseTable);
-            try ( ResultSet results = conn.prepareStatement(sql).executeQuery()) {
+//            recordInfo(task, sql);
+            try (ResultSet results = conn.prepareStatement(sql).executeQuery()) {
                 while (results.next()) {
+                    if (task != null && task.isCancelled()) {
+                        return -1;
+                    }
                     Data2DDefinition data = readData(results);
                     if (DerbyBase.exist(conn, data.getSheet()) == 0) {
                         invalid.add(data);
+                        recordInfo(task, message("NotFound") + ": " + data.getSheet());
                     }
                 }
             }
@@ -340,22 +362,30 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
                         + Data2D.type(Data2DDefinition.Type.DatabaseTable)
                         + " AND ( sheet like '" + TmpTable.TmpTablePrefix + "%'"
                         + " OR sheet like '" + TmpTable.TmpTablePrefix.toLowerCase() + "%' )";
-                try ( ResultSet results = conn.prepareStatement(sql).executeQuery()) {
+//                recordInfo(task, sql);
+                try (ResultSet results = conn.prepareStatement(sql).executeQuery()) {
                     while (results.next()) {
+                        if (task != null && task.isCancelled()) {
+                            return -1;
+                        }
                         Data2DDefinition data = readData(results);
                         invalid.add(data);
+                        recordInfo(task, message("Delete") + ": " + data.getSheet());
                     }
                 } catch (Exception e) {
-                    MyBoxLog.error(e);
+                    recordError(task, e.toString() + "\n" + tableName);
                 }
                 count += invalid.size();
                 for (Data2DDefinition d : invalid) {
+                    if (task != null && task.isCancelled()) {
+                        return -1;
+                    }
                     deleteUserTable(conn, d.getSheet());
                 }
                 conn.commit();
             }
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            recordError(task, e.toString() + "\n" + tableName);
         }
         return count;
     }

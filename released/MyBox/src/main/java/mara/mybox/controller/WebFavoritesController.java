@@ -65,12 +65,20 @@ public class WebFavoritesController extends TreeManageController {
             popError(message("InvalidData") + ": " + message("Address"));
             return;
         }
-        WebBrowserController.oneOpen(address, true);
+        WebBrowserController.openAddress(address, true);
     }
 
     /*
         static methods
      */
+    public static WebFavoritesController open() {
+        WebFavoritesController controller = (WebFavoritesController) WindowTools.openStage(Fxmls.WebFavoritesFxml);
+        if (controller != null) {
+            controller.requestMouse();
+        }
+        return controller;
+    }
+
     public static WebFavoritesController oneOpen() {
         WebFavoritesController controller = null;
         List<Window> windows = new ArrayList<>();

@@ -34,7 +34,7 @@ public class TreeNodesMoveController extends TreeNodesController {
             return;
         }
         synchronized (this) {
-            List<TreeNode> nodes = manageController.tableView.getSelectionModel().getSelectedItems();
+            List<TreeNode> nodes = manageController.selectedItems();
             if (nodes == null || nodes.isEmpty()) {
                 alertError(message("NoData"));
                 manageController.getMyStage().requestFocus();

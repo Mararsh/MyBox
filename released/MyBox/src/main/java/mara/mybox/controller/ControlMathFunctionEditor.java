@@ -179,14 +179,14 @@ public class ControlMathFunctionEditor extends TreeNodeEditor {
     }
 
     @FXML
-    protected void popScriptHistories(MouseEvent mouseEvent) {
+    protected void popScriptHistories(Event event) {
         if (UserConfig.getBoolean("FunctionScriptHistoriesPopWhenMouseHovering", false)) {
-            PopTools.popStringValues(this, valueInput, mouseEvent, "FunctionScriptHistories", false, true);
+            showScriptHistories(event);
         }
     }
 
     @FXML
-    protected void showScriptHistories(ActionEvent event) {
+    protected void showScriptHistories(Event event) {
         PopTools.popStringValues(this, valueInput, event, "FunctionScriptHistories", false, true);
     }
 
@@ -222,14 +222,14 @@ public class ControlMathFunctionEditor extends TreeNodeEditor {
     }
 
     @FXML
-    protected void popDomainHistories(MouseEvent mouseEvent) {
+    protected void popDomainHistories(Event event) {
         if (UserConfig.getBoolean("FunctionDomainHistoriesPopWhenMouseHovering", false)) {
-            PopTools.popStringValues(this, moreInput, mouseEvent, "FunctionDomainHistories", false, true);
+            showDomainHistories(event);
         }
     }
 
     @FXML
-    protected void showDomainHistories(ActionEvent event) {
+    protected void showDomainHistories(Event event) {
         PopTools.popStringValues(this, moreInput, event, "FunctionDomainHistories", false, true);
     }
 

@@ -1,12 +1,10 @@
 package mara.mybox.controller;
 
 import java.text.MessageFormat;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
-import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.AppVariables.scheduledTasks;
 import static mara.mybox.value.Languages.message;
@@ -36,10 +34,6 @@ public class MyBoxController extends MyBoxController_About {
             if (scheduledTasks != null && !scheduledTasks.isEmpty()) {
                 bottomLabel.setText(MessageFormat.format(message("AlarmClocksRunning"), scheduledTasks.size()));
             }
-
-            Platform.runLater(() -> {
-                WindowTools.clearInvalidData();
-            });
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

@@ -65,7 +65,7 @@ public class ImagesEditorController extends BaseImagesListController {
     }
 
     public void checkImages() {
-        List<ImageInformation> selected = tableView.getSelectionModel().getSelectedItems();
+        List<ImageInformation> selected = tableController.selectedItems();
         if (selected == null || selected.isEmpty()) {
             selected = tableData;
         }

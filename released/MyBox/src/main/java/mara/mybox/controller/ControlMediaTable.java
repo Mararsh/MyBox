@@ -23,7 +23,6 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.table.TableMediaList;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableDurationCell;
@@ -230,7 +229,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
     @Override
     public void checkSelected() {
         super.checkSelected();
-        MediaInformation selected = tableView.getSelectionModel().getSelectedItem();
+        MediaInformation selected = selectedItem();
         if (selected == null || selected.getInfo() == null) {
             return;
         }
@@ -271,7 +270,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
 
     @Override
     public void itemDoubleClicked() {
-        int index = tableView.getSelectionModel().getSelectedIndex();
+        int index = selectedIndix();
         if (index < 0 || index > tableData.size() - 1) {
             return;
         }
@@ -378,7 +377,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
     @FXML
     @Override
     public void infoAction() {
-        MediaInformation info = tableView.getSelectionModel().getSelectedItem();
+        MediaInformation info = selectedItem();
         if (info == null) {
             return;
         }
@@ -392,7 +391,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
         if (info.getHtml() == null) {
             info.makeHtml(null);
         }
-        ControllerTools.openHtmlTable(null, info.getHtml());
+        HtmlTableController.open(info.getHtml());
     }
 
     @FXML

@@ -19,7 +19,8 @@ public abstract class MainMenuController_Help extends MainMenuController_Develop
     @FXML
     protected void Overview(ActionEvent event) {
         String lang = Languages.getLangName();
-        File file = FxFileTools.getInternalFile("/doc/" + lang + "/MyBox-Overview-" + lang + ".pdf", "doc", "MyBox-Overview-" + lang + ".pdf");
+        File file = FxFileTools.getInternalFile("/doc/" + lang + "/MyBox-Overview-" + lang + ".pdf",
+                "doc", "MyBox-Overview-" + lang + ".pdf");
         if (file != null && file.exists()) {
             PopTools.browseURI(this, file.toURI());
         }
@@ -36,29 +37,12 @@ public abstract class MainMenuController_Help extends MainMenuController_Develop
     }
 
     @FXML
-    public void documents(ActionEvent event) {
-        String lang = Languages.getLangName();
-        File file = FxFileTools.getInternalFile("/doc/" + lang + "/MyBox-Documents-" + lang + ".html", "doc", "MyBox-Documents-" + lang + ".html");
-        if (file != null && file.exists()) {
-            PopTools.browseURI(this, file.toURI());
-        }
-    }
-
-    @FXML
     public void readme(ActionEvent event) {
-        MarkdownEditorController c = (MarkdownEditorController) openStage(Fxmls.MarkdownEditorFxml);
-        String lang = Languages.getLangName();
-        File file = FxFileTools.getInternalFile("/doc/" + lang + "/README.md", "doc", "README-" + lang + ".md");
-        c.sourceFileChanged(file);
-    }
-
-    @FXML
-    protected void showAbout(ActionEvent event) {
-        HelpTools.about();
+        HelpTools.readMe(myController);
     }
 
     @FXML
     protected void stories(ActionEvent event) {
-        HelpTools.imageStories(this);
+        HelpTools.imageStories(parentController);
     }
 }

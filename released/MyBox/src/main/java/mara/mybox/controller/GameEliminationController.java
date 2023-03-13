@@ -721,7 +721,7 @@ public class GameEliminationController extends BaseController {
                 }
             }
             if (countedChesses.isEmpty()) {
-                if (!PopTools.askSure(this, getBaseTitle(), message("SureNoScore"))) {
+                if (!PopTools.askSure(getTitle(), message("SureNoScore"))) {
                     return;
                 }
             }
@@ -1347,7 +1347,7 @@ public class GameEliminationController extends BaseController {
             afterElimination((int) node.getUserData(), adjacent.getLength());
             findAdjacentAndEliminate();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

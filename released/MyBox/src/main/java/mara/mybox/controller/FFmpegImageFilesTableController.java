@@ -124,7 +124,7 @@ public class FFmpegImageFilesTableController extends FilesTableController {
                 return;
             }
             isSettingValues = true;
-            List<FileInformation> rows = tableView.getSelectionModel().getSelectedItems();
+            List<FileInformation> rows = selectedItems();
             if (rows == null || rows.isEmpty()) {
                 rows = tableData;
             }

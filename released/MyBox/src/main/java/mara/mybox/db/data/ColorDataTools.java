@@ -31,9 +31,10 @@ public class ColorDataTools {
                 return;
             }
             List<String> names = new ArrayList<>();
-            names.addAll(Arrays.asList("name", "rgba", "rgb", "value", "SRGB", "HSB",
+            names.addAll(Arrays.asList("name", "rgba", "rgb", "SRGB", "HSB", "rybAngle",
                     "AdobeRGB", "AppleRGB", "EciRGB", "SRGBLinear", "AdobeRGBLinear", "AppleRGBLinear",
-                    "CalculatedCMYK", "EciCMYK", "AdobeCMYK", "XYZ", "CieLab", "Lchab", "CieLuv", "Lchuv"));
+                    "CalculatedCMYK", "EciCMYK", "AdobeCMYK", "XYZ", "CieLab", "Lchab", "CieLuv", "Lchuv",
+                    "invert", "complementray", "value"));
             if (orderNumber) {
                 names.add("PaletteIndex");
             }
@@ -44,13 +45,13 @@ public class ColorDataTools {
     }
 
     public static void exportCSV(TableColor tableColor, File file) {
-        try ( Connection conn = DerbyBase.getConnection();
-                 CSVPrinter printer = CsvTools.csvPrinter(file)) {
+        try (Connection conn = DerbyBase.getConnection();
+                CSVPrinter printer = CsvTools.csvPrinter(file)) {
             conn.setReadOnly(true);
             printHeader(printer, false);
             String sql = " SELECT * FROM Color ORDER BY color_value";
-            try ( PreparedStatement statement = conn.prepareStatement(sql);
-                     ResultSet results = statement.executeQuery()) {
+            try (PreparedStatement statement = conn.prepareStatement(sql);
+                    ResultSet results = statement.executeQuery()) {
                 List<String> row = new ArrayList<>();
                 while (results.next()) {
                     ColorData data = tableColor.readData(results);
@@ -63,13 +64,13 @@ public class ColorDataTools {
     }
 
     public static void exportCSV(TableColorPalette tableColorPalette, File file, ColorPaletteName palette) {
-        try ( Connection conn = DerbyBase.getConnection();
-                 CSVPrinter printer = CsvTools.csvPrinter(file)) {
+        try (Connection conn = DerbyBase.getConnection();
+                CSVPrinter printer = CsvTools.csvPrinter(file)) {
             conn.setReadOnly(true);
             printHeader(printer, true);
             String sql = "SELECT * FROM Color_Palette_View WHERE paletteid=" + palette.getCpnid() + " ORDER BY order_number";
-            try ( PreparedStatement statement = conn.prepareStatement(sql);
-                     ResultSet results = statement.executeQuery()) {
+            try (PreparedStatement statement = conn.prepareStatement(sql);
+                    ResultSet results = statement.executeQuery()) {
                 List<String> row = new ArrayList<>();
                 while (results.next()) {
                     ColorPalette data = tableColorPalette.readData(results);
@@ -104,13 +105,16 @@ public class ColorDataTools {
             if (printer == null || row == null || data == null) {
                 return;
             }
+            if (data.needConvert()) {
+                data.convert();
+            }
             row.clear();
             row.add(data.getColorName());
             row.add(data.getRgba());
             row.add(data.getRgb());
-            row.add(data.getColorValue() + "");
             row.add(data.getSrgb());
             row.add(data.getHsb());
+            row.add(data.getRybAngle());
             row.add(data.getAdobeRGB());
             row.add(data.getAppleRGB());
             row.add(data.getEciRGB());
@@ -125,6 +129,9 @@ public class ColorDataTools {
             row.add(data.getLchab());
             row.add(data.getCieLuv());
             row.add(data.getLchuv());
+            row.add(data.getInvertRGB());
+            row.add(data.getComplementaryRGB());
+            row.add(data.getColorValue() + "");
             if (orderNumber) {
                 row.add(data.getOrderNumner() + "");
             }
@@ -137,7 +144,7 @@ public class ColorDataTools {
     public static List<ColorData> readCSV(File file, boolean reOrder) {
         List<ColorData> data = new ArrayList();
         File validFile = FileTools.removeBOM(file);
-        try ( CSVParser parser = CSVParser.parse(validFile, StandardCharsets.UTF_8, CsvTools.csvFormat())) {
+        try (CSVParser parser = CSVParser.parse(validFile, StandardCharsets.UTF_8, CsvTools.csvFormat())) {
             List<String> names = parser.getHeaderNames();
             if (names == null || (!names.contains("rgba") && !names.contains("rgb"))) {
                 return null;

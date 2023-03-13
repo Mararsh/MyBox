@@ -14,7 +14,6 @@ import java.awt.image.BufferedImage;
 import mara.mybox.controller.ControlImageText;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
-import static mara.mybox.fximage.FxColorTools.toAwtColor;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Colors;
 
@@ -53,11 +52,11 @@ public class ImageTextTools {
                                 optionsController.getBaseY() - m,
                                 optionsController.getBaseX() + optionsController.getTextWidth() + m - 1,
                                 optionsController.getBaseY() + optionsController.getTextHeight() + m - 1),
-                        toAwtColor(optionsController.getBordersStrokeColorSetController().color()),
+                        optionsController.bordersStrokeColor(),
                         optionsController.getBordersStrokeWidth(), optionsController.getBordersArc(),
                         optionsController.bordersDotted(), optionsController.bordersFilled(),
-                        toAwtColor(optionsController.getBordersFillColorSetController().color()),
-                        PixelsBlend.ImagesBlendMode.NORMAL, optionsController.getBordersOpacity(), false, true);
+                        optionsController.bordersFillColor(), opacity,
+                        PixelsBlend.blender(PixelsBlend.ImagesBlendMode.NORMAL, opacity, false, true));
             }
             Color textColor = optionsController.textColor();
             boolean noBlend = textColor.equals(Colors.TRANSPARENT);
@@ -119,9 +118,7 @@ public class ImageTextTools {
             if (noBlend) {
                 return foreImage;
             } else {
-                return ImageBlend.blend(foreImage, backImage, 0, 0,
-                        optionsController.getBlendMode(), opacity,
-                        optionsController.orderReversed(), optionsController.ignoreTransparent());
+                return PixelsBlend.blend(foreImage, backImage, 0, 0, optionsController.blender());
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

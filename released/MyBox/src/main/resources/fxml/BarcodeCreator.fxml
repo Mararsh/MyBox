@@ -145,7 +145,7 @@ License:    Apache License Version 2.0
                                                             <children>
                                                                 <Label text="%Picture" />
                                                                 <TextField fx:id="sourceFileInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                                <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popSourceFile">
+                                                                <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#pickSourceFile" onMouseEntered="#popSourceFile">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
@@ -258,7 +258,7 @@ License:    Apache License Version 2.0
                                                 </Button> 
                                                 <ComboBox fx:id="zoomStepSelector" editable="true" prefWidth="80.0" />
                                                 <Label maxWidth="1.7976931348623157E308" visible="false" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
+                                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#pickSaveAs" onMouseEntered="#popSaveAs">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>

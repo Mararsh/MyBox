@@ -8,8 +8,8 @@ package mara.mybox.value;
 public class AppValues {
 
     public static final boolean Alpha = false;
-    public static final String AppVersion = "6.7";
-    public static final String AppVersionDate = "2023-1-21";
+    public static final String AppVersion = "6.7.1";
+    public static final String AppVersionDate = "2023-3-13";
     public static final String AppDerbyUser = "mara";
     public static final String AppDerbyPassword = "mybox";
     public static final int AppYear = 2023;
@@ -22,7 +22,6 @@ public class AppValues {
 
     public static final String Indent = "    ";
     public static final int IOBufferLength = 8024;
-    public static final String HttpsProtocal = "TLSv1.2";
 
     public static final short InvalidShort = Short.MAX_VALUE;
     public static final long InvalidLong = Long.MAX_VALUE;
@@ -34,16 +33,5 @@ public class AppValues {
     public static final String GaoDeMapWebKey = "06b9e078a51325a843dfefd57ffd876c";
     public static final String GaoDeMapServiceKey = "d7444d9a7fae01fa850236d909ad4450";
     public static final String TianDiTuWebKey = "0ddeb917def62b4691500526cc30a9b1";
-
-    public static final String WhiteOnBlackStyle = "/styles/modena/whiteOnBlack.css";
-    public static final String WhiteOnBlueStyle = "/styles/modena/whiteOnBlue.css";
-    public static final String DefaultStyle = "/styles/modena/modena.css";
-    public static final String PinkOnBlackStyle = "/styles/modena/pinkOnBlack.css";
-    public static final String WhiteOnPurpleStyle = "/styles/modena/whiteOnPurple.css";
-    public static final String caspianStyle = "/styles/caspian/caspian.css";
-    public static final String YellowOnBlackStyle = "/styles/modena/yellowOnBlack.css";
-    public static final String BlackOnYellowStyle = "/styles/modena/blackOnYellow.css";
-    public static final String WhiteOnGreenStyle = "/styles/modena/whiteOnGreen.css";
-    public static final String GreenOnBlackStyle = "/styles/modena/greenOnBlack.css";
 
 }

@@ -12,13 +12,16 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.shape.Rectangle;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fxml.WindowTools.refreshInterfaceAll;
 import static mara.mybox.fxml.WindowTools.reloadAll;
 import static mara.mybox.fxml.WindowTools.styleAll;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.Colors;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -31,7 +34,7 @@ import mara.mybox.value.UserConfig;
 public abstract class MainMenuController_Settings extends MainMenuController_Media {
 
     @FXML
-    protected Menu settingsMenu;
+    protected Menu settingsMenu, languagesMenu;
     @FXML
     protected ToggleGroup langGroup;
     @FXML
@@ -41,9 +44,11 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     protected RadioMenuItem chineseMenuItem, englishMenuItem,
             font12MenuItem, font15MenuItem, font17MenuItem,
             normalIconMenuItem, bigIconMenuItem, smallIconMenuItem,
-            pinkMenuItem, redMenuItem, blueMenuItem, lightBlueMenuItem, orangeMenuItem, darkGreenMenuItem;
+            pinkMenuItem, redMenuItem, blueMenuItem, lightBlueMenuItem, orangeMenuItem, greenMenuItem, colorCustomizeMenuItem;
     @FXML
-    protected MenuItem languagesSperatorMenuItem;
+    protected Rectangle colorCustomizeRect;
+    @FXML
+    protected ImageView smallIconView, normalIconView, bigIconView;
 
     @Override
     public void initControls() {
@@ -53,6 +58,18 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
             settingsMenu.setOnShowing((Event e) -> {
                 checkSettings();
             });
+            checkSettings();
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+
             checkSettings();
 
         } catch (Exception e) {
@@ -77,12 +94,6 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     protected void checkLanguage() {
         Languages.refreshBundle();
         List<MenuItem> items = new ArrayList();
-        items.addAll(settingsMenu.getItems());
-        int pos1 = items.indexOf(englishMenuItem);
-        int pos2 = items.indexOf(languagesSperatorMenuItem);
-        for (int i = pos2 - 1; i > pos1; --i) {
-            items.remove(i);
-        }
         List<String> languages = Languages.userLanguages();
         if (languages != null && !languages.isEmpty()) {
             String lang = Languages.getLanguage();
@@ -100,7 +111,7 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
                         parentController.reload();
                     }
                 });
-                items.add(pos1 + 1 + i, langItem);
+                items.add(langItem);
                 if (name.equals(lang)) {
                     isSettingValues = true;
                     langItem.setSelected(true);
@@ -108,8 +119,12 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
                 }
             }
         }
-        settingsMenu.getItems().clear();
-        settingsMenu.getItems().addAll(items);
+        languagesMenu.getItems().clear();
+        if (!items.isEmpty()) {
+            languagesMenu.getItems().setAll(items);
+        }
+        languagesMenu.getItems().add(chineseMenuItem);
+        languagesMenu.getItems().add(englishMenuItem);
 
         if (AppVariables.currentBundle == Languages.BundleZhCN) {
             chineseMenuItem.setSelected(true);
@@ -174,10 +189,18 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
             case Orange:
                 orangeMenuItem.setSelected(true);
                 break;
-            case DarkGreen:
-                darkGreenMenuItem.setSelected(true);
+            case Green:
+                greenMenuItem.setSelected(true);
+                break;
+            case Customize:
+                colorCustomizeMenuItem.setSelected(true);
                 break;
         }
+        colorCustomizeRect.setFill(Colors.customizeColorDark());
+        Image image = StyleTools.getIconImage("iconExamples.png");
+        smallIconView.setImage(image);
+        normalIconView.setImage(image);
+        bigIconView.setImage(image);
     }
 
     @FXML
@@ -242,44 +265,47 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
 
     @FXML
     protected void setDefaultColor(ActionEvent event) {
-        StyleTools.setConfigStyleColor("red");
-        refreshInterfaceAll();
+        setRed(event);
     }
 
     @FXML
     protected void setPink(ActionEvent event) {
-        StyleTools.setConfigStyleColor("pink");
-        refreshInterfaceAll();
+        StyleTools.setConfigStyleColor(parentController, "pink");
     }
 
     @FXML
     protected void setRed(ActionEvent event) {
-        StyleTools.setConfigStyleColor("red");
-        refreshInterfaceAll();
+        StyleTools.setConfigStyleColor(parentController, "red");
     }
 
     @FXML
     protected void setBlue(ActionEvent event) {
-        StyleTools.setConfigStyleColor("blue");
-        refreshInterfaceAll();
+        StyleTools.setConfigStyleColor(parentController, "blue");
     }
 
     @FXML
     protected void setLightBlue(ActionEvent event) {
-        StyleTools.setConfigStyleColor("lightBlue");
-        refreshInterfaceAll();
+        StyleTools.setConfigStyleColor(parentController, "lightBlue");
     }
 
     @FXML
     protected void setOrange(ActionEvent event) {
-        StyleTools.setConfigStyleColor("orange");
-        refreshInterfaceAll();
+        StyleTools.setConfigStyleColor(parentController, "orange");
     }
 
     @FXML
-    protected void setDarkGeen(ActionEvent event) {
-        StyleTools.setConfigStyleColor("darkgreen");
-        refreshInterfaceAll();
+    protected void setGeen(ActionEvent event) {
+        StyleTools.setConfigStyleColor(parentController, "green");
+    }
+
+    @FXML
+    protected void setColorCustomize(ActionEvent event) {
+        StyleTools.setConfigStyleColor(parentController, "customize");
+    }
+
+    @FXML
+    protected void inputColors(ActionEvent event) {
+        SettingCustomColorsController.open(this);
     }
 
     @FXML
@@ -337,56 +363,6 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
         UserConfig.setBoolean("MousePassControlPanes", controlPanesCheck.isSelected());
     }
 
-    @FXML
-    protected void setDefaultStyle(ActionEvent event) {
-        setStyle(AppValues.DefaultStyle);
-    }
-
-    @FXML
-    protected void setWhiteOnBlackStyle(ActionEvent event) {
-        setStyle(AppValues.WhiteOnBlackStyle);
-    }
-
-    @FXML
-    protected void setYellowOnBlackStyle(ActionEvent event) {
-        setStyle(AppValues.YellowOnBlackStyle);
-    }
-
-    @FXML
-    protected void setWhiteOnGreenStyle(ActionEvent event) {
-        setStyle(AppValues.WhiteOnGreenStyle);
-    }
-
-    @FXML
-    protected void setCaspianStyle(ActionEvent event) {
-        setStyle(AppValues.caspianStyle);
-    }
-
-    @FXML
-    protected void setGreenOnBlackStyle(ActionEvent event) {
-        setStyle(AppValues.GreenOnBlackStyle);
-    }
-
-    @FXML
-    protected void setPinkOnBlackStyle(ActionEvent event) {
-        setStyle(AppValues.PinkOnBlackStyle);
-    }
-
-    @FXML
-    protected void setBlackOnYellowStyle(ActionEvent event) {
-        setStyle(AppValues.BlackOnYellowStyle);
-    }
-
-    @FXML
-    protected void setWhiteOnPurpleStyle(ActionEvent event) {
-        setStyle(AppValues.WhiteOnPurpleStyle);
-    }
-
-    @FXML
-    protected void setWhiteOnBlueStyle(ActionEvent event) {
-        setStyle(AppValues.WhiteOnBlueStyle);
-    }
-
     public void setStyle(String style) {
         try {
             UserConfig.setString("InterfaceStyle", style);
@@ -408,6 +384,11 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     @FXML
     public void clearSettings(ActionEvent event) {
         parentController.clearUserSettings();
+    }
+
+    @FXML
+    public void clearExpiredData(ActionEvent event) {
+        parentController.clearExpiredData();
     }
 
 }

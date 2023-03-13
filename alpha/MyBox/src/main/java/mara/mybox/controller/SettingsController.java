@@ -573,7 +573,8 @@ public class SettingsController extends BaseController {
 
     @FXML
     protected void defaultJVM() {
-        long defaultJVM = Runtime.getRuntime().maxMemory() / (1024 * 1024);
+        OperatingSystemMXBean osmxb = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+        long defaultJVM = osmxb.getTotalMemorySize() / (4 * 1024 * 1024);
         jvmInput.setText(defaultJVM + "");
     }
 

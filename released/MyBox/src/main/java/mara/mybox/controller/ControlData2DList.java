@@ -97,7 +97,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
             tableData2DDefinition = manageController.tableData2DDefinition;
             tableDefinition = tableData2DDefinition;
             tableName = tableDefinition.getTableName();
-            idColumn = tableDefinition.getIdColumn();
+            idColumnName = tableDefinition.getIdColumnName();
 
             if (manageController instanceof Data2DSpliceController) {
                 buttonsPane.getChildren().removeAll(renameDataButton);
@@ -141,7 +141,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
 
                 @Override
                 protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
+                    try (Connection conn = DerbyBase.getConnection()) {
                         DataInternalTable dataTable = new DataInternalTable();
                         for (String name : DataInternalTable.InternalTables) {
                             if (tableData2DDefinition.queryTable(conn, name, Data2DDefinition.Type.InternalTable) == null) {
@@ -167,7 +167,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
 
                 @Override
                 protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
+                    try (Connection conn = DerbyBase.getConnection()) {
                         List<String> tables = DerbyBase.allTables(conn);
                         DataTable dataTable = new DataTable();
                         for (String referredName : tables) {
@@ -199,8 +199,8 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
 
     @Override
     public boolean checkBeforeLoadingTableData() {
-        try ( Connection conn = DerbyBase.getConnection();) {
-            tableData2DDefinition.clearInvalid(conn, false);
+        try (Connection conn = DerbyBase.getConnection();) {
+            tableData2DDefinition.clearInvalid(task, conn, false);
         } catch (Exception e) {
         }
         return true;
@@ -222,7 +222,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
             MenuItem menu;
 
             if (!(manageController instanceof Data2DSpliceController)) {
-                menu = new MenuItem(message("Load"), StyleTools.getIconImage("iconData.png"));
+                menu = new MenuItem(message("Load"), StyleTools.getIconImageView("iconData.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     load();
                 });
@@ -230,7 +230,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
             }
 
             if (buttonsPane.getChildren().contains(renameDataButton)) {
-                menu = new MenuItem(message("Rename"), StyleTools.getIconImage("iconRename.png"));
+                menu = new MenuItem(message("Rename"), StyleTools.getIconImageView("iconInput.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     renameAction();
                 });
@@ -240,7 +240,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
             }
 
             if (buttonsPane.getChildren().contains(deleteDataButton)) {
-                menu = new MenuItem(message("Delete"), StyleTools.getIconImage("iconDelete.png"));
+                menu = new MenuItem(message("Delete"), StyleTools.getIconImageView("iconDelete.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     deleteAction();
                 });
@@ -275,7 +275,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
         }
         super.checkButtons();
         boolean isEmpty = tableData == null || tableData.isEmpty();
-        boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
+        boolean none = isNoneSelected();
         if (clearDataButton != null) {
             clearDataButton.setDisable(isEmpty);
         }
@@ -295,8 +295,8 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
         if (manageController instanceof Data2DManageController
                 || manageController instanceof DataTablesController) {
             boolean changed = false;
-            try ( Connection conn = DerbyBase.getConnection();
-                     Statement statement = conn.createStatement()) {
+            try (Connection conn = DerbyBase.getConnection();
+                    Statement statement = conn.createStatement()) {
                 for (Data2DDefinition item : data) {
                     if (item.isUserTable() && item.getSheet() != null) {
                         String referName = DerbyBase.fixedIdentifier(item.getSheet());
@@ -343,10 +343,10 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
             String sql = "SELECT d2did, sheet FROM " + tableData2DDefinition.getTableName()
                     + " WHERE  data_type = " + Data2D.type(Data2DDefinition.Type.DatabaseTable);
             boolean isCurrent = false;
-            try ( Connection conn = DerbyBase.getConnection();
-                     Statement query = conn.createStatement();
-                     Statement delete = conn.createStatement();
-                     ResultSet results = query.executeQuery(sql)) {
+            try (Connection conn = DerbyBase.getConnection();
+                    Statement query = conn.createStatement();
+                    Statement delete = conn.createStatement();
+                    ResultSet results = query.executeQuery(sql)) {
                 List<String> names = new ArrayList<>();
                 while (results.next()) {
                     names.add(results.getString("sheet"));
@@ -385,7 +385,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
 
     public void load() {
         try {
-            load(tableView.getSelectionModel().getSelectedItem());
+            load(selectedItem());
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -408,8 +408,8 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
         if (manageController.loadController == null) {
             return;
         }
-        int index = tableView.getSelectionModel().getSelectedIndex();
-        Data2DDefinition selected = tableView.getSelectionModel().getSelectedItem();
+        int index = selectedIndix();
+        Data2DDefinition selected = selectedItem();
         if (selected == null) {
             return;
         }
@@ -436,44 +436,44 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
 
             MenuItem menu;
 
-            menu = new MenuItem("CSV", StyleTools.getIconImage("iconCSV.png"));
+            menu = new MenuItem("CSV", StyleTools.getIconImageView("iconCSV.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DDefinition.openType(Data2DDefinition.Type.CSV);
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem("Excel", StyleTools.getIconImage("iconExcel.png"));
+            menu = new MenuItem("Excel", StyleTools.getIconImageView("iconExcel.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DDefinition.openType(Data2DDefinition.Type.Excel);
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Texts"), StyleTools.getIconImage("iconTxt.png"));
+            menu = new MenuItem(message("Texts"), StyleTools.getIconImageView("iconTxt.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DDefinition.openType(Data2DDefinition.Type.Texts);
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("Matrix"), StyleTools.getIconImage("iconMatrix.png"));
+            menu = new MenuItem(message("Matrix"), StyleTools.getIconImageView("iconMatrix.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DDefinition.openType(Data2DDefinition.Type.Matrix);
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("DatabaseTable"), StyleTools.getIconImage("iconDatabase.png"));
+            menu = new MenuItem(message("DatabaseTable"), StyleTools.getIconImageView("iconDatabase.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DDefinition.openType(Data2DDefinition.Type.DatabaseTable);
             });
             popMenu.getItems().add(menu);
 
-            menu = new MenuItem(message("MyBoxClipboard"), StyleTools.getIconImage("iconClipboard.png"));
+            menu = new MenuItem(message("MyBoxClipboard"), StyleTools.getIconImageView("iconClipboard.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DDefinition.openType(Data2DDefinition.Type.MyBoxClipboard);
             });
             popMenu.getItems().add(menu);
 
             popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImage("iconCancel.png"));
+            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override

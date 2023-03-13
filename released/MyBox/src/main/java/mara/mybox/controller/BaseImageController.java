@@ -36,44 +36,62 @@ public abstract class BaseImageController extends BaseImageController_Actions {
     public boolean controlAltK() {
         if (pickColorCheck != null) {
             pickColorCheck.setSelected(!pickColorCheck.isSelected());
-        } else {
+            return true;
+        } else if (imageView != null && imageView.getImage() != null) {
             isPickingColor = !isPickingColor;
             checkPickingColor();
+            return true;
+        } else {
+            return false;
         }
-        return true;
     }
 
     @Override
     public boolean controlAltT() {
         if (selectAreaCheck != null) {
             selectAreaCheck.setSelected(!selectAreaCheck.isSelected());
-        } else {
+            return true;
+        } else if (imageView != null && imageView.getImage() != null) {
             UserConfig.setBoolean(baseName + "SelectArea", !UserConfig.getBoolean(baseName + "SelectArea", false));
             checkSelect();
+            return true;
+        } else {
+            return false;
         }
-        return true;
     }
 
     @Override
     public boolean controlAlt1() {
+        if (scrollPane == null || imageView == null || imageView.getImage() == null) {
+            return false;
+        }
         loadedSize();
         return true;
     }
 
     @Override
     public boolean controlAlt2() {
+        if (scrollPane == null || imageView == null || imageView.getImage() == null) {
+            return false;
+        }
         paneSize();
         return true;
     }
 
     @Override
     public boolean controlAlt3() {
+        if (scrollPane == null || imageView == null || imageView.getImage() == null) {
+            return false;
+        }
         zoomIn();
         return true;
     }
 
     @Override
     public boolean controlAlt4() {
+        if (scrollPane == null || imageView == null || imageView.getImage() == null) {
+            return false;
+        }
         zoomOut();
         return true;
     }

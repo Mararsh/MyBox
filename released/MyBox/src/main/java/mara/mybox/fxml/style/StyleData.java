@@ -8,7 +8,7 @@ package mara.mybox.fxml.style;
 public class StyleData {
 
     public static enum StyleColor {
-        Red, Blue, LightBlue, Pink, Orange, DarkGreen
+        Red, Blue, LightBlue, Pink, Orange, Green, Customize
     }
 
     private String id, name, comments, shortcut, iconName;

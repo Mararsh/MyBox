@@ -2,17 +2,11 @@ package mara.mybox.fximage;
 
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import javafx.application.Platform;
-import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Group;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.control.Button;
 import javafx.scene.effect.Blend;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.DropShadow;
@@ -27,25 +21,14 @@ import javafx.scene.text.Text;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.bufferedimage.ColorConvertTools;
-import mara.mybox.bufferedimage.ImageBlend;
 import mara.mybox.bufferedimage.ImageTextTools;
 import mara.mybox.bufferedimage.PixelsBlend;
-import mara.mybox.bufferedimage.PixelsBlend.ImagesBlendMode;
-import mara.mybox.bufferedimage.PixelsBlendFactory;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.bufferedimage.ShadowTools;
-import mara.mybox.controller.BaseController;
 import mara.mybox.controller.ControlImageText;
-import mara.mybox.controller.ImagesBrowserController;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fximage.FxColorTools.toAwtColor;
-import mara.mybox.fxml.WindowTools;
-import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.value.AppValues;
-import mara.mybox.value.AppVariables;
-import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
 
 /**
  * @Author Mara
@@ -242,15 +225,13 @@ public class FxImageTools {
         return newImage;
     }
 
-    public static Image blend(Image foreImage, Image backImage, int x, int y,
-            ImagesBlendMode blendMode, float opacity, boolean orderReversed, boolean ignoreTransparent) {
-        if (foreImage == null || backImage == null || blendMode == null) {
+    public static Image blend(Image foreImage, Image backImage, int x, int y, PixelsBlend blender) {
+        if (foreImage == null || backImage == null || blender == null) {
             return null;
         }
         BufferedImage source1 = SwingFXUtils.fromFXImage(foreImage, null);
         BufferedImage source2 = SwingFXUtils.fromFXImage(backImage, null);
-        BufferedImage target = ImageBlend.blend(source1, source2,
-                x, y, blendMode, opacity, orderReversed, ignoreTransparent);
+        BufferedImage target = PixelsBlend.blend(source1, source2, x, y, blender);
         if (target == null) {
             target = source1;
         }
@@ -315,105 +296,6 @@ public class FxImageTools {
                 ColorConvertTools.converColor(oldColor), ColorConvertTools.converColor(newColor), distance);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
-    }
-
-    public static void blendDemoFx(BaseController parent, Button demoButton,
-            Image foreImage, Image backImage, int x, int y,
-            float opacity, boolean orderReversed, boolean ignoreTransparent) {
-        BufferedImage foreBI = null;
-        if (foreImage != null) {
-            foreBI = SwingFXUtils.fromFXImage(foreImage, null);
-        }
-        BufferedImage backBI = null;
-        if (backImage != null) {
-            backBI = SwingFXUtils.fromFXImage(backImage, null);
-        }
-        blendDemo(parent, demoButton, foreBI, backBI, x, y, opacity, orderReversed, ignoreTransparent);
-    }
-
-    public static void blendDemo(BaseController parent, Button demoButton,
-            BufferedImage foreImage, BufferedImage backImage, int x, int y,
-            float opacity, boolean orderReversed, boolean ignoreTransparent) {
-        if (parent != null) {
-            parent.popInformation(Languages.message("WaitAndHandling"), 6000);
-        }
-        if (demoButton != null) {
-            demoButton.setVisible(false);
-        }
-        Task demoTask = new Task<Void>() {
-            private List<File> files;
-
-            @Override
-            protected Void call() {
-                try {
-                    BufferedImage foreBI = foreImage;
-                    if (foreBI == null) {
-                        foreBI = SwingFXUtils.fromFXImage(new Image("img/cover" + AppValues.AppYear + "g9.png"), null);
-                    }
-                    BufferedImage backBI = backImage;
-                    if (backBI == null) {
-                        backBI = SwingFXUtils.fromFXImage(new Image("img/cover" + AppValues.AppYear + "g2.png"), null);
-                    }
-                    files = new ArrayList<>();
-                    for (String name : PixelsBlendFactory.blendModes()) {
-                        PixelsBlend.ImagesBlendMode mode = PixelsBlendFactory.blendMode(name);
-                        if (mode == PixelsBlend.ImagesBlendMode.NORMAL) {
-                            BufferedImage blended = ImageBlend.blend(foreBI, backBI, x, y, mode, 1f, orderReversed, ignoreTransparent);
-                            File tmpFile = new File(AppVariables.MyBoxTempPath + File.separator + name + "-"
-                                    + Languages.message("Opacity") + "-1.0f.png");
-                            if (ImageFileWriters.writeImageFile(blended, tmpFile)) {
-                                files.add(tmpFile);
-                            }
-                            if (opacity < 1f) {
-                                blended = ImageBlend.blend(foreBI, backBI, x, y, mode, opacity, orderReversed, ignoreTransparent);
-                                tmpFile = new File(AppVariables.MyBoxTempPath + File.separator + name + "-"
-                                        + Languages.message("Opacity") + "-" + opacity + "f.png");
-                                if (ImageFileWriters.writeImageFile(blended, tmpFile)) {
-                                    files.add(tmpFile);
-                                }
-                            }
-                        } else {
-                            BufferedImage blended = ImageBlend.blend(foreBI, backBI, x, y, mode, opacity, orderReversed, ignoreTransparent);
-                            File tmpFile = new File(AppVariables.MyBoxTempPath + File.separator + name + "-"
-                                    + Languages.message("Opacity") + "-" + opacity + "f.png");
-                            if (ImageFileWriters.writeImageFile(blended, tmpFile)) {
-                                files.add(tmpFile);
-                            }
-                        }
-                    }
-                } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
-                }
-                return null;
-            }
-
-            @Override
-            protected void succeeded() {
-                super.succeeded();
-                if (demoButton != null) {
-                    demoButton.setVisible(true);
-                }
-                if (files.isEmpty()) {
-                    return;
-                }
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            ImagesBrowserController controller
-                                    = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);
-                            controller.loadImages(files);
-                        } catch (Exception e) {
-                            MyBoxLog.error(e.toString());
-                        }
-                    }
-                });
-            }
-
-        };
-        Thread thread = new Thread(demoTask);
-        thread.setDaemon(false);
-        thread.start();
     }
 
     public static Image applyRenderHints(Image image, Map<RenderingHints.Key, Object> hints) {

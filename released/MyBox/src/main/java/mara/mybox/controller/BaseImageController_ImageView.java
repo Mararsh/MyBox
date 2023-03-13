@@ -31,6 +31,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
+import mara.mybox.tools.StringTools;
 import static mara.mybox.value.AppVariables.sceneFontSize;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -412,10 +413,10 @@ public abstract class BaseImageController_ImageView extends BaseController {
                 String info = fileInfo + "\n" + imageInfo + "\n" + loadInfo;
                 imageInfoLabel.setText(info);
                 if (imageLabel != null) {
-                    imageLabel.setText(loadInfo.replaceAll("\n", "  "));
+                    imageLabel.setText(StringTools.replaceLineBreak(loadInfo));
                 }
             } else if (imageLabel != null) {
-                imageLabel.setText((fileInfo + "\n" + imageInfo + "\n" + loadInfo).replaceAll("\n", "  "));
+                imageLabel.setText(StringTools.replaceLineBreak(fileInfo + "\n" + imageInfo + "\n" + loadInfo));
             }
             if (imageView != null && imageView.getImage() != null) {
                 if (borderLine != null) {
@@ -544,7 +545,7 @@ public abstract class BaseImageController_ImageView extends BaseController {
                 imageLabelOriginal = new Label(imageLabel.getText());
                 imageLabelOriginal.setStyle(imageLabel.getStyle());
                 imageLabel.setText(message("PickingColorsNow"));
-                imageLabel.setStyle(NodeStyleTools.darkRedText);
+                imageLabel.setStyle(NodeStyleTools.darkRedTextStyle());
             } else {
                 popInformation(message("PickingColorsNow"));
             }

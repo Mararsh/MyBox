@@ -108,7 +108,7 @@ public class ControlSelection extends BaseTableViewController<List<String>> {
     }
 
     public List<List<String>> selectedRows() {
-        return tableView.getSelectionModel().getSelectedItems();
+        return selectedItems();
     }
 
     public List<String> selectedNames() {

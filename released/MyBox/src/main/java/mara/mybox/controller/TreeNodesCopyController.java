@@ -39,7 +39,7 @@ public class TreeNodesCopyController extends TreeNodesController {
         if (manageController == null || manageController.getMyStage() == null || !manageController.getMyStage().isShowing()) {
             return;
         }
-        List<TreeNode> nodes = manageController.tableView.getSelectionModel().getSelectedItems();
+        List<TreeNode> nodes = manageController.selectedItems();
         if (nodes == null || nodes.isEmpty()) {
             alertError(message("NoData"));
             manageController.getMyStage().requestFocus();

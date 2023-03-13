@@ -20,7 +20,7 @@ public class TableDataBooleanDisplayCell extends TableDataCell {
 
     public TableDataBooleanDisplayCell(ControlData2DLoad dataControl, Data2DColumn dataColumn) {
         super(dataControl, dataColumn);
-        imageview = StyleTools.getIconImage("iconYes.png");
+        imageview = StyleTools.getIconImageView("iconYes.png");
         imageview.setPreserveRatio(true);
     }
 

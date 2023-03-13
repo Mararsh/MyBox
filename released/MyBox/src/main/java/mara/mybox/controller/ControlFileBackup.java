@@ -122,7 +122,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
     }
 
     // call this to init
-    public void setControls(BaseController parent, String baseName) {
+    public void setParameters(BaseController parent, String baseName) {
         try {
             this.parentController = parent;
             this.baseName = baseName;
@@ -171,8 +171,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
             return;
         }
         super.checkButtons();
-        boolean isEmpty = tableData == null || tableData.isEmpty();
-        boolean none = isEmpty || tableView.getSelectionModel().getSelectedItem() == null;
+        boolean none = isNoneSelected();
         if (deleteBackupButton != null) {
             deleteBackupButton.setDisable(none);
         }
@@ -297,7 +296,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
 
     @FXML
     public synchronized void clearBackups() {
-        if (sourceFile == null || !PopTools.askSure(this, getBaseTitle(), Languages.message("SureClear"))) {
+        if (sourceFile == null || !PopTools.askSure(getTitle(), Languages.message("SureClear"))) {
             return;
         }
         if (task != null) {
@@ -308,7 +307,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
             @Override
             protected boolean handle() {
                 try {
-                    tableFileBackup.clearBackups(sourceFile.getAbsolutePath());
+                    tableFileBackup.clearBackups(task, sourceFile.getAbsolutePath());
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -327,7 +326,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
 
     @FXML
     public synchronized void deleteBackups() {
-        List<FileBackup> selected = tableView.getSelectionModel().getSelectedItems();
+        List<FileBackup> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {
             return;
         }
@@ -361,7 +360,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
 
     @FXML
     public void viewBackup() {
-        FileBackup selected = tableView.getSelectionModel().getSelectedItem();
+        FileBackup selected = selectedItem();
         if (selected == null) {
             return;
         }
@@ -373,7 +372,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
         if (sourceFile == null) {
             return;
         }
-        FileBackup selected = tableView.getSelectionModel().getSelectedItem();
+        FileBackup selected = selectedItem();
         if (selected == null) {
             return;
         }
@@ -382,7 +381,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
             tableData.remove(selected);
             return;
         }
-        if (!PopTools.askSure(this, getBaseTitle(), Languages.message("SureOverrideCurrentFile"),
+        if (!PopTools.askSure(getTitle(), Languages.message("SureOverrideCurrentFile"),
                 Languages.message("CurrentFile") + ":\n   " + sourceFile + "\n" + FileTools.showFileSize(sourceFile.length())
                 + "\n\n" + Languages.message("OverrideBy") + ":\n   " + backup + "\n" + FileTools.showFileSize(backup.length()))) {
             return;
@@ -415,7 +414,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
     }
 
     public FileBackup selectedBackup() {
-        return tableView.getSelectionModel().getSelectedItem();
+        return selectedItem();
     }
 
     @FXML

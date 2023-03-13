@@ -7,13 +7,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
-import mara.mybox.db.data.VisitHistory;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.HtmlStyles;
-import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.HtmlWriteTools;
-import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -21,7 +18,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-12-05
  * @License Apache License Version 2.0
  */
-public class HtmlSetStyleController extends BaseBatchFileController {
+public class HtmlSetStyleController extends BaseBatchHtmlController {
 
     protected String css;
 
@@ -31,12 +28,7 @@ public class HtmlSetStyleController extends BaseBatchFileController {
     protected CheckBox ignoreCheck;
 
     public HtmlSetStyleController() {
-        baseTitle = Languages.message("HtmlSetStyle");
-    }
-
-    @Override
-    public void setFileType() {
-        setFileType(VisitHistory.FileType.Html);
+        baseTitle = message("HtmlSetStyle");
     }
 
     @Override
@@ -63,48 +55,8 @@ public class HtmlSetStyleController extends BaseBatchFileController {
     }
 
     @Override
-    public boolean matchType(File file) {
-        String suffix = FileNameTools.suffix(file.getName());
-        if (suffix == null) {
-            return false;
-        }
-        suffix = suffix.trim().toLowerCase();
-        return "html".equals(suffix) || "htm".equals(suffix);
-    }
-
-    @Override
-    public String handleFile(File srcFile, File targetPath) {
-        try {
-            File target = makeTargetFile(srcFile, targetPath);
-            if (target == null) {
-                return Languages.message("Skip");
-            }
-            Charset charset = TextFileTools.charset(srcFile);
-            String changed = HtmlWriteTools.setStyle(srcFile, charset, css, ignoreCheck.isSelected());
-            if (changed == null) {
-                return Languages.message("Failed");
-            }
-            TextFileTools.writeFile(target, changed, charset);
-            targetFileGenerated(target);
-            return Languages.message("Successful");
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return Languages.message("Failed");
-        }
-    }
-
-    @Override
-    public File makeTargetFile(File sourceFile, File targetPath) {
-        try {
-            String namePrefix = FileNameTools.prefix(sourceFile.getName());
-            String nameSuffix = "";
-            if (sourceFile.isFile()) {
-                nameSuffix = ".html";
-            }
-            return makeTargetFile(namePrefix, nameSuffix, targetPath);
-        } catch (Exception e) {
-            return null;
-        }
+    public String covertHtml(File srcFile, Charset charset) {
+        return HtmlWriteTools.setStyle(srcFile, charset, css, ignoreCheck.isSelected());
     }
 
 }

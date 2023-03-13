@@ -27,11 +27,7 @@ public class UserConfig {
 
     public static boolean setString(Connection conn, String key, String value) {
         userConfigValues.put(key, value);
-        if (TableUserConf.writeString(conn, key, value) >= 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return TableUserConf.writeString(conn, key, value) >= 0;
     }
 
     public static String getString(String key, String defaultValue) {
@@ -277,7 +273,7 @@ public class UserConfig {
     public static long getLong(String key, long defaultValue) {
         if (userConfigValues.containsKey(key)) {
             try {
-                long v = Long.valueOf(userConfigValues.get(key));
+                long v = Long.parseLong(userConfigValues.get(key));
                 return v;
             } catch (Exception e) {
                 //                MyBoxLog.console(e.toString());
@@ -288,7 +284,7 @@ public class UserConfig {
             if (v == null) {
                 return defaultValue;
             }
-            long d = Long.valueOf(v);
+            long d = Long.parseLong(v);
             userConfigValues.put(key, v);
             return d;
         } catch (Exception e) {
@@ -300,7 +296,7 @@ public class UserConfig {
     public static long getLong(Connection conn, String key, long defaultValue) {
         if (userConfigValues.containsKey(key)) {
             try {
-                long v = Long.valueOf(userConfigValues.get(key));
+                long v = Long.parseLong(userConfigValues.get(key));
                 return v;
             } catch (Exception e) {
                 //                MyBoxLog.console(e.toString());
@@ -311,7 +307,7 @@ public class UserConfig {
             if (v == null) {
                 return defaultValue;
             }
-            long d = Long.valueOf(v);
+            long d = Long.parseLong(v);
             userConfigValues.put(key, v);
             return d;
         } catch (Exception e) {
@@ -405,6 +401,14 @@ public class UserConfig {
     public static String warnStyle() {
         String c = warnColor();
         return "-fx-text-box-border: " + c + ";   -fx-text-fill: " + c + ";";
+    }
+
+    public static int selectorScrollSize() {
+        int size = getInt("SelectorScrollSize", 100);
+        if (size <= 0) {
+            size = 100;
+        }
+        return size;
     }
 
     public static MemoryUsageSetting getPdfMem() {

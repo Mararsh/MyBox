@@ -39,7 +39,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button> 
-                <Button fx:id="styleButton" mnemonicParsing="false" onMouseEntered="#popStyles">
+                <Button fx:id="styleButton" mnemonicParsing="false"  onAction="#showStyles"    onMouseEntered="#popStyles" >
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -143,7 +143,7 @@ License:    Apache License Version 2.0
                 </HBox>
                 <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="146.0" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
-                        <Button fx:id="styleHtmlButton" mnemonicParsing="false" onMouseEntered="#popHtmlStyle">
+                        <Button fx:id="styleHtmlButton" mnemonicParsing="false"  onAction="#showHtmlStyle"     onMouseEntered="#popHtmlStyle">
                             <graphic>
                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -201,7 +201,7 @@ License:    Apache License Version 2.0
                 </HBox>
                 <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="109.0" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
-                        <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsAction" onMouseEntered="#popSaveAs">
+                        <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#pickSaveAs" onMouseEntered="#popSaveAs">
                             <graphic>
                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                     <image>

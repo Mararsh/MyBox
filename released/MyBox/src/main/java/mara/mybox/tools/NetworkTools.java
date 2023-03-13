@@ -11,7 +11,6 @@ import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.List;
 import mara.mybox.dev.MyBoxLog;
-
 import mara.mybox.value.Languages;
 
 /**
@@ -169,7 +168,7 @@ public class NetworkTools {
                 return null;
             }
             String address = "https://ip.taobao.com/outGetIpInfo?ip=" + ip;
-            String data = HtmlReadTools.url2text(address);
+            String data = HtmlReadTools.url2html(address);
             List<String> keys = Arrays.asList(
                     "ip", "country", "area", "region", "city", "county", "isp",
                     "country_id", "area_id", "region_id", "city_id", "county_id", "isp_id");
@@ -189,7 +188,7 @@ public class NetworkTools {
                 return null;
             }
             String address = "https://www.ipaddress.com/ipv4/" + ip;
-            String data = HtmlReadTools.url2text(address);
+            String data = HtmlReadTools.url2html(address);
             List<String> keys = Arrays.asList(
                     "<tr><th>Reverse IP (<abbr title=\"Pointer Record\">PTR</abbr>)</th><td>",
                     "<tr><th><abbr title=\"Autonomous System Number\">ASN</abbr></th><td>",
@@ -277,7 +276,7 @@ public class NetworkTools {
             }
             String domain = nodes[nodes.length - 2] + "." + nodes[nodes.length - 1];
             String address = "https://" + domain + ".ipaddress.com/" + (nodes.length == 2 ? "" : host);
-            String data = HtmlReadTools.url2text(address);
+            String data = HtmlReadTools.url2html(address);
             if (data == null) {
                 return null;
             }

@@ -5,6 +5,7 @@ import java.util.List;
 import javafx.scene.paint.Color;
 import mara.mybox.db.data.GeographyCode;
 import mara.mybox.db.data.GeographyCodeTools;
+import mara.mybox.tools.StringTools;
 
 /**
  * @Author Mara
@@ -67,8 +68,8 @@ public class MapPoint {
         List<String> row = new ArrayList<>();
         row.add(longitude + "");
         row.add(latitude + "");
-        row.add(label == null ? null : label.replaceAll("\n", "<BR>"));
-        row.add(info == null ? null : info.replaceAll("\n", "<BR>"));
+        row.add(StringTools.replaceHtmlLineBreak(label));
+        row.add(StringTools.replaceHtmlLineBreak(info));
         row.add(cs.messageName());
         return row;
     }

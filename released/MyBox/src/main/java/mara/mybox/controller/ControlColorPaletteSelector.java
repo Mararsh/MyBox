@@ -8,13 +8,14 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.input.MouseEvent;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColorPaletteName;
 import mara.mybox.db.table.TableColorPaletteName;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.PaletteTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -35,147 +36,155 @@ public class ControlColorPaletteSelector extends BaseController {
     protected ListView<ColorPaletteName> palettesList;
 
     public ControlColorPaletteSelector() {
-        baseTitle = Languages.message("ColorPalettes");
+        baseTitle = message("ColorPalettes");
     }
 
-    public void setParent(ColorsManageController colorsManager) {
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            tableColorPaletteName = new TableColorPaletteName();
+
+            palettesList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+            palettesList.setCellFactory(p -> new ListCell<ColorPaletteName>() {
+                @Override
+                public void updateItem(ColorPaletteName item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        setText(null);
+                        setGraphic(null);
+                        return;
+                    }
+                    setText(item.getName());
+                }
+            });
+
+            includeAll = false;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void setParameter(ColorsManageController colorsManager) {
         parentController = colorsManager;
         includeAll = true;
-        setValues(colorsManager);
+        setManager(colorsManager);
     }
 
-    public void setValues(ColorsManageController colorsManager) {
+    public void setManager(ColorsManageController colorsManager) {
         this.colorsManager = colorsManager;
         baseName = colorsManager.baseName;
-        tableColorPaletteName = colorsManager.colorsController.tableColorPaletteName;
         ignore = null;
-
         if (includeAll) {
-            allColors = new ColorPaletteName(Languages.message("AllColors"));
-            palettesList.getItems().addAll(allColors);
+            allColors = new ColorPaletteName(message("AllColors"));
+            palettesList.getItems().add(allColors);
         } else {
             allColors = null;
         }
-        palettesList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        palettesList.setCellFactory(p -> new ListCell<ColorPaletteName>() {
-            @Override
-            public void updateItem(ColorPaletteName item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                    setGraphic(null);
-                    return;
-                }
-                setText(item.getName());
-            }
-        });
-        palettesList.setOnMouseClicked((MouseEvent event) -> {
-            if (event.getClickCount() > 1) {
-                okAction();
-            }
-        });
     }
 
     @FXML
     public void loadPalettes() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            if (allColors != null) {
-                palettesList.getItems().setAll(allColors);
-            } else {
-                palettesList.getItems().clear();
-            }
-            task = new SingletonTask<Void>(this) {
-                private List<ColorPaletteName> palettes;
+        if (task != null) {
+            task.cancel();
+        }
+        if (allColors != null) {
+            palettesList.getItems().setAll(allColors);
+        } else {
+            palettesList.getItems().clear();
+        }
+        task = new SingletonTask<Void>(this) {
+            private List<ColorPaletteName> palettes;
 
-                @Override
-                protected boolean handle() {
-                    defaultPalette = tableColorPaletteName.defaultPalette();
-                    palettes = tableColorPaletteName.query();
-                    return true;
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    defaultPalette = PaletteTools.defaultPalette(conn);
+                    palettes = tableColorPaletteName.readAll(conn);
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
                 }
+                return true;
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    if (palettes != null) {
-                        if (ignore != null) {
-                            for (ColorPaletteName palette : palettes) {
-                                if (!palette.getName().equals(ignore)) {
-                                    palettesList.getItems().add(palette);
-                                }
-                            }
-                        } else {
-                            palettesList.getItems().addAll(palettes);
-                        }
-                        String s = UserConfig.getString(baseName + "Palette", TableColorPaletteName.defaultPaletteName());
+            @Override
+            protected void whenSucceeded() {
+                if (palettes != null) {
+                    if (ignore != null) {
                         for (ColorPaletteName palette : palettes) {
-                            if (palette.getName().equals(s)) {
-                                palettesList.getSelectionModel().select(palette);
-                                return;
+                            if (!palette.getName().equals(ignore)) {
+                                palettesList.getItems().add(palette);
                             }
+                        }
+                    } else {
+                        palettesList.getItems().addAll(palettes);
+                    }
+                    String s = UserConfig.getString(baseName + "Palette", PaletteTools.defaultPaletteName());
+                    for (ColorPaletteName palette : palettes) {
+                        if (palette.getName().equals(s)) {
+                            palettesList.getSelectionModel().select(palette);
+                            return;
                         }
                     }
-                    palettesList.getSelectionModel().select(0);
                 }
+                palettesList.getSelectionModel().select(0);
+            }
 
-            };
-            start(task);
-        }
+        };
+        start(task);
     }
 
     @FXML
     public void addPalette() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            String name = PopTools.askValue(baseTitle, Languages.message("AddPalette"), Languages.message("Name"),
-                    Languages.message("ColorPalette") + new Date().getTime());
-            if (name == null || name.isBlank()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                private ColorPaletteName newPalatte;
+        String name = PopTools.askValue(baseTitle, message("AddPalette"), message("Name"),
+                message("ColorPalette") + new Date().getTime());
+        if (name == null || name.isBlank()) {
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+            private ColorPaletteName newPalatte;
 
-                @Override
-                protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
-                        if (tableColorPaletteName.find(conn, name) != null) {
-                            error = "AlreadyExisted";
-                            return false;
-                        }
-                        newPalatte = new ColorPaletteName(name);
-                        newPalatte = tableColorPaletteName.insertData(conn, newPalatte);
-                        return newPalatte != null;
-                    } catch (Exception e) {
-                        error = e.toString();
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    if (tableColorPaletteName.find(conn, name) != null) {
+                        error = "AlreadyExisted";
                         return false;
                     }
+                    newPalatte = new ColorPaletteName(name);
+                    newPalatte = tableColorPaletteName.insertData(conn, newPalatte);
+                    return newPalatte != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
                 }
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    palettesList.getItems().add(newPalatte);
-                    if (parentController != null) {
-                        parentController.popSuccessful();
-                    } else {
-                        popSuccessful();
-                        colorsManager.colorsController.palettesController.palettesList.getItems().add(newPalatte);
-                    }
-                    palettesList.getSelectionModel().select(newPalatte);
+            @Override
+            protected void whenSucceeded() {
+                palettesList.getItems().add(newPalatte);
+                if (colorsManager != null) {
+                    colorsManager.colorsController.palettesController.palettesList.getItems().add(newPalatte);
                 }
+                palettesList.getSelectionModel().select(newPalatte);
+                popSuccessful();
+            }
 
-            };
-            start(task);
-        }
+        };
+        start(task);
     }
 
-    @FXML
-    @Override
-    public void cancelAction() {
-        closeStage();
+    public ColorsManageController colorsManager() {
+        if (colorsManager == null || !colorsManager.getMyStage().isShowing()) {
+            colorsManager = ColorsManageController.oneOpen();
+        }
+        return colorsManager;
     }
 
 }

@@ -7,6 +7,7 @@ import mara.mybox.controller.ControlMap;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
+import mara.mybox.fxml.style.StyleData;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.UserConfig;
@@ -142,15 +143,21 @@ public class MapOptions {
     }
 
     public File circleImage() {
-        String path = "/" + StyleTools.getIconPath();
-        return FxFileTools.getInternalFile(path + "iconCircle.png", "map",
-                AppVariables.ControlColor.name() + "Circle.png");
+        if (AppVariables.ControlColor == StyleData.StyleColor.Customize) {
+            return new File(AppVariables.MyboxDataPath + "/buttons/iconCircle.png");
+        } else {
+            return FxFileTools.getInternalFile("/" + StyleTools.getIconPath() + "iconCircle.png", "map",
+                    AppVariables.ControlColor.name() + "Circle.png");
+        }
     }
 
     public File pointImage() {
-        String path = "/" + StyleTools.getIconPath();
-        return FxFileTools.getInternalFile(path + "iconLocation.png", "map",
-                AppVariables.ControlColor.name() + "Point.png");
+        if (AppVariables.ControlColor == StyleData.StyleColor.Customize) {
+            return new File(AppVariables.MyboxDataPath + "/buttons/iconLocation.png");
+        } else {
+            return FxFileTools.getInternalFile("/" + StyleTools.getIconPath() + "iconLocation.png", "map",
+                    AppVariables.ControlColor.name() + "Point.png");
+        }
     }
 
     public File chineseHistoricalCapitalsImage() {
@@ -467,7 +474,7 @@ public class MapOptions {
     }
 
     public MapOptions setMarkerImageFile(File file) {
-        if (!file.exists() || !file.isFile() || file.equals(markerImageFile)) {
+        if (file == null || !file.exists() || !file.isFile()) {
             return this;
         }
         markerImageFile = file;

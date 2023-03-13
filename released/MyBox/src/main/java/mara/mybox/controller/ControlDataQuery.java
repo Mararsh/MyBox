@@ -28,6 +28,7 @@ import mara.mybox.db.table.TableQueryCondition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -128,7 +129,8 @@ public class ControlDataQuery extends BaseController {
             loadList();
 
             tableDefinitonView.getEngine().loadContent(tableDefinition);
-            titleInput.setText(initCondition.getTitle() == null ? "" : initCondition.getTitle().replaceAll("\n", " "));
+            titleInput.setText(initCondition.getTitle() == null ? ""
+                    : StringTools.replaceLineBreak(initCondition.getTitle()));
             prefixInput.setText(initCondition.getPrefix());
             prefixInput.setEditable(prefixEditable);
             whereInput.setText(initCondition.getWhere());
@@ -158,7 +160,7 @@ public class ControlDataQuery extends BaseController {
                 return;
             }
             for (QueryCondition condition : list) {
-                Text node = new Text(condition.getTitle().replaceAll("\n", " "));
+                Text node = new Text(StringTools.replaceLineBreak(condition.getTitle()));
                 node.setUserData(condition);
                 listView.getItems().add(node);
             }

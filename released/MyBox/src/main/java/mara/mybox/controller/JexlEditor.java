@@ -17,11 +17,13 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.JShellTools;
+import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -90,7 +92,8 @@ public class JexlEditor extends JShellEditor {
             }
 
             String jexlScriptOrignal = "jexlScript = jexlEngine.createScript(\"" + script + "\");\n";
-            String jexlScript = "jexlScript = jexlEngine.createScript(\"" + script.replaceAll("\n", " ") + "\");\n";
+            String jexlScript = "jexlScript = jexlEngine.createScript(\""
+                    + StringTools.replaceLineBreak(script) + "\");\n";
             runSnippet(jexlScriptOrignal, jexlScript);
 
             String parameters = parametersInput.getText();
@@ -132,7 +135,7 @@ public class JexlEditor extends JShellEditor {
 
             List<Node> topButtons = new ArrayList<>();
             Button newLineButton = new Button();
-            newLineButton.setGraphic(StyleTools.getIconImage("iconTurnOver.png"));
+            newLineButton.setGraphic(StyleTools.getIconImageView("iconTurnOver.png"));
             NodeStyleTools.setTooltip(newLineButton, new Tooltip(message("Newline")));
             newLineButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -144,7 +147,7 @@ public class JexlEditor extends JShellEditor {
             topButtons.add(newLineButton);
 
             Button clearInputButton = new Button();
-            clearInputButton.setGraphic(StyleTools.getIconImage("iconClear.png"));
+            clearInputButton.setGraphic(StyleTools.getIconImageView("iconClear.png"));
             NodeStyleTools.setTooltip(clearInputButton, new Tooltip(message("ClearInputArea")));
             clearInputButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -155,8 +158,8 @@ public class JexlEditor extends JShellEditor {
             topButtons.add(clearInputButton);
 
             CheckBox popCheck = new CheckBox();
-            popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
-            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+            popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
             popCheck.setSelected(UserConfig.getBoolean(interfaceName + "ScriptExamplesPopWhenMouseHovering", false));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -363,7 +366,7 @@ public class JexlEditor extends JShellEditor {
             jlink.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    openLink("https://docs.oracle.com/en/java/javase/17/docs/api/index.html");
+                    openLink(HelpTools.javaAPILink());
                 }
             });
             controller.addNode(jlink);
@@ -374,14 +377,14 @@ public class JexlEditor extends JShellEditor {
     }
 
     @FXML
-    protected void popScriptHistories(MouseEvent mouseEvent) {
+    protected void popScriptHistories(Event event) {
         if (UserConfig.getBoolean("JexlScriptHistoriesPopWhenMouseHovering", false)) {
-            PopTools.popStringValues(this, valueInput, mouseEvent, "JexlScriptHistories", false, true);
+            showScriptHistories(event);
         }
     }
 
     @FXML
-    protected void showScriptHistories(ActionEvent event) {
+    protected void showScriptHistories(Event event) {
         PopTools.popStringValues(this, valueInput, event, "JexlScriptHistories", false, true);
     }
 
@@ -414,7 +417,7 @@ public class JexlEditor extends JShellEditor {
 
             List<Node> topButtons = new ArrayList<>();
             Button newLineButton = new Button();
-            newLineButton.setGraphic(StyleTools.getIconImage("iconTurnOver.png"));
+            newLineButton.setGraphic(StyleTools.getIconImageView("iconTurnOver.png"));
             NodeStyleTools.setTooltip(newLineButton, new Tooltip(message("Newline")));
             newLineButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -426,7 +429,7 @@ public class JexlEditor extends JShellEditor {
             topButtons.add(newLineButton);
 
             Button clearInputButton = new Button();
-            clearInputButton.setGraphic(StyleTools.getIconImage("iconClear.png"));
+            clearInputButton.setGraphic(StyleTools.getIconImageView("iconClear.png"));
             NodeStyleTools.setTooltip(clearInputButton, new Tooltip(message("ClearInputArea")));
             clearInputButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -437,8 +440,8 @@ public class JexlEditor extends JShellEditor {
             topButtons.add(clearInputButton);
 
             CheckBox popCheck = new CheckBox();
-            popCheck.setGraphic(StyleTools.getIconImage("iconPop.png"));
-            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWhenMouseHovering")));
+            popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
             popCheck.setSelected(UserConfig.getBoolean(interfaceName + "ContextExamplesPopWhenMouseHovering", false));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -477,7 +480,7 @@ public class JexlEditor extends JShellEditor {
             jlink.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    openLink("https://docs.oracle.com/en/java/javase/17/docs/api/index.html");
+                    openLink(HelpTools.javaAPILink());
                 }
             });
             controller.addNode(jlink);

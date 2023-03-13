@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+ <head>
+  <title>Items in one sentence about java</title>
+  <style type="text/css">
+             body { margin:0 auto; } 
+ table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;} 
+ th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;} 
+ th { font-weight:bold;  text-align:center;} 
+ tr { height: 1.2em;  } 
+ .center { text-align:center;  max-width:95%; } 
+ .valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;} 
+ .boldText { font-weight:bold;  } 
+ body { width: 900px; } 
+ img { max-width: 900px; } 
+ .valueText { color:#2e598a;  } 
+
+        </style>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="UTF-8">
+  <meta http-equiv="cache-control" content="no-cache">
+ </head>
+ <body>
+  <h1 align="center">Items in one sentence about java</h1>
+  <ol>
+   <li>Always assume most extreme inputs and most weird operations.</li>
+   <li>Assume user’ hardware configuration(CPU/memory/disk) is lower than average level.</li>
+   <li>Use BufferedInputStream and BufferedOutputStream for file I/O.</li>
+   <li>Use try-with-resource for file I/O.</li>
+   <li>Always consider out of memory when read/write file or data.</li>
+   <li>Notice charset when read/write text file.</li>
+   <li>Notice charset when convert between bytes and string.</li>
+   <li>Condition to determine whether reach end of file should be "len &gt; 0". If use "len != -1", endless loop may happen if zero byte is read.</li>
+   <li>Call "System.gc()" before delete/move/rename file, to avoid failure due to cache.</li>
+   <li>When handle information in tree, like files system, endless loop should be avoided. If the operation will change source node, the target node should not be the source node nor its descendants.</li>
+   <li>If delete list by indices, delete items from the end index to the start index.</li>
+   <li>When class has many parameters, do not write many constructors to initialized different sets of parameters. Better coding is static creator and chain assignment by return “this” in all “set” methods.</li>
+   <li>Anonymous class is very useful for scenario like lots of duplicated codes with only difference that several methods have difference implements.</li>
+   <li>Generic is very useful for scenario like lots of duplicated codes with only differernce of data type.</li>
+   <li>Define as less instance variables/methods as possible in class if it generates lots of instance.</li>
+   <li>As less float-point calculations as possible in loop. If can, change float-point calculations as integer calculations.</li>
+   <li>When listen data changing, need judge whether change trully happens, and avoid too frequently manufactures by setting minimum threshold of changing.</li>
+   <li>Reboot application when change JVM parameters or need clean env in simple way.</li>
+   <li>Notice whether the index is 0-based or 1-based, especially for thrid-party codes. 0-based is default. If 1-based, should write comment for it.</li>
+   <li>Generally, index in user interface starts from 1, while index in codes data starts from 0.</li>
+   <li>Generally, range(start-end) in user interface includes end, while range(start-end) in codes data excludes end.</li>
+   <li>Double.MIN_VALUE is the minimum positive double(almost zero). -Double.MAX_VALUE is the minimum double.</li>
+   <li>When handle money, store integer numbers for each unit.</li>
+   <li>BigDecimal is much slower than double. Double is enough for most situations.</li>
+   <li>To determine value's broken, write if (abs(x - 7.3) &lt; TOLERANCE) instead of if (x == 7.3).</li>
+   <li>Value of final static constant should be determined at compling time.</li>
+   <li>When JDBC read numbers, if SQL value is null, ResultSet.getDouble/getFloat/getInt/getShort returns 0. Use ResultSet.getObject instead if need distinct zero and null. <a target="_blank" href="https://docs.oracle.com/en/java/javase/18/docs/api/java.sql/java/sql/ResultSet.html#getDouble(java.lang.String)">ResultSet.html#getDouble</a></li>
+   <li>From Java18, Charset.defaultCharset() is always UTF-8. This will affect commands and results of ProcessBuilder. <a target="_blank" href="https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Process.html#inputReader()">Process</a> <a target="_blank" href="https://bugs.openjdk.org/browse/JDK-8266075">JDK-8266075</a></li>
+  </ol>
+ </body>
+</html>

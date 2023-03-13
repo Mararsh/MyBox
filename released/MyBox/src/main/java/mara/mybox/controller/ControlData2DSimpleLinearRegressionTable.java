@@ -97,7 +97,7 @@ public class ControlData2DSimpleLinearRegressionTable extends ControlData2DResul
     }
 
     public List<String> selected() {
-        return tableView.getSelectionModel().getSelectedItem();
+        return selectedItem();
     }
 
     @Override

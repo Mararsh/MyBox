@@ -328,7 +328,7 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
         }
         String value = pageSelector.getEditor().getText();
         try {
-            int v = Integer.valueOf(value);
+            int v = Integer.parseInt(value);
             if (v > 0 && v <= sourceInformation.getPagesNumber()) {
                 sourceInformation.setCurrentPage(v - 1);
                 pageSelector.getEditor().setStyle(null);

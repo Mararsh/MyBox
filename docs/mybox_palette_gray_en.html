@@ -1,0 +1,6977 @@
+<!doctype html>
+<html>
+ <head>
+  <title>Gray scale</title>
+  <style type="text/css">
+             body { margin:0 auto; } 
+ table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;} 
+ th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;} 
+ th { font-weight:bold;  text-align:center;} 
+ tr { height: 1.2em;  } 
+ .center { text-align:center;  max-width:95%; } 
+ .valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;} 
+ .boldText { font-weight:bold;  } 
+
+        </style>
+  <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+  <meta charset="US-ASCII">
+  <meta http-equiv="cache-control" content="no-cache">
+ </head>
+ <body>
+  <h2 align="center">Gray scale</h2>
+  <div align="center">
+   <table>
+    <tbody>
+     <tr style="font-weight:bold; ">
+      <th>Name</th>
+      <th>Color</th>
+      <th>Color - RGBA</th>
+      <th>Color - RGB</th>
+      <th>sRGB</th>
+      <th>HSB</th>
+      <th>Hue</th>
+      <th>Saturation</th>
+      <th>Brightness</th>
+      <th>RYB angle</th>
+      <th>Calculated CMYK</th>
+      <th>Value</th>
+      <th>RGB invert color</th>
+      <th>RGB invert color</th>
+      <th>RYB complementary color</th>
+      <th>RYB complementary color</th>
+     </tr>
+     <tr>
+      <td>Brightness:255</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#FFFFFF; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XFFFFFFFF</td>
+      <td>#FFFFFF</td>
+      <td>255 255 255 100%</td>
+      <td>0 0% 100%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>100</td>
+      <td>000</td>
+      <td>0 0 0 0</td>
+      <td>-1</td>
+      <td>
+       <div style="width: 50px;  background-color:#000000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X000000FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:254</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#FEFEFE; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XFEFEFEFF</td>
+      <td>#FEFEFE</td>
+      <td>254 254 254 100%</td>
+      <td>0 0% 100%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>100</td>
+      <td>000</td>
+      <td>0 0 0 0</td>
+      <td>-65794</td>
+      <td>
+       <div style="width: 50px;  background-color:#000000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X010101FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:253</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#FDFDFD; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XFDFDFDFF</td>
+      <td>#FDFDFD</td>
+      <td>253 253 253 100%</td>
+      <td>0 0% 99%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>099</td>
+      <td>000</td>
+      <td>0 0 0 1</td>
+      <td>-131587</td>
+      <td>
+       <div style="width: 50px;  background-color:#010101; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X020202FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:252</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#FCFCFC; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XFCFCFCFF</td>
+      <td>#FCFCFC</td>
+      <td>252 252 252 100%</td>
+      <td>0 0% 99%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>099</td>
+      <td>000</td>
+      <td>0 0 0 1</td>
+      <td>-197380</td>
+      <td>
+       <div style="width: 50px;  background-color:#020202; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X030303FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:251</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#FBFBFB; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XFBFBFBFF</td>
+      <td>#FBFBFB</td>
+      <td>251 251 251 100%</td>
+      <td>0 0% 98%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>098</td>
+      <td>000</td>
+      <td>0 0 0 2</td>
+      <td>-263173</td>
+      <td>
+       <div style="width: 50px;  background-color:#030303; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X040404FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:250</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#FAFAFA; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XFAFAFAFF</td>
+      <td>#FAFAFA</td>
+      <td>250 250 250 100%</td>
+      <td>0 0% 98%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>098</td>
+      <td>000</td>
+      <td>0 0 0 2</td>
+      <td>-328966</td>
+      <td>
+       <div style="width: 50px;  background-color:#040404; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X050505FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:249</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#F9F9F9; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XF9F9F9FF</td>
+      <td>#F9F9F9</td>
+      <td>249 249 249 100%</td>
+      <td>0 0% 98%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>098</td>
+      <td>000</td>
+      <td>0 0 0 2</td>
+      <td>-394759</td>
+      <td>
+       <div style="width: 50px;  background-color:#050505; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X060606FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:248</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#F8F8F8; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XF8F8F8FF</td>
+      <td>#F8F8F8</td>
+      <td>248 248 248 100%</td>
+      <td>0 0% 97%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>097</td>
+      <td>000</td>
+      <td>0 0 0 3</td>
+      <td>-460552</td>
+      <td>
+       <div style="width: 50px;  background-color:#060606; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X070707FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:247</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#F7F7F7; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XF7F7F7FF</td>
+      <td>#F7F7F7</td>
+      <td>247 247 247 100%</td>
+      <td>0 0% 97%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>097</td>
+      <td>000</td>
+      <td>0 0 0 3</td>
+      <td>-526345</td>
+      <td>
+       <div style="width: 50px;  background-color:#070707; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X080808FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:246</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#F6F6F6; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XF6F6F6FF</td>
+      <td>#F6F6F6</td>
+      <td>246 246 246 100%</td>
+      <td>0 0% 96%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>096</td>
+      <td>000</td>
+      <td>0 0 0 4</td>
+      <td>-592138</td>
+      <td>
+       <div style="width: 50px;  background-color:#080808; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X090909FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:245</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#F5F5F5; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XF5F5F5FF</td>
+      <td>#F5F5F5</td>
+      <td>245 245 245 100%</td>
+      <td>0 0% 96%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>096</td>
+      <td>000</td>
+      <td>0 0 0 4</td>
+      <td>-657931</td>
+      <td>
+       <div style="width: 50px;  background-color:#090909; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X0A0A0AFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:244</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#F4F4F4; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XF4F4F4FF</td>
+      <td>#F4F4F4</td>
+      <td>244 244 244 100%</td>
+      <td>0 0% 96%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>096</td>
+      <td>000</td>
+      <td>0 0 0 4</td>
+      <td>-723724</td>
+      <td>
+       <div style="width: 50px;  background-color:#0A0A0A; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X0B0B0BFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:243</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#F3F3F3; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XF3F3F3FF</td>
+      <td>#F3F3F3</td>
+      <td>243 243 243 100%</td>
+      <td>0 0% 95%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>095</td>
+      <td>000</td>
+      <td>0 0 0 5</td>
+      <td>-789517</td>
+      <td>
+       <div style="width: 50px;  background-color:#0B0B0B; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X0C0C0CFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:242</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#F2F2F2; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XF2F2F2FF</td>
+      <td>#F2F2F2</td>
+      <td>242 242 242 100%</td>
+      <td>0 0% 95%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>095</td>
+      <td>000</td>
+      <td>0 0 0 5</td>
+      <td>-855310</td>
+      <td>
+       <div style="width: 50px;  background-color:#0C0C0C; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X0D0D0DFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:241</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#F1F1F1; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XF1F1F1FF</td>
+      <td>#F1F1F1</td>
+      <td>241 241 241 100%</td>
+      <td>0 0% 95%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>095</td>
+      <td>000</td>
+      <td>0 0 0 5</td>
+      <td>-921103</td>
+      <td>
+       <div style="width: 50px;  background-color:#0D0D0D; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X0E0E0EFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:240</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#F0F0F0; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XF0F0F0FF</td>
+      <td>#F0F0F0</td>
+      <td>240 240 240 100%</td>
+      <td>0 0% 94%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>094</td>
+      <td>000</td>
+      <td>0 0 0 6</td>
+      <td>-986896</td>
+      <td>
+       <div style="width: 50px;  background-color:#0E0E0E; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X0F0F0FFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:239</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#EFEFEF; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XEFEFEFFF</td>
+      <td>#EFEFEF</td>
+      <td>239 239 239 100%</td>
+      <td>0 0% 94%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>094</td>
+      <td>000</td>
+      <td>0 0 0 6</td>
+      <td>-1052689</td>
+      <td>
+       <div style="width: 50px;  background-color:#0F0F0F; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X101010FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:238</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#EEEEEE; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XEEEEEEFF</td>
+      <td>#EEEEEE</td>
+      <td>238 238 238 100%</td>
+      <td>0 0% 93%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>093</td>
+      <td>000</td>
+      <td>0 0 0 7</td>
+      <td>-1118482</td>
+      <td>
+       <div style="width: 50px;  background-color:#101010; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X111111FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:237</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#EDEDED; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XEDEDEDFF</td>
+      <td>#EDEDED</td>
+      <td>237 237 237 100%</td>
+      <td>0 0% 93%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>093</td>
+      <td>000</td>
+      <td>0 0 0 7</td>
+      <td>-1184275</td>
+      <td>
+       <div style="width: 50px;  background-color:#111111; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X121212FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:236</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#ECECEC; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XECECECFF</td>
+      <td>#ECECEC</td>
+      <td>236 236 236 100%</td>
+      <td>0 0% 93%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>093</td>
+      <td>000</td>
+      <td>0 0 0 7</td>
+      <td>-1250068</td>
+      <td>
+       <div style="width: 50px;  background-color:#121212; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X131313FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:235</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#EBEBEB; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XEBEBEBFF</td>
+      <td>#EBEBEB</td>
+      <td>235 235 235 100%</td>
+      <td>0 0% 92%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>092</td>
+      <td>000</td>
+      <td>0 0 0 8</td>
+      <td>-1315861</td>
+      <td>
+       <div style="width: 50px;  background-color:#131313; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X141414FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:234</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#EAEAEA; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XEAEAEAFF</td>
+      <td>#EAEAEA</td>
+      <td>234 234 234 100%</td>
+      <td>0 0% 92%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>092</td>
+      <td>000</td>
+      <td>0 0 0 8</td>
+      <td>-1381654</td>
+      <td>
+       <div style="width: 50px;  background-color:#141414; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X151515FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:233</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#E9E9E9; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XE9E9E9FF</td>
+      <td>#E9E9E9</td>
+      <td>233 233 233 100%</td>
+      <td>0 0% 91%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>091</td>
+      <td>000</td>
+      <td>0 0 0 9</td>
+      <td>-1447447</td>
+      <td>
+       <div style="width: 50px;  background-color:#151515; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X161616FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:232</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#E8E8E8; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XE8E8E8FF</td>
+      <td>#E8E8E8</td>
+      <td>232 232 232 100%</td>
+      <td>0 0% 91%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>091</td>
+      <td>000</td>
+      <td>0 0 0 9</td>
+      <td>-1513240</td>
+      <td>
+       <div style="width: 50px;  background-color:#161616; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X171717FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:231</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#E7E7E7; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XE7E7E7FF</td>
+      <td>#E7E7E7</td>
+      <td>231 231 231 100%</td>
+      <td>0 0% 91%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>091</td>
+      <td>000</td>
+      <td>0 0 0 9</td>
+      <td>-1579033</td>
+      <td>
+       <div style="width: 50px;  background-color:#171717; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X181818FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:230</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#E6E6E6; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XE6E6E6FF</td>
+      <td>#E6E6E6</td>
+      <td>230 230 230 100%</td>
+      <td>0 0% 90%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>090</td>
+      <td>000</td>
+      <td>0 0 0 10</td>
+      <td>-1644826</td>
+      <td>
+       <div style="width: 50px;  background-color:#181818; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X191919FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:229</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#E5E5E5; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XE5E5E5FF</td>
+      <td>#E5E5E5</td>
+      <td>229 229 229 100%</td>
+      <td>0 0% 90%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>090</td>
+      <td>000</td>
+      <td>0 0 0 10</td>
+      <td>-1710619</td>
+      <td>
+       <div style="width: 50px;  background-color:#191919; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X1A1A1AFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:228</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#E4E4E4; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XE4E4E4FF</td>
+      <td>#E4E4E4</td>
+      <td>228 228 228 100%</td>
+      <td>0 0% 89%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>089</td>
+      <td>000</td>
+      <td>0 0 0 11</td>
+      <td>-1776412</td>
+      <td>
+       <div style="width: 50px;  background-color:#1A1A1A; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X1B1B1BFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:227</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#E3E3E3; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XE3E3E3FF</td>
+      <td>#E3E3E3</td>
+      <td>227 227 227 100%</td>
+      <td>0 0% 89%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>089</td>
+      <td>000</td>
+      <td>0 0 0 11</td>
+      <td>-1842205</td>
+      <td>
+       <div style="width: 50px;  background-color:#1B1B1B; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X1C1C1CFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:226</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#E2E2E2; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XE2E2E2FF</td>
+      <td>#E2E2E2</td>
+      <td>226 226 226 100%</td>
+      <td>0 0% 89%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>089</td>
+      <td>000</td>
+      <td>0 0 0 11</td>
+      <td>-1907998</td>
+      <td>
+       <div style="width: 50px;  background-color:#1C1C1C; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X1D1D1DFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:225</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#E1E1E1; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XE1E1E1FF</td>
+      <td>#E1E1E1</td>
+      <td>225 225 225 100%</td>
+      <td>0 0% 88%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>088</td>
+      <td>000</td>
+      <td>0 0 0 12</td>
+      <td>-1973791</td>
+      <td>
+       <div style="width: 50px;  background-color:#1D1D1D; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X1E1E1EFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:224</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#E0E0E0; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XE0E0E0FF</td>
+      <td>#E0E0E0</td>
+      <td>224 224 224 100%</td>
+      <td>0 0% 88%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>088</td>
+      <td>000</td>
+      <td>0 0 0 12</td>
+      <td>-2039584</td>
+      <td>
+       <div style="width: 50px;  background-color:#1E1E1E; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X1F1F1FFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:223</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#DFDFDF; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XDFDFDFFF</td>
+      <td>#DFDFDF</td>
+      <td>223 223 223 100%</td>
+      <td>0 0% 87%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>087</td>
+      <td>000</td>
+      <td>0 0 0 13</td>
+      <td>-2105377</td>
+      <td>
+       <div style="width: 50px;  background-color:#1F1F1F; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X202020FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:222</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#DEDEDE; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XDEDEDEFF</td>
+      <td>#DEDEDE</td>
+      <td>222 222 222 100%</td>
+      <td>0 0% 87%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>087</td>
+      <td>000</td>
+      <td>0 0 0 13</td>
+      <td>-2171170</td>
+      <td>
+       <div style="width: 50px;  background-color:#202020; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X212121FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:221</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#DDDDDD; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XDDDDDDFF</td>
+      <td>#DDDDDD</td>
+      <td>221 221 221 100%</td>
+      <td>0 0% 87%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>087</td>
+      <td>000</td>
+      <td>0 0 0 13</td>
+      <td>-2236963</td>
+      <td>
+       <div style="width: 50px;  background-color:#212121; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X222222FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:220</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#DCDCDC; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XDCDCDCFF</td>
+      <td>#DCDCDC</td>
+      <td>220 220 220 100%</td>
+      <td>0 0% 86%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>086</td>
+      <td>000</td>
+      <td>0 0 0 14</td>
+      <td>-2302756</td>
+      <td>
+       <div style="width: 50px;  background-color:#222222; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X232323FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:219</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#DBDBDB; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XDBDBDBFF</td>
+      <td>#DBDBDB</td>
+      <td>219 219 219 100%</td>
+      <td>0 0% 86%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>086</td>
+      <td>000</td>
+      <td>0 0 0 14</td>
+      <td>-2368549</td>
+      <td>
+       <div style="width: 50px;  background-color:#232323; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X242424FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:218</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#DADADA; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XDADADAFF</td>
+      <td>#DADADA</td>
+      <td>218 218 218 100%</td>
+      <td>0 0% 85%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>085</td>
+      <td>000</td>
+      <td>0 0 0 15</td>
+      <td>-2434342</td>
+      <td>
+       <div style="width: 50px;  background-color:#242424; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X252525FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:217</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#D9D9D9; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XD9D9D9FF</td>
+      <td>#D9D9D9</td>
+      <td>217 217 217 100%</td>
+      <td>0 0% 85%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>085</td>
+      <td>000</td>
+      <td>0 0 0 15</td>
+      <td>-2500135</td>
+      <td>
+       <div style="width: 50px;  background-color:#252525; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X262626FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:216</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#D8D8D8; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XD8D8D8FF</td>
+      <td>#D8D8D8</td>
+      <td>216 216 216 100%</td>
+      <td>0 0% 85%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>085</td>
+      <td>000</td>
+      <td>0 0 0 15</td>
+      <td>-2565928</td>
+      <td>
+       <div style="width: 50px;  background-color:#262626; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X272727FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:215</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#D7D7D7; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XD7D7D7FF</td>
+      <td>#D7D7D7</td>
+      <td>215 215 215 100%</td>
+      <td>0 0% 84%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>084</td>
+      <td>000</td>
+      <td>0 0 0 16</td>
+      <td>-2631721</td>
+      <td>
+       <div style="width: 50px;  background-color:#272727; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X282828FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:214</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#D6D6D6; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XD6D6D6FF</td>
+      <td>#D6D6D6</td>
+      <td>214 214 214 100%</td>
+      <td>0 0% 84%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>084</td>
+      <td>000</td>
+      <td>0 0 0 16</td>
+      <td>-2697514</td>
+      <td>
+       <div style="width: 50px;  background-color:#282828; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X292929FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:213</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#D5D5D5; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XD5D5D5FF</td>
+      <td>#D5D5D5</td>
+      <td>213 213 213 100%</td>
+      <td>0 0% 84%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>084</td>
+      <td>000</td>
+      <td>0 0 0 16</td>
+      <td>-2763307</td>
+      <td>
+       <div style="width: 50px;  background-color:#292929; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X2A2A2AFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:212</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#D4D4D4; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XD4D4D4FF</td>
+      <td>#D4D4D4</td>
+      <td>212 212 212 100%</td>
+      <td>0 0% 83%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>083</td>
+      <td>000</td>
+      <td>0 0 0 17</td>
+      <td>-2829100</td>
+      <td>
+       <div style="width: 50px;  background-color:#2A2A2A; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X2B2B2BFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:211</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#D3D3D3; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XD3D3D3FF</td>
+      <td>#D3D3D3</td>
+      <td>211 211 211 100%</td>
+      <td>0 0% 83%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>083</td>
+      <td>000</td>
+      <td>0 0 0 17</td>
+      <td>-2894893</td>
+      <td>
+       <div style="width: 50px;  background-color:#2B2B2B; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X2C2C2CFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:210</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#D2D2D2; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XD2D2D2FF</td>
+      <td>#D2D2D2</td>
+      <td>210 210 210 100%</td>
+      <td>0 0% 82%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>082</td>
+      <td>000</td>
+      <td>0 0 0 18</td>
+      <td>-2960686</td>
+      <td>
+       <div style="width: 50px;  background-color:#2C2C2C; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X2D2D2DFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:209</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#D1D1D1; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XD1D1D1FF</td>
+      <td>#D1D1D1</td>
+      <td>209 209 209 100%</td>
+      <td>0 0% 82%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>082</td>
+      <td>000</td>
+      <td>0 0 0 18</td>
+      <td>-3026479</td>
+      <td>
+       <div style="width: 50px;  background-color:#2D2D2D; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X2E2E2EFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:208</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#D0D0D0; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XD0D0D0FF</td>
+      <td>#D0D0D0</td>
+      <td>208 208 208 100%</td>
+      <td>0 0% 82%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>082</td>
+      <td>000</td>
+      <td>0 0 0 18</td>
+      <td>-3092272</td>
+      <td>
+       <div style="width: 50px;  background-color:#2E2E2E; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X2F2F2FFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:207</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#CFCFCF; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XCFCFCFFF</td>
+      <td>#CFCFCF</td>
+      <td>207 207 207 100%</td>
+      <td>0 0% 81%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>081</td>
+      <td>000</td>
+      <td>0 0 0 19</td>
+      <td>-3158065</td>
+      <td>
+       <div style="width: 50px;  background-color:#2F2F2F; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X303030FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:206</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#CECECE; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XCECECEFF</td>
+      <td>#CECECE</td>
+      <td>206 206 206 100%</td>
+      <td>0 0% 81%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>081</td>
+      <td>000</td>
+      <td>0 0 0 19</td>
+      <td>-3223858</td>
+      <td>
+       <div style="width: 50px;  background-color:#303030; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X313131FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:205</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#CDCDCD; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XCDCDCDFF</td>
+      <td>#CDCDCD</td>
+      <td>205 205 205 100%</td>
+      <td>0 0% 80%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>080</td>
+      <td>000</td>
+      <td>0 0 0 20</td>
+      <td>-3289651</td>
+      <td>
+       <div style="width: 50px;  background-color:#313131; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X323232FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:204</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#CCCCCC; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XCCCCCCFF</td>
+      <td>#CCCCCC</td>
+      <td>204 204 204 100%</td>
+      <td>0 0% 80%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>080</td>
+      <td>000</td>
+      <td>0 0 0 20</td>
+      <td>-3355444</td>
+      <td>
+       <div style="width: 50px;  background-color:#323232; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X333333FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:203</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#CBCBCB; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XCBCBCBFF</td>
+      <td>#CBCBCB</td>
+      <td>203 203 203 100%</td>
+      <td>0 0% 80%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>080</td>
+      <td>000</td>
+      <td>0 0 0 20</td>
+      <td>-3421237</td>
+      <td>
+       <div style="width: 50px;  background-color:#333333; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X343434FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:202</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#CACACA; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XCACACAFF</td>
+      <td>#CACACA</td>
+      <td>202 202 202 100%</td>
+      <td>0 0% 79%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>079</td>
+      <td>000</td>
+      <td>0 0 0 21</td>
+      <td>-3487030</td>
+      <td>
+       <div style="width: 50px;  background-color:#343434; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X353535FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:201</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#C9C9C9; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XC9C9C9FF</td>
+      <td>#C9C9C9</td>
+      <td>201 201 201 100%</td>
+      <td>0 0% 79%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>079</td>
+      <td>000</td>
+      <td>0 0 0 21</td>
+      <td>-3552823</td>
+      <td>
+       <div style="width: 50px;  background-color:#353535; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X363636FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:200</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#C8C8C8; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XC8C8C8FF</td>
+      <td>#C8C8C8</td>
+      <td>200 200 200 100%</td>
+      <td>0 0% 78%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>078</td>
+      <td>000</td>
+      <td>0 0 0 22</td>
+      <td>-3618616</td>
+      <td>
+       <div style="width: 50px;  background-color:#363636; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X373737FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:199</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#C7C7C7; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XC7C7C7FF</td>
+      <td>#C7C7C7</td>
+      <td>199 199 199 100%</td>
+      <td>0 0% 78%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>078</td>
+      <td>000</td>
+      <td>0 0 0 22</td>
+      <td>-3684409</td>
+      <td>
+       <div style="width: 50px;  background-color:#373737; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X383838FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:198</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#C6C6C6; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XC6C6C6FF</td>
+      <td>#C6C6C6</td>
+      <td>198 198 198 100%</td>
+      <td>0 0% 78%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>078</td>
+      <td>000</td>
+      <td>0 0 0 22</td>
+      <td>-3750202</td>
+      <td>
+       <div style="width: 50px;  background-color:#383838; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X393939FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:197</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#C5C5C5; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XC5C5C5FF</td>
+      <td>#C5C5C5</td>
+      <td>197 197 197 100%</td>
+      <td>0 0% 77%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>077</td>
+      <td>000</td>
+      <td>0 0 0 23</td>
+      <td>-3815995</td>
+      <td>
+       <div style="width: 50px;  background-color:#393939; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X3A3A3AFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:196</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#C4C4C4; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XC4C4C4FF</td>
+      <td>#C4C4C4</td>
+      <td>196 196 196 100%</td>
+      <td>0 0% 77%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>077</td>
+      <td>000</td>
+      <td>0 0 0 23</td>
+      <td>-3881788</td>
+      <td>
+       <div style="width: 50px;  background-color:#3A3A3A; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X3B3B3BFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:195</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#C3C3C3; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XC3C3C3FF</td>
+      <td>#C3C3C3</td>
+      <td>195 195 195 100%</td>
+      <td>0 0% 76%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>076</td>
+      <td>000</td>
+      <td>0 0 0 24</td>
+      <td>-3947581</td>
+      <td>
+       <div style="width: 50px;  background-color:#3B3B3B; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X3C3C3CFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:194</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#C2C2C2; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XC2C2C2FF</td>
+      <td>#C2C2C2</td>
+      <td>194 194 194 100%</td>
+      <td>0 0% 76%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>076</td>
+      <td>000</td>
+      <td>0 0 0 24</td>
+      <td>-4013374</td>
+      <td>
+       <div style="width: 50px;  background-color:#3C3C3C; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X3D3D3DFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:193</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#C1C1C1; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XC1C1C1FF</td>
+      <td>#C1C1C1</td>
+      <td>193 193 193 100%</td>
+      <td>0 0% 76%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>076</td>
+      <td>000</td>
+      <td>0 0 0 24</td>
+      <td>-4079167</td>
+      <td>
+       <div style="width: 50px;  background-color:#3D3D3D; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X3E3E3EFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:192</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#C0C0C0; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XC0C0C0FF</td>
+      <td>#C0C0C0</td>
+      <td>192 192 192 100%</td>
+      <td>0 0% 75%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>075</td>
+      <td>000</td>
+      <td>0 0 0 25</td>
+      <td>-4144960</td>
+      <td>
+       <div style="width: 50px;  background-color:#3E3E3E; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X3F3F3FFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:191</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#BFBFBF; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XBFBFBFFF</td>
+      <td>#BFBFBF</td>
+      <td>191 191 191 100%</td>
+      <td>0 0% 75%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>075</td>
+      <td>000</td>
+      <td>0 0 0 25</td>
+      <td>-4210753</td>
+      <td>
+       <div style="width: 50px;  background-color:#3F3F3F; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X404040FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:190</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#BEBEBE; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XBEBEBEFF</td>
+      <td>#BEBEBE</td>
+      <td>190 190 190 100%</td>
+      <td>0 0% 75%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>075</td>
+      <td>000</td>
+      <td>0 0 0 25</td>
+      <td>-4276546</td>
+      <td>
+       <div style="width: 50px;  background-color:#404040; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X414141FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:189</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#BDBDBD; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XBDBDBDFF</td>
+      <td>#BDBDBD</td>
+      <td>189 189 189 100%</td>
+      <td>0 0% 74%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>074</td>
+      <td>000</td>
+      <td>0 0 0 26</td>
+      <td>-4342339</td>
+      <td>
+       <div style="width: 50px;  background-color:#414141; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X424242FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:188</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#BCBCBC; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XBCBCBCFF</td>
+      <td>#BCBCBC</td>
+      <td>188 188 188 100%</td>
+      <td>0 0% 74%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>074</td>
+      <td>000</td>
+      <td>0 0 0 26</td>
+      <td>-4408132</td>
+      <td>
+       <div style="width: 50px;  background-color:#424242; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X434343FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:187</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#BBBBBB; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XBBBBBBFF</td>
+      <td>#BBBBBB</td>
+      <td>187 187 187 100%</td>
+      <td>0 0% 73%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>073</td>
+      <td>000</td>
+      <td>0 0 0 27</td>
+      <td>-4473925</td>
+      <td>
+       <div style="width: 50px;  background-color:#434343; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X444444FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:186</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#BABABA; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XBABABAFF</td>
+      <td>#BABABA</td>
+      <td>186 186 186 100%</td>
+      <td>0 0% 73%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>073</td>
+      <td>000</td>
+      <td>0 0 0 27</td>
+      <td>-4539718</td>
+      <td>
+       <div style="width: 50px;  background-color:#444444; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X454545FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:185</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#B9B9B9; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XB9B9B9FF</td>
+      <td>#B9B9B9</td>
+      <td>185 185 185 100%</td>
+      <td>0 0% 73%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>073</td>
+      <td>000</td>
+      <td>0 0 0 27</td>
+      <td>-4605511</td>
+      <td>
+       <div style="width: 50px;  background-color:#454545; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X464646FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:184</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#B8B8B8; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XB8B8B8FF</td>
+      <td>#B8B8B8</td>
+      <td>184 184 184 100%</td>
+      <td>0 0% 72%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>072</td>
+      <td>000</td>
+      <td>0 0 0 28</td>
+      <td>-4671304</td>
+      <td>
+       <div style="width: 50px;  background-color:#464646; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X474747FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:183</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#B7B7B7; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XB7B7B7FF</td>
+      <td>#B7B7B7</td>
+      <td>183 183 183 100%</td>
+      <td>0 0% 72%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>072</td>
+      <td>000</td>
+      <td>0 0 0 28</td>
+      <td>-4737097</td>
+      <td>
+       <div style="width: 50px;  background-color:#474747; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X484848FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:182</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#B6B6B6; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XB6B6B6FF</td>
+      <td>#B6B6B6</td>
+      <td>182 182 182 100%</td>
+      <td>0 0% 71%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>071</td>
+      <td>000</td>
+      <td>0 0 0 29</td>
+      <td>-4802890</td>
+      <td>
+       <div style="width: 50px;  background-color:#484848; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X494949FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:181</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#B5B5B5; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XB5B5B5FF</td>
+      <td>#B5B5B5</td>
+      <td>181 181 181 100%</td>
+      <td>0 0% 71%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>071</td>
+      <td>000</td>
+      <td>0 0 0 29</td>
+      <td>-4868683</td>
+      <td>
+       <div style="width: 50px;  background-color:#494949; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X4A4A4AFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:180</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#B4B4B4; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XB4B4B4FF</td>
+      <td>#B4B4B4</td>
+      <td>180 180 180 100%</td>
+      <td>0 0% 71%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>071</td>
+      <td>000</td>
+      <td>0 0 0 29</td>
+      <td>-4934476</td>
+      <td>
+       <div style="width: 50px;  background-color:#4A4A4A; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X4B4B4BFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:179</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#B3B3B3; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XB3B3B3FF</td>
+      <td>#B3B3B3</td>
+      <td>179 179 179 100%</td>
+      <td>0 0% 70%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>070</td>
+      <td>000</td>
+      <td>0 0 0 30</td>
+      <td>-5000269</td>
+      <td>
+       <div style="width: 50px;  background-color:#4B4B4B; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X4C4C4CFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:178</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#B2B2B2; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XB2B2B2FF</td>
+      <td>#B2B2B2</td>
+      <td>178 178 178 100%</td>
+      <td>0 0% 70%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>070</td>
+      <td>000</td>
+      <td>0 0 0 30</td>
+      <td>-5066062</td>
+      <td>
+       <div style="width: 50px;  background-color:#4C4C4C; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X4D4D4DFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:177</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#B1B1B1; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XB1B1B1FF</td>
+      <td>#B1B1B1</td>
+      <td>177 177 177 100%</td>
+      <td>0 0% 69%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>069</td>
+      <td>000</td>
+      <td>0 0 0 31</td>
+      <td>-5131855</td>
+      <td>
+       <div style="width: 50px;  background-color:#4D4D4D; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X4E4E4EFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:176</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#B0B0B0; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XB0B0B0FF</td>
+      <td>#B0B0B0</td>
+      <td>176 176 176 100%</td>
+      <td>0 0% 69%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>069</td>
+      <td>000</td>
+      <td>0 0 0 31</td>
+      <td>-5197648</td>
+      <td>
+       <div style="width: 50px;  background-color:#4E4E4E; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X4F4F4FFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:175</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#AFAFAF; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XAFAFAFFF</td>
+      <td>#AFAFAF</td>
+      <td>175 175 175 100%</td>
+      <td>0 0% 69%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>069</td>
+      <td>000</td>
+      <td>0 0 0 31</td>
+      <td>-5263441</td>
+      <td>
+       <div style="width: 50px;  background-color:#4F4F4F; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X505050FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:174</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#AEAEAE; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XAEAEAEFF</td>
+      <td>#AEAEAE</td>
+      <td>174 174 174 100%</td>
+      <td>0 0% 68%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>068</td>
+      <td>000</td>
+      <td>0 0 0 32</td>
+      <td>-5329234</td>
+      <td>
+       <div style="width: 50px;  background-color:#505050; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X515151FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:173</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#ADADAD; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XADADADFF</td>
+      <td>#ADADAD</td>
+      <td>173 173 173 100%</td>
+      <td>0 0% 68%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>068</td>
+      <td>000</td>
+      <td>0 0 0 32</td>
+      <td>-5395027</td>
+      <td>
+       <div style="width: 50px;  background-color:#515151; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X525252FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:172</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#ACACAC; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XACACACFF</td>
+      <td>#ACACAC</td>
+      <td>172 172 172 100%</td>
+      <td>0 0% 67%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>067</td>
+      <td>000</td>
+      <td>0 0 0 33</td>
+      <td>-5460820</td>
+      <td>
+       <div style="width: 50px;  background-color:#525252; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X535353FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:171</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#ABABAB; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XABABABFF</td>
+      <td>#ABABAB</td>
+      <td>171 171 171 100%</td>
+      <td>0 0% 67%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>067</td>
+      <td>000</td>
+      <td>0 0 0 33</td>
+      <td>-5526613</td>
+      <td>
+       <div style="width: 50px;  background-color:#535353; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X545454FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:170</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#AAAAAA; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XAAAAAAFF</td>
+      <td>#AAAAAA</td>
+      <td>170 170 170 100%</td>
+      <td>0 0% 67%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>067</td>
+      <td>000</td>
+      <td>0 0 0 33</td>
+      <td>-5592406</td>
+      <td>
+       <div style="width: 50px;  background-color:#545454; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X555555FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:169</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#A9A9A9; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XA9A9A9FF</td>
+      <td>#A9A9A9</td>
+      <td>169 169 169 100%</td>
+      <td>0 0% 66%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>066</td>
+      <td>000</td>
+      <td>0 0 0 34</td>
+      <td>-5658199</td>
+      <td>
+       <div style="width: 50px;  background-color:#555555; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X565656FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:168</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#A8A8A8; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XA8A8A8FF</td>
+      <td>#A8A8A8</td>
+      <td>168 168 168 100%</td>
+      <td>0 0% 66%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>066</td>
+      <td>000</td>
+      <td>0 0 0 34</td>
+      <td>-5723992</td>
+      <td>
+       <div style="width: 50px;  background-color:#565656; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X575757FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:167</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#A7A7A7; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XA7A7A7FF</td>
+      <td>#A7A7A7</td>
+      <td>167 167 167 100%</td>
+      <td>0 0% 65%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>065</td>
+      <td>000</td>
+      <td>0 0 0 35</td>
+      <td>-5789785</td>
+      <td>
+       <div style="width: 50px;  background-color:#575757; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X585858FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:166</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#A6A6A6; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XA6A6A6FF</td>
+      <td>#A6A6A6</td>
+      <td>166 166 166 100%</td>
+      <td>0 0% 65%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>065</td>
+      <td>000</td>
+      <td>0 0 0 35</td>
+      <td>-5855578</td>
+      <td>
+       <div style="width: 50px;  background-color:#585858; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X595959FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:165</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#A5A5A5; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XA5A5A5FF</td>
+      <td>#A5A5A5</td>
+      <td>165 165 165 100%</td>
+      <td>0 0% 65%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>065</td>
+      <td>000</td>
+      <td>0 0 0 35</td>
+      <td>-5921371</td>
+      <td>
+       <div style="width: 50px;  background-color:#595959; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X5A5A5AFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:164</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#A4A4A4; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XA4A4A4FF</td>
+      <td>#A4A4A4</td>
+      <td>164 164 164 100%</td>
+      <td>0 0% 64%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>064</td>
+      <td>000</td>
+      <td>0 0 0 36</td>
+      <td>-5987164</td>
+      <td>
+       <div style="width: 50px;  background-color:#5A5A5A; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X5B5B5BFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:163</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#A3A3A3; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XA3A3A3FF</td>
+      <td>#A3A3A3</td>
+      <td>163 163 163 100%</td>
+      <td>0 0% 64%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>064</td>
+      <td>000</td>
+      <td>0 0 0 36</td>
+      <td>-6052957</td>
+      <td>
+       <div style="width: 50px;  background-color:#5B5B5B; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X5C5C5CFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:162</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#A2A2A2; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XA2A2A2FF</td>
+      <td>#A2A2A2</td>
+      <td>162 162 162 100%</td>
+      <td>0 0% 64%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>064</td>
+      <td>000</td>
+      <td>0 0 0 36</td>
+      <td>-6118750</td>
+      <td>
+       <div style="width: 50px;  background-color:#5C5C5C; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X5D5D5DFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:161</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#A1A1A1; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XA1A1A1FF</td>
+      <td>#A1A1A1</td>
+      <td>161 161 161 100%</td>
+      <td>0 0% 63%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>063</td>
+      <td>000</td>
+      <td>0 0 0 37</td>
+      <td>-6184543</td>
+      <td>
+       <div style="width: 50px;  background-color:#5D5D5D; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X5E5E5EFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:160</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#A0A0A0; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XA0A0A0FF</td>
+      <td>#A0A0A0</td>
+      <td>160 160 160 100%</td>
+      <td>0 0% 63%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>063</td>
+      <td>000</td>
+      <td>0 0 0 37</td>
+      <td>-6250336</td>
+      <td>
+       <div style="width: 50px;  background-color:#5E5E5E; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X5F5F5FFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:159</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#9F9F9F; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X9F9F9FFF</td>
+      <td>#9F9F9F</td>
+      <td>159 159 159 100%</td>
+      <td>0 0% 62%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>062</td>
+      <td>000</td>
+      <td>0 0 0 38</td>
+      <td>-6316129</td>
+      <td>
+       <div style="width: 50px;  background-color:#5F5F5F; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X606060FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:158</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#9E9E9E; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X9E9E9EFF</td>
+      <td>#9E9E9E</td>
+      <td>158 158 158 100%</td>
+      <td>0 0% 62%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>062</td>
+      <td>000</td>
+      <td>0 0 0 38</td>
+      <td>-6381922</td>
+      <td>
+       <div style="width: 50px;  background-color:#606060; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X616161FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:157</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#9D9D9D; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X9D9D9DFF</td>
+      <td>#9D9D9D</td>
+      <td>157 157 157 100%</td>
+      <td>0 0% 62%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>062</td>
+      <td>000</td>
+      <td>0 0 0 38</td>
+      <td>-6447715</td>
+      <td>
+       <div style="width: 50px;  background-color:#616161; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X626262FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:156</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#9C9C9C; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X9C9C9CFF</td>
+      <td>#9C9C9C</td>
+      <td>156 156 156 100%</td>
+      <td>0 0% 61%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>061</td>
+      <td>000</td>
+      <td>0 0 0 39</td>
+      <td>-6513508</td>
+      <td>
+       <div style="width: 50px;  background-color:#626262; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X636363FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:155</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#9B9B9B; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X9B9B9BFF</td>
+      <td>#9B9B9B</td>
+      <td>155 155 155 100%</td>
+      <td>0 0% 61%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>061</td>
+      <td>000</td>
+      <td>0 0 0 39</td>
+      <td>-6579301</td>
+      <td>
+       <div style="width: 50px;  background-color:#636363; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X646464FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:154</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#9A9A9A; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X9A9A9AFF</td>
+      <td>#9A9A9A</td>
+      <td>154 154 154 100%</td>
+      <td>0 0% 60%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>060</td>
+      <td>000</td>
+      <td>0 0 0 40</td>
+      <td>-6645094</td>
+      <td>
+       <div style="width: 50px;  background-color:#646464; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X656565FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:153</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#999999; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X999999FF</td>
+      <td>#999999</td>
+      <td>153 153 153 100%</td>
+      <td>0 0% 60%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>060</td>
+      <td>000</td>
+      <td>0 0 0 40</td>
+      <td>-6710887</td>
+      <td>
+       <div style="width: 50px;  background-color:#656565; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X666666FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:152</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#989898; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X989898FF</td>
+      <td>#989898</td>
+      <td>152 152 152 100%</td>
+      <td>0 0% 60%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>060</td>
+      <td>000</td>
+      <td>0 0 0 40</td>
+      <td>-6776680</td>
+      <td>
+       <div style="width: 50px;  background-color:#666666; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X676767FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:151</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#979797; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X979797FF</td>
+      <td>#979797</td>
+      <td>151 151 151 100%</td>
+      <td>0 0% 59%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>059</td>
+      <td>000</td>
+      <td>0 0 0 41</td>
+      <td>-6842473</td>
+      <td>
+       <div style="width: 50px;  background-color:#676767; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X686868FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:150</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#969696; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X969696FF</td>
+      <td>#969696</td>
+      <td>150 150 150 100%</td>
+      <td>0 0% 59%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>059</td>
+      <td>000</td>
+      <td>0 0 0 41</td>
+      <td>-6908266</td>
+      <td>
+       <div style="width: 50px;  background-color:#686868; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X696969FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:149</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#959595; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X959595FF</td>
+      <td>#959595</td>
+      <td>149 149 149 100%</td>
+      <td>0 0% 58%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>058</td>
+      <td>000</td>
+      <td>0 0 0 42</td>
+      <td>-6974059</td>
+      <td>
+       <div style="width: 50px;  background-color:#696969; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X6A6A6AFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:148</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#949494; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X949494FF</td>
+      <td>#949494</td>
+      <td>148 148 148 100%</td>
+      <td>0 0% 58%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>058</td>
+      <td>000</td>
+      <td>0 0 0 42</td>
+      <td>-7039852</td>
+      <td>
+       <div style="width: 50px;  background-color:#6A6A6A; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X6B6B6BFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:147</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#939393; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X939393FF</td>
+      <td>#939393</td>
+      <td>147 147 147 100%</td>
+      <td>0 0% 58%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>058</td>
+      <td>000</td>
+      <td>0 0 0 42</td>
+      <td>-7105645</td>
+      <td>
+       <div style="width: 50px;  background-color:#6B6B6B; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X6C6C6CFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:146</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#929292; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X929292FF</td>
+      <td>#929292</td>
+      <td>146 146 146 100%</td>
+      <td>0 0% 57%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>057</td>
+      <td>000</td>
+      <td>0 0 0 43</td>
+      <td>-7171438</td>
+      <td>
+       <div style="width: 50px;  background-color:#6C6C6C; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X6D6D6DFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:145</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#919191; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X919191FF</td>
+      <td>#919191</td>
+      <td>145 145 145 100%</td>
+      <td>0 0% 57%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>057</td>
+      <td>000</td>
+      <td>0 0 0 43</td>
+      <td>-7237231</td>
+      <td>
+       <div style="width: 50px;  background-color:#6D6D6D; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X6E6E6EFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:144</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#909090; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X909090FF</td>
+      <td>#909090</td>
+      <td>144 144 144 100%</td>
+      <td>0 0% 56%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>056</td>
+      <td>000</td>
+      <td>0 0 0 44</td>
+      <td>-7303024</td>
+      <td>
+       <div style="width: 50px;  background-color:#6E6E6E; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X6F6F6FFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:143</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#8F8F8F; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X8F8F8FFF</td>
+      <td>#8F8F8F</td>
+      <td>143 143 143 100%</td>
+      <td>0 0% 56%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>056</td>
+      <td>000</td>
+      <td>0 0 0 44</td>
+      <td>-7368817</td>
+      <td>
+       <div style="width: 50px;  background-color:#6F6F6F; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X707070FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:142</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#8E8E8E; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X8E8E8EFF</td>
+      <td>#8E8E8E</td>
+      <td>142 142 142 100%</td>
+      <td>0 0% 56%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>056</td>
+      <td>000</td>
+      <td>0 0 0 44</td>
+      <td>-7434610</td>
+      <td>
+       <div style="width: 50px;  background-color:#707070; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X717171FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:141</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#8D8D8D; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X8D8D8DFF</td>
+      <td>#8D8D8D</td>
+      <td>141 141 141 100%</td>
+      <td>0 0% 55%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>055</td>
+      <td>000</td>
+      <td>0 0 0 45</td>
+      <td>-7500403</td>
+      <td>
+       <div style="width: 50px;  background-color:#717171; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X727272FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:140</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#8C8C8C; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X8C8C8CFF</td>
+      <td>#8C8C8C</td>
+      <td>140 140 140 100%</td>
+      <td>0 0% 55%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>055</td>
+      <td>000</td>
+      <td>0 0 0 45</td>
+      <td>-7566196</td>
+      <td>
+       <div style="width: 50px;  background-color:#727272; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X737373FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:139</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#8B8B8B; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X8B8B8BFF</td>
+      <td>#8B8B8B</td>
+      <td>139 139 139 100%</td>
+      <td>0 0% 55%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>055</td>
+      <td>000</td>
+      <td>0 0 0 45</td>
+      <td>-7631989</td>
+      <td>
+       <div style="width: 50px;  background-color:#737373; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X747474FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:138</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#8A8A8A; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X8A8A8AFF</td>
+      <td>#8A8A8A</td>
+      <td>138 138 138 100%</td>
+      <td>0 0% 54%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>054</td>
+      <td>000</td>
+      <td>0 0 0 46</td>
+      <td>-7697782</td>
+      <td>
+       <div style="width: 50px;  background-color:#747474; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X757575FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:137</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#898989; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X898989FF</td>
+      <td>#898989</td>
+      <td>137 137 137 100%</td>
+      <td>0 0% 54%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>054</td>
+      <td>000</td>
+      <td>0 0 0 46</td>
+      <td>-7763575</td>
+      <td>
+       <div style="width: 50px;  background-color:#757575; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X767676FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:136</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#888888; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X888888FF</td>
+      <td>#888888</td>
+      <td>136 136 136 100%</td>
+      <td>0 0% 53%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>053</td>
+      <td>000</td>
+      <td>0 0 0 47</td>
+      <td>-7829368</td>
+      <td>
+       <div style="width: 50px;  background-color:#767676; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X777777FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:135</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#878787; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X878787FF</td>
+      <td>#878787</td>
+      <td>135 135 135 100%</td>
+      <td>0 0% 53%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>053</td>
+      <td>000</td>
+      <td>0 0 0 47</td>
+      <td>-7895161</td>
+      <td>
+       <div style="width: 50px;  background-color:#777777; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X787878FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:134</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#868686; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X868686FF</td>
+      <td>#868686</td>
+      <td>134 134 134 100%</td>
+      <td>0 0% 53%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>053</td>
+      <td>000</td>
+      <td>0 0 0 47</td>
+      <td>-7960954</td>
+      <td>
+       <div style="width: 50px;  background-color:#787878; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X797979FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:133</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#858585; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X858585FF</td>
+      <td>#858585</td>
+      <td>133 133 133 100%</td>
+      <td>0 0% 52%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>052</td>
+      <td>000</td>
+      <td>0 0 0 48</td>
+      <td>-8026747</td>
+      <td>
+       <div style="width: 50px;  background-color:#797979; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X7A7A7AFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:132</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#848484; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X848484FF</td>
+      <td>#848484</td>
+      <td>132 132 132 100%</td>
+      <td>0 0% 52%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>052</td>
+      <td>000</td>
+      <td>0 0 0 48</td>
+      <td>-8092540</td>
+      <td>
+       <div style="width: 50px;  background-color:#7A7A7A; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X7B7B7BFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:131</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#838383; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X838383FF</td>
+      <td>#838383</td>
+      <td>131 131 131 100%</td>
+      <td>0 0% 51%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>051</td>
+      <td>000</td>
+      <td>0 0 0 49</td>
+      <td>-8158333</td>
+      <td>
+       <div style="width: 50px;  background-color:#7B7B7B; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X7C7C7CFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:130</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#828282; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X828282FF</td>
+      <td>#828282</td>
+      <td>130 130 130 100%</td>
+      <td>0 0% 51%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>051</td>
+      <td>000</td>
+      <td>0 0 0 49</td>
+      <td>-8224126</td>
+      <td>
+       <div style="width: 50px;  background-color:#7C7C7C; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X7D7D7DFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:129</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#818181; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X818181FF</td>
+      <td>#818181</td>
+      <td>129 129 129 100%</td>
+      <td>0 0% 51%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>051</td>
+      <td>000</td>
+      <td>0 0 0 49</td>
+      <td>-8289919</td>
+      <td>
+       <div style="width: 50px;  background-color:#7D7D7D; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X7E7E7EFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:128</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#808080; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X808080FF</td>
+      <td>#808080</td>
+      <td>128 128 128 100%</td>
+      <td>0 0% 50%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>050</td>
+      <td>000</td>
+      <td>0 0 0 50</td>
+      <td>-8355712</td>
+      <td>
+       <div style="width: 50px;  background-color:#7E7E7E; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X7F7F7FFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:127</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#7F7F7F; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X7F7F7FFF</td>
+      <td>#7F7F7F</td>
+      <td>127 127 127 100%</td>
+      <td>0 0% 50%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>050</td>
+      <td>000</td>
+      <td>0 0 0 50</td>
+      <td>-8421505</td>
+      <td>
+       <div style="width: 50px;  background-color:#7F7F7F; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X808080FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:126</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#7E7E7E; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X7E7E7EFF</td>
+      <td>#7E7E7E</td>
+      <td>126 126 126 100%</td>
+      <td>0 0% 49%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>049</td>
+      <td>000</td>
+      <td>0 0 0 51</td>
+      <td>-8487298</td>
+      <td>
+       <div style="width: 50px;  background-color:#818181; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X818181FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:125</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#7D7D7D; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X7D7D7DFF</td>
+      <td>#7D7D7D</td>
+      <td>125 125 125 100%</td>
+      <td>0 0% 49%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>049</td>
+      <td>000</td>
+      <td>0 0 0 51</td>
+      <td>-8553091</td>
+      <td>
+       <div style="width: 50px;  background-color:#818181; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X828282FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:124</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#7C7C7C; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X7C7C7CFF</td>
+      <td>#7C7C7C</td>
+      <td>124 124 124 100%</td>
+      <td>0 0% 49%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>049</td>
+      <td>000</td>
+      <td>0 0 0 51</td>
+      <td>-8618884</td>
+      <td>
+       <div style="width: 50px;  background-color:#838383; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X838383FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:123</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#7B7B7B; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X7B7B7BFF</td>
+      <td>#7B7B7B</td>
+      <td>123 123 123 100%</td>
+      <td>0 0% 48%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>048</td>
+      <td>000</td>
+      <td>0 0 0 52</td>
+      <td>-8684677</td>
+      <td>
+       <div style="width: 50px;  background-color:#838383; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X848484FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:122</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#7A7A7A; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X7A7A7AFF</td>
+      <td>#7A7A7A</td>
+      <td>122 122 122 100%</td>
+      <td>0 0% 48%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>048</td>
+      <td>000</td>
+      <td>0 0 0 52</td>
+      <td>-8750470</td>
+      <td>
+       <div style="width: 50px;  background-color:#858585; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X858585FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:121</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#797979; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X797979FF</td>
+      <td>#797979</td>
+      <td>121 121 121 100%</td>
+      <td>0 0% 47%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>047</td>
+      <td>000</td>
+      <td>0 0 0 53</td>
+      <td>-8816263</td>
+      <td>
+       <div style="width: 50px;  background-color:#858585; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X868686FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:120</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#787878; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X787878FF</td>
+      <td>#787878</td>
+      <td>120 120 120 100%</td>
+      <td>0 0% 47%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>047</td>
+      <td>000</td>
+      <td>0 0 0 53</td>
+      <td>-8882056</td>
+      <td>
+       <div style="width: 50px;  background-color:#878787; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X878787FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:119</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#777777; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X777777FF</td>
+      <td>#777777</td>
+      <td>119 119 119 100%</td>
+      <td>0 0% 47%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>047</td>
+      <td>000</td>
+      <td>0 0 0 53</td>
+      <td>-8947849</td>
+      <td>
+       <div style="width: 50px;  background-color:#878787; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X888888FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:118</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#767676; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X767676FF</td>
+      <td>#767676</td>
+      <td>118 118 118 100%</td>
+      <td>0 0% 46%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>046</td>
+      <td>000</td>
+      <td>0 0 0 54</td>
+      <td>-9013642</td>
+      <td>
+       <div style="width: 50px;  background-color:#898989; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X898989FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:117</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#757575; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X757575FF</td>
+      <td>#757575</td>
+      <td>117 117 117 100%</td>
+      <td>0 0% 46%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>046</td>
+      <td>000</td>
+      <td>0 0 0 54</td>
+      <td>-9079435</td>
+      <td>
+       <div style="width: 50px;  background-color:#898989; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X8A8A8AFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:116</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#747474; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X747474FF</td>
+      <td>#747474</td>
+      <td>116 116 116 100%</td>
+      <td>0 0% 45%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>045</td>
+      <td>000</td>
+      <td>0 0 0 55</td>
+      <td>-9145228</td>
+      <td>
+       <div style="width: 50px;  background-color:#8B8B8B; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X8B8B8BFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:115</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#737373; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X737373FF</td>
+      <td>#737373</td>
+      <td>115 115 115 100%</td>
+      <td>0 0% 45%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>045</td>
+      <td>000</td>
+      <td>0 0 0 55</td>
+      <td>-9211021</td>
+      <td>
+       <div style="width: 50px;  background-color:#8B8B8B; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X8C8C8CFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:114</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#727272; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X727272FF</td>
+      <td>#727272</td>
+      <td>114 114 114 100%</td>
+      <td>0 0% 45%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>045</td>
+      <td>000</td>
+      <td>0 0 0 55</td>
+      <td>-9276814</td>
+      <td>
+       <div style="width: 50px;  background-color:#8D8D8D; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X8D8D8DFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:113</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#717171; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X717171FF</td>
+      <td>#717171</td>
+      <td>113 113 113 100%</td>
+      <td>0 0% 44%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>044</td>
+      <td>000</td>
+      <td>0 0 0 56</td>
+      <td>-9342607</td>
+      <td>
+       <div style="width: 50px;  background-color:#8D8D8D; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X8E8E8EFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:112</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#707070; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X707070FF</td>
+      <td>#707070</td>
+      <td>112 112 112 100%</td>
+      <td>0 0% 44%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>044</td>
+      <td>000</td>
+      <td>0 0 0 56</td>
+      <td>-9408400</td>
+      <td>
+       <div style="width: 50px;  background-color:#8F8F8F; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X8F8F8FFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:111</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#6F6F6F; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X6F6F6FFF</td>
+      <td>#6F6F6F</td>
+      <td>111 111 111 100%</td>
+      <td>0 0% 44%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>044</td>
+      <td>000</td>
+      <td>0 0 0 56</td>
+      <td>-9474193</td>
+      <td>
+       <div style="width: 50px;  background-color:#8F8F8F; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X909090FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:110</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#6E6E6E; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X6E6E6EFF</td>
+      <td>#6E6E6E</td>
+      <td>110 110 110 100%</td>
+      <td>0 0% 43%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>043</td>
+      <td>000</td>
+      <td>0 0 0 57</td>
+      <td>-9539986</td>
+      <td>
+       <div style="width: 50px;  background-color:#919191; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X919191FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:109</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#6D6D6D; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X6D6D6DFF</td>
+      <td>#6D6D6D</td>
+      <td>109 109 109 100%</td>
+      <td>0 0% 43%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>043</td>
+      <td>000</td>
+      <td>0 0 0 57</td>
+      <td>-9605779</td>
+      <td>
+       <div style="width: 50px;  background-color:#919191; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X929292FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:108</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#6C6C6C; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X6C6C6CFF</td>
+      <td>#6C6C6C</td>
+      <td>108 108 108 100%</td>
+      <td>0 0% 42%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>042</td>
+      <td>000</td>
+      <td>0 0 0 58</td>
+      <td>-9671572</td>
+      <td>
+       <div style="width: 50px;  background-color:#939393; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X939393FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:107</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#6B6B6B; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X6B6B6BFF</td>
+      <td>#6B6B6B</td>
+      <td>107 107 107 100%</td>
+      <td>0 0% 42%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>042</td>
+      <td>000</td>
+      <td>0 0 0 58</td>
+      <td>-9737365</td>
+      <td>
+       <div style="width: 50px;  background-color:#939393; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X949494FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:106</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#6A6A6A; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X6A6A6AFF</td>
+      <td>#6A6A6A</td>
+      <td>106 106 106 100%</td>
+      <td>0 0% 42%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>042</td>
+      <td>000</td>
+      <td>0 0 0 58</td>
+      <td>-9803158</td>
+      <td>
+       <div style="width: 50px;  background-color:#959595; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X959595FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:105</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#696969; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X696969FF</td>
+      <td>#696969</td>
+      <td>105 105 105 100%</td>
+      <td>0 0% 41%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>041</td>
+      <td>000</td>
+      <td>0 0 0 59</td>
+      <td>-9868951</td>
+      <td>
+       <div style="width: 50px;  background-color:#959595; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X969696FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:104</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#686868; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X686868FF</td>
+      <td>#686868</td>
+      <td>104 104 104 100%</td>
+      <td>0 0% 41%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>041</td>
+      <td>000</td>
+      <td>0 0 0 59</td>
+      <td>-9934744</td>
+      <td>
+       <div style="width: 50px;  background-color:#979797; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X979797FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:103</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#676767; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X676767FF</td>
+      <td>#676767</td>
+      <td>103 103 103 100%</td>
+      <td>0 0% 40%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>040</td>
+      <td>000</td>
+      <td>0 0 0 60</td>
+      <td>-10000537</td>
+      <td>
+       <div style="width: 50px;  background-color:#979797; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X989898FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:102</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#666666; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X666666FF</td>
+      <td>#666666</td>
+      <td>102 102 102 100%</td>
+      <td>0 0% 40%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>040</td>
+      <td>000</td>
+      <td>0 0 0 60</td>
+      <td>-10066330</td>
+      <td>
+       <div style="width: 50px;  background-color:#999999; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X999999FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:101</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#656565; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X656565FF</td>
+      <td>#656565</td>
+      <td>101 101 101 100%</td>
+      <td>0 0% 40%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>040</td>
+      <td>000</td>
+      <td>0 0 0 60</td>
+      <td>-10132123</td>
+      <td>
+       <div style="width: 50px;  background-color:#999999; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X9A9A9AFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:100</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#646464; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X646464FF</td>
+      <td>#646464</td>
+      <td>100 100 100 100%</td>
+      <td>0 0% 39%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>039</td>
+      <td>000</td>
+      <td>0 0 0 61</td>
+      <td>-10197916</td>
+      <td>
+       <div style="width: 50px;  background-color:#9B9B9B; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X9B9B9BFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:99</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#636363; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X636363FF</td>
+      <td>#636363</td>
+      <td>99 99 99 100%</td>
+      <td>0 0% 39%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>039</td>
+      <td>000</td>
+      <td>0 0 0 61</td>
+      <td>-10263709</td>
+      <td>
+       <div style="width: 50px;  background-color:#9B9B9B; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X9C9C9CFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:98</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#626262; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X626262FF</td>
+      <td>#626262</td>
+      <td>98 98 98 100%</td>
+      <td>0 0% 38%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>038</td>
+      <td>000</td>
+      <td>0 0 0 62</td>
+      <td>-10329502</td>
+      <td>
+       <div style="width: 50px;  background-color:#9D9D9D; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X9D9D9DFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:97</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#616161; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X616161FF</td>
+      <td>#616161</td>
+      <td>97 97 97 100%</td>
+      <td>0 0% 38%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>038</td>
+      <td>000</td>
+      <td>0 0 0 62</td>
+      <td>-10395295</td>
+      <td>
+       <div style="width: 50px;  background-color:#9D9D9D; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X9E9E9EFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:96</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#606060; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X606060FF</td>
+      <td>#606060</td>
+      <td>96 96 96 100%</td>
+      <td>0 0% 38%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>038</td>
+      <td>000</td>
+      <td>0 0 0 62</td>
+      <td>-10461088</td>
+      <td>
+       <div style="width: 50px;  background-color:#9F9F9F; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X9F9F9FFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:95</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#5F5F5F; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X5F5F5FFF</td>
+      <td>#5F5F5F</td>
+      <td>95 95 95 100%</td>
+      <td>0 0% 37%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>037</td>
+      <td>000</td>
+      <td>0 0 0 63</td>
+      <td>-10526881</td>
+      <td>
+       <div style="width: 50px;  background-color:#9F9F9F; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XA0A0A0FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:94</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#5E5E5E; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X5E5E5EFF</td>
+      <td>#5E5E5E</td>
+      <td>94 94 94 100%</td>
+      <td>0 0% 37%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>037</td>
+      <td>000</td>
+      <td>0 0 0 63</td>
+      <td>-10592674</td>
+      <td>
+       <div style="width: 50px;  background-color:#A1A1A1; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XA1A1A1FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:93</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#5D5D5D; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X5D5D5DFF</td>
+      <td>#5D5D5D</td>
+      <td>93 93 93 100%</td>
+      <td>0 0% 36%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>036</td>
+      <td>000</td>
+      <td>0 0 0 64</td>
+      <td>-10658467</td>
+      <td>
+       <div style="width: 50px;  background-color:#A1A1A1; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XA2A2A2FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:92</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#5C5C5C; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X5C5C5CFF</td>
+      <td>#5C5C5C</td>
+      <td>92 92 92 100%</td>
+      <td>0 0% 36%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>036</td>
+      <td>000</td>
+      <td>0 0 0 64</td>
+      <td>-10724260</td>
+      <td>
+       <div style="width: 50px;  background-color:#A3A3A3; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XA3A3A3FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:91</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#5B5B5B; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X5B5B5BFF</td>
+      <td>#5B5B5B</td>
+      <td>91 91 91 100%</td>
+      <td>0 0% 36%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>036</td>
+      <td>000</td>
+      <td>0 0 0 64</td>
+      <td>-10790053</td>
+      <td>
+       <div style="width: 50px;  background-color:#A3A3A3; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XA4A4A4FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:90</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#5A5A5A; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X5A5A5AFF</td>
+      <td>#5A5A5A</td>
+      <td>90 90 90 100%</td>
+      <td>0 0% 35%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>035</td>
+      <td>000</td>
+      <td>0 0 0 65</td>
+      <td>-10855846</td>
+      <td>
+       <div style="width: 50px;  background-color:#A5A5A5; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XA5A5A5FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:89</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#595959; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X595959FF</td>
+      <td>#595959</td>
+      <td>89 89 89 100%</td>
+      <td>0 0% 35%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>035</td>
+      <td>000</td>
+      <td>0 0 0 65</td>
+      <td>-10921639</td>
+      <td>
+       <div style="width: 50px;  background-color:#A5A5A5; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XA6A6A6FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:88</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#585858; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X585858FF</td>
+      <td>#585858</td>
+      <td>88 88 88 100%</td>
+      <td>0 0% 35%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>035</td>
+      <td>000</td>
+      <td>0 0 0 65</td>
+      <td>-10987432</td>
+      <td>
+       <div style="width: 50px;  background-color:#A7A7A7; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XA7A7A7FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:87</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#575757; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X575757FF</td>
+      <td>#575757</td>
+      <td>87 87 87 100%</td>
+      <td>0 0% 34%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>034</td>
+      <td>000</td>
+      <td>0 0 0 66</td>
+      <td>-11053225</td>
+      <td>
+       <div style="width: 50px;  background-color:#A7A7A7; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XA8A8A8FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:86</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#565656; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X565656FF</td>
+      <td>#565656</td>
+      <td>86 86 86 100%</td>
+      <td>0 0% 34%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>034</td>
+      <td>000</td>
+      <td>0 0 0 66</td>
+      <td>-11119018</td>
+      <td>
+       <div style="width: 50px;  background-color:#A9A9A9; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XA9A9A9FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:85</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#555555; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X555555FF</td>
+      <td>#555555</td>
+      <td>85 85 85 100%</td>
+      <td>0 0% 33%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>033</td>
+      <td>000</td>
+      <td>0 0 0 67</td>
+      <td>-11184811</td>
+      <td>
+       <div style="width: 50px;  background-color:#A9A9A9; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XAAAAAAFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:84</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#545454; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X545454FF</td>
+      <td>#545454</td>
+      <td>84 84 84 100%</td>
+      <td>0 0% 33%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>033</td>
+      <td>000</td>
+      <td>0 0 0 67</td>
+      <td>-11250604</td>
+      <td>
+       <div style="width: 50px;  background-color:#ABABAB; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XABABABFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:83</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#535353; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X535353FF</td>
+      <td>#535353</td>
+      <td>83 83 83 100%</td>
+      <td>0 0% 33%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>033</td>
+      <td>000</td>
+      <td>0 0 0 67</td>
+      <td>-11316397</td>
+      <td>
+       <div style="width: 50px;  background-color:#ABABAB; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XACACACFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:82</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#525252; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X525252FF</td>
+      <td>#525252</td>
+      <td>82 82 82 100%</td>
+      <td>0 0% 32%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>032</td>
+      <td>000</td>
+      <td>0 0 0 68</td>
+      <td>-11382190</td>
+      <td>
+       <div style="width: 50px;  background-color:#ADADAD; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XADADADFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:81</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#515151; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X515151FF</td>
+      <td>#515151</td>
+      <td>81 81 81 100%</td>
+      <td>0 0% 32%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>032</td>
+      <td>000</td>
+      <td>0 0 0 68</td>
+      <td>-11447983</td>
+      <td>
+       <div style="width: 50px;  background-color:#ADADAD; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XAEAEAEFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:80</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#505050; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X505050FF</td>
+      <td>#505050</td>
+      <td>80 80 80 100%</td>
+      <td>0 0% 31%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>031</td>
+      <td>000</td>
+      <td>0 0 0 69</td>
+      <td>-11513776</td>
+      <td>
+       <div style="width: 50px;  background-color:#AFAFAF; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XAFAFAFFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:79</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#4F4F4F; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X4F4F4FFF</td>
+      <td>#4F4F4F</td>
+      <td>79 79 79 100%</td>
+      <td>0 0% 31%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>031</td>
+      <td>000</td>
+      <td>0 0 0 69</td>
+      <td>-11579569</td>
+      <td>
+       <div style="width: 50px;  background-color:#AFAFAF; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XB0B0B0FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:78</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#4E4E4E; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X4E4E4EFF</td>
+      <td>#4E4E4E</td>
+      <td>78 78 78 100%</td>
+      <td>0 0% 31%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>031</td>
+      <td>000</td>
+      <td>0 0 0 69</td>
+      <td>-11645362</td>
+      <td>
+       <div style="width: 50px;  background-color:#B1B1B1; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XB1B1B1FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:77</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#4D4D4D; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X4D4D4DFF</td>
+      <td>#4D4D4D</td>
+      <td>77 77 77 100%</td>
+      <td>0 0% 30%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>030</td>
+      <td>000</td>
+      <td>0 0 0 70</td>
+      <td>-11711155</td>
+      <td>
+       <div style="width: 50px;  background-color:#B1B1B1; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XB2B2B2FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:76</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#4C4C4C; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X4C4C4CFF</td>
+      <td>#4C4C4C</td>
+      <td>76 76 76 100%</td>
+      <td>0 0% 30%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>030</td>
+      <td>000</td>
+      <td>0 0 0 70</td>
+      <td>-11776948</td>
+      <td>
+       <div style="width: 50px;  background-color:#B3B3B3; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XB3B3B3FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:75</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#4B4B4B; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X4B4B4BFF</td>
+      <td>#4B4B4B</td>
+      <td>75 75 75 100%</td>
+      <td>0 0% 29%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>029</td>
+      <td>000</td>
+      <td>0 0 0 71</td>
+      <td>-11842741</td>
+      <td>
+       <div style="width: 50px;  background-color:#B3B3B3; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XB4B4B4FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:74</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#4A4A4A; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X4A4A4AFF</td>
+      <td>#4A4A4A</td>
+      <td>74 74 74 100%</td>
+      <td>0 0% 29%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>029</td>
+      <td>000</td>
+      <td>0 0 0 71</td>
+      <td>-11908534</td>
+      <td>
+       <div style="width: 50px;  background-color:#B5B5B5; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XB5B5B5FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:73</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#494949; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X494949FF</td>
+      <td>#494949</td>
+      <td>73 73 73 100%</td>
+      <td>0 0% 29%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>029</td>
+      <td>000</td>
+      <td>0 0 0 71</td>
+      <td>-11974327</td>
+      <td>
+       <div style="width: 50px;  background-color:#B5B5B5; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XB6B6B6FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:72</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#484848; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X484848FF</td>
+      <td>#484848</td>
+      <td>72 72 72 100%</td>
+      <td>0 0% 28%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>028</td>
+      <td>000</td>
+      <td>0 0 0 72</td>
+      <td>-12040120</td>
+      <td>
+       <div style="width: 50px;  background-color:#B7B7B7; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XB7B7B7FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:71</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#474747; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X474747FF</td>
+      <td>#474747</td>
+      <td>71 71 71 100%</td>
+      <td>0 0% 28%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>028</td>
+      <td>000</td>
+      <td>0 0 0 72</td>
+      <td>-12105913</td>
+      <td>
+       <div style="width: 50px;  background-color:#B7B7B7; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XB8B8B8FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:70</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#464646; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X464646FF</td>
+      <td>#464646</td>
+      <td>70 70 70 100%</td>
+      <td>0 0% 27%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>027</td>
+      <td>000</td>
+      <td>0 0 0 73</td>
+      <td>-12171706</td>
+      <td>
+       <div style="width: 50px;  background-color:#B9B9B9; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XB9B9B9FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:69</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#454545; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X454545FF</td>
+      <td>#454545</td>
+      <td>69 69 69 100%</td>
+      <td>0 0% 27%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>027</td>
+      <td>000</td>
+      <td>0 0 0 73</td>
+      <td>-12237499</td>
+      <td>
+       <div style="width: 50px;  background-color:#B9B9B9; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XBABABAFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:68</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#444444; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X444444FF</td>
+      <td>#444444</td>
+      <td>68 68 68 100%</td>
+      <td>0 0% 27%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>027</td>
+      <td>000</td>
+      <td>0 0 0 73</td>
+      <td>-12303292</td>
+      <td>
+       <div style="width: 50px;  background-color:#BBBBBB; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XBBBBBBFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:67</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#434343; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X434343FF</td>
+      <td>#434343</td>
+      <td>67 67 67 100%</td>
+      <td>0 0% 26%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>026</td>
+      <td>000</td>
+      <td>0 0 0 74</td>
+      <td>-12369085</td>
+      <td>
+       <div style="width: 50px;  background-color:#BBBBBB; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XBCBCBCFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:66</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#424242; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X424242FF</td>
+      <td>#424242</td>
+      <td>66 66 66 100%</td>
+      <td>0 0% 26%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>026</td>
+      <td>000</td>
+      <td>0 0 0 74</td>
+      <td>-12434878</td>
+      <td>
+       <div style="width: 50px;  background-color:#BDBDBD; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XBDBDBDFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:65</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#414141; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X414141FF</td>
+      <td>#414141</td>
+      <td>65 65 65 100%</td>
+      <td>0 0% 25%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>025</td>
+      <td>000</td>
+      <td>0 0 0 75</td>
+      <td>-12500671</td>
+      <td>
+       <div style="width: 50px;  background-color:#BDBDBD; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XBEBEBEFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:64</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#404040; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X404040FF</td>
+      <td>#404040</td>
+      <td>64 64 64 100%</td>
+      <td>0 0% 25%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>025</td>
+      <td>000</td>
+      <td>0 0 0 75</td>
+      <td>-12566464</td>
+      <td>
+       <div style="width: 50px;  background-color:#BFBFBF; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XBFBFBFFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:63</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#3F3F3F; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X3F3F3FFF</td>
+      <td>#3F3F3F</td>
+      <td>63 63 63 100%</td>
+      <td>0 0% 25%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>025</td>
+      <td>000</td>
+      <td>0 0 0 75</td>
+      <td>-12632257</td>
+      <td>
+       <div style="width: 50px;  background-color:#C0C0C0; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XC0C0C0FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:62</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#3E3E3E; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X3E3E3EFF</td>
+      <td>#3E3E3E</td>
+      <td>62 62 62 100%</td>
+      <td>0 0% 24%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>024</td>
+      <td>000</td>
+      <td>0 0 0 76</td>
+      <td>-12698050</td>
+      <td>
+       <div style="width: 50px;  background-color:#C1C1C1; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XC1C1C1FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:61</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#3D3D3D; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X3D3D3DFF</td>
+      <td>#3D3D3D</td>
+      <td>61 61 61 100%</td>
+      <td>0 0% 24%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>024</td>
+      <td>000</td>
+      <td>0 0 0 76</td>
+      <td>-12763843</td>
+      <td>
+       <div style="width: 50px;  background-color:#C2C2C2; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XC2C2C2FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:60</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#3C3C3C; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X3C3C3CFF</td>
+      <td>#3C3C3C</td>
+      <td>60 60 60 100%</td>
+      <td>0 0% 24%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>024</td>
+      <td>000</td>
+      <td>0 0 0 76</td>
+      <td>-12829636</td>
+      <td>
+       <div style="width: 50px;  background-color:#C3C3C3; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XC3C3C3FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:59</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#3B3B3B; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X3B3B3BFF</td>
+      <td>#3B3B3B</td>
+      <td>59 59 59 100%</td>
+      <td>0 0% 23%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>023</td>
+      <td>000</td>
+      <td>0 0 0 77</td>
+      <td>-12895429</td>
+      <td>
+       <div style="width: 50px;  background-color:#C4C4C4; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XC4C4C4FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:58</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#3A3A3A; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X3A3A3AFF</td>
+      <td>#3A3A3A</td>
+      <td>58 58 58 100%</td>
+      <td>0 0% 23%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>023</td>
+      <td>000</td>
+      <td>0 0 0 77</td>
+      <td>-12961222</td>
+      <td>
+       <div style="width: 50px;  background-color:#C5C5C5; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XC5C5C5FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:57</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#393939; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X393939FF</td>
+      <td>#393939</td>
+      <td>57 57 57 100%</td>
+      <td>0 0% 22%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>022</td>
+      <td>000</td>
+      <td>0 0 0 78</td>
+      <td>-13027015</td>
+      <td>
+       <div style="width: 50px;  background-color:#C6C6C6; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XC6C6C6FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:56</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#383838; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X383838FF</td>
+      <td>#383838</td>
+      <td>56 56 56 100%</td>
+      <td>0 0% 22%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>022</td>
+      <td>000</td>
+      <td>0 0 0 78</td>
+      <td>-13092808</td>
+      <td>
+       <div style="width: 50px;  background-color:#C7C7C7; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XC7C7C7FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:55</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#373737; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X373737FF</td>
+      <td>#373737</td>
+      <td>55 55 55 100%</td>
+      <td>0 0% 22%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>022</td>
+      <td>000</td>
+      <td>0 0 0 78</td>
+      <td>-13158601</td>
+      <td>
+       <div style="width: 50px;  background-color:#C8C8C8; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XC8C8C8FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:54</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#363636; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X363636FF</td>
+      <td>#363636</td>
+      <td>54 54 54 100%</td>
+      <td>0 0% 21%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>021</td>
+      <td>000</td>
+      <td>0 0 0 79</td>
+      <td>-13224394</td>
+      <td>
+       <div style="width: 50px;  background-color:#C9C9C9; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XC9C9C9FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:53</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#353535; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X353535FF</td>
+      <td>#353535</td>
+      <td>53 53 53 100%</td>
+      <td>0 0% 21%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>021</td>
+      <td>000</td>
+      <td>0 0 0 79</td>
+      <td>-13290187</td>
+      <td>
+       <div style="width: 50px;  background-color:#CACACA; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XCACACAFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:52</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#343434; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X343434FF</td>
+      <td>#343434</td>
+      <td>52 52 52 100%</td>
+      <td>0 0% 20%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>020</td>
+      <td>000</td>
+      <td>0 0 0 80</td>
+      <td>-13355980</td>
+      <td>
+       <div style="width: 50px;  background-color:#CBCBCB; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XCBCBCBFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:51</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#333333; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X333333FF</td>
+      <td>#333333</td>
+      <td>51 51 51 100%</td>
+      <td>0 0% 20%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>020</td>
+      <td>000</td>
+      <td>0 0 0 80</td>
+      <td>-13421773</td>
+      <td>
+       <div style="width: 50px;  background-color:#CCCCCC; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XCCCCCCFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:50</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#323232; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X323232FF</td>
+      <td>#323232</td>
+      <td>50 50 50 100%</td>
+      <td>0 0% 20%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>020</td>
+      <td>000</td>
+      <td>0 0 0 80</td>
+      <td>-13487566</td>
+      <td>
+       <div style="width: 50px;  background-color:#CDCDCD; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XCDCDCDFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:49</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#313131; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X313131FF</td>
+      <td>#313131</td>
+      <td>49 49 49 100%</td>
+      <td>0 0% 19%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>019</td>
+      <td>000</td>
+      <td>0 0 0 81</td>
+      <td>-13553359</td>
+      <td>
+       <div style="width: 50px;  background-color:#CECECE; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XCECECEFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:48</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#303030; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X303030FF</td>
+      <td>#303030</td>
+      <td>48 48 48 100%</td>
+      <td>0 0% 19%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>019</td>
+      <td>000</td>
+      <td>0 0 0 81</td>
+      <td>-13619152</td>
+      <td>
+       <div style="width: 50px;  background-color:#CFCFCF; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XCFCFCFFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:47</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#2F2F2F; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X2F2F2FFF</td>
+      <td>#2F2F2F</td>
+      <td>47 47 47 100%</td>
+      <td>0 0% 18%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>018</td>
+      <td>000</td>
+      <td>0 0 0 82</td>
+      <td>-13684945</td>
+      <td>
+       <div style="width: 50px;  background-color:#D0D0D0; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XD0D0D0FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:46</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#2E2E2E; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X2E2E2EFF</td>
+      <td>#2E2E2E</td>
+      <td>46 46 46 100%</td>
+      <td>0 0% 18%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>018</td>
+      <td>000</td>
+      <td>0 0 0 82</td>
+      <td>-13750738</td>
+      <td>
+       <div style="width: 50px;  background-color:#D1D1D1; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XD1D1D1FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:45</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#2D2D2D; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X2D2D2DFF</td>
+      <td>#2D2D2D</td>
+      <td>45 45 45 100%</td>
+      <td>0 0% 18%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>018</td>
+      <td>000</td>
+      <td>0 0 0 82</td>
+      <td>-13816531</td>
+      <td>
+       <div style="width: 50px;  background-color:#D2D2D2; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XD2D2D2FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:44</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#2C2C2C; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X2C2C2CFF</td>
+      <td>#2C2C2C</td>
+      <td>44 44 44 100%</td>
+      <td>0 0% 17%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>017</td>
+      <td>000</td>
+      <td>0 0 0 83</td>
+      <td>-13882324</td>
+      <td>
+       <div style="width: 50px;  background-color:#D3D3D3; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XD3D3D3FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:43</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#2B2B2B; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X2B2B2BFF</td>
+      <td>#2B2B2B</td>
+      <td>43 43 43 100%</td>
+      <td>0 0% 17%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>017</td>
+      <td>000</td>
+      <td>0 0 0 83</td>
+      <td>-13948117</td>
+      <td>
+       <div style="width: 50px;  background-color:#D4D4D4; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XD4D4D4FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:42</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#2A2A2A; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X2A2A2AFF</td>
+      <td>#2A2A2A</td>
+      <td>42 42 42 100%</td>
+      <td>0 0% 16%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>016</td>
+      <td>000</td>
+      <td>0 0 0 84</td>
+      <td>-14013910</td>
+      <td>
+       <div style="width: 50px;  background-color:#D5D5D5; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XD5D5D5FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:41</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#292929; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X292929FF</td>
+      <td>#292929</td>
+      <td>41 41 41 100%</td>
+      <td>0 0% 16%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>016</td>
+      <td>000</td>
+      <td>0 0 0 84</td>
+      <td>-14079703</td>
+      <td>
+       <div style="width: 50px;  background-color:#D6D6D6; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XD6D6D6FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:40</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#282828; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X282828FF</td>
+      <td>#282828</td>
+      <td>40 40 40 100%</td>
+      <td>0 0% 16%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>016</td>
+      <td>000</td>
+      <td>0 0 0 84</td>
+      <td>-14145496</td>
+      <td>
+       <div style="width: 50px;  background-color:#D7D7D7; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XD7D7D7FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:39</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#272727; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X272727FF</td>
+      <td>#272727</td>
+      <td>39 39 39 100%</td>
+      <td>0 0% 15%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>015</td>
+      <td>000</td>
+      <td>0 0 0 85</td>
+      <td>-14211289</td>
+      <td>
+       <div style="width: 50px;  background-color:#D8D8D8; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XD8D8D8FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:38</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#262626; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X262626FF</td>
+      <td>#262626</td>
+      <td>38 38 38 100%</td>
+      <td>0 0% 15%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>015</td>
+      <td>000</td>
+      <td>0 0 0 85</td>
+      <td>-14277082</td>
+      <td>
+       <div style="width: 50px;  background-color:#D9D9D9; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XD9D9D9FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:37</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#252525; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X252525FF</td>
+      <td>#252525</td>
+      <td>37 37 37 100%</td>
+      <td>0 0% 15%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>015</td>
+      <td>000</td>
+      <td>0 0 0 85</td>
+      <td>-14342875</td>
+      <td>
+       <div style="width: 50px;  background-color:#DADADA; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XDADADAFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:36</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#242424; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X242424FF</td>
+      <td>#242424</td>
+      <td>36 36 36 100%</td>
+      <td>0 0% 14%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>014</td>
+      <td>000</td>
+      <td>0 0 0 86</td>
+      <td>-14408668</td>
+      <td>
+       <div style="width: 50px;  background-color:#DBDBDB; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XDBDBDBFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:35</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#232323; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X232323FF</td>
+      <td>#232323</td>
+      <td>35 35 35 100%</td>
+      <td>0 0% 14%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>014</td>
+      <td>000</td>
+      <td>0 0 0 86</td>
+      <td>-14474461</td>
+      <td>
+       <div style="width: 50px;  background-color:#DCDCDC; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XDCDCDCFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:34</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#222222; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X222222FF</td>
+      <td>#222222</td>
+      <td>34 34 34 100%</td>
+      <td>0 0% 13%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>013</td>
+      <td>000</td>
+      <td>0 0 0 87</td>
+      <td>-14540254</td>
+      <td>
+       <div style="width: 50px;  background-color:#DDDDDD; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XDDDDDDFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:33</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#212121; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X212121FF</td>
+      <td>#212121</td>
+      <td>33 33 33 100%</td>
+      <td>0 0% 13%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>013</td>
+      <td>000</td>
+      <td>0 0 0 87</td>
+      <td>-14606047</td>
+      <td>
+       <div style="width: 50px;  background-color:#DEDEDE; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XDEDEDEFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:32</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#202020; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X202020FF</td>
+      <td>#202020</td>
+      <td>32 32 32 100%</td>
+      <td>0 0% 13%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>013</td>
+      <td>000</td>
+      <td>0 0 0 87</td>
+      <td>-14671840</td>
+      <td>
+       <div style="width: 50px;  background-color:#DFDFDF; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XDFDFDFFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:31</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#1F1F1F; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X1F1F1FFF</td>
+      <td>#1F1F1F</td>
+      <td>31 31 31 100%</td>
+      <td>0 0% 12%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>012</td>
+      <td>000</td>
+      <td>0 0 0 88</td>
+      <td>-14737633</td>
+      <td>
+       <div style="width: 50px;  background-color:#E0E0E0; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XE0E0E0FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:30</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#1E1E1E; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X1E1E1EFF</td>
+      <td>#1E1E1E</td>
+      <td>30 30 30 100%</td>
+      <td>0 0% 12%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>012</td>
+      <td>000</td>
+      <td>0 0 0 88</td>
+      <td>-14803426</td>
+      <td>
+       <div style="width: 50px;  background-color:#E1E1E1; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XE1E1E1FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:29</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#1D1D1D; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X1D1D1DFF</td>
+      <td>#1D1D1D</td>
+      <td>29 29 29 100%</td>
+      <td>0 0% 11%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>011</td>
+      <td>000</td>
+      <td>0 0 0 89</td>
+      <td>-14869219</td>
+      <td>
+       <div style="width: 50px;  background-color:#E2E2E2; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XE2E2E2FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:28</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#1C1C1C; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X1C1C1CFF</td>
+      <td>#1C1C1C</td>
+      <td>28 28 28 100%</td>
+      <td>0 0% 11%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>011</td>
+      <td>000</td>
+      <td>0 0 0 89</td>
+      <td>-14935012</td>
+      <td>
+       <div style="width: 50px;  background-color:#E3E3E3; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XE3E3E3FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:27</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#1B1B1B; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X1B1B1BFF</td>
+      <td>#1B1B1B</td>
+      <td>27 27 27 100%</td>
+      <td>0 0% 11%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>011</td>
+      <td>000</td>
+      <td>0 0 0 89</td>
+      <td>-15000805</td>
+      <td>
+       <div style="width: 50px;  background-color:#E4E4E4; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XE4E4E4FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:26</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#1A1A1A; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X1A1A1AFF</td>
+      <td>#1A1A1A</td>
+      <td>26 26 26 100%</td>
+      <td>0 0% 10%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>010</td>
+      <td>000</td>
+      <td>0 0 0 90</td>
+      <td>-15066598</td>
+      <td>
+       <div style="width: 50px;  background-color:#E5E5E5; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XE5E5E5FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:25</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#191919; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X191919FF</td>
+      <td>#191919</td>
+      <td>25 25 25 100%</td>
+      <td>0 0% 10%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>010</td>
+      <td>000</td>
+      <td>0 0 0 90</td>
+      <td>-15132391</td>
+      <td>
+       <div style="width: 50px;  background-color:#E6E6E6; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XE6E6E6FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:24</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#181818; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X181818FF</td>
+      <td>#181818</td>
+      <td>24 24 24 100%</td>
+      <td>0 0% 9%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>009</td>
+      <td>000</td>
+      <td>0 0 0 91</td>
+      <td>-15198184</td>
+      <td>
+       <div style="width: 50px;  background-color:#E7E7E7; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XE7E7E7FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:23</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#171717; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X171717FF</td>
+      <td>#171717</td>
+      <td>23 23 23 100%</td>
+      <td>0 0% 9%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>009</td>
+      <td>000</td>
+      <td>0 0 0 91</td>
+      <td>-15263977</td>
+      <td>
+       <div style="width: 50px;  background-color:#E8E8E8; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XE8E8E8FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:22</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#161616; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X161616FF</td>
+      <td>#161616</td>
+      <td>22 22 22 100%</td>
+      <td>0 0% 9%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>009</td>
+      <td>000</td>
+      <td>0 0 0 91</td>
+      <td>-15329770</td>
+      <td>
+       <div style="width: 50px;  background-color:#E9E9E9; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XE9E9E9FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:21</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#151515; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X151515FF</td>
+      <td>#151515</td>
+      <td>21 21 21 100%</td>
+      <td>0 0% 8%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>008</td>
+      <td>000</td>
+      <td>0 0 0 92</td>
+      <td>-15395563</td>
+      <td>
+       <div style="width: 50px;  background-color:#EAEAEA; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XEAEAEAFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:20</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#141414; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X141414FF</td>
+      <td>#141414</td>
+      <td>20 20 20 100%</td>
+      <td>0 0% 8%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>008</td>
+      <td>000</td>
+      <td>0 0 0 92</td>
+      <td>-15461356</td>
+      <td>
+       <div style="width: 50px;  background-color:#EBEBEB; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XEBEBEBFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:19</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#131313; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X131313FF</td>
+      <td>#131313</td>
+      <td>19 19 19 100%</td>
+      <td>0 0% 7%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>007</td>
+      <td>000</td>
+      <td>0 0 0 93</td>
+      <td>-15527149</td>
+      <td>
+       <div style="width: 50px;  background-color:#ECECEC; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XECECECFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:18</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#121212; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X121212FF</td>
+      <td>#121212</td>
+      <td>18 18 18 100%</td>
+      <td>0 0% 7%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>007</td>
+      <td>000</td>
+      <td>0 0 0 93</td>
+      <td>-15592942</td>
+      <td>
+       <div style="width: 50px;  background-color:#EDEDED; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XEDEDEDFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:17</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#111111; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X111111FF</td>
+      <td>#111111</td>
+      <td>17 17 17 100%</td>
+      <td>0 0% 7%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>007</td>
+      <td>000</td>
+      <td>0 0 0 93</td>
+      <td>-15658735</td>
+      <td>
+       <div style="width: 50px;  background-color:#EEEEEE; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XEEEEEEFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:16</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#101010; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X101010FF</td>
+      <td>#101010</td>
+      <td>16 16 16 100%</td>
+      <td>0 0% 6%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>006</td>
+      <td>000</td>
+      <td>0 0 0 94</td>
+      <td>-15724528</td>
+      <td>
+       <div style="width: 50px;  background-color:#EFEFEF; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XEFEFEFFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:15</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#0F0F0F; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X0F0F0FFF</td>
+      <td>#0F0F0F</td>
+      <td>15 15 15 100%</td>
+      <td>0 0% 6%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>006</td>
+      <td>000</td>
+      <td>0 0 0 94</td>
+      <td>-15790321</td>
+      <td>
+       <div style="width: 50px;  background-color:#F0F0F0; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XF0F0F0FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:14</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#0E0E0E; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X0E0E0EFF</td>
+      <td>#0E0E0E</td>
+      <td>14 14 14 100%</td>
+      <td>0 0% 5%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>005</td>
+      <td>000</td>
+      <td>0 0 0 95</td>
+      <td>-15856114</td>
+      <td>
+       <div style="width: 50px;  background-color:#F1F1F1; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XF1F1F1FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:13</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#0D0D0D; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X0D0D0DFF</td>
+      <td>#0D0D0D</td>
+      <td>13 13 13 100%</td>
+      <td>0 0% 5%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>005</td>
+      <td>000</td>
+      <td>0 0 0 95</td>
+      <td>-15921907</td>
+      <td>
+       <div style="width: 50px;  background-color:#F2F2F2; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XF2F2F2FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:12</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#0C0C0C; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X0C0C0CFF</td>
+      <td>#0C0C0C</td>
+      <td>12 12 12 100%</td>
+      <td>0 0% 5%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>005</td>
+      <td>000</td>
+      <td>0 0 0 95</td>
+      <td>-15987700</td>
+      <td>
+       <div style="width: 50px;  background-color:#F3F3F3; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XF3F3F3FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:11</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#0B0B0B; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X0B0B0BFF</td>
+      <td>#0B0B0B</td>
+      <td>11 11 11 100%</td>
+      <td>0 0% 4%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>004</td>
+      <td>000</td>
+      <td>0 0 0 96</td>
+      <td>-16053493</td>
+      <td>
+       <div style="width: 50px;  background-color:#F4F4F4; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XF4F4F4FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:10</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#0A0A0A; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X0A0A0AFF</td>
+      <td>#0A0A0A</td>
+      <td>10 10 10 100%</td>
+      <td>0 0% 4%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>004</td>
+      <td>000</td>
+      <td>0 0 0 96</td>
+      <td>-16119286</td>
+      <td>
+       <div style="width: 50px;  background-color:#F5F5F5; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XF5F5F5FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:9</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#090909; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X090909FF</td>
+      <td>#090909</td>
+      <td>9 9 9 100%</td>
+      <td>0 0% 4%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>004</td>
+      <td>000</td>
+      <td>0 0 0 96</td>
+      <td>-16185079</td>
+      <td>
+       <div style="width: 50px;  background-color:#F6F6F6; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XF6F6F6FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:8</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#080808; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X080808FF</td>
+      <td>#080808</td>
+      <td>8 8 8 100%</td>
+      <td>0 0% 3%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>003</td>
+      <td>000</td>
+      <td>0 0 0 97</td>
+      <td>-16250872</td>
+      <td>
+       <div style="width: 50px;  background-color:#F7F7F7; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XF7F7F7FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:7</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#070707; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X070707FF</td>
+      <td>#070707</td>
+      <td>7 7 7 100%</td>
+      <td>0 0% 3%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>003</td>
+      <td>000</td>
+      <td>0 0 0 97</td>
+      <td>-16316665</td>
+      <td>
+       <div style="width: 50px;  background-color:#F8F8F8; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XF8F8F8FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:6</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#060606; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X060606FF</td>
+      <td>#060606</td>
+      <td>6 6 6 100%</td>
+      <td>0 0% 2%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>002</td>
+      <td>000</td>
+      <td>0 0 0 98</td>
+      <td>-16382458</td>
+      <td>
+       <div style="width: 50px;  background-color:#F9F9F9; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XF9F9F9FF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:5</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#050505; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X050505FF</td>
+      <td>#050505</td>
+      <td>5 5 5 100%</td>
+      <td>0 0% 2%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>002</td>
+      <td>000</td>
+      <td>0 0 0 98</td>
+      <td>-16448251</td>
+      <td>
+       <div style="width: 50px;  background-color:#FAFAFA; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XFAFAFAFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:4</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#040404; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X040404FF</td>
+      <td>#040404</td>
+      <td>4 4 4 100%</td>
+      <td>0 0% 2%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>002</td>
+      <td>000</td>
+      <td>0 0 0 98</td>
+      <td>-16514044</td>
+      <td>
+       <div style="width: 50px;  background-color:#FBFBFB; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XFBFBFBFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:3</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#030303; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X030303FF</td>
+      <td>#030303</td>
+      <td>3 3 3 100%</td>
+      <td>0 0% 1%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>001</td>
+      <td>000</td>
+      <td>0 0 0 99</td>
+      <td>-16579837</td>
+      <td>
+       <div style="width: 50px;  background-color:#FCFCFC; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XFCFCFCFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:2</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#020202; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X020202FF</td>
+      <td>#020202</td>
+      <td>2 2 2 100%</td>
+      <td>0 0% 1%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>001</td>
+      <td>000</td>
+      <td>0 0 0 99</td>
+      <td>-16645630</td>
+      <td>
+       <div style="width: 50px;  background-color:#FDFDFD; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XFDFDFDFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:1</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#010101; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X010101FF</td>
+      <td>#010101</td>
+      <td>1 1 1 100%</td>
+      <td>0 0% 0%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>000</td>
+      <td>000</td>
+      <td>0 0 0 100</td>
+      <td>-16711423</td>
+      <td>
+       <div style="width: 50px;  background-color:#FEFEFE; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XFEFEFEFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr>
+      <td>Brightness:0</td>
+      <td align="center">
+       <div style="width: 50px;  background-color:#000000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X000000FF</td>
+      <td>#000000</td>
+      <td>0 0 0 100%</td>
+      <td>0 0% 0%</td>
+      <td>000</td>
+      <td>000</td>
+      <td>000</td>
+      <td>000</td>
+      <td>0 0 0 100</td>
+      <td>-16777216</td>
+      <td>
+       <div style="width: 50px;  background-color:#FFFFFF; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0XFFFFFFFF</td>
+      <td>
+       <div style="width: 50px;  background-color:#008000; ">
+        &nbsp;&nbsp;&nbsp;
+       </div></td>
+      <td>0X008000FF</td>
+     </tr>
+     <tr style="font-weight:bold; ">
+      <th>Name</th>
+      <th>Color</th>
+      <th>Color - RGBA</th>
+      <th>Color - RGB</th>
+      <th>sRGB</th>
+      <th>HSB</th>
+      <th>Hue</th>
+      <th>Saturation</th>
+      <th>Brightness</th>
+      <th>RYB angle</th>
+      <th>Calculated CMYK</th>
+      <th>Value</th>
+      <th>RGB invert color</th>
+      <th>RGB invert color</th>
+      <th>RYB complementary color</th>
+      <th>RYB complementary color</th>
+     </tr>
+    </tbody>
+   </table>
+  </div>
+ </body>
+</html>

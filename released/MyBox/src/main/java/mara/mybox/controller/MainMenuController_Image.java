@@ -17,6 +17,16 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
     }
 
     @FXML
+    protected void openImageManufacture(ActionEvent event) {
+        loadScene(Fxmls.ImageManufactureFxml);
+    }
+
+    @FXML
+    protected void openSVGEditor(ActionEvent event) {
+        loadScene(Fxmls.SVGEditorFxml);
+    }
+
+    @FXML
     protected void openImagesBrowser(ActionEvent event) {
         loadScene(Fxmls.ImagesBrowserFxml);
     }
@@ -29,11 +39,6 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
     @FXML
     protected void openImageConverterBatch(ActionEvent event) {
         loadScene(Fxmls.ImageConverterBatchFxml);
-    }
-
-    @FXML
-    protected void openImageManufacture(ActionEvent event) {
-        loadScene(Fxmls.ImageManufactureFxml);
     }
 
     @FXML

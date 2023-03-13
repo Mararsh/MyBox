@@ -48,12 +48,11 @@ License:    Apache License Version 2.0
                             </ImageView>
                         </graphic>
                     </Button>
-            <RadioButton fx:id="csvRadio" mnemonicParsing="false" selected="true" text="CSV">
+            <RadioButton fx:id="textsRadio" mnemonicParsing="false" selected="true" text="%Texts">
                <toggleGroup>
                   <ToggleGroup fx:id="formatGroup" />
-               </toggleGroup>
-            </RadioButton>
-            <RadioButton fx:id="textsRadio" mnemonicParsing="false" text="%Texts" toggleGroup="$formatGroup" />
+               </toggleGroup></RadioButton>
+            <RadioButton fx:id="csvRadio" mnemonicParsing="false" text="CSV" toggleGroup="$formatGroup" />
                     <CheckBox fx:id="nameCheck" mnemonicParsing="false" text="%FirstLineAsNames" />
          </children>
       </FlowPane>

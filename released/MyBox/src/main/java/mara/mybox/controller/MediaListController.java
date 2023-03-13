@@ -84,7 +84,7 @@ public class MediaListController extends BaseTableViewController<MediaList> {
         if (isSettingValues) {
             return;
         }
-        MediaList selected = tableView.getSelectionModel().getSelectedItem();
+        MediaList selected = selectedItem();
         if (selected == null) {
             playButton.setDisable(true);
             saveAsButton.setDisable(true);
@@ -125,7 +125,7 @@ public class MediaListController extends BaseTableViewController<MediaList> {
         } else {
             playerController.getMyStage().show();
         }
-        MediaList selected = tableView.getSelectionModel().getSelectedItem();
+        MediaList selected = selectedItem();
         if (selected == null) {
             return;
         }
@@ -137,7 +137,7 @@ public class MediaListController extends BaseTableViewController<MediaList> {
     @FXML
     @Override
     public void saveAsAction() {
-        MediaList selected = tableView.getSelectionModel().getSelectedItem();
+        MediaList selected = selectedItem();
         if (selected == null || selected.getMedias() == null) {
             return;
         }

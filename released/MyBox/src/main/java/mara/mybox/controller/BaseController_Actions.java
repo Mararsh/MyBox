@@ -18,9 +18,11 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
+import static mara.mybox.fxml.WindowTools.recordError;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -47,14 +49,14 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         if (address == null || address.isBlank()) {
             return;
         }
-        WebBrowserController.oneOpen(address, true);
+        WebBrowserController.openAddress(address, true);
     }
 
     public void openLink(File file) {
         if (file == null || !file.exists()) {
             return;
         }
-        WebBrowserController.oneOpen(file);
+        WebBrowserController.openFile(file);
     }
 
     @FXML
@@ -68,7 +70,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
 
     @FXML
     public void derbyHelp() {
-        openLink("https://db.apache.org/derby/docs/10.15/ref/index.html");
+        openLink(HelpTools.derbyLink());
     }
 
     @FXML
@@ -314,7 +316,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
     }
 
     public void clearUserSettings() {
-        if (!PopTools.askSure(myController, getBaseTitle(), message("ClearPersonalSettings"), message("SureClear"))) {
+        if (!PopTools.askSure(getTitle(), message("ClearPersonalSettings"), message("SureClear"))) {
             return;
         }
         synchronized (this) {
@@ -342,6 +344,38 @@ public abstract class BaseController_Actions extends BaseController_Interface {
             };
             start(task);
         }
+    }
+
+    public void clearExpiredData() {
+        if (task != null && !task.isQuit()) {
+            return;
+        }
+        task = new SingletonTask<Void>(myController) {
+
+            private String info;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    WindowTools.clearExpiredData(task);
+                    info = task.getInfo();
+                    return true;
+                } catch (Exception e) {
+                    recordError(task, e.toString());
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (info != null && !info.isBlank()) {
+                    TextPopController.loadText(myController, info);
+                } else {
+                    popSuccessful();
+                }
+            }
+        };
+        start(task);
     }
 
     public void view(File file) {
@@ -489,9 +523,8 @@ public abstract class BaseController_Actions extends BaseController_Interface {
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             ButtonType buttonOpen = new ButtonType(message("OpenTargetPath"));
             ButtonType buttonBrowse = new ButtonType(message("Browse"));
-            ButtonType buttonBrowseNew = new ButtonType(message("BrowseInNew"));
             ButtonType buttonClose = new ButtonType(message("Close"));
-            alert.getButtonTypes().setAll(buttonBrowseNew, buttonBrowse, buttonOpen, buttonClose);
+            alert.getButtonTypes().setAll(buttonBrowse, buttonOpen, buttonClose);
             Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
             stage.setAlwaysOnTop(true);
             stage.toFront();
@@ -505,12 +538,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
                 browseURI(new File(path).toURI());
                 recordFileOpened(path);
             } else if (result.get() == buttonBrowse) {
-                final ImagesBrowserController controller = ControllerTools.openImagesBrowser(getMyStage());
-                if (controller != null) {
-                    controller.loadFiles(fileNames);
-                }
-            } else if (result.get() == buttonBrowseNew) {
-                final ImagesBrowserController controller = ControllerTools.openImagesBrowser(null);
+                final ImagesBrowserController controller = ImagesBrowserController.open();
                 if (controller != null) {
                     controller.loadFiles(fileNames);
                 }

@@ -36,6 +36,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.LocationTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.FileFilters;
@@ -449,7 +450,7 @@ public class ControlMap extends BaseController {
 
     protected String jsString(String string) {
         return string == null ? "null"
-                : "'" + string.replaceAll("'", AppValues.MyBoxSeparator).replaceAll("\n", "</BR>") + "'";
+                : "'" + StringTools.replaceHtmlLineBreak(string.replaceAll("'", AppValues.MyBoxSeparator)) + "'";
     }
 
     public void initPoints(List<MapPoint> points) {
@@ -642,7 +643,7 @@ public class ControlMap extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                HtmlEditorController.load(html);
+                HtmlEditorController.openHtml(html);
             }
 
         };

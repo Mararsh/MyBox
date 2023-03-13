@@ -11,7 +11,7 @@
 | 地址 | 下载 | 自述 | 
 | --- | --- | --- | 
 | github | [https://github.com/Mararsh/MyBox/releases](https://github.com/Mararsh/MyBox/releases)  | [英文](https://mararsh.github.io/MyBox/readme-en.html)   [中文](https://mararsh.github.io/MyBox/readme-zh.html) |
-| sourceforge | [https://sourceforge.net/projects/mara-mybox/files/](https://sourceforge.net/projects/mara-mybox/files/)  | [英文](https://mara-mybox.sourceforge.io/readme-en.htm)  [中文](https://mara-mybox.sourceforge.io/readme-zh.htm) |
+| sourceforge | [https://sourceforge.net/projects/mara-mybox/files/](https://sourceforge.net/projects/mara-mybox/files/)  | [英文](https://mara-mybox.sourceforge.io/readme-en.html)  [中文](https://mara-mybox.sourceforge.io/readme-zh.html) |
 | 云盘 | [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)   |  |
 
 
@@ -19,31 +19,32 @@
 2023-3-13 版本6.7.1                
                                 
 * 新增：                  
-     - html编辑模式：DOM。                                               
-     - 图片处理：对于选择的范围进行颜色混合。                                               
-     - 可以定制按钮的颜色。                                                                                                                                  
-* 改进：                  
-     - 图片处理：替换颜色时可选是否替换色相/饱和度/明亮度。                                               
-     - 颜色的新属性：RYB角度、RGB反色、和RYB补色。更多的调色盘示例。                                               
-     - 可设置选择框的滚动尺寸。                                               
-     - 网页加载完毕之前就能使用链接的菜单。                                               
-     - 用jsoup解析html。                                                                     
-     - 可选择在悬停按钮时是否弹出菜单/窗口。                                                                     
-     - 自述文件中链接指向最新版本。                                                                  
-     - 在打包脚本中设置JAVA_HOME。                                                                  
-* 移除：                  
-     - 不再支持更改界面风格。                                               
-     - 在一些界面上移除鸡肋的滑动条。                                               
-     - 程序包名不再包含版本号。                                                                                                                                
-* Java和JavaFx均升级到v19。                                               
-* 解决问题：                       
-     - 添加文件备份时可能自动清除所有文件备份。                                               
-     - 当标签图片不存在时加载地图会失败。                                               
-     - 将网址加为收藏时会失败。                                               
-     - 一些界面上访问目录的历史未生效。                                               
-     - 批量粘贴图片时，对于粘贴位置的处理不准确。                                               
-     - 编辑图片颜色时快捷键未生效。                                                                                               
-     - Javascript的编辑历史没有保存。                                                                                               
+     - html编辑模式：DOM。                                                             
+     - 图片处理：对于选择的范围进行颜色混合。                                                             
+     - 批量设置网页的http-equiv。                                                             
+     - 可以定制按钮的颜色。                                                                                                                                                
+* 改进：                                
+     - 图片处理：替换颜色时可选是否替换色相/饱和度/明亮度。                                                             
+     - 颜色的新属性：RYB角度、RGB反色、和RYB补色。更多的调色盘示例。                                                             
+     - 可设置选择框的滚动尺寸。                                                             
+     - 网页加载完毕之前就能使用链接的菜单。                                                             
+     - 用jsoup解析html。                                                                                   
+     - 可选择在悬停按钮时是否弹出菜单/窗口。                                                                                   
+     - 自述文件中链接指向最新版本。                                                                                
+     - 在打包脚本中设置JAVA_HOME。                                                                                
+* 移除：                                
+     - 不再支持更改界面风格。                                                             
+     - 在一些界面上移除鸡肋的滑动条。                                                             
+     - 程序包名不再包含版本号。                                                                                                                                              
+* Java和JavaFx均升级到v19。                                                             
+* 解决问题：                                     
+     - 添加文件备份时可能自动清除所有文件备份。                                                             
+     - 当标签图片不存在时加载地图会失败。                                                             
+     - 将网址加为收藏时会失败。                                                             
+     - 一些界面上访问目录的历史未生效。                                                             
+     - 批量粘贴图片时，对于粘贴位置的处理不准确。                                                             
+     - 编辑图片颜色时快捷键未生效。                                                                                                             
+     - Javascript的编辑历史没有保存。                                                                                                             
  
 [此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.1)             
              
@@ -52,8 +53,8 @@
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases)目录下。      
 
 ### 源码
-[MyBox-src.zip](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-src.zip)   65M-       
-[开发指南](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-DevGuide-zh.pdf)    [打包步骤](https://mara-mybox.sourceforge.io/pack_steps.html)       
+[MyBox-src.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-src.zip)   65M-       
+[开发指南](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-zh.pdf)    [打包步骤](https://mara-mybox.sourceforge.io/pack_steps.html)       
 
 
 ### 自包含程序包
@@ -61,9 +62,9 @@
 
 | 平台 | 链接 | 大小 | 启动文件 |
 | --- | --- | --- |  --- |
-| win10 x64 | [MyBox-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-win10-x64.zip)  | 260MB- | MyBox.exe |
-| CentOS 7 x64 | [MyBox-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-CentOS7-x64.tar.gz)  | 280MB-  | MyBox  |
-| mac x64| [MyBox-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-mac.dmg)  | 280MB-  |  MyBox.app   |
+| win10 x64 | [MyBox-win10-x64.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win10-x64.zip)  | 260MB- | MyBox.exe |
+| CentOS 7 x64 | [MyBox-CentOS7-x64.tar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-CentOS7-x64.tar.gz)  | 280MB-  | MyBox  |
+| mac x64| [MyBox-mac.dmg](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.dmg)  | 280MB-  |  MyBox.app   |
 
 双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。        
   
@@ -73,9 +74,9 @@
 
 | 平台 | 链接 | 大小 | 运行需要 |
 | --- | --- | --- |  --- |
-| win | [MyBox-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-win-jar.zip)  | 190MB- | Java 19或更高版本 |
-| linux | [MyBox-linux.jar.gz](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-linux.jar.gz)  | 200MB-  | Java 19或更高版本 |
-| mac | [MyBox-mac.jar.gz](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-mac.jar.gz)  |  200MB-  | Java 19或更高版本 |
+| win | [MyBox-win-jar.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win-jar.zip)  | 190MB- | Java 19或更高版本 |
+| linux | [MyBox-linux.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-linux.jar.gz)  | 200MB-  | Java 19或更高版本 |
+| mac | [MyBox-mac.jar.gz](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-mac.jar.gz)  |  200MB-  | Java 19或更高版本 |
 
 执行以下命令来启动程序：       
 <PRE><CODE>     java   -jar   MyBox.jar</CODE></PRE>       
@@ -124,15 +125,15 @@
 | 快捷键            | 6.7.1   | 2023-3-13   | [html](https://mara-mybox.sourceforge.io/mybox_shortcuts_en.html)                                                                                                                                                                                                                               | [html](https://mara-mybox.sourceforge.io/mybox_shortcuts.html)                                                                                                                                                                                                                                  |
 | 功能列表          | 6.7.1   | 2023-3-13   | [html](https://mara-mybox.sourceforge.io/mybox_functions_en.html)                                                                                                                                                                                                                               | [html](https://mara-mybox.sourceforge.io/mybox_functions.html)                                                                                                                                                                                                                                  |
 | 打包步骤          | 6.7.1   | 2023-3-13   | [html](https://mara-mybox.sourceforge.io/pack_steps_en.html)                                                                                                                                                                                                                                    | [html](https://mara-mybox.sourceforge.io/pack_steps.html)                                                                                                                                                                                                                                       |
-| 开发指南          | 2.1     | 2020-8-27  | [PDF](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-DevGuide-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-DevGuide-en.odt)                                                                                                                                                                                  | [PDF](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-DevGuide-zh.pdf)  [odt](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-DevGuide-zh.odt)                                                                                                                                                                                                                |
-| 用户手册-综述     | 6.7.1   | 2023-3-13  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-Overview-en/MyBox-Overview-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-Overview-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-Overview-en.odt)                     | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-Overview-zh/MyBox-Overview-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-Overview-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-Overview-zh.odt)                     |
-| 用户手册-数据工具 | 6.7.1   | 2023-3-13  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-DataTools-en/MyBox-DataTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-DataTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-DataTools-en.odt)                 | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-DataTools-zh/MyBox-DataTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-DataTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-DataTools-zh.odt)                 |
-| 用户手册-文档工具 | 6.7.1   | 2023-3-13  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-DocumentTools-en/MyBox-DocumentTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-DocumentTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-DocumentTools-en.odt) | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-DocumentTools-zh/MyBox-DocumentTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-DocumentTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-DocumentTools-zh.odt) |
-| 用户手册-图像工具 | 6.7.1   | 2023-3-13  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-ImageTools-en/MyBox-ImageTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-ImageTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-ImageTools-en.odt)             | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-ImageTools-zh/MyBox-ImageTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-ImageTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-ImageTools-zh.odt)             |
-| 用户手册-文件工具 | 6.7.1   | 2023-3-13  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-FileTools-en/MyBox-FileTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-FileTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-FileTools-en.odt)                 | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-FileTools-zh/MyBox-FileTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-FileTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-FileTools-zh.odt)                 |
-| 用户手册-网络工具 | 6.7.1   | 2023-3-13  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-NetworkTools-en/MyBox-NetworkTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-NetworkTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-NetworkTools-en.odt)     | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-NetworkTools-zh/MyBox-NetworkTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-NetworkTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-NetworkTools-zh.odt)     |
-| 用户手册-媒体工具 | 6.7.1   | 2023-3-13  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-MediaTools-en/MyBox-MediaTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-MediaTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-MediaTools-en.odt)             | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-MediaTools-zh/MyBox-MediaTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-MediaTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-MediaTools-zh.odt)             |
-| 用户手册-开发工具 | 6.7.1   | 2023-3-13  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-DevTools-en/MyBox-DevTools-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-DevTools-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-DevTools-en.odt)                     | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-DevTools-zh/MyBox-DevTools-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-DevTools-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-DevTools-zh.odt)                     |
+| 开发指南          | 2.1     | 2020-8-27  | [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-en.odt)                                                                                                                                                                                  | [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-zh.pdf)  [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-zh.odt)                                                                                                                                                                                                                |
+| 用户手册-综述     | 6.7.1   | 2023-3-13  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-Overview-en/MyBox-Overview-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.odt)                     | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-Overview-zh/MyBox-Overview-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.odt)                     |
+| 用户手册-数据工具 | 6.7.1   | 2023-3-13  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-DataTools-en/MyBox-DataTools-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DataTools-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DataTools-en.odt)                 | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-DataTools-zh/MyBox-DataTools-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DataTools-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DataTools-zh.odt)                 |
+| 用户手册-文档工具 | 6.7.1   | 2023-3-13  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-DocumentTools-en/MyBox-DocumentTools-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DocumentTools-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DocumentTools-en.odt) | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-DocumentTools-zh/MyBox-DocumentTools-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DocumentTools-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DocumentTools-zh.odt) |
+| 用户手册-图像工具 | 6.7.1   | 2023-3-13  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-ImageTools-en/MyBox-ImageTools-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-ImageTools-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-ImageTools-en.odt)             | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-ImageTools-zh/MyBox-ImageTools-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-ImageTools-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-ImageTools-zh.odt)             |
+| 用户手册-文件工具 | 6.7.1   | 2023-3-13  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-FileTools-en/MyBox-FileTools-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-FileTools-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-FileTools-en.odt)                 | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-FileTools-zh/MyBox-FileTools-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-FileTools-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-FileTools-zh.odt)                 |
+| 用户手册-网络工具 | 6.7.1   | 2023-3-13  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-NetworkTools-en/MyBox-NetworkTools-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-NetworkTools-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-NetworkTools-en.odt)     | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-NetworkTools-zh/MyBox-NetworkTools-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-NetworkTools-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-NetworkTools-zh.odt)     |
+| 用户手册-媒体工具 | 6.7.1   | 2023-3-13  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-MediaTools-en/MyBox-MediaTools-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-MediaTools-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-MediaTools-en.odt)             | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-MediaTools-zh/MyBox-MediaTools-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-MediaTools-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-MediaTools-zh.odt)             |
+| 用户手册-开发工具 | 6.7.1   | 2023-3-13  | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-DevTools-en/MyBox-DevTools-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DevTools-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DevTools-en.odt)                     | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-DevTools-zh/MyBox-DevTools-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-DevTools-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-DevTools-zh.odt)                     |
 | 示例-笔记         | 6.7.1   | 2023-3-13  | [html](https://mara-mybox.sourceforge.io/mybox_examples_notes_en.html)                                                                                                                                                                                                                          | [html](https://mara-mybox.sourceforge.io/mybox_examples_notes.html)                                                                                                                                                                                                                                    |
 | 示例-树形         | 6.6.1   | 2022-11-16 | [html](https://mara-mybox.sourceforge.io/mybox_examples_tree_en.html)                                                                                                                                                                                                                           | [html](https://mara-mybox.sourceforge.io/mybox_examples_tree.html)                                                                                                                                                                                                                                    |
 | 示例-收藏的网址   | 6.6.1   | 2022-11-16 | [html](https://mara-mybox.sourceforge.io/mybox_examples_web_favorite_en.html)                                                                                                                                                                                                                   | [html](https://mara-mybox.sourceforge.io/mybox_examples_web_favorite.html)                                                                                                                                                                                                                                    |
@@ -162,7 +163,7 @@
 | 调色盘-美术颜料               | 6.7.1   | 2023-3-13 | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_art_paints_en.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_art_paints_all_en.html)                                                                                                                                  | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_art_paints.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_art_paints_all.html)                                                                                                                                                                                                                                   |
 | 调色盘-MyBox的颜色            | 6.7.1   | 2023-3-13 | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_mybox_en.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_mybox_all_en.html)                                                                                                                              | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_mybox.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_mybox_all.html)                                                                                                                                                                                                                                   |
 | 调色盘-灰阶                   | 6.7.1   | 2023-3-13 | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_gray_en.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_gray_all_en.html)                                                                                                                                  | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_gray.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_gray_all.html)                                                                                                                                                                                                                                   |
-| 图片的故事                    | 6.7.1   | 2023-3-13 | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-StoriesOfImages-en.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-StoriesOfImages-en.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-StoriesOfImages-en.odt)                     | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-StoriesOfImages-zh.html) [PDF](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-StoriesOfImages-zh.pdf) [odt](https://sourceforge.net/projects/mara-mybox/files/current/MyBox-StoriesOfImages-zh.odt)                     |   
+| 图片的故事                    | 6.7.1   | 2023-3-13 | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-StoriesOfImages-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.odt)                     | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-StoriesOfImages-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.odt)                     |   
 
 # 实现基础       
 MyBox基于以下开放资源：       

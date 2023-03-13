@@ -4,17 +4,18 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.TextArea;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Window;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableColorPalette;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.PopTools;
@@ -23,6 +24,7 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -62,8 +64,27 @@ public class ColorInputController extends BaseController {
     }
 
     @FXML
-    public void popExamples(MouseEvent mouseEvent) {
-        PopTools.popColorExamples(this, valuesArea, mouseEvent);
+    protected void showExamples(Event event) {
+        PopTools.popColorExamples(this, valuesArea, event);
+    }
+
+    @FXML
+    public void popExamples(Event event) {
+        if (UserConfig.getBoolean("ColorExamplesPopWhenMouseHovering", false)) {
+            showExamples(event);
+        }
+    }
+
+    @FXML
+    protected void popHistories(Event event) {
+        if (UserConfig.getBoolean("ColorInputHistoriesPopWhenMouseHovering", false)) {
+            showHistories(event);
+        }
+    }
+
+    @FXML
+    protected void showHistories(Event event) {
+        PopTools.popStringValues(this, valuesArea, event, "ColorInputHistories", false, true);
     }
 
     @FXML
@@ -81,7 +102,7 @@ public class ColorInputController extends BaseController {
                     if (values == null || values.length == 0) {
                         return true;
                     }
-                    try ( Connection conn = DerbyBase.getConnection();) {
+                    try (Connection conn = DerbyBase.getConnection();) {
                         TableColor tableColor = null;
                         TableColorPalette tableColorPalette = null;
                         long paletteid = -1;
@@ -107,8 +128,10 @@ public class ColorInputController extends BaseController {
                             }
                             tableColor.write(conn, color, true);
                             if (paletteid >= 0) {
-                                tableColorPalette.findAndCreate(conn, paletteid, color, false);
+                                color.setPaletteid(paletteid);
+                                tableColorPalette.findAndCreate(conn, color, false, false);
                             }
+                            TableStringValues.add(conn, "ColorInputHistories", value);
                         }
                         conn.commit();
                     } catch (Exception e) {

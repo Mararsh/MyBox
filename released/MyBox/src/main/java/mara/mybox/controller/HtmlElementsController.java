@@ -6,15 +6,18 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.table.TableStringValues;
@@ -22,8 +25,11 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.style.HtmlStyles;
+import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
@@ -50,6 +56,8 @@ public class HtmlElementsController extends WebAddressController {
     protected ToggleGroup elementGroup;
     @FXML
     protected Button queryElementButton;
+    @FXML
+    protected Label infoLabel;
 
     public HtmlElementsController() {
         baseTitle = message("WebElements");
@@ -95,13 +103,14 @@ public class HtmlElementsController extends WebAddressController {
         super.pageLoading();
         queryElementButton.setDisable(true);
         recoverButton.setDisable(true);
+        infoLabel.setText("");
     }
 
     @Override
     public void pageLoaded() {
         try {
             super.pageLoaded();
-            bottomLabel.setText(message("Count") + ": " + foundCount);
+            infoLabel.setText(message("Found") + ": " + foundCount);
             if (loadedDoc == null) {
                 loadedDoc = (HTMLDocument) webEngine.getDocument();
                 sourceHtml = WebViewTools.getHtml(webEngine);
@@ -191,17 +200,10 @@ public class HtmlElementsController extends WebAddressController {
     }
 
     @FXML
-    public void popExamples(MouseEvent mouseEvent) {
+    public void showExamples(Event event) {
         try {
-            List<String> values = new ArrayList<>();
-            values.addAll(Arrays.asList(
-                    "p", "img", "a", "div", "li", "ul", "ol", "h1", "h2", "h3",
-                    "button", "input", "label", "form", "table", "tr", "th", "td",
-                    "script", "style", "font", "span", "b", "hr", "br", "frame", "pre"
-            ));
-
             List<Node> buttons = new ArrayList<>();
-            for (String value : values) {
+            for (String value : PopTools.htmlTags()) {
                 Button button = new Button(value);
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
@@ -214,7 +216,20 @@ public class HtmlElementsController extends WebAddressController {
                 buttons.add(button);
             }
 
-            MenuController controller = MenuController.open(this, elementInput, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+            MenuController controller = MenuController.open(this, elementInput, event);
+
+            CheckBox popCheck = new CheckBox();
+            popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
+            NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
+            popCheck.setSelected(UserConfig.getBoolean("HtmlElementsPopWhenMouseHovering", true));
+            popCheck.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("HtmlElementsPopWhenMouseHovering", popCheck.isSelected());
+                }
+            });
+            controller.addNode(popCheck);
+
             controller.addFlowPane(buttons);
 
         } catch (Exception e) {
@@ -223,8 +238,22 @@ public class HtmlElementsController extends WebAddressController {
     }
 
     @FXML
-    protected void popElementHistories(MouseEvent mouseEvent) {
-        PopTools.popStringValues(this, elementInput, mouseEvent, key, true);
+    public void popExamples(Event event) {
+        if (UserConfig.getBoolean("HtmlElementsPopWhenMouseHovering", true)) {
+            showExamples(event);
+        }
+    }
+
+    @FXML
+    protected void showElementHistories(Event event) {
+        PopTools.popStringValues(this, elementInput, event, key, true, true);
+    }
+
+    @FXML
+    public void popElementHistories(Event event) {
+        if (UserConfig.getBoolean(key + "PopWhenMouseHovering", false)) {
+            showElementHistories(event);
+        }
     }
 
 }

@@ -25,9 +25,9 @@ public abstract class ImageManufactureScopeController_Points extends ImageManufa
                     int size = pointsList.getItems().size();
                     pointsSizeLabel.setText(Languages.message("Count") + ": " + size);
                     if (size > 100) {
-                        pointsSizeLabel.setStyle(NodeStyleTools.redText);
+                        pointsSizeLabel.setStyle(NodeStyleTools.redTextStyle());
                     } else {
-                        pointsSizeLabel.setStyle(NodeStyleTools.blueText);
+                        pointsSizeLabel.setStyle(NodeStyleTools.blueTextStyle());
                     }
                     clearPointsButton.setDisable(size == 0);
                 }

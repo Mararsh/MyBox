@@ -15,6 +15,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -27,7 +28,6 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -42,7 +42,6 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -395,7 +394,17 @@ public class ControlImagesSave extends BaseController {
 
     @FXML
     @Override
-    public void popSaveAs(MouseEvent event) {
+    public void pickSaveAs(Event event) {
+        if (spliceRadio.isSelected() || videoRadio.isSelected()) {
+            saveAsAction();
+            return;
+        }
+        super.pickSaveAs(event);
+    }
+
+    @FXML
+    @Override
+    public void popSaveAs(Event event) {
         if (spliceRadio.isSelected() || videoRadio.isSelected()) {
             return;
         }
@@ -591,7 +600,7 @@ public class ControlImagesSave extends BaseController {
                 @Override
                 protected boolean handle() {
                     File tmpFile = TmpFileTools.getTempFile();
-                    try ( PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
+                    try (PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
                         PDDocumentInformation info = new PDDocumentInformation();
                         info.setCreationDate(Calendar.getInstance());
                         info.setModificationDate(Calendar.getInstance());
@@ -641,7 +650,7 @@ public class ControlImagesSave extends BaseController {
                 protected void whenSucceeded() {
                     parentController.popSuccessful();
                     recordFileWritten(targetFile);
-                    ControllerTools.openPdfViewer(null, targetFile);
+                    PdfViewController.open(targetFile);
                 }
 
             };
@@ -664,7 +673,7 @@ public class ControlImagesSave extends BaseController {
                 protected boolean handle() {
                     System.gc();
                     File tmpFile = TmpFileTools.getTempFile();
-                    try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
+                    try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                         ImageWriter writer = ImageTiffFile.getWriter();
                         writer.setOutput(out);
                         writer.prepareWriteSequence(null);
@@ -725,7 +734,7 @@ public class ControlImagesSave extends BaseController {
                 protected boolean handle() {
                     System.gc();
                     File tmpFile = TmpFileTools.getTempFile();
-                    try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
+                    try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                         ImageWriter gifWriter = ImageGifFile.getWriter();
                         ImageWriteParam param = gifWriter.getDefaultWriteParam();
                         GIFImageMetadata metaData = (GIFImageMetadata) gifWriter.getDefaultImageMetadata(
@@ -791,7 +800,7 @@ public class ControlImagesSave extends BaseController {
                 protected boolean handle() {
                     System.gc();
                     File tmpFile = TmpFileTools.getTempFile();
-                    try ( HSLFSlideShow ppt = new HSLFSlideShow()) {
+                    try (HSLFSlideShow ppt = new HSLFSlideShow()) {
                         for (int i = 0; i < imageInfos.size(); ++i) {
                             if (task == null || task.isCancelled()) {
                                 return false;

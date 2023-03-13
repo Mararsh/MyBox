@@ -14,7 +14,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -44,7 +43,7 @@ public class OperationController extends BaseController {
         miaoCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                UserConfig.setBoolean("Miao", newValue);
+                UserConfig.setBoolean(baseName + "Miao", newValue);
 
             }
         });
@@ -53,7 +52,7 @@ public class OperationController extends BaseController {
         openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                UserConfig.setBoolean("OpenWhenComplete", newValue);
+                UserConfig.setBoolean(baseName + "OpenWhenComplete", newValue);
 
             }
         });
@@ -83,9 +82,7 @@ public class OperationController extends BaseController {
     @FXML
     @Override
     public void openTarget(ActionEvent event) {
-
         if (parentController != null) {
-
             parentController.openTarget(event);
         }
     }

@@ -15,8 +15,8 @@ import mara.mybox.db.table.TableColor;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.UserConfig;
@@ -53,14 +53,14 @@ public class ColorSet extends BaseController {
         }
     }
 
-    public void init(BaseController parent, String name) {
-        init(parent, name, Color.TRANSPARENT);
+    public ColorSet init(BaseController parent, String name) {
+        return init(parent, name, Color.TRANSPARENT);
     }
 
-    public void init(BaseController parent, String name, Color defaultColor) {
+    public ColorSet init(BaseController parent, String name, Color defaultColor) {
         try {
             if (parent == null) {
-                return;
+                return this;
             }
             if (name == null) {
                 name = parent.baseName + "Color";
@@ -73,17 +73,18 @@ public class ColorSet extends BaseController {
 
             rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
-                public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
+                public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
                     if (isSettingValues) {
                         return;
                     }
-                    UserConfig.setString(thisName, ((Color) newValue).toString());
+                    UserConfig.setString(thisName, ((Color) nv).toString());
                 }
             });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+        return this;
     }
 
     public void hideRect() {
@@ -92,6 +93,7 @@ public class ColorSet extends BaseController {
 
     public void setColor(Color color) {
         rect.setFill(color);
+        NodeStyleTools.setTooltip(rect, FxColorTools.colorNameDisplay(tableColor, color));
     }
 
     public Color color() {
@@ -112,8 +114,7 @@ public class ColorSet extends BaseController {
 
     public void resetRect() {
         Color color = Color.web(UserConfig.getString(thisName, FxColorTools.color2rgba(defaultColor)));
-        rect.setFill(color);
-        NodeStyleTools.setTooltip(rect, FxColorTools.colorNameDisplay(tableColor, color));
+        setColor(color);
     }
 
     @FXML

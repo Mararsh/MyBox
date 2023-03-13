@@ -16,7 +16,6 @@ import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.TransformTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
-import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
@@ -87,7 +86,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
             }
             ImageInformation imageInfo = tableData.get(index);
             if (imageInfo != null) {
-                ControllerTools.showImageInformation(imageInfo);
+                ImageInformationController.open(imageInfo);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -101,7 +100,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
             }
             ImageInformation imageInfo = tableData.get(index);
             if (imageInfo != null) {
-                ControllerTools.showImageMetaData(imageInfo);
+                ImageMetaDataController.open(imageInfo);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -116,7 +115,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
             ImageInformation imageInfo = tableData.get(index);
             if (imageInfo != null) {
                 File file = imageInfo.getImageFileInformation().getFile();
-                ControllerTools.openImageViewer(null, file);
+                ImageViewerController.openFile(file);
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -129,7 +128,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                 return;
             }
             if (deleteConfirmCheck != null && deleteConfirmCheck.isSelected()) {
-                if (!PopTools.askSure(this,getMyStage().getTitle(), Languages.message("SureDelete"))) {
+                if (!PopTools.askSure(getTitle(), Languages.message("SureDelete"))) {
                     return;
                 }
             }
@@ -461,7 +460,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                 return;
             }
             if (deleteConfirmCheck != null && deleteConfirmCheck.isSelected()) {
-                if (!PopTools.askSure(this,getMyStage().getTitle(), Languages.message("SureDelete"))) {
+                if (!PopTools.askSure(getTitle(), Languages.message("SureDelete"))) {
                     return;
                 }
             }

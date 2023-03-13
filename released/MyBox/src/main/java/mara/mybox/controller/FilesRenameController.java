@@ -8,13 +8,13 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.FileInformation;
@@ -400,8 +400,15 @@ public class FilesRenameController extends BaseBatchFileController {
     }
 
     @FXML
-    public void popRegexExample(MouseEvent mouseEvent) {
-        PopTools.popRegexExamples(this, oldStringInput, mouseEvent);
+    protected void showRegexExample(Event event) {
+        PopTools.popRegexExamples(this, oldStringInput, event);
+    }
+
+    @FXML
+    protected void popRegexExample(Event event) {
+        if (UserConfig.getBoolean("RegexExamplesPopWhenMouseHovering", false)) {
+            showRegexExample(event);
+        }
     }
 
 }

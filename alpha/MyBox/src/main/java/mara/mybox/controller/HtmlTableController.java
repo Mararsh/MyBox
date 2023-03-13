@@ -132,7 +132,7 @@ public class HtmlTableController extends BaseWebViewController {
         }
         String name = title;
         if (name != null) {
-            name += ".htm";
+            name += ".html";
         }
         final File file = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
                 name, targetExtensionFilter);

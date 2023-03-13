@@ -279,13 +279,13 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
             if (ocrOptionsController.embedRadio.isSelected()) {
                 OCRinstance = new Tesseract();
                 // https://stackoverflow.com/questions/58286373/tess4j-pdf-to-tiff-to-tesseract-warning-invalid-resolution-0-dpi-using-70/58296472#58296472
-                OCRinstance.setTessVariable("user_defined_dpi", "96");
-                OCRinstance.setTessVariable("debug_file", "/dev/null");
+                OCRinstance.setVariable("user_defined_dpi", "96");
+                OCRinstance.setVariable("debug_file", "/dev/null");
                 OCRinstance.setPageSegMode(ocrOptionsController.psm);
                 Map<String, String> p = ocrOptionsController.checkParameters();
                 if (p != null && !p.isEmpty()) {
                     for (String key : p.keySet()) {
-                        OCRinstance.setTessVariable(key, p.get(key));
+                        OCRinstance.setVariable(key, p.get(key));
                     }
                 }
                 String path = UserConfig.getString(OCRTools.TessDataPath, null);
@@ -577,7 +577,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
             ProcessBuilder pb = new ProcessBuilder(parameters).redirectErrorStream(true);
             process = pb.start();
             String outputs = "", line;
-            try ( BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
+            try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                 while ((line = inReader.readLine()) != null) {
                     outputs += line + "\n";
                 }
