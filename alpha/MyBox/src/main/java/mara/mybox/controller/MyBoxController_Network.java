@@ -7,7 +7,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -20,47 +20,52 @@ public abstract class MyBoxController_Network extends MyBoxController_File {
     protected void showNetworkMenu(MouseEvent event) {
         hideMenu(event);
 
-        MenuItem weiboSnap = new MenuItem(Languages.message("WeiboSnap"));
+        MenuItem weiboSnap = new MenuItem(message("WeiboSnap"));
         weiboSnap.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.WeiboSnapFxml);
         });
 
-        MenuItem webBrowserHtml = new MenuItem(Languages.message("WebBrowser"));
+        MenuItem webBrowserHtml = new MenuItem(message("WebBrowser"));
         webBrowserHtml.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.WebBrowserFxml);
         });
 
-        MenuItem WebFavorites = new MenuItem(Languages.message("WebFavorites"));
+        MenuItem WebFavorites = new MenuItem(message("WebFavorites"));
         WebFavorites.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.WebFavoritesFxml);
         });
 
-        MenuItem WebHistories = new MenuItem(Languages.message("WebHistories"));
+        MenuItem WebHistories = new MenuItem(message("WebHistories"));
         WebHistories.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.WebHistoriesFxml);
         });
 
-        MenuItem ConvertUrl = new MenuItem(Languages.message("ConvertUrl"));
+        MenuItem ConvertUrl = new MenuItem(message("ConvertUrl"));
         ConvertUrl.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.NetworkConvertUrlFxml);
         });
 
-        MenuItem QueryAddress = new MenuItem(Languages.message("QueryNetworkAddress"));
+        MenuItem QueryAddress = new MenuItem(message("QueryNetworkAddress"));
         QueryAddress.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.NetworkQueryAddressFxml);
         });
 
-        MenuItem QueryDNSBatch = new MenuItem(Languages.message("QueryDNSBatch"));
+        MenuItem QueryDNSBatch = new MenuItem(message("QueryDNSBatch"));
         QueryDNSBatch.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.NetworkQueryDNSBatchFxml);
         });
 
-        MenuItem DownloadFirstLevelLinks = new MenuItem(Languages.message("DownloadHtmls"));
+        MenuItem DownloadFirstLevelLinks = new MenuItem(message("DownloadHtmls"));
         DownloadFirstLevelLinks.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.DownloadFirstLevelLinksFxml);
         });
 
-        MenuItem SecurityCertificates = new MenuItem(Languages.message("SecurityCertificates"));
+        MenuItem DirectorySynchronizeSFTP = new MenuItem(message("DirectorySynchronizeSFTP"));
+        DirectorySynchronizeSFTP.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.DirectorySynchronizeSFTPFxml);
+        });
+
+        MenuItem SecurityCertificates = new MenuItem(message("SecurityCertificates"));
         SecurityCertificates.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.SecurityCertificatesFxml);
         });
@@ -70,12 +75,12 @@ public abstract class MyBoxController_Network extends MyBoxController_File {
         popMenu.getItems().addAll(
                 webBrowserHtml, WebFavorites, WebHistories, new SeparatorMenuItem(),
                 QueryAddress, QueryDNSBatch, ConvertUrl, new SeparatorMenuItem(),
-                DownloadFirstLevelLinks, weiboSnap, new SeparatorMenuItem(),
+                DirectorySynchronizeSFTP, DownloadFirstLevelLinks, weiboSnap, new SeparatorMenuItem(),
                 SecurityCertificates
         );
 
         popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem closeMenu = new MenuItem(Languages.message("PopupClose"));
+        MenuItem closeMenu = new MenuItem(message("PopupClose"));
         closeMenu.setStyle("-fx-text-fill: #2e598a;");
         closeMenu.setOnAction((ActionEvent cevent) -> {
             popMenu.hide();

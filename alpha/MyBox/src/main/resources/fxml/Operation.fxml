@@ -37,7 +37,7 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/Red/iconOpen.png" />
+                                <Image url="@../buttons/Red/iconOpenPath.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -65,6 +65,6 @@ License:    Apache License Version 2.0
                 <Insets />
             </VBox.margin>
         </HBox>
-          <TextField fx:id="statusLabel" editable="false" focusTraversable="false" maxWidth="1.7976931348623157E308" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" />
+        <TextField fx:id="statusLabel" editable="false" focusTraversable="false" maxWidth="1.7976931348623157E308" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" />
     </children>
 </VBox>

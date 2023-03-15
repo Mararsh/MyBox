@@ -1176,6 +1176,21 @@ public class ControlColors extends BaseSysTableController<ColorData> {
         }
     }
 
+    @Override
+    public void itemDoubleClicked() {
+        popAction();
+    }
+
+    @FXML
+    @Override
+    public boolean popAction() {
+        ColorData selected = tableView.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            return false;
+        }
+        HtmlPopController.openHtml(selected.html());
+        return true;
+    }
 
     /*
         Colors pane

@@ -256,7 +256,7 @@ public class StyleButton {
             return new StyleData(id, message("ColorPalette"), "", "iconColor.png");
         }
         if (id.startsWith("open")) {
-            if (id.startsWith("openPath")) {
+            if (id.startsWith("openPath") || id.startsWith("openTarget")) {
                 return new StyleData(id, message("OpenDirectory"), "", "iconOpenPath.png");
             }
             switch (id) {

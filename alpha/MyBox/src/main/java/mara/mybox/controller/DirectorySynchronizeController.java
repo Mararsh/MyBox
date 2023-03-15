@@ -31,7 +31,6 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -66,7 +65,7 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
     protected DatePicker modifyAfterInput;
 
     public DirectorySynchronizeController() {
-        baseTitle = Languages.message("DirectorySynchronize");
+        baseTitle = message("DirectorySynchronize");
     }
 
     @Override
@@ -74,6 +73,17 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
         try {
             super.initControls();
 
+            initOptions();
+
+            initTarget();
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+
+    }
+
+    public void initOptions() {
+        try {
             deleteNonExistedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov,
@@ -107,6 +117,14 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
                 }
             });
 
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+
+    }
+
+    public void initTarget() {
+        try {
             targetPathInputController.baseName(baseName).init();
 
             startButton.disableProperty().bind(
@@ -114,7 +132,6 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
                             .or(sourcePathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
                             .or(targetPathInputController.valid.not())
             );
-
             operationBarController.openTargetButton.disableProperty().bind(
                     startButton.disableProperty()
             );
@@ -122,22 +139,28 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
+    }
 
+    protected boolean checkTarget() {
+        targetPath = targetPathInputController.file();
+        if (targetPath == null) {
+            popError(message("Invlid") + ": " + message("TargetPath"));
+            return false;
+        }
+        if (targetPath.getAbsolutePath().startsWith(sourcePath.getAbsolutePath())) {
+            popError(message("TargetPathShouldNotSourceSub"));
+            return false;
+        }
+        return true;
     }
 
     protected boolean initAttributes() {
         try {
-            sourcePath = new File(sourcePathInput.getText());
-            targetPath = targetPathInputController.file();
-            if (targetPath == null) {
-                popError(message("Invlid") + ": " + message("TargetPath"));
-                return false;
-            }
-            if (targetPath.getAbsolutePath().startsWith(sourcePath.getAbsolutePath())) {
-                popError(message("TargetPathShouldNotSourceSub"));
+            if (!checkTarget()) {
                 return false;
             }
 
+            sourcePath = new File(sourcePathInput.getText());
             if (!paused || lastFileName == null) {
                 if (!targetPath.exists()) {
                     targetPath.mkdirs();
@@ -171,7 +194,7 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
                 copyAttr.setDeleteNotExisteds(deleteNonExistedCheck.isSelected());
 
                 if (!copyAttr.isCopyNew() && !copyAttr.isCopyExisted() && !copyAttr.isCopySubdir()) {
-                    alertInformation(Languages.message("NothingCopy"));
+                    alertInformation(message("NothingCopy"));
                     return false;
                 }
                 // In case that the source path itself is in blacklist
@@ -180,30 +203,30 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
                     String srcName = sourcePath.getName();
                     for (String key : keys) {
                         if (srcName.contains(key)) {
-                            alertInformation(Languages.message("NothingCopy"));
+                            alertInformation(message("NothingCopy"));
                             return false;
                         }
                     }
                 }
 
                 initLogs();
-                logsTextArea.setText(Languages.message("SourcePath") + ": " + sourcePathInput.getText() + "\n");
-                logsTextArea.appendText(Languages.message("TargetPath") + ": " + targetPath.getAbsolutePath() + "\n");
+                logsTextArea.setText(message("SourcePath") + ": " + sourcePathInput.getText() + "\n");
+                logsTextArea.appendText(message("TargetPath") + ": " + targetPath.getAbsolutePath() + "\n");
 
-                strFailedCopy = Languages.message("FailedCopy") + ": ";
-                strCreatedSuccessfully = Languages.message("CreatedSuccessfully") + ": ";
-                strCopySuccessfully = Languages.message("CopySuccessfully") + ": ";
-                strDeleteSuccessfully = Languages.message("DeletedSuccessfully") + ": ";
-                strFailedDelete = Languages.message("FailedDelete") + ": ";
-                strFileDeleteSuccessfully = Languages.message("FileDeletedSuccessfully") + ": ";
-                strDirectoryDeleteSuccessfully = Languages.message("DirectoryDeletedSuccessfully") + ": ";
+                strFailedCopy = message("FailedCopy") + ": ";
+                strCreatedSuccessfully = message("CreatedSuccessfully") + ": ";
+                strCopySuccessfully = message("CopySuccessfully") + ": ";
+                strDeleteSuccessfully = message("DeletedSuccessfully") + ": ";
+                strFailedDelete = message("FailedDelete") + ": ";
+                strFileDeleteSuccessfully = message("FileDeletedSuccessfully") + ": ";
+                strDirectoryDeleteSuccessfully = message("DirectoryDeletedSuccessfully") + ": ";
 
                 startHandle = true;
                 lastFileName = null;
 
             } else {
                 startHandle = false;
-                updateLogs(Languages.message("LastHanldedFile") + " " + lastFileName, true);
+                updateLogs(message("LastHanldedFile") + " " + lastFileName, true);
             }
 
             processStartTime = new Date();
@@ -238,11 +261,11 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
                             done = conditionalCopy(sourcePath, targetPath);
                         } else {
                             if (!paused && targetPath.exists()) {
-                                updateLogs(Languages.message("ClearingTarget"), true);
+                                updateLogs(message("ClearingTarget"), true);
                                 if (clearDir(targetPath, false)) {
-                                    updateLogs(Languages.message("TargetCleared"), true);
+                                    updateLogs(message("TargetCleared"), true);
                                 } else if (!copyAttr.isContinueWhenError()) {
-                                    updateLogs(Languages.message("FailClearTarget"), true);
+                                    updateLogs(message("FailClearTarget"), true);
                                     return false;
                                 }
                             }
@@ -254,7 +277,7 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
                         }
                         if (deleteSourceCheck.isSelected()) {
                             done = FileDeleteTools.deleteDir(sourcePath);
-                            updateLogs(Languages.message("SourcePathCleared"), true);
+                            updateLogs(message("SourcePathCleared"), true);
                         }
                         return done;
                     }
@@ -293,16 +316,16 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
             @Override
             public void run() {
                 if (paused) {
-                    updateLogs(Languages.message("Paused"), true);
+                    updateLogs(message("Paused"), true);
                 } else {
-                    updateLogs(Languages.message(newStatus), true);
+                    updateLogs(message(newStatus), true);
                 }
                 switch (newStatus) {
                     case "Started":
-                        operationBarController.statusLabel.setText(Languages.message("Handling...") + " "
-                                + Languages.message("StartTime")
+                        operationBarController.statusLabel.setText(message("Handling...") + " "
+                                + message("StartTime")
                                 + ": " + DateTools.datetimeToString(processStartTime));
-                        StyleTools.setNameIcon(startButton, Languages.message("Stop"), "iconStop.png");
+                        StyleTools.setNameIcon(startButton, message("Stop"), "iconStop.png");
                         startButton.applyCss();
                         startButton.setOnAction(new EventHandler<ActionEvent>() {
                             @Override
@@ -312,7 +335,7 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
                         });
                         operationBarController.pauseButton.setVisible(true);
                         operationBarController.pauseButton.setDisable(false);
-                        StyleTools.setNameIcon(operationBarController.pauseButton, Languages.message("Pause"), "iconPause.png");
+                        StyleTools.setNameIcon(operationBarController.pauseButton, message("Pause"), "iconPause.png");
                         operationBarController.pauseButton.applyCss();
                         operationBarController.pauseButton.setOnAction(new EventHandler<ActionEvent>() {
                             @Override
@@ -327,7 +350,7 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
                     case "Done":
                     default:
                         if (paused) {
-                            StyleTools.setNameIcon(startButton, Languages.message("Stop"), "iconStop.png");
+                            StyleTools.setNameIcon(startButton, message("Stop"), "iconStop.png");
                             startButton.applyCss();
                             startButton.setOnAction(new EventHandler<ActionEvent>() {
                                 @Override
@@ -337,7 +360,7 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
                             });
                             operationBarController.pauseButton.setVisible(true);
                             operationBarController.pauseButton.setDisable(false);
-                            StyleTools.setNameIcon(operationBarController.pauseButton, Languages.message("Start"), "iconStart.png");
+                            StyleTools.setNameIcon(operationBarController.pauseButton, message("Start"), "iconStart.png");
                             operationBarController.pauseButton.applyCss();
                             operationBarController.pauseButton.setOnAction(new EventHandler<ActionEvent>() {
                                 @Override
@@ -347,7 +370,7 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
                             });
                             disableControls(true);
                         } else {
-                            StyleTools.setNameIcon(startButton, Languages.message("Start"), "iconStart.png");
+                            StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
                             startButton.applyCss();
                             startButton.setOnAction(new EventHandler<ActionEvent>() {
                                 @Override
@@ -385,33 +408,33 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
         }
         String s;
         if (paused) {
-            s = Languages.message("Paused");
+            s = message("Paused");
         } else {
-            s = Languages.message(currentStatus);
+            s = message(currentStatus);
         }
-        s += ". " + Languages.message("HandledFiles") + ": " + copyAttr.getCopiedFilesNumber() + " "
-                + Languages.message("Cost") + ": " + DateTools.datetimeMsDuration(new Date(), processStartTime) + ". "
-                + Languages.message("Average") + ": " + avg + " " + Languages.message("SecondsPerItem") + ". "
-                + Languages.message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + ", "
-                + Languages.message("EndTime") + ": " + DateTools.datetimeToString(new Date());
+        s += ". " + message("HandledFiles") + ": " + copyAttr.getCopiedFilesNumber() + " "
+                + message("Cost") + ": " + DateTools.datetimeMsDuration(new Date(), processStartTime) + ". "
+                + message("Average") + ": " + avg + " " + message("SecondsPerItem") + ". "
+                + message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + ", "
+                + message("EndTime") + ": " + DateTools.datetimeToString(new Date());
         operationBarController.statusLabel.setText(s);
     }
 
     @Override
     public void donePost() {
         showCost();
-        updateLogs(Languages.message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + "   "
-                + Languages.message("Cost") + ": " + DateTools.datetimeMsDuration(new Date(), processStartTime), false, true);
-        updateLogs(Languages.message("TotalCheckedFiles") + ": " + copyAttr.getTotalFilesNumber() + "   "
-                + Languages.message("TotalCheckedDirectories") + ": " + copyAttr.getTotalDirectoriesNumber() + "   "
-                + Languages.message("TotalCheckedSize") + ": " + FileTools.showFileSize(copyAttr.getTotalSize()), false, true);
-        updateLogs(Languages.message("TotalCopiedFiles") + ": " + copyAttr.getCopiedFilesNumber() + "   "
-                + Languages.message("TotalCopiedDirectories") + ": " + copyAttr.getCopiedDirectoriesNumber() + "   "
-                + Languages.message("TotalCopiedSize") + ": " + FileTools.showFileSize(copyAttr.getCopiedSize()), false, true);
+        updateLogs(message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + "   "
+                + message("Cost") + ": " + DateTools.datetimeMsDuration(new Date(), processStartTime), false, true);
+        updateLogs(message("TotalCheckedFiles") + ": " + copyAttr.getTotalFilesNumber() + "   "
+                + message("TotalCheckedDirectories") + ": " + copyAttr.getTotalDirectoriesNumber() + "   "
+                + message("TotalCheckedSize") + ": " + FileTools.showFileSize(copyAttr.getTotalSize()), false, true);
+        updateLogs(message("TotalCopiedFiles") + ": " + copyAttr.getCopiedFilesNumber() + "   "
+                + message("TotalCopiedDirectories") + ": " + copyAttr.getCopiedDirectoriesNumber() + "   "
+                + message("TotalCopiedSize") + ": " + FileTools.showFileSize(copyAttr.getCopiedSize()), false, true);
         if (copyAttr.isConditionalCopy() && copyAttr.isDeleteNotExisteds()) {
-            updateLogs(Languages.message("TotalDeletedFiles") + ": " + copyAttr.getDeletedFiles() + "   "
-                    + Languages.message("TotalDeletedDirectories") + ": " + copyAttr.getDeletedDirectories() + "   "
-                    + Languages.message("TotalDeletedSize") + ": " + FileTools.showFileSize(copyAttr.getDeletedSize()), false, true);
+            updateLogs(message("TotalDeletedFiles") + ": " + copyAttr.getDeletedFiles() + "   "
+                    + message("TotalDeletedDirectories") + ": " + copyAttr.getDeletedDirectories() + "   "
+                    + message("TotalDeletedSize") + ": " + FileTools.showFileSize(copyAttr.getDeletedSize()), false, true);
         }
 
         if (operationBarController.miaoCheck.isSelected()) {
@@ -445,7 +468,7 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
 
     protected void checkIsConditional() {
         RadioButton sort = (RadioButton) copyGroup.getSelectedToggle();
-        if (!Languages.message("CopyConditionally").equals(sort.getText())) {
+        if (!message("CopyConditionally").equals(sort.getText())) {
             condBox.setDisable(true);
             isConditional = false;
         } else {
@@ -482,7 +505,7 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
                 if (!startHandle) {
                     if (lastFileName.equals(srcFileName)) {
                         startHandle = true;
-                        updateLogs(Languages.message("ReachFile") + " " + lastFileName, true);
+                        updateLogs(message("ReachFile") + " " + lastFileName, true);
                     }
                     if (srcFile.isFile()) {
                         continue;
@@ -550,7 +573,7 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
                     }
                 } else if (srcFile.isDirectory() && copyAttr.isCopySubdir()) {
                     if (verboseCheck == null || verboseCheck.isSelected()) {
-                        updateLogs(Languages.message("HandlingDirectory") + " " + srcFileName, true);
+                        updateLogs(message("HandlingDirectory") + " " + srcFileName, true);
                     }
                     if (srcFile.listFiles() == null && !copyAttr.isCopyEmpty()) {
                         continue;
@@ -611,7 +634,7 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
                     if (lastFileName.equals(srcFileName)) {
                         startHandle = true;
                         if (verboseCheck == null || verboseCheck.isSelected()) {
-                            updateLogs(Languages.message("ReachFile") + " " + lastFileName, true);
+                            updateLogs(message("ReachFile") + " " + lastFileName, true);
                         }
                     }
                     if (srcFile.isFile()) {
@@ -643,7 +666,7 @@ public class DirectorySynchronizeController extends BaseBatchFileController {
                     }
                 } else if (srcFile.isDirectory()) {
                     if (verboseCheck == null || verboseCheck.isSelected()) {
-                        updateLogs(Languages.message("HandlingDirectory") + " " + srcFileName, true);
+                        updateLogs(message("HandlingDirectory") + " " + srcFileName, true);
                     }
                     if (startHandle) {
                         tFile.mkdirs();

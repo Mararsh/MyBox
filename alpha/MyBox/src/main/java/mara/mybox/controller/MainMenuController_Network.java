@@ -55,4 +55,10 @@ public abstract class MainMenuController_Network extends MainMenuController_File
     protected void downloadFirstLevelLinks(ActionEvent event) {
         loadScene(Fxmls.DownloadFirstLevelLinksFxml);
     }
+
+    @FXML
+    protected void directorySynchronizeSFTP(ActionEvent event) {
+        loadScene(Fxmls.DirectorySynchronizeSFTPFxml);
+    }
+
 }

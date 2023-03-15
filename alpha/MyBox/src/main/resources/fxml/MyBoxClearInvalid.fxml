@@ -25,46 +25,46 @@ License:    Apache License Version 2.0
     <center>
         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" BorderPane.alignment="CENTER">
             <children>
-            <HBox alignment="CENTER_LEFT" spacing="2.0">
-               <children>
-                  <Label minHeight="-Infinity" text="%ClearInvalidFiles" wrapText="true" />
-                  <CheckBox fx:id="timeCheck1" layoutX="36.0" layoutY="16.0" mnemonicParsing="false" text="%TempDir" />
-                                  <CheckBox fx:id="timeCheck" mnemonicParsing="false" text="%ImagesEditHistories" />
-                  <CheckBox fx:id="tagsCheck" mnemonicParsing="false" text="%Backup" />
-                                  <CheckBox fx:id="iconCheck" mnemonicParsing="false" text="%Data" />
-                  <Label layoutX="10.0" layoutY="17.0" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                      <Button fx:id="openTargetButton" mnemonicParsing="false" onAction="#openTarget">
-                          <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                  <image>
-                                      <Image url="@../buttons/Red/iconOpen.png" />
-                                  </image>
-                              </ImageView>
-                          </graphic>
-                      </Button>
-               </children>
-            </HBox>
-                      <TextArea fx:id="logsTextArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
-                      <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
-                          <children>
-                              <Label text="%MaxCharacters" />
-                              <TextField fx:id="maxCharsinput" prefWidth="80.0" text="5000" />
-                              <CheckBox fx:id="verboseCheck" mnemonicParsing="false" text="%VerboseLogs" />
-                              <Button fx:id="clearButton1" mnemonicParsing="false" onAction="#clearLogs">
-                                  <graphic>
-                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                          <image>
-                                              <Image url="@../buttons/Red/iconClear.png" />
-                                          </image>
-                                      </ImageView>
-                                  </graphic>
-                              </Button>
-                          </children>
-                      </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="2.0">
+                    <children>
+                        <Label minHeight="-Infinity" text="%ClearInvalidFiles" wrapText="true" />
+                        <CheckBox fx:id="timeCheck1" layoutX="36.0" layoutY="16.0" mnemonicParsing="false" text="%TempDir" />
+                        <CheckBox fx:id="timeCheck" mnemonicParsing="false" text="%ImagesEditHistories" />
+                        <CheckBox fx:id="tagsCheck" mnemonicParsing="false" text="%Backup" />
+                        <CheckBox fx:id="iconCheck" mnemonicParsing="false" text="%Data" />
+                        <Label layoutX="10.0" layoutY="17.0" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="openTargetButton" mnemonicParsing="false" onAction="#openTarget">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconOpenPath.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                    </children>
+                </HBox>
+                <TextArea fx:id="logsTextArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
+                <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
+                    <children>
+                        <Label text="%MaxCharacters" />
+                        <TextField fx:id="maxCharsinput" prefWidth="80.0" text="5000" />
+                        <CheckBox fx:id="verboseCheck" mnemonicParsing="false" text="%VerboseLogs" />
+                        <Button fx:id="clearButton1" mnemonicParsing="false" onAction="#clearLogs">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconClear.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                    </children>
+                </HBox>
             </children>
-         <padding>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </padding>
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
         </VBox>
     </center>
     <padding>

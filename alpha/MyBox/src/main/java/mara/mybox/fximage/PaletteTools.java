@@ -74,11 +74,7 @@ public class PaletteTools {
         try {
             List<MenuItem> menus = new ArrayList<>();
 
-            MenuItem menu = new MenuItem(message("ArtHuesWheel") + "-" + message("Colors24"));
-            menu.setOnAction((ActionEvent e) -> {
-                importPalette(parent, message("ArtHuesWheel") + "-" + message("Colors24"));
-            });
-            menus.add(menu);
+            MenuItem menu;
 
             menu = new MenuItem(message("WebCommonColors"));
             menu.setOnAction((ActionEvent e) -> {
@@ -107,6 +103,12 @@ public class PaletteTools {
             menu = new MenuItem(message("ArtHuesWheel") + "-" + message("Colors12"));
             menu.setOnAction((ActionEvent e) -> {
                 importPalette(parent, message("ArtHuesWheel") + "-" + message("Colors12"));
+            });
+            menus.add(menu);
+
+            menu = new MenuItem(message("ArtHuesWheel") + "-" + message("Colors24"));
+            menu.setOnAction((ActionEvent e) -> {
+                importPalette(parent, message("ArtHuesWheel") + "-" + message("Colors24"));
             });
             menus.add(menu);
 
