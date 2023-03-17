@@ -62,7 +62,7 @@ public abstract class MyBoxController_Network extends MyBoxController_File {
 
         MenuItem DirectorySynchronizeSFTP = new MenuItem(message("DirectorySynchronizeSFTP"));
         DirectorySynchronizeSFTP.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.DirectorySynchronizeSFTPFxml);
+            loadScene(Fxmls.DirectorySynchronizeSftpFxml);
         });
 
         MenuItem SecurityCertificates = new MenuItem(message("SecurityCertificates"));

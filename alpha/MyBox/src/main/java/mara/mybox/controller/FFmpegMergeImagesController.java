@@ -140,7 +140,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
                             merge(imagesListFile, audiosListFile, videoFile);
 
                         } catch (Exception e) {
-                            updateLogs(e.toString(), true);
+                            showLogs(e.toString());
                         }
                         ok = true;
                         return null;

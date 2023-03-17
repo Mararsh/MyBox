@@ -355,7 +355,7 @@ public class Fxmls {
     public static final String DownloadFirstLevelLinksFxml = "/fxml/DownloadFirstLevelLinks.fxml";
     public static final String DownloadFirstLevelLinksSetFxml = "/fxml/DownloadFirstLevelLinksSet.fxml";
 
-    public static final String DirectorySynchronizeSFTPFxml = "/fxml/DirectorySynchronizeSFTP.fxml";
+    public static final String DirectorySynchronizeSftpFxml = "/fxml/DirectorySynchronizeSftp.fxml";
 
 
     /*

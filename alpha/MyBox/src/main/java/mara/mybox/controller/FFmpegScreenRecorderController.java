@@ -21,7 +21,6 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
@@ -135,41 +134,31 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
         return true;
     }
 
-    @FXML
     @Override
-    public void startAction() {
-        if (!checkOptions()) {
-            return;
+    public void beforeTask() {
+        super.beforeTask();
+        initLogs();
+    }
+
+    @Override
+    public void startTask() {
+        if (optionsController.delayController.value > 0) {
+            updateLogs(message("Delay") + ": " + optionsController.delayController.value + " " + message("Seconds"));
+            timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    superStartTask();
+                }
+            }, optionsController.delayController.value * 1000);
+        } else {
+            superStartTask();
         }
-        if (startButton.getUserData() != null) {
-            StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
-            startButton.applyCss();
-            startButton.setUserData(null);
-            cancelAction();
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            clearLogs();
-            StyleTools.setNameIcon(startButton, message("Stop"), "iconStop.png");
-            startButton.applyCss();
-            startButton.setUserData("started");
-            tabPane.getSelectionModel().select(logsTab);
-            if (optionsController.delayController.value > 0) {
-                updateLogs(message("Delay") + ": " + optionsController.delayController.value + " " + message("Seconds"));
-                timer = new Timer();
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        startTask();
-                    }
-                }, optionsController.delayController.value * 1000);
-            } else {
-                startTask();
-            }
-        }
+    }
+
+    public void superStartTask() {
+
+        super.startTask();
     }
 
     @Override
@@ -182,11 +171,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
             timer = null;
         }
         updateLogs(message("Started"));
-        List<String> parameters = optionsController.makeParameters(this);
-        if (parameters == null) {
-            return false;
-        }
-        return startRecorder(parameters);
+        return startRecorder(optionsController.makeParameters(this));
     }
 
     protected boolean startRecorder(List<String> parameters) {
@@ -208,7 +193,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
                 timer = null;
             }
             boolean started = false, recording;
-            try ( BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
+            try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                 String line;
                 long start = new Date().getTime();
                 while ((line = inReader.readLine()) != null) {
@@ -226,7 +211,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
                         }
                     }
                     if (verboseCheck.isSelected() || !recording) {
-                        updateLogs(line + "\n");
+                        updateLogs(line + "\n", true, true);
                     }
                     if (!started && (new Date().getTime() - start > 15000)) {  // terminal process if too long blocking
                         process.destroyForcibly();
@@ -261,6 +246,15 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
     }
 
     @Override
+    public void cancelTask() {
+        if (task != null) {
+            task.cancel();
+            task = null;
+        }
+        cancelAction();
+    }
+
+    @Override
     public void cancelAction() {
         if (process == null) {
             stopping.set(false);
@@ -271,7 +265,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
         }
         stopping.set(true);
         if (process != null) {
-            try ( BufferedWriter writer = new BufferedWriter(
+            try (BufferedWriter writer = new BufferedWriter(
                     new OutputStreamWriter(process.getOutputStream(), Charset.forName("UTF-8")));) {
                 writer.append('q');
             } catch (Exception e) {
@@ -305,11 +299,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
     @Override
     public void cleanPane() {
         try {
-            if (timer != null) {
-                timer.cancel();
-                timer = null;
-            }
-            cancelAction();
+            cancelTask();
         } catch (Exception e) {
         }
         super.cleanPane();

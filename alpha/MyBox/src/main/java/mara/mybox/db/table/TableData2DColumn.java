@@ -77,7 +77,7 @@ public class TableData2DColumn extends BaseTable<Data2DColumn> {
     public static final String ClearData
             = "DELETE FROM Data2D_Column WHERE d2id=?";
 
-    public static final String QeuryData
+    public static final String QueryData
             = "SELECT * FROM Data2D_Column WHERE d2id=? ORDER BY index";
 
     /*

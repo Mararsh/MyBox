@@ -279,7 +279,7 @@ public abstract class BaseImportCsvController<D> extends BaseBatchFileController
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
-            updateLogs(e.toString(), true);
+            showLogs(e.toString());
         }
         updateLogs(Languages.message("Imported") + ":" + importCount + "  " + file + "\n"
                 + Languages.message("Insert") + ":" + insertCount + " "

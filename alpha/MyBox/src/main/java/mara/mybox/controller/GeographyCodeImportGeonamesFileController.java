@@ -291,7 +291,7 @@ public class GeographyCodeImportGeonamesFileController extends BaseImportCsvCont
                 conn.commit();
             }
         } catch (Exception e) {
-            updateLogs(e.toString(), true);
+            showLogs(e.toString());
         }
         updateLogs(Languages.message("Imported") + ":" + importCount + "  " + file + "\n"
                 + Languages.message("Insert") + ":" + insertCount + " "

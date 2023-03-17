@@ -146,7 +146,7 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
                 result = Languages.message("Successful");
             }
         } catch (Exception e) {
-            updateLogs(e.toString(), true);
+            showLogs(e.toString());
             result = Languages.message("Failed");
         }
         tableController.markFileHandled(currentParameters.currentIndex, result);

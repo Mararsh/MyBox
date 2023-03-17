@@ -265,7 +265,7 @@ public class FilesRenameController extends BaseBatchFileController {
                 return null;
             }
         } catch (Exception e) {
-            updateLogs(e.toString(), true);
+            showLogs(e.toString());
             return null;
         }
     }
@@ -325,7 +325,7 @@ public class FilesRenameController extends BaseBatchFileController {
             }
             return filePath + newName;
         } catch (Exception e) {
-            updateLogs(e.toString(), true);
+            showLogs(e.toString());
             return null;
         }
     }

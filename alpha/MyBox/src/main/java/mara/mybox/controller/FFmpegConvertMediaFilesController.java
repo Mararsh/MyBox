@@ -55,7 +55,7 @@ public class FFmpegConvertMediaFilesController extends BaseBatchFFmpegController
             targetFileGenerated(target);
             return Languages.message("Successful");
         } catch (Exception e) {
-            updateLogs(e.toString(), true);
+            showLogs(e.toString());
             return Languages.message("Failed");
         }
     }

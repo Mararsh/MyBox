@@ -83,6 +83,10 @@ public class BaseLogs extends BaseController {
         });
     }
 
+    protected void showLogs(String line) {
+        updateLogs(line, true, true);
+    }
+
     public void updateLogs(String line) {
         updateLogs(line, true, false);
     }

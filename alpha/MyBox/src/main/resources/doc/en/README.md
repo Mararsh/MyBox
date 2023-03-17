@@ -6,7 +6,7 @@ This is desktop application based on JavaFx to provide simple and easy functions
 ## Latest Versions       
 Contents of this document may be expired, but its links refer to the latest versions.     
 
-The latest versions can be downloaded in following addresses:             
+The latest versions and all archived versions can be downloaded in following addresses:             
 
 | address | dowloads | readme | 
 | --- | --- | --- | 

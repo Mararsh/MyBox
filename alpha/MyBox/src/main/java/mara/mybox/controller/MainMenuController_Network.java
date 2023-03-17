@@ -58,7 +58,7 @@ public abstract class MainMenuController_Network extends MainMenuController_File
 
     @FXML
     protected void directorySynchronizeSFTP(ActionEvent event) {
-        loadScene(Fxmls.DirectorySynchronizeSFTPFxml);
+        loadScene(Fxmls.DirectorySynchronizeSftpFxml);
     }
 
 }

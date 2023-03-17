@@ -76,6 +76,10 @@ public class DataMigration {
         try (Connection conn = DerbyBase.getConnection()) {
             int lastVersion = DevTools.lastVersion(conn);
             int currentVersion = DevTools.myboxVersion(AppValues.AppVersion);
+            if (SystemConfig.getBoolean("IsAlpha", false) && !AppValues.Alpha) {
+                reloadInternalDoc();
+            }
+            SystemConfig.setBoolean("IsAlpha", AppValues.Alpha);
             if (lastVersion == currentVersion) {
                 return true;
             }
