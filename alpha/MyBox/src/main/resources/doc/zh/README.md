@@ -229,6 +229,7 @@ MyBox基于以下开放资源：
 | nashorn | JavaScript | [https://openjdk.org/projects/nashorn/](https://openjdk.org/projects/nashorn/) |
 | echarts-gl | WebGL | [https://github.com/ecomfe/echarts-gl](https://github.com/ecomfe/echarts-gl) |
 | RYB色相 | 美术色彩 | [https://blog.csdn.net/weixin_44938037/article/details/90599711](https://blog.csdn.net/weixin_44938037/article/details/90599711) |
+| jsch | sftp | [http://www.jcraft.com/jsch/](http://www.jcraft.com/jsch/) |
 
 
 # 特点

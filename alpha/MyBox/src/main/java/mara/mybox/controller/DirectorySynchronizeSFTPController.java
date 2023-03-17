@@ -4,6 +4,7 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.ChannelSftp.LsEntry;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -186,7 +187,7 @@ public class DirectorySynchronizeSftpController extends DirectorySynchronizeCont
         currentConnection.setHost(host);
         currentConnection.setUsername(userInput.getText());
         currentConnection.setPassword(passwordInput.getText());
-        currentConnection.setPath(remotePath);
+        currentConnection.setPath(fixName(remotePath));
         currentConnection.setType(PathConnection.Type.SFTP);
         currentConnection.setPort(22);
         currentConnection.setHostKeyCheck(hostKeyCheck.isSelected());
@@ -213,6 +214,7 @@ public class DirectorySynchronizeSftpController extends DirectorySynchronizeCont
             @Override
             protected void whenSucceeded() {
                 loadProfiles();
+                editProfile(currentConnection);
             }
 
         };
@@ -316,7 +318,6 @@ public class DirectorySynchronizeSftpController extends DirectorySynchronizeCont
         try {
             JSch jsch = new JSch();
             Session sshSession = jsch.getSession(currentConnection.getUsername(), currentConnection.getHost(), 22);
-            showLogs("Session created.");
             sshSession.setPassword(currentConnection.getPassword());
             sshSession.setTimeout(currentConnection.getTimeout());
 
@@ -325,19 +326,14 @@ public class DirectorySynchronizeSftpController extends DirectorySynchronizeCont
             sshSession.setConfig(sshConfig);
 
             sshSession.connect();
-            updateLogs("SSH session connected: " + currentConnection.getHost(), true, true);
-            updateLogs("Opening Channel...", true, true);
+            showLogs("SSH session connected: " + currentConnection.getHost());
+            showLogs("Opening Channel...");
             sftp = (ChannelSftp) sshSession.openChannel("sftp");
             sftp.connect();
-            updateLogs("SFTP 登录成功", true, true);
+            showLogs("SFTP 登录成功");
 
-            Iterator<LsEntry> iterator = sftp.ls(currentConnection.getPath()).iterator();
-            List<String> names = new ArrayList<>();
-            while (iterator.hasNext()) {
-                String name = iterator.next().getFilename();
-                names.add(name);
-            }
-            updateLogs(names.toString(), true, true);
+            mkdirs(currentConnection.getPath());
+            synchronize(currentConnection.getPath());
 
             sftp.disconnect();
             sftp.exit();
@@ -345,6 +341,155 @@ public class DirectorySynchronizeSftpController extends DirectorySynchronizeCont
             return true;
         } catch (Exception e) {
             showLogs(e.toString());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean checkLoop(File sourcePath, String targetDirectory) {
+        return true;
+    }
+
+    public String fixName(String targetName) {
+        try {
+            return targetName.replaceAll("\\\\", "/");
+        } catch (Exception e) {
+            return targetName;
+        }
+    }
+
+    public LsEntry find(String targetName) {
+        try {
+            if (targetName == null || targetName.isBlank() || "/".equals(targetName)) {
+                return null;
+            }
+            String parent = fixName(new File(targetName).getParent());
+            Iterator<LsEntry> iterator = ls(parent);
+            while (iterator.hasNext()) {
+                LsEntry entry = iterator.next();
+                if (targetName.equals(parent + "/" + entry.getFilename())) {
+                    return entry;
+                }
+            }
+        } catch (Exception e) {
+//            showLogs(e.toString());
+        }
+        return null;
+    }
+
+    public Iterator<LsEntry> ls(String targetName) {
+        try {
+            return sftp.ls(fixName(targetName)).iterator();
+        } catch (Exception e) {
+//            showLogs(e.toString());
+            return null;
+        }
+    }
+
+    @Override
+    public boolean fileExist(String targetName) {
+        return find(targetName) != null;
+    }
+
+    @Override
+    public List<String> fileChildren(String targetName) {
+        List<String> list = new ArrayList<>();
+        try {
+            targetName = fixName(targetName);
+            Iterator<LsEntry> iterator = ls(targetName);
+            while (iterator.hasNext()) {
+                LsEntry entry = iterator.next();
+                String name = entry.getFilename();
+                if (name == null || name.isBlank()
+                        || ".".equals(name) || "..".equals(name)) {
+                    continue;
+                }
+                list.add(targetName + "/" + name);
+            }
+        } catch (Exception e) {
+//            showLogs(e.toString());
+        }
+        return list;
+    }
+
+    @Override
+    public boolean isDirectory(String targetName) {
+        try {
+            if ("/".equals(targetName)) {
+                return true;
+            }
+            LsEntry entry = find(targetName);
+            return entry != null && entry.getAttrs().isDir();
+        } catch (Exception e) {
+//            showLogs(e.toString());
+            return false;
+        }
+    }
+
+    @Override
+    public long fileLength(String targetName) {
+        try {
+            LsEntry entry = find(targetName);
+            if (entry != null) {
+                return entry.getAttrs().getSize();
+            }
+        } catch (Exception e) {
+//            showLogs(e.toString());
+        }
+        return -1;
+    }
+
+    @Override
+    public long fileModifyTime(String targetName) {
+        try {
+            LsEntry entry = find(targetName);
+            if (entry != null) {
+                return entry.getAttrs().getMTime() * 1000l;
+            }
+        } catch (Exception e) {
+//            showLogs(e.toString());
+        }
+        return -1;
+    }
+
+    @Override
+    public void deleteFile(String targetName) {
+        try {
+            sftp.rm(fixName(targetName));
+        } catch (Exception e) {
+            showLogs(e.toString());
+        }
+    }
+
+    @Override
+    public void mkdirs(String targetDirectory) {
+        try {
+            String[] names = fixName(targetDirectory).split("/");
+            String parent = null;
+            for (String name : names) {
+                String path = (parent == null ? "" : parent + "/") + name;
+                try {
+                    sftp.mkdir(path);
+                } catch (Exception e) {
+                }
+                parent = path;
+            }
+        } catch (Exception e) {
+            showLogs(e.toString());
+        }
+    }
+
+    @Override
+    public boolean copyFile(File sourceFile, String targetFile) {
+        try {
+            if (task == null || task.isCancelled()
+                    || sourceFile == null || !sourceFile.exists() || !sourceFile.isFile()) {
+                return false;
+            }
+            sftp.put(sourceFile.getAbsolutePath(), fixName(targetFile));
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.console(e.toString() + " " + targetFile);
             return false;
         }
     }
