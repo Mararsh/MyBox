@@ -40,6 +40,15 @@ public class PathConnection extends BaseData {
         modifyTime = new Date();
     }
 
+    public PathConnection copy() {
+        try {
+            return (PathConnection) super.clone();
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
+        }
+    }
+
     /*
         Static methods
      */

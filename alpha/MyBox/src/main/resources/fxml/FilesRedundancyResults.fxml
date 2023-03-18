@@ -6,21 +6,20 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
-<?import javafx.scene.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.web.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.effect.*?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.collections.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.chart.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.paint.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.TreeTableColumn?>
+<?import javafx.scene.control.TreeTableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FilesRedundancyResultsController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.FilesRedundancyResultsController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -50,8 +49,7 @@ License:    Apache License Version 2.0
                         <RadioButton fx:id="deleteRadio" mnemonicParsing="false" text="%DeleteDirectly" toggleGroup="$deleteType" />
                         <Button fx:id="exceptLastButton" layoutX="1004.0" layoutY="13.0" mnemonicParsing="false" onAction="#exceptLastAction" text="%ExceptLast" />
                         <Button fx:id="exceptFirstButton" mnemonicParsing="false" onAction="#exceptFirstAction" text="%ExceptFirst" />
-                        <Button fx:id="deleteButton" defaultButton="true" mnemonicParsing="false" onAction="#deleteAction"
-                                styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                        <Button fx:id="deleteButton" defaultButton="true" mnemonicParsing="false" onAction="#deleteAction" styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>

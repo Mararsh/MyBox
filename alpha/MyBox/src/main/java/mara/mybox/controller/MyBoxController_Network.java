@@ -60,9 +60,14 @@ public abstract class MyBoxController_Network extends MyBoxController_File {
             loadScene(Fxmls.DownloadFirstLevelLinksFxml);
         });
 
-        MenuItem DirectorySynchronizeSFTP = new MenuItem(message("DirectorySynchronizeSFTP"));
-        DirectorySynchronizeSFTP.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.DirectorySynchronizeSftpFxml);
+        MenuItem RemotePathManage = new MenuItem(message("RemotePathManage"));
+        RemotePathManage.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.RemotePathManageFxml);
+        });
+
+        MenuItem RemotePathSynchronizeFromLocal = new MenuItem(message("RemotePathSynchronizeFromLocal"));
+        RemotePathSynchronizeFromLocal.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.RemotePathSynchronizeFromLocalFxml);
         });
 
         MenuItem SecurityCertificates = new MenuItem(message("SecurityCertificates"));
@@ -75,7 +80,8 @@ public abstract class MyBoxController_Network extends MyBoxController_File {
         popMenu.getItems().addAll(
                 webBrowserHtml, WebFavorites, WebHistories, new SeparatorMenuItem(),
                 QueryAddress, QueryDNSBatch, ConvertUrl, new SeparatorMenuItem(),
-                DirectorySynchronizeSFTP, DownloadFirstLevelLinks, weiboSnap, new SeparatorMenuItem(),
+                RemotePathManage, RemotePathSynchronizeFromLocal,
+                DownloadFirstLevelLinks, weiboSnap, new SeparatorMenuItem(),
                 SecurityCertificates
         );
 

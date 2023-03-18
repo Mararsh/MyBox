@@ -894,12 +894,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 return;
             }
         }
-        if (indice.contains(editingIndex)) {
-            editNull();
-        }
-        if (indice.contains(viewingIndex)) {
-            viewNull();
-        }
+
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
@@ -918,6 +913,12 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 protected void whenSucceeded() {
                     popInformation(message("Deleted") + ":" + deletedCount);
                     if (deletedCount > 0) {
+                        if (indice.contains(editingIndex)) {
+                            editNull();
+                        }
+                        if (indice.contains(viewingIndex)) {
+                            viewNull();
+                        }
                         afterDeletion();
                     }
                 }

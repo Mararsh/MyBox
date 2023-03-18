@@ -291,6 +291,11 @@ public abstract class BaseController_Actions extends BaseController_Interface {
     }
 
     @FXML
+    public void refreshAction() {
+
+    }
+
+    @FXML
     public boolean popAction() {
         return false;
     }

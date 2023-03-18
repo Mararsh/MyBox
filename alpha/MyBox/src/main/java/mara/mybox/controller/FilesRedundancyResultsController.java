@@ -11,8 +11,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TreeItem;
-import mara.mybox.data.FileInformation;
 import mara.mybox.data.FileInformation.FileType;
+import mara.mybox.data.FileNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.FileDeleteTools;
@@ -26,7 +26,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class FilesRedundancyResultsController extends FilesTreeController {
 
-    protected Map<String, List<FileInformation>> redundancy;
+    protected Map<String, List<FileNode>> redundancy;
 
     @FXML
     protected RadioButton deleteRadio, trashRadio;
@@ -52,12 +52,12 @@ public class FilesRedundancyResultsController extends FilesTreeController {
                         List<TreeItem> digests = new ArrayList();
                         digests.addAll(rootItem.getChildren());
                         for (TreeItem digest : digests) {
-                            List<TreeItem<FileInformation>> files = new ArrayList();
+                            List<TreeItem<FileNode>> files = new ArrayList();
                             files.addAll(digest.getChildren());
                             filesTotal += files.size();
                             filesRundancy += files.size() - 1;
-                            for (TreeItem<FileInformation> item : files) {
-                                FileInformation info = item.getValue();
+                            for (TreeItem<FileNode> item : files) {
+                                FileNode info = item.getValue();
                                 fileSize = info.getFileSize();
                                 if (fileSize > 0) {
                                     sizeTotal += fileSize;
@@ -93,7 +93,7 @@ public class FilesRedundancyResultsController extends FilesTreeController {
     }
 
     // https://stackoverflow.com/questions/29989892/checkboxtreetablecell-select-all-children-under-parent-event
-    public void loadRedundancy(Map<String, List<FileInformation>> data) {
+    public void loadRedundancy(Map<String, List<FileNode>> data) {
         filesTreeView.setRoot(null);
         if (data == null || data.isEmpty()) {
             popInformation(message("NoRedundancy"));
@@ -105,57 +105,39 @@ public class FilesRedundancyResultsController extends FilesTreeController {
             }
             task = new SingletonTask<Void>(this) {
 
-                private TreeItem<FileInformation> rootItem;
+                private TreeItem<FileNode> rootItem;
 
                 @Override
                 protected boolean handle() {
                     try {
                         redundancy = data;
-                        FileInformation rootInfo = new FileInformation();
+                        FileNode rootInfo = new FileNode();
                         rootInfo.setData(message("HandleFilesRedundancy"));
                         rootInfo.setFileType(FileType.Root);
                         rootItem = new TreeItem(rootInfo);
+                        addSelectedListener(rootItem);
                         rootItem.setExpanded(true);
 
-                        rootInfo.getSelectedProperty().addListener(new ChangeListener<Boolean>() {
-                            @Override
-                            public void changed(ObservableValue<? extends Boolean> ov,
-                                    Boolean oldItem, Boolean newItem) {
-                                if (!isSettingValues) {
-                                    treeItemSelected(rootItem, newItem);
-                                }
-                            }
-                        });
-
                         for (String digest : redundancy.keySet()) {
-                            FileInformation digestInfo = new FileInformation();
+                            FileNode digestInfo = new FileNode();
                             digestInfo.setData(digest);
                             digestInfo.setFileType(FileType.Digest);
-                            TreeItem<FileInformation> digestItem = new TreeItem(digestInfo);
+                            TreeItem<FileNode> digestItem = new TreeItem(digestInfo);
                             digestItem.setExpanded(true);
 
-                            List<FileInformation> files = redundancy.get(digest);
+                            List<FileNode> files = redundancy.get(digest);
                             digestInfo.setFileSize(files.get(0).getFileSize());
-                            digestInfo.getSelectedProperty().addListener(new ChangeListener<Boolean>() {
-                                @Override
-                                public void changed(ObservableValue<? extends Boolean> ov,
-                                        Boolean oldItem, Boolean newItem) {
-                                    if (!isSettingValues) {
-                                        treeItemSelected(digestItem, newItem);
-                                    }
-                                }
-                            });
+                            addSelectedListener(digestItem);
 
-                            for (FileInformation file : files) {
+                            for (FileNode file : files) {
                                 File f = file.getFile();
                                 if (f == null || !f.exists() || !f.isFile()) {
                                     continue;
                                 }
                                 digestItem.getChildren().add(new TreeItem(file));
-                                file.getSelectedProperty().addListener(new ChangeListener<Boolean>() {
+                                file.getSelected().addListener(new ChangeListener<Boolean>() {
                                     @Override
-                                    public void changed(ObservableValue<? extends Boolean> ov,
-                                            Boolean oldItem, Boolean newItem) {
+                                    public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                                         if (!isSettingValues) {
                                             checkSelection();
                                         }
@@ -170,7 +152,6 @@ public class FilesRedundancyResultsController extends FilesTreeController {
 
                         return true;
                     } catch (Exception e) {
-
                         error = e.toString();
                         MyBoxLog.debug(error);
                         return false;
@@ -196,16 +177,16 @@ public class FilesRedundancyResultsController extends FilesTreeController {
     @FXML
     public void exceptFirstAction() {
         isSettingValues = true;
-        TreeItem<FileInformation> rootItem = filesTreeView.getRoot();
-        List<TreeItem<FileInformation>> digests = rootItem.getChildren();
+        TreeItem<FileNode> rootItem = filesTreeView.getRoot();
+        List<TreeItem<FileNode>> digests = rootItem.getChildren();
         if (digests == null || digests.isEmpty()) {
             filesTreeView.setRoot(null);
             return;
         }
         rootItem.getValue().setSelected(false);
-        for (TreeItem<FileInformation> digest : digests) {
+        for (TreeItem<FileNode> digest : digests) {
             digest.getValue().setSelected(false);
-            List<TreeItem<FileInformation>> files = digest.getChildren();
+            List<TreeItem<FileNode>> files = digest.getChildren();
             if (files == null || files.isEmpty()) {
                 continue;
             }
@@ -223,16 +204,16 @@ public class FilesRedundancyResultsController extends FilesTreeController {
     @FXML
     public void exceptLastAction() {
         isSettingValues = true;
-        TreeItem<FileInformation> rootItem = filesTreeView.getRoot();
-        List<TreeItem<FileInformation>> digests = rootItem.getChildren();
+        TreeItem<FileNode> rootItem = filesTreeView.getRoot();
+        List<TreeItem<FileNode>> digests = rootItem.getChildren();
         if (digests == null || digests.isEmpty()) {
             filesTreeView.setRoot(null);
             return;
         }
         rootItem.getValue().setSelected(false);
-        for (TreeItem<FileInformation> digest : digests) {
+        for (TreeItem<FileNode> digest : digests) {
             digest.getValue().setSelected(false);
-            List<TreeItem<FileInformation>> files = digest.getChildren();
+            List<TreeItem<FileNode>> files = digest.getChildren();
             if (files == null || files.isEmpty()) {
                 continue;
             }
@@ -264,9 +245,9 @@ public class FilesRedundancyResultsController extends FilesTreeController {
                         List<TreeItem> digests = new ArrayList();
                         digests.addAll(rootItem.getChildren());
                         for (TreeItem digest : digests) {
-                            List<TreeItem<FileInformation>> files = new ArrayList();
+                            List<TreeItem<FileNode>> files = new ArrayList();
                             files.addAll(digest.getChildren());
-                            for (TreeItem<FileInformation> item : files) {
+                            for (TreeItem<FileNode> item : files) {
                                 if (!item.getValue().isSelected()) {
                                     continue;
                                 }
@@ -299,9 +280,9 @@ public class FilesRedundancyResultsController extends FilesTreeController {
                         return;
                     }
                     for (TreeItem digest : digests) {
-                        List<TreeItem<FileInformation>> files = new ArrayList();
+                        List<TreeItem<FileNode>> files = new ArrayList();
                         files.addAll(digest.getChildren());
-                        for (TreeItem<FileInformation> item : files) {
+                        for (TreeItem<FileNode> item : files) {
                             File file = item.getValue().getFile();
                             if (file == null || !file.exists() || !file.isFile()) {
                                 digest.getChildren().remove(item);

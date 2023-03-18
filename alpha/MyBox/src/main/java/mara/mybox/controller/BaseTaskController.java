@@ -117,7 +117,6 @@ public class BaseTaskController extends BaseLogs {
             task.cancel();
             task = null;
         }
-
     }
 
     @Override

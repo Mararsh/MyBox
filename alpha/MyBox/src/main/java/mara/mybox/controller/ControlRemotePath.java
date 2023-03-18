@@ -10,18 +10,10 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
-import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import mara.mybox.db.data.PathConnection;
@@ -30,22 +22,20 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
  * @CreateDate 2023-3-15
  * @License Apache License Version 2.0
  */
-public class DirectorySynchronizeSftpController extends DirectorySynchronizeController {
+public class ControlRemotePath extends BaseSysTableController<PathConnection> {
 
+    protected BaseTaskController taskController;
+    protected Session sshSession;
     protected ChannelSftp sftp;
     protected TablePathConnection tablePathConnection;
-    protected ObservableList<PathConnection> tableData;
     protected PathConnection currentConnection;
 
-    @FXML
-    protected TableView<PathConnection> tableView;
     @FXML
     protected TableColumn<PathConnection, String> titleColumn, hostColumn, pathColumn;
     @FXML
@@ -55,82 +45,61 @@ public class DirectorySynchronizeSftpController extends DirectorySynchronizeCont
     @FXML
     protected CheckBox hostKeyCheck;
 
-    public DirectorySynchronizeSftpController() {
+    public ControlRemotePath() {
         baseTitle = message("DirectorySynchronizeSFTP");
     }
 
     @Override
-    public void initTarget() {
+    public void setTableDefinition() {
+        tablePathConnection = new TablePathConnection();
+        tableDefinition = tablePathConnection;
+        queryConditions = " type='" + PathConnection.Type.SFTP.name() + "'";
+    }
+
+    @Override
+    protected void initColumns() {
         try {
-            tablePathConnection = new TablePathConnection();
-
-            tableData = FXCollections.observableArrayList();
-            tableView.setItems(tableData);
-            tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-            tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<PathConnection>() {
-                @Override
-                public void changed(ObservableValue<? extends PathConnection> v, PathConnection oldV, PathConnection newV) {
-                    if (isSettingValues) {
-                        return;
-                    }
-                    editProfile(newV);
-                }
-            });
-
             titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
             hostColumn.setCellValueFactory(new PropertyValueFactory<>("host"));
             pathColumn.setCellValueFactory(new PropertyValueFactory<>("path"));
 
-            startButton.disableProperty().bind(
-                    Bindings.isEmpty(sourcePathInput.textProperty())
-                            .or(sourcePathInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-                            .or(hostInput.textProperty().isEmpty())
-                            .or(pathInput.textProperty().isEmpty())
-            );
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
 
-    @Override
-    public void afterSceneLoaded() {
-        super.afterSceneLoaded();
-        loadProfiles();
-        editProfile(null);
+    public void setParameters(BaseTaskController taskController) {
+        try {
+            this.taskController = taskController;
+            loadTableData();
+            editProfile(null);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
     }
 
-    /*
-        profiles
-     */
-    public void loadProfiles() {
-        if (task != null) {
-            task.cancel();
+    @Override
+    public void itemClicked() {
+        editAction();
+    }
+
+    @FXML
+    @Override
+    public void editAction() {
+        PathConnection selected = selectedItem();
+        if (selected == null) {
+            return;
         }
-        tableData.clear();
-        task = new SingletonTask<Void>(this) {
-            private List<PathConnection> profiles;
-
-            @Override
-            protected boolean handle() {
-                profiles = tablePathConnection.read(PathConnection.Type.SFTP, -1);
-                return profiles != null;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                isSettingValues = true;
-                tableData.setAll(profiles);
-                isSettingValues = false;
-            }
-
-        };
-        start(task);
+        editProfile(selected);
     }
 
     public void editProfile(PathConnection profile) {
         currentConnection = profile;
         if (currentConnection == null) {
             currentConnection = new PathConnection();
+            editingIndex = -1;
+        } else {
+            editingIndex = tableData.indexOf(currentConnection);
         }
         titleInput.setText(currentConnection.getTitle());
         hostInput.setText(currentConnection.getHost());
@@ -144,7 +113,8 @@ public class DirectorySynchronizeSftpController extends DirectorySynchronizeCont
     }
 
     @FXML
-    public void addProfile() {
+    @Override
+    public void addAction() {
         editProfile(null);
     }
 
@@ -171,23 +141,23 @@ public class DirectorySynchronizeSftpController extends DirectorySynchronizeCont
             popError(message("InvalidParameter") + ": " + message("MaxRetries"));
             return false;
         }
-        String host = hostInput.getText().trim();
-        if (host.isBlank()) {
+        String host = hostInput.getText();
+        if (host == null || host.isBlank()) {
             popError(message("InvalidParameter") + ": " + message("Host"));
             return false;
         }
-        String remotePath = pathInput.getText().trim();
-        if (remotePath.isBlank()) {
+        String remotePath = pathInput.getText();
+        if (remotePath == null || remotePath.isBlank()) {
             popError(message("InvalidParameter") + ": " + message("RemotePath"));
             return false;
         }
         currentConnection.setTimeout(timeout);
         currentConnection.setRetry(retry);
         currentConnection.setTitle(titleInput.getText().trim());
-        currentConnection.setHost(host);
+        currentConnection.setHost(host.trim());
         currentConnection.setUsername(userInput.getText());
         currentConnection.setPassword(passwordInput.getText());
-        currentConnection.setPath(fixName(remotePath));
+        currentConnection.setPath(fixFilename(remotePath.trim()));
         currentConnection.setType(PathConnection.Type.SFTP);
         currentConnection.setPort(22);
         currentConnection.setHostKeyCheck(hostKeyCheck.isSelected());
@@ -196,7 +166,8 @@ public class DirectorySynchronizeSftpController extends DirectorySynchronizeCont
     }
 
     @FXML
-    public void saveProfile() {
+    @Override
+    public void saveAction() {
         if (!pickProfile()) {
             return;
         }
@@ -213,8 +184,7 @@ public class DirectorySynchronizeSftpController extends DirectorySynchronizeCont
 
             @Override
             protected void whenSucceeded() {
-                loadProfiles();
-                editProfile(currentConnection);
+                loadTableData();
             }
 
         };
@@ -222,81 +192,36 @@ public class DirectorySynchronizeSftpController extends DirectorySynchronizeCont
     }
 
     @FXML
-    public void copyProfile() {
+    @Override
+    public void copyAction() {
         if (currentConnection == null) {
             currentConnection = new PathConnection();
+        } else {
+            try {
+                currentConnection = currentConnection.copy();
+            } catch (Exception e) {
+            }
         }
-        currentConnection.setPcnid(-1);
         String title = currentConnection.getTitle();
+        currentConnection.setPcnid(-1);
         currentConnection.setTitle(title == null ? message("Copy") : title + " " + message("Copy"));
         editProfile(currentConnection);
-    }
-
-    @FXML
-    public void deleteProfiles() {
-        List<PathConnection> selected = tableView.getSelectionModel().getSelectedItems();
-        if (selected == null || selected.isEmpty()) {
-            popError(message("SelectToHandle"));
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonTask<Void>(this) {
-
-            @Override
-            protected boolean handle() {
-                return tablePathConnection.deleteData(selected) >= 0;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                loadProfiles();
-                editProfile(null);
-            }
-
-        };
-        start(task);
-    }
-
-    @FXML
-    public void clearProfiles() {
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonTask<Void>(this) {
-
-            @Override
-            protected boolean handle() {
-                return tablePathConnection.clear(PathConnection.Type.SFTP) >= 0;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                loadProfiles();
-                editProfile(null);
-            }
-
-        };
-        start(task);
-    }
-
-    @FXML
-    public void refreshProfiles() {
-        loadProfiles();
     }
 
     /*
         sftp
      */
-    @Override
-    protected boolean checkTarget() {
-        return pickProfile();
+    public boolean isConnected() {
+        return sftp != null;
     }
 
-    @Override
-    public boolean doTask() {
+    public boolean connect(SingletonTask<Void> task) {
         try {
+            disconnect();
+            if (currentConnection == null) {
+                return false;
+            }
+            this.task = task;
             int repeat = 0;
             boolean ok = false;
             while (repeat++ <= currentConnection.getRetry()) {
@@ -307,37 +232,33 @@ public class DirectorySynchronizeSftpController extends DirectorySynchronizeCont
                     showLogs("Retry...");
                 }
             }
+            showLogs("Login in path: " + currentConnection.getPath());
+            mkdirs(currentConnection.getPath());
             return ok;
         } catch (Exception e) {
-            updateLogs(e.toString(), true, true);
+            showLogs(e.toString());
             return false;
         }
     }
 
     public boolean sftp() {
         try {
-            JSch jsch = new JSch();
-            Session sshSession = jsch.getSession(currentConnection.getUsername(), currentConnection.getHost(), 22);
+            if (currentConnection == null) {
+                return false;
+            }
+            sshSession = new JSch().getSession(currentConnection.getUsername(),
+                    currentConnection.getHost(), 22);
             sshSession.setPassword(currentConnection.getPassword());
             sshSession.setTimeout(currentConnection.getTimeout());
-
             Properties sshConfig = new Properties();
             sshConfig.put("StrictHostKeyChecking", hostKeyCheck.isSelected() ? "yes" : "no");
             sshSession.setConfig(sshConfig);
-
             sshSession.connect();
             showLogs("SSH session connected: " + currentConnection.getHost());
-            showLogs("Opening Channel...");
+            showLogs("Opening channel for sftp...");
+
             sftp = (ChannelSftp) sshSession.openChannel("sftp");
             sftp.connect();
-            showLogs("SFTP 登录成功");
-
-            mkdirs(currentConnection.getPath());
-            synchronize(currentConnection.getPath());
-
-            sftp.disconnect();
-            sftp.exit();
-            sshSession.disconnect();
             return true;
         } catch (Exception e) {
             showLogs(e.toString());
@@ -345,29 +266,44 @@ public class DirectorySynchronizeSftpController extends DirectorySynchronizeCont
         }
     }
 
-    @Override
-    public boolean checkLoop(File sourcePath, String targetDirectory) {
-        return true;
-    }
-
-    public String fixName(String targetName) {
+    public boolean disconnect() {
         try {
-            return targetName.replaceAll("\\\\", "/");
+            if (sftp != null) {
+                sftp.disconnect();
+                sftp.exit();
+                sftp = null;
+                showLogs("Channel exited.");
+            }
+            if (sshSession != null) {
+                sshSession.disconnect();
+                sshSession = null;
+                showLogs("Session disconnected.");
+            }
+            return true;
         } catch (Exception e) {
-            return targetName;
+            showLogs(e.toString());
+            return false;
         }
     }
 
-    public LsEntry find(String targetName) {
+    public String fixFilename(String filename) {
         try {
-            if (targetName == null || targetName.isBlank() || "/".equals(targetName)) {
+            return filename.replaceAll("\\\\", "/");
+        } catch (Exception e) {
+            return filename;
+        }
+    }
+
+    public LsEntry find(String filename) {
+        try {
+            if (filename == null || filename.isBlank() || "/".equals(filename)) {
                 return null;
             }
-            String parent = fixName(new File(targetName).getParent());
+            String parent = fixFilename(new File(filename).getParent());
             Iterator<LsEntry> iterator = ls(parent);
             while (iterator.hasNext()) {
                 LsEntry entry = iterator.next();
-                if (targetName.equals(parent + "/" + entry.getFilename())) {
+                if (filename.equals(parent + "/" + entry.getFilename())) {
                     return entry;
                 }
             }
@@ -377,26 +313,26 @@ public class DirectorySynchronizeSftpController extends DirectorySynchronizeCont
         return null;
     }
 
-    public Iterator<LsEntry> ls(String targetName) {
+    public Iterator<LsEntry> ls(String filename) {
         try {
-            return sftp.ls(fixName(targetName)).iterator();
+            String name = fixFilename(filename);
+            showLogs("ls " + fixFilename(name));
+            return sftp.ls(fixFilename(name)).iterator();
         } catch (Exception e) {
 //            showLogs(e.toString());
             return null;
         }
     }
 
-    @Override
-    public boolean fileExist(String targetName) {
-        return find(targetName) != null;
+    public boolean fileExist(String filename) {
+        return find(filename) != null;
     }
 
-    @Override
-    public List<String> fileChildren(String targetName) {
+    public List<String> fileChildren(String filename) {
         List<String> list = new ArrayList<>();
         try {
-            targetName = fixName(targetName);
-            Iterator<LsEntry> iterator = ls(targetName);
+            filename = fixFilename(filename);
+            Iterator<LsEntry> iterator = ls(filename);
             while (iterator.hasNext()) {
                 LsEntry entry = iterator.next();
                 String name = entry.getFilename();
@@ -404,7 +340,7 @@ public class DirectorySynchronizeSftpController extends DirectorySynchronizeCont
                         || ".".equals(name) || "..".equals(name)) {
                     continue;
                 }
-                list.add(targetName + "/" + name);
+                list.add(filename + "/" + name);
             }
         } catch (Exception e) {
 //            showLogs(e.toString());
@@ -412,13 +348,12 @@ public class DirectorySynchronizeSftpController extends DirectorySynchronizeCont
         return list;
     }
 
-    @Override
-    public boolean isDirectory(String targetName) {
+    public boolean isDirectory(String filename) {
         try {
-            if ("/".equals(targetName)) {
+            if ("/".equals(filename)) {
                 return true;
             }
-            LsEntry entry = find(targetName);
+            LsEntry entry = find(filename);
             return entry != null && entry.getAttrs().isDir();
         } catch (Exception e) {
 //            showLogs(e.toString());
@@ -426,10 +361,9 @@ public class DirectorySynchronizeSftpController extends DirectorySynchronizeCont
         }
     }
 
-    @Override
-    public long fileLength(String targetName) {
+    public long fileLength(String filename) {
         try {
-            LsEntry entry = find(targetName);
+            LsEntry entry = find(filename);
             if (entry != null) {
                 return entry.getAttrs().getSize();
             }
@@ -439,10 +373,9 @@ public class DirectorySynchronizeSftpController extends DirectorySynchronizeCont
         return -1;
     }
 
-    @Override
-    public long fileModifyTime(String targetName) {
+    public long fileModifyTime(String filename) {
         try {
-            LsEntry entry = find(targetName);
+            LsEntry entry = find(filename);
             if (entry != null) {
                 return entry.getAttrs().getMTime() * 1000l;
             }
@@ -452,21 +385,27 @@ public class DirectorySynchronizeSftpController extends DirectorySynchronizeCont
         return -1;
     }
 
-    @Override
-    public void deleteFile(String targetName) {
+    public void deleteFile(String filename) {
         try {
-            sftp.rm(fixName(targetName));
+            String name = fixFilename(filename);
+            showLogs("rm " + fixFilename(name));
+            sftp.rm(name);
         } catch (Exception e) {
             showLogs(e.toString());
         }
     }
 
-    @Override
-    public void mkdirs(String targetDirectory) {
+    public void mkdirs(String filename) {
         try {
-            String[] names = fixName(targetDirectory).split("/");
+            String fixedName = fixFilename(filename);
+            showLogs("mkdirs " + fixedName);
+            String[] names = fixedName.split("/");
             String parent = null;
             for (String name : names) {
+                if (name == null || name.isBlank()
+                        || ".".equals(name) || "..".equals(name)) {
+                    continue;
+                }
                 String path = (parent == null ? "" : parent + "/") + name;
                 try {
                     sftp.mkdir(path);
@@ -479,14 +418,15 @@ public class DirectorySynchronizeSftpController extends DirectorySynchronizeCont
         }
     }
 
-    @Override
     public boolean copyFile(File sourceFile, String targetFile) {
         try {
             if (task == null || task.isCancelled()
                     || sourceFile == null || !sourceFile.exists() || !sourceFile.isFile()) {
                 return false;
             }
-            sftp.put(sourceFile.getAbsolutePath(), fixName(targetFile));
+            String fixedName = fixFilename(targetFile);
+            showLogs("put " + fixedName);
+            sftp.put(sourceFile.getAbsolutePath(), fixedName);
             return true;
         } catch (Exception e) {
             MyBoxLog.console(e.toString() + " " + targetFile);
@@ -494,13 +434,17 @@ public class DirectorySynchronizeSftpController extends DirectorySynchronizeCont
         }
     }
 
-    @FXML
-    @Override
-    public void openTarget(ActionEvent event) {
-        try {
+    public void showLogs(String log) {
+        taskController.showLogs(log);
+        if (task != null) {
+            task.setInfo(log);
+        }
+    }
 
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+    public void updateLogs(String log, boolean immediate) {
+        taskController.updateLogs(log, true, immediate);
+        if (task != null) {
+            task.setInfo(log);
         }
     }
 

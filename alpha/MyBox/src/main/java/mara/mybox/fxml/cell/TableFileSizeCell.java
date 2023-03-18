@@ -9,8 +9,6 @@ import mara.mybox.tools.FileTools;
 /**
  * @Author Mara
  * @CreateDate 2019-3-15 14:24:30
- * @Version 1.0
- * @Description
  * @License Apache License Version 2.0
  */
 public class TableFileSizeCell<T> extends TableCell<T, Long>

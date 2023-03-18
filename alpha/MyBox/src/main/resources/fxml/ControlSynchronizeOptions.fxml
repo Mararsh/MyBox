@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlSynchronizeOptions">
+      <children>
+      <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
+         <children>
+                            <RadioButton fx:id="conditionallyRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%CopyConditionally" wrapText="true">
+                                <toggleGroup>
+                                    <ToggleGroup fx:id="copyGroup" />
+                                </toggleGroup>
+                            </RadioButton>
+                            <RadioButton minHeight="-Infinity" mnemonicParsing="false" text="%ClearTargetThenCopy" toggleGroup="$copyGroup" wrapText="true" />
+         </children>
+      </FlowPane>
+                  <VBox fx:id="conditionsBox" spacing="10.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                      <children>
+            <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
+               <children>
+                                    <CheckBox fx:id="copySubdirCheck" mnemonicParsing="false" selected="true" text="%CopySubdirectoies" wrapText="true" />
+                                    <CheckBox fx:id="copyEmptyCheck" mnemonicParsing="false" selected="true" text="%CopyEmpty" wrapText="true" />
+                                    <CheckBox fx:id="copyNewCheck" mnemonicParsing="false" selected="true" text="%CopyNewFiles" wrapText="true" />
+                                    <CheckBox fx:id="copyHiddenCheck" mnemonicParsing="false" selected="true" text="%CopyHiddenFiles" wrapText="true" />
+                                    <CheckBox fx:id="copyReadonlyCheck" mnemonicParsing="false" text="%OnlyCopyReadOnly" wrapText="true" />
+               </children>
+            </FlowPane>
+            <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
+               <children>
+                                    <CheckBox fx:id="copyExistedCheck" mnemonicParsing="false" selected="true" text="%CopyExistedFiles" wrapText="true" />
+                                    <CheckBox fx:id="copyModifiedCheck" mnemonicParsing="false" selected="true" text="%OnlyCopyModifiedFiles" wrapText="true" />
+               </children>
+            </FlowPane>
+            <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
+               <children>
+                                    <Label text="%OnlyCopyModifiedAfter" wrapText="true">
+                     <FlowPane.margin>
+                        <Insets left="100.0" />
+                     </FlowPane.margin>
+                                    </Label>
+                                    <DatePicker fx:id="modifyAfterInput" />
+                                    <Label text="%CopyExistedComments" wrapText="true" />
+               </children>
+            </FlowPane>
+                              <CheckBox fx:id="deleteNonExistedCheck" minHeight="-Infinity" mnemonicParsing="false" text="%DeleteNotExistedinSource" wrapText="true" />
+            <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
+               <children>
+                                    <CheckBox fx:id="notCopyCheck" minHeight="-Infinity" mnemonicParsing="false" text="%NotCopyInclude" wrapText="true" />
+                                    <TextField fx:id="notCopyInput" maxWidth="1.7976931348623157E308" promptText="%SeparateByComma" />
+                  <Button fx:id="historyNameButton" mnemonicParsing="false" onAction="#showNameHistories" onMouseEntered="#popNameHistories">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconHistory.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
+            </FlowPane>
+                      </children>
+         <VBox.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </VBox.margin>
+                  </VBox>
+      <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
+         <children>
+                            <CheckBox fx:id="copyAttrCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%CopyOriginalFileAttr" wrapText="true" />
+                            <CheckBox fx:id="continueCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%ContinueWhenError" wrapText="true" />
+                            <CheckBox fx:id="deleteSourceCheck" minHeight="-Infinity" mnemonicParsing="false" text="%DeleteSourcePathAfterComplete" wrapText="true" />
+         </children>
+      </FlowPane>
+      </children>
+  </VBox>

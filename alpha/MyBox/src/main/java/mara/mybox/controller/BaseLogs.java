@@ -71,16 +71,13 @@ public class BaseLogs extends BaseController {
     }
 
     public void initLogs() {
-        if (logsTextArea == null) {
-            return;
-        }
-        Platform.runLater(() -> {
+        if (logsTextArea != null) {
             logsTextArea.setText("");
-            newLogs = new StringBuffer();
-            logsNewlines = 0;
-            logsTotalLines = 0;
-            lastLogTime = new Date().getTime();
-        });
+        }
+        newLogs = new StringBuffer();
+        logsNewlines = 0;
+        logsTotalLines = 0;
+        lastLogTime = new Date().getTime();
     }
 
     protected void showLogs(String line) {

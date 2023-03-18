@@ -117,7 +117,7 @@ License:    Apache License Version 2.0
                                                 <Image url="@../buttons/Red/iconTips.png" />
                                             </image>
                                         </ImageView>
-                                        <FlowPane alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" prefWrapLength="200.0" HBox.hgrow="ALWAYS">
+                                        <FlowPane alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="200.0" vgap="2.0" HBox.hgrow="ALWAYS">
                                             <children>
                                                 <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
                                                     <graphic>
