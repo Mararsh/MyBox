@@ -81,7 +81,7 @@ public class ValidationTools {
     public static void setFloatValidation(final TextField input) {
         input.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
             try {
-                float v = Float.valueOf(newValue);
+                float v = Float.parseFloat(newValue);
                 input.setStyle(null);
             } catch (Exception e) {
                 input.setStyle(UserConfig.badStyle());

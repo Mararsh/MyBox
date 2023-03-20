@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import mara.mybox.data.FileNode;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
 
@@ -15,7 +16,7 @@ import static mara.mybox.value.Languages.message;
 public class RemotePathSynchronizeFromLocalController extends DirectorySynchronizeController {
 
     @FXML
-    protected ControlRemotePath remoteController;
+    protected ControlRemoteConnection remoteController;
 
     public RemotePathSynchronizeFromLocalController() {
         baseTitle = message("RemotePathSynchronizeFromLocal");
@@ -62,48 +63,36 @@ public class RemotePathSynchronizeFromLocalController extends DirectorySynchroni
     }
 
     @Override
-    public String targetName(String targetName) {
-        return remoteController.fixFilename(targetName);
+    public FileNode targetNode(String targetName) {
+        return remoteController.FileNode(targetName);
     }
 
     @Override
-    public boolean targetExist(String targetName) {
-        return remoteController.fileExist(targetName);
+    public List<FileNode> targetChildren(FileNode targetNode) {
+        return remoteController.children(targetNode);
     }
 
     @Override
-    public List<String> targetChildren(String targetName) {
-        return remoteController.fileChildren(targetName);
+    public void deleteTargetFile(FileNode targetNode) {
+        if (targetNode != null) {
+            remoteController.deleteFile(targetNode.fullName());
+        }
     }
 
     @Override
-    public boolean isTargetDirectory(String targetName) {
-        return remoteController.isDirectory(targetName);
+    public void targetMkdirs(FileNode targetNode) {
+        if (targetNode != null) {
+            remoteController.mkdirs(targetNode.fullName());
+        }
     }
 
     @Override
-    public long targetFileLength(String targetName) {
-        return remoteController.fileLength(targetName);
-    }
-
-    @Override
-    public long targetFileModifyTime(String targetName) {
-        return remoteController.fileModifyTime(targetName);
-    }
-
-    @Override
-    public void deleteTargetFile(String targetName) {
-        remoteController.deleteFile(targetName);
-    }
-
-    @Override
-    public void targetMkdirs(String targetDirectory) {
-        remoteController.mkdirs(targetDirectory);
-    }
-
-    @Override
-    public boolean copyFile(File sourceFile, String targetFile) {
-        return remoteController.copyFile(sourceFile, targetFile);
+    public boolean copyFile(File sourceFile, FileNode targetNode) {
+        if (targetNode != null) {
+            return remoteController.copyFile(sourceFile, targetNode.fullName());
+        } else {
+            return false;
+        }
     }
 
     @FXML

@@ -335,12 +335,12 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
     protected void locateLinesRange() {
         long from, to;  // 0-based, exlcuded end
         try {
-            from = Long.valueOf(lineFromInput.getText()) - 1;
+            from = Long.parseLong(lineFromInput.getText()) - 1;
             if (from < 0 || from >= sourceInformation.getLinesNumber()) {
                 popError(message("InvalidParameters") + ": " + message("From"));
                 return;
             }
-            to = Long.valueOf(lineToInput.getText());
+            to = Long.parseLong(lineToInput.getText());
             if (to < 0 || to > sourceInformation.getLinesNumber() || from > to) {
                 popError(message("InvalidParameters") + ": " + message("To"));
                 return;
@@ -390,12 +390,12 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
     protected void locateObjectsRange() {
         long from, to;  // 0-based, exlcuded end
         try {
-            from = Long.valueOf(objectFromInput.getText()) - 1;
+            from = Long.parseLong(objectFromInput.getText()) - 1;
             if (from < 0 || from >= sourceInformation.getObjectsNumber()) {
                 popError(message("InvalidParameters") + ": " + message("From"));
                 return;
             }
-            to = Long.valueOf(objectToInput.getText());
+            to = Long.parseLong(objectToInput.getText());
             if (to < 0 || to > sourceInformation.getObjectsNumber() || from > to) {
                 popError(message("InvalidParameters") + ": " + message("To"));
                 return;

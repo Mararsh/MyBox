@@ -36,7 +36,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
-import static mara.mybox.fxml.WindowTools.openScene;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -132,7 +132,7 @@ public class ImageViewerController extends BaseImageController {
                             loadWidth = -1;
                         } else {
                             try {
-                                loadWidth = Integer.valueOf(newValue);
+                                loadWidth = Integer.parseInt(newValue);
                                 ValidationTools.setEditorNormal(loadWidthBox);
                             } catch (Exception e) {
                                 ValidationTools.setEditorBadStyle(loadWidthBox);
@@ -897,14 +897,11 @@ public class ImageViewerController extends BaseImageController {
     /*
         static methods
      */
-    public static ImageViewerController openFile(Stage stage, File file) {
+    public static ImageViewerController open() {
         try {
-            ImageViewerController controller = (ImageViewerController) openScene(stage, Fxmls.ImageViewerFxml);
+            ImageViewerController controller = (ImageViewerController) WindowTools.openStage(Fxmls.ImageViewerFxml);
             if (controller != null) {
                 controller.requestMouse();
-                if (file != null) {
-                    controller.loadImageFile(file);
-                }
             }
             return controller;
         } catch (Exception e) {
@@ -913,20 +910,17 @@ public class ImageViewerController extends BaseImageController {
         }
     }
 
-    public static ImageViewerController open() {
-        return open(null);
-    }
-
-    public static ImageViewerController open(Stage stage) {
-        return openFile(null, null);
-    }
-
     public static ImageViewerController openFile(File file) {
-        return openFile(null, file);
-    }
-
-    public static ImageViewerController openFileName(String file) {
-        return openFile(null, new File(file));
+        try {
+            ImageViewerController controller = open();
+            if (controller != null && file != null) {
+                controller.loadImageFile(file);
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
     }
 
     public static ImageViewerController openImage(Image image) {

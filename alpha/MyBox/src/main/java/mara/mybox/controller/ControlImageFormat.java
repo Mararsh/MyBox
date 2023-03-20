@@ -437,7 +437,7 @@ public class ControlImageFormat extends BaseController {
             return;
         }
         try {
-            int v = Integer.valueOf(qualitySelector.getValue());
+            int v = Integer.parseInt(qualitySelector.getValue());
             if (v > 0 && v <= 100) {
                 attributes.setQuality(v);
                 ValidationTools.setEditorNormal(qualitySelector);
@@ -456,7 +456,7 @@ public class ControlImageFormat extends BaseController {
             return;
         }
         try {
-            int v = Integer.valueOf(icoWidthSelector.getValue());
+            int v = Integer.parseInt(icoWidthSelector.getValue());
             if (v > 0) {
                 attributes.setWidth(v);
                 ValidationTools.setEditorNormal(icoWidthSelector);

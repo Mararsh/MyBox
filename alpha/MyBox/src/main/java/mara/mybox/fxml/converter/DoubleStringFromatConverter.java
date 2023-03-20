@@ -12,7 +12,7 @@ public class DoubleStringFromatConverter extends StringConverter<Double> {
     @Override
     public Double fromString(String value) {
         try {
-            return Double.valueOf(value.trim().replaceAll(",", ""));
+            return Double.parseDouble(value.trim().replaceAll(",", ""));
         } catch (Exception e) {
             return null;
         }

@@ -541,9 +541,22 @@ public class StyleButton {
                     return new StyleData(id, message("ContextMenu"), "", "iconMenu.png");
             }
         }
-
-        if (id.startsWith("closePop")) {
-            return new StyleData(id, message("Close"), "ESC / F6", "iconCancel.png");
+        if (id.startsWith("close")) {
+            if (id.startsWith("closePop")) {
+                return new StyleData(id, message("Close"), "ESC / F6", "iconCancel.png");
+            }
+            switch (id) {
+                case "closeButton":
+                    return new StyleData("closeButton", message("Close"), "F7", "iconClose.png");
+                default:
+                    return new StyleData(id, message("Close"), "", "iconClose.png");
+            }
+        }
+        if (id.startsWith("disconnect")) {
+            return new StyleData(id, message("Disconnect"), "", "iconClose.png");
+        }
+        if (id.startsWith("permission")) {
+            return new StyleData(id, message("Permission"), "", "iconPermission.png");
         }
         if (id.startsWith("message")) {
             return new StyleData(id, message("SendMessage"), "", "iconMessage.png");
@@ -679,8 +692,6 @@ public class StyleButton {
                 return new StyleData("redoButton", message("Redo"), "CTRL+y / ALT+y", "iconRedo.png");
             case "undoButton":
                 return new StyleData("undoButton", message("Undo"), "CTRL+z / ALT+z", "iconUndo.png");
-            case "closeButton":
-                return new StyleData("closeButton", message("Close"), "F7", "iconClose.png");
             case "findNextButton":
                 return new StyleData("findNextButton", message("Next"), "CTRL+2", "iconNext.png");
             case "findPreviousButton":

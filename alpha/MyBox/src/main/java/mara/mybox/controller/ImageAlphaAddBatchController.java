@@ -127,7 +127,7 @@ public class ImageAlphaAddBatchController extends BaseImageManufactureBatchContr
 
     private void checkOpacity() {
         try {
-            int v = Integer.valueOf(opacityBox.getValue());
+            int v = Integer.parseInt(opacityBox.getValue());
             if (v >= 0 && v <= 100) {
                 opacityValue = v / 100f;
                 ValidationTools.setEditorNormal(opacityBox);

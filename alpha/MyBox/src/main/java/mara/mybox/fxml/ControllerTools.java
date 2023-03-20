@@ -4,17 +4,16 @@ import java.io.File;
 import java.util.Arrays;
 import javafx.stage.Stage;
 import mara.mybox.controller.BaseController;
-import mara.mybox.controller.BytesEditorController;
 import mara.mybox.controller.DataFileCSVController;
 import mara.mybox.controller.DataFileExcelController;
 import mara.mybox.controller.FileDecompressUnarchiveController;
-import mara.mybox.controller.HtmlEditorController;
 import mara.mybox.controller.ImageViewerController;
 import mara.mybox.controller.MarkdownEditorController;
 import mara.mybox.controller.MediaPlayerController;
 import mara.mybox.controller.PdfViewController;
 import mara.mybox.controller.PptViewController;
 import mara.mybox.controller.TextEditorController;
+import mara.mybox.controller.WebBrowserController;
 import mara.mybox.controller.WordViewController;
 import static mara.mybox.fxml.WindowTools.openScene;
 import mara.mybox.tools.CompressTools;
@@ -33,17 +32,17 @@ public class ControllerTools {
         return openScene(stage, Fxmls.MyboxFxml);
     }
 
-    public static BaseController openTarget(Stage stage, String filename) {
-        return openTarget(stage, filename, true);
+    public static BaseController openTarget(String filename) {
+        return openTarget(filename, true);
     }
 
-    public static BaseController openTarget(Stage stage, String filename, boolean mustOpen) {
+    public static BaseController openTarget(String filename, boolean mustOpen) {
         BaseController controller = null;
         if (filename == null) {
             return controller;
         }
         if (filename.startsWith("http") || filename.startsWith("ftp")) {
-            return HtmlEditorController.openAddress(filename);
+            return WebBrowserController.openAddress(filename, true);
         }
         File file = new File(filename);
         if (!file.exists()) {
@@ -55,9 +54,9 @@ public class ControllerTools {
         }
         String suffix = FileNameTools.suffix(file.getName()).toLowerCase();
         if (FileExtensions.SupportedImages.contains(suffix)) {
-            controller = ImageViewerController.openFile(stage, file);
+            controller = ImageViewerController.openFile(file);
         } else if ("html".equals(suffix) || "htm".equals(suffix)) {
-            controller = HtmlEditorController.openFile(file);
+            controller = WebBrowserController.openFile(file);
         } else if ("md".equals(suffix)) {
             controller = MarkdownEditorController.open(file);
         } else if ("pdf".equals(suffix)) {
@@ -77,7 +76,8 @@ public class ControllerTools {
         } else if (Arrays.asList(FileExtensions.MediaPlayerSupports).contains(suffix)) {
             controller = MediaPlayerController.open(file);
         } else if (mustOpen) {
-            controller = BytesEditorController.open(file);
+            PopTools.browseURI(controller, file.toURI());
+//            controller = BytesEditorController.open(file);
         }
         return controller;
     }

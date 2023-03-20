@@ -151,7 +151,7 @@ public class FilesRenameController extends BaseBatchFileController {
                 } else {
                     sortFileInformations(tableData);
                     try {
-                        digit = Integer.valueOf(digitInput.getText());
+                        digit = Integer.parseInt(digitInput.getText());
                     } catch (Exception e) {
                         if (tableController.totalFilesNumber <= 0) {
                             tableController.countSize();
@@ -160,7 +160,7 @@ public class FilesRenameController extends BaseBatchFileController {
                     }
                 }
                 try {
-                    startNumber = Integer.valueOf(acumFromInput.getText());
+                    startNumber = Integer.parseInt(acumFromInput.getText());
                 } catch (Exception e) {
                     startNumber = 0;
                 }

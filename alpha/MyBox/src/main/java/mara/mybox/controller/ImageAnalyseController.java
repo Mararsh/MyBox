@@ -335,7 +335,7 @@ public class ImageAnalyseController extends ImageViewerController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v > 0) {
                             colorNumber1 = v;
                             UserConfig.setInt(baseName + "ColorNumber1", colorNumber1);
@@ -358,7 +358,7 @@ public class ImageAnalyseController extends ImageViewerController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v > 0) {
                             regionSize1 = v;
                             UserConfig.setInt(baseName + "RegionSize1", regionSize1);
@@ -412,7 +412,7 @@ public class ImageAnalyseController extends ImageViewerController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v > 0) {
                             kmeansLoop = v;
                             ValidationTools.setEditorNormal(kmeansLoopSelector);
@@ -436,7 +436,7 @@ public class ImageAnalyseController extends ImageViewerController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v > 0) {
                             colorNumber2 = v;
                             UserConfig.setInt(baseName + "ColorNumber2", colorNumber2);
@@ -459,7 +459,7 @@ public class ImageAnalyseController extends ImageViewerController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v > 0) {
                             regionSize2 = v;
                             UserConfig.setInt(baseName + "RegionSize2", regionSize2);

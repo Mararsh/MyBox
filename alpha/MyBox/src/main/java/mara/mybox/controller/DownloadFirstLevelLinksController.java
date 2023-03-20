@@ -837,8 +837,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
                 popError(message("InvalidParameters") + ": " + message("Address"));
                 return;
             }
-            HtmlEditorController controller = (HtmlEditorController) openStage(Fxmls.HtmlEditorFxml);
-            controller.loadAddress(addr);
+            WebBrowserController.openAddress(addr, true);
         } catch (Exception e) {
         }
     }

@@ -231,7 +231,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                 fileProgressValue = operationBarController.fileProgressValue;
                 miaoCheck = operationBarController.miaoCheck;
                 openCheck = operationBarController.openCheck;
-                statusLabel = operationBarController.statusLabel;
+                statusInput = operationBarController.statusInput;
             }
 
         } catch (Exception e) {
@@ -398,8 +398,8 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         if (tableController != null) {
             tableController.stopCountSize();
         }
-        if (statusLabel != null) {
-            statusLabel.setText("");
+        if (statusInput != null) {
+            statusInput.setText("");
         }
         isPreview = false;
         if (!makeActualParameters()) {
@@ -963,11 +963,11 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     }
 
     public void updateStatusLabel(String info) {
-        if (statusLabel == null || info == null) {
+        if (statusInput == null || info == null) {
             return;
         }
         Platform.runLater(() -> {
-            statusLabel.setText(info);
+            statusInput.setText(info);
         });
     }
 
@@ -987,11 +987,12 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         }
         finalTargetName = target.getAbsolutePath();
         targetFiles.add(target);
+        MyBoxLog.console(targetFiles.size());
         String msg;
         msg = MessageFormat.format(message("FilesGenerated"), finalTargetName);
-        msg += "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(new Date(), fileStartTime);
+        msg += " " + message("Cost") + ":" + DateTools.datetimeMsDuration(new Date(), fileStartTime);
         updateStatusLabel(msg);
-        updateLogs(msg, true, true);
+        showLogs(msg);
         if (record) {
             recordFileWritten(target, type, type);
         }
@@ -1115,8 +1116,8 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                 + message("Average") + ":" + avgString + " "
                 + message("StartTime") + ":" + DateTools.datetimeToString(processStartTime) + space
                 + message("EndTime") + ":" + DateTools.datetimeToString(new Date());
-        if (statusLabel != null) {
-            statusLabel.setText(s);
+        if (statusInput != null) {
+            statusInput.setText(s);
         }
         updateLogs(s, true, true);
     }

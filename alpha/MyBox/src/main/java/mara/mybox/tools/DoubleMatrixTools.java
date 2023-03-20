@@ -876,7 +876,7 @@ public class DoubleMatrixTools {
                 for (int c = 0; c < row.size(); c++) {
                     double d = 0;
                     try {
-                        d = Double.valueOf(row.get(c));
+                        d = Double.parseDouble(row.get(c));
                     } catch (Exception e) {
                     }
                     array[r][c] = d;

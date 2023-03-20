@@ -104,7 +104,7 @@ public class ControlImageBinary extends BaseController {
                 return;
             }
             thresholdInput.setEditable(true);
-            int v = Integer.valueOf(thresholdInput.getText());
+            int v = Integer.parseInt(thresholdInput.getText());
             if (v >= 0 && v <= 255) {
                 threshold = v;
                 thresholdInput.setStyle(null);

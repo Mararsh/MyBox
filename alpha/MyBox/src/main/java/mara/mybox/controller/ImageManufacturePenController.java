@@ -142,7 +142,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v >= 0) {
                             arcWidth = v;
                             UserConfig.setInt("ImagePenArcWidth", arcWidth);

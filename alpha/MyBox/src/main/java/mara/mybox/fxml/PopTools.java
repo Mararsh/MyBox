@@ -120,7 +120,7 @@ public class PopTools {
             return;
         }
         if (!uri.getScheme().equals("file") || new File(uri.getPath()).isFile()) {
-            ControllerTools.openTarget(null, uri.toString());
+            ControllerTools.openTarget(uri.toString());
         } else {
             alertError(controller, message("DesktopNotSupportBrowse"));
         }

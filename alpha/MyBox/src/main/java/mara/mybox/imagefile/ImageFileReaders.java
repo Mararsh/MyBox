@@ -591,14 +591,14 @@ public class ImageFileReaders {
             if (javax_imageio.containsKey("NumChannels")) {
                 Map<String, Object> NumChannels = javax_imageio.get("NumChannels").get(0);
                 if (NumChannels.containsKey("value")) {
-                    imageInfo.setColorChannels(Integer.valueOf((String) NumChannels.get("value")));
+                    imageInfo.setColorChannels(Integer.parseInt((String) NumChannels.get("value")));
 //                    MyBoxLog.debug(" NumChannels:" + NumChannels.get("value"));
                 }
             }
             if (javax_imageio.containsKey("Gamma")) {
                 Map<String, Object> Gamma = javax_imageio.get("Gamma").get(0);
                 if (Gamma.containsKey("value")) {
-                    imageInfo.setGamma(Float.valueOf((String) Gamma.get("value")));
+                    imageInfo.setGamma(Float.parseFloat((String) Gamma.get("value")));
                 }
             }
             if (javax_imageio.containsKey("BlackIsZero")) {
@@ -612,13 +612,13 @@ public class ImageFileReaders {
                 imageInfo.setStandardAttribute("PaletteSize", PaletteEntryList.size());
 //                List<ImageColor> Palette = new ArrayList<>();
 //                for (Map<String, Object> PaletteEntry : PaletteEntryList) {
-//                    int index = Integer.valueOf(PaletteEntry.get("index"));
-//                    int red = Integer.valueOf(PaletteEntry.get("red"));
-//                    int green = Integer.valueOf(PaletteEntry.get("green"));
-//                    int blue = Integer.valueOf(PaletteEntry.get("blue"));
+//                    int index = Integer.parseInt(PaletteEntry.get("index"));
+//                    int red = Integer.parseInt(PaletteEntry.get("red"));
+//                    int green = Integer.parseInt(PaletteEntry.get("green"));
+//                    int blue = Integer.parseInt(PaletteEntry.get("blue"));
 //                    int alpha = 255;
 //                    if (PaletteEntry.containsKey("alpha")) {
-//                        alpha = Integer.valueOf(PaletteEntry.get("alpha"));
+//                        alpha = Integer.parseInt(PaletteEntry.get("alpha"));
 //                    }
 //                    Palette.add(new ImageColor(index, red, green, blue, alpha));
 //                }
@@ -627,14 +627,14 @@ public class ImageFileReaders {
             if (javax_imageio.containsKey("BackgroundIndex")) {
                 Map<String, Object> BackgroundIndex = javax_imageio.get("BackgroundIndex").get(0);
                 if (BackgroundIndex.containsKey("value")) {
-                    imageInfo.setBackgroundIndex(Integer.valueOf((String) BackgroundIndex.get("value")));
+                    imageInfo.setBackgroundIndex(Integer.parseInt((String) BackgroundIndex.get("value")));
                 }
             }
             if (javax_imageio.containsKey("BackgroundColor")) {
                 Map<String, Object> BackgroundColor = javax_imageio.get("BackgroundColor").get(0);
-                int red = Integer.valueOf((String) BackgroundColor.get("red"));
-                int green = Integer.valueOf((String) BackgroundColor.get("green"));
-                int blue = Integer.valueOf((String) BackgroundColor.get("blue"));
+                int red = Integer.parseInt((String) BackgroundColor.get("red"));
+                int green = Integer.parseInt((String) BackgroundColor.get("green"));
+                int blue = Integer.parseInt((String) BackgroundColor.get("blue"));
                 imageInfo.setBackgroundColor(new ImageColor(red, green, blue));
             }
             if (javax_imageio.containsKey("CompressionTypeName")) {
@@ -652,13 +652,13 @@ public class ImageFileReaders {
             if (javax_imageio.containsKey("NumProgressiveScans")) {
                 Map<String, Object> NumProgressiveScans = javax_imageio.get("NumProgressiveScans").get(0);
                 if (NumProgressiveScans.containsKey("value")) {
-                    imageInfo.setNumProgressiveScans(Integer.valueOf((String) NumProgressiveScans.get("value")));
+                    imageInfo.setNumProgressiveScans(Integer.parseInt((String) NumProgressiveScans.get("value")));
                 }
             }
             if (javax_imageio.containsKey("BitRate")) {
                 Map<String, Object> BitRate = javax_imageio.get("BitRate").get(0);
                 if (BitRate.containsKey("value")) {
-                    imageInfo.setBitRate(Float.valueOf((String) BitRate.get("value")));
+                    imageInfo.setBitRate(Float.parseFloat((String) BitRate.get("value")));
                 }
             }
             if (javax_imageio.containsKey("PlanarConfiguration")) {
@@ -694,7 +694,7 @@ public class ImageFileReaders {
             if (javax_imageio.containsKey("PixelAspectRatio")) {
                 Map<String, Object> PixelAspectRatio = javax_imageio.get("PixelAspectRatio").get(0);
                 if (PixelAspectRatio.containsKey("value")) {
-                    imageInfo.setPixelAspectRatio(Float.valueOf((String) PixelAspectRatio.get("value")));
+                    imageInfo.setPixelAspectRatio(Float.parseFloat((String) PixelAspectRatio.get("value")));
                 }
             }
             if (javax_imageio.containsKey("ImageOrientation")) {
@@ -706,7 +706,7 @@ public class ImageFileReaders {
             if (javax_imageio.containsKey("HorizontalPixelSize")) { // The width of a pixel, in millimeters
                 Map<String, Object> HorizontalPixelSize = javax_imageio.get("HorizontalPixelSize").get(0);
                 if (HorizontalPixelSize.containsKey("value")) {
-                    float v = Float.valueOf((String) HorizontalPixelSize.get("value"));
+                    float v = Float.parseFloat((String) HorizontalPixelSize.get("value"));
                     imageInfo.setHorizontalPixelSize(v);
                     imageInfo.setXDpi(pixelSizeMm2dpi(v));
                 }
@@ -714,7 +714,7 @@ public class ImageFileReaders {
             if (javax_imageio.containsKey("VerticalPixelSize")) { // The height of a pixel, in millimeters
                 Map<String, Object> VerticalPixelSize = javax_imageio.get("VerticalPixelSize").get(0);
                 if (VerticalPixelSize.containsKey("value")) {
-                    float v = Float.valueOf((String) VerticalPixelSize.get("value"));
+                    float v = Float.parseFloat((String) VerticalPixelSize.get("value"));
                     imageInfo.setVerticalPixelSize(v);
                     imageInfo.setYDpi(pixelSizeMm2dpi(v));
                 }
@@ -722,56 +722,56 @@ public class ImageFileReaders {
             if (javax_imageio.containsKey("HorizontalPhysicalPixelSpacing")) {
                 Map<String, Object> HorizontalPhysicalPixelSpacing = javax_imageio.get("HorizontalPhysicalPixelSpacing").get(0);
                 if (HorizontalPhysicalPixelSpacing.containsKey("value")) {
-                    float v = Float.valueOf((String) HorizontalPhysicalPixelSpacing.get("value"));
+                    float v = Float.parseFloat((String) HorizontalPhysicalPixelSpacing.get("value"));
                     imageInfo.setHorizontalPhysicalPixelSpacing(v);
                 }
             }
             if (javax_imageio.containsKey("VerticalPhysicalPixelSpacing")) {
                 Map<String, Object> VerticalPhysicalPixelSpacing = javax_imageio.get("VerticalPhysicalPixelSpacing").get(0);
                 if (VerticalPhysicalPixelSpacing.containsKey("value")) {
-                    float v = Float.valueOf((String) VerticalPhysicalPixelSpacing.get("value"));
+                    float v = Float.parseFloat((String) VerticalPhysicalPixelSpacing.get("value"));
                     imageInfo.setVerticalPhysicalPixelSpacing(v);
                 }
             }
             if (javax_imageio.containsKey("HorizontalPosition")) {
                 Map<String, Object> HorizontalPosition = javax_imageio.get("HorizontalPosition").get(0);
                 if (HorizontalPosition.containsKey("value")) {
-                    float v = Float.valueOf((String) HorizontalPosition.get("value"));
+                    float v = Float.parseFloat((String) HorizontalPosition.get("value"));
                     imageInfo.setHorizontalPosition(v);
                 }
             }
             if (javax_imageio.containsKey("VerticalPosition")) {
                 Map<String, Object> VerticalPosition = javax_imageio.get("VerticalPosition").get(0);
                 if (VerticalPosition.containsKey("value")) {
-                    float v = Float.valueOf((String) VerticalPosition.get("value"));
+                    float v = Float.parseFloat((String) VerticalPosition.get("value"));
                     imageInfo.setVerticalPosition(v);
                 }
             }
             if (javax_imageio.containsKey("HorizontalPixelOffset")) {
                 Map<String, Object> HorizontalPixelOffset = javax_imageio.get("HorizontalPixelOffset").get(0);
                 if (HorizontalPixelOffset.containsKey("value")) {
-                    float v = Float.valueOf((String) HorizontalPixelOffset.get("value"));
+                    float v = Float.parseFloat((String) HorizontalPixelOffset.get("value"));
                     imageInfo.setHorizontalPixelOffset(v);
                 }
             }
             if (javax_imageio.containsKey("VerticalPixelOffset")) {
                 Map<String, Object> VerticalPixelOffset = javax_imageio.get("VerticalPixelOffset").get(0);
                 if (VerticalPixelOffset.containsKey("value")) {
-                    float v = Float.valueOf((String) VerticalPixelOffset.get("value"));
+                    float v = Float.parseFloat((String) VerticalPixelOffset.get("value"));
                     imageInfo.setVerticalPixelOffset(v);
                 }
             }
             if (javax_imageio.containsKey("HorizontalScreenSize")) {
                 Map<String, Object> HorizontalScreenSize = javax_imageio.get("HorizontalScreenSize").get(0);
                 if (HorizontalScreenSize.containsKey("value")) {
-                    float v = Float.valueOf((String) HorizontalScreenSize.get("value"));
+                    float v = Float.parseFloat((String) HorizontalScreenSize.get("value"));
                     imageInfo.setHorizontalScreenSize(v);
                 }
             }
             if (javax_imageio.containsKey("VerticalScreenSize")) {
                 Map<String, Object> VerticalScreenSize = javax_imageio.get("VerticalScreenSize").get(0);
                 if (VerticalScreenSize.containsKey("value")) {
-                    float v = Float.valueOf((String) VerticalScreenSize.get("value"));
+                    float v = Float.parseFloat((String) VerticalScreenSize.get("value"));
                     imageInfo.setVerticalScreenSize(v);
                 }
             }
@@ -838,7 +838,7 @@ public class ImageFileReaders {
             if (javax_imageio.containsKey("TransparentIndex")) {
                 Map<String, Object> TransparentIndex = javax_imageio.get("TransparentIndex").get(0);
                 if (TransparentIndex.containsKey("value")) {
-                    imageInfo.setTransparentIndex(Integer.valueOf((String) TransparentIndex.get("value")));
+                    imageInfo.setTransparentIndex(Integer.parseInt((String) TransparentIndex.get("value")));
                 }
             }
             if (javax_imageio.containsKey("TransparentColor")) {

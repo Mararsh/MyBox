@@ -12,7 +12,7 @@ public class ShortStringFromatConverter extends StringConverter<Short> {
     @Override
     public Short fromString(String value) {
         try {
-            return Short.valueOf(value.trim().replaceAll(",", ""));
+            return Short.parseShort(value.trim().replaceAll(",", ""));
         } catch (Exception e) {
             return null;
         }

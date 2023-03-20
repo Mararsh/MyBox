@@ -130,7 +130,7 @@ public class ControlSplit extends BaseController {
             return;
         }
         try {
-            int v = Integer.valueOf(sizeInput.getText());
+            int v = Integer.parseInt(sizeInput.getText());
             if (v > 0) {
                 size = v;
                 UserConfig.setString(baseName + "Size", size + "");
@@ -148,7 +148,7 @@ public class ControlSplit extends BaseController {
 
     protected void checkNumber() {
         try {
-            int v = Integer.valueOf(numberInput.getText());
+            int v = Integer.parseInt(numberInput.getText());
             if (v > 0) {
                 numberInput.setStyle(null);
                 number = v;
@@ -171,8 +171,8 @@ public class ControlSplit extends BaseController {
                     continue;
                 }
                 try {
-                    int start = Integer.valueOf(values[0].trim());
-                    int end = Integer.valueOf(values[1].trim());
+                    int start = Integer.parseInt(values[0].trim());
+                    int end = Integer.parseInt(values[1].trim());
                     if (start > 0 && end >= start) {  // 1-based, include start and end
                         list.add(start);
                         list.add(end);

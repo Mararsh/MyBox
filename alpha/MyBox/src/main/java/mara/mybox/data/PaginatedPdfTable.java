@@ -141,7 +141,7 @@ public class PaginatedPdfTable {
             PDPage page = new PDPage();
             page.setMediaBox(pageSize);
             doc.addPage(page);
-            try ( PDPageContentStream contentStream = new PDPageContentStream(doc, page)) {
+            try (PDPageContentStream contentStream = new PDPageContentStream(doc, page)) {
                 contentStream.setFont(textFont, fontSize);
                 float tableTopY = pageSize.getHeight() - margin;
 

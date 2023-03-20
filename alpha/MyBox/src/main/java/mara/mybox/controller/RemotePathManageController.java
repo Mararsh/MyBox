@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.SftpATTRS;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -11,7 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TreeItem;
-import mara.mybox.data.FileInformation;
+import javafx.scene.layout.VBox;
 import mara.mybox.data.FileNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -24,13 +23,14 @@ import static mara.mybox.value.Languages.message;
  */
 public class RemotePathManageController extends FilesTreeController {
 
-    protected String rootPath;
     protected ChangeListener<Boolean> expandListener;
 
     @FXML
-    protected ControlRemotePath remoteController;
+    protected ControlRemoteConnection remoteController;
     @FXML
     protected Tab remoteTab, filesTab;
+    @FXML
+    protected VBox filesBox;
 
     public RemotePathManageController() {
         baseTitle = message("RemotePathManage");
@@ -50,23 +50,140 @@ public class RemotePathManageController extends FilesTreeController {
 
     @FXML
     @Override
-    public void goAction() {
-        if (task != null) {
-            task.cancel();
-        }
-        remoteController.disconnect();
+    public void startAction() {
+        openPath();
+    }
+
+    @FXML
+    @Override
+    public void openPath() {
+        filesBox.setDisable(true);
         if (!remoteController.pickProfile()) {
             return;
         }
-        tabPane.getSelectionModel().select(logsTab);
-        rootPath = remoteController.currentConnection.getPath();
-        FileNode rootInfo = new FileNode(null, rootPath, true);
-        rootInfo.setFileType(FileInformation.FileType.Directory);
-        TreeItem<FileNode> rootItem = new TreeItem(rootInfo);
-        rootItem.setExpanded(true);
-        filesTreeView.setRoot(rootItem);
+        remoteController.disconnect();
+        loadPath();
+    }
 
-        expandPath(rootItem);
+    public void loadPath() {
+        if (task != null) {
+            task.cancel();
+        }
+        filesTreeView.setRoot(null);
+        tabPane.getSelectionModel().select(logsTab);
+        task = new SingletonTask<Void>(this) {
+
+            TreeItem<FileNode> rootItem;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    if (!checkConnection()) {
+                        return false;
+                    }
+                    String rootPath = remoteController.currentConnection.getPath();
+                    FileNode rootInfo = new FileNode()
+                            .setNodename(rootPath)
+                            .setIsRemote(true)
+                            .attrs(remoteController.stat(rootPath));
+                    rootItem = new TreeItem(rootInfo);
+                    rootItem.setExpanded(true);
+
+                    List<TreeItem<FileNode>> children = makeChildren(rootItem);
+                    if (children != null && !children.isEmpty()) {
+                        rootItem.getChildren().setAll(children);
+                        addSelectedListener(rootItem);
+                    }
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+            }
+
+            @Override
+            protected void whenCanceled() {
+                cancelled = true;
+                showLogs(message("Cancel"));
+            }
+
+            @Override
+            protected void finalAction() {
+                tabPane.getSelectionModel().select(filesTab);
+                filesBox.setDisable(false);
+                filesTreeView.setRoot(rootItem);
+            }
+        };
+        start(task);
+    }
+
+    protected boolean checkConnection() {
+        if (remoteController.sshSession != null) {
+            remoteController.task = task;
+            return true;
+        }
+        return remoteController.connect(task);
+    }
+
+    protected List<TreeItem<FileNode>> makeChildren(TreeItem<FileNode> treeItem) {
+        List<TreeItem<FileNode>> children = new ArrayList<>();
+        try {
+            FileNode remoteFile = (FileNode) (treeItem.getValue());
+            if (remoteFile == null || !checkConnection()) {
+                return null;
+            }
+            String path = remoteFile.fullName();
+            Iterator<ChannelSftp.LsEntry> iterator = remoteController.ls(path);
+            if (iterator == null) {
+                return children;
+            }
+            while (iterator.hasNext()) {
+                if (task == null || task.isCancelled()) {
+                    return children;
+                }
+                ChannelSftp.LsEntry entry = iterator.next();
+                String name = entry.getFilename();
+                if (name == null || name.isBlank() || ".".equals(name) || "..".equals(name)) {
+                    continue;
+                }
+                FileNode fileInfo = new FileNode()
+                        .setNodename(name)
+                        .setParentFile(remoteFile)
+                        .setIsRemote(true)
+                        .attrs(entry.getAttrs());
+
+                TreeItem<FileNode> fileItem = new TreeItem<>(fileInfo);
+                fileItem.setExpanded(true);
+                children.add(fileItem);
+
+                if (fileInfo.isDirectory()) {
+                    FileNode dummyInfo = new FileNode()
+                            .setNodename("Loading")
+                            .setParentFile(remoteFile)
+                            .setIsRemote(false);
+                    TreeItem<FileNode> dummyItem = new TreeItem(dummyInfo);
+                    fileItem.getChildren().add(dummyItem);
+                    fileItem.setExpanded(false);
+                    fileItem.expandedProperty().addListener(new ChangeListener<Boolean>() {
+                        @Override
+                        public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                            if (!isSettingValues) {
+                                fileItem.expandedProperty().removeListener(this);
+                                expandPath(fileItem);
+                            }
+                        }
+                    });
+                }
+            }
+
+        } catch (Exception e) {
+            error = e.toString();
+        }
+        return children;
     }
 
     protected void expandPath(TreeItem<FileNode> treeItem) {
@@ -88,52 +205,8 @@ public class RemotePathManageController extends FilesTreeController {
             @Override
             protected boolean handle() {
                 try {
-                    children = new ArrayList<>();
-                    if (remoteController.sshSession == null && !remoteController.connect(task)) {
-                        return false;
-                    }
-                    remoteController.task = task;
-                    String path = remoteFile.fullName();
-                    remoteController.showLogs("Expand: " + path);
-                    Iterator<ChannelSftp.LsEntry> iterator = remoteController.ls(path);
-                    if (iterator == null) {
-                        return true;
-                    }
-                    while (iterator.hasNext()) {
-                        if (task == null || task.isCancelled()) {
-                            return true;
-                        }
-                        ChannelSftp.LsEntry entry = iterator.next();
-                        String name = entry.getFilename();
-                        if (name == null || name.isBlank() || ".".equals(name) || "..".equals(name)) {
-                            continue;
-                        }
-                        FileNode fileInfo = new FileNode(remoteFile, name, true);
-                        SftpATTRS attrs = entry.getAttrs();
-                        boolean isDir = attrs.isDir();
-                        fileInfo.setFileType(isDir ? FileInformation.FileType.Directory : FileInformation.FileType.File);
-                        fileInfo.setModifyTime(attrs.getMTime());
-                        fileInfo.setFileSize(attrs.getSize());
-                        TreeItem<FileNode> fileItem = new TreeItem(fileInfo);
-                        fileItem.setExpanded(true);
-                        children.add(fileItem);
-
-                        if (isDir) {
-                            TreeItem<FileNode> dummyItem = new TreeItem(new FileNode(remoteFile, "Loading", false));
-                            fileItem.getChildren().add(dummyItem);
-                            fileItem.setExpanded(false);
-                            fileItem.expandedProperty().addListener(new ChangeListener<Boolean>() {
-                                @Override
-                                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                                    if (!isSettingValues) {
-                                        fileItem.expandedProperty().removeListener(this);
-                                        expandPath(fileItem);
-                                    }
-                                }
-                            });
-                        }
-                    }
-                    return true;
+                    children = makeChildren(treeItem);
+                    return children != null;
                 } catch (Exception e) {
                     error = e.toString();
                     return true;
@@ -163,8 +236,23 @@ public class RemotePathManageController extends FilesTreeController {
     }
 
     @FXML
+    public void disconnect() {
+        tabPane.getSelectionModel().select(logsTab);
+        if (task != null) {
+            task.cancel();
+        }
+        remoteController.disconnect();
+        popInformation(message("Disconnected"));
+    }
+
+    @FXML
     @Override
     public void refreshAction() {
+        loadPath();
+    }
+
+    @FXML
+    public void permissionAction() {
 
     }
 

@@ -137,7 +137,7 @@ public class MediaPlayerController extends BaseController {
                             repeat = MediaPlayer.INDEFINITE;
                             return;
                         }
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v <= 0) {
                             repeat = MediaPlayer.INDEFINITE;
                         } else {
@@ -159,7 +159,7 @@ public class MediaPlayerController extends BaseController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        double v = Double.valueOf(newValue);
+                        double v = Double.parseDouble(newValue);
                         if (v <= 0 || v > 8) {
                             speedSelector.getEditor().setStyle(UserConfig.badStyle());
                         } else {

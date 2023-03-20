@@ -95,7 +95,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                             scale = 1;
                             return;
                         }
-                        float f = Float.valueOf(newV);
+                        float f = Float.parseFloat(newV);
                         if (f > 0) {
                             scale = f;
                             scaleSelector.getEditor().setStyle(null);
@@ -121,7 +121,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                             threshold = 0;
                             return;
                         }
-                        int i = Integer.valueOf(newV);
+                        int i = Integer.parseInt(newV);
                         if (i > 0) {
                             threshold = i;
                             binarySelector.getEditor().setStyle(null);
@@ -156,7 +156,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                             rotate = 0;
                             return;
                         }
-                        rotate = Integer.valueOf(newV);
+                        rotate = Integer.parseInt(newV);
                     } catch (Exception e) {
 
                     }

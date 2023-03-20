@@ -80,7 +80,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                         if (newV == null || newV.isEmpty()) {
                             return;
                         }
-                        float f = Float.valueOf(newV);
+                        float f = Float.parseFloat(newV);
                         if (f > 0) {
                             scale = f;
                             scaleSelector.getEditor().setStyle(null);
@@ -105,7 +105,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                         if (newV == null || newV.isEmpty()) {
                             return;
                         }
-                        int i = Integer.valueOf(newV);
+                        int i = Integer.parseInt(newV);
                         if (i > 0) {
                             threshold = i;
                             binarySelector.getEditor().setStyle(null);
@@ -129,7 +129,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                         if (newV == null || newV.isEmpty()) {
                             return;
                         }
-                        rotate = Integer.valueOf(newV);
+                        rotate = Integer.parseInt(newV);
                     } catch (Exception e) {
 
                     }

@@ -149,7 +149,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
                             scale = 1;
                             return;
                         }
-                        float f = Float.valueOf(newV);
+                        float f = Float.parseFloat(newV);
                         if (f > 0) {
                             scale = f;
                             scaleSelector.getEditor().setStyle(null);
@@ -175,7 +175,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
                             threshold = 0;
                             return;
                         }
-                        int i = Integer.valueOf(newV);
+                        int i = Integer.parseInt(newV);
                         if (i > 0) {
                             threshold = i;
                             binarySelector.getEditor().setStyle(null);
@@ -210,7 +210,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
                             rotate = 0;
                             return;
                         }
-                        rotate = Integer.valueOf(newV);
+                        rotate = Integer.parseInt(newV);
                     } catch (Exception e) {
 
                     }
@@ -247,7 +247,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
             if (!imageOptionsPane.getChildren().contains(scaleBox)) {
                 imageOptionsPane.getChildren().add(scaleBox);
             }
-            scale = Float.valueOf(scaleSelector.getValue());
+            scale = Float.parseFloat(scaleSelector.getValue());
         }
     }
 

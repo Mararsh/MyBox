@@ -88,8 +88,8 @@ public class GeographyCodeImportGeonamesFileController extends BaseImportCsvCont
                         String province = record.get(3);
                         String city = record.get(5);
                         String county = record.get(7);
-                        double longitude = Double.valueOf(record.get(10));
-                        double latitude = Double.valueOf(record.get(9));
+                        double longitude = Double.parseDouble(record.get(10));
+                        double latitude = Double.parseDouble(record.get(9));
                         short level;
                         if (county != null) {
                             level = 7;

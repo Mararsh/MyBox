@@ -181,7 +181,7 @@ public class ControlImageText extends BaseController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v >= 0) {
                             lineHeight = v;
                         } else {
@@ -306,7 +306,7 @@ public class ControlImageText extends BaseController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v >= 0) {
                             angle = v;
                             UserConfig.setInt(baseName + "TextAngle", v);
@@ -406,7 +406,7 @@ public class ControlImageText extends BaseController {
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     bordersStrokeWidth = 0;
                     try {
-                        bordersStrokeWidth = Integer.valueOf(newValue);
+                        bordersStrokeWidth = Integer.parseInt(newValue);
                         if (bordersStrokeWidth < 0) {
                             bordersStrokeWidth = 0;
                         }
@@ -440,7 +440,7 @@ public class ControlImageText extends BaseController {
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     bordersArc = 0;
                     try {
-                        bordersArc = Integer.valueOf(newValue);
+                        bordersArc = Integer.parseInt(newValue);
                         if (bordersArc < 0) {
                             bordersArc = 0;
                         }
@@ -463,7 +463,7 @@ public class ControlImageText extends BaseController {
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     bordersOpacity = 0.5f;
                     try {
-                        bordersOpacity = Float.valueOf(newValue);
+                        bordersOpacity = Float.parseFloat(newValue);
                         if (bordersOpacity < 0.0f || bordersOpacity > 1.0f) {
                             bordersOpacity = 0.5f;
                         }
@@ -573,7 +573,7 @@ public class ControlImageText extends BaseController {
 
     public boolean checkMargin() {
         try {
-            int v = Integer.valueOf(marginInput.getText());
+            int v = Integer.parseInt(marginInput.getText());
             if (v >= 0) {
                 margin = v;
                 UserConfig.setInt(baseName + "Margin", margin);
@@ -699,7 +699,7 @@ public class ControlImageText extends BaseController {
 
     public boolean checkBordersMargin() {
         try {
-            bordersMargin = Integer.valueOf(bordersMarginInput.getText());
+            bordersMargin = Integer.parseInt(bordersMarginInput.getText());
             UserConfig.setInt(baseName + "BordersMargin", bordersMargin);
         } catch (Exception e) {
             bordersMarginInput.setStyle(UserConfig.badStyle());

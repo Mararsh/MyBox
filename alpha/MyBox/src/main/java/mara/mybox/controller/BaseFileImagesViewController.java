@@ -108,7 +108,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
                             return;
                         }
                         try {
-                            int v = Integer.valueOf(newValue);
+                            int v = Integer.parseInt(newValue);
                             if (v > 0) {
                                 percent = v;
                                 UserConfig.setInt(baseName + "Percent", percent);
@@ -139,7 +139,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
                             return;
                         }
                         try {
-                            int v = Integer.valueOf(newValue);
+                            int v = Integer.parseInt(newValue);
                             if (v > 0) {
                                 dpi = v;
                                 UserConfig.setInt(baseName + "DPI", dpi);

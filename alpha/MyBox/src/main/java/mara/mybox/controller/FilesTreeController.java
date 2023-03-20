@@ -31,9 +31,9 @@ public class FilesTreeController extends BaseTaskController {
     @FXML
     protected TreeTableView<FileNode> filesTreeView;
     @FXML
-    protected TreeTableColumn<FileNode, String> fileColumn, hierarchyColumn, typeColumn;
+    protected TreeTableColumn<FileNode, String> fileColumn, nodeColumn, hierarchyColumn, typeColumn, permissionColumn;
     @FXML
-    protected TreeTableColumn<FileNode, Long> sizeColumn, modifyTimeColumn, createTimeColumn;
+    protected TreeTableColumn<FileNode, Long> sizeColumn, modifyTimeColumn, accessTimeColumn, createTimeColumn;
     @FXML
     protected TreeTableColumn<FileNode, Boolean> selectedColumn;
 
@@ -58,8 +58,15 @@ public class FilesTreeController extends BaseTaskController {
     protected void initTreeTableView() {
         try {
 
-            fileColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("fileName"));
-            fileColumn.setPrefWidth(400);
+            if (hierarchyColumn != null) {
+                fileColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("fileName"));
+                fileColumn.setPrefWidth(400);
+            }
+
+            if (nodeColumn != null) {
+                nodeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("nodename"));
+                nodeColumn.setPrefWidth(400);
+            }
 
             if (hierarchyColumn != null) {
                 hierarchyColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("hierarchyNumber"));
@@ -85,9 +92,17 @@ public class FilesTreeController extends BaseTaskController {
             modifyTimeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("modifyTime"));
             modifyTimeColumn.setCellFactory(new TreeTableEraCell());
 
+            if (accessTimeColumn != null) {
+                accessTimeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("accessTime"));
+                accessTimeColumn.setCellFactory(new TreeTableEraCell());
+            }
+
             if (createTimeColumn != null) {
                 createTimeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("createTime"));
                 createTimeColumn.setCellFactory(new TreeTableEraCell());
+            }
+            if (permissionColumn != null) {
+                permissionColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("permission"));
             }
 
             filesTreeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);

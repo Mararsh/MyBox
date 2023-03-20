@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.TreeTableColumn?>
+<?import javafx.scene.control.TreeTableView?>
+<?import javafx.scene.layout.VBox?>
+
+
+  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.RemotePathManageController">
+      <children>
+                <VBox fx:id="paraBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                    <children>
+            <TreeTableView fx:id="filesTreeView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+               <columns>
+                  <TreeTableColumn fx:id="nodeColumn" editable="false" prefWidth="300.0" text="%File" />
+                  <TreeTableColumn fx:id="selectedColumn" minWidth="-1.0" prefWidth="100.0" text="%Select" />
+                  <TreeTableColumn fx:id="sizeColumn" editable="false" prefWidth="100.0" text="%Size" />
+                  <TreeTableColumn fx:id="typeColumn" editable="false" minWidth="0.0" text="%Type" />
+                  <TreeTableColumn fx:id="permissionColumn" editable="false" minWidth="0.0" prefWidth="100.0" text="%Permission" />
+                  <TreeTableColumn fx:id="modifyTimeColumn" editable="false" prefWidth="140.0" text="%ModifiedTime" />
+                  <TreeTableColumn fx:id="accessTimeColumn" editable="false" prefWidth="140.0" text="%AccessTime" />
+               </columns>
+            </TreeTableView>
+                    </children>
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    </padding>
+                </VBox>
+      </children>
+  </VBox>

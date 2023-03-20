@@ -46,7 +46,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        shearX = Float.valueOf(newValue);
+                        shearX = Float.parseFloat(newValue);
                         shearButton.setDisable(false);
                         ValidationTools.setEditorNormal(shearBox);
                     } catch (Exception e) {
@@ -71,7 +71,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        rotateAngle = Integer.valueOf(newValue);
+                        rotateAngle = Integer.parseInt(newValue);
                         rotateLeftButton.setDisable(false);
                         rotateRightButton.setDisable(false);
                         ValidationTools.setEditorNormal(angleBox);

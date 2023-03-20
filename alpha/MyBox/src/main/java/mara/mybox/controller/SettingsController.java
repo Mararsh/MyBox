@@ -226,7 +226,7 @@ public class SettingsController extends BaseController {
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     if (newValue != null && !newValue.isEmpty()) {
                         try {
-                            int v = Integer.valueOf(newValue);
+                            int v = Integer.parseInt(newValue);
                             if (v > 0) {
                                 setSceneFontSize(v);
                                 ValidationTools.setEditorNormal(fontSizeBox);
@@ -249,7 +249,7 @@ public class SettingsController extends BaseController {
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     if (newValue != null && !newValue.isEmpty()) {
                         try {
-                            int v = Integer.valueOf(newValue);
+                            int v = Integer.parseInt(newValue);
                             if (v > 0) {
                                 setIconSize(v);
                                 ValidationTools.setEditorNormal(iconSizeBox);
@@ -519,7 +519,7 @@ public class SettingsController extends BaseController {
                         return;
                     }
                     try {
-                        int v = Integer.valueOf(jvmInput.getText());
+                        int v = Integer.parseInt(jvmInput.getText());
                         if (v > 50 && v <= totalM - 50) {
                             jvmInput.setStyle(null);
                             if (jvmM == v) {
@@ -712,7 +712,7 @@ public class SettingsController extends BaseController {
                         return;
                     }
                     try {
-                        long v = Long.valueOf(batchInput.getText());
+                        long v = Long.parseLong(batchInput.getText());
                         if (v > 0) {
                             batchInput.setStyle(null);
                             Database.BatchSize = v;
@@ -877,7 +877,7 @@ public class SettingsController extends BaseController {
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     if (newValue != null && !newValue.isEmpty()) {
                         try {
-                            int v = Integer.valueOf(newValue);
+                            int v = Integer.parseInt(newValue);
                             if (v > 0) {
                                 UserConfig.setInt("StrokeWidth", v);
                                 ValidationTools.setEditorNormal(strokeWidthBox);
@@ -909,7 +909,7 @@ public class SettingsController extends BaseController {
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     if (newValue != null && !newValue.isEmpty()) {
                         try {
-                            int v = Integer.valueOf(newValue);
+                            int v = Integer.parseInt(newValue);
                             if (v > 0) {
                                 UserConfig.setInt("AnchorWidth", v);
                                 ValidationTools.setEditorNormal(anchorWidthBox);
@@ -961,7 +961,7 @@ public class SettingsController extends BaseController {
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     if (newValue != null && !newValue.isEmpty()) {
                         try {
-                            int v = Integer.valueOf(newValue);
+                            int v = Integer.parseInt(newValue);
                             if (v > 0) {
                                 UserConfig.setInt("GridLinesWidth", v);
                                 ValidationTools.setEditorNormal(gridWidthSelector);
@@ -985,7 +985,7 @@ public class SettingsController extends BaseController {
                     int v = -1;
                     try {
                         if (!message("Automatic").equals(newValue)) {
-                            v = Integer.valueOf(newValue);
+                            v = Integer.parseInt(newValue);
                         }
                     } catch (Exception e) {
                     }
@@ -1028,7 +1028,7 @@ public class SettingsController extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(thumbnailWidthInput.getText());
+                        int v = Integer.parseInt(thumbnailWidthInput.getText());
                         if (v > 0) {
                             UserConfig.setInt("ThumbnailWidth", v);
                             AppVariables.thumbnailWidth = v;

@@ -113,7 +113,7 @@ public class ControlChartXYZ extends BaseController {
     public boolean checkParameters() {
         try {
             try {
-                double v = Double.valueOf(widthSelector.getValue());
+                double v = Double.parseDouble(widthSelector.getValue());
                 if (v > 0) {
                     width = v;
                     widthSelector.getEditor().setStyle(null);
@@ -129,7 +129,7 @@ public class ControlChartXYZ extends BaseController {
                 return false;
             }
             try {
-                double v = Double.valueOf(HeightSelector.getValue());
+                double v = Double.parseDouble(HeightSelector.getValue());
                 if (v > 0) {
                     height = v;
                     HeightSelector.getEditor().setStyle(null);
@@ -145,7 +145,7 @@ public class ControlChartXYZ extends BaseController {
                 return false;
             }
             try {
-                double v = Double.valueOf(pointSelector.getValue());
+                double v = Double.parseDouble(pointSelector.getValue());
                 if (v > 0) {
                     pointSize = v;
                     pointSelector.getEditor().setStyle(null);

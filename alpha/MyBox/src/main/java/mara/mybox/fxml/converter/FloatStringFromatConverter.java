@@ -12,7 +12,7 @@ public class FloatStringFromatConverter extends StringConverter<Float> {
     @Override
     public Float fromString(String value) {
         try {
-            return Float.valueOf(value.trim().replaceAll(",", ""));
+            return Float.parseFloat(value.trim().replaceAll(",", ""));
         } catch (Exception e) {
             return null;
         }

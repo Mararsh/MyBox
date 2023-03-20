@@ -21,7 +21,6 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
-import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
@@ -93,7 +92,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
         if (v == null || v.isBlank()) {
             targetFileController.input(AppPaths.getGeneratedPath() + File.separator + DateTools.nowFileString() + "." + ext);
         } else if (!v.endsWith("." + ext)) {
-            targetFileController.input(FileNameTools.prefix(v) + "." + ext);
+            targetFileController.input(FileNameTools.replaceSuffix(v, ext));
         }
     }
 
@@ -119,7 +118,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
             if (videoFile == null) {
                 return;
             }
-            updateLogs(message("TargetFile") + ": " + videoFile, true);
+            showLogs(message("TargetFile") + ": " + videoFile);
             synchronized (this) {
                 if (task != null && !task.isQuit()) {
                     return;
@@ -195,7 +194,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
             boolean selected = tableController.selectedItem() != null;
             for (int i = 0; i < tableData.size(); ++i) {
                 if (task == null || task.isCancelled()) {
-                    updateLogs(message("TaskCancelled"), true);
+                    showLogs(message("TaskCancelled"));
                     return null;
                 }
                 if (selected && !tableView.getSelectionModel().isSelected(i)) {
@@ -205,10 +204,10 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
                 totalFilesHandled++;
                 if (info.getFile() != null) {
                     if (info.getIndex() >= 0) {
-                        updateLogs(message("Reading") + ": " + info.getFile() + "  "
-                                + message("Frame") + info.getIndex(), true);
+                        showLogs(message("Reading") + ": " + info.getFile() + "  "
+                                + message("Frame") + info.getIndex());
                     } else {
-                        updateLogs(message("Reading") + ": " + info.getFile(), true);
+                        showLogs(message("Reading") + ": " + info.getFile());
                     }
                 }
                 try {
@@ -229,7 +228,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
                 }
             }
             if (lastFile == null) {
-                updateLogs(message("InvalidData"), true);
+                showLogs(message("InvalidData"));
                 return null;
             }
             s.append("file '").append(lastFile.getAbsolutePath()).append("'\n");
@@ -248,7 +247,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
             boolean selected = audiosTableController.selectedItem() != null;
             for (int i = 0; i < audiosData.size(); ++i) {
                 if (task == null || task.isCancelled()) {
-                    updateLogs(message("TaskCancelled"), true);
+                    showLogs(message("TaskCancelled"));
                     return null;
                 }
                 if (selected && !audiosTableController.tableView.getSelectionModel().isSelected(i)) {
@@ -260,7 +259,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
                     continue;
                 }
                 totalFilesHandled++;
-                updateLogs(message("Handling") + ": " + file, true);
+                showLogs(message("Handling") + ": " + file);
                 s.append("file '").append(file.getAbsolutePath()).append("'\n");
             }
             String ss = s.toString();
@@ -282,7 +281,6 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
         }
         try {
             List<String> parameters = new ArrayList<>();
-            parameters.add(ffmpegOptionsController.executable.getAbsolutePath());
             parameters.add("-f");
             parameters.add("concat");
             parameters.add("-safe");
@@ -297,35 +295,29 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
                 parameters.add("-i");
                 parameters.add(audiosListFile.getAbsolutePath());
             }
-
             parameters.add("-shortest");
-
             parameters.add("-s");
             parameters.add(ffmpegOptionsController.width + "x" + ffmpegOptionsController.height);
 
-            parameters.add("-pix_fmt");
-            parameters.add("yuv420p");
+//            parameters.add("-pix_fmt");
+//            parameters.add("yuv420p");
+            parameters = ffmpegOptionsController.makeParameters(parameters);
 
-            ffmpegOptionsController.makeParameters(this, parameters);
-
-            FileDeleteTools.delete(targetFile);
-
-            ProcessBuilder pb = new ProcessBuilder(parameters).redirectErrorStream(true);
-            Process process = pb.start();
-            updateLogs("PID:" + process.pid());
-            try ( BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
+            Process process = ffmpegOptionsController.startProcess(this, parameters, videoFile);
+            try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                 String line;
                 while ((line = inReader.readLine()) != null) {
-                    updateLogs(line + "\n");
+                    if (verboseCheck.isSelected()) {
+                        updateLogs(line + "\n");
+                    }
                 }
             }
             process.waitFor();
 
-            updateLogs(message("ConvertingMedia") + "  " + message("TargetFile") + ":" + videoFile, true);
             targetFileGenerated(videoFile);
-            updateLogs(message("Size") + ": " + FileTools.showFileSize(videoFile.length()), true);
+            showLogs(message("Size") + ": " + FileTools.showFileSize(videoFile.length()));
         } catch (Exception e) {
-            updateLogs(e.toString());
+            showLogs(e.toString());
         }
     }
 

@@ -89,7 +89,7 @@ public class UserConfig {
     public static int getInt(String key, int defaultValue) {
         if (userConfigValues.containsKey(key)) {
             try {
-                int v = Integer.valueOf(userConfigValues.get(key));
+                int v = Integer.parseInt(userConfigValues.get(key));
                 return v;
             } catch (Exception e) {
                 //                MyBoxLog.console(e.toString());
@@ -111,7 +111,7 @@ public class UserConfig {
     public static int getInt(Connection conn, String key, int defaultValue) {
         if (userConfigValues.containsKey(key)) {
             try {
-                int v = Integer.valueOf(userConfigValues.get(key));
+                int v = Integer.parseInt(userConfigValues.get(key));
                 return v;
             } catch (Exception e) {
                 //                MyBoxLog.console(e.toString());
@@ -209,7 +209,7 @@ public class UserConfig {
     public static double getDouble(String key, double defaultValue) {
         if (userConfigValues.containsKey(key)) {
             try {
-                double v = Double.valueOf(userConfigValues.get(key));
+                double v = Double.parseDouble(userConfigValues.get(key));
                 return v;
             } catch (Exception e) {
                 //                MyBoxLog.console(e.toString());
@@ -220,7 +220,7 @@ public class UserConfig {
             if (v == null) {
                 return defaultValue;
             }
-            double d = Double.valueOf(v);
+            double d = Double.parseDouble(v);
             userConfigValues.put(key, v);
             return d;
         } catch (Exception e) {
@@ -232,7 +232,7 @@ public class UserConfig {
     public static double getDouble(Connection conn, String key, double defaultValue) {
         if (userConfigValues.containsKey(key)) {
             try {
-                double v = Double.valueOf(userConfigValues.get(key));
+                double v = Double.parseDouble(userConfigValues.get(key));
                 return v;
             } catch (Exception e) {
                 //                MyBoxLog.console(e.toString());
@@ -243,7 +243,7 @@ public class UserConfig {
             if (v == null) {
                 return defaultValue;
             }
-            double d = Double.valueOf(v);
+            double d = Double.parseDouble(v);
             userConfigValues.put(key, v);
             return d;
         } catch (Exception e) {

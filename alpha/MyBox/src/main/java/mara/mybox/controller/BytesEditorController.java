@@ -172,7 +172,7 @@ public class BytesEditorController extends BaseFileEditorController {
                 lbWidthInput.setStyle(null);
                 return;
             }
-            int v = Integer.valueOf(lbWidthInput.getText());
+            int v = Integer.parseInt(lbWidthInput.getText());
             if (v > 0) {
                 lineBreakWidth = v;
                 lbWidthInput.setStyle(null);

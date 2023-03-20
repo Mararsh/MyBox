@@ -37,14 +37,18 @@ License:    Apache License Version 2.0
                <children>
                                     <CheckBox fx:id="copySubdirCheck" mnemonicParsing="false" selected="true" text="%CopySubdirectoies" wrapText="true" />
                                     <CheckBox fx:id="copyEmptyCheck" mnemonicParsing="false" selected="true" text="%CopyEmpty" wrapText="true" />
+               </children>
+            </FlowPane>
+            <FlowPane fx:id="fileOptionsPane" alignment="CENTER_LEFT" hgap="2.0" layoutX="15.0" layoutY="15.0" vgap="2.0">
+               <children>
                                     <CheckBox fx:id="copyNewCheck" mnemonicParsing="false" selected="true" text="%CopyNewFiles" wrapText="true" />
+                                    <CheckBox fx:id="copyExistedCheck" mnemonicParsing="false" selected="true" text="%CopyExistedFiles" wrapText="true" />
                                     <CheckBox fx:id="copyHiddenCheck" mnemonicParsing="false" selected="true" text="%CopyHiddenFiles" wrapText="true" />
                                     <CheckBox fx:id="copyReadonlyCheck" mnemonicParsing="false" text="%OnlyCopyReadOnly" wrapText="true" />
                </children>
             </FlowPane>
             <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
                <children>
-                                    <CheckBox fx:id="copyExistedCheck" mnemonicParsing="false" selected="true" text="%CopyExistedFiles" wrapText="true" />
                                     <CheckBox fx:id="copyModifiedCheck" mnemonicParsing="false" selected="true" text="%OnlyCopyModifiedFiles" wrapText="true" />
                </children>
             </FlowPane>
@@ -52,18 +56,27 @@ License:    Apache License Version 2.0
                <children>
                                     <Label text="%OnlyCopyModifiedAfter" wrapText="true">
                      <FlowPane.margin>
-                        <Insets left="100.0" />
+                        <Insets left="20.0" />
                      </FlowPane.margin>
                                     </Label>
+                                    <Label minHeight="-Infinity" text="%CopyExistedComments" wrapText="true" />
                                     <DatePicker fx:id="modifyAfterInput" />
-                                    <Label text="%CopyExistedComments" wrapText="true" />
+                  <Button fx:id="historyModifyButton" mnemonicParsing="false" onAction="#showModifyHistories" onMouseEntered="#popModifyHistories">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconHistory.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
                </children>
             </FlowPane>
                               <CheckBox fx:id="deleteNonExistedCheck" minHeight="-Infinity" mnemonicParsing="false" text="%DeleteNotExistedinSource" wrapText="true" />
             <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
                <children>
                                     <CheckBox fx:id="notCopyCheck" minHeight="-Infinity" mnemonicParsing="false" text="%NotCopyInclude" wrapText="true" />
-                                    <TextField fx:id="notCopyInput" maxWidth="1.7976931348623157E308" promptText="%SeparateByComma" />
+                                    <TextField fx:id="notCopyInput" maxWidth="1.7976931348623157E308" prefWidth="200.0" promptText="%SeparateByComma" />
                   <Button fx:id="historyNameButton" mnemonicParsing="false" onAction="#showNameHistories" onMouseEntered="#popNameHistories">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -80,12 +93,8 @@ License:    Apache License Version 2.0
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </VBox.margin>
                   </VBox>
-      <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
-         <children>
-                            <CheckBox fx:id="copyAttrCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%CopyOriginalFileAttr" wrapText="true" />
-                            <CheckBox fx:id="continueCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%ContinueWhenError" wrapText="true" />
-                            <CheckBox fx:id="deleteSourceCheck" minHeight="-Infinity" mnemonicParsing="false" text="%DeleteSourcePathAfterComplete" wrapText="true" />
-         </children>
-      </FlowPane>
+                      <CheckBox fx:id="copyAttrCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%CopyOriginalFileAttr" wrapText="true" />
+                      <CheckBox fx:id="continueCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%ContinueWhenError" wrapText="true" />
+                      <CheckBox fx:id="deleteSourceCheck" minHeight="-Infinity" mnemonicParsing="false" text="%DeleteSourcePathAfterComplete" wrapText="true" />
       </children>
   </VBox>

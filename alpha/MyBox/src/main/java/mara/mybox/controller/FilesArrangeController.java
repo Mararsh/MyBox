@@ -339,7 +339,7 @@ public class FilesArrangeController extends BaseBatchFileController {
                     }
                     switch (newStatus) {
                         case "Started":
-                            operationBarController.statusLabel.setText(Languages.message("Handling...") + " "
+                            operationBarController.statusInput.setText(Languages.message("Handling...") + " "
                                     + Languages.message("StartTime")
                                     + ": " + DateTools.datetimeToString(processStartTime));
                             StyleTools.setNameIcon(startButton, Languages.message("Stop"), "iconStop.png");
@@ -419,7 +419,7 @@ public class FilesArrangeController extends BaseBatchFileController {
 
     @Override
     public void showCost() {
-        if (operationBarController.statusLabel == null) {
+        if (operationBarController.statusInput == null) {
             return;
         }
         long cost = new Date().getTime() - processStartTime.getTime();
@@ -438,7 +438,7 @@ public class FilesArrangeController extends BaseBatchFileController {
                 + Languages.message("Average") + ": " + avg + " " + Languages.message("SecondsPerItem") + ". "
                 + Languages.message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + ", "
                 + Languages.message("EndTime") + ": " + DateTools.datetimeToString(new Date());
-        operationBarController.statusLabel.setText(s);
+        operationBarController.statusInput.setText(s);
     }
 
     @Override

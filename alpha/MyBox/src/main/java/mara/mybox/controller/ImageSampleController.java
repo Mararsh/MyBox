@@ -136,7 +136,7 @@ public class ImageSampleController extends ImageViewerController {
             return;
         }
         try {
-            int v = Integer.valueOf(widthScaleSelector.getSelectionModel().getSelectedItem());
+            int v = Integer.parseInt(widthScaleSelector.getSelectionModel().getSelectedItem());
             if (v > 0) {
                 widthScale = v;
                 ValidationTools.setEditorNormal(widthScaleSelector);
@@ -147,7 +147,7 @@ public class ImageSampleController extends ImageViewerController {
             ValidationTools.setEditorBadStyle(widthScaleSelector);
         }
         try {
-            int v = Integer.valueOf(heightScaleSelector.getSelectionModel().getSelectedItem());
+            int v = Integer.parseInt(heightScaleSelector.getSelectionModel().getSelectedItem());
             if (v > 0) {
                 heightScale = v;
                 ValidationTools.setEditorNormal(heightScaleSelector);

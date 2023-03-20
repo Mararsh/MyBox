@@ -880,7 +880,7 @@ public class WeiboSnapRunController extends BaseController {
                                             int pos5 = s1.indexOf("条)</em></span>");
                                             if (pos5 > 0) {
                                                 try {
-                                                    totalLikeCount = Integer.valueOf(s1.substring(0, pos5));
+                                                    totalLikeCount = Integer.parseInt(s1.substring(0, pos5));
                                                     showBaseInfo();
                                                 } catch (Exception e) {
                                                     MyBoxLog.debug(e.toString());
@@ -938,8 +938,8 @@ public class WeiboSnapRunController extends BaseController {
                                                         int pos3 = s1.indexOf("\"");
                                                         if (pos3 > 0) {
                                                             try {
-                                                                currentPage = Integer.valueOf(s1.substring(0, pos2));
-                                                                currentMonthPageCount = Integer.valueOf(s1.substring(pos2 + "&amp;countPage=".length(), pos3));
+                                                                currentPage = Integer.parseInt(s1.substring(0, pos2));
+                                                                currentMonthPageCount = Integer.parseInt(s1.substring(pos2 + "&amp;countPage=".length(), pos3));
                                                                 mainCompleted();
                                                             } catch (Exception e) {
 //                                                            loadFailed = loadCompleted = true;

@@ -11,7 +11,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.FileSynchronizeAttributes;
@@ -50,10 +49,77 @@ public class ControlSynchronizeOptions extends BaseController {
         baseTitle = message("DirectorySynchronize");
     }
 
-    @Override
-    public void initControls() {
+    public void setParameters(BaseController parent) {
         try {
-            super.initControls();
+            this.parentController = parent;
+            this.baseName = parent.baseName;
+
+            setControls();
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    private void setControls() {
+        try {
+            conditionsBox.disableProperty().bind(conditionallyRadio.selectedProperty().not());
+
+            copySubdirCheck.setSelected(UserConfig.getBoolean(baseName + "CopySubdir", true));
+            copySubdirCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    UserConfig.setBoolean(baseName + "CopySubdir", nv);
+                }
+            });
+
+            copyEmptyCheck.setSelected(UserConfig.getBoolean(baseName + "CopyEmpty", true));
+            copyEmptyCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    UserConfig.setBoolean(baseName + "CopyEmpty", nv);
+                }
+            });
+
+            copyNewCheck.setSelected(UserConfig.getBoolean(baseName + "CopyNew", true));
+            copyNewCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    UserConfig.setBoolean(baseName + "CopyNew", nv);
+                }
+            });
+
+            copyHiddenCheck.setSelected(UserConfig.getBoolean(baseName + "CopyHidden", true));
+            copyHiddenCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    UserConfig.setBoolean(baseName + "CopyHidden", nv);
+                }
+            });
+
+            copyReadonlyCheck.setSelected(UserConfig.getBoolean(baseName + "CopyReadonly", false));
+            copyReadonlyCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    UserConfig.setBoolean(baseName + "CopyReadonly", nv);
+                }
+            });
+
+            copyExistedCheck.setSelected(UserConfig.getBoolean(baseName + "CopyExisted", true));
+            copyExistedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    UserConfig.setBoolean(baseName + "CopyExisted", nv);
+                }
+            });
+
+            copyModifiedCheck.setSelected(UserConfig.getBoolean(baseName + "CopyModified", true));
+            copyModifiedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    UserConfig.setBoolean(baseName + "CopyModified", nv);
+                }
+            });
 
             deleteNonExistedCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -63,6 +129,32 @@ public class ControlSynchronizeOptions extends BaseController {
                     } else {
                         deleteNonExistedCheck.setStyle(null);
                     }
+                    UserConfig.setBoolean(baseName + "DeleteNonExisted", nv);
+                }
+            });
+            deleteNonExistedCheck.setSelected(UserConfig.getBoolean(baseName + "DeleteNonExisted", false));
+
+            notCopyCheck.setSelected(UserConfig.getBoolean(baseName + "NotCopy", false));
+            notCopyCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    UserConfig.setBoolean(baseName + "NotCopy", nv);
+                }
+            });
+
+            copyAttrCheck.setSelected(UserConfig.getBoolean(baseName + "CopyAttr", true));
+            copyAttrCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    UserConfig.setBoolean(baseName + "CopyAttr", nv);
+                }
+            });
+
+            continueCheck.setSelected(UserConfig.getBoolean(baseName + "Continue", true));
+            continueCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    UserConfig.setBoolean(baseName + "Continue", nv);
                 }
             });
 
@@ -74,16 +166,10 @@ public class ControlSynchronizeOptions extends BaseController {
                     } else {
                         deleteSourceCheck.setStyle(null);
                     }
+                    UserConfig.setBoolean(baseName + "DeleteSource", nv);
                 }
             });
-
-            copyGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue<? extends Toggle> v, Toggle ov, Toggle nv) {
-                    conditionsBox.setDisable(!conditionallyRadio.isSelected());
-                }
-            });
-            conditionsBox.setDisable(!conditionallyRadio.isSelected());
+            deleteSourceCheck.setSelected(UserConfig.getBoolean(baseName + "DeleteSource", false));
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -139,6 +225,18 @@ public class ControlSynchronizeOptions extends BaseController {
     @FXML
     protected void showNameHistories(Event event) {
         PopTools.popStringValues(this, notCopyInput, event, interfaceName + "Histories", true, true);
+    }
+
+    @FXML
+    protected void popModifyHistories(Event event) {
+        if (UserConfig.getBoolean(interfaceName + "ModifyPopWhenMouseHovering", false)) {
+            showModifyHistories(event);
+        }
+    }
+
+    @FXML
+    protected void showModifyHistories(Event event) {
+        PopTools.popStringValues(this, modifyAfterInput.getEditor(), event, interfaceName + "Modify", true, true);
     }
 
 }

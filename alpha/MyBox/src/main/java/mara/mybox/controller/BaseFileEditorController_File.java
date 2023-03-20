@@ -296,7 +296,7 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
             if (isSettingValues || !checkBeforeNextAction()) {
                 return;
             }
-            int v = Integer.valueOf(pageSizeSelector.getValue().replaceAll(",", ""));
+            int v = Integer.parseInt(pageSizeSelector.getValue().replaceAll(",", ""));
             int available = (int) (SystemTools.freeBytes() / 4);
             if (v > available) {
                 popError(message("MayOutOfMemory"));

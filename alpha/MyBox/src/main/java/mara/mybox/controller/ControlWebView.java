@@ -910,8 +910,7 @@ public class ControlWebView extends BaseController {
 
         menu = new MenuItem(message("Edit"), StyleTools.getIconImageView("iconEdit.png"));
         menu.setOnAction((ActionEvent event) -> {
-            HtmlEditorController controller = (HtmlEditorController) WindowTools.openStage(Fxmls.HtmlEditorFxml);
-            controller.loadAddress(finalAddress);
+            HtmlEditorController.openAddress(finalAddress);
         });
         items.add(menu);
 
@@ -1389,11 +1388,10 @@ public class ControlWebView extends BaseController {
                             }
                             menu = new MenuItem(frame);
                             menu.setOnAction((ActionEvent event) -> {
-                                HtmlEditorController controller = (HtmlEditorController) WindowTools.openStage(Fxmls.HtmlEditorFxml);
                                 if (src != null && !src.isBlank()) {
-                                    controller.loadAddress(UrlTools.fullAddress(address, src));
+                                    WebBrowserController.openAddress(UrlTools.fullAddress(address, src), true);
                                 } else {
-                                    controller.loadContents(WebViewTools.getFrame(webEngine, index));
+                                    WebBrowserController.openHtml(WebViewTools.getFrame(webEngine, index), true);
                                 }
 
                             });

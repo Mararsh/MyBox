@@ -78,7 +78,7 @@ public class ImageManufactureBatchTransformController extends BaseImageManufactu
             checkTransformType();
 
             try {
-                float f = Float.valueOf(UserConfig.getString(baseName + "Shear", "0.5"));
+                float f = Float.parseFloat(UserConfig.getString(baseName + "Shear", "0.5"));
                 if (f >= 0.0f && f <= 1.0f) {
                     shearX = 0.5f;
                 }
@@ -144,7 +144,7 @@ public class ImageManufactureBatchTransformController extends BaseImageManufactu
 
     private void checkShear() {
         try {
-            shearX = Float.valueOf(shearBox.getValue());
+            shearX = Float.parseFloat(shearBox.getValue());
             UserConfig.setString(baseName + "Shear", shearX + "");
             ValidationTools.setEditorNormal(shearBox);
         } catch (Exception e) {

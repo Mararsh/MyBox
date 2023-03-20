@@ -398,7 +398,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
             categoryTickRotationSelector.getSelectionModel().selectedItemProperty().addListener(
                     (ObservableValue<? extends String> v, String ov, String nv) -> {
                         try {
-                            chartMaker.setCategoryTickRotation(Integer.valueOf(nv));
+                            chartMaker.setCategoryTickRotation(Integer.parseInt(nv));
                             categoryTickRotationSelector.getEditor().setStyle(null);
                         } catch (Exception e) {
                             categoryTickRotationSelector.getEditor().setStyle(UserConfig.badStyle());
@@ -483,7 +483,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
             barGapSelector.getSelectionModel().selectedItemProperty().addListener(
                     (ObservableValue<? extends String> v, String ov, String nv) -> {
                         try {
-                            double d = Double.valueOf(nv);
+                            double d = Double.parseDouble(nv);
                             if (d >= 0) {
                                 chartMaker.setBarGap(d);
                                 barGapSelector.getEditor().setStyle(null);
@@ -504,7 +504,7 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
             categoryGapSelector.getSelectionModel().selectedItemProperty().addListener(
                     (ObservableValue<? extends String> v, String ov, String nv) -> {
                         try {
-                            double d = Double.valueOf(nv);
+                            double d = Double.parseDouble(nv);
                             if (d >= 0) {
                                 chartMaker.setCategoryGap(d);
                                 categoryGapSelector.getEditor().setStyle(null);
@@ -564,8 +564,8 @@ public class Data2DChartXYOptionsController extends BaseData2DChartFxOptionsCont
             numberTickRotationSelector.getSelectionModel().select(numberTickRotation + "");
             numberTickRotationSelector.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> v, String ov, String nv) -> {
                 try {
-                    int d = Integer.valueOf(nv);
-                    chartMaker.setNumberTickRotation(Integer.valueOf(nv));
+                    int d = Integer.parseInt(nv);
+                    chartMaker.setNumberTickRotation(Integer.parseInt(nv));
                     numberTickRotationSelector.getEditor().setStyle(null);
                 } catch (Exception e) {
                     numberTickRotationSelector.getEditor().setStyle(UserConfig.badStyle());

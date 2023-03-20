@@ -74,7 +74,7 @@ public class TableSystemConf extends BaseTable<StringValue> {
                             break;
                         default: {
                             try {
-                                int v = Integer.valueOf(value);
+                                int v = Integer.parseInt(value);
                                 intStatement.setString(1, key);
                                 intStatement.setInt(2, v);
                                 intStatement.executeUpdate();

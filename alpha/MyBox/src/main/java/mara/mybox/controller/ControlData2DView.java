@@ -307,8 +307,7 @@ public class ControlData2DView extends BaseController {
 
     @FXML
     public void editHtml() {
-        HtmlEditorController controller = (HtmlEditorController) openStage(Fxmls.HtmlEditorFxml);
-        controller.loadContents(WebViewTools.getHtml(htmlController.webEngine));
+        HtmlEditorController.openHtml(WebViewTools.getHtml(htmlController.webEngine));
     }
 
     /*

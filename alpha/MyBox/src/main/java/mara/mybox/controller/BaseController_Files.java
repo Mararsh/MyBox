@@ -134,7 +134,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         recordFileOpened(file, fileType, fileType);
     }
 
-    private void recordFileOpened(final File file, int pathType, int fileType) {
+    private void recordFileOpened(File file, int pathType, int fileType) {
         if (file == null) {
             return;
         }
@@ -254,11 +254,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         if (AppPaths.reservedPath(fname)) {
             return;
         }
-        try (Connection conn = DerbyBase.getConnection()) {
-            recordFileRead(conn, file, SourcePathType, AddFileType);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+        recordFileOpened(file, SourcePathType, AddFileType);
     }
 
     public void recordFileAdded(List<File> files) {

@@ -118,7 +118,7 @@ public class FileCutController extends BaseBatchFileController {
 
     private void checkFilesNumber() {
         try {
-            int v = Integer.valueOf(filesNumberInput.getText());
+            int v = Integer.parseInt(filesNumberInput.getText());
             if (v >= 0) {
                 filesNumber = v;
                 filesNumberInput.setStyle(null);

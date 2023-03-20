@@ -135,7 +135,7 @@ public class ImageManufactureBatchShadowController extends BaseImageManufactureB
 
     private void checkPercent() {
         try {
-            int v = Integer.valueOf(perBox.getValue());
+            int v = Integer.parseInt(perBox.getValue());
             if (v > 0 && v <= 100) {
                 percent = v;
                 UserConfig.setInt(baseName + "Percent", percent);
@@ -150,7 +150,7 @@ public class ImageManufactureBatchShadowController extends BaseImageManufactureB
 
     private void checkShadow() {
         try {
-            int v = Integer.valueOf(shadowBox.getValue());
+            int v = Integer.parseInt(shadowBox.getValue());
             if (v > 0) {
                 shadow = v;
                 UserConfig.setInt(baseName + "Shadow", shadow);

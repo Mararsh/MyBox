@@ -21,7 +21,7 @@ import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TmpFileTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import net.sf.image4j.codec.ico.ICODecoder;
 
 /**
@@ -35,7 +35,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
     protected StringBuilder imageFileString;
 
     public FFmpegMergeImageFilesController() {
-        baseTitle = Languages.message("FFmpegMergeImagesFiles");
+        baseTitle = message("FFmpegMergeImagesFiles");
     }
 
     @Override
@@ -45,7 +45,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
             lastFile = null;
             for (int i = 0; i < tableData.size(); ++i) {
                 if (task == null || task.isCancelled()) {
-                    updateLogs(Languages.message("TaskCancelled"), true);
+                    updateLogs(message("TaskCancelled"), true);
                     return null;
                 }
                 tableController.markFileHandling(i);
@@ -56,18 +56,18 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
                 }
                 String result;
                 if (!file.exists()) {
-                    result = Languages.message("NotFound");
+                    result = message("NotFound");
                 } else if (file.isFile()) {
                     result = handleFile(file, info.getDuration());
                 } else if (file.isDirectory()) {
                     result = handleDirectory(file, info.getDuration());
                 } else {
-                    result = Languages.message("NotFound");
+                    result = message("NotFound");
                 }
                 tableController.markFileHandled(currentParameters.currentIndex, result);
             }
             if (lastFile == null) {
-                updateLogs(Languages.message("InvalidData"), true);
+                updateLogs(message("InvalidData"), true);
                 return null;
             }
             imageFileString.append("file '").append(lastFile.getAbsolutePath()).append("'\n");
@@ -88,15 +88,15 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
     public String handleDirectory(File directory, long duration) {
         try {
             if (directory == null || !directory.isDirectory()) {
-                return Languages.message("Failed");
+                return message("Failed");
             }
             File[] files = directory.listFiles();
             if (files == null) {
-                return Languages.message("Done");
+                return message("Done");
             }
             for (File srcFile : files) {
                 if (task == null || task.isCancelled()) {
-                    return Languages.message("Canceled");
+                    return message("Canceled");
                 }
                 if (srcFile.isFile()) {
                     handleFile(srcFile, duration);
@@ -104,19 +104,19 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
                     handleDirectory(srcFile, duration);
                 }
             }
-            return Languages.message("Done");
+            return message("Done");
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return Languages.message("Failed");
+            return message("Failed");
         }
     }
 
     public String handleFile(File file, long duration) {
         if (file == null) {
-            return Languages.message("Failed");
+            return message("Failed");
         }
         if (verboseCheck == null || verboseCheck.isSelected()) {
-            updateLogs(Languages.message("Handling") + ": " + file, true);
+            updateLogs(message("Handling") + ": " + file, true);
         }
         String format = FileNameTools.suffix(file.getName()).toLowerCase();
         if ("ico".equals(format) || "icon".equals(format)) {
@@ -126,16 +126,16 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
                     handleImage(image, duration);
                 }
                 totalFilesHandled++;
-                return Languages.message("Done");
+                return message("Done");
             } catch (Exception e) {
                 MyBoxLog.error(e.toString());
-                return Languages.message("Failed");
+                return message("Failed");
             }
         }
-        try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(file)))) {
+        try (ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(file)))) {
             ImageReader reader = getReader(iis, format);
             if (reader == null) {
-                return Languages.message("Failed");
+                return message("Failed");
             }
             reader.setInput(iis, false, true);
             ImageReadParam param = reader.getDefaultReadParam();
@@ -144,9 +144,9 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
             imageInfo.setImageFormat(format);
             for (int i = 0; i < num; i++) {
                 if (num > 1) {
-                    updateLogs(Languages.message("Reading") + ": " + file + "-" + (i + 1), true);
+                    updateLogs(message("Reading") + ": " + file + "-" + (i + 1), true);
                 } else {
-                    updateLogs(Languages.message("Reading") + ": " + file, true);
+                    updateLogs(message("Reading") + ": " + file, true);
                 }
                 BufferedImage frame;
                 try {
@@ -165,10 +165,10 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
             }
             reader.dispose();
             totalFilesHandled++;
-            return Languages.message("Done");
+            return message("Done");
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return Languages.message("Failed");
+            return message("Failed");
         }
     }
 

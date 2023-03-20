@@ -91,7 +91,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                     public ObservableValue<Integer> call(TableColumn.CellDataFeatures<List<String>, Integer> param) {
                         try {
                             List<String> row = (List<String>) param.getValue();
-                            Integer v = Integer.valueOf(row.get(0));
+                            Integer v = Integer.parseInt(row.get(0));
                             if (v < 0) {
                                 return null;
                             }

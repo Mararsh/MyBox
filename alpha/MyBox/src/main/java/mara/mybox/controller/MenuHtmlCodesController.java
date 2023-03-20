@@ -446,8 +446,7 @@ public class MenuHtmlCodesController extends MenuTextEditController {
     @FXML
     @Override
     public void editAction() {
-        HtmlEditorController controller = (HtmlEditorController) openStage(Fxmls.HtmlEditorFxml);
-        controller.loadContents(textInput.getText());
+        HtmlEditorController.openHtml(textInput.getText());
     }
 
     @FXML

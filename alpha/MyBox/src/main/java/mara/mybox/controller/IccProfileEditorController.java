@@ -1846,8 +1846,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
 //        if (!validateInputs()) {
 //            return;
 //        }
-
-        String name = null;
+        String name;
         if (isIccFile) {
             name = FileNameTools.prefix(sourceFile.getName());
         } else {

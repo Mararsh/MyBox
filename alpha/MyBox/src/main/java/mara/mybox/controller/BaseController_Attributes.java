@@ -70,7 +70,7 @@ public abstract class BaseController_Attributes {
     @FXML
     protected MainMenuController mainMenuController;
     @FXML
-    protected TextField sourceFileInput, sourcePathInput, targetPrefixInput, statusLabel;
+    protected TextField sourceFileInput, sourcePathInput, targetPrefixInput, statusInput;
     @FXML
     protected OperationController operationBarController;
     @FXML

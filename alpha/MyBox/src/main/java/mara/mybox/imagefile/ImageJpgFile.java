@@ -300,13 +300,13 @@ public class ImageJpgFile {
             if (javax_imageio_jpeg.containsKey("app0JFIF")) {
                 Map<String, Object> app0JFIF = javax_imageio_jpeg.get("app0JFIF").get(0);
                 if (app0JFIF.containsKey("majorVersion")) {
-                    info.setNativeAttribute("majorVersion", Integer.valueOf((String) app0JFIF.get("majorVersion")));
+                    info.setNativeAttribute("majorVersion", Integer.parseInt((String) app0JFIF.get("majorVersion")));
                 }
                 if (app0JFIF.containsKey("minorVersion")) {
-                    info.setNativeAttribute("minorVersion", Integer.valueOf((String) app0JFIF.get("minorVersion")));
+                    info.setNativeAttribute("minorVersion", Integer.parseInt((String) app0JFIF.get("minorVersion")));
                 }
                 if (app0JFIF.containsKey("resUnits")) {
-                    int u = Integer.valueOf((String) app0JFIF.get("resUnits"));
+                    int u = Integer.parseInt((String) app0JFIF.get("resUnits"));
                     info.setNativeAttribute("resUnits", u);
                     switch (u) {
                         case 1:
@@ -319,7 +319,7 @@ public class ImageJpgFile {
                             info.setNativeAttribute("resUnits", Languages.message("None"));
                     }
                     if (app0JFIF.containsKey("Xdensity")) {
-                        int v = Integer.valueOf((String) app0JFIF.get("Xdensity"));
+                        int v = Integer.parseInt((String) app0JFIF.get("Xdensity"));
                         info.setNativeAttribute("Xdensity", v);
                         if (u == 2) {
                             info.setXDpi(ImageConvertTools.dpi2dpcm(v));  // density value should be dpi
@@ -328,7 +328,7 @@ public class ImageJpgFile {
                         }
                     }
                     if (app0JFIF.containsKey("Ydensity")) {
-                        int v = Integer.valueOf((String) app0JFIF.get("Ydensity"));
+                        int v = Integer.parseInt((String) app0JFIF.get("Ydensity"));
                         info.setNativeAttribute("Ydensity", v);
                         if (u == 2) {
                             info.setYDpi(ImageConvertTools.dpi2dpcm(v));  // density value should be dpi
@@ -338,10 +338,10 @@ public class ImageJpgFile {
                     }
                 }
                 if (app0JFIF.containsKey("thumbWidth")) {
-                    info.setNativeAttribute("thumbWidth", Integer.valueOf((String) app0JFIF.get("thumbWidth")));
+                    info.setNativeAttribute("thumbWidth", Integer.parseInt((String) app0JFIF.get("thumbWidth")));
                 }
                 if (app0JFIF.containsKey("thumbHeight")) {
-                    info.setNativeAttribute("thumbHeight", Integer.valueOf((String) app0JFIF.get("thumbHeight")));
+                    info.setNativeAttribute("thumbHeight", Integer.parseInt((String) app0JFIF.get("thumbHeight")));
                 }
             }
             if (javax_imageio_jpeg.containsKey("app0JFXX")) {

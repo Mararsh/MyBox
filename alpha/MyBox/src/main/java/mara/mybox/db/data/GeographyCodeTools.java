@@ -489,8 +489,8 @@ public class GeographyCodeTools {
                     nodes = doc.getElementsByTagName("location");
                     if (nodes != null && nodes.getLength() > 0) {
                         String[] values = nodes.item(0).getFirstChild().getTextContent().split(",");
-                        geographyCode.setLongitude(Double.valueOf(values[0].trim()));
-                        geographyCode.setLatitude(Double.valueOf(values[1].trim()));
+                        geographyCode.setLongitude(Double.parseDouble(values[0].trim()));
+                        geographyCode.setLatitude(Double.parseDouble(values[1].trim()));
                     } else {
                         geographyCode.setLongitude(-200);
                         geographyCode.setLatitude(-200);
@@ -1322,25 +1322,25 @@ public class GeographyCodeTools {
         try {
             GeographyCode code = new GeographyCode();
             if (names.contains("gcid")) {
-                code.setGcid(Long.valueOf(record.get("gcid")));
+                code.setGcid(Long.parseLong(record.get("gcid")));
             } else {
-                code.setGcid(Long.valueOf(record.get("dataid")));
+                code.setGcid(Long.parseLong(record.get("dataid")));
             }
-            code.setLevelCode(new GeographyCodeLevel(Short.valueOf(record.get("levelid"))));
+            code.setLevelCode(new GeographyCodeLevel(Short.parseShort(record.get("levelid"))));
             try {
-                code.setLongitude(Double.valueOf(record.get("longitude")));
-                code.setLatitude(Double.valueOf(record.get("latitude")));
+                code.setLongitude(Double.parseDouble(record.get("longitude")));
+                code.setLatitude(Double.parseDouble(record.get("latitude")));
             } catch (Exception e) {
             }
             if (names.contains("altitude")) {
                 try {
-                    code.setAltitude(Double.valueOf(record.get("altitude")));
+                    code.setAltitude(Double.parseDouble(record.get("altitude")));
                 } catch (Exception e) {
                 }
             }
             if (names.contains("precision")) {
                 try {
-                    code.setPrecision(Double.valueOf(record.get("precision")));
+                    code.setPrecision(Double.parseDouble(record.get("precision")));
                 } catch (Exception e) {
                 }
             }
@@ -1386,56 +1386,56 @@ public class GeographyCodeTools {
                 code.setAlias5(record.get("alias5"));
             }
             if (names.contains("area") && record.get("area") != null) {
-                code.setArea(Long.valueOf(record.get("area")));
+                code.setArea(Long.parseLong(record.get("area")));
             }
             if (names.contains("population") && record.get("population") != null) {
-                code.setPopulation(Long.valueOf(record.get("population")));
+                code.setPopulation(Long.parseLong(record.get("population")));
             }
             try {
                 if (record.get("continentid") != null) {
-                    code.setContinent(Long.valueOf(record.get("continentid")));
+                    code.setContinent(Long.parseLong(record.get("continentid")));
                 }
             } catch (Exception e) {
             }
             try {
                 if (record.get("countryid") != null) {
-                    code.setCountry(Long.valueOf(record.get("countryid")));
+                    code.setCountry(Long.parseLong(record.get("countryid")));
                 }
             } catch (Exception e) {
             }
             try {
                 if (record.get("provinceid") != null) {
-                    code.setProvince(Long.valueOf(record.get("provinceid")));
+                    code.setProvince(Long.parseLong(record.get("provinceid")));
                 }
             } catch (Exception e) {
             }
             try {
                 if (record.get("cityid") != null) {
-                    code.setCity(Long.valueOf(record.get("cityid")));
+                    code.setCity(Long.parseLong(record.get("cityid")));
                 }
             } catch (Exception e) {
             }
             try {
                 if (record.get("countyid") != null) {
-                    code.setCounty(Long.valueOf(record.get("countyid")));
+                    code.setCounty(Long.parseLong(record.get("countyid")));
                 }
             } catch (Exception e) {
             }
             try {
                 if (record.get("townid") != null) {
-                    code.setTown(Long.valueOf(record.get("townid")));
+                    code.setTown(Long.parseLong(record.get("townid")));
                 }
             } catch (Exception e) {
             }
             try {
                 if (record.get("villageid") != null) {
-                    code.setVillage(Long.valueOf(record.get("villageid")));
+                    code.setVillage(Long.parseLong(record.get("villageid")));
                 }
             } catch (Exception e) {
             }
             try {
                 if (record.get("buildingid") != null) {
-                    code.setBuilding(Long.valueOf(record.get("buildingid")));
+                    code.setBuilding(Long.parseLong(record.get("buildingid")));
                 }
             } catch (Exception e) {
             }
@@ -1463,45 +1463,45 @@ public class GeographyCodeTools {
             }
             if (names.contains("longitude")) {
                 try {
-                    code.setLongitude(Double.valueOf(record.get("longitude")));
+                    code.setLongitude(Double.parseDouble(record.get("longitude")));
                 } catch (Exception e) {
                 }
             } else if (names.contains(Languages.message(lang, "Longitude"))) {
                 try {
-                    code.setLongitude(Double.valueOf(record.get(Languages.message(lang, "Longitude"))));
+                    code.setLongitude(Double.parseDouble(record.get(Languages.message(lang, "Longitude"))));
                 } catch (Exception e) {
                 }
             }
             if (names.contains("latitude")) {
                 try {
-                    code.setLatitude(Double.valueOf(record.get("latitude")));
+                    code.setLatitude(Double.parseDouble(record.get("latitude")));
                 } catch (Exception e) {
                 }
             } else if (names.contains(Languages.message(lang, "Latitude"))) {
                 try {
-                    code.setLatitude(Double.valueOf(record.get(Languages.message(lang, "Latitude"))));
+                    code.setLatitude(Double.parseDouble(record.get(Languages.message(lang, "Latitude"))));
                 } catch (Exception e) {
                 }
             }
             if (names.contains("altitude")) {
                 try {
-                    code.setAltitude(Double.valueOf(record.get("altitude")));
+                    code.setAltitude(Double.parseDouble(record.get("altitude")));
                 } catch (Exception e) {
                 }
             } else if (names.contains(Languages.message(lang, "Altitude"))) {
                 try {
-                    code.setAltitude(Double.valueOf(record.get(Languages.message(lang, "Altitude"))));
+                    code.setAltitude(Double.parseDouble(record.get(Languages.message(lang, "Altitude"))));
                 } catch (Exception e) {
                 }
             }
             if (names.contains("precision")) {
                 try {
-                    code.setPrecision(Double.valueOf(record.get("precision")));
+                    code.setPrecision(Double.parseDouble(record.get("precision")));
                 } catch (Exception e) {
                 }
             } else if (names.contains(Languages.message(lang, "Precision"))) {
                 try {
-                    code.setPrecision(Double.valueOf(record.get(Languages.message(lang, "Precision"))));
+                    code.setPrecision(Double.parseDouble(record.get(Languages.message(lang, "Precision"))));
                 } catch (Exception e) {
                 }
             }
@@ -1577,28 +1577,28 @@ public class GeographyCodeTools {
             }
             if (names.contains("area") && record.get("area") != null) {
                 try {
-                    code.setArea(1000000 * Long.valueOf(record.get("area")));
+                    code.setArea(1000000 * Long.parseLong(record.get("area")));
                 } catch (Exception e) {
                 }
             } else if (names.contains(Languages.message(lang, "SquareMeters")) && record.get(Languages.message(lang, "SquareMeters")) != null) {
                 try {
-                    code.setArea(Long.valueOf(record.get(Languages.message(lang, "SquareMeters"))));
+                    code.setArea(Long.parseLong(record.get(Languages.message(lang, "SquareMeters"))));
                 } catch (Exception e) {
                 }
             } else if (names.contains(Languages.message(lang, "SquareKilometers")) && record.get(Languages.message(lang, "SquareKilometers")) != null) {
                 try {
-                    code.setArea(1000000 * Long.valueOf(record.get(Languages.message(lang, "SquareKilometers"))));
+                    code.setArea(1000000 * Long.parseLong(record.get(Languages.message(lang, "SquareKilometers"))));
                 } catch (Exception e) {
                 }
             }
             if (names.contains("population") && record.get("population") != null) {
                 try {
-                    code.setPopulation(Long.valueOf(record.get("population")));
+                    code.setPopulation(Long.parseLong(record.get("population")));
                 } catch (Exception e) {
                 }
             } else if (names.contains(Languages.message(lang, "Population")) && record.get(Languages.message(lang, "Population")) != null) {
                 try {
-                    code.setArea(Long.valueOf(record.get(Languages.message(lang, "Population"))));
+                    code.setArea(Long.parseLong(record.get(Languages.message(lang, "Population"))));
                 } catch (Exception e) {
                 }
             }

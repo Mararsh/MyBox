@@ -297,7 +297,7 @@ public class MenuTextEditController extends MenuTextBaseController {
 
             @Override
             protected void whenSucceeded() {
-                HtmlEditorController.openHtml(html);
+                WebBrowserController.openHtml(html, true);
             }
 
         };

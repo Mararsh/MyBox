@@ -67,6 +67,6 @@ License:    Apache License Version 2.0
                 <Insets />
             </VBox.margin>
         </HBox>
-          <TextField id="PdfStatus" fx:id="statusLabel" editable="false" focusTraversable="false" maxWidth="1.7976931348623157E308" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" />
+          <TextField id="PdfStatus" fx:id="statusInput" editable="false" focusTraversable="false" maxWidth="1.7976931348623157E308" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" />
     </children>
 </VBox>

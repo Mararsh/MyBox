@@ -281,7 +281,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                         double size;
                         for (List<String> row : outputData) {
                             try {
-                                size = Double.valueOf(row.get(3));
+                                size = Double.parseDouble(row.get(3));
                             } catch (Exception e) {
                                 size = 0;
                             }

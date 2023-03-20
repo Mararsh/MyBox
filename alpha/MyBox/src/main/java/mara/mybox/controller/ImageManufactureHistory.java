@@ -147,7 +147,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(maxHistoriesInput.getText());
+                        int v = Integer.parseInt(maxHistoriesInput.getText());
                         if (v >= 0) {
                             maxEditHistories = v;
                             UserConfig.setInt("MaxImageHistories", v);

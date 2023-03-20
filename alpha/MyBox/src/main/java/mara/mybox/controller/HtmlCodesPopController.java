@@ -111,9 +111,7 @@ public class HtmlCodesPopController extends TextPopController {
     @FXML
     @Override
     public void editAction() {
-        HtmlEditorController controller = (HtmlEditorController) WindowTools.openStage(Fxmls.HtmlEditorFxml);
-        controller.loadContents(textArea.getText());
-        controller.requestMouse();
+        HtmlEditorController.openHtml(textArea.getText());
     }
 
     @FXML
@@ -143,8 +141,7 @@ public class HtmlCodesPopController extends TextPopController {
                 protected void whenSucceeded() {
                     popSaved();
                     recordFileWritten(file);
-                    HtmlEditorController controller = (HtmlEditorController) WindowTools.openStage(Fxmls.HtmlEditorFxml);
-                    controller.sourceFileChanged(file);
+                    WebBrowserController.openFile(file);
                 }
             };
             start(task);

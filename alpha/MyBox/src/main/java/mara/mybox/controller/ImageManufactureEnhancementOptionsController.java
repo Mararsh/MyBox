@@ -237,7 +237,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v > 0) {
                             intPara1 = v;
                             ValidationTools.setEditorNormal(intSelector);
@@ -274,7 +274,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v > 0) {
                             intPara1 = v;
                             ValidationTools.setEditorNormal(intSelector);
@@ -441,7 +441,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
                     public void changed(ObservableValue<? extends String> observable,
                             String oldValue, String newValue) {
                         try {
-                            int v = Integer.valueOf(intInput1.getText());
+                            int v = Integer.parseInt(intInput1.getText());
                             if (v >= 0) {
                                 intPara1 = v;
                                 intInput1.setStyle(null);
@@ -462,7 +462,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
                     public void changed(ObservableValue<? extends String> observable,
                             String oldValue, String newValue) {
                         try {
-                            int v = Integer.valueOf(intInput2.getText());
+                            int v = Integer.parseInt(intInput2.getText());
                             if (v >= 0) {
                                 intPara2 = v;
                                 intInput2.setStyle(null);
@@ -493,7 +493,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
                     public void changed(ObservableValue<? extends String> observable,
                             String oldValue, String newValue) {
                         try {
-                            int v = Integer.valueOf(intInput1.getText());
+                            int v = Integer.parseInt(intInput1.getText());
                             if (v >= -255 && v <= 255) {
                                 intPara1 = v;
                                 intInput1.setStyle(null);

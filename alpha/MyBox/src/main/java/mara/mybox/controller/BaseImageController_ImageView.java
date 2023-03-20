@@ -204,7 +204,7 @@ public abstract class BaseImageController_ImageView extends BaseController {
                     @Override
                     public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
                         try {
-                            int v = Integer.valueOf(newVal);
+                            int v = Integer.parseInt(newVal);
                             if (v > 0) {
                                 zoomStep = v;
                                 UserConfig.setInt(baseName + "ZoomStep", zoomStep);

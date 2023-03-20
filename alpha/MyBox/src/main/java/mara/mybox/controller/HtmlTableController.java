@@ -171,7 +171,7 @@ public class HtmlTableController extends BaseWebViewController {
                 protected void whenSucceeded() {
                     if (isEdit) {
                         recordFileWritten(file);
-                        HtmlEditorController.openFile(file);
+                        WebBrowserController.openFile(file);
                     } else {
                         popSuccessful();
                     }

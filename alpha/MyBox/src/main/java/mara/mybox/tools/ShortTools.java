@@ -17,12 +17,12 @@ public class ShortTools {
     public static int compare(String s1, String s2, boolean desc) {
         float f1, f2;
         try {
-            f1 = Short.valueOf(s1.replaceAll(",", ""));
+            f1 = Short.parseShort(s1.replaceAll(",", ""));
         } catch (Exception e) {
             f1 = Float.NaN;
         }
         try {
-            f2 = Short.valueOf(s2.replaceAll(",", ""));
+            f2 = Short.parseShort(s2.replaceAll(",", ""));
         } catch (Exception e) {
             f2 = Float.NaN;
         }

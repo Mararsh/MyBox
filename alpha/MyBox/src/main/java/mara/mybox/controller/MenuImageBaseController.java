@@ -277,7 +277,7 @@ public class MenuImageBaseController extends MenuController {
                         if (isSettingValues) {
                             return;
                         }
-                        int v = Integer.valueOf(newVal);
+                        int v = Integer.parseInt(newVal);
                         if (v > 0) {
                             zoomStepSelector.getEditor().setStyle(null);
                             isSettingValues = true;
@@ -330,7 +330,7 @@ public class MenuImageBaseController extends MenuController {
                         int v = -1;
                         if (!message("OriginalSize").equals(newValue)) {
                             try {
-                                v = Integer.valueOf(newValue);
+                                v = Integer.parseInt(newValue);
                                 ValidationTools.setEditorNormal(loadWidthSelector);
                             } catch (Exception e) {
                                 ValidationTools.setEditorBadStyle(loadWidthSelector);

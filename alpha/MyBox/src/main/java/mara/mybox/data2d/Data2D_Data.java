@@ -328,7 +328,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
             return -1;
         }
         try {
-            return Long.valueOf(tableData().get(row).get(0));
+            return Long.parseLong(tableData().get(row).get(0));
         } catch (Exception e) {
             return -1;
         }

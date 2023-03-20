@@ -102,7 +102,7 @@ public class ImagesSpliceController extends ImageViewerController {
                 @Override
                 public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
                     try {
-                        int columnsValue = Integer.valueOf(newValue);
+                        int columnsValue = Integer.parseInt(newValue);
                         if (columnsValue > 0) {
                             imageCombine.setColumnsValue(columnsValue);
                             UserConfig.setString(baseName + "Columns", columnsValue + "");
@@ -126,7 +126,7 @@ public class ImagesSpliceController extends ImageViewerController {
                 public void changed(ObservableValue<? extends String> ov,
                         String oldValue, String newValue) {
                     try {
-                        int intervalValue = Integer.valueOf(newValue);
+                        int intervalValue = Integer.parseInt(newValue);
                         if (intervalValue >= 0) {
                             imageCombine.setIntervalValue(intervalValue);
                             UserConfig.setString(baseName + "Interval", intervalValue + "");
@@ -148,7 +148,7 @@ public class ImagesSpliceController extends ImageViewerController {
                 public void changed(ObservableValue<? extends String> ov,
                         String oldValue, String newValue) {
                     try {
-                        int MarginsValue = Integer.valueOf(newValue);
+                        int MarginsValue = Integer.parseInt(newValue);
                         if (MarginsValue >= 0) {
                             imageCombine.setMarginsValue(MarginsValue);
                             UserConfig.setString(baseName + "Margin", MarginsValue + "");
@@ -326,7 +326,7 @@ public class ImagesSpliceController extends ImageViewerController {
 
     private void checkEachWidthValue() {
         try {
-            int eachWidthValue = Integer.valueOf(eachWidthInput.getText());
+            int eachWidthValue = Integer.parseInt(eachWidthInput.getText());
             if (eachWidthValue > 0) {
                 imageCombine.setEachWidthValue(eachWidthValue);
                 eachWidthInput.setStyle(null);
@@ -343,7 +343,7 @@ public class ImagesSpliceController extends ImageViewerController {
 
     private void checkEachHeightValue() {
         try {
-            int eachHeightValue = Integer.valueOf(eachHeightInput.getText());
+            int eachHeightValue = Integer.parseInt(eachHeightInput.getText());
             if (eachHeightValue > 0) {
                 imageCombine.setEachHeightValue(eachHeightValue);
                 eachHeightInput.setStyle(null);
@@ -360,7 +360,7 @@ public class ImagesSpliceController extends ImageViewerController {
 
     private void checkTotalWidthValue() {
         try {
-            int totalWidthValue = Integer.valueOf(totalWidthInput.getText());
+            int totalWidthValue = Integer.parseInt(totalWidthInput.getText());
             if (totalWidthValue > 0) {
                 imageCombine.setTotalWidthValue(totalWidthValue);
                 totalWidthInput.setStyle(null);
@@ -377,7 +377,7 @@ public class ImagesSpliceController extends ImageViewerController {
 
     private void checkTotalHeightValue() {
         try {
-            int totalHeightValue = Integer.valueOf(totalHeightInput.getText());
+            int totalHeightValue = Integer.parseInt(totalHeightInput.getText());
             if (totalHeightValue > 0) {
                 imageCombine.setTotalHeightValue(totalHeightValue);
                 totalHeightInput.setStyle(null);

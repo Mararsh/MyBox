@@ -98,7 +98,7 @@ public class DoubleStatistic {
         if (options.include(StatisticType.Mode)) {
             modeValue = modeObject(values);
             try {
-                mode = Double.valueOf(modeValue + "");
+                mode = Double.parseDouble(modeValue + "");
             } catch (Exception e) {
                 mode = Double.NaN;
             }

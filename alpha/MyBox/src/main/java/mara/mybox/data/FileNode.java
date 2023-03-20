@@ -1,5 +1,6 @@
 package mara.mybox.data;
 
+import com.jcraft.jsch.SftpATTRS;
 import java.io.File;
 import static mara.mybox.value.Languages.message;
 
@@ -10,9 +11,11 @@ import static mara.mybox.value.Languages.message;
  */
 public class FileNode extends FileInformation {
 
-    public boolean isRemote;
+    public boolean isRemote, isExisted;
     public FileNode parentNode;
-    public String nodename;
+    public String nodename, permission;
+    public long accessTime;
+    public int uid, gid;
 
     public FileNode() {
         init();
@@ -22,13 +25,59 @@ public class FileNode extends FileInformation {
 
     public FileNode(File file) {
         setFileAttributes(file);
+        isExisted = file != null && file.exists();
+        nodename = super.getFileName();
     }
 
-    public FileNode(FileNode parentFile, String nodename, boolean isRemote) {
-        this.parentNode = parentFile;
-        this.nodename = nodename;
-        this.isRemote = isRemote;
+    public FileNode attrs(SftpATTRS attrs) {
+        try {
+            if (attrs == null) {
+                isExisted = false;
+                return this;
+            }
+            isExisted = true;
+            if (attrs.isDir()) {
+                setFileType(FileInformation.FileType.Directory);
+            } else if (attrs.isBlk()) {
+                setFileType(FileInformation.FileType.Block);
+            } else if (attrs.isChr()) {
+                setFileType(FileInformation.FileType.Character);
+            } else if (attrs.isFifo()) {
+                setFileType(FileInformation.FileType.FIFO);
+            } else if (attrs.isLink()) {
+                setFileType(FileInformation.FileType.Link);
+            } else if (attrs.isSock()) {
+                setFileType(FileInformation.FileType.Socket);
+            } else {
+                setFileType(FileInformation.FileType.File);
+            }
+            setFileSize(attrs.getSize());
+            setModifyTime(attrs.getMTime() * 1000l);
+            setAccessTime(attrs.getATime() * 1000l);
+            setUid(attrs.getUId());
+            setGid(attrs.getGId());
+            setPermission(attrs.getPermissionsString());
+        } catch (Exception e) {
+        }
+        return this;
     }
+
+    public String separator() {
+        return isRemote ? "/" : File.separator;
+    }
+
+    public String fullName() {
+        return (parentNode != null ? parentNode.fullName() + separator() : "") + nodename;
+    }
+
+    public boolean isExisted() {
+        return isExisted;
+    }
+
+    public boolean isDirectory() {
+        return fileType == FileInformation.FileType.Directory;
+    }
+
 
     /*
         customized get/set
@@ -36,14 +85,10 @@ public class FileNode extends FileInformation {
     @Override
     public String getFileName() {
         if (isRemote) {
-            return nodename;
+            return fullName();
         } else {
             return super.getFileName();
         }
-    }
-
-    public String fullName() {
-        return (parentNode != null ? parentNode.fullName() + File.separator : "") + nodename;
     }
 
     @Override
@@ -82,6 +127,42 @@ public class FileNode extends FileInformation {
 
     public FileNode setIsRemote(boolean isRemote) {
         this.isRemote = isRemote;
+        return this;
+    }
+
+    public long getAccessTime() {
+        return accessTime;
+    }
+
+    public FileNode setAccessTime(long accessTime) {
+        this.accessTime = accessTime;
+        return this;
+    }
+
+    public String getPermission() {
+        return permission;
+    }
+
+    public FileNode setPermission(String permission) {
+        this.permission = permission;
+        return this;
+    }
+
+    public int getUid() {
+        return uid;
+    }
+
+    public FileNode setUid(int uid) {
+        this.uid = uid;
+        return this;
+    }
+
+    public int getGid() {
+        return gid;
+    }
+
+    public FileNode setGid(int gid) {
+        this.gid = gid;
         return this;
     }
 

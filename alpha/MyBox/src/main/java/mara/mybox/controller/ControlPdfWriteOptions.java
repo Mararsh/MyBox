@@ -132,7 +132,7 @@ public class ControlPdfWriteOptions extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v >= 0) {
                             marginSize = v;
                             ValidationTools.setEditorNormal(marginSelector);
@@ -156,7 +156,7 @@ public class ControlPdfWriteOptions extends BaseController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v > 0) {
                             fontSize = v;
                             UserConfig.setInt(baseName + "PdfFontSize", v);
@@ -178,7 +178,7 @@ public class ControlPdfWriteOptions extends BaseController {
                 public void changed(ObservableValue<? extends String> ov,
                         String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v > 0) {
                             zoom = v;
                             ValidationTools.setEditorNormal(zoomSelector);
@@ -358,7 +358,7 @@ public class ControlPdfWriteOptions extends BaseController {
             return;
         }
         try {
-            int v = Integer.valueOf(customWidthInput.getText());
+            int v = Integer.parseInt(customWidthInput.getText());
             if (v > 0) {
                 pageWidth = v;
                 customWidthInput.setStyle(null);
@@ -369,7 +369,7 @@ public class ControlPdfWriteOptions extends BaseController {
             customWidthInput.setStyle(UserConfig.badStyle());
         }
         try {
-            int v = Integer.valueOf(customHeightInput.getText());
+            int v = Integer.parseInt(customHeightInput.getText());
             if (pageHeight > 0) {
                 pageHeight = v;
                 customHeightInput.setStyle(null);
@@ -437,7 +437,7 @@ public class ControlPdfWriteOptions extends BaseController {
 
     protected void checkJpegQuality() {
         try {
-            int v = Integer.valueOf(jpegQualitySelector.getSelectionModel().getSelectedItem());
+            int v = Integer.parseInt(jpegQualitySelector.getSelectionModel().getSelectedItem());
             if (v >= 0 && v <= 100) {
                 jpegQuality = v;
                 jpegQualitySelector.setStyle(null);
@@ -477,7 +477,7 @@ public class ControlPdfWriteOptions extends BaseController {
                 thresholdInput.setStyle(null);
                 return;
             }
-            int v = Integer.valueOf(thresholdInput.getText());
+            int v = Integer.parseInt(thresholdInput.getText());
             if (v >= 0 && v <= 255) {
                 threshold = v;
                 thresholdInput.setStyle(null);

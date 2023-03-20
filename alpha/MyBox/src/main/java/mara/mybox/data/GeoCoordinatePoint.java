@@ -49,9 +49,9 @@ public class GeoCoordinatePoint {
                 return null;
             }
             if (vs.length > 2) {
-                return new GeoCoordinatePoint(Float.valueOf(vs[0]), Float.valueOf(vs[1]), Float.valueOf(vs[2]));
+                return new GeoCoordinatePoint(Float.parseFloat(vs[0]), Float.parseFloat(vs[1]), Float.parseFloat(vs[2]));
             } else {
-                return new GeoCoordinatePoint(Float.valueOf(vs[0]), Float.valueOf(vs[1]));
+                return new GeoCoordinatePoint(Float.parseFloat(vs[0]), Float.parseFloat(vs[1]));
             }
         } catch (Exception e) {
             return null;

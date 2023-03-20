@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
-import javafx.scene.control.IndexRange;
 
 /**
  * @Author Mara
@@ -16,33 +15,19 @@ import javafx.scene.control.IndexRange;
  */
 public class IntTools {
 
-    // invalid values are always in the end
     public static int compare(String s1, String s2, boolean desc) {
         float f1, f2;
         try {
-            f1 = Integer.valueOf(s1.replaceAll(",", ""));
+            f1 = Integer.parseInt(s1.replaceAll(",", ""));
         } catch (Exception e) {
             f1 = Float.NaN;
         }
         try {
-            f2 = Integer.valueOf(s2.replaceAll(",", ""));
+            f2 = Integer.parseInt(s2.replaceAll(",", ""));
         } catch (Exception e) {
             f2 = Float.NaN;
         }
         return FloatTools.compare(f1, f2, desc);
-    }
-
-    public static int mapInt(int value, IndexRange originalRange, IndexRange newlRange) {
-        if (originalRange == null || newlRange == null || originalRange.getStart() > value || originalRange.getEnd() < value) {
-            return value;
-        }
-        int len = value - originalRange.getStart() + 1;
-        double ratio = newlRange.getLength() * 1.0 / originalRange.getLength();
-        return newlRange.getStart() + (int) Math.round(len * ratio);
-    }
-
-    public static int zipInt(int value, int zipStep) {
-        return Math.round((value + zipStep / 2) / zipStep) * zipStep;
     }
 
     public static int random(int max) {

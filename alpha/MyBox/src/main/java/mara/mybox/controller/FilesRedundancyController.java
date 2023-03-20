@@ -240,7 +240,7 @@ public class FilesRedundancyController extends BaseBatchFileController {
                         + message("Cost") + ": " + DateTools.datetimeMsDuration(new Date(), processStartTime) + ".   "
                         + MessageFormat.format(message("HandlingObject"),
                                 file.getFile().getAbsolutePath() + "   " + FileTools.showFileSize(file.getFileSize()));
-                statusLabel.setText(s);
+                statusInput.setText(s);
             }
         });
     }
@@ -285,7 +285,7 @@ public class FilesRedundancyController extends BaseBatchFileController {
                 + message("Cost") + ": " + DateTools.datetimeMsDuration(new Date(), processStartTime) + ". "
                 + message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + ", "
                 + message("EndTime") + ": " + DateTools.datetimeToString(new Date());
-        statusLabel.setText(s);
+        statusInput.setText(s);
         currentLabel.setText("");
     }
 

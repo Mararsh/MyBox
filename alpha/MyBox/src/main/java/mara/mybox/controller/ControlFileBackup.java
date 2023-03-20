@@ -138,7 +138,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(maxBackupsInput.getText());
+                        int v = Integer.parseInt(maxBackupsInput.getText());
                         if (v >= 0) {
                             maxBackups = v;
                             UserConfig.setInt("MaxFileBackups", v);
@@ -364,7 +364,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
         if (selected == null) {
             return;
         }
-        ControllerTools.openTarget(null, selected.getBackup().getAbsolutePath(), true);
+        ControllerTools.openTarget(selected.getBackup().getAbsolutePath(), true);
     }
 
     @FXML

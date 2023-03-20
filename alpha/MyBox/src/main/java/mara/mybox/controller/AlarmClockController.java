@@ -272,7 +272,7 @@ public class AlarmClockController extends BaseController {
 //                repeatType = AlarmClock.AlarmType.EverySomeSeconds;
 //            }
 //            try {
-//                everyValue = Integer.valueOf(everyInput.getText());
+//                everyValue = Integer.parseInt(everyInput.getText());
 //                if (everyValue <= 0) {
 //                    everyInput.setStyle(UserConfig.badStyle());
 //                }
@@ -284,7 +284,7 @@ public class AlarmClockController extends BaseController {
 
     protected void checkLoop() {
         try {
-            loopValue = Integer.valueOf(loopInput.getText());
+            loopValue = Integer.parseInt(loopInput.getText());
             loopInput.setStyle(null);
         } catch (Exception e) {
             loopValue = 0;

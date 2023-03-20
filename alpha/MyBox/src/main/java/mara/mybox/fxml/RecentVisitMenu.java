@@ -213,7 +213,7 @@ public abstract class RecentVisitMenu {
 
     public List<VisitHistory> recentAddFiles() {
         int fileNumber = AppVariables.fileRecentNumber * 3 / 4;
-        return VisitHistoryTools.getRecentFileWrite(AddFileType, fileNumber);
+        return VisitHistoryTools.getRecentFileRead(AddFileType, fileNumber);
     }
 
     public List<VisitHistory> recentSourcePathsBesidesFiles() {

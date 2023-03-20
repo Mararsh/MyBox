@@ -25,7 +25,7 @@ public class FileInformation {
     protected long duration;  // milliseconds
 
     public enum FileType {
-        File, Directory, Root, Digest, NotExist
+        File, Directory, Link, Socket, Block, Character, FIFO, Root, Digest, NotExist
     }
 
     public enum FileSelectorType {

@@ -198,7 +198,7 @@ public class ControlData2DSplit extends BaseTableViewController<ValueRange> {
             return true;
         }
         try {
-            double v = Double.valueOf(sizeInput.getText());
+            double v = Double.parseDouble(sizeInput.getText());
             if (v > 0) {
                 size = v;
                 UserConfig.setString(baseName + "Size", size + "");
@@ -230,7 +230,7 @@ public class ControlData2DSplit extends BaseTableViewController<ValueRange> {
 
     protected boolean checkNumber() {
         try {
-            int v = Integer.valueOf(numberInput.getText());
+            int v = Integer.parseInt(numberInput.getText());
             if (v > 0) {
                 numberInput.setStyle(null);
                 number = v;

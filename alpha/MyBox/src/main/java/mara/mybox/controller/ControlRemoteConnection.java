@@ -4,18 +4,22 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.ChannelSftp.LsEntry;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpATTRS;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import mara.mybox.data.FileNode;
 import mara.mybox.db.data.PathConnection;
 import mara.mybox.db.table.TablePathConnection;
 import mara.mybox.dev.MyBoxLog;
@@ -28,7 +32,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2023-3-15
  * @License Apache License Version 2.0
  */
-public class ControlRemotePath extends BaseSysTableController<PathConnection> {
+public class ControlRemoteConnection extends BaseSysTableController<PathConnection> {
 
     protected BaseTaskController taskController;
     protected Session sshSession;
@@ -39,13 +43,16 @@ public class ControlRemotePath extends BaseSysTableController<PathConnection> {
     @FXML
     protected TableColumn<PathConnection, String> titleColumn, hostColumn, pathColumn;
     @FXML
-    protected TextField titleInput, hostInput, userInput, pathInput, timeoutInput, retryInput, timeInput;
+    protected TextField titleInput, hostInput, protocalInput, portInput, userInput, pathInput,
+            timeoutInput, retryInput, timeInput;
     @FXML
     protected PasswordField passwordInput;
     @FXML
     protected CheckBox hostKeyCheck;
+    @FXML
+    protected Label statusLabel;
 
-    public ControlRemotePath() {
+    public ControlRemoteConnection() {
         baseTitle = message("DirectorySynchronizeSFTP");
     }
 
@@ -71,8 +78,11 @@ public class ControlRemotePath extends BaseSysTableController<PathConnection> {
     public void setParameters(BaseTaskController taskController) {
         try {
             this.taskController = taskController;
+            this.baseName = taskController.baseName;
+
             loadTableData();
             editProfile(null);
+            statusLabel.setText(message("Disconnected"));
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -81,6 +91,11 @@ public class ControlRemotePath extends BaseSysTableController<PathConnection> {
     @Override
     public void itemClicked() {
         editAction();
+    }
+
+    @Override
+    public void itemDoubleClicked() {
+        taskController.startAction();
     }
 
     @FXML
@@ -103,6 +118,8 @@ public class ControlRemotePath extends BaseSysTableController<PathConnection> {
         }
         titleInput.setText(currentConnection.getTitle());
         hostInput.setText(currentConnection.getHost());
+        protocalInput.setText(currentConnection.getType().name().toLowerCase());
+        portInput.setText(currentConnection.getPort() + "");
         userInput.setText(currentConnection.getUsername());
         passwordInput.setText(currentConnection.getPassword());
         pathInput.setText(currentConnection.getPath());
@@ -122,7 +139,16 @@ public class ControlRemotePath extends BaseSysTableController<PathConnection> {
         if (currentConnection == null) {
             currentConnection = new PathConnection();
         }
-        int timeout, retry;
+        int port, timeout, retry;
+        try {
+            port = Integer.parseInt(portInput.getText());
+        } catch (Exception e) {
+            port = -1;
+        }
+        if (port <= 0) {
+            popError(message("InvalidParameter") + ": " + message("Port"));
+            return false;
+        }
         try {
             timeout = Integer.parseInt(timeoutInput.getText());
         } catch (Exception e) {
@@ -146,18 +172,15 @@ public class ControlRemotePath extends BaseSysTableController<PathConnection> {
             popError(message("InvalidParameter") + ": " + message("Host"));
             return false;
         }
-        String remotePath = pathInput.getText();
-        if (remotePath == null || remotePath.isBlank()) {
-            popError(message("InvalidParameter") + ": " + message("RemotePath"));
-            return false;
-        }
+        String path = pathInput.getText();
+        currentConnection.setPort(port);
         currentConnection.setTimeout(timeout);
         currentConnection.setRetry(retry);
         currentConnection.setTitle(titleInput.getText().trim());
         currentConnection.setHost(host.trim());
         currentConnection.setUsername(userInput.getText());
         currentConnection.setPassword(passwordInput.getText());
-        currentConnection.setPath(fixFilename(remotePath.trim()));
+        currentConnection.setPath(fixFilename(path));
         currentConnection.setType(PathConnection.Type.SFTP);
         currentConnection.setPort(22);
         currentConnection.setHostKeyCheck(hostKeyCheck.isSelected());
@@ -211,10 +234,6 @@ public class ControlRemotePath extends BaseSysTableController<PathConnection> {
     /*
         sftp
      */
-    public boolean isConnected() {
-        return sftp != null;
-    }
-
     public boolean connect(SingletonTask<Void> task) {
         try {
             disconnect();
@@ -259,6 +278,16 @@ public class ControlRemotePath extends BaseSysTableController<PathConnection> {
 
             sftp = (ChannelSftp) sshSession.openChannel("sftp");
             sftp.connect();
+            showLogs("sftp channel connected.");
+            showLogs("version: " + sftp.version());
+            showLogs("home: " + sftp.getHome());
+            String path = currentConnection.getPath();
+            if (path == null || path.isBlank()) {
+                currentConnection.setPath(sftp.getHome());
+            }
+            Platform.runLater(() -> {
+                statusLabel.setText(message("Connected"));
+            });
             return true;
         } catch (Exception e) {
             showLogs(e.toString());
@@ -279,6 +308,9 @@ public class ControlRemotePath extends BaseSysTableController<PathConnection> {
                 sshSession = null;
                 showLogs("Session disconnected.");
             }
+            Platform.runLater(() -> {
+                statusLabel.setText(message("Disconnected"));
+            });
             return true;
         } catch (Exception e) {
             showLogs(e.toString());
@@ -294,38 +326,71 @@ public class ControlRemotePath extends BaseSysTableController<PathConnection> {
         }
     }
 
-    public LsEntry find(String filename) {
+    public SftpATTRS stat(String filename) {
         try {
-            if (filename == null || filename.isBlank() || "/".equals(filename)) {
-                return null;
-            }
-            String parent = fixFilename(new File(filename).getParent());
-            Iterator<LsEntry> iterator = ls(parent);
-            while (iterator.hasNext()) {
-                LsEntry entry = iterator.next();
-                if (filename.equals(parent + "/" + entry.getFilename())) {
-                    return entry;
-                }
-            }
+            String name = fixFilename(filename);
+            showLogs("stat " + name);
+            return sftp.stat(name);
         } catch (Exception e) {
-//            showLogs(e.toString());
+            showLogs(e.toString());
+            return null;
         }
-        return null;
     }
 
     public Iterator<LsEntry> ls(String filename) {
         try {
             String name = fixFilename(filename);
-            showLogs("ls " + fixFilename(name));
-            return sftp.ls(fixFilename(name)).iterator();
+            showLogs("ls " + name);
+            return sftp.ls(name).iterator();
         } catch (Exception e) {
-//            showLogs(e.toString());
+            showLogs(e.toString());
             return null;
         }
     }
 
+    public FileNode FileNode(String nodename) {
+        return FileNode(null, nodename);
+    }
+
+    public FileNode FileNode(FileNode parent, String nodename) {
+        return new FileNode()
+                .setNodename(nodename)
+                .setParentFile(parent)
+                .setIsRemote(true)
+                .attrs(stat(nodename));
+    }
+
+    public List<FileNode> children(FileNode targetNode) {
+        List<FileNode> children = new ArrayList<>();
+        try {
+            Iterator<ChannelSftp.LsEntry> iterator = ls(targetNode.fullName());
+            if (iterator == null) {
+                return children;
+            }
+            while (iterator.hasNext()) {
+                if (task == null || task.isCancelled()) {
+                    return children;
+                }
+                ChannelSftp.LsEntry entry = iterator.next();
+                String name = entry.getFilename();
+                if (name == null || name.isBlank() || ".".equals(name) || "..".equals(name)) {
+                    continue;
+                }
+                FileNode fileInfo = new FileNode()
+                        .setNodename(name)
+                        .setParentFile(targetNode)
+                        .setIsRemote(true)
+                        .attrs(entry.getAttrs());
+                children.add(fileInfo);
+            }
+        } catch (Exception e) {
+            showLogs(e.toString());
+        }
+        return children;
+    }
+
     public boolean fileExist(String filename) {
-        return find(filename) != null;
+        return stat(filename) != null;
     }
 
     public List<String> fileChildren(String filename) {
@@ -353,8 +418,8 @@ public class ControlRemotePath extends BaseSysTableController<PathConnection> {
             if ("/".equals(filename)) {
                 return true;
             }
-            LsEntry entry = find(filename);
-            return entry != null && entry.getAttrs().isDir();
+            SftpATTRS attrs = stat(filename);
+            return attrs != null && attrs.isDir();
         } catch (Exception e) {
 //            showLogs(e.toString());
             return false;
@@ -363,9 +428,9 @@ public class ControlRemotePath extends BaseSysTableController<PathConnection> {
 
     public long fileLength(String filename) {
         try {
-            LsEntry entry = find(filename);
-            if (entry != null) {
-                return entry.getAttrs().getSize();
+            SftpATTRS attrs = stat(filename);
+            if (attrs != null) {
+                return attrs.getSize();
             }
         } catch (Exception e) {
 //            showLogs(e.toString());
@@ -375,9 +440,9 @@ public class ControlRemotePath extends BaseSysTableController<PathConnection> {
 
     public long fileModifyTime(String filename) {
         try {
-            LsEntry entry = find(filename);
-            if (entry != null) {
-                return entry.getAttrs().getMTime() * 1000l;
+            SftpATTRS attrs = stat(filename);
+            if (attrs != null) {
+                return attrs.getMTime() * 1000l;
             }
         } catch (Exception e) {
 //            showLogs(e.toString());
@@ -397,6 +462,9 @@ public class ControlRemotePath extends BaseSysTableController<PathConnection> {
 
     public void mkdirs(String filename) {
         try {
+            if (filename == null || filename.isBlank()) {
+                return;
+            }
             String fixedName = fixFilename(filename);
             showLogs("mkdirs " + fixedName);
             String[] names = fixedName.split("/");
@@ -421,15 +489,17 @@ public class ControlRemotePath extends BaseSysTableController<PathConnection> {
     public boolean copyFile(File sourceFile, String targetFile) {
         try {
             if (task == null || task.isCancelled()
+                    || targetFile == null || targetFile.isBlank()
                     || sourceFile == null || !sourceFile.exists() || !sourceFile.isFile()) {
                 return false;
             }
+            String sourceName = sourceFile.getAbsolutePath();
             String fixedName = fixFilename(targetFile);
-            showLogs("put " + fixedName);
-            sftp.put(sourceFile.getAbsolutePath(), fixedName);
+            showLogs("put " + sourceName + " " + fixedName);
+            sftp.put(sourceName, fixedName);
             return true;
         } catch (Exception e) {
-            MyBoxLog.console(e.toString() + " " + targetFile);
+            showLogs(e.toString());
             return false;
         }
     }

@@ -314,7 +314,7 @@ public class PixelsCalculationController extends BaseController {
             public void changed(ObservableValue<? extends String> observable,
                     String oldValue, String newValue) {
                 try {
-                    sourceX = Integer.valueOf(newValue);
+                    sourceX = Integer.parseInt(newValue);
                     if (sourceY > 0) {
                         ratioLabel.setText(Languages.message("AspectRatio") + ": "
                                 + DoubleTools.scale3(1.0f * sourceX / sourceY));
@@ -333,7 +333,7 @@ public class PixelsCalculationController extends BaseController {
             public void changed(ObservableValue<? extends String> observable,
                     String oldValue, String newValue) {
                 try {
-                    sourceY = Integer.valueOf(newValue);
+                    sourceY = Integer.parseInt(newValue);
                     if (sourceX > 0) {
                         ratioLabel.setText(Languages.message("AspectRatio") + ": "
                                 + DoubleTools.scale3(1.0f * sourceX / sourceY));
@@ -403,7 +403,7 @@ public class PixelsCalculationController extends BaseController {
             public void changed(ObservableValue<? extends String> observable,
                     String oldValue, String newValue) {
                 try {
-                    cp_inchX = Float.valueOf(newValue);
+                    cp_inchX = Float.parseFloat(newValue);
                     cp_widthInches.setStyle(null);
                     UserConfig.setString("widthInches", cp_inchX + "");
                     if (cp_useInch) {
@@ -424,7 +424,7 @@ public class PixelsCalculationController extends BaseController {
             public void changed(ObservableValue<? extends String> observable,
                     String oldValue, String newValue) {
                 try {
-                    cp_inchY = Float.valueOf(newValue);
+                    cp_inchY = Float.parseFloat(newValue);
                     cp_heightInches.setStyle(null);
                     UserConfig.setString("heightInches", cp_inchY + "");
                     if (cp_useInch) {
@@ -445,7 +445,7 @@ public class PixelsCalculationController extends BaseController {
             public void changed(ObservableValue<? extends String> observable,
                     String oldValue, String newValue) {
                 try {
-                    cp_cmX = Float.valueOf(newValue);
+                    cp_cmX = Float.parseFloat(newValue);
                     cp_widthCM.setStyle(null);
                     UserConfig.setString("widthCM", cp_cmX + "");
                     if (!cp_useInch) {
@@ -466,7 +466,7 @@ public class PixelsCalculationController extends BaseController {
             public void changed(ObservableValue<? extends String> observable,
                     String oldValue, String newValue) {
                 try {
-                    cp_cmY = Float.valueOf(newValue);
+                    cp_cmY = Float.parseFloat(newValue);
                     cp_heightCM.setStyle(null);
                     UserConfig.setString("heightCM", cp_cmY + "");
                     if (!cp_useInch) {
@@ -489,7 +489,7 @@ public class PixelsCalculationController extends BaseController {
             public void changed(ObservableValue<? extends String> observable,
                     String oldValue, String newValue) {
                 try {
-                    cs_X = Integer.valueOf(newValue);
+                    cs_X = Integer.parseInt(newValue);
                 } catch (Exception e) {
                     cs_X = 0;
                 }
@@ -503,7 +503,7 @@ public class PixelsCalculationController extends BaseController {
             public void changed(ObservableValue<? extends String> observable,
                     String oldValue, String newValue) {
                 try {
-                    cs_Y = Integer.valueOf(newValue);
+                    cs_Y = Integer.parseInt(newValue);
                 } catch (Exception e) {
                     cs_Y = 0;
                 }
@@ -539,7 +539,7 @@ public class PixelsCalculationController extends BaseController {
             public void changed(ObservableValue<? extends String> observable,
                     String oldValue, String newValue) {
                 try {
-                    cd_X = Integer.valueOf(newValue);
+                    cd_X = Integer.parseInt(newValue);
                 } catch (Exception e) {
                     cd_X = 0;
                 }
@@ -553,7 +553,7 @@ public class PixelsCalculationController extends BaseController {
             public void changed(ObservableValue<? extends String> observable,
                     String oldValue, String newValue) {
                 try {
-                    cd_Y = Integer.valueOf(newValue);
+                    cd_Y = Integer.parseInt(newValue);
                 } catch (Exception e) {
                     cd_Y = 0;
                 }
@@ -596,7 +596,7 @@ public class PixelsCalculationController extends BaseController {
             public void changed(ObservableValue<? extends String> observable,
                     String oldValue, String newValue) {
                 try {
-                    cd_inchX = Float.valueOf(newValue);
+                    cd_inchX = Float.parseFloat(newValue);
                     cd_widthInches.setStyle(null);
                     UserConfig.setString("widthInches", cd_inchX + "");
                     if (cd_useInch) {
@@ -617,7 +617,7 @@ public class PixelsCalculationController extends BaseController {
             public void changed(ObservableValue<? extends String> observable,
                     String oldValue, String newValue) {
                 try {
-                    cd_inchY = Float.valueOf(newValue);
+                    cd_inchY = Float.parseFloat(newValue);
                     cd_heightInches.setStyle(null);
                     UserConfig.setString("heightInches", cd_inchY + "");
                     if (cd_useInch) {
@@ -638,7 +638,7 @@ public class PixelsCalculationController extends BaseController {
             public void changed(ObservableValue<? extends String> observable,
                     String oldValue, String newValue) {
                 try {
-                    cd_cmX = Float.valueOf(newValue);
+                    cd_cmX = Float.parseFloat(newValue);
                     cd_widthCM.setStyle(null);
                     UserConfig.setString("widthCM", cd_cmX + "");
                     if (!cd_useInch) {
@@ -659,7 +659,7 @@ public class PixelsCalculationController extends BaseController {
             public void changed(ObservableValue<? extends String> observable,
                     String oldValue, String newValue) {
                 try {
-                    cd_cmY = Float.valueOf(newValue);
+                    cd_cmY = Float.parseFloat(newValue);
                     cd_heightCM.setStyle(null);
                     UserConfig.setString("heightCM", cd_cmY + "");
                     if (!cd_useInch) {
@@ -774,8 +774,8 @@ public class PixelsCalculationController extends BaseController {
         if (vs.length != 2) {
             return;
         }
-        selectX = Integer.valueOf(vs[0]);
-        selectY = Integer.valueOf(vs[1]);
+        selectX = Integer.parseInt(vs[0]);
+        selectY = Integer.parseInt(vs[1]);
         String label = Languages.message("SelectedPixelsNumber") + ": " + v + "  "
                 + Languages.message("AspectRatio") + ": "
                 + DoubleTools.scale3(1.0f * selectX / selectY);

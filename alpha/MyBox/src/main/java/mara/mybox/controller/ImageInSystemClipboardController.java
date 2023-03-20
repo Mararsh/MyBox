@@ -94,7 +94,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
                         scaledWidth = -1;
                     } else {
                         try {
-                            scaledWidth = Integer.valueOf(newValue);
+                            scaledWidth = Integer.parseInt(newValue);
                             ValidationTools.setEditorNormal(widthSelector);
                         } catch (Exception e) {
                             ValidationTools.setEditorBadStyle(widthSelector);
@@ -111,7 +111,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
                 @Override
                 public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(intervalSelector.getValue());
+                        int v = Integer.parseInt(intervalSelector.getValue());
                         if (v > 0) {
                             intervalSelector.getEditor().setStyle(null);
                             ImageClipboardTools.setMonitorInterval(v);

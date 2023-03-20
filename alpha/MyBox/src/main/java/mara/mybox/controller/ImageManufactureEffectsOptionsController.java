@@ -192,7 +192,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v > 0) {
                             quanColors = v;
                             UserConfig.setInt(baseName + "QuanColorsNumber", quanColors);
@@ -214,7 +214,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v > 0) {
                             regionSize = v;
                             UserConfig.setInt(baseName + "RegionSize", regionSize);
@@ -263,7 +263,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v > 0) {
                             kmeansLoop = v;
                             UserConfig.setInt(baseName + "KmeansLoop", kmeansLoop);
@@ -477,7 +477,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v > 0) {
                             intPara2 = v;
                             ValidationTools.setEditorNormal(intBox);
@@ -534,7 +534,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                 public void changed(ObservableValue<? extends String> observable,
                         String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v >= 0 && v <= 255) {
                             intPara1 = v;
                             intInput.setStyle(null);
@@ -560,7 +560,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                 public void changed(ObservableValue<? extends String> observable,
                         String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v >= 0 && v <= 255) {
                             intPara2 = v;
                             intInput2.setStyle(null);
@@ -585,7 +585,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                 public void changed(ObservableValue<? extends String> observable,
                         String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v >= 0 && v <= 255) {
                             intPara3 = v;
                             intInput3.setStyle(null);
@@ -642,7 +642,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v >= 0 && v <= 255) {
                             intPara1 = v;
                             ValidationTools.setEditorNormal(intBox);
@@ -683,7 +683,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v > 0) {
                             intPara1 = v;
                             ValidationTools.setEditorNormal(intBox);

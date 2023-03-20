@@ -386,8 +386,8 @@ public class ControlMap extends BaseController {
                 return;
             }
             String[] values = data.split(",");
-            double longitude = Double.valueOf(values[0]);
-            double latitude = Double.valueOf(values[1]);
+            double longitude = Double.parseDouble(values[0]);
+            double latitude = Double.parseDouble(values[1]);
             if (isClicked) {
                 mapClicked(longitude, latitude);
             } else {
@@ -643,7 +643,7 @@ public class ControlMap extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                HtmlEditorController.openHtml(html);
+                WebBrowserController.openHtml(html, true);
             }
 
         };

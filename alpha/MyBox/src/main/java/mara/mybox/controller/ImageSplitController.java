@@ -217,7 +217,7 @@ public class ImageSplitController extends BaseImagesListController {
             rowsInput.setStyle(null);
         } else {
             try {
-                rowsNumber = Integer.valueOf(rowsInput.getText());
+                rowsNumber = Integer.parseInt(rowsInput.getText());
                 rowsInput.setStyle(null);
                 if (rowsNumber > 0) {
                     rowsInput.setStyle(null);
@@ -234,7 +234,7 @@ public class ImageSplitController extends BaseImagesListController {
             colsInput.setStyle(null);
         } else {
             try {
-                colsNumber = Integer.valueOf(colsInput.getText());
+                colsNumber = Integer.parseInt(colsInput.getText());
                 colsInput.setStyle(null);
                 if (colsNumber > 0) {
                     colsInput.setStyle(null);
@@ -252,7 +252,7 @@ public class ImageSplitController extends BaseImagesListController {
             return;
         }
         try {
-            int v = Integer.valueOf(widthInput.getText());
+            int v = Integer.parseInt(widthInput.getText());
             if (v > 0 && v < getOperationWidth()) {
                 widthInput.setStyle(null);
                 width = v;
@@ -263,7 +263,7 @@ public class ImageSplitController extends BaseImagesListController {
             widthInput.setStyle(UserConfig.badStyle());
         }
         try {
-            int v = Integer.valueOf(heightInput.getText());
+            int v = Integer.parseInt(heightInput.getText());
             if (v > 0 && v < getOperationHeight()) {
                 heightInput.setStyle(null);
                 height = v;
@@ -293,7 +293,7 @@ public class ImageSplitController extends BaseImagesListController {
             String[] rowStrings = customizedRowsInput.getText().split(",");
             for (String row : rowStrings) {
                 try {
-                    int value = Integer.valueOf(row.trim());
+                    int value = Integer.parseInt(row.trim());
                     if (value < 0 || value > getOperationHeight() - 1) {
                         customizedRowsInput.setStyle(UserConfig.badStyle());
                         isValidRows = false;
@@ -314,7 +314,7 @@ public class ImageSplitController extends BaseImagesListController {
             String[] colStrings = customizedColsInput.getText().split(",");
             for (String col : colStrings) {
                 try {
-                    int value = Integer.valueOf(col.trim());
+                    int value = Integer.parseInt(col.trim());
                     if (value <= 0 || value >= getOperationWidth() - 1) {
                         customizedColsInput.setStyle(UserConfig.badStyle());
                         isValidcols = false;

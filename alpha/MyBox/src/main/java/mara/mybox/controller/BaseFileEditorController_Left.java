@@ -209,7 +209,7 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
                     @Override
                     public void changed(ObservableValue ov, String oldValue, String newValue) {
                         try {
-                            int v = Integer.valueOf(lineInput.getText());
+                            int v = Integer.parseInt(lineInput.getText());
                             if (v > 0 && v <= sourceInformation.getLinesNumber()) {
                                 locateLine = v - 1;  // 0-based
                                 lineInput.setStyle(null);
@@ -232,7 +232,7 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
                     @Override
                     public void changed(ObservableValue ov, String oldValue, String newValue) {
                         try {
-                            int v = Integer.valueOf(objectNumberInput.getText());
+                            int v = Integer.parseInt(objectNumberInput.getText());
                             if (v > 0 && v <= sourceInformation.getObjectsNumber()) {
                                 locateObject = v - 1; // 0-based
                                 objectNumberInput.setStyle(null);

@@ -32,8 +32,8 @@ public class PathConnection extends BaseData {
         path = null;
         username = null;
         password = null;
-        type = null;
-        port = -1;
+        type = Type.SFTP;
+        port = 22;
         timeout = 5000;
         retry = 3;
         hostKeyCheck = false;

@@ -40,19 +40,28 @@ License:    Apache License Version 2.0
                                           <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                       </padding>
                            <children>
-                              <fx:include fx:id="remote" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlRemotePath.fxml" VBox.vgrow="ALWAYS" />
+                              <fx:include fx:id="remote" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlRemoteConnection.fxml" VBox.vgrow="ALWAYS" />
                                   <HBox alignment="CENTER_LEFT" spacing="2.0">
                                       <children>
                                           <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" />
-                                          <Button fx:id="goButton" defaultButton="true" mnemonicParsing="false" onAction="#goAction" styleClass="big" stylesheets="@../styles/MyBox.css">
-                                              <graphic>
-                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                      <image>
-                                                          <Image url="@../buttons/Red/iconGo.png" />
-                                                      </image>
-                                                  </ImageView>
-                                              </graphic>
-                                          </Button>
+                                    <Button fx:id="disconnectButton" layoutX="960.0" layoutY="11.0" mnemonicParsing="false" onAction="#disconnect">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconClose.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
+                                    <Button fx:id="openPathButton" mnemonicParsing="false" onAction="#openPath">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/Red/iconOpenPath.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
                                       </children>
                                   </HBox>
                            </children>
@@ -63,7 +72,7 @@ License:    Apache License Version 2.0
                             <content>
                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                                     <content>
-                                        <VBox fx:id="paraBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                        <VBox fx:id="filesBox" disable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                             <children>
                                     <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="800.0" vgap="2.0">
                                        <children>
@@ -94,6 +103,15 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                              </graphic>
                                           </Button>
+                                          <Button fx:id="permissionButton" layoutX="916.0" layoutY="10.0" mnemonicParsing="false" onAction="#permissionAction">
+                                             <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/Red/iconPermission.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
                                           <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction">
                                              <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -116,11 +134,13 @@ License:    Apache License Version 2.0
                                     </FlowPane>
                                     <TreeTableView fx:id="filesTreeView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                                        <columns>
-                                          <TreeTableColumn fx:id="fileColumn" editable="false" prefWidth="300.0" text="%File" />
+                                          <TreeTableColumn fx:id="nodeColumn" editable="false" prefWidth="300.0" text="%File" />
                                           <TreeTableColumn fx:id="selectedColumn" minWidth="-1.0" prefWidth="100.0" text="%Select" />
-                                          <TreeTableColumn fx:id="sizeColumn" editable="false" prefWidth="160.0" text="%Size" />
-                                          <TreeTableColumn fx:id="typeColumn" editable="false" minWidth="0.0" prefWidth="100.0" text="%Type" />
-                                          <TreeTableColumn fx:id="modifyTimeColumn" editable="false" prefWidth="160.0" text="%ModifiedTime" />
+                                          <TreeTableColumn fx:id="sizeColumn" editable="false" prefWidth="100.0" text="%Size" />
+                                          <TreeTableColumn fx:id="typeColumn" editable="false" minWidth="0.0" text="%Type" />
+                                          <TreeTableColumn fx:id="permissionColumn" editable="false" minWidth="0.0" prefWidth="100.0" text="%Permission" />
+                                          <TreeTableColumn fx:id="modifyTimeColumn" editable="false" prefWidth="140.0" text="%ModifiedTime" />
+                                          <TreeTableColumn fx:id="accessTimeColumn" editable="false" prefWidth="140.0" text="%AccessTime" />
                                        </columns>
                                     </TreeTableView>
                                             </children>

@@ -179,7 +179,7 @@ public class Data2DSetStylesController extends BaseController {
             if (sv == null || sv.isBlank()) {
                 updatedStyle.setSequence(listController.dataSize + 1);
             } else {
-                updatedStyle.setSequence(Float.valueOf(sv));
+                updatedStyle.setSequence(Float.parseFloat(sv));
             }
             sequenceInput.setStyle(null);
         } catch (Exception e) {

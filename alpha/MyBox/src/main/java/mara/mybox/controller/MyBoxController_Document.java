@@ -356,12 +356,7 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
                 Notes, InformationInTree, new SeparatorMenuItem(),
-                pdfMenu, new SeparatorMenuItem(),
-                markdownMenu, new SeparatorMenuItem(),
-                htmlMenu, new SeparatorMenuItem(),
-                textsMenu, new SeparatorMenuItem(),
-                msMenu, new SeparatorMenuItem(),
-                bytesEditer, new SeparatorMenuItem(),
+                pdfMenu, markdownMenu, htmlMenu, textsMenu, msMenu, bytesEditer, new SeparatorMenuItem(),
                 TextInMyBoxClipboard, TextInSystemClipboard
         );
 

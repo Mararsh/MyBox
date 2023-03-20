@@ -149,7 +149,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        rotateAngle = Integer.valueOf(newValue);
+                        rotateAngle = Integer.parseInt(newValue);
                         rotateLeftButton.setDisable(false);
                         rotateRightButton.setDisable(false);
                         ValidationTools.setEditorNormal(angleBox);

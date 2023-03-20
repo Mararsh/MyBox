@@ -287,7 +287,7 @@ public class ImageScope extends BaseData {
                     data.setColorDistance(value == null ? AppValues.InvalidInteger : (int) value);
                     return true;
                 case "hsb_distance":
-                    data.setHsbDistance(value == null ? AppValues.InvalidInteger : Float.valueOf(value + ""));
+                    data.setHsbDistance(value == null ? AppValues.InvalidInteger : Float.parseFloat(value + ""));
                     return true;
                 case "area_excluded":
                     data.setAreaExcluded(value == null ? false : (int) value > 0);

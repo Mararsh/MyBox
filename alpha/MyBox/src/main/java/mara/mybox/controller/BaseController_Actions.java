@@ -384,11 +384,9 @@ public abstract class BaseController_Actions extends BaseController_Interface {
     }
 
     public void view(File file) {
-        ControllerTools.openTarget(null, file.getAbsolutePath());
-    }
-
-    public void view(String file) {
-        ControllerTools.openTarget(null, file);
+        if (file != null) {
+            ControllerTools.openTarget(file.getAbsolutePath());
+        }
     }
 
     public void browse(File file) {

@@ -276,7 +276,7 @@ public class GeographyCodeConditionTreeController extends ControlConditionTree {
                                     + " OFFSET 0 ROWS FETCH NEXT 1 ROWS ONLY";
                             try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
                                 if (results.next()) {
-                                    haveLevels.add(Short.valueOf(i + ""));
+                                    haveLevels.add(Short.parseShort(i + ""));
                                 }
                             }
                         }

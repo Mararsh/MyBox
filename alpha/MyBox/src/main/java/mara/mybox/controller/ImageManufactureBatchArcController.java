@@ -133,7 +133,7 @@ public class ImageManufactureBatchArcController extends BaseImageManufactureBatc
 
     private void checkPercent() {
         try {
-            int v = Integer.valueOf(perBox.getValue());
+            int v = Integer.parseInt(perBox.getValue());
             if (v > 0 && v <= 100) {
                 percent = v;
                 UserConfig.setInt(baseName + "Percent", percent);
@@ -148,7 +148,7 @@ public class ImageManufactureBatchArcController extends BaseImageManufactureBatc
 
     private void checkArc() {
         try {
-            int v = Integer.valueOf(arcBox.getValue());
+            int v = Integer.parseInt(arcBox.getValue());
             if (v > 0) {
                 arc = v;
                 UserConfig.setInt(baseName + "Arc", arc);

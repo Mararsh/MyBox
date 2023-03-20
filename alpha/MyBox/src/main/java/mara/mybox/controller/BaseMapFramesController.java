@@ -85,7 +85,7 @@ public abstract class BaseMapFramesController extends BaseMapController {
                 intervalSelector.getSelectionModel().selectedItemProperty().addListener(
                         (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
                             try {
-                                int v = Integer.valueOf(intervalSelector.getValue());
+                                int v = Integer.parseInt(intervalSelector.getValue());
                                 if (v > 0) {
                                     interval = v;
                                     UserConfig.setInt(baseName + "Interval", interval);

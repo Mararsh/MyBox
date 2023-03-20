@@ -173,7 +173,7 @@ public class MyBoxLoadingController implements Initializable {
                             }
                         }
                         if (inFile != null) {
-                            BaseController controller = ControllerTools.openTarget(myStage, inFile, false);
+                            BaseController controller = ControllerTools.openTarget(inFile, false);
                             if (controller == null) {
                                 ControllerTools.openMyBox(myStage);
                             }
