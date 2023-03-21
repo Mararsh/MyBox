@@ -13,7 +13,6 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
@@ -71,6 +70,8 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
         try {
             super.initControls();
 
+            optionsController.setParameters(this);
+
             os = SystemTools.os();
 
             openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -124,12 +125,22 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
                 popError(message("NothingHandled"));
                 return false;
             }
+            return pickTarget();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return false;
+        }
+    }
+
+    public boolean pickTarget() {
+        try {
             targetFile = targetFileController.file;
             if (targetFile == null) {
-                popError(message("InvalidParameters"));
+                popError(message("InvalidParameter") + ": " + message("TargetFile"));
                 return false;
             }
-            targetFile.getParentFile().mkdirs();
+            targetPath = targetFile.getParentFile();
+            targetPath.mkdirs();
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -161,6 +172,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
 
     public void superStartTask() {
         super.startTask();
+        openPath();
     }
 
     @Override
@@ -221,7 +233,21 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
             }
             showLogs(message("Exit"));
             if (started) {
-                openTarget(null);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (targetFile != null && targetFile.exists()) {
+                            recordFileWritten(targetFile);
+                            if (openCheck.isSelected()) {
+                                ControllerTools.openTarget(targetFile.getAbsolutePath());
+                            } else {
+                                browseURI(targetFile.getParentFile().toURI());
+                            }
+                        } else {
+                            popInformation(message("NoFileGenerated"));
+                        }
+                    }
+                });
             } else {
                 Platform.runLater(new Runnable() {
                     @Override
@@ -264,26 +290,6 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
                 MyBoxLog.error(e.toString());
             }
         }
-    }
-
-    @FXML
-    @Override
-    public void openTarget(ActionEvent event) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                if (targetFile != null && targetFile.exists()) {
-                    recordFileOpened(targetFile);
-                    if (openCheck.isSelected()) {
-                        ControllerTools.openTarget(targetFile.getAbsolutePath());
-                    } else {
-                        browseURI(targetFile.getParentFile().toURI());
-                    }
-                } else {
-                    popInformation(message("NoFileGenerated"));
-                }
-            }
-        });
     }
 
     @Override

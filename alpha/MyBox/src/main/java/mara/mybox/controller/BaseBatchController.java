@@ -18,7 +18,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
@@ -63,8 +62,6 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     protected Date processStartTime, fileStartTime;
     protected String finalTargetName;
 
-    @FXML
-    protected TabPane batchTabPane;
     @FXML
     protected Tab sourceTab, targetTab;
     @FXML
@@ -154,6 +151,11 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                 path = new File(finalTargetName).getParentFile();
             } else if (actualParameters != null && actualParameters.targetPath != null) {
                 path = new File(actualParameters.targetPath);
+            } else if (targetFile != null) {
+                path = targetFile.getParentFile();
+            } else if (targetFileController != null) {
+                String p = targetFileController.text();
+                path = new File(p).getParentFile();
             } else if (targetPathController != null) {
                 String p = targetPathController.text();
                 if (targetPrefixInput != null && targetSubdirCheck != null && targetSubdirCheck.isSelected()) {
@@ -452,9 +454,11 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
 
         if (targetFileController != null) {
             targetFile = targetFileController.file();
+            MyBoxLog.console(targetFile);
             if (targetFile != null) {
                 finalTargetName = targetFile.getAbsolutePath();
                 targetPath = targetFile.getParentFile();
+                MyBoxLog.console(targetPath);
             }
         }
         if (targetPathController != null) {
@@ -929,8 +933,8 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         if (targetVBox != null) {
             targetVBox.setDisable(disable);
         }
-        if (!isPreview && batchTabPane != null && logsTab != null) {
-            batchTabPane.getSelectionModel().select(logsTab);
+        if (!isPreview && tabPane != null && logsTab != null) {
+            tabPane.getSelectionModel().select(logsTab);
         }
     }
 

@@ -5,11 +5,13 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.io.BufferedReader;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
@@ -21,7 +23,7 @@ import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.SystemTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -33,17 +35,20 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
 
     protected Rectangle snapArea;
     protected int audioThreadQueueSize, videoThreadQueueSize,
-            screenWidth, screenHeight, x, y, macVideo, macAudio;
-    protected String os, audioDevice, vcodec, title;
+            screenWidth, screenHeight, x, y;
+    protected String os, vcodec, title;
+    protected List<String> videoDevices, audioDevices;
 
     @FXML
     protected CheckBox audioCheck, videoCheck, miaoCheck;
     @FXML
     protected VBox videoBox;
     @FXML
+    protected ComboBox<String> videoDeviceSelector, audioDeviceSelector;
+    @FXML
     protected HBox fullScreenBox, windowBox, rectBox;
     @FXML
-    protected Label audioComments, videoComments, screenSizeLabel, infoLabel;
+    protected Label screenSizeLabel, infoLabel;
     @FXML
     protected TextField audioThreadQueueSizeInput, videoThreadQueueSizeInput,
             titleInput, xInput, yInput, widthInput, heightInput, vcodecInput;
@@ -61,7 +66,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
     // https://slhck.info/video/2017/03/01/rate-control.html
     // https://www.cnblogs.com/sunny-li/p/9979796.html
     public FFmpegScreenRecorderOptionsController() {
-        baseTitle = Languages.message("FFmpegScreenRecorder");
+        baseTitle = message("FFmpegScreenRecorder");
     }
 
     @Override
@@ -69,44 +74,29 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
         try {
             super.initControls();
 
+            miaoCheck.setSelected(UserConfig.getBoolean("FFmpegScreenRecorderMiao", true));
+            miaoCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    UserConfig.setBoolean("FFmpegScreenRecorderMiao", nv);
+                }
+            });
+
             audioCheck.setSelected(UserConfig.getBoolean("FFmpegScreenRecorderAudio", true));
             audioCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean("FFmpegScreenRecorderAudio", newValue);
-
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    UserConfig.setBoolean("FFmpegScreenRecorderAudio", nv);
                 }
             });
 
             videoCheck.setSelected(UserConfig.getBoolean("FFmpegScreenRecorderVideo", true));
             videoCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean("FFmpegScreenRecorderVideo", newValue);
-
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    UserConfig.setBoolean("FFmpegScreenRecorderVideo", nv);
                 }
             });
-
-            os = SystemTools.os();
-            switch (os) {
-                case "win":
-                    checkAudioDeviceWin();
-                    break;
-                case "linux":
-                    windowRadio.setDisable(true);
-                    videoBox.getChildren().remove(windowBox);
-                    audioComments.setText("alsa");
-                    break;
-                case "mac":
-                    fullscreenRadio.setSelected(true);
-                    videoBox.getChildren().removeAll(windowBox, rectBox);
-                    checkDevicesMac();
-                    break;
-                default:
-                    return;
-            }
-
-            checkThreadQueueSizes();
 
             DisplayMode dm = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
             screenWidth = dm.getWidth();
@@ -166,10 +156,10 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
             checkScope();
 
             delayController.permitInvalid(false).permitNotSet(true)
-                    .init(baseName + "Delay", 5);
+                    .init(baseName + "Delay", 0);
 
             durationController.permitInvalid(false).permitNotSet(true)
-                    .init(baseName + "Duration", -1);
+                    .init(baseName + "Duration", 5);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -180,56 +170,144 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeStyleTools.setTooltip(tipsView, new Tooltip(Languages.message("FFmpegOptionsTips")
-                    + "\n" + Languages.message("FFmpegScreenRecorderComments")));
+            NodeStyleTools.setTooltip(tipsView, new Tooltip(message("FFmpegOptionsTips")
+                    + "\n" + message("FFmpegScreenRecorderComments")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
 
-    protected void checkAudioDeviceWin() {
+    @Override
+    public void setParameters(BaseTaskController ffmpegController) {
         try {
+            super.setParameters(ffmpegController);
             if (executable == null) {
                 return;
             }
-            // ffmpeg -list_devices true -f dshow -i dummy
-            ProcessBuilder pb = new ProcessBuilder(
-                    executable.getAbsolutePath(),
-                    "-list_devices", "true", "-f", "dshow", "-i", "dummy"
-            ).redirectErrorStream(true);
-            audioDevice = null;
-            final Process process = pb.start();
+            videoDevices = new ArrayList<>();
+            videoDevices.add(message("Screen"));
+            audioDevices = new ArrayList<>();
+            os = SystemTools.os();
+            switch (os) {
+                case "win":
+                    checkDevicesWin();
+                    break;
+                case "linux":
+                    windowRadio.setDisable(true);
+                    videoBox.getChildren().remove(windowBox);
+                    audioDevices.add("alsa");
+                    break;
+                case "mac":
+                    fullscreenRadio.setSelected(true);
+                    videoBox.getChildren().removeAll(windowBox, rectBox);
+                    checkDevicesMac();
+                    break;
+                default:
+                    return;
+            }
 
-            try ( BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
-                String line;
-                boolean audioNext = false;
+            ffmpegController.showLogs(message("VideoDevice") + ": " + videoDevices.toString());
+            videoDeviceSelector.getItems().setAll(videoDevices);
+            videoDeviceSelector.getSelectionModel().select(0);
+
+            audioDeviceSelector.getItems().setAll(audioDevices);
+            if (audioDevices.isEmpty()) {
+                ffmpegController.showLogs(message("AudioDevice") + ": " + message("NotFound"));
+                audioCheck.setDisable(true);
+                audioCheck.setSelected(false);
+            } else {
+                ffmpegController.showLogs(message("AudioDevice") + ": " + audioDevices.toString());
+                audioCheck.setDisable(false);
+                audioCheck.setSelected(true);
+                audioDeviceSelector.getSelectionModel().select(0);
+            }
+
+            checkThreadQueueSizes();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    protected void checkDevicesWin() {
+        try {
+            // ffmpeg -list_devices true -f dshow -i dummy
+            List<String> command = new ArrayList<>();
+            command.add(executable.getAbsolutePath());
+            command.add("-hide_banner");
+            command.add("-list_devices");
+            command.add("true");
+            command.add("-f");
+            command.add("dshow");
+            command.add("-i");
+            command.add("dummy");
+            showCmd(command);
+            ProcessBuilder pb = new ProcessBuilder(command).redirectErrorStream(true);
+            final Process process = pb.start();
+            try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
+                String line, name, prefix = "]  \"";
+                int pos, prefixlen = prefix.length();
+                boolean videoNext = false, audioNext = false;
                 while ((line = inReader.readLine()) != null) {
-                    if (line.contains("DirectShow audio devices")) {
+                    ffmpegController.showLogs(line);
+                    if (line.endsWith("\" (audio)")) {
+                        pos = line.indexOf(prefix);
+                        if (pos < 0) {
+                            continue;
+                        }
+                        name = line.substring(pos + prefixlen);
+                        pos = name.indexOf("\"");
+                        if (pos < 0) {
+                            continue;
+                        }
+                        name = name.substring(0, pos);
+                        audioDevices.add(name);
+                    } else if (line.endsWith("\" (video)")) {
+                        pos = line.indexOf(prefix);
+                        if (pos < 0) {
+                            continue;
+                        }
+                        name = line.substring(pos + prefixlen);
+                        pos = name.indexOf("\"");
+                        if (pos < 0) {
+                            continue;
+                        }
+                        name = name.substring(0, pos);
+                        videoDevices.add(name);
+                    } else if (line.contains("DirectShow video devices")) {
+                        videoNext = true;
+                        audioNext = false;
+                    } else if (line.contains("DirectShow audio devices")) {
+                        videoNext = false;
                         audioNext = true;
+                    } else if (videoNext) {
+                        pos = line.indexOf(prefix);
+                        if (pos < 0) {
+                            continue;
+                        }
+                        name = line.substring(pos + prefixlen);
+                        pos = name.indexOf("\"");
+                        if (pos < 0) {
+                            continue;
+                        }
+                        name = name.substring(0, pos);
+                        videoDevices.add(name);
                     } else if (audioNext) {
-                        int pos = line.indexOf("\"");
+                        pos = line.indexOf(prefix);
                         if (pos < 0) {
                             continue;
                         }
-                        line = line.substring(pos + 1);
-                        pos = line.indexOf("\"");
+                        name = line.substring(pos + prefixlen);
+                        pos = name.indexOf("\"");
                         if (pos < 0) {
                             continue;
                         }
-                        audioDevice = line.substring(0, pos);
-                        audioComments.setText(Languages.message("AudioDevice") + ": " + audioDevice);
-                        audioCheck.setDisable(false);
-                        audioCheck.setSelected(true);
-                        return;
+                        name = name.substring(0, pos);
+                        audioDevices.add(name);
                     }
                 }
             }
             process.waitFor();
-            if (audioDevice == null) {
-                audioComments.setText(Languages.message("AudioDevice") + ": " + Languages.message("NotFound"));
-                audioCheck.setDisable(true);
-                audioCheck.setSelected(false);
-            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -242,51 +320,47 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                 return;
             }
             // ffmpeg -f avfoundation -list_devices true -i ""
-            ProcessBuilder pb = new ProcessBuilder(
-                    executable.getAbsolutePath(),
-                    "-f", "avfoundation", "-list_devices", "true", "-i", "\"\""
-            ).redirectErrorStream(true);
-            macVideo = macAudio = -1;
+            List<String> command = new ArrayList<>();
+            command.add(executable.getAbsolutePath());
+            command.add("-hide_banner");
+            command.add("-f");
+            command.add("avfoundation");
+            command.add("-list_devices");
+            command.add("true");
+            command.add("-i");
+            command.add("\"\"");
+            showCmd(command);
+            ProcessBuilder pb = new ProcessBuilder(command).redirectErrorStream(true);
             final Process process = pb.start();
-            try ( BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
+            try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                 String line;
+                boolean videoNext = false, audioNext = false;
                 while ((line = inReader.readLine()) != null) {
-                    try {
+                    ffmpegController.showLogs(line);
+                    if (line.contains("AVFoundation video devices")) {
+                        videoNext = true;
+                        audioNext = false;
+                    } else if (videoNext) {
                         int pos1 = line.indexOf("] [");
                         if (pos1 < 0) {
                             continue;
                         }
-                        String s = line.substring(pos1 + 3);
-                        pos1 = s.indexOf("]");
-                        int index = Integer.parseInt(s.substring(0, pos1));
-                        String name = s.substring(pos1 + 1);
-                        if (line.contains("Capture screen")) {
-                            macVideo = index;
-                            videoComments.setText(name);
-                            videoCheck.setDisable(false);
-                            videoCheck.setSelected(true);
-                        } else if (line.contains("Microphone") || line.contains("麦克风")) {
-                            macAudio = index;
-                            audioComments.setText(Languages.message("AudioDevice") + ": " + name);
-                            audioCheck.setDisable(false);
-                            audioCheck.setSelected(true);
+                        String name = line.substring(pos1 + 2);
+                        videoDevices.add(name);
+                    } else if (line.contains("AVFoundation audio devices")) {
+                        videoNext = false;
+                        audioNext = true;
+                    } else if (audioNext) {
+                        int pos1 = line.indexOf("] [");
+                        if (pos1 < 0) {
+                            continue;
                         }
-                    } catch (Exception e) {
-                        MyBoxLog.error(e.toString());
+                        String name = line.substring(pos1 + 2);
+                        audioDevices.add(name);
                     }
                 }
             }
             process.waitFor();
-            if (macVideo < 0) {
-                videoComments.setText(Languages.message("NotFound"));
-                videoCheck.setDisable(true);
-                videoCheck.setSelected(false);
-            }
-            if (macAudio < 0) {
-                audioComments.setText(Languages.message("AudioDevice") + ": " + Languages.message("NotFound"));
-                audioCheck.setDisable(true);
-                audioCheck.setSelected(false);
-            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -514,7 +588,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                 }
             }
 
-            if (!audioCheck.isSelected() || audioDevice == null || disableAudio) {
+            if (!audioCheck.isSelected() || audioDevices.isEmpty() || disableAudio) {
                 parameters.add("-an");
             } else {
                 parameters.add("-f");
@@ -522,7 +596,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                 parameters.add("-thread_queue_size");
                 parameters.add(audioThreadQueueSize + "");
                 parameters.add("-i");
-                parameters.add("audio=" + audioDevice);
+                parameters.add("audio=" + audioDeviceSelector.getValue());
 
             }
 
@@ -583,6 +657,27 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
         return true;
     }
 
+    protected int macDeviceIndex(String name) {
+        try {
+            if (name == null) {
+                return -1;
+            }
+            int pos = name.indexOf("[");
+            if (pos < 0) {
+                return -1;
+            }
+            name = name.substring(pos + 1);
+            pos = name.indexOf("]");
+            if (pos < 0) {
+                return -1;
+            }
+            name = name.substring(0, pos);
+            return Integer.parseInt(name);
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
     protected boolean macParameters(List<String> parameters) {
         try {
             if (!"mac".equals(os) || parameters == null) {
@@ -591,16 +686,32 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
             // ffmpeg -f avfoundation -i "<screen device index>:<audio device index>" -r 30 -s 3360x2100 -pix_fmt uyvy422 output.yuv
             parameters.add("-f");
             parameters.add("avfoundation");
+
+            int v = macDeviceIndex(videoDeviceSelector.getValue());
+            int a = macDeviceIndex(audioDeviceSelector.getValue());
+
             if (videoCheck.isSelected()) {
+                if (v < 0) {
+                    popError(message("InvalidParameter") + ": " + message("VideoDevice"));
+                    return false;
+                }
                 parameters.add("-i");
                 if (audioCheck.isSelected()) {
-                    parameters.add(macVideo + ":" + macAudio);
+                    if (a < 0) {
+                        popError(message("InvalidParameter") + ": " + message("AudioDevice"));
+                        return false;
+                    }
+                    parameters.add(v + ":" + a);
                 } else {
-                    parameters.add(macVideo + "");
+                    parameters.add(v + "");
                 }
             } else {
+                if (a < 0) {
+                    popError(message("InvalidParameter") + ": " + message("AudioDevice"));
+                    return false;
+                }
                 if (audioCheck.isSelected()) {
-                    parameters.add(":" + macAudio);
+                    parameters.add(":" + a);
                 }
             }
 

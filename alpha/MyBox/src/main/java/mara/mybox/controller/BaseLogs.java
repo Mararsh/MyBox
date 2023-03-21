@@ -94,37 +94,38 @@ public class BaseLogs extends BaseController {
 
     public void updateLogs(String line, boolean showTime, boolean immediate) {
         try {
-            if (logsTextArea == null || line == null || line.isBlank()) {
+            if (logsTextArea == null || line == null) {
                 return;
             }
-            synchronized (logsTextArea) {
-                if (newLogs == null) {
-                    newLogs = new StringBuffer();
-                }
-                if (showTime) {
-                    newLogs.append(DateTools.datetimeToString(new Date())).append("  ");
-                }
-                newLogs.append(line).append("\n");
-                logsNewlines++;
-                Platform.runLater(() -> {
-                    try {
+            Platform.runLater(() -> {
+                try {
+                    synchronized (logsTextArea) {
+                        if (newLogs == null) {
+                            newLogs = new StringBuffer();
+                        }
+                        if (showTime) {
+                            newLogs.append(DateTools.datetimeToString(new Date())).append("  ");
+                        }
+                        newLogs.append(line).append("\n");
+                        logsNewlines++;
                         long ctime = new Date().getTime();
                         if (immediate || logsNewlines > 50 || ctime - lastLogTime > 3000) {
                             logsTextArea.appendText(newLogs.toString());
+                            newLogs = new StringBuffer();
                             logsTotalLines += logsNewlines;
                             logsNewlines = 0;
                             lastLogTime = ctime;
-                            newLogs = new StringBuffer();
                             int extra = logsTextArea.getText().length() - logsMaxChars;
                             if (extra > 0) {
                                 logsTextArea.deleteText(0, extra);
                             }
                         }
-                    } catch (Exception e) {
-                        MyBoxLog.debug(e.toString());
                     }
-                });
-            }
+                } catch (Exception e) {
+                    MyBoxLog.debug(e.toString());
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -136,8 +137,10 @@ public class BaseLogs extends BaseController {
             return;
         }
         Platform.runLater(() -> {
-            logsTextArea.setText("");
-            logsTotalLines = 0;
+            synchronized (logsTextArea) {
+                logsTextArea.setText("");
+                logsTotalLines = 0;
+            }
         });
     }
 

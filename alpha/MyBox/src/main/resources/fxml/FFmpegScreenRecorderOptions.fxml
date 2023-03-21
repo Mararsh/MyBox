@@ -114,7 +114,12 @@ License:    Apache License Version 2.0
                         <VBox fx:id="videoBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                             <children>
                                 <CheckBox fx:id="videoCheck" mnemonicParsing="false" selected="true" text="%Video" />
-                                <Label fx:id="videoComments" minWidth="-Infinity" wrapText="true" />
+                        <HBox alignment="CENTER_LEFT" spacing="5.0">
+                           <children>
+                              <Label fx:id="audioComments1" minWidth="-Infinity" text="%VideoDevice" wrapText="true" />
+                              <ComboBox fx:id="videoDeviceSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
                                 <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="75.0" spacing="10.0">
                                     <children>
                                         <Label text="%ThreadQueueSize">
@@ -204,8 +209,13 @@ License:    Apache License Version 2.0
                         <VBox fx:id="audioBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                             <children>
                                 <CheckBox fx:id="audioCheck" minWidth="-Infinity" mnemonicParsing="false" selected="true" text="%Audio" />
-                                <Label fx:id="audioComments" minWidth="-Infinity" text="%AudioDevice" wrapText="true" />
-                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="75.0" spacing="10.0">
+                        <HBox alignment="CENTER_LEFT" spacing="5.0">
+                           <children>
+                                      <Label fx:id="audioComments" minWidth="-Infinity" text="%AudioDevice" wrapText="true" />
+                              <ComboBox fx:id="audioDeviceSelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
+                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="75.0" spacing="5.0">
                                     <children>
                                         <Label minWidth="-Infinity" text="%ThreadQueueSize" HBox.hgrow="NEVER">
                                             <HBox.margin>

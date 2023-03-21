@@ -414,7 +414,7 @@ public class FilesArrangeController extends BaseBatchFileController {
     @Override
     public void disableControls(boolean disable) {
         paraBox.setDisable(disable);
-        batchTabPane.getSelectionModel().select(logsTab);
+        tabPane.getSelectionModel().select(logsTab);
     }
 
     @Override

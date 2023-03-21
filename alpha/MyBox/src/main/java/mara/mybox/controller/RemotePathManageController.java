@@ -10,6 +10,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.FileNode;
 import mara.mybox.dev.MyBoxLog;
@@ -31,6 +33,8 @@ public class RemotePathManageController extends FilesTreeController {
     protected Tab remoteTab, filesTab;
     @FXML
     protected VBox filesBox;
+    @FXML
+    protected TreeTableColumn<FileNode, Integer> uidColumn, gidColumn;
 
     public RemotePathManageController() {
         baseTitle = message("RemotePathManage");
@@ -42,7 +46,10 @@ public class RemotePathManageController extends FilesTreeController {
         try {
             super.initControls();
             remoteController.setParameters(this);
+            filesBox.setDisable(true);
 
+            uidColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("uid"));
+            gidColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("gid"));
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

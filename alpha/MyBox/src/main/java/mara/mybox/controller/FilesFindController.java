@@ -110,7 +110,7 @@ public class FilesFindController extends BaseBatchFileController {
     @Override
     public void disableControls(boolean disable) {
         tableController.thisPane.setDisable(disable);
-        batchTabPane.getSelectionModel().select(targetTab);
+        tabPane.getSelectionModel().select(targetTab);
     }
 
     @Override

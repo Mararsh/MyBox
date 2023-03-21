@@ -134,11 +134,17 @@ public class BaseTaskController extends BaseLogs {
 
     @FXML
     public void openPath() {
-        if (targetPath == null || !targetPath.exists()) {
-            return;
+        File path = targetPath;
+        if (path == null || !path.exists()) {
+            if (targetFile != null) {
+                path = targetFile.getParentFile();
+            }
+            if (path == null || !path.exists()) {
+                return;
+            }
         }
-        browseURI(targetPath.toURI());
-        recordFileOpened(targetPath);
+        browseURI(path.toURI());
+        recordFileOpened(path);
     }
 
     public boolean targetFileGenerated(File target) {
