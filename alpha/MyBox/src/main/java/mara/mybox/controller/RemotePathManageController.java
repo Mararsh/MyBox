@@ -6,16 +6,29 @@ import java.util.Iterator;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.FileNode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.LocateTools;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -35,6 +48,8 @@ public class RemotePathManageController extends FilesTreeController {
     protected VBox filesBox;
     @FXML
     protected TreeTableColumn<FileNode, Integer> uidColumn, gidColumn;
+    @FXML
+    protected Button clearFilesButton, permissionButton, downloadButton;
 
     public RemotePathManageController() {
         baseTitle = message("RemotePathManage");
@@ -50,8 +65,44 @@ public class RemotePathManageController extends FilesTreeController {
 
             uidColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("uid"));
             gidColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("gid"));
+            filesTreeView.getSelectionModel().getSelectedIndices().addListener(new ListChangeListener<Integer>() {
+
+                @Override
+                public void onChanged(ListChangeListener.Change c) {
+                    checkButtons();
+                }
+            });
+            checkButtons();
+
+            filesTreeView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    if (popMenu != null && popMenu.isShowing()) {
+                        popMenu.hide();
+                    }
+                    if (event.getButton() == MouseButton.SECONDARY) {
+                        popFunctionsMenu(event);
+                    }
+                }
+            });
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void checkButtons() {
+        try {
+            TreeItem<FileNode> root = filesTreeView.getRoot();
+            clearFilesButton.setDisable(root == null || root.getChildren().isEmpty());
+            boolean noSelected = filesTreeView.getSelectionModel().getSelectedItem() == null;
+            deleteButton.setDisable(noSelected);
+            permissionButton.setDisable(noSelected);
+            renameButton.setDisable(noSelected);
+            downloadButton.setDisable(clearFilesButton.isDisabled());
+            saveAsButton.setDisable(noSelected);
+            addButton.setDisable(noSelected);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 
@@ -65,6 +116,7 @@ public class RemotePathManageController extends FilesTreeController {
     @Override
     public void openPath() {
         filesBox.setDisable(true);
+        checkButtons();
         if (!remoteController.pickProfile()) {
             return;
         }
@@ -123,6 +175,7 @@ public class RemotePathManageController extends FilesTreeController {
                 tabPane.getSelectionModel().select(filesTab);
                 filesBox.setDisable(false);
                 filesTreeView.setRoot(rootItem);
+                checkButtons();
             }
         };
         start(task);
@@ -264,6 +317,43 @@ public class RemotePathManageController extends FilesTreeController {
     }
 
     @FXML
+    public void renameAction() {
+        try {
+            TreeItem<FileNode> item = filesTreeView.getSelectionModel().getSelectedItem();
+            if (item == null) {
+                popError(message("SelectToHandle"));
+                return;
+            }
+            String name = item.getValue().fullName();
+            String value = PopTools.askValue(baseTitle, "rename \n" + name, "", name);
+            if (value == null || value.isBlank()) {
+                return;
+            }
+            if (name.equals(value)) {
+                popError(message("Unchanged"));
+                return;
+            }
+            if (remoteController.renameFile(name, value)) {
+                loadPath();
+                popSuccessful();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @FXML
+    public void downloadAction() {
+
+    }
+
+    @FXML
+    @Override
+    public void addAction() {
+
+    }
+
+    @FXML
     public void clearFiles() {
 
     }
@@ -276,6 +366,95 @@ public class RemotePathManageController extends FilesTreeController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    public void popFunctionsMenu(Event event) {
+        if (getMyWindow() == null) {
+            return;
+        }
+        TreeItem<FileNode> item = filesTreeView.getSelectionModel().getSelectedItem();
+        String filename = item == null ? null : (item.getValue().parentName()
+                + "\n" + item.getValue().getNodename());
+
+        List<MenuItem> items = new ArrayList<>();
+        MenuItem menuItem = new MenuItem(StringTools.menuPrefix(filename));
+        menuItem.setStyle("-fx-text-fill: #2e598a;");
+        items.add(menuItem);
+        items.add(new SeparatorMenuItem());
+
+        menuItem = new MenuItem(message("Add"), StyleTools.getIconImageView("iconAdd.png"));
+        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
+            addAction();
+        });
+        menuItem.setDisable(item == null);
+        items.add(menuItem);
+
+        menuItem = new MenuItem(message("SaveAs"), StyleTools.getIconImageView("iconSaveAs.png"));
+        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
+            saveAsAction();
+        });
+        menuItem.setDisable(item == null);
+        items.add(menuItem);
+
+        menuItem = new MenuItem(message("Download"), StyleTools.getIconImageView("iconDownload.png"));
+        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
+            downloadAction();
+        });
+        menuItem.setDisable(item == null);
+        items.add(menuItem);
+
+        menuItem = new MenuItem(message("Delete"), StyleTools.getIconImageView("iconDelete.png"));
+        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
+            deleteAction();
+        });
+        menuItem.setDisable(item == null);
+        items.add(menuItem);
+
+        menuItem = new MenuItem(message("Rename"), StyleTools.getIconImageView("iconInput.png"));
+        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
+            renameAction();
+        });
+        menuItem.setDisable(item == null);
+        items.add(menuItem);
+
+        menuItem = new MenuItem(message("Permission"), StyleTools.getIconImageView("iconPermission.png"));
+        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
+            permissionAction();
+        });
+        menuItem.setDisable(item == null);
+        items.add(menuItem);
+
+        menuItem = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
+        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
+            refreshAction();
+        });
+        items.add(menuItem);
+
+        menuItem = new MenuItem(message("Clear"), StyleTools.getIconImageView("iconClear.png"));
+        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
+            clearFiles();
+        });
+        items.add(menuItem);
+
+        items.add(new SeparatorMenuItem());
+
+        menuItem = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
+        menuItem.setStyle("-fx-text-fill: #2e598a;");
+        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = null;
+        });
+        items.add(menuItem);
+
+        if (popMenu != null && popMenu.isShowing()) {
+            popMenu.hide();
+        }
+        popMenu = new ContextMenu();
+        popMenu.setAutoHide(true);
+        popMenu.getItems().addAll(items);
+        LocateTools.locateEvent(event, popMenu);
     }
 
     @Override

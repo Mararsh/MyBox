@@ -101,8 +101,20 @@ public class LocateTools {
     }
 
     public static void locateEvent(Event event, PopupWindow window) {
-        Point2D everntCoord = LocateTools.getScreenCoordinate(event);
-        window.show((Node) event.getSource(), everntCoord.getX(), everntCoord.getY() + LocateTools.PopOffsetY);
+        if (window == null || event == null) {
+            return;
+        }
+        double x, y;
+        try {
+            Point2D everntCoord = LocateTools.getScreenCoordinate(event);
+            x = everntCoord.getX();
+            y = everntCoord.getY() + LocateTools.PopOffsetY;
+        } catch (Exception e) {
+            javafx.scene.robot.Robot r = new javafx.scene.robot.Robot();
+            x = r.getMouseX();
+            y = r.getMouseY() + PopOffsetY;
+        }
+        window.show((Node) event.getSource(), x, y);
     }
 
     public static void locateMouse(Node owner, PopupWindow window) {

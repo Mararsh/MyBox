@@ -454,11 +454,9 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
 
         if (targetFileController != null) {
             targetFile = targetFileController.file();
-            MyBoxLog.console(targetFile);
             if (targetFile != null) {
                 finalTargetName = targetFile.getAbsolutePath();
                 targetPath = targetFile.getParentFile();
-                MyBoxLog.console(targetPath);
             }
         }
         if (targetPathController != null) {
@@ -991,7 +989,6 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         }
         finalTargetName = target.getAbsolutePath();
         targetFiles.add(target);
-        MyBoxLog.console(targetFiles.size());
         String msg;
         msg = MessageFormat.format(message("FilesGenerated"), finalTargetName);
         msg += " " + message("Cost") + ":" + DateTools.datetimeMsDuration(new Date(), fileStartTime);

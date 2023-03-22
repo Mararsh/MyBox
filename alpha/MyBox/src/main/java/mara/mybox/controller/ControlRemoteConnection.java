@@ -450,10 +450,23 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
         return -1;
     }
 
+    public boolean renameFile(String filename, String newname) {
+        try {
+            String name = fixFilename(filename);
+            showLogs("rename " + name + " " + newname);
+            sftp.rename(name, newname);
+            return true;
+        } catch (Exception e) {
+            showLogs(e.toString());
+            taskController.popError(e.toString());
+            return false;
+        }
+    }
+
     public void deleteFile(String filename) {
         try {
             String name = fixFilename(filename);
-            showLogs("rm " + fixFilename(name));
+            showLogs("rm " + name);
             sftp.rm(name);
         } catch (Exception e) {
             showLogs(e.toString());

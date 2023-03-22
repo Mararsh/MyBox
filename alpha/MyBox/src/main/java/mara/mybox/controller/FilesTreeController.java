@@ -57,7 +57,6 @@ public class FilesTreeController extends BaseTaskController {
 
     protected void initTreeTableView() {
         try {
-
             if (hierarchyColumn != null) {
                 fileColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("fileName"));
                 fileColumn.setPrefWidth(400);
@@ -72,17 +71,19 @@ public class FilesTreeController extends BaseTaskController {
                 hierarchyColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("hierarchyNumber"));
             }
 
-            selectedColumn.setCellValueFactory(
-                    new Callback<TreeTableColumn.CellDataFeatures<FileNode, Boolean>, ObservableValue<Boolean>>() {
-                @Override
-                public ObservableValue<Boolean> call(TreeTableColumn.CellDataFeatures<FileNode, Boolean> param) {
-                    if (param.getValue() != null) {
-                        return param.getValue().getValue().getSelected();
+            if (selectedColumn != null) {
+                selectedColumn.setCellValueFactory(
+                        new Callback<TreeTableColumn.CellDataFeatures<FileNode, Boolean>, ObservableValue<Boolean>>() {
+                    @Override
+                    public ObservableValue<Boolean> call(TreeTableColumn.CellDataFeatures<FileNode, Boolean> param) {
+                        if (param.getValue() != null) {
+                            return param.getValue().getValue().getSelected();
+                        }
+                        return null;
                     }
-                    return null;
-                }
-            });
-            selectedColumn.setCellFactory(CheckBoxTreeTableCell.forTreeTableColumn(selectedColumn));
+                });
+                selectedColumn.setCellFactory(CheckBoxTreeTableCell.forTreeTableColumn(selectedColumn));
+            }
 
             typeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("suffix"));
 
@@ -125,7 +126,7 @@ public class FilesTreeController extends BaseTaskController {
                 });
             }
         } catch (Exception e) {
-
+            MyBoxLog.error(e);
         }
     }
 

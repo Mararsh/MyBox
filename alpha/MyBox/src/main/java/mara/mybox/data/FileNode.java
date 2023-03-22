@@ -66,6 +66,10 @@ public class FileNode extends FileInformation {
         return isRemote ? "/" : File.separator;
     }
 
+    public String parentName() {
+        return parentNode != null ? parentNode.fullName() : "/";
+    }
+
     public String fullName() {
         return (parentNode != null ? parentNode.fullName() + separator() : "") + nodename;
     }
