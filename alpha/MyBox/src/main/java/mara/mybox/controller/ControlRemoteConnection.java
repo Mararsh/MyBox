@@ -318,6 +318,17 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
         }
     }
 
+    public String host() {
+        try {
+            if (currentConnection == null) {
+                return null;
+            }
+            return currentConnection.getHost();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public String fixFilename(String filename) {
         try {
             return filename.replaceAll("\\\\", "/");
@@ -463,39 +474,124 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
         }
     }
 
-    public void deleteFile(String filename) {
+    public boolean delete(String filename) {
+        if (isDirectory(filename)) {
+            return deleteDirectory(filename);
+        } else {
+            return deleteFile(filename);
+        }
+    }
+
+    public boolean deleteFile(String filename) {
         try {
             String name = fixFilename(filename);
             showLogs("rm " + name);
             sftp.rm(name);
+            return true;
         } catch (Exception e) {
             showLogs(e.toString());
+            taskController.popError(e.toString());
+            return false;
         }
     }
 
-    public void mkdirs(String filename) {
+    public boolean deleteDirectory(String dirname) {
+        try {
+            dirname = fixFilename(dirname);
+            if (!clearDirectory(dirname)) {
+                return false;
+            }
+            showLogs("rmdir " + dirname);
+            sftp.rmdir(dirname);
+            return true;
+        } catch (Exception e) {
+            error = e.toString();
+            showLogs(error);
+            if (task != null) {
+                task.setError(error);
+            } else {
+                taskController.popError(error);
+            }
+            return false;
+        }
+    }
+
+    public boolean clearDirectory(String dirname) {
+        try {
+            dirname = fixFilename(dirname);
+            Iterator<LsEntry> iterator = ls(dirname);
+            while (iterator.hasNext()) {
+                if (task == null || task.isCancelled()) {
+                    return false;
+                }
+                LsEntry entry = iterator.next();
+                String child = entry.getFilename();
+                if (child == null || child.isBlank()
+                        || ".".equals(child) || "..".equals(child)) {
+                    continue;
+                }
+                child = dirname + "/" + child;
+                SftpATTRS attrs = entry.getAttrs();
+                if (attrs.isDir()) {
+                    if (clearDirectory(child)) {
+                        showLogs("rmdir " + dirname);
+                        sftp.rmdir(dirname);
+                    } else {
+                        if (task != null) {
+                            task.cancel();
+                        }
+                        return false;
+                    }
+                } else {
+                    showLogs("rm " + child);
+                    sftp.rm(child);
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            error = e.toString();
+            showLogs(error);
+            if (task != null) {
+                task.setError(error);
+                task.cancel();
+            } else {
+                taskController.popError(error);
+            }
+            return false;
+        }
+    }
+
+    public boolean mkdirs(String filename) {
         try {
             if (filename == null || filename.isBlank()) {
-                return;
+                return false;
             }
             String fixedName = fixFilename(filename);
             showLogs("mkdirs " + fixedName);
             String[] names = fixedName.split("/");
-            String parent = null;
+            String parent = "";
             for (String name : names) {
                 if (name == null || name.isBlank()
                         || ".".equals(name) || "..".equals(name)) {
                     continue;
                 }
-                String path = (parent == null ? "" : parent + "/") + name;
+                String path = parent + "/" + name;
                 try {
                     sftp.mkdir(path);
                 } catch (Exception e) {
                 }
                 parent = path;
             }
+            return true;
         } catch (Exception e) {
-            showLogs(e.toString());
+            error = e.toString();
+            showLogs(error);
+            if (task != null) {
+                task.setError(error);
+            } else {
+                taskController.popError(error);
+            }
+            return false;
         }
     }
 

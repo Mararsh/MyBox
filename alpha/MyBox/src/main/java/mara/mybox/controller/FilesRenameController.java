@@ -331,7 +331,7 @@ public class FilesRenameController extends BaseBatchFileController {
     }
 
     @Override
-    protected boolean handleDirectory(File sourcePath, File targetPath) {
+    protected boolean handleDirectory(File sourcePath, String targetPath) {
         if (sourcePath == null || !sourcePath.exists() || !sourcePath.isDirectory()) {
             return false;
         }

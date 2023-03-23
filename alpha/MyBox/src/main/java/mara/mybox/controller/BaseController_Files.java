@@ -779,15 +779,32 @@ public abstract class BaseController_Files extends BaseController_Attributes {
 
     }
 
-    public File makeTargetFile(File sourceFile, File targetPath) {
-        if (sourceFile == null || targetPath == null) {
+    public File makeTargetFile(File srcFile, File targetPath) {
+        if (srcFile == null || targetPath == null) {
             return null;
         }
         try {
-            if (sourceFile.isDirectory()) {
-                return makeTargetFile(sourceFile.getName(), "", targetPath);
+            String targetName = makeTargetFilename(srcFile, targetPath.getAbsolutePath());
+            if (targetName == null) {
+                return null;
+            }
+            File target = new File(targetName);
+            target.getParentFile().mkdirs();
+            return target;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public String makeTargetFilename(File srcFile, String targetPath) {
+        if (srcFile == null || targetPath == null) {
+            return null;
+        }
+        try {
+            if (srcFile.isDirectory()) {
+                return makeTargetFilename(srcFile.getName(), "", targetPath);
             } else {
-                String filename = sourceFile.getName();
+                String filename = srcFile.getName();
                 String namePrefix = FileNameTools.prefix(filename);
                 String nameSuffix;
                 if (targetFileSuffix != null) {
@@ -800,26 +817,48 @@ public abstract class BaseController_Files extends BaseController_Attributes {
                         nameSuffix = "";
                     }
                 }
-                return makeTargetFile(namePrefix, nameSuffix, targetPath);
+                return makeTargetFilename(namePrefix, nameSuffix, targetPath);
             }
         } catch (Exception e) {
             return null;
         }
     }
 
-    public File makeTargetFile(String namePrefix, String nameSuffix, File targetPath) {
+    public String makeTargetFilename(String namePrefix, String nameSuffix, String targetPath) {
         try {
             if (targetFileController != null) {
-                return targetFileController.makeTargetFile(namePrefix, nameSuffix, targetPath);
+                File file = targetFileController.makeTargetFile(namePrefix, nameSuffix, new File(targetPath));
+                if (file == null) {
+                    return null;
+                }
+                return file.getAbsolutePath();
 
             } else if (targetPathController != null) {
-                return targetPathController.makeTargetFile(namePrefix, nameSuffix, targetPath);
-
+                File file = targetPathController.makeTargetFile(namePrefix, nameSuffix, new File(targetPath));
+                if (file == null) {
+                    return null;
+                }
+                return file.getAbsolutePath();
             }
-            String targetPrefix = targetPath.getAbsolutePath() + File.separator
-                    + FileNameTools.filter(namePrefix);
+            String targetPrefix = targetPath + File.separator + FileNameTools.filter(namePrefix);
             String targetSuffix = FileNameTools.filter(nameSuffix);
-            File target = new File(targetPrefix + targetSuffix);
+            return targetPrefix + targetSuffix;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
+        }
+    }
+
+    public File makeTargetFile(String namePrefix, String nameSuffix, File targetPath) {
+        try {
+            if (targetPath == null) {
+                return null;
+            }
+            String targetName = makeTargetFilename(namePrefix, nameSuffix, targetPath.getAbsolutePath());
+            if (targetName == null) {
+                return null;
+            }
+            File target = new File(targetName);
             target.getParentFile().mkdirs();
             return target;
         } catch (Exception e) {

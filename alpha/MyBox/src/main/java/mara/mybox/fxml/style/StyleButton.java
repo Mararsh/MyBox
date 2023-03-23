@@ -91,6 +91,9 @@ public class StyleButton {
                     return new StyleData(id, message("Add"), "", "iconAdd.png");
             }
         }
+        if (id.startsWith("makeDirectory")) {
+            return new StyleData(id, message("MakeDirectory"), "", "iconAdd.png");
+        }
         if (id.startsWith("clear")) {
             switch (id) {
                 case "clearButton":
@@ -135,6 +138,9 @@ public class StyleButton {
         }
         if (id.startsWith("download")) {
             return new StyleData(id, message("Download"), "", "iconDownload.png");
+        }
+        if (id.startsWith("upload")) {
+            return new StyleData(id, message("Upload"), "", "iconUpload.png");
         }
         if (id.startsWith("default")) {
             return new StyleData(id, message("Default"), "", "iconDefault.png");

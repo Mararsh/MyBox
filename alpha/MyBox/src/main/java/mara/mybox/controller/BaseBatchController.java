@@ -104,6 +104,10 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         return message("Successful");
     }
 
+    public String handleFile2(File srcFile, String targetPath) {
+        return handleFile(srcFile, targetPath == null ? null : new File(targetPath));
+    }
+
     public void donePost() {
         tableView.refresh();
 
@@ -692,9 +696,9 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                 return message("Skip" + ": " + file);
             }
             if (currentParameters.targetPath != null) {
-                return handleFile(file, new File(currentParameters.targetPath));
+                return handleFile2(file, currentParameters.targetPath);
             } else {
-                return handleFile(file, null);
+                return handleFile2(file, null);
             }
         } catch (Exception e) {
             return file + " " + e.toString();
@@ -834,7 +838,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                     targetDir = new File(currentParameters.targetPath);
                 }
                 targetDir.mkdirs();
-                handleDirectory(dir, targetDir);
+                handleDirectory(dir, targetDir.getAbsolutePath());
             } else {
                 handleDirectory(dir, null);
             }
@@ -845,7 +849,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         }
     }
 
-    protected boolean handleDirectory(File sourcePath, File targetPath) {
+    protected boolean handleDirectory(File sourcePath, String targetPath) {
         if (sourcePath == null || !sourcePath.exists() || !sourcePath.isDirectory()
                 || (isPreview && dirFilesHandled > 0)) {
             return false;
@@ -867,25 +871,41 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                     if (!match(srcFile)) {
                         continue;
                     }
-                    String result = handleFile(srcFile, targetPath);
+                    String result = handleFile2(srcFile, targetPath);
                     if (!message("Failed").equals(result)
                             && !message("Skip").equals(result)) {
                         dirFilesHandled++;
                     }
                 } else if (srcFile.isDirectory() && sourceCheckSubdir) {
                     if (targetPath != null) {
-                        if (targetPath.getAbsolutePath().startsWith(srcFile.getAbsolutePath())) {
+                        if (targetPath.startsWith(srcFile.getAbsolutePath())) {
                             continue;
                         }
-                        File subPath = makeTargetFile(srcFile, targetPath);
-                        if (!subPath.exists()) {
-                            subPath.mkdirs();
+                        String subPathName = makeTargetFilename(srcFile, targetPath);
+                        if (!checkDirectory(subPathName)) {
+                            return false;
                         }
-                        handleDirectory(srcFile, subPath);
+                        handleDirectory(srcFile, subPathName);
                     } else {
                         handleDirectory(srcFile, targetPath);
                     }
                 }
+            }
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return false;
+        }
+    }
+
+    public boolean checkDirectory(String pathname) {
+        try {
+            if (pathname == null) {
+                return false;
+            }
+            File path = new File(pathname);
+            if (!path.exists()) {
+                path.mkdirs();
             }
             return true;
         } catch (Exception e) {
@@ -1029,11 +1049,11 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                     startButton.setOnAction((ActionEvent event) -> {
                         cancelProcess(event);
                     });
-                    if (allowPaused) {
+                    if (allowPaused && pauseButton != null) {
                         pauseButton.setVisible(true);
                         pauseButton.setDisable(false);
                         StyleTools.setNameIcon(pauseButton, message("Pause"), "iconPause.png");
-                        startButton.applyCss();
+                        pauseButton.applyCss();
                         pauseButton.setOnAction((ActionEvent event) -> {
                             pauseProcess(event);
                         });
@@ -1053,13 +1073,15 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                         startButton.setOnAction((ActionEvent event) -> {
                             cancelProcess(event);
                         });
-                        pauseButton.setVisible(true);
-                        pauseButton.setDisable(false);
-                        StyleTools.setNameIcon(pauseButton, message("Start"), "iconStart.png");
-                        pauseButton.applyCss();
-                        pauseButton.setOnAction((ActionEvent event) -> {
-                            startAction();
-                        });
+                        if (pauseButton != null) {
+                            pauseButton.setVisible(true);
+                            pauseButton.setDisable(false);
+                            StyleTools.setNameIcon(pauseButton, message("Start"), "iconStart.png");
+                            pauseButton.applyCss();
+                            pauseButton.setOnAction((ActionEvent event) -> {
+                                startAction();
+                            });
+                        }
                         disableControls(true);
                     } else {
                         StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
@@ -1067,8 +1089,10 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                         startButton.setOnAction((ActionEvent event) -> {
                             startAction();
                         });
-                        pauseButton.setVisible(false);
-                        pauseButton.setDisable(true);
+                        if (pauseButton != null) {
+                            pauseButton.setVisible(false);
+                            pauseButton.setDisable(true);
+                        }
                         disableControls(false);
                         donePost();
                     }

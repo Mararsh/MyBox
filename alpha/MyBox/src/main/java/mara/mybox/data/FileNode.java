@@ -67,7 +67,19 @@ public class FileNode extends FileInformation {
     }
 
     public String parentName() {
-        return parentNode != null ? parentNode.fullName() : "/";
+        return parentNode != null ? parentNode.fullName() : "";
+    }
+
+    public String path(boolean endSeparator) {
+        String pathname;
+        if (parentNode == null) {
+            pathname = nodename;
+        } else if (isDirectory()) {
+            pathname = fullName();
+        } else {
+            pathname = parentNode.fullName();
+        }
+        return endSeparator ? pathname + separator() : pathname;
     }
 
     public String fullName() {

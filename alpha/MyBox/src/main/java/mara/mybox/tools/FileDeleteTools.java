@@ -5,7 +5,6 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import mara.mybox.dev.MyBoxLog;
-import org.apache.commons.io.FileUtils;
 
 /**
  * @Author Mara
@@ -28,8 +27,7 @@ public class FileDeleteTools {
             }
             System.gc();
             if (file.isDirectory()) {
-                FileUtils.deleteDirectory(file);
-                return true;
+                return deleteDir(file);
             } else {
                 return file.delete();
             }
@@ -39,38 +37,41 @@ public class FileDeleteTools {
         }
     }
 
-    public static boolean deleteDir(File dir) {
-        if (dir == null) {
+    public static boolean deleteDir(File file) {
+        if (file == null) {
             return false;
         }
-        if (dir.isDirectory()) {
-            File[] files = dir.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    boolean success = deleteDir(file);
-                    if (!success) {
+        if (file.exists() && file.isDirectory()) {
+            File[] children = file.listFiles();
+            if (children != null) {
+                for (File child : children) {
+                    if (!deleteDir(child)) {
                         return false;
                     }
                 }
             }
         }
-        return dir.delete();
+        return file.delete();
         //        FileUtils.deleteQuietly(dir);
         //        return true;
     }
 
-    public static boolean clearDir(File dir) {
-        if (dir == null) {
+    public static boolean clearDir(File file) {
+        if (file == null) {
             return false;
         }
-        if (dir.exists() && dir.isDirectory()) {
-            File[] files = dir.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    if (file.isFile()) {
-                        file.delete();
-                    } else if (file.isDirectory()) {
-                        deleteDir(file);
+        if (file.exists() && file.isDirectory()) {
+            File[] children = file.listFiles();
+            if (children != null) {
+                for (File child : children) {
+                    if (child.isDirectory()) {
+                        if (clearDir(child)) {
+                            child.delete();
+                        } else {
+                            return false;
+                        }
+                    } else {
+                        child.delete();
                     }
                 }
             }
@@ -87,14 +88,13 @@ public class FileDeleteTools {
 
     public static boolean deleteDirExcept(File dir, File except) {
         if (dir.isDirectory()) {
-            File[] files = dir.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    if (file.equals(except)) {
+            File[] children = dir.listFiles();
+            if (children != null) {
+                for (File child : children) {
+                    if (child.equals(except)) {
                         continue;
                     }
-                    boolean success = deleteDirExcept(file, except);
-                    if (!success) {
+                    if (!deleteDirExcept(child, except)) {
                         return false;
                     }
                 }
@@ -156,8 +156,8 @@ public class FileDeleteTools {
 
     public static int deleteEmptyDir(File dir, int count, boolean trash) {
         if (dir != null && dir.exists() && dir.isDirectory()) {
-            File[] files = dir.listFiles();
-            if (files == null || files.length == 0) {
+            File[] children = dir.listFiles();
+            if (children == null || children.length == 0) {
                 if (trash) {
                     Desktop.getDesktop().moveToTrash(dir);
                 } else {
@@ -165,13 +165,13 @@ public class FileDeleteTools {
                 }
                 return ++count;
             }
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    count = deleteEmptyDir(file, count, trash);
+            for (File child : children) {
+                if (child.isDirectory()) {
+                    count = deleteEmptyDir(child, count, trash);
                 }
             }
-            files = dir.listFiles();
-            if (files == null || files.length == 0) {
+            children = dir.listFiles();
+            if (children == null || children.length == 0) {
                 if (trash) {
                     Desktop.getDesktop().moveToTrash(dir);
                 } else {
@@ -186,24 +186,7 @@ public class FileDeleteTools {
     public static void clearJavaIOTmpPath() {
         try {
             System.gc();
-            File path = FileTools.javaIOTmpPath();
-            File[] files = path.listFiles();
-            if (files == null) {
-                return;
-            }
-            for (File file : files) {
-                try {
-                    if (file.isDirectory()) {
-                        try {
-                            FileUtils.cleanDirectory(file);
-                        } catch (Exception e) {
-                        }
-                    } else {
-                        FileUtils.deleteQuietly(file);
-                    }
-                } catch (Exception e) {
-                }
-            }
+            clearDir(FileTools.javaIOTmpPath());
         } catch (Exception e) {
 //            MyBoxLog.debug(e.toString());
         }

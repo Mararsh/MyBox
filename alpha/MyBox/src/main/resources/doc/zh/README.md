@@ -53,10 +53,10 @@
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases)目录下。      
 
 ### 源码
-[MyBox-src.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-src.zip)   65M-       
-[开发指南](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-zh.pdf)    [打包步骤](https://mara-mybox.sourceforge.io/pack_steps.html)       
-
-
+| 源码 | 开发指南 | 打包步骤 |           
+| --- | --- | --- | 
+| [MyBox-src.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-src.zip)   65M-  | [pdf](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-zh.pdf) | [html](https://mara-mybox.sourceforge.io/pack_steps.html) |
+           
 ### 自包含程序包
 自包含的程序包无需java环境、无需安装、解包可用。     
 
