@@ -21,8 +21,8 @@ public class TableDataColumnCell<S, T> extends TableAutoCommitCell<S, T> {
     }
 
     @Override
-    public void startEdit() {
-        Data2DColumnEditController.open(columnsControl, rowIndex());
+    public void startEditDo() {
+        Data2DColumnEditController.open(columnsControl, editingRow);
     }
 
     @Override

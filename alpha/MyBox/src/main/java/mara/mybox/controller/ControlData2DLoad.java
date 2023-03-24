@@ -231,7 +231,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
             @Override
             protected boolean handle() {
-                try ( Connection conn = DerbyBase.getConnection()) {
+                try (Connection conn = DerbyBase.getConnection()) {
                     data2D.startTask(task, null);
                     data2D.readDataDefinition(conn);
                     if (isCancelled()) {

@@ -110,7 +110,7 @@ public class DirectorySynchronizeController extends BaseTaskController {
             popError(message("Invlid") + ": " + message("TargetPath"));
             return false;
         }
-        if (targetPath.getAbsolutePath().startsWith(sourcePath.getAbsolutePath())) {
+        if (FileTools.isEqualOrSubPath(targetPath.getAbsolutePath(), sourcePath.getAbsolutePath())) {
             popError(message("TargetPathShouldNotSourceSub"));
             return false;
         }

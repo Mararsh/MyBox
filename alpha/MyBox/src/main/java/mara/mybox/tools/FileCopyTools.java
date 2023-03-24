@@ -70,7 +70,7 @@ public class FileCopyTools {
             if (sourcePath == null || !sourcePath.exists() || !sourcePath.isDirectory()) {
                 return false;
             }
-            if (targetPath.getAbsolutePath().startsWith(sourcePath.getAbsolutePath())) {
+            if (FileTools.isEqualOrSubPath(targetPath.getAbsolutePath(), sourcePath.getAbsolutePath())) {
                 MyBoxLog.error(message("TargetPathShouldNotSourceSub"));
                 return false;
             }

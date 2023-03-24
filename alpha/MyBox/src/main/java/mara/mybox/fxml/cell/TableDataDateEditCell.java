@@ -21,7 +21,7 @@ public class TableDataDateEditCell extends TableDataEditCell {
     }
 
     @Override
-    public void startEdit() {
+    public void startEditDo() {
         DateInputController inputController
                 = DateInputController.open(dataControl, name(), getCellValue(), dataColumn.getType());
         getListener = new ChangeListener<Boolean>() {

@@ -165,6 +165,15 @@ public class FileTools {
         return file != null && file.exists() && file.isFile() && file.length() > 0;
     }
 
+    public static boolean isEqualOrSubPath(String path1, String path2) {
+        if (path1 == null || path1.isBlank() || path2 == null || path2.isBlank()) {
+            return false;
+        }
+        String name1 = path1.endsWith(File.separator) ? path1 : (path1 + File.separator);
+        String name2 = path1.endsWith(File.separator) ? path2 : (path2 + File.separator);
+        return name1.equals(name2) || name1.startsWith(name2);
+    }
+
     public static File removeBOM(File file) {
         if (!hasData(file)) {
             return file;

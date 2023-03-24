@@ -536,7 +536,6 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean controlAlt1() {
-        MyBoxLog.debug("here");
         return false;
     }
 

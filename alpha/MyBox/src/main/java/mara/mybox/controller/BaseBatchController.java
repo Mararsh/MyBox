@@ -33,6 +33,7 @@ import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileNameTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.FileFilters;
 import static mara.mybox.value.Languages.message;
@@ -832,7 +833,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             if (currentParameters.targetPath != null) {
                 File targetDir;
                 if (createDirectories
-                        && !currentParameters.targetPath.startsWith(dir.getAbsolutePath())) {
+                        && !FileTools.isEqualOrSubPath(currentParameters.targetPath, dir.getAbsolutePath())) {
                     targetDir = new File(currentParameters.targetPath + File.separator + dir.getName());
                 } else {
                     targetDir = new File(currentParameters.targetPath);
@@ -878,7 +879,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                     }
                 } else if (srcFile.isDirectory() && sourceCheckSubdir) {
                     if (targetPath != null) {
-                        if (targetPath.startsWith(srcFile.getAbsolutePath())) {
+                        if (FileTools.isEqualOrSubPath(targetPath, srcFile.getAbsolutePath())) {
                             continue;
                         }
                         String subPathName = makeTargetFilename(srcFile, targetPath);

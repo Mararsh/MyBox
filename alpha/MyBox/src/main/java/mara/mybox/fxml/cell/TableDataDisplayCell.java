@@ -18,7 +18,7 @@ public class TableDataDisplayCell extends TableDataCell {
     }
 
     @Override
-    public void startEdit() {
+    public void startEditDo() {
     }
 
     @Override

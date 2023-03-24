@@ -34,12 +34,14 @@ public class Data2DAddRowsController extends TableAddRowsController {
     @Override
     public void addRow(int index, int number) {
         try {
-            List<String> row = rowEditController.pickValues();
-            if (row == null) {
+            List<String> values = rowEditController.pickValues();
+            if (values == null) {
                 return;
             }
             List<List<String>> list = new ArrayList<>();
             for (int i = 0; i < number; i++) {
+                List<String> row = new ArrayList<>();
+                row.addAll(values);
                 list.add(row);
             }
             tableViewController.addRows(index, list);

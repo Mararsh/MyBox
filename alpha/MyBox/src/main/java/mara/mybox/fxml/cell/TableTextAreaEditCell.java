@@ -45,11 +45,7 @@ public class TableTextAreaEditCell<S> extends TableAutoCommitCell<S, String> {
     }
 
     @Override
-    public void startEdit() {
-        int row = rowIndex();
-        if (row < 0) {
-            return;
-        }
+    public void startEditDo() {
         BaseInputController inputController = TextInputController.open(parent, name(), getCellValue());
         inputController.setCommentsLabel(comments);
         getListener = new ChangeListener<Boolean>() {
@@ -66,6 +62,9 @@ public class TableTextAreaEditCell<S> extends TableAutoCommitCell<S, String> {
     @Override
     public void commitEdit(String inValue) {
         try {
+            if (!validEditing()) {
+                return;
+            }
             clearEditor();
             setCellValue(inValue);
         } catch (Exception e) {

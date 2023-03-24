@@ -53,6 +53,15 @@ public class HtmlDomMoveController extends HtmlDomCopyController {
         start(task);
     }
 
+    public static boolean isEqualOrSubNode(String node1, String node2) {
+        if (node1 == null || node1.isBlank() || node2 == null || node2.isBlank()) {
+            return false;
+        }
+        String name1 = node1 + ".";
+        String name2 = node2 + ".";
+        return name1.equals(name2) || name1.startsWith(name2);
+    }
+
     public boolean move() {
         try {
             count = 0;
@@ -72,7 +81,7 @@ public class HtmlDomMoveController extends HtmlDomCopyController {
             List<TreeItem<HtmlNode>> manageItems = new ArrayList<>();
             for (TreeItem<HtmlNode> sourceItem : sourcesItems) {
                 String sourceNumber = sourceController.hierarchyNumber(sourceItem);
-                if (targetNumber.startsWith(sourceNumber)) {
+                if (isEqualOrSubNode(targetNumber, sourceNumber)) {
                     continue;
                 }
                 TreeItem<HtmlNode> manageItem = manageController.find(sourceNumber);

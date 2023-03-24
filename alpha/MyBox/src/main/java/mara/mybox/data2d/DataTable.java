@@ -250,7 +250,11 @@ public class DataTable extends Data2D {
                 return null;
             }
             Data2DRow data2DRow = tableData2D.newRow();
-            data2DRow.setRowIndex(Integer.parseInt(values.get(0)));
+            try {
+                data2DRow.setRowIndex(Integer.parseInt(values.get(0)));
+            } catch (Exception e) {
+                data2DRow.setRowIndex(-1);
+            }
             for (int i = 0; i < Math.min(columns.size(), values.size() - 1); i++) {
                 Data2DColumn column = columns.get(i);
                 String name = column.getColumnName();
@@ -326,7 +330,7 @@ public class DataTable extends Data2D {
 
     @Override
     public boolean savePageData(Data2D targetData) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             updateTable(conn);
             List<Data2DRow> dbRows = tableData2D.query(conn, pageQuery());
             List<Data2DRow> pageRows = new ArrayList<>();
@@ -371,7 +375,7 @@ public class DataTable extends Data2D {
         if (sheet == null || sheet.isBlank()) {
             return -4;
         }
-        try ( Connection conn = DerbyBase.getConnection();) {
+        try (Connection conn = DerbyBase.getConnection();) {
             return drop(conn, sheet);
         } catch (Exception e) {
             if (task != null) {
@@ -407,9 +411,9 @@ public class DataTable extends Data2D {
         if (task != null) {
             task.setInfo(query);
         }
-        try ( Connection conn = DerbyBase.getConnection();
-                 PreparedStatement statement = conn.prepareStatement(query);
-                 ResultSet results = statement.executeQuery()) {
+        try (Connection conn = DerbyBase.getConnection();
+                PreparedStatement statement = conn.prepareStatement(query);
+                ResultSet results = statement.executeQuery()) {
             if (results != null) {
                 targetData = DataFileCSV.save(this, dname, task, results, rowNumberName, dscale, invalidAs);
             }
@@ -433,8 +437,8 @@ public class DataTable extends Data2D {
         if (task != null) {
             task.setInfo(sql);
         }
-        try ( PreparedStatement statement = conn.prepareStatement(sql);
-                 ResultSet results = statement.executeQuery()) {
+        try (PreparedStatement statement = conn.prepareStatement(sql);
+                ResultSet results = statement.executeQuery()) {
             if (results.next()) {
                 mode = results.getObject(DerbyBase.savedName(colName));
             }
@@ -483,8 +487,8 @@ public class DataTable extends Data2D {
         if (task != null) {
             task.setInfo(sql);
         }
-        try ( PreparedStatement statement = conn.prepareStatement(sql);
-                 ResultSet results = statement.executeQuery()) {
+        try (PreparedStatement statement = conn.prepareStatement(sql);
+                ResultSet results = statement.executeQuery()) {
             Object first = null;
             if (results.next()) {
                 first = column.value(results);
@@ -520,7 +524,7 @@ public class DataTable extends Data2D {
         if (cols == null || cols.isEmpty() || selections == null) {
             return null;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             int colLen = cols.size();
             DoubleStatistic[] sData = new DoubleStatistic[colLen];
             for (int c = 0; c < cols.size(); c++) {
@@ -626,8 +630,8 @@ public class DataTable extends Data2D {
         }
         File csvFile = tmpFile(dname, "frequency", ".csv");
         int total = 0, dNumber = 0;
-        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile);
-                 Connection conn = DerbyBase.getConnection()) {
+        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile);
+                Connection conn = DerbyBase.getConnection()) {
             List<String> row = new ArrayList<>();
             row.add(colName);
             row.add(colName + "_" + message("Count"));
@@ -638,8 +642,8 @@ public class DataTable extends Data2D {
             if (task != null) {
                 task.setInfo(sql);
             }
-            try ( PreparedStatement statement = conn.prepareStatement(sql);
-                     ResultSet results = statement.executeQuery()) {
+            try (PreparedStatement statement = conn.prepareStatement(sql);
+                    ResultSet results = statement.executeQuery()) {
                 if (results.next()) {
                     total = results.getInt("mybox99_count");
                 }
@@ -662,8 +666,8 @@ public class DataTable extends Data2D {
             if (task != null) {
                 task.setInfo(sql);
             }
-            try ( PreparedStatement statement = conn.prepareStatement(sql);
-                     ResultSet results = statement.executeQuery()) {
+            try (PreparedStatement statement = conn.prepareStatement(sql);
+                    ResultSet results = statement.executeQuery()) {
                 String sname = DerbyBase.savedName(colName);
                 while (results.next() && task != null && !task.isCancelled()) {
                     row.clear();
@@ -708,7 +712,7 @@ public class DataTable extends Data2D {
      */
     public static List<String> userTables() {
         List<String> userTables = new ArrayList<>();
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             List<String> allTables = DerbyBase.allTables(conn);
             for (String name : allTables) {
                 if (!DataInternalTable.InternalTables.contains(name.toUpperCase())) {

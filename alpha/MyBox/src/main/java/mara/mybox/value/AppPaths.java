@@ -18,16 +18,17 @@ public class AppPaths {
         return new File(getGeneratedPath());
     }
 
-    public static boolean reservedPath(String filename) {
+    public static boolean sysPath(String filename) {
         if (filename == null || filename.isBlank()) {
             return false;
         }
-        return filename.startsWith(getImageClipboardPath())
-                || filename.startsWith(getDataClipboardPath())
-                || filename.startsWith(getImageHisPath())
-                || filename.startsWith(getImageScopePath())
-                || filename.startsWith(getLanguagesPath())
-                || filename.startsWith(getBackupsPath());
+        return filename.startsWith(AppVariables.MyBoxTempPath.getAbsolutePath() + File.separator)
+                || filename.startsWith(getImageClipboardPath() + File.separator)
+                || filename.startsWith(getDataClipboardPath() + File.separator)
+                || filename.startsWith(getImageHisPath() + File.separator)
+                || filename.startsWith(getImageScopePath() + File.separator)
+                || filename.startsWith(getLanguagesPath() + File.separator)
+                || filename.startsWith(getBackupsPath() + File.separator);
     }
 
     public static String getPath(String name) {

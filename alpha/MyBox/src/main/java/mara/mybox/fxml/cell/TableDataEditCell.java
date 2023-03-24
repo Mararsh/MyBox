@@ -24,7 +24,7 @@ public class TableDataEditCell extends TableDataCell {
     }
 
     @Override
-    public void startEdit() {
+    public void startEditDo() {
         String s = getItem();
         if (supportMultipleLine && s != null && s.contains("\n")) {
             TextInputController inputController = TextInputController.open(dataControl, name(), s);
@@ -40,13 +40,16 @@ public class TableDataEditCell extends TableDataCell {
             inputController.getNotify().addListener(getListener);
 
         } else {
-            super.startEdit();
+            super.startEditDo();
         }
     }
 
     @Override
     public void commitEdit(String inValue) {
         try {
+            if (!validEditing()) {
+                return;
+            }
             clearEditor();
             setCellValue(inValue);
         } catch (Exception e) {

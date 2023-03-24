@@ -138,12 +138,8 @@ public class MyBoxLanguagesController extends BaseController {
         }
 
         @Override
-        public void startEdit() {
-            int row = rowIndex();
-            if (row < 0) {
-                return;
-            }
-            LanguageItem item = tableData.get(row);
+        public void startEditDo() {
+            LanguageItem item = tableData.get(editingRow);
             String en = item.getEnglish();
             String value = item.getValue();
             if (value != null && value.contains("\n") || en != null && en.contains("\n")) {
@@ -155,13 +151,13 @@ public class MyBoxLanguagesController extends BaseController {
                         String value = inputController.getInput();
                         inputController.getNotify().removeListener(getListener);
                         getListener = null;
-                        setCellValue(row, value);
+                        setCellValue(editingRow, value);
                         inputController.closeStage();
                     }
                 };
                 inputController.getNotify().addListener(getListener);
             } else {
-                super.startEdit();
+                super.startEditDo();
             }
         }
 

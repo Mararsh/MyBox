@@ -231,16 +231,16 @@ public class ColumnDefinition extends BaseData {
                 case Double:
                 case Longitude:
                 case Latitude:
-                    Double.parseDouble(value.replaceAll(",", ""));
+                    Double.valueOf(value.replaceAll(",", ""));
                     return true;
                 case Float:
-                    Float.parseFloat(value.replaceAll(",", ""));
+                    Float.valueOf(value.replaceAll(",", ""));
                     return true;
                 case Long:
-                    Long.parseLong(value);
+                    Long.valueOf(value);
                     return true;
                 case Integer:
-                    Integer.parseInt(value.replaceAll(",", ""));
+                    Integer.valueOf(value.replaceAll(",", ""));
                     return true;
                 case Boolean:
                     String v = value.toLowerCase();
@@ -250,7 +250,7 @@ public class ColumnDefinition extends BaseData {
                             || message("true").equals(v) || message("false").equals(v)
                             || message("yes").equals(v) || message("no").equals(v);
                 case Short:
-                    Short.parseShort(value);
+                    Short.valueOf(value);
                     return true;
                 case Datetime:
                 case Date:
@@ -865,12 +865,12 @@ public class ColumnDefinition extends BaseData {
         try {
             switch (targetType) {
                 case Double:
-                    return Double.parseDouble(string.replaceAll(",", ""));
+                    return Double.valueOf(string.replaceAll(",", ""));
                 case Longitude:
                 case Latitude:
-                    return Double.parseDouble(string.replaceAll(",", ""));
+                    return Double.valueOf(string.replaceAll(",", ""));
                 case Float:
-                    return Float.parseFloat(string.replaceAll(",", ""));
+                    return Float.valueOf(string.replaceAll(",", ""));
                 case Long:
                     return Math.round(Double.parseDouble(string.replaceAll(",", "")));
                 case Integer:

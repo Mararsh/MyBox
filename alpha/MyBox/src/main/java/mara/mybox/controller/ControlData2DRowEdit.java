@@ -399,7 +399,8 @@ public class ControlData2DRowEdit extends BaseController {
                     }
 
                 }
-                if (column.validValue(value) && editController.data2D.validValue(value)) {
+                if (column.isAuto()
+                        || (column.validValue(value) && editController.data2D.validValue(value))) {
                     row.add(value);
                 } else {
                     popError(message("Invalid") + ": " + column.getColumnName());

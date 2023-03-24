@@ -139,7 +139,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             return;
         }
         String fname = file.getAbsolutePath();
-        if (AppPaths.reservedPath(fname)) {
+        if (AppPaths.sysPath(fname)) {
             return;
         }
         try (Connection conn = DerbyBase.getConnection()) {
@@ -155,7 +155,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
                 return;
             }
             String fname = file.getAbsolutePath();
-            if (AppPaths.reservedPath(fname)) {
+            if (AppPaths.sysPath(fname)) {
                 return;
             }
             String path;
@@ -197,7 +197,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             return;
         }
         String fname = file.getAbsolutePath();
-        if (AppPaths.reservedPath(fname)) {
+        if (AppPaths.sysPath(fname)) {
             return;
         }
         try (Connection conn = DerbyBase.getConnection()) {
@@ -213,7 +213,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
                 return;
             }
             String fname = file.getAbsolutePath();
-            if (AppPaths.reservedPath(fname)) {
+            if (AppPaths.sysPath(fname)) {
                 return;
             }
             String path;
@@ -251,7 +251,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             return;
         }
         String fname = file.getAbsolutePath();
-        if (AppPaths.reservedPath(fname)) {
+        if (AppPaths.sysPath(fname)) {
             return;
         }
         recordFileOpened(file, SourcePathType, AddFileType);
