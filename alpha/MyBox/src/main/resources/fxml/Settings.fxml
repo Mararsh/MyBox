@@ -75,7 +75,7 @@ License:    Apache License Version 2.0
                                                         <Label text="%ControlsColor" />
                                                         <RadioButton fx:id="redRadio" mnemonicParsing="false">
                                                             <graphic>
-                                                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#9D2933" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+                                                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#C32136" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
                                                             </graphic>
                                                             <toggleGroup>
                                                                 <ToggleGroup fx:id="controlColorGroup" />
@@ -83,7 +83,7 @@ License:    Apache License Version 2.0
                                                         </RadioButton>
                                                         <RadioButton fx:id="pinkRadio" layoutX="602.0" layoutY="15.0" mnemonicParsing="false" toggleGroup="$controlColorGroup">
                                                             <graphic>
-                                                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#FF2D51" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+                                                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#9E004F" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
                                                             </graphic>
                                                         </RadioButton>
                                                         <RadioButton fx:id="lightBlueRadio" layoutX="904.0" layoutY="15.0" mnemonicParsing="false" toggleGroup="$controlColorGroup">
@@ -149,16 +149,16 @@ License:    Apache License Version 2.0
                                                         <CheckBox fx:id="splitPaneSensitiveCheck" mnemonicParsing="false" onAction="#splitPaneSensitive" text="%Sensitive" />
                                                     </children>
                                                 </HBox>
-                                    <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="66.0" spacing="10.0">
-                                       <children>
-                                          <Label text="%SelectorScrollSize">
-                                             <HBox.margin>
-                                                <Insets />
-                                             </HBox.margin>
-                                          </Label>
-                                          <ComboBox fx:id="scrollSizeSelector" editable="true" prefWidth="100.0" />
-                                       </children>
-                                    </HBox>
+                                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="66.0" spacing="10.0">
+                                                    <children>
+                                                        <Label text="%SelectorScrollSize">
+                                                            <HBox.margin>
+                                                                <Insets />
+                                                            </HBox.margin>
+                                                        </Label>
+                                                        <ComboBox fx:id="scrollSizeSelector" editable="true" prefWidth="100.0" />
+                                                    </children>
+                                                </HBox>
                                                 <VBox minHeight="-Infinity" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                     <children>
                                                         <Label text="%Message" />

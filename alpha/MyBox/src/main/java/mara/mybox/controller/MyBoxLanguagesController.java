@@ -138,7 +138,7 @@ public class MyBoxLanguagesController extends BaseController {
         }
 
         @Override
-        public void startEditDo() {
+        public void editCell() {
             LanguageItem item = tableData.get(editingRow);
             String en = item.getEnglish();
             String value = item.getValue();
@@ -157,7 +157,7 @@ public class MyBoxLanguagesController extends BaseController {
                 };
                 inputController.getNotify().addListener(getListener);
             } else {
-                super.startEditDo();
+                super.editCell();
             }
         }
 

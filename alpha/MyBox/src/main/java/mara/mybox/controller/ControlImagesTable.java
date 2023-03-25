@@ -152,25 +152,30 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
                         }
 
                         @Override
-                        public void commitEdit(Long value) {
+                        public boolean setCellValue(Long value) {
                             try {
-                                int rowIndex = rowIndex();
-                                if (rowIndex < 0 || !valid(value)) {
+                                if (!valid(value)) {
                                     cancelEdit();
-                                    return;
+                                    return false;
                                 }
-                                ImageInformation row = tableData.get(rowIndex);
-                                if (value != row.getDuration()) {
-                                    super.commitEdit(value);
-                                    row.setDuration(value);
-                                    if (!isSettingValues) {
-                                        Platform.runLater(() -> {
-                                            updateLabel();
-                                        });
-                                    }
+                                ImageInformation row = tableData.get(editingRow);
+                                if (value == row.getDuration()) {
+                                    cancelEdit();
+                                    return false;
                                 }
+                                if (!super.setCellValue(value)) {
+                                    return false;
+                                }
+                                row.setDuration(value);
+                                if (!isSettingValues) {
+                                    Platform.runLater(() -> {
+                                        updateLabel();
+                                    });
+                                }
+                                return true;
                             } catch (Exception e) {
                                 MyBoxLog.debug(e);
+                                return false;
                             }
                         }
                     };

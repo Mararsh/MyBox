@@ -29,7 +29,8 @@ public class TableDataCell extends TableAutoCommitCell<List<String>, String> {
         return getItem();
     }
 
-    protected boolean setCellValue(String inValue) {
+    @Override
+    public boolean setCellValue(String inValue) {
         try {
             String value = inValue;
             if (value != null && supportMultipleLine) {

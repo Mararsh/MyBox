@@ -19,7 +19,7 @@ public class TableDataCoordinateEditCell extends TableDataEditCell {
     }
 
     @Override
-    public void startEditDo() {
+    public void editCell() {
         Data2DCoordinatePickerController.open(dataControl, editingRow);
     }
 

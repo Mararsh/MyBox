@@ -6,11 +6,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javax.imageio.ImageIO;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.style.StyleData.StyleColor;
 import mara.mybox.fxml.style.StyleTools;
@@ -46,50 +46,65 @@ public class MyBoxIconsController extends BaseBatchFileController {
                     .defaultFile("win".equals(SystemTools.os()) ? new File("D:\\MyBox") : new File("/home/mara/mybox"))
                     .baseName(baseName).savedName(baseName + "SourceCodesPath").init();
 
-            sourceCodesPathController.notify.addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
-                checkPath();
-            });
-            checkPath();
-
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
 
-    public boolean checkPath() {
-        try {
-            tableData.clear();
-            srcRoot = sourceCodesPathController.file();
-            if (srcRoot == null) {
-                popError(message("InvalidSourceCodesPath"));
-                return false;
-            }
-            resourcePath = srcRoot + "/src/main/resources/";
-            String redPath = resourcePath + StyleTools.ButtonsSourcePath + "Red/";
-            if (!new File(redPath).exists()) {
-                popError(message("WrongSourceCodesPath"));
-                return false;
-            }
-            List<File> icons = Arrays.asList(new File(redPath).listFiles());
-            Collections.sort(icons, new Comparator<File>() {
-                @Override
-                public int compare(File v1, File v2) {
-                    long diff = v2.lastModified() - v1.lastModified();
-                    if (diff == 0) {
-                        return 0;
-                    } else if (diff > 0) {
-                        return 1;
-                    } else {
-                        return -1;
-                    }
-                }
-            });
-            tableController.addFiles(0, icons);
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return false;
+    @Override
+    public void goAction() {
+        if (task != null) {
+            task.cancel();
         }
+        srcRoot = sourceCodesPathController.file();
+        if (srcRoot == null) {
+            popError(message("InvalidSourceCodesPath"));
+            return;
+        }
+        resourcePath = srcRoot + "/src/main/resources/";
+        String redPath = resourcePath + StyleTools.ButtonsSourcePath + "Red/";
+        if (!new File(redPath).exists()) {
+            popError(message("WrongSourceCodesPath"));
+            return;
+        }
+        task = new SingletonTask<Void>(this) {
+            private List<File> icons = null;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    icons = Arrays.asList(new File(redPath).listFiles());
+                    Collections.sort(icons, new Comparator<File>() {
+                        @Override
+                        public int compare(File v1, File v2) {
+                            long diff = v2.lastModified() - v1.lastModified();
+                            if (diff == 0) {
+                                return 0;
+                            } else if (diff > 0) {
+                                return 1;
+                            } else {
+                                return -1;
+                            }
+                        }
+                    });
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+            }
+
+            @Override
+            protected void taskQuit() {
+                tableController.addFiles(0, icons);
+                task = null;
+            }
+        };
+        start(task);
     }
 
     @Override
@@ -99,6 +114,7 @@ public class MyBoxIconsController extends BaseBatchFileController {
                 actualParameters = null;
                 return false;
             }
+            targetPath = new File(resourcePath);
             updateLogs(resourcePath + StyleTools.ButtonsSourcePath);
             if (tableController.isNoneSelected()) {
                 for (StyleColor style : StyleColor.values()) {
@@ -118,6 +134,7 @@ public class MyBoxIconsController extends BaseBatchFileController {
     @Override
     public String handleFile(File file) {
         try {
+            MyBoxLog.console(file);
             if (task == null || task.isCancelled()) {
                 return message("Canceled");
             }

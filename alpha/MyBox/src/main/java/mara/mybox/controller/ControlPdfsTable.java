@@ -17,8 +17,8 @@ import javafx.scene.layout.HBox;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.converter.IntegerStringFromatConverter;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
+import mara.mybox.fxml.converter.IntegerStringFromatConverter;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.Languages;
@@ -91,20 +91,22 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
                         = new TableAutoCommitCell<PdfInformation, Integer>(new IntegerStringFromatConverter()) {
 
                     @Override
-                    public void commitEdit(Integer value) {
+                    public boolean setCellValue(Integer value) {
                         try {
-                            int rowIndex = rowIndex();
-                            if (rowIndex < 0 || value == null || value < 0) {
+                            if (value == null || value < 0) {
                                 cancelEdit();
-                                return;
+                                return false;
                             }
-                            super.commitEdit(value);
-                            PdfInformation row = tableData.get(rowIndex);
+                            if (!super.setCellValue(value)) {
+                                return false;
+                            }
+                            PdfInformation row = tableData.get(editingRow);
                             row.setFromPage(value);
+                            return true;
                         } catch (Exception e) {
                             MyBoxLog.debug(e);
+                            return false;
                         }
-
                     }
                 };
                 return cell;
@@ -117,18 +119,21 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
                         = new TableAutoCommitCell<PdfInformation, Integer>(new IntegerStringFromatConverter()) {
 
                     @Override
-                    public void commitEdit(Integer value) {
+                    public boolean setCellValue(Integer value) {
                         try {
-                            int rowIndex = rowIndex();
-                            if (rowIndex < 0 || value == null) {
+                            if (value == null) {
                                 cancelEdit();
-                                return;
+                                return false;
                             }
-                            super.commitEdit(value);
-                            PdfInformation row = tableData.get(rowIndex);
+                            if (!super.setCellValue(value)) {
+                                return false;
+                            }
+                            PdfInformation row = tableData.get(editingRow);
                             row.setToPage(value);
+                            return true;
                         } catch (Exception e) {
                             MyBoxLog.debug(e);
+                            return false;
                         }
 
                     }

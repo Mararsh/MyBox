@@ -334,7 +334,7 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
                         continue;
                     }
                     File imageFile = new File(image);
-                    if (!imageFile.exists()) {
+                    if (!imageFile.exists() && !clear.contains(imageFile.getAbsolutePath())) {
                         clear.add(imageFile.getAbsolutePath());
                         recordInfo(task, message("NotFound") + ": " + image);
                     } else {

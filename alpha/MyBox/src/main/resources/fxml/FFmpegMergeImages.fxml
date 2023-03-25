@@ -49,12 +49,6 @@ License:    Apache License Version 2.0
                                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                             </padding>
                                             <children>
-                                    <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                       <children>
-                                          <Label text="%Duration" />
-                                          <CheckBox fx:id="shortestCheck" mnemonicParsing="false" selected="true" text="%Shortest" />
-                                       </children>
-                                    </HBox>
                                                 <fx:include fx:id="ffmpegOptions" source="ControlFFmpegOptions.fxml" HBox.hgrow="ALWAYS" />
                                             </children>
                                         </VBox>

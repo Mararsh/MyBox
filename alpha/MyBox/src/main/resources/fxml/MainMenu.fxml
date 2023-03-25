@@ -422,12 +422,12 @@ License:    Apache License Version 2.0
                                                 <ToggleGroup fx:id="colorGroup" />
                                             </toggleGroup>
                                             <graphic>
-                                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#9D2933" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+                                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#C32136" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
                                             </graphic>
                                         </RadioMenuItem>
                                         <RadioMenuItem fx:id="pinkMenuItem" mnemonicParsing="false" onAction="#setPink" text="%MyBoxColorPinkDark" toggleGroup="$colorGroup">
                                             <graphic>
-                                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#FF2D51" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+                                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#9E004F" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
                                             </graphic>
                                         </RadioMenuItem>
                                         <RadioMenuItem fx:id="lightBlueMenuItem" mnemonicParsing="false" onAction="#setLightBlue" text="%MyBoxColorLightBlueDark" toggleGroup="$colorGroup">

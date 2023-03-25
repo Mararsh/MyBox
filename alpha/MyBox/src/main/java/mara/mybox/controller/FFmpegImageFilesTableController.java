@@ -10,8 +10,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.converter.LongStringFromatConverter;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
+import mara.mybox.fxml.converter.LongStringFromatConverter;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -85,25 +85,30 @@ public class FFmpegImageFilesTableController extends FilesTableController {
                     }
 
                     @Override
-                    public void commitEdit(Long value) {
+                    public boolean setCellValue(Long value) {
                         try {
-                            int rowIndex = rowIndex();
-                            if (rowIndex < 0 || !valid(value)) {
+                            if (!valid(value)) {
                                 cancelEdit();
-                                return;
+                                return false;
                             }
-                            FileInformation row = tableData.get(rowIndex);
-                            if (value != row.getDuration()) {
-                                super.commitEdit(value);
-                                row.setDuration(value);
-                                if (!isSettingValues) {
-                                    Platform.runLater(() -> {
-                                        updateLabel();
-                                    });
-                                }
+                            FileInformation row = tableData.get(editingRow);
+                            if (value == row.getDuration()) {
+                                cancelEdit();
+                                return false;
                             }
+                            if (!super.setCellValue(value)) {
+                                return false;
+                            }
+                            row.setDuration(value);
+                            if (!isSettingValues) {
+                                Platform.runLater(() -> {
+                                    updateLabel();
+                                });
+                            }
+                            return true;
                         } catch (Exception e) {
                             MyBoxLog.debug(e);
+                            return false;
                         }
                     }
                 };

@@ -380,10 +380,19 @@ License:    Apache License Version 2.0
                                                 </ScrollPane>
                                             </content>
                                         </TitledPane>
-                                        <TitledPane fx:id="browsePane" expanded="false" text="%Browse">
+                                        <TitledPane fx:id="browsePane" text="%Browse">
                                             <content>
                                                 <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                     <children>
+                                          <Button fx:id="browseButton" mnemonicParsing="false" onAction="#browseAction">
+                                             <graphic>
+                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/Red/iconBrowse.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
                                                         <RadioButton fx:id="NameAscRadio" mnemonicParsing="false" selected="true" text="%NameAsc">
                                                             <toggleGroup>
                                                                 <ToggleGroup fx:id="sortGroup" />

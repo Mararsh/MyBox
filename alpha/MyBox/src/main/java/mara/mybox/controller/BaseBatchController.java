@@ -554,6 +554,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
 
     public void doCurrentProcess() {
         try {
+            MyBoxLog.console(sourceFiles.size());
             if (currentParameters == null || sourceFiles.isEmpty()) {
                 return;
             }

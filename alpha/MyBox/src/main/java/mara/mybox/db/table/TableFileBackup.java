@@ -181,7 +181,7 @@ public class TableFileBackup extends BaseTable<FileBackup> {
                     File file = data.getFile();
                     if (file == null) {
                         invalid.add(data);
-                    } else if (!file.exists()) {
+                    } else if (!file.exists() && !clear.contains(file.getAbsolutePath())) {
                         clear.add(file.getAbsolutePath());
                         recordInfo(task, message("NotFound") + ": " + file.getAbsolutePath());
                     } else {

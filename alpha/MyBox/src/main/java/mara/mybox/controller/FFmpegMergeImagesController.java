@@ -11,7 +11,6 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.ScaleTools;
@@ -45,8 +44,6 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
     protected Tab imagesTab, audiosTab;
     @FXML
     protected ControlFFmpegAudiosTable audiosTableController;
-    @FXML
-    protected CheckBox shortestCheck;
 
     public FFmpegMergeImagesController() {
         baseTitle = message("FFmpegMergeImagesInformation");
@@ -67,6 +64,8 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
             audiosTableController.parentFxml = myFxml;
 
             audiosData = audiosTableController.tableData;
+
+            ffmpegOptionsController.durationBox.setVisible(true);
 
             ffmpegOptionsController.extensionInput.textProperty().addListener(
                     (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
@@ -298,7 +297,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
                 parameters.add("-i");
                 parameters.add(audiosListFile.getAbsolutePath());
             }
-            if (shortestCheck != null && shortestCheck.isSelected()) {
+            if (ffmpegOptionsController.shortestCheck.isSelected()) {
                 parameters.add("-shortest");
             }
             parameters.add("-s");

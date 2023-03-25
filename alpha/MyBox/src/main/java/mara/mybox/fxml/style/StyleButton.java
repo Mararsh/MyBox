@@ -62,6 +62,14 @@ public class StyleButton {
                     return new StyleData(id, message("Save"), "", "iconSave.png");
             }
         }
+        if (id.startsWith("cancel")) {
+            switch (id) {
+                case "cancelButton":
+                    return new StyleData(id, message("Cancel"), "ESC", "iconCancel.png");
+                default:
+                    return new StyleData(id, message("Cancel"), "", "iconCancel.png");
+            }
+        }
         if (id.startsWith("create")) {
             switch (id) {
                 case "createButton":
@@ -678,8 +686,6 @@ public class StyleButton {
                 return new StyleData(id, message("Select"), "", "iconSelect.png");
             case "unselectButton":
                 return new StyleData(id, message("Unselect"), "", "iconSelectNone.png");
-            case "cancelButton":
-                return new StyleData("cancelButton", message("Cancel"), "ESC", "iconCancel.png");
             case "cropButton":
                 return new StyleData("cropButton", message("Crop"), "CTRL+x / ALT+x", "iconCrop.png");
             case "metaButton":

@@ -402,15 +402,6 @@ public class ColorPalettePopupController extends BaseChildController {
     }
 
     @FXML
-    @Override
-    public void closePopup() {
-        if (parentController != null) {
-            parentController.closePopup();
-        }
-        super.closePopup();
-    }
-
-    @FXML
     public void exitPane() {
         if (enteredRect != null && !enteredRect.equals(clickedRect)) {
             enteredRect.setEffect(null);

@@ -39,7 +39,7 @@ public class TableDataColorEditCell extends TableDataEditCell {
     }
 
     @Override
-    public void startEditDo() {
+    public void editCell() {
         Node g = getGraphic();
         if (g == null || !(g instanceof Rectangle)) {
             return;

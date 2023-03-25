@@ -365,21 +365,22 @@ public class GameEliminationController extends BaseController {
                         }
 
                         @Override
-                        public void commitEdit(Integer value) {
+                        public boolean setCellValue(Integer value) {
                             try {
-                                int rowIndex = rowIndex();
-                                if (rowIndex < 0 || !valid(value)) {
+                                if (!valid(value)) {
                                     cancelEdit();
-                                    return;
+                                    return false;
                                 }
-                                ScoreRuler row = scoreRulersData.get(rowIndex);
+                                ScoreRuler row = scoreRulersData.get(editingRow);
                                 if (row == null || value == null || value < 0) {
-                                    return;
+                                    cancelEdit();
+                                    return false;
                                 }
-                                super.commitEdit(value);
                                 row.score = value;
+                                return super.setCellValue(value);
                             } catch (Exception e) {
                                 MyBoxLog.debug(e);
+                                return false;
                             }
                         }
                     };

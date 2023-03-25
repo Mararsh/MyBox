@@ -116,7 +116,7 @@ public class TableImageClipboard extends BaseTable<ImageClipboard> {
                     File imageFile = data.getImageFile();
                     if (imageFile == null) {
                         invalid.add(data);
-                    } else if (!imageFile.exists()) {
+                    } else if (!imageFile.exists() && !clear.contains(imageFile.getAbsolutePath())) {
                         clear.add(imageFile.getAbsolutePath());
                         recordInfo(task, message("NotFound") + ": " + imageFile.getAbsolutePath());
                     } else {

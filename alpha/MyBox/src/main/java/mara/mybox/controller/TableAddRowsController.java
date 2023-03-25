@@ -150,10 +150,11 @@ public class TableAddRowsController extends BaseChildController {
                 index++;
             }
             addRow(index, number);
-            popSuccessful();
+            close();
 
-            setSelector();
+            tableViewController.popSuccessful();
 
+//            setSelector();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

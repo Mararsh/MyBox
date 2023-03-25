@@ -49,8 +49,7 @@ import mara.mybox.value.UserConfig;
 public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
 
     protected String editingText;
-    protected boolean isFocused;
-    protected int editingRow;
+    protected int editingRow = -1;
     protected ChangeListener<Boolean> focusListener;
     protected ChangeListener<String> editListener;
 
@@ -87,7 +86,7 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
     }
 
     public int rowIndex() {
-        int rowIndex = -1;
+        int rowIndex = -2;
         try {
             int v = getTableRow().getIndex();
             if (v >= 0 && v < size()) {
@@ -98,7 +97,7 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
         return rowIndex;
     }
 
-    public boolean validEditing() {
+    public boolean isEditingRow() {
         int rowIndex = rowIndex();
         return rowIndex >= 0 && editingRow == rowIndex;
 
@@ -130,20 +129,24 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
                 + getTableColumn().getText();
     }
 
+    public boolean initEditor() {
+        editingRow = rowIndex();
+        return editingRow >= 0;
+    }
+
     @Override
     public void startEdit() {
         try {
-            editingRow = rowIndex();
-            if (editingRow < 0) {
+            if (!initEditor()) {
                 return;
             }
-            startEditDo();
+            editCell();
         } catch (Exception e) {
             MyBoxLog.console(e);
         }
     }
 
-    public void startEditDo() {
+    public void editCell() {
         try {
             super.startEdit();
 
@@ -154,7 +157,6 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
             if (editor == null) {
                 return;
             }
-            isFocused = true;
             editingText = editor.getText();
             editor.focusedProperty().addListener(focusListener);
             editor.textProperty().addListener(editListener);
@@ -169,10 +171,9 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 try {
-                    if (isFocused && !newValue && validEditing()) {
+                    if (!newValue && isEditingRow()) {
                         commitEdit(getConverter().fromString(editingText));
                     }
-                    isFocused = newValue;
                 } catch (Exception e) {
                 }
             }
@@ -182,7 +183,7 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 try {
-                    if (!isFocused || !validEditing()) {
+                    if (!isEditingRow()) {
                         return;
                     }
                     TextField editor = editor();
@@ -219,10 +220,19 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
     @Override
     public void commitEdit(T value) {
         try {
-            if (!validEditing()) {
+            if (!isEditingRow()) {
+                cancelEdit();
                 return;
             }
             clearEditor();
+            setCellValue(value);
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
+    }
+
+    public boolean setCellValue(T value) {
+        try {
             boolean valid = valid(value);
             boolean changed = changed(value);
             if (isEditing()) {
@@ -232,17 +242,19 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
                     cancelEdit();
                 }
             } else {
-                commit(value, valid, changed);
+                return commit(value, valid, changed);
             }
+            return true;
         } catch (Exception e) {
             MyBoxLog.debug(e);
+            return false;
         }
     }
 
-    public void commit(T value, boolean valid, boolean changed) {
+    public boolean commit(T value, boolean valid, boolean changed) {
         try {
             TableView<S> table = getTableView();
-            if (valid && valid && table != null && validEditing()) {
+            if (valid && valid && table != null && isEditingRow()) {
                 TableColumn<S, T> column = getTableColumn();
                 if (column == null) {
                     cancelEdit();
@@ -258,9 +270,18 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
             if (table != null) {
                 table.edit(-1, null);
             }
+            editingRow = -1;
+            return true;
         } catch (Exception e) {
             MyBoxLog.debug(e);
+            return false;
         }
+    }
+
+    @Override
+    public void cancelEdit() {
+        super.cancelEdit();
+        editingRow = -1;
     }
 
     /*

@@ -18,6 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
@@ -74,6 +75,10 @@ public class ControlFFmpegOptions extends BaseController {
     protected CheckBox stereoCheck;
     @FXML
     protected Button helpMeButton;
+    @FXML
+    protected HBox durationBox;
+    @FXML
+    protected CheckBox shortestCheck;
 
     public ControlFFmpegOptions() {
         baseTitle = message("FFmpegOptions");
@@ -117,6 +122,10 @@ public class ControlFFmpegOptions extends BaseController {
 
             if (functionBox != null) {
                 functionBox.disableProperty().bind(executableInput.styleProperty().isEqualTo(UserConfig.badStyle()));
+            }
+
+            if (durationBox != null) {
+                durationBox.setVisible(false);
             }
 
         } catch (Exception e) {
@@ -203,7 +212,7 @@ public class ControlFFmpegOptions extends BaseController {
         if (executable == null) {
             return;
         }
-        ffmpegController.tabPane.getSelectionModel().select(ffmpegController.logsTab);
+//        ffmpegController.tabPane.getSelectionModel().select(ffmpegController.logsTab);
         synchronized (this) {
             if (muxerTask != null && !muxerTask.isQuit()) {
                 return;
@@ -322,7 +331,7 @@ public class ControlFFmpegOptions extends BaseController {
             if (encoderTask != null && !encoderTask.isQuit()) {
                 return;
             }
-            ffmpegController.tabPane.getSelectionModel().select(ffmpegController.logsTab);
+//            ffmpegController.tabPane.getSelectionModel().select(ffmpegController.logsTab);
             try {
                 List<String> command = new ArrayList<>();
                 command.add(executable.getAbsolutePath());
@@ -781,7 +790,8 @@ public class ControlFFmpegOptions extends BaseController {
                                 subtitleCodec = newValue.substring(0, pos);
                             }
                         });
-                subtitleEncoderSelector.getSelectionModel().select(UserConfig.getString("ffmpegDefaultSubtitleEncoder", "srt"));
+                subtitleEncoderSelector.getSelectionModel().select(
+                        UserConfig.getString("ffmpegDefaultSubtitleEncoder", message("NotSet")));
             }
 
         } catch (Exception e) {
