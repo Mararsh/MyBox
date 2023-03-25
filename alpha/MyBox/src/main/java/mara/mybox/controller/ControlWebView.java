@@ -1405,23 +1405,9 @@ public class ControlWebView extends BaseController {
                     }
                 }
 
-            }
+                Menu codesMenu = new Menu(message("Analyse"), StyleTools.getIconImageView("iconAnalyse.png"));
+                items.add(codesMenu);
 
-            Menu codesMenu = new Menu(message("Analyse"), StyleTools.getIconImageView("iconAnalyse.png"));
-            items.add(codesMenu);
-            if (!(this instanceof ControlHtmlRichEditor)) {
-                CheckMenuItem editableMenu = new CheckMenuItem(message("Editable"), StyleTools.getIconImageView("iconEdit.png"));
-                editableMenu.setSelected(UserConfig.getBoolean("WebViewEditable", false));
-                editableMenu.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        setEditable(editableMenu.isSelected());
-                    }
-                });
-                codesMenu.getItems().add(editableMenu);
-            }
-
-            if (html != null && !html.isBlank()) {
                 menu = new MenuItem(message("HtmlEditor"), StyleTools.getIconImageView("iconEdit.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     edit(address, html);
@@ -1490,15 +1476,28 @@ public class ControlWebView extends BaseController {
                 menu.setDisable(isFrameset);
                 extractMenu.getItems().add(menu);
 
-            }
+                items.add(new SeparatorMenuItem());
 
-            if (html != null && !html.isBlank()) {
                 menu = new MenuItem(message("SaveAs"), StyleTools.getIconImageView("iconSaveAs.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     saveAsAction();
                 });
                 items.add(menu);
+
+                if (!(this instanceof ControlHtmlRichEditor)) {
+                    CheckMenuItem editableMenu = new CheckMenuItem(message("Editable"), StyleTools.getIconImageView("iconEdit.png"));
+                    editableMenu.setSelected(UserConfig.getBoolean("WebViewEditable", false));
+                    editableMenu.setOnAction(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent event) {
+                            setEditable(editableMenu.isSelected());
+                        }
+                    });
+                    items.add(editableMenu);
+                }
+
                 items.add(new SeparatorMenuItem());
+
             }
 
             menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
