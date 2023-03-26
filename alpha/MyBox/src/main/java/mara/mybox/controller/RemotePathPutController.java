@@ -1,12 +1,16 @@
 package mara.mybox.controller;
 
+import com.jcraft.jsch.SftpProgressMonitor;
 import java.io.File;
 import java.text.MessageFormat;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
+import static mara.mybox.tools.FileTools.showFileSize;
+import mara.mybox.tools.FloatTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -18,7 +22,8 @@ import static mara.mybox.value.Languages.message;
 public class RemotePathPutController extends BaseBatchFileController {
 
     protected RemotePathManageController manageController;
-    protected String rootPathName, separator;
+    protected String targetPathName, separator;
+    protected long srcLen;
 
     @FXML
     protected TextField targetPathInput;
@@ -32,10 +37,15 @@ public class RemotePathPutController extends BaseBatchFileController {
     public void setParameters(RemotePathManageController manageController, String pathName) {
         try {
             this.manageController = manageController;
-            this.rootPathName = pathName;
+            this.targetPathName = pathName;
+            logsTextArea = manageController.logsTextArea;
+            logsMaxChars = manageController.logsMaxChars;
+            verboseCheck = manageController.verboseCheck;
+
             separator = "/";
 
-            targetPathInput.setText(rootPathName);
+            targetPathInput.setText(targetPathName);
+            targetPathInput.selectEnd();
             hostLabel.setText(manageController.remoteController.host());
 
         } catch (Exception e) {
@@ -46,21 +56,36 @@ public class RemotePathPutController extends BaseBatchFileController {
 
     @Override
     public boolean makeMoreParameters() {
-        targetPath = null;
-        actualParameters.targetRootPath = null;
-        actualParameters.targetPath = null;
+        targetPathName = targetPathInput.getText();
+        if (targetPathName == null || targetPathName.isBlank()) {
+            popError(message("InvalidParameter") + ": " + message("TargetPath"));
+            return false;
+        }
+
+        if (manageController.task != null) {
+            manageController.task.cancel();
+        }
+        manageController.tabPane.getSelectionModel().select(manageController.logsTab);
+        manageController.requestMouse();
         return super.makeMoreParameters();
     }
 
     @FXML
     @Override
     public void startAction() {
-        start();
+        runTask();
     }
 
     @Override
     public void startTask() {
         super.startAction();
+    }
+
+    @Override
+    public boolean beforeHandleFiles() {
+        manageController.task = task;
+        manageController.remoteController.task = task;
+        return manageController.checkConnection() && checkDirectory(targetPathName);
     }
 
     @Override
@@ -72,23 +97,28 @@ public class RemotePathPutController extends BaseBatchFileController {
             if (file == null || !file.isFile() || !match(file)) {
                 return message("Skip" + ": " + file);
             }
-            return handleFile2(file, rootPathName);
+            return handleFileWithName(file, targetPathName);
         } catch (Exception e) {
             return file + " " + e.toString();
         }
     }
 
     @Override
-    public String handleFile2(File srcFile, String targetPath) {
+    public String handleFileWithName(File srcFile, String targetPath) {
         try {
+            recordFiles(srcFile, targetPath);
             String targetName = makeTargetFilename(srcFile, targetPath);
             if (targetName == null) {
                 return message("Skip");
             }
-            updateLogs(MessageFormat.format(message("FilesGenerated"), targetName));
+            targetName = manageController.remoteController.fixFilename(targetName);
+            srcLen = srcFile.length();
+            showLogs("put " + srcFile.getAbsolutePath() + " " + targetName);
+            manageController.remoteController.sftp.put(srcFile.getAbsolutePath(), targetName, new PutMonitor());
+            showLogs(MessageFormat.format(message("FilesGenerated"), targetName));
             return message("Successful");
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            showLogs(e.toString());
             return null;
         }
     }
@@ -97,17 +127,62 @@ public class RemotePathPutController extends BaseBatchFileController {
     public String handleDirectory(File dir) {
         try {
             dirFilesNumber = dirFilesHandled = 0;
-            handleDirectory(dir, rootPathName);
+            handleDirectory(dir, targetPathName);
             return MessageFormat.format(message("DirHandledSummary"), dirFilesNumber, dirFilesHandled);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            showLogs(e.toString());
             return message("Failed");
         }
     }
 
     @Override
     public boolean checkDirectory(String pathname) {
-        return pathname != null;
+        try {
+            if (pathname == null) {
+                return false;
+            }
+            return manageController.remoteController.mkdirs(pathname);
+        } catch (Exception e) {
+            showLogs(e.toString());
+            return false;
+        }
+    }
+
+    @Override
+    public void donePost() {
+        tableView.refresh();
+        if (miaoCheck.isSelected()) {
+            SoundTools.miao3();
+        }
+        if (manageController == null) {
+            return;
+        }
+        manageController.loadPath();
+    }
+
+    private class PutMonitor implements SftpProgressMonitor {
+
+        private long len = 0;
+
+        @Override
+        public boolean count(long count) {
+            len += count;
+            if (manageController.verboseCheck.isSelected() && len % 500 == 0) {
+                updateLogs(message("Status") + ": "
+                        + FloatTools.percentage(len, srcLen) + "%   "
+                        + showFileSize(len) + "/" + showFileSize(srcLen));
+            }
+            return true;
+        }
+
+        @Override
+        public void end() {
+//            updateLogs(message("Done"));
+        }
+
+        @Override
+        public void init(int op, String src, String dest, long max) {
+        }
     }
 
     /*

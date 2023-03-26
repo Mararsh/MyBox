@@ -226,11 +226,10 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
         popMenu = new ContextMenu();
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
-                DataManufacture, ManageData, SpliceData, RowFilter, new SeparatorMenuItem(),
-                DataFile, matrix, database, DataInSystemClipboard, DataInMyBoxClipboard, new SeparatorMenuItem(),
+                DataManufacture, DataFile, matrix, database, ManageData, SpliceData, RowFilter,
+                DataInSystemClipboard, DataInMyBoxClipboard, new SeparatorMenuItem(),
                 calculation, MathFunction, new SeparatorMenuItem(),
-                Location, new SeparatorMenuItem(),
-                miscellaneousMenu
+                Location, miscellaneousMenu
         );
 
         popMenu.getItems().add(new SeparatorMenuItem());

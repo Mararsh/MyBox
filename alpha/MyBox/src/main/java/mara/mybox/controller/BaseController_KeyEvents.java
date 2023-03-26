@@ -620,7 +620,8 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
                 return keyESC();
 
         }
-        if (!isPopup() && !targetIsTextInput()) {
+        if (AppVariables.shortcutsOmitCtrlAlt
+                && !isPopup() && !targetIsTextInput()) {
             return controlAltFilter(event);
         }
         return false;

@@ -33,10 +33,10 @@ public class BaseTaskController extends BaseLogs {
     @FXML
     @Override
     public void startAction() {
-        start();
+        runTask();
     }
 
-    public void start() {
+    public void runTask() {
         if (startButton != null && startButton.getUserData() != null) {
             StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
             startButton.applyCss();

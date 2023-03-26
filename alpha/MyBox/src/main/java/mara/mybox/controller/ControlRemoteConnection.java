@@ -461,6 +461,18 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
         return -1;
     }
 
+    public boolean put(String srcName, String targetName) {
+        try {
+            String tname = fixFilename(targetName);
+            showLogs("put " + srcName + " " + tname);
+            sftp.put(srcName, tname);
+            return true;
+        } catch (Exception e) {
+            showLogs(e.toString());
+            return false;
+        }
+    }
+
     public boolean renameFile(String filename, String newname) {
         try {
             String name = fixFilename(filename);
@@ -469,7 +481,6 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
             return true;
         } catch (Exception e) {
             showLogs(e.toString());
-            taskController.popError(e.toString());
             return false;
         }
     }
@@ -567,7 +578,6 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
                 return false;
             }
             String fixedName = fixFilename(filename);
-            showLogs("mkdirs " + fixedName);
             String[] names = fixedName.split("/");
             String parent = "";
             for (String name : names) {
@@ -576,9 +586,14 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
                     continue;
                 }
                 String path = parent + "/" + name;
+                SftpATTRS attrs = null;
                 try {
-                    sftp.mkdir(path);
+                    attrs = sftp.stat(path);
                 } catch (Exception e) {
+                }
+                if (attrs == null) {
+                    showLogs("mkdirs " + path);
+                    sftp.mkdir(path);
                 }
                 parent = path;
             }
@@ -586,11 +601,6 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
         } catch (Exception e) {
             error = e.toString();
             showLogs(error);
-            if (task != null) {
-                task.setError(error);
-            } else {
-                taskController.popError(error);
-            }
             return false;
         }
     }

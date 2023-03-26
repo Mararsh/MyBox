@@ -38,13 +38,14 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     @FXML
     protected ToggleGroup langGroup;
     @FXML
-    protected CheckMenuItem closeCurrentCheck, recordWindowsSizeLocationCheck, popRecentCheck, popColorSetCheck, controlPanesCheck,
-            controlTextCheck, hidpiIconsCheck;
+    protected CheckMenuItem closeCurrentCheck, recordWindowsSizeLocationCheck, popRecentCheck,
+            popColorSetCheck, controlPanesCheck, shortcutsOmitCheck, controlTextCheck, hidpiIconsCheck;
     @FXML
     protected RadioMenuItem chineseMenuItem, englishMenuItem,
             font12MenuItem, font15MenuItem, font17MenuItem,
             normalIconMenuItem, bigIconMenuItem, smallIconMenuItem,
-            pinkMenuItem, redMenuItem, blueMenuItem, lightBlueMenuItem, orangeMenuItem, greenMenuItem, colorCustomizeMenuItem;
+            pinkMenuItem, redMenuItem, blueMenuItem, lightBlueMenuItem, orangeMenuItem,
+            greenMenuItem, colorCustomizeMenuItem;
     @FXML
     protected Rectangle colorCustomizeRect;
     @FXML
@@ -87,6 +88,7 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
         recordWindowsSizeLocationCheck.setSelected(AppVariables.recordWindowsSizeLocation);
         popRecentCheck.setSelected(AppVariables.fileRecentNumber > 0);
         popColorSetCheck.setSelected(UserConfig.getBoolean("PopColorSetWhenMouseHovering", true));
+        shortcutsOmitCheck.setSelected(AppVariables.shortcutsOmitCtrlAlt);
         controlPanesCheck.setSelected(UserConfig.getBoolean("MousePassControlPanes", true));
         checkControlColor();
     }
@@ -356,6 +358,12 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     @FXML
     protected void popColorSetAction() {
         UserConfig.setBoolean("PopColorSetWhenMouseHovering", popColorSetCheck.isSelected());
+    }
+
+    @FXML
+    protected void ShortcutsOmitCtrlAlt() {
+        AppVariables.shortcutsOmitCtrlAlt = shortcutsOmitCheck.isSelected();
+        UserConfig.setBoolean("ShortcutsOmitCtrlAlt", AppVariables.shortcutsOmitCtrlAlt);
     }
 
     @FXML

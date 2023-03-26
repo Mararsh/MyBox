@@ -105,7 +105,8 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         return message("Successful");
     }
 
-    public String handleFile2(File srcFile, String targetPath) {
+    public String handleFileWithName(File srcFile, String targetPath) {
+        recordFiles(srcFile, targetPath);
         return handleFile(srcFile, targetPath == null ? null : new File(targetPath));
     }
 
@@ -554,7 +555,6 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
 
     public void doCurrentProcess() {
         try {
-            MyBoxLog.console(sourceFiles.size());
             if (currentParameters == null || sourceFiles.isEmpty()) {
                 return;
             }
@@ -681,11 +681,11 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                 result = message("Invalid");
             }
             if (!message("Successful").equals(result)) {
-                updateLogs(result, true, true);
+                showLogs(result);
             }
             tableController.markFileHandled(currentParameters.currentIndex, result);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            showLogs(e.toString());
         }
     }
 
@@ -698,11 +698,12 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                 return message("Skip" + ": " + file);
             }
             if (currentParameters.targetPath != null) {
-                return handleFile2(file, currentParameters.targetPath);
+                return handleFileWithName(file, currentParameters.targetPath);
             } else {
-                return handleFile2(file, null);
+                return handleFileWithName(file, null);
             }
         } catch (Exception e) {
+            showLogs(e.toString());
             return file + " " + e.toString();
         }
     }
@@ -846,7 +847,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             }
             return MessageFormat.format(message("DirHandledSummary"), dirFilesNumber, dirFilesHandled);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            showLogs(e.toString());
             return message("Failed");
         }
     }
@@ -873,7 +874,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                     if (!match(srcFile)) {
                         continue;
                     }
-                    String result = handleFile2(srcFile, targetPath);
+                    String result = handleFileWithName(srcFile, targetPath);
                     if (!message("Failed").equals(result)
                             && !message("Skip").equals(result)) {
                         dirFilesHandled++;
@@ -895,7 +896,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            showLogs(e.toString());
             return false;
         }
     }
@@ -911,7 +912,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            showLogs(e.toString());
             return false;
         }
     }
@@ -969,16 +970,34 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         if (name == null) {
             return;
         }
+        String msg = MessageFormat.format(message("HandlingObject"), name);
         try {
-            if (new File(name).isFile()) {
+            File f = new File(name);
+            if (f.isFile()) {
                 totalFilesHandled++;
+                msg += " " + message("Length") + ": " + FileTools.showFileSize(f.length());
             }
         } catch (Exception e) {
         }
         fileStartTime = new Date();
-        String msg = MessageFormat.format(message("HandlingObject"), name);
-        updateStatusLabel(msg + "    " + message("StartTime") + ": " + DateTools.datetimeToString(fileStartTime));
-        updateLogs(msg, true, true);
+        updateStatusLabel(msg + "  " + message("StartTime") + ": " + DateTools.datetimeToString(fileStartTime));
+        showLogs(msg);
+    }
+
+    public void recordFiles(File srcFile, String targetPath) {
+        if (verboseCheck == null || !verboseCheck.isSelected()) {
+            return;
+        }
+        if (srcFile != null) {
+            String msg = message("SourceFile") + ": " + srcFile;
+            if (srcFile.isFile()) {
+                msg += " " + message("Length") + ": " + FileTools.showFileSize(srcFile.length());
+            }
+            updateLogs(msg);
+        }
+        if (targetPath != null && !targetPath.isBlank()) {
+            updateLogs(message("TargetPath") + ": " + targetPath);
+        }
     }
 
     public void showStatus(String info) {

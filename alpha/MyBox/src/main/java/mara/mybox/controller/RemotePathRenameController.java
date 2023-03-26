@@ -30,7 +30,9 @@ public class RemotePathRenameController extends BaseController {
             this.currentName = filename;
 
             currentInput.setText(filename);
+            currentInput.selectEnd();
             newInput.setText(filename);
+            newInput.selectEnd();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

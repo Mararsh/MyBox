@@ -177,7 +177,7 @@ public class DataExportController extends BaseTaskController {
         top = queryController.savedCondition.getTop();
         Platform.runLater(() -> {
             if (startButton.getUserData() == null) {
-                start();
+                runTask();
                 StyleTools.setNameIcon(startButton, Languages.message("Stop"), "iconStop.png");
                 startButton.applyCss();
                 startButton.setUserData("stop");
@@ -194,7 +194,7 @@ public class DataExportController extends BaseTaskController {
         });
     }
 
-    public void start() {
+    public void runTask() {
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;

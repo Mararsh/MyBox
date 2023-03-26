@@ -73,7 +73,7 @@ public class SettingsController extends BaseController {
     protected ToggleGroup langGroup, pdfMemGroup, controlColorGroup, derbyGroup, splitPanesGroup;
     @FXML
     protected CheckBox stopAlarmCheck, closeCurrentCheck, recordWindowsSizeLocationCheck,
-            anchorSolidCheck, controlsTextCheck, hidpiIconsCheck,
+            anchorSolidCheck, controlsTextCheck, hidpiIconsCheck, shortcutsOmitCheck,
             clearCurrentRootCheck, splitPaneSensitiveCheck,
             mousePassControlPanesCheck, popColorSetCheck;
     @FXML
@@ -194,6 +194,7 @@ public class SettingsController extends BaseController {
             splitPaneSensitiveCheck.setSelected(UserConfig.getBoolean("ControlSplitPanesSensitive", false));
             mousePassControlPanesCheck.setSelected(UserConfig.getBoolean("MousePassControlPanes", true));
             popColorSetCheck.setSelected(UserConfig.getBoolean("PopColorSetWhenMouseHovering", true));
+            shortcutsOmitCheck.setSelected(AppVariables.shortcutsOmitCtrlAlt);
 
             checkLanguage();
             checkPdfMem();
@@ -486,6 +487,12 @@ public class SettingsController extends BaseController {
     @FXML
     protected void popColorSet() {
         UserConfig.setBoolean("PopColorSetWhenMouseHovering", popColorSetCheck.isSelected());
+    }
+
+    @FXML
+    protected void shortcutsOmit() {
+        AppVariables.shortcutsOmitCtrlAlt = shortcutsOmitCheck.isSelected();
+        UserConfig.setBoolean("ShortcutsOmitCtrlAlt", AppVariables.shortcutsOmitCtrlAlt);
     }
 
     @FXML

@@ -44,9 +44,10 @@ public class AppVariables {
     public static AlarmClockController alarmClockController;
     public static MemoryUsageSetting pdfMemUsage;
     public static int sceneFontSize, fileRecentNumber, iconSize, thumbnailWidth;
-    public static boolean isChinese, closeCurrentWhenOpenTool, recordWindowsSizeLocation, controlDisplayText,
-            hidpiIcons, ignoreDbUnavailable, popErrorLogs, saveDebugLogs, detailedDebugLogs,
-            isTesting, handlingExit;
+    public static boolean isChinese, isTesting, handlingExit,
+            closeCurrentWhenOpenTool, recordWindowsSizeLocation, controlDisplayText,
+            hidpiIcons, shortcutsOmitCtrlAlt,
+            ignoreDbUnavailable, popErrorLogs, saveDebugLogs, detailedDebugLogs;
     public static TextClipboardMonitor textClipboardMonitor;
     public static ImageClipboardMonitor imageClipboardMonitor;
     public static Timer exitTimer;
@@ -69,6 +70,7 @@ public class AppVariables {
             ControlColor = StyleTools.getConfigStyleColor();
             controlDisplayText = UserConfig.getBoolean("ControlDisplayText", false);
             hidpiIcons = UserConfig.getBoolean("HidpiIcons", Toolkit.getDefaultToolkit().getScreenResolution() > 120);
+            shortcutsOmitCtrlAlt = UserConfig.getBoolean("ShortcutsOmitCtrlAlt", true);
             saveDebugLogs = UserConfig.getBoolean("SaveDebugLogs", false);
             detailedDebugLogs = UserConfig.getBoolean("DetailedDebugLogs", false);
             ignoreDbUnavailable = false;

@@ -99,7 +99,6 @@ public class RemotePathManageController extends FilesTreeController {
             deleteButton.setDisable(noSelected);
             permissionButton.setDisable(noSelected);
             renameButton.setDisable(noSelected);
-            saveAsButton.setDisable(noSelected);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -114,6 +113,7 @@ public class RemotePathManageController extends FilesTreeController {
     @FXML
     @Override
     public void openPath() {
+        remoteController.taskController = this;
         filesBox.setDisable(true);
         checkButtons();
         if (!remoteController.pickProfile()) {
@@ -127,7 +127,7 @@ public class RemotePathManageController extends FilesTreeController {
         if (task != null) {
             task.cancel();
         }
-        filesTreeView.setRoot(null);
+        remoteController.taskController = this;
         tabPane.getSelectionModel().select(logsTab);
         task = new SingletonTask<Void>(this) {
 
@@ -542,22 +542,21 @@ public class RemotePathManageController extends FilesTreeController {
             return;
         }
         TreeItem<FileNode> item = filesTreeView.getSelectionModel().getSelectedItem();
-        String filename = item == null ? null
-                : (StringTools.menuSuffix(item.getValue().path(true)) + "\n"
-                + StringTools.menuSuffix(item.getValue().getNodename()));
+        String filename;
+        if (item == null || item.getValue() == null) {
+            filename = null;
+        } else if (item.getValue().getParentNode() == null) {
+            filename = StringTools.menuSuffix(item.getValue().getNodename());
+        } else {
+            filename = (StringTools.menuSuffix(item.getValue().path(true)) + "\n"
+                    + StringTools.menuSuffix(item.getValue().getNodename()));
+        }
 
         List<MenuItem> items = new ArrayList<>();
         MenuItem menuItem = new MenuItem(filename);
         menuItem.setStyle("-fx-text-fill: #2e598a;");
         items.add(menuItem);
         items.add(new SeparatorMenuItem());
-
-        menuItem = new MenuItem(message("SaveAs"), StyleTools.getIconImageView("iconSaveAs.png"));
-        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
-            saveAsAction();
-        });
-        menuItem.setDisable(item == null);
-        items.add(menuItem);
 
         menuItem = new MenuItem(message("Download"), StyleTools.getIconImageView("iconDownload.png"));
         menuItem.setOnAction((ActionEvent menuItemEvent) -> {
@@ -598,13 +597,6 @@ public class RemotePathManageController extends FilesTreeController {
         menuItem.setOnAction((ActionEvent menuItemEvent) -> {
             putAction();
         });
-        items.add(menuItem);
-
-        menuItem = new MenuItem(message("DeleteFile"), StyleTools.getIconImageView("iconDelete.png"));
-        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
-            deleteFile();
-        });
-        menuItem.setDisable(item == null);
         items.add(menuItem);
 
         menuItem = new MenuItem(message("DeleteFiles"), StyleTools.getIconImageView("iconDelete.png"));
