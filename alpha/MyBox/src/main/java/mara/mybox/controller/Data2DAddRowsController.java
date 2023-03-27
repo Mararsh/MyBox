@@ -32,11 +32,11 @@ public class Data2DAddRowsController extends TableAddRowsController {
     }
 
     @Override
-    public void addRow(int index, int number) {
+    public int addRow(int index, int number) {
         try {
-            List<String> values = rowEditController.pickValues();
+            List<String> values = rowEditController.pickValues(false);
             if (values == null) {
-                return;
+                return -1;
             }
             List<List<String>> list = new ArrayList<>();
             for (int i = 0; i < number; i++) {
@@ -44,9 +44,10 @@ public class Data2DAddRowsController extends TableAddRowsController {
                 row.addAll(values);
                 list.add(row);
             }
-            tableViewController.addRows(index, list);
+            return tableViewController.addRows(index, list);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+            return -2;
         }
     }
 

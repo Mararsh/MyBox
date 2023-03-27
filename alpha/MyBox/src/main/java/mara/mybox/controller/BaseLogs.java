@@ -72,7 +72,10 @@ public class BaseLogs extends BaseController {
 
     public void initLogs() {
         if (logsTextArea != null) {
-            logsTextArea.setText("");
+            if (!logsTextArea.getText().isBlank()) {
+                updateLogs("\n\n", false, true);
+                return;
+            }
         }
         newLogs = new StringBuffer();
         logsNewlines = 0;

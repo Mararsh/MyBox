@@ -422,7 +422,7 @@ public class ControlData2D extends BaseController {
         if (task != null && !task.isQuit()) {
             return;
         }
-        if (checkBeforeSave() < 0) {
+        if (!tableController.verifyData() || checkBeforeSave() < 0) {
             return;
         }
         if (manageController != null && manageController instanceof DataManufactureController) {
@@ -633,6 +633,7 @@ public class ControlData2D extends BaseController {
     }
 
     @FXML
+    @Override
     public void refreshAction() {
         goPage();
     }

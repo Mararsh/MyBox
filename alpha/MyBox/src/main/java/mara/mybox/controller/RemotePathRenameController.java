@@ -2,6 +2,8 @@ package mara.mybox.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TreeItem;
+import mara.mybox.data.FileNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -15,7 +17,6 @@ import static mara.mybox.value.Languages.message;
 public class RemotePathRenameController extends BaseController {
 
     protected RemotePathManageController manageController;
-    protected String currentName, newName;
 
     @FXML
     protected TextField currentInput, newInput;
@@ -24,16 +25,19 @@ public class RemotePathRenameController extends BaseController {
         baseTitle = message("FileRename");
     }
 
-    public void setParameters(RemotePathManageController manageController, String filename) {
+    public void setParameters(RemotePathManageController manageController) {
         try {
             this.manageController = manageController;
-            this.currentName = filename;
 
-            currentInput.setText(filename);
-            currentInput.selectEnd();
-            newInput.setText(filename);
-            newInput.selectEnd();
-
+            TreeItem<FileNode> item = manageController.filesTreeView.getSelectionModel().getSelectedItem();
+            if (item != null && item.getValue() != null) {
+                String filename = item.getValue().fullName();
+                currentInput.setText(filename);
+                currentInput.selectEnd();
+                newInput.setText(filename);
+                newInput.selectEnd();
+            }
+            newInput.requestFocus();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             popError(e.toString());
@@ -44,12 +48,12 @@ public class RemotePathRenameController extends BaseController {
     @Override
     public void okAction() {
         try {
-            currentName = currentInput.getText();
+            String currentName = currentInput.getText();
             if (currentName == null || currentName.isBlank()) {
                 popError(message("InvalidParameter") + ": " + message("OriginalFileName"));
                 return;
             }
-            newName = newInput.getText();
+            String newName = newInput.getText();
             if (newName == null || newName.isBlank()) {
                 popError(message("InvalidParameter") + ": " + message("NewFileName"));
                 return;
@@ -68,14 +72,14 @@ public class RemotePathRenameController extends BaseController {
     /*
         static methods
      */
-    public static RemotePathRenameController open(RemotePathManageController manageController, String filename) {
+    public static RemotePathRenameController open(RemotePathManageController manageController) {
         try {
             if (manageController == null) {
                 return null;
             }
             RemotePathRenameController controller = (RemotePathRenameController) WindowTools.openChildStage(
                     manageController.getMyWindow(), Fxmls.RemotePathRenameFxml, false);
-            controller.setParameters(manageController, filename);
+            controller.setParameters(manageController);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {

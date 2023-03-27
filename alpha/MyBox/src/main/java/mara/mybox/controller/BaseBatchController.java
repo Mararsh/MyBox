@@ -106,7 +106,6 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     }
 
     public String handleFileWithName(File srcFile, String targetPath) {
-        recordFiles(srcFile, targetPath);
         return handleFile(srcFile, targetPath == null ? null : new File(targetPath));
     }
 
@@ -874,6 +873,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                     if (!match(srcFile)) {
                         continue;
                     }
+                    logSourceFile(srcFile);
                     String result = handleFileWithName(srcFile, targetPath);
                     if (!message("Failed").equals(result)
                             && !message("Skip").equals(result)) {
@@ -984,20 +984,15 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         showLogs(msg);
     }
 
-    public void recordFiles(File srcFile, String targetPath) {
-        if (verboseCheck == null || !verboseCheck.isSelected()) {
+    public void logSourceFile(File srcFile) {
+        if (verboseCheck == null || !verboseCheck.isSelected() || srcFile == null) {
             return;
         }
-        if (srcFile != null) {
-            String msg = message("SourceFile") + ": " + srcFile;
-            if (srcFile.isFile()) {
-                msg += " " + message("Length") + ": " + FileTools.showFileSize(srcFile.length());
-            }
-            updateLogs(msg);
+        String msg = message("SourceFile") + ": " + srcFile;
+        if (srcFile.isFile()) {
+            msg += " " + message("Length") + ": " + FileTools.showFileSize(srcFile.length());
         }
-        if (targetPath != null && !targetPath.isBlank()) {
-            updateLogs(message("TargetPath") + ": " + targetPath);
-        }
+        updateLogs(msg);
     }
 
     public void showStatus(String info) {

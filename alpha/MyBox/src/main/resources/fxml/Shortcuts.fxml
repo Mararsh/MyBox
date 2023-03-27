@@ -8,7 +8,7 @@ License:    Apache License Version 2.0
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.image.Image?>
@@ -16,7 +16,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="800.0" spacing="5.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ShortcutsController">
+<VBox fx:id="thisPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="800.0" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ShortcutsController">
     <children>
         <HBox alignment="CENTER_LEFT" spacing="5.0">
             <children>
@@ -25,7 +25,7 @@ License:    Apache License Version 2.0
                   <Image url="@../buttons/Red/iconTips.png" />
                </image>
             </ImageView>
-                <Label maxWidth="1.7976931348623157E308" visible="false" HBox.hgrow="ALWAYS" />
+            <CheckBox fx:id="omitCheck" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" onAction="#setOmit" text="%ShortcutsOmitCtrlAlt" wrapText="true" HBox.hgrow="ALWAYS" />
             <Button fx:id="snapshotButton" mnemonicParsing="false" onAction="#snapAction">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

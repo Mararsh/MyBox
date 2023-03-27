@@ -194,6 +194,7 @@ public class DataExportController extends BaseTaskController {
         });
     }
 
+    @Override
     public void runTask() {
         synchronized (this) {
             if (task != null && !task.isQuit()) {
@@ -202,7 +203,7 @@ public class DataExportController extends BaseTaskController {
             cancelled = false;
             tabPane.getSelectionModel().select(logsTab);
             startTime = new Date().getTime();
-            clearLogs();
+            initLogs();
             task = new SingletonTask<Void>(this) {
 
                 private final boolean skip = targetPathController.isSkip();
@@ -265,13 +266,13 @@ public class DataExportController extends BaseTaskController {
 
                 private boolean writeFiles(String filePrefix) {
                     updateLogs(currentSQL);
-                    try ( Connection conn = DerbyBase.getConnection()) {
+                    try (Connection conn = DerbyBase.getConnection()) {
                         conn.setReadOnly(true);
                         int count = 0;
                         if (!convertController.setParameters(filePrefix, skip)) {
                             return false;
                         }
-                        try ( ResultSet results = conn.createStatement().executeQuery(currentSQL)) {
+                        try (ResultSet results = conn.createStatement().executeQuery(currentSQL)) {
                             while (results.next()) {
                                 if (cancelled) {
                                     updateLogs(Languages.message("Cancelled") + " " + filePrefix);

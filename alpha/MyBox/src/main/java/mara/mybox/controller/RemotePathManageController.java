@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -67,14 +66,6 @@ public class RemotePathManageController extends FilesTreeController {
 
             uidColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("uid"));
             gidColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("gid"));
-            filesTreeView.getSelectionModel().getSelectedIndices().addListener(new ListChangeListener<Integer>() {
-
-                @Override
-                public void onChanged(ListChangeListener.Change c) {
-                    checkButtons();
-                }
-            });
-            checkButtons();
 
             filesTreeView.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
@@ -92,18 +83,6 @@ public class RemotePathManageController extends FilesTreeController {
         }
     }
 
-    public void checkButtons() {
-        try {
-            boolean noSelected = filesTreeView.getSelectionModel().getSelectedItem() == null;
-            clearDirectoryButton.setDisable(noSelected);
-            deleteButton.setDisable(noSelected);
-            permissionButton.setDisable(noSelected);
-            renameButton.setDisable(noSelected);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     @FXML
     @Override
     public void startAction() {
@@ -115,7 +94,6 @@ public class RemotePathManageController extends FilesTreeController {
     public void openPath() {
         remoteController.taskController = this;
         filesBox.setDisable(true);
-        checkButtons();
         if (!remoteController.pickProfile()) {
             return;
         }
@@ -175,7 +153,6 @@ public class RemotePathManageController extends FilesTreeController {
                 tabPane.getSelectionModel().select(filesTab);
                 filesBox.setDisable(false);
                 filesTreeView.setRoot(rootItem);
-                checkButtons();
             }
         };
         start(task);
@@ -339,12 +316,7 @@ public class RemotePathManageController extends FilesTreeController {
 
     @FXML
     public void renameAction() {
-        TreeItem<FileNode> item = filesTreeView.getSelectionModel().getSelectedItem();
-        if (item == null) {
-            popError(message("SelectToHandle"));
-            return;
-        }
-        RemotePathRenameController.open(this, item.getValue().fullName());
+        RemotePathRenameController.open(this);
     }
 
     public void renameFile(String currentName, String newName) {
@@ -384,11 +356,7 @@ public class RemotePathManageController extends FilesTreeController {
 
     @FXML
     public void putAction() {
-        TreeItem<FileNode> item = filesTreeView.getSelectionModel().getSelectedItem();
-        if (item == null) {
-            item = filesTreeView.getRoot();
-        }
-        RemotePathPutController.open(this, item.getValue().path(false));
+        RemotePathPutController.open(this);
     }
 
     @FXML
@@ -431,7 +399,9 @@ public class RemotePathManageController extends FilesTreeController {
         start(task);
     }
 
-    public void deleteFile() {
+    @FXML
+    @Override
+    public void deleteAction() {
         TreeItem<FileNode> item = filesTreeView.getSelectionModel().getSelectedItem();
         if (item == null) {
             popError(message("SelectToHandle"));
@@ -471,16 +441,6 @@ public class RemotePathManageController extends FilesTreeController {
         start(task);
     }
 
-    public void deleteFiles() {
-
-    }
-
-    @FXML
-    @Override
-    public void deleteAction() {
-        deleteFiles();
-    }
-
     @FXML
     public void clearDirectory() {
         TreeItem<FileNode> item = filesTreeView.getSelectionModel().getSelectedItem();
@@ -488,12 +448,7 @@ public class RemotePathManageController extends FilesTreeController {
             popError(message("SelectToHandle"));
             return;
         }
-        FileNode node = item.getValue();
-        if (!node.isDirectory()) {
-            popError(message("SelectToHandle"));
-            return;
-        }
-        String filename = node.fullName();
+        String filename = item.getValue().path(false);
         String clearName = PopTools.askValue(baseTitle, message("ClearDirectory"), "", filename);
         if (clearName == null || clearName.isBlank()) {
             return;
@@ -545,8 +500,8 @@ public class RemotePathManageController extends FilesTreeController {
         String filename;
         if (item == null || item.getValue() == null) {
             filename = null;
-        } else if (item.getValue().getParentNode() == null) {
-            filename = StringTools.menuSuffix(item.getValue().getNodename());
+        } else if (item.getValue().isDirectory()) {
+            filename = StringTools.menuSuffix(item.getValue().fullName());
         } else {
             filename = (StringTools.menuSuffix(item.getValue().path(true)) + "\n"
                     + StringTools.menuSuffix(item.getValue().getNodename()));
@@ -590,7 +545,6 @@ public class RemotePathManageController extends FilesTreeController {
         menuItem.setOnAction((ActionEvent menuItemEvent) -> {
             makeDirectory();
         });
-        menuItem.setDisable(item == null);
         items.add(menuItem);
 
         menuItem = new MenuItem(message("Upload"), StyleTools.getIconImageView("iconUpload.png"));
@@ -599,32 +553,28 @@ public class RemotePathManageController extends FilesTreeController {
         });
         items.add(menuItem);
 
-        menuItem = new MenuItem(message("DeleteFiles"), StyleTools.getIconImageView("iconDelete.png"));
+        menuItem = new MenuItem(message("Delete"), StyleTools.getIconImageView("iconDelete.png"));
         menuItem.setOnAction((ActionEvent menuItemEvent) -> {
-            deleteFiles();
+            deleteAction();
         });
-        menuItem.setDisable(item == null);
         items.add(menuItem);
 
         menuItem = new MenuItem(message("ClearDirectory"), StyleTools.getIconImageView("iconClear.png"));
         menuItem.setOnAction((ActionEvent menuItemEvent) -> {
             clearDirectory();
         });
-        menuItem.setDisable(item == null);
         items.add(menuItem);
 
         menuItem = new MenuItem(message("Rename"), StyleTools.getIconImageView("iconInput.png"));
         menuItem.setOnAction((ActionEvent menuItemEvent) -> {
             renameAction();
         });
-        menuItem.setDisable(item == null);
         items.add(menuItem);
 
         menuItem = new MenuItem(message("Permission"), StyleTools.getIconImageView("iconPermission.png"));
         menuItem.setOnAction((ActionEvent menuItemEvent) -> {
             permissionAction();
         });
-        menuItem.setDisable(item == null);
         items.add(menuItem);
 
         items.add(new SeparatorMenuItem());

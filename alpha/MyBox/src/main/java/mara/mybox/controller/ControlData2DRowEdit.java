@@ -103,7 +103,8 @@ public class ControlData2DRowEdit extends BaseController {
                 } else if (type == ColumnType.Color) {
                     makeColorInput(column);
 
-                } else if (column.isNumberType() || type == ColumnType.Longitude || type == ColumnType.Latitude) {
+                } else if (column.isNumberType()
+                        || type == ColumnType.Longitude || type == ColumnType.Latitude) {
                     makeTextField(column);
 
                 } else if (column.isTimeType()) {
@@ -125,6 +126,33 @@ public class ControlData2DRowEdit extends BaseController {
         }
     }
 
+    public void makeTextField(Data2DColumn column) {
+        try {
+            HBox line = makeTextField(column.getColumnName(), column.isEditable());
+            TextField input = (TextField) line.getChildren().get(1);
+            inputs.put(column, input);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public HBox makeTextField(String name, boolean editable) {
+        try {
+            HBox line = makeLineBox(name);
+
+            TextField input = new TextField();
+            input.setMaxWidth(Double.MAX_VALUE);
+            HBox.setHgrow(input, Priority.ALWAYS);
+            input.setDisable(!editable);
+            line.getChildren().add(input);
+
+            return line;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
     public void makeTextArea(Data2DColumn column) {
         try {
             Label label = new Label(column.getColumnName());
@@ -138,16 +166,6 @@ public class ControlData2DRowEdit extends BaseController {
             HBox.setHgrow(input, Priority.ALWAYS);
             input.setEditable(column.isEditable());
             valuesBox.getChildren().add(input);
-            inputs.put(column, input);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void makeTextField(Data2DColumn column) {
-        try {
-            HBox line = makeTextField(column.getColumnName(), column.isEditable());
-            TextField input = (TextField) line.getChildren().get(1);
             inputs.put(column, input);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -300,23 +318,6 @@ public class ControlData2DRowEdit extends BaseController {
         }
     }
 
-    public HBox makeTextField(String name, boolean editable) {
-        try {
-            HBox line = makeLineBox(name);
-
-            TextField input = new TextField();
-            input.setMaxWidth(Double.MAX_VALUE);
-            HBox.setHgrow(input, Priority.ALWAYS);
-            input.setEditable(editable);
-            line.getChildren().add(input);
-
-            return line;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
-    }
-
     public void loadRow(int index) {
         try {
             List<String> row = editController.tableData.get(index);
@@ -364,7 +365,7 @@ public class ControlData2DRowEdit extends BaseController {
         }
     }
 
-    public List<String> pickValues() {
+    public List<String> pickValues(boolean checkValid) {
         try {
             List<String> row = new ArrayList<>();
             row.add(indexInput.getText());
@@ -399,12 +400,16 @@ public class ControlData2DRowEdit extends BaseController {
                     }
 
                 }
-                if (column.isAuto()
-                        || (column.validValue(value) && editController.data2D.validValue(value))) {
-                    row.add(value);
+                if (checkValid) {
+                    if (column.isAuto()
+                            || (column.validValue(value) && editController.data2D.validValue(value))) {
+                        row.add(value);
+                    } else {
+                        popError(message("Invalid") + ": " + column.getColumnName());
+                        return null;
+                    }
                 } else {
-                    popError(message("Invalid") + ": " + column.getColumnName());
-                    return null;
+                    row.add(value);
                 }
             }
             return row;

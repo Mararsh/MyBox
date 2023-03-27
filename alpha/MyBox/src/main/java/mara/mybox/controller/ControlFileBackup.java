@@ -205,8 +205,8 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
     }
 
     public synchronized void loadBackups() {
-        tableData.clear();
         if (sourceFile == null || !backupCheck.isSelected()) {
+            tableData.clear();
             return;
         }
         if (backgroundTask != null) {
@@ -231,8 +231,17 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
 
             @Override
             protected void whenSucceeded() {
-                if (list != null && currentFile.equals(sourceFile)) {
-                    tableData.setAll(list);
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                if (currentFile.equals(sourceFile)) {
+                    if (list != null && !list.isEmpty()) {
+                        tableData.setAll(list);
+                    } else {
+                        tableData.clear();
+                    }
                 }
             }
 

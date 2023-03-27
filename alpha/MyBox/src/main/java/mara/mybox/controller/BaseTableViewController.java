@@ -626,24 +626,20 @@ public abstract class BaseTableViewController<P> extends BaseController {
         return null;
     }
 
-    public void addRows() {
-        addRows(-1, 1);
-    }
-
-    public void addRows(int index, int number) {
+    public int addRows(int index, int number) {
         if (number < 1) {
-            return;
+            return -1;
         }
         List<P> list = new ArrayList<>();
         for (int i = 0; i < number; i++) {
             list.add(newData());
         }
-        addRows(index, list);
+        return addRows(index, list);
     }
 
-    public void addRows(int index, List<P> list) {
+    public int addRows(int index, List<P> list) {
         if (list == null || list.isEmpty()) {
-            return;
+            return -1;
         }
         if (index < 0) {
             index = tableData.size();
@@ -652,6 +648,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         tableView.scrollTo(index - 5);
         isSettingValues = false;
         tableChanged(true);
+        return list.size();
     }
 
     public P dataCopy(P data) {

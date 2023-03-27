@@ -294,6 +294,9 @@ public class StyleButton {
         if (id.startsWith("suggestion")) {
             return new StyleData(id, message("CodeCompletionSuggestions"), "CTRL+1 / ALT+1", "iconInput.png");
         }
+        if (id.startsWith("verify")) {
+            return new StyleData(id, message("Validate"), "", "iconVerify.png");
+        }
         if (id.startsWith("data")) {
             if (id.startsWith("database")) {
                 return new StyleData(id, "", message("DatabaseTable"), "", "iconDatabase.png");
@@ -301,8 +304,6 @@ public class StyleButton {
                 return new StyleData(id, message("Import"), "", "iconImport.png");
             } else if (id.startsWith("dataExport")) {
                 return new StyleData(id, message("Export"), "", "iconExport.png");
-            } else if (id.startsWith("dataset")) {
-                return new StyleData(id, message("DataSet"), "", "iconDataset.png");
             } else if (id.startsWith("dataA")) {
                 return new StyleData(id, message("SetAsDataA"), "", "iconA.png");
             } else if (id.startsWith("dataBB")) {

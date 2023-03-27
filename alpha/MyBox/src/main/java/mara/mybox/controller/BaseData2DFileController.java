@@ -162,6 +162,9 @@ public abstract class BaseData2DFileController extends BaseData2DController {
     @FXML
     @Override
     public void saveAsAction() {
+        if (!dataController.tableController.verifyData()) {
+            return;
+        }
         Data2D targetData = saveAsTarget();
         if (targetData == null) {
             return;

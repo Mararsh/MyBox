@@ -6,6 +6,8 @@ import java.text.MessageFormat;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TreeItem;
+import mara.mybox.data.FileNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
@@ -34,19 +36,26 @@ public class RemotePathPutController extends BaseBatchFileController {
         baseTitle = message("RemotePathPut");
     }
 
-    public void setParameters(RemotePathManageController manageController, String pathName) {
+    public void setParameters(RemotePathManageController manageController) {
         try {
             this.manageController = manageController;
-            this.targetPathName = pathName;
             logsTextArea = manageController.logsTextArea;
             logsMaxChars = manageController.logsMaxChars;
             verboseCheck = manageController.verboseCheck;
 
+            TreeItem<FileNode> item = manageController.filesTreeView.getSelectionModel().getSelectedItem();
+            if (item == null) {
+                item = manageController.filesTreeView.getRoot();
+            }
+            if (item != null && item.getValue() != null) {
+                targetPathName = item.getValue().path(false);
+                targetPathInput.setText(targetPathName);
+                targetPathInput.selectEnd();
+            }
+
             separator = "/";
 
-            targetPathInput.setText(targetPathName);
-            targetPathInput.selectEnd();
-            hostLabel.setText(manageController.remoteController.host());
+            hostLabel.setText(message("Host") + ": " + manageController.remoteController.host());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -106,7 +115,6 @@ public class RemotePathPutController extends BaseBatchFileController {
     @Override
     public String handleFileWithName(File srcFile, String targetPath) {
         try {
-            recordFiles(srcFile, targetPath);
             String targetName = makeTargetFilename(srcFile, targetPath);
             if (targetName == null) {
                 return message("Skip");
@@ -177,7 +185,6 @@ public class RemotePathPutController extends BaseBatchFileController {
 
         @Override
         public void end() {
-//            updateLogs(message("Done"));
         }
 
         @Override
@@ -188,14 +195,14 @@ public class RemotePathPutController extends BaseBatchFileController {
     /*
         static methods
      */
-    public static RemotePathPutController open(RemotePathManageController manageController, String pathName) {
+    public static RemotePathPutController open(RemotePathManageController manageController) {
         try {
             if (manageController == null) {
                 return null;
             }
             RemotePathPutController controller = (RemotePathPutController) WindowTools.openChildStage(
                     manageController.getMyWindow(), Fxmls.RemotePathPutFxml, false);
-            controller.setParameters(manageController, pathName);
+            controller.setParameters(manageController);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {

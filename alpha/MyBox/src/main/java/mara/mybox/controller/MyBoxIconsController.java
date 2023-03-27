@@ -114,7 +114,6 @@ public class MyBoxIconsController extends BaseBatchFileController {
                 actualParameters = null;
                 return false;
             }
-            targetPath = new File(resourcePath);
             updateLogs(resourcePath + StyleTools.ButtonsSourcePath);
             if (tableController.isNoneSelected()) {
                 for (StyleColor style : StyleColor.values()) {
@@ -134,7 +133,6 @@ public class MyBoxIconsController extends BaseBatchFileController {
     @Override
     public String handleFile(File file) {
         try {
-            MyBoxLog.console(file);
             if (task == null || task.isCancelled()) {
                 return message("Canceled");
             }

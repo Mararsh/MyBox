@@ -21,7 +21,7 @@ License:    Apache License Version 2.0
       <HBox alignment="CENTER_RIGHT" spacing="5.0">
          <children>
             <Label text="%DataRowNumber" />
-            <TextField fx:id="indexInput" editable="false" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+            <TextField fx:id="indexInput" disable="true" editable="false" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
             <Button fx:id="locationButton" mnemonicParsing="false" onAction="#locationAction">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

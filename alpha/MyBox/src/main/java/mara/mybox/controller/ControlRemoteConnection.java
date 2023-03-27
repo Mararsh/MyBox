@@ -545,8 +545,8 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
                 SftpATTRS attrs = entry.getAttrs();
                 if (attrs.isDir()) {
                     if (clearDirectory(child)) {
-                        showLogs("rmdir " + dirname);
-                        sftp.rmdir(dirname);
+                        showLogs("rmdir " + child);
+                        sftp.rmdir(child);
                     } else {
                         if (task != null) {
                             task.cancel();

@@ -86,6 +86,7 @@ public class FileTools {
 ////                System.gc();
 //                FileUtils.moveFile(sourceFile, targetFile);
 //            }
+            targetFile.getParentFile().mkdirs();
             Files.move(sourceFile.toPath(), targetFile.toPath(),
                     StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
             return true;

@@ -27,6 +27,24 @@ License:    Apache License Version 2.0
                 </ImageView>
                 <FlowPane fx:id="buttonsPane" alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
                     <children>
+                  <CheckBox fx:id="verifyCheck" mnemonicParsing="false">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconVerify.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </CheckBox>
+                  <Button fx:id="verifyButton" layoutX="68.0" layoutY="10.0" mnemonicParsing="false" onAction="#verifyAction">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconVerify.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
                   <Button fx:id="headerButton" layoutX="221.0" layoutY="10.0" mnemonicParsing="false" onAction="#headerAction">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

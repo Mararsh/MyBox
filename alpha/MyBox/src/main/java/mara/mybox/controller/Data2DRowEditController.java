@@ -41,7 +41,7 @@ public class Data2DRowEditController extends BaseChildController {
     @Override
     public void okAction() {
         try {
-            List<String> row = rowEditController.pickValues();
+            List<String> row = rowEditController.pickValues(false);
             if (row == null) {
                 return;
             }

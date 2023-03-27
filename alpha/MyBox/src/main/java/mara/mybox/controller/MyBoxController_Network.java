@@ -79,10 +79,9 @@ public abstract class MyBoxController_Network extends MyBoxController_File {
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(
                 webBrowserHtml, WebFavorites, WebHistories, new SeparatorMenuItem(),
-                QueryAddress, QueryDNSBatch, ConvertUrl, new SeparatorMenuItem(),
-                RemotePathManage, RemotePathSynchronizeFromLocal,
-                DownloadFirstLevelLinks, weiboSnap, new SeparatorMenuItem(),
-                SecurityCertificates
+                RemotePathManage, RemotePathSynchronizeFromLocal, new SeparatorMenuItem(),
+                QueryAddress, QueryDNSBatch, ConvertUrl, SecurityCertificates, new SeparatorMenuItem(),
+                DownloadFirstLevelLinks, weiboSnap
         );
 
         popMenu.getItems().add(new SeparatorMenuItem());

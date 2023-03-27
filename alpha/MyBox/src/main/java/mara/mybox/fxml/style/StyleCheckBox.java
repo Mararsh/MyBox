@@ -13,6 +13,27 @@ public class StyleCheckBox {
         if (id == null || id.isEmpty()) {
             return null;
         }
+        if (id.startsWith("leftPane")) {
+            return new StyleData(id, "", message("LeftPane"), "", "iconDoubleLeft.png");
+        }
+        if (id.startsWith("rightPane")) {
+            return new StyleData(id, "", message("RightPane"), "", "iconDoubleRight.png");
+        }
+        if (id.startsWith("contextMenu")) {
+            return new StyleData(id, "", message("ContextMenu"), "", "iconMenu.png");
+        }
+        if (id.startsWith("openPath")) {
+            return new StyleData(id, "", message("OpenDirectory"), "", "iconOpenPath.png");
+        }
+        if (id.startsWith("wrap")) {
+            return new StyleData(id, "", message("Wrap"), "", "iconWrap.png");
+        }
+        if (id.startsWith("editable")) {
+            return new StyleData(id, "", message("Editable"), "", "iconEdit.png");
+        }
+        if (id.startsWith("scope")) {
+            return new StyleData(id, "", message("Scope"), "", "iconTarget.png");
+        }
         if (id.startsWith("csv")) {
             return new StyleData(id, "", "CSV", "", "iconCSV.png");
         }
@@ -55,29 +76,11 @@ public class StyleCheckBox {
         if (id.startsWith("refreshChange")) {
             return new StyleData(id, "", message("RefreshWhenChange"), "", "iconRefresh.png");
         }
-        if (id.startsWith("wrap")) {
-            return new StyleData(id, "", message("Wrap"), "", "iconWrap.png");
-        }
-        if (id.startsWith("leftPane")) {
-            return new StyleData(id, "", message("LeftPane"), "", "iconDoubleLeft.png");
-        }
-        if (id.startsWith("rightPane")) {
-            return new StyleData(id, "", message("RightPane"), "", "iconDoubleRight.png");
-        }
-        if (id.startsWith("contextMenu")) {
-            return new StyleData(id, "", message("ContextMenu"), "", "iconMenu.png");
-        }
-        if (id.startsWith("editable")) {
-            return new StyleData(id, "", message("Editable"), "", "iconEdit.png");
-        }
-        if (id.startsWith("scope")) {
-            return new StyleData(id, "", message("Scope"), "", "iconTarget.png");
-        }
         if (id.startsWith("nodesList")) {
             return new StyleData(id, "", message("List"), "", "iconList.png");
         }
-        if (id.startsWith("openPath")) {
-            return new StyleData(id, "", message("OpenDirectory"), "", "iconOpenPath.png");
+        if (id.startsWith("verify")) {
+            return new StyleData(id, message("Validate"), "", "iconVerify.png");
         }
         switch (id) {
             case "tableSubdirCheck":

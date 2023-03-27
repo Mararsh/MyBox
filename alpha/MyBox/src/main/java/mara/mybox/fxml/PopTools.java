@@ -173,9 +173,11 @@ public class PopTools {
         dialog.setContentText(name);
         dialog.getEditor().setText(initValue);
         dialog.getEditor().setPrefWidth(initValue == null ? minWidth : Math.min(minWidth, initValue.length() * AppVariables.sceneFontSize));
+        dialog.getEditor().selectEnd();
         Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
         stage.setAlwaysOnTop(true);
         stage.toFront();
+        stage.getScene().getRoot().requestFocus();
         Optional<String> result = dialog.showAndWait();
         if (result == null || !result.isPresent()) {
             return null;
