@@ -356,7 +356,7 @@ License:    Apache License Version 2.0
                                 <CheckMenuItem fx:id="popRecentCheck" mnemonicParsing="false" onAction="#popRecentAction" text="%PopRecentFiles" />
                                 <CheckMenuItem fx:id="closeCurrentCheck" mnemonicParsing="false" onAction="#closeCurrentAction" text="%CloseCurrentWhenOpenTool" />
                                 <CheckMenuItem fx:id="recordWindowsSizeLocationCheck" mnemonicParsing="false" onAction="#RecordWindowsSizeLocationAction" text="%RecordWindowsSizeLocation" />
-                                <CheckMenuItem fx:id="shortcutsOmitCheck" mnemonicParsing="false" onAction="#ShortcutsOmitCtrlAlt" text="%ShortcutsOmitCtrlAlt" />
+                                <CheckMenuItem fx:id="shortcutsCanNotOmitCheck" mnemonicParsing="false" onAction="#shortcutsCanNotOmitCtrlAlt" text="%ShortcutsCanNotOmitCtrlAlt" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 
                                 <Menu fx:id="languagesMenu" mnemonicParsing="false" text="%Languages">
@@ -465,7 +465,6 @@ License:    Apache License Version 2.0
                                         </MenuItem>
 
                                         <SeparatorMenuItem mnemonicParsing="false" />
-                                        <CheckMenuItem fx:id="hidpiIconsCheck" mnemonicParsing="false" onAction="#hidpiIcons" text="%HidpiIcons" />
                                         <CheckMenuItem fx:id="controlTextCheck" mnemonicParsing="false" onAction="#setControlDisplayText" text="%DisplayControlText" />
 
                                     </items>

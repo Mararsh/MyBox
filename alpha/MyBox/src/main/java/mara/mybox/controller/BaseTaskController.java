@@ -3,12 +3,17 @@ package mara.mybox.controller;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.Date;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -22,8 +27,30 @@ public class BaseTaskController extends BaseLogs {
 
     @FXML
     protected Tab logsTab;
+    @FXML
+    protected CheckBox miaoCheck, openCheck;
 
     public BaseTaskController() {
+    }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            if (miaoCheck != null) {
+                miaoCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean("Miao", newValue);
+                    }
+                });
+                miaoCheck.setSelected(UserConfig.getBoolean("Miao", true));
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
     }
 
     public boolean checkOptions() {

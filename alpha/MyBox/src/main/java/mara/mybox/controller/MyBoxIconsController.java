@@ -153,7 +153,7 @@ public class MyBoxIconsController extends BaseBatchFileController {
                 }
                 String tname = resourcePath + StyleTools.ButtonsSourcePath + style.name() + "/" + filename;
                 ImageFileWriters.writeImageFile(image, "png", tname);
-                targetFileGenerated(new File(tname));
+                targetFileGenerated(new File(tname), false);
             }
             return message("Successful");
         } catch (Exception e) {

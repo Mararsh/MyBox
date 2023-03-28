@@ -11,7 +11,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import mara.mybox.data.FileNode;
 import mara.mybox.data.FileSynchronizeAttributes;
 import mara.mybox.dev.MyBoxLog;
@@ -38,8 +37,6 @@ public class DirectorySynchronizeController extends BaseTaskController {
     protected ControlPathInput targetPathInputController;
     @FXML
     protected ControlSynchronizeOptions optionsController;
-    @FXML
-    protected CheckBox miaoCheck, openCheck;
 
     public DirectorySynchronizeController() {
         baseTitle = message("DirectorySynchronize");
@@ -53,14 +50,6 @@ public class DirectorySynchronizeController extends BaseTaskController {
             optionsController.setParameters(this);
 
             initTarget();
-
-            miaoCheck.setSelected(UserConfig.getBoolean(baseName + "Miao", true));
-            miaoCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    UserConfig.setBoolean(baseName + "Miao", miaoCheck.isSelected());
-                }
-            });
 
             openCheck.setSelected(UserConfig.getBoolean(baseName + "OpenTarget", true));
             openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {

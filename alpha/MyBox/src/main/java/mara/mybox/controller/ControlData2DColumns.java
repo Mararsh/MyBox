@@ -519,7 +519,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
         super.checkButtons();
         renameColumnsButton.setDisable(data2D == null || data2D.isTable() || tableData.isEmpty());
         addRowsButton.setDisable(data2D == null || data2D.isInternalTable());
-        deleteButton.setDisable(data2D == null || data2D.isInternalTable() || tableData.isEmpty());
+        deleteButton.setDisable(data2D == null || data2D.isInternalTable() || isNoneSelected());
         randomColorsButton.setDisable(tableData.isEmpty());
     }
 

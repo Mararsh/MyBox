@@ -1,7 +1,6 @@
 package mara.mybox.value;
 
 import java.awt.RenderingHints;
-import java.awt.Toolkit;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -44,9 +43,8 @@ public class AppVariables {
     public static AlarmClockController alarmClockController;
     public static MemoryUsageSetting pdfMemUsage;
     public static int sceneFontSize, fileRecentNumber, iconSize, thumbnailWidth;
-    public static boolean isChinese, isTesting, handlingExit,
+    public static boolean isChinese, isTesting, handlingExit, ShortcutsCanNotOmitCtrlAlt,
             closeCurrentWhenOpenTool, recordWindowsSizeLocation, controlDisplayText,
-            hidpiIcons, shortcutsOmitCtrlAlt,
             ignoreDbUnavailable, popErrorLogs, saveDebugLogs, detailedDebugLogs;
     public static TextClipboardMonitor textClipboardMonitor;
     public static ImageClipboardMonitor imageClipboardMonitor;
@@ -69,8 +67,7 @@ public class AppVariables {
             thumbnailWidth = UserConfig.getInt("ThumbnailWidth", 100);
             ControlColor = StyleTools.getConfigStyleColor();
             controlDisplayText = UserConfig.getBoolean("ControlDisplayText", false);
-            hidpiIcons = UserConfig.getBoolean("HidpiIcons", Toolkit.getDefaultToolkit().getScreenResolution() > 120);
-            shortcutsOmitCtrlAlt = UserConfig.getBoolean("ShortcutsOmitCtrlAlt", true);
+            ShortcutsCanNotOmitCtrlAlt = UserConfig.getBoolean("ShortcutsCanNotOmitCtrlAlt", false);
             saveDebugLogs = UserConfig.getBoolean("SaveDebugLogs", false);
             detailedDebugLogs = UserConfig.getBoolean("DetailedDebugLogs", false);
             ignoreDbUnavailable = false;

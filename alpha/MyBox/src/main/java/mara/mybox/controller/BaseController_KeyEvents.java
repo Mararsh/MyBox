@@ -620,9 +620,11 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
                 return keyESC();
 
         }
-        if (AppVariables.shortcutsOmitCtrlAlt
+        if (!AppVariables.ShortcutsCanNotOmitCtrlAlt
                 && !isPopup() && !targetIsTextInput()) {
-            return controlAltFilter(event);
+            if (code != KeyCode.D && code != KeyCode.G) {  // to avoid accidents
+                return controlAltFilter(event);
+            }
         }
         return false;
     }

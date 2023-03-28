@@ -24,7 +24,6 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -41,7 +40,6 @@ import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableRowSelectionCell;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.NumberTools;
 import static mara.mybox.value.Languages.message;
@@ -117,19 +115,6 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
     public void initMore() {
 
-    }
-
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-
-            if (deleteButton != null) {
-                NodeStyleTools.setTooltip(deleteButton, new Tooltip(message("DeleteRows")));
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
     }
 
     /*
@@ -891,7 +876,6 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 return;
             }
         }
-
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
@@ -1011,6 +995,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
     }
 
     @FXML
+    @Override
     public void refreshAction() {
         loadPage(currentPage);
     }

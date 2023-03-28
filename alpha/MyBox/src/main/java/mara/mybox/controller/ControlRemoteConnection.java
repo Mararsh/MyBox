@@ -176,7 +176,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
         currentConnection.setPort(port);
         currentConnection.setTimeout(timeout);
         currentConnection.setRetry(retry);
-        currentConnection.setTitle(titleInput.getText().trim());
+        currentConnection.setTitle(titleInput.getText());
         currentConnection.setHost(host.trim());
         currentConnection.setUsername(userInput.getText());
         currentConnection.setPassword(passwordInput.getText());
@@ -286,7 +286,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
                 currentConnection.setPath(sftp.getHome());
             }
             Platform.runLater(() -> {
-                statusLabel.setText(message("Connected"));
+                statusLabel.setText(message("Connected") + ": " + currentConnection.getHost());
             });
             return true;
         } catch (Exception e) {
@@ -501,7 +501,6 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
             return true;
         } catch (Exception e) {
             showLogs(e.toString());
-            taskController.popError(e.toString());
             return false;
         }
     }
@@ -518,11 +517,6 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
         } catch (Exception e) {
             error = e.toString();
             showLogs(error);
-            if (task != null) {
-                task.setError(error);
-            } else {
-                taskController.popError(error);
-            }
             return false;
         }
     }
@@ -531,6 +525,9 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
         try {
             dirname = fixFilename(dirname);
             Iterator<LsEntry> iterator = ls(dirname);
+            if (iterator == null) {
+                return false;
+            }
             while (iterator.hasNext()) {
                 if (task == null || task.isCancelled()) {
                     return false;
@@ -560,14 +557,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
             }
             return true;
         } catch (Exception e) {
-            error = e.toString();
-            showLogs(error);
-            if (task != null) {
-                task.setError(error);
-                task.cancel();
-            } else {
-                taskController.popError(error);
-            }
+            showLogs(e.toString());
             return false;
         }
     }

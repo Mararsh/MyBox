@@ -72,7 +72,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     @FXML
     protected TextField previewInput, acumFromInput, digitInput;
     @FXML
-    protected CheckBox targetSubdirCheck, miaoCheck, openCheck;
+    protected CheckBox targetSubdirCheck;
     @FXML
     protected Button pauseButton, openTargetButton;
     @FXML
@@ -337,19 +337,6 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                 if (previewButton != null) {
                     previewButton.disableProperty().bind(startButton.disableProperty());
                 }
-            }
-
-            if (miaoCheck != null) {
-                miaoCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue,
-                            Boolean newValue) {
-                        UserConfig.setBoolean("Miao", newValue);
-
-                    }
-                });
-
-                miaoCheck.setSelected(UserConfig.getBoolean("Miao"));
             }
 
             if (openCheck != null) {

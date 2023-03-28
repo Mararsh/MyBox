@@ -351,7 +351,7 @@ public class RemotePathManageController extends FilesTreeController {
 
     @FXML
     public void getAction() {
-
+        RemotePathGetController.open(this);
     }
 
     @FXML
@@ -365,7 +365,8 @@ public class RemotePathManageController extends FilesTreeController {
         if (item == null) {
             item = filesTreeView.getRoot();
         }
-        String makeName = PopTools.askValue(baseTitle, message("MakeDirectory"), "",
+        String makeName = PopTools.askValue(baseTitle,
+                message("CreateFileComments"), message("MakeDirectory"),
                 item.getValue().path(true) + "m");
         if (makeName == null || makeName.isBlank()) {
             return;
@@ -402,43 +403,7 @@ public class RemotePathManageController extends FilesTreeController {
     @FXML
     @Override
     public void deleteAction() {
-        TreeItem<FileNode> item = filesTreeView.getSelectionModel().getSelectedItem();
-        if (item == null) {
-            popError(message("SelectToHandle"));
-            return;
-        }
-        String filename = item.getValue().fullName();
-        String deleteName = PopTools.askValue(baseTitle, message("DeleteFile"), "", filename);
-        if (deleteName == null || deleteName.isBlank()) {
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        task = new SingletonTask<Void>(this) {
-
-            @Override
-            protected boolean handle() {
-                if (!checkConnection()) {
-                    return false;
-                }
-                return remoteController.delete(deleteName);
-            }
-
-            @Override
-            protected void whenCanceled() {
-                cancelled = true;
-                showLogs(message("Cancel"));
-            }
-
-            @Override
-            protected void finalAction() {
-                task = null;
-                loadPath();
-                popSuccessful();
-            }
-        };
-        start(task);
+        RemotePathDeleteController.open(this);
     }
 
     @FXML
@@ -449,7 +414,9 @@ public class RemotePathManageController extends FilesTreeController {
             return;
         }
         String filename = item.getValue().path(false);
-        String clearName = PopTools.askValue(baseTitle, message("ClearDirectory"), "", filename);
+        String clearName = PopTools.askValue(baseTitle,
+                message("MakeSureAccountHasPermission"), message("ClearDirectory"),
+                filename);
         if (clearName == null || clearName.isBlank()) {
             return;
         }

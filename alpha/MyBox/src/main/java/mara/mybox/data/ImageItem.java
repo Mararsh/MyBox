@@ -164,11 +164,11 @@ public class ImageItem {
                     "Data", "Default", "Delete", "Delimiter", "Demo", "DoubleLeft", "Edit", "Examples", "Export",
                     "Function", "Go", "Import", "Menu", "NewItem", "OK", "Open", "OpenPath",
                     "Panes", "Play", "Permission", "Query", "Random", "Recover", "Refresh", "Repeat",
-                    "Sampled", "Save", "Style", "Tips", "Undo", "Window"));
+                    "Sampled", "Save", "Style", "Tips", "Undo", "Verify", "Window"));
             for (String name : icons) {
                 item = new ImageItem()
-                        .setName("icon" + name + "_100.png")
-                        .setAddress("buttons/Red/icon" + name + "_100.png")
+                        .setName("icon" + name + ".png")
+                        .setAddress("buttons/Red/icon" + name + ".png")
                         .setComments(message("icon" + name));
                 preDefined.add(item);
             }

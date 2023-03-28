@@ -248,7 +248,7 @@ public class FilesRenameController extends BaseBatchFileController {
                 return null;
             }
             File newFile = new File(newName);
-            if (file.equals(newFile)) {
+            if (file.getAbsolutePath().equals(newFile.getAbsolutePath())) {
                 return null;
             }
             if (newFile.isFile() && newFile.exists()) {
@@ -259,7 +259,7 @@ public class FilesRenameController extends BaseBatchFileController {
             }
             if (FileTools.rename(file, newFile)) {
                 newName = newFile.getAbsolutePath();
-                targetFileGenerated(newFile);
+                targetFileGenerated(newFile, false);
                 return newName;
             } else {
                 return null;

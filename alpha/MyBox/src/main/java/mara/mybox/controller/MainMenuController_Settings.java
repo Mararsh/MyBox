@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
@@ -39,7 +38,7 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     protected ToggleGroup langGroup;
     @FXML
     protected CheckMenuItem closeCurrentCheck, recordWindowsSizeLocationCheck, popRecentCheck,
-            popColorSetCheck, controlPanesCheck, shortcutsOmitCheck, controlTextCheck, hidpiIconsCheck;
+            popColorSetCheck, controlPanesCheck, shortcutsCanNotOmitCheck, controlTextCheck;
     @FXML
     protected RadioMenuItem chineseMenuItem, englishMenuItem,
             font12MenuItem, font15MenuItem, font17MenuItem,
@@ -83,12 +82,11 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
         checkFontSize();
         checkIconSize();
         controlTextCheck.setSelected(AppVariables.controlDisplayText);
-        hidpiIconsCheck.setSelected(AppVariables.hidpiIcons);
         closeCurrentCheck.setSelected(AppVariables.closeCurrentWhenOpenTool);
         recordWindowsSizeLocationCheck.setSelected(AppVariables.recordWindowsSizeLocation);
         popRecentCheck.setSelected(AppVariables.fileRecentNumber > 0);
         popColorSetCheck.setSelected(UserConfig.getBoolean("PopColorSetWhenMouseHovering", true));
-        shortcutsOmitCheck.setSelected(AppVariables.shortcutsOmitCtrlAlt);
+        shortcutsCanNotOmitCheck.setSelected(AppVariables.ShortcutsCanNotOmitCtrlAlt);
         controlPanesCheck.setSelected(UserConfig.getBoolean("MousePassControlPanes", true));
         checkControlColor();
     }
@@ -318,22 +316,6 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     }
 
     @FXML
-    protected void hidpiIcons(ActionEvent event) {
-        AppVariables.hidpiIcons = hidpiIconsCheck.isSelected();
-        UserConfig.setBoolean("HidpiIcons", AppVariables.hidpiIcons);
-        if (AppVariables.hidpiIcons) {
-            if (Toolkit.getDefaultToolkit().getScreenResolution() <= 120) {
-                parentController.alertInformation(Languages.message("HidpiIconsComments"));
-            }
-        } else {
-            if (Toolkit.getDefaultToolkit().getScreenResolution() > 120) {
-                parentController.alertInformation(Languages.message("HidpiIconsComments"));
-            }
-        }
-        refreshInterfaceAll();
-    }
-
-    @FXML
     protected void closeCurrentAction() {
         UserConfig.setBoolean("CloseCurrentWhenOpenTool", closeCurrentCheck.isSelected());
         AppVariables.closeCurrentWhenOpenTool = closeCurrentCheck.isSelected();
@@ -361,9 +343,9 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     }
 
     @FXML
-    protected void ShortcutsOmitCtrlAlt() {
-        AppVariables.shortcutsOmitCtrlAlt = shortcutsOmitCheck.isSelected();
-        UserConfig.setBoolean("ShortcutsOmitCtrlAlt", AppVariables.shortcutsOmitCtrlAlt);
+    protected void shortcutsCanNotOmitCtrlAlt() {
+        AppVariables.ShortcutsCanNotOmitCtrlAlt = shortcutsCanNotOmitCheck.isSelected();
+        UserConfig.setBoolean("ShortcutsCanNotOmitCtrlAlt", AppVariables.ShortcutsCanNotOmitCtrlAlt);
     }
 
     @FXML

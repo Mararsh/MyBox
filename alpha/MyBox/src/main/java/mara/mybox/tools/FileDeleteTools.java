@@ -132,6 +132,7 @@ public class FileDeleteTools {
                             for (File subfile : subfiles) {
                                 if (subfile.isDirectory()) {
                                     String target = tmpDir.getAbsolutePath() + File.separator + subfile.getName();
+                                    new File(target).getParentFile().mkdirs();
                                     Files.move(Paths.get(subfile.getAbsolutePath()), Paths.get(target));
                                 } else {
                                     delete(subfile);

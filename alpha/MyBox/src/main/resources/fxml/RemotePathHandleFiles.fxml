@@ -8,6 +8,7 @@ License:    Apache License Version 2.0
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.image.Image?>
@@ -16,16 +17,39 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" minHeight="-Infinity" minWidth="-Infinity" prefWidth="600.0" spacing="5.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.RemotePathRenameController">
+<VBox fx:id="thisPane" prefHeight="500.0" prefWidth="600.0" spacing="5.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.RemotePathDeleteController">
     <children>
-        <Label fx:id="titleLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%Rename" textAlignment="CENTER" VBox.vgrow="ALWAYS" />
-          <Label fx:id="commentsLabel" text="%Files" />
-      <TextArea prefHeight="400.0" />
-        <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="20.0" spacing="5.0" />
-        <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="20.0" spacing="5.0">
-            <children>
-                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                <Button fx:id="closePopButton" mnemonicParsing="false" onAction="#closeAction">
+        <Label fx:id="titleLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%RemotePathDelete" textAlignment="CENTER" VBox.vgrow="ALWAYS" />
+      <Label fx:id="hostLabel" layoutX="20.0" layoutY="450.0" />
+      <HBox alignment="CENTER_LEFT" spacing="2.0">
+         <children>
+                <Label fx:id="commentsLabel" maxWidth="1.7976931348623157E308" text="%OneFileEachLine" HBox.hgrow="ALWAYS" />
+            <CheckBox fx:id="wrapCheck" mnemonicParsing="false">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/red/iconWrap.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </CheckBox>
+         </children>
+      </HBox>
+      <TextArea fx:id="namesArea" prefHeight="400.0" />
+      <Label fx:id="commentsLabel1" layoutX="20.0" layoutY="60.0" text="%DeleteDirectoryComments" />
+      <HBox alignment="CENTER_LEFT" spacing="2.0">
+         <children>
+            <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" />
+            <CheckBox fx:id="miaoCheck" mnemonicParsing="false">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconCat.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </CheckBox>
+                <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -34,17 +58,17 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="okButton" defaultButton="true" mnemonicParsing="false" onAction="#okAction">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconOK.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-            </children>
-        </HBox>
+            <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction" styleClass="big" stylesheets="@../styles/MyBox.css">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconStart.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </HBox>
     </children>
     <BorderPane.margin>
         <Insets />

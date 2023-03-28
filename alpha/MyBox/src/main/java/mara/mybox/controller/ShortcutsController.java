@@ -73,7 +73,7 @@ public class ShortcutsController extends BaseTableViewController<ShortCut> {
         try {
             super.afterSceneLoaded();
 
-            omitCheck.setSelected(AppVariables.shortcutsOmitCtrlAlt);
+            omitCheck.setSelected(AppVariables.ShortcutsCanNotOmitCtrlAlt);
 
             tableData.add(new ShortCut("F1", "",
                     message("Start") + " / " + message("OK") + " / " + message("Synchronize") + " / " + message("Set") + " / " + message("Query"),
@@ -150,8 +150,8 @@ public class ShortcutsController extends BaseTableViewController<ShortCut> {
 
     @FXML
     public void setOmit() {
-        AppVariables.shortcutsOmitCtrlAlt = omitCheck.isSelected();
-        UserConfig.setBoolean("ShortcutsOmitCtrlAlt", AppVariables.shortcutsOmitCtrlAlt);
+        AppVariables.ShortcutsCanNotOmitCtrlAlt = omitCheck.isSelected();
+        UserConfig.setBoolean("ShortcutsCanNotOmitCtrlAlt", AppVariables.ShortcutsCanNotOmitCtrlAlt);
     }
 
     @FXML

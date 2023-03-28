@@ -50,7 +50,8 @@ public class ControlData2DEditTable extends ControlData2DLoad {
         try {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(headerButton, new Tooltip(message("FirstLineDefineNames")));
-            NodeStyleTools.setTooltip(verifyCheck, new Tooltip(message("VerifyDataBeforeSaved")));
+            NodeStyleTools.setTooltip(verifyButton, new Tooltip(message("VerifyPageData")));
+            NodeStyleTools.setTooltip(verifyCheck, new Tooltip(message("VerifyDataWhenSave")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -94,7 +95,7 @@ public class ControlData2DEditTable extends ControlData2DLoad {
         try {
             super.setData(data);
 
-            headerButton.setVisible(data2D.isTmpData() || data2D.isDataFile() || data.isClipboard());
+            headerButton.setDisable(!data2D.isTmpData() && !data2D.isDataFile() && !data.isClipboard());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -262,7 +263,7 @@ public class ControlData2DEditTable extends ControlData2DLoad {
     public void verifyAction() {
         StringTable results = verifyResults();
         if (results.isEmpty()) {
-            popInformation(message("Valid"));
+            popInformation(message("AllValuesValid"), 5000);
             return;
         }
         results.htmlTable();
@@ -277,6 +278,9 @@ public class ControlData2DEditTable extends ControlData2DLoad {
                 List<String> dataRow = tableData.get(r);
                 for (int c = 0; c < data2D.columnsNumber(); c++) {
                     Data2DColumn column = data2D.column(c);
+                    if (column.isAuto()) {
+                        continue;
+                    }
                     String value = column.savedValue(dataRow.get(c + 1));
                     String item = null;
                     if (column.isNotNull() && (value == null || value.isBlank())) {

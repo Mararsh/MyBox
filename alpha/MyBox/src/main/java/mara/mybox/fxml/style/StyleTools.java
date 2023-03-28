@@ -232,14 +232,7 @@ public class StyleTools {
         }
         try {
             String stylePath = getIconPath();
-            ImageView view = null;
-            if (AppVariables.hidpiIcons && iconName.endsWith(".png") && !iconName.endsWith("_100.png")) {
-                String hiName = iconName.substring(0, iconName.length() - 4) + "_100.png";
-                view = getIconImageView(stylePath, hiName);
-            }
-            if (view == null) {
-                view = getIconImageView(stylePath, iconName);
-            }
+            ImageView view = getIconImageView(stylePath, iconName);
             if (view != null) {
                 view.setFitWidth(AppVariables.iconSize);
                 view.setFitHeight(AppVariables.iconSize);

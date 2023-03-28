@@ -40,6 +40,7 @@ License:    Apache License Version 2.0
                                         <Insets />
                                     </VBox.margin>
                                 </TextField>
+                        <Label maxWidth="1.7976931348623157E308" text="%CreateFileComments" />
                             </children>
                         </VBox>
                     </content>

@@ -24,7 +24,7 @@ import static mara.mybox.value.Languages.message;
 public class RemotePathPutController extends BaseBatchFileController {
 
     protected RemotePathManageController manageController;
-    protected String targetPathName, separator;
+    protected String targetPathName;
     protected long srcLen;
 
     @FXML
@@ -52,8 +52,6 @@ public class RemotePathPutController extends BaseBatchFileController {
                 targetPathInput.setText(targetPathName);
                 targetPathInput.selectEnd();
             }
-
-            separator = "/";
 
             hostLabel.setText(message("Host") + ": " + manageController.remoteController.host());
 
