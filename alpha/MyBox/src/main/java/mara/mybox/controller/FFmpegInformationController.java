@@ -238,7 +238,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                         pb.redirectErrorStream(true);
                         final Process process = pb.start();
 
-                        try ( BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
+                        try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                             String line;
                             int count = 0;
                             boolean versionEnd = false;
@@ -293,8 +293,8 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                 }
 
                 @Override
-                protected void taskQuit() {
-                    super.taskQuit();
+                protected void finalAction() {
+                    super.finalAction();
                     formatsTask = null;
                 }
             };
@@ -325,7 +325,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                         ProcessBuilder pb = new ProcessBuilder(command)
                                 .redirectErrorStream(true);
                         final Process process = pb.start();
-                        try ( BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
+                        try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                             String line;
                             int count = 0;
                             while ((line = inReader.readLine()) != null) {
@@ -379,8 +379,8 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                 }
 
                 @Override
-                protected void taskQuit() {
-                    super.taskQuit();
+                protected void finalAction() {
+                    super.finalAction();
                     codecsTask = null;
                 }
             };
@@ -414,7 +414,7 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                         pb.redirectErrorStream(true);
                         final Process process = pb.start();
 
-                        try ( BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
+                        try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                             String line;
                             int count = 0;
                             while ((line = inReader.readLine()) != null) {
@@ -460,8 +460,8 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                 }
 
                 @Override
-                protected void taskQuit() {
-                    super.taskQuit();
+                protected void finalAction() {
+                    super.finalAction();
                     filtersTask = null;
                 }
             };
@@ -509,8 +509,8 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
                 }
 
                 @Override
-                protected void taskQuit() {
-                    super.taskQuit();
+                protected void finalAction() {
+                    super.finalAction();
                     queryTask = null;
                 }
             };

@@ -444,8 +444,8 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
             }
 
             @Override
-            protected void taskQuit() {
-                super.taskQuit();
+            protected void finalAction() {
+                super.finalAction();
                 queryTask = null;
             }
         };

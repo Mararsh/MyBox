@@ -66,7 +66,7 @@ public class HtmlMergeAsPDFController extends BaseBatchFileController {
             if (targetFile == null) {
                 return false;
             }
-            finalTargetName = targetFile.getAbsolutePath();
+            lastTargetName = targetFile.getAbsolutePath();
             targetPath = targetFile.getParentFile();
             mergedHtml = new StringBuilder();
             String head

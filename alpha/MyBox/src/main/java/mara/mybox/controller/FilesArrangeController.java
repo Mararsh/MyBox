@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -286,7 +287,7 @@ public class FilesArrangeController extends BaseBatchFileController {
             if (!initAttributes()) {
                 return;
             }
-
+            targetFiles = new LinkedHashMap<>();
             updateInterface("Started");
             synchronized (this) {
                 if (task != null && !task.isQuit()) {
@@ -315,6 +316,14 @@ public class FilesArrangeController extends BaseBatchFileController {
                         super.failed();
                         updateInterface("Failed");
                     }
+
+                    @Override
+                    protected void finalAction() {
+                        super.finalAction();
+                        task = null;
+                        afterTask();
+                    }
+
                 };
                 start(task, false);
             }

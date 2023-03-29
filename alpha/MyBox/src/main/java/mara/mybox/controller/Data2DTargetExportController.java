@@ -152,6 +152,7 @@ public class Data2DTargetExportController extends BaseTaskController {
 
     @Override
     public void afterTask() {
+        super.afterTask();
         if (csvFile != null) {
             csvFile.stopTask();
         }

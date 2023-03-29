@@ -1,9 +1,11 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.sql.Connection;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -25,6 +27,7 @@ import javafx.scene.layout.VBox;
 import mara.mybox.data.FileInformation;
 import mara.mybox.data.FileInformation.FileSelectorType;
 import mara.mybox.data.ProcessParameters;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.SoundTools;
@@ -50,7 +53,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     protected String targetSubdirKey, previewKey;
     protected ObservableList<T> tableData;
     protected TableView<T> tableView;
-    protected List<File> sourceFiles, targetFiles;
+    protected List<File> sourceFiles;
     protected List<String> filesPassword;
     protected boolean sourceCheckSubdir, allowPaused, browseTargets, viewTargetPath, createDirectories;
     protected boolean isPreview, paused;
@@ -61,7 +64,6 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     protected SimpleBooleanProperty optionsValid;
     protected ProcessParameters actualParameters, previewParameters, currentParameters;
     protected Date processStartTime, fileStartTime;
-    protected String finalTargetName;
 
     @FXML
     protected Tab sourceTab, targetTab;
@@ -101,7 +103,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         if (target == null) {
             return message("Skip");
         }
-        targetFileGenerated(target, false);
+        targetFileGenerated(target);
         return message("Successful");
     }
 
@@ -115,26 +117,17 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         if (miaoCheck != null && miaoCheck.isSelected()) {
             SoundTools.miao3();
         }
-        if (targetFiles != null && !targetFiles.isEmpty()) {
-            recordFileWritten(targetFiles.get(0), TargetFileType);
-        } else if (targetFile != null) {
-            recordFileWritten(targetFile, TargetFileType);
-        } else if (finalTargetName != null) {
-            recordFileWritten(new File(finalTargetName), TargetFileType);
-        } else if (targetPath != null) {
-            recordFileWritten(targetPath, TargetPathType);
-        }
+
         if (!isPreview && openCheck != null && !openCheck.isSelected()) {
             return;
         }
         if (targetFiles != null && viewTargetPath) {
             openTarget(null);
         } else if (targetFiles == null || targetFiles.size() == 1) {
-            if (finalTargetName == null
-                    || !new File(finalTargetName).exists()) {
+            if (lastTargetName == null || !new File(lastTargetName).exists()) {
                 alertInformation(message("NoDataNotSupported"));
             } else {
-                viewTarget(new File(finalTargetName));
+                viewTarget(new File(lastTargetName));
             }
         } else if (!targetFiles.isEmpty()) {
             if (browseTargets) {
@@ -144,6 +137,26 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             }
         } else {
             popInformation(message("NoFileGenerated"));
+        }
+    }
+
+    @Override
+    public void recordTargetFiles() {
+        if (targetFiles != null && !targetFiles.isEmpty()) {
+            try (Connection conn = DerbyBase.getConnection()) {
+                for (File file : targetFiles.keySet()) {
+                    int type = targetFiles.get(file);
+                    recordFileWritten(conn, file, type, type);
+                }
+            } catch (Exception e) {
+                MyBoxLog.error(e);
+            }
+        } else if (targetFile != null) {
+            recordFileWritten(targetFile, TargetFileType);
+        } else if (lastTargetName != null) {
+            recordFileWritten(new File(lastTargetName), TargetFileType);
+        } else if (targetPath != null) {
+            recordFileWritten(targetPath, TargetPathType);
         }
     }
 
@@ -159,10 +172,10 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     public void openTarget(ActionEvent event) {
         try {
             File path = null;
-            if (targetFiles != null && !targetFiles.isEmpty()) {
-                path = targetFiles.get(0).getParentFile();
-            } else if (actualParameters != null && finalTargetName != null) {
-                path = new File(finalTargetName).getParentFile();
+            if (lastTargetName != null) {
+                path = new File(lastTargetName).getParentFile();
+            } else if (targetFiles != null && !targetFiles.isEmpty()) {
+                path = targetFiles.keySet().iterator().next().getParentFile();
             } else if (actualParameters != null && actualParameters.targetPath != null) {
                 path = new File(actualParameters.targetPath);
             } else if (targetFile != null) {
@@ -204,7 +217,14 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             }
             ImagesBrowserController controller = ImagesBrowserController.open();
             if (controller != null) {
-                controller.loadImages(targetFiles.subList(0, Math.min(9, targetFiles.size())), 3);
+                List<File> files = new ArrayList<>();
+                for (File file : targetFiles.keySet()) {
+                    files.add(file);
+                    if (files.size() >= Math.min(9, targetFiles.size())) {
+                        break;
+                    }
+                }
+                controller.loadImages(files, 3);
             }
         } catch (Exception e) {
         }
@@ -412,6 +432,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         }
         currentParameters = actualParameters;
         paused = false;
+        beforeTask();
         doCurrentProcess();
     }
 
@@ -456,7 +477,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         if (targetFileController != null) {
             targetFile = targetFileController.file();
             if (targetFile != null) {
-                finalTargetName = targetFile.getAbsolutePath();
+                lastTargetName = targetFile.getAbsolutePath();
                 targetPath = targetFile.getParentFile();
             }
         }
@@ -485,7 +506,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         actualParameters.acumDigit = 0;
 
         sourceFiles = new ArrayList<>();
-        targetFiles = new ArrayList<>();
+        beforeTask();
 
         return makeMoreParameters();
 
@@ -603,11 +624,11 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                     }
 
                     @Override
-                    protected void taskQuit() {
-                        super.taskQuit();
-                        quitProcess();
+                    protected void finalAction() {
+                        super.finalAction();
                         task = null;
                         tableController.markFileHandling(-1);
+                        afterTask();
                     }
 
                 };
@@ -625,7 +646,6 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     }
 
     public void afterHandleFiles() {
-
     }
 
     public void afterSuccessful() {
@@ -1014,25 +1034,14 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         return super.makeTargetFile(srcFile, path);
     }
 
-    public boolean targetFileGenerated(File target) {
-        return targetFileGenerated(target, TargetFileType, false);
-    }
-
     @Override
-    public boolean targetFileGenerated(File target, int type, boolean record) {
-        if (target == null || !target.exists() || target.length() == 0) {
+    public boolean targetFileGenerated(File target, int type) {
+        if (!super.targetFileGenerated(target, type)) {
             return false;
         }
-        finalTargetName = target.getAbsolutePath();
-        targetFiles.add(target);
-        String msg;
-        msg = MessageFormat.format(message("FilesGenerated"), finalTargetName);
-        msg += " " + message("Cost") + ":" + DateTools.datetimeMsDuration(new Date(), fileStartTime);
-        updateStatusLabel(msg);
+        String msg = message("Cost") + ":" + DateTools.datetimeMsDuration(new Date(), fileStartTime);
         showLogs(msg);
-        if (record) {
-            recordFileWritten(target, type, type);
-        }
+        updateStatusLabel(MessageFormat.format(message("FilesGenerated"), lastTargetName));
         return true;
     }
 
@@ -1040,18 +1049,22 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         if (tFiles == null || tFiles.isEmpty()) {
             return;
         }
-        finalTargetName = tFiles.get(0).getAbsolutePath();
-        targetFiles.addAll(tFiles);
+        lastTargetName = tFiles.get(tFiles.size() - 1).getAbsolutePath();
+        if (targetFiles == null) {
+            targetFiles = new LinkedHashMap<>();
+        }
+        for (File file : tFiles) {
+            targetFiles.put(file, TargetFileType);
+        }
         String msg;
         if (tFiles.size() == 1) {
-            msg = MessageFormat.format(message("FilesGenerated"), finalTargetName);
+            msg = MessageFormat.format(message("FilesGenerated"), lastTargetName);
         } else {
             msg = MessageFormat.format(message("FilesGenerated"), tFiles.size());
         }
         msg += "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(new Date(), fileStartTime);
         updateStatusLabel(msg);
         updateLogs(msg, true, true);
-        recordFileWritten(tFiles.get(0));
     }
 
     public void updateInterface(final String newStatus) {
@@ -1161,10 +1174,6 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             statusInput.setText(s);
         }
         updateLogs(s, true, true);
-    }
-
-    public void quitProcess() {
-
     }
 
     @Override

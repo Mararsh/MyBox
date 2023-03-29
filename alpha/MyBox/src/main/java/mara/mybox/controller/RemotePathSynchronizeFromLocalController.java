@@ -53,6 +53,7 @@ public class RemotePathSynchronizeFromLocalController extends DirectorySynchroni
 
     @Override
     public void afterTask() {
+        super.afterTask();
         remoteController.disconnect();
     }
 

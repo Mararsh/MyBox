@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
@@ -174,6 +175,7 @@ public class DataExportController extends BaseTaskController {
         if (!checkOptions()) {
             return;
         }
+        targetFiles = new LinkedHashMap<>();
         top = queryController.savedCondition.getTop();
         Platform.runLater(() -> {
             if (startButton.getUserData() == null) {
@@ -203,7 +205,7 @@ public class DataExportController extends BaseTaskController {
             cancelled = false;
             tabPane.getSelectionModel().select(logsTab);
             startTime = new Date().getTime();
-            initLogs();
+            beforeTask();
             task = new SingletonTask<Void>(this) {
 
                 private final boolean skip = targetPathController.isSkip();
@@ -331,9 +333,11 @@ public class DataExportController extends BaseTaskController {
 
                 @Override
                 protected void finalAction() {
+                    super.finalAction();
                     StyleTools.setNameIcon(startButton, Languages.message("Start"), "iconStart.png");
                     startButton.applyCss();
                     startButton.setUserData(null);
+                    afterTask();
                 }
             };
             start(task, false);

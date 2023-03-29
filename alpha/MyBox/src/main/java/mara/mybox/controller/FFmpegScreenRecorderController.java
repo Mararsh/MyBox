@@ -149,12 +149,6 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
     }
 
     @Override
-    public void beforeTask() {
-        super.beforeTask();
-        initLogs();
-    }
-
-    @Override
     public void startTask() {
         if (optionsController.delayController.value > 0) {
             showLogs(message("Delay") + ": " + optionsController.delayController.value + " " + message("Seconds"));
@@ -172,7 +166,6 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
 
     public void superStartTask() {
         super.startTask();
-        openPath();
     }
 
     @Override

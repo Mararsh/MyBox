@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import com.jcraft.jsch.SftpProgressMonitor;
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.LinkedHashMap;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -80,6 +81,7 @@ public class RemotePathPutController extends BaseBatchFileController {
     @FXML
     @Override
     public void startAction() {
+        targetFiles = new LinkedHashMap<>();
         runTask();
     }
 

@@ -259,7 +259,7 @@ public class FilesRenameController extends BaseBatchFileController {
             }
             if (FileTools.rename(file, newFile)) {
                 newName = newFile.getAbsolutePath();
-                targetFileGenerated(newFile, false);
+                targetFileGenerated(newFile);
                 return newName;
             } else {
                 return null;

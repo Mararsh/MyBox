@@ -614,7 +614,8 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
     }
 
     @Override
-    public void quitProcess() {
+    public void afterTask() {
+        super.afterTask();
         OCRinstance = null;
     }
 

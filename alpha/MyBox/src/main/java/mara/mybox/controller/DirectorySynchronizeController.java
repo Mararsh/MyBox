@@ -133,12 +133,6 @@ public class DirectorySynchronizeController extends BaseTaskController {
     }
 
     @Override
-    public void beforeTask() {
-        super.beforeTask();
-        initLogs();
-    }
-
-    @Override
     public boolean doTask() {
         return synchronize(targetPath.getAbsolutePath());
     }

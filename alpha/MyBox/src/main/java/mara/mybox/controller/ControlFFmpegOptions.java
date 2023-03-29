@@ -295,8 +295,8 @@ public class ControlFFmpegOptions extends BaseController {
                     }
 
                     @Override
-                    protected void taskQuit() {
-                        super.taskQuit();
+                    protected void finalAction() {
+                        super.finalAction();
                         muxerTask = null;
                     }
                 };
@@ -413,8 +413,8 @@ public class ControlFFmpegOptions extends BaseController {
                     }
 
                     @Override
-                    protected void taskQuit() {
-                        super.taskQuit();
+                    protected void finalAction() {
+                        super.finalAction();
                         encoderTask = null;
                     }
                 };

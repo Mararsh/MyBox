@@ -1,13 +1,16 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.sql.Connection;
 import java.text.MessageFormat;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.StyleTools;
@@ -24,6 +27,8 @@ public class BaseTaskController extends BaseLogs {
 
     protected boolean cancelled, successed;
     protected Date startTime, endTime;
+    protected LinkedHashMap<File, Integer> targetFiles;
+    protected String lastTargetName;
 
     @FXML
     protected Tab logsTab;
@@ -94,6 +99,8 @@ public class BaseTaskController extends BaseLogs {
     public void beforeTask() {
         cancelled = false;
         successed = false;
+        targetFiles = new LinkedHashMap<>();
+        initLogs();
     }
 
     public void startTask() {
@@ -119,7 +126,7 @@ public class BaseTaskController extends BaseLogs {
 
             @Override
             protected void finalAction() {
-                endTime = new Date();
+                super.taskQuit();
                 task = null;
                 if (startButton != null) {
                     StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
@@ -163,10 +170,6 @@ public class BaseTaskController extends BaseLogs {
         showLogs(message("Cancel"));
     }
 
-    public void afterTask() {
-
-    }
-
     @FXML
     public void openPath() {
         File path = targetPath;
@@ -184,23 +187,39 @@ public class BaseTaskController extends BaseLogs {
         recordFileOpened(path);
     }
 
-    public boolean targetFileGenerated(File target, boolean record) {
-        return targetFileGenerated(target, TargetFileType, record);
+    public boolean targetFileGenerated(File target) {
+        return targetFileGenerated(target, TargetFileType);
     }
 
     public boolean targetFileGenerated(File target, int type) {
-        return targetFileGenerated(target, type, true);
-    }
-
-    public boolean targetFileGenerated(File target, int type, boolean record) {
-        if (target == null || !target.exists() || target.length() == 0) {
+        if (target == null || !target.exists()) {
             return false;
         }
-        updateLogs(MessageFormat.format(message("FilesGenerated"), target.getAbsolutePath()));
-        if (record) {
-            recordFileWritten(target, type, type);
+        if (targetFiles == null) {
+            targetFiles = new LinkedHashMap<>();
         }
+        targetFiles.put(target, type);
+        lastTargetName = target.getAbsolutePath();
+        showLogs(MessageFormat.format(message("FilesGenerated"), lastTargetName) + " "
+                + message("Size") + ": " + target.length());
         return true;
+    }
+
+    public void afterTask() {
+        recordTargetFiles();
+    }
+
+    public void recordTargetFiles() {
+        if (targetFiles != null && !targetFiles.isEmpty()) {
+            try (Connection conn = DerbyBase.getConnection()) {
+                for (File file : targetFiles.keySet()) {
+                    int type = targetFiles.get(file);
+                    recordFileWritten(conn, file, type, type);
+                }
+            } catch (Exception e) {
+                MyBoxLog.error(e);
+            }
+        }
     }
 
     @Override

@@ -166,10 +166,10 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
                     }
 
                     @Override
-                    protected void taskQuit() {
-                        super.taskQuit();
-                        quitProcess();
+                    protected void finalAction() {
+                        super.finalAction();
                         task = null;
+                        afterTask();
                     }
 
                 };

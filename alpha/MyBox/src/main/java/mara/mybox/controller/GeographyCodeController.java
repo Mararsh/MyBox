@@ -231,8 +231,8 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
                 }
 
                 @Override
-                protected void taskQuit() {
-                    super.taskQuit();
+                protected void finalAction() {
+                    super.finalAction();
                     backgroundTask = null;
                 }
             };

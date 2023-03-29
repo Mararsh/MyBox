@@ -306,7 +306,8 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
                 updateLogs(MessageFormat.format(message("FileDecompressedSuccessfully"),
                         decompressedFile, DateTools.datetimeMsDuration(new Date(), startTime), true, true
                 ));
-                targetFileGenerated(decompressedFile, true);
+                targetFileGenerated(decompressedFile);
+                recordFileWritten(decompressedFile);
                 if (archiver != null) {
                     unarchiveFile = decompressedFile;
                     readEntries();
@@ -318,6 +319,7 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
             }
         };
         start(task, info);
+
     }
 
     public void readEntries() {
@@ -519,6 +521,7 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
 
     @Override
     public void afterTask() {
+        super.afterTask();
         sourceVBox.setDisable(false);
         selectionVBox.setDisable(false);
         targetVBox.setDisable(false);

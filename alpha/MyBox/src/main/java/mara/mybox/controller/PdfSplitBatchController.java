@@ -4,6 +4,7 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.LinkedHashMap;
 import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
@@ -59,7 +60,7 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
     @Override
     public String handleFile(File srcFile, File targetPath) {
         doc = null;
-        targetFiles = new ArrayList<>();
+        targetFiles = new LinkedHashMap<>();
         try {
             currentParameters.currentSourceFile = srcFile;
             PdfInformation info = (PdfInformation) tableData.get(currentParameters.currentIndex);
@@ -69,7 +70,7 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
             }
             currentParameters.toPage = info.getToPage();
             currentParameters.password = info.getUserPassword();
-            try ( PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
+            try (PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
                     currentParameters.password, AppVariables.pdfMemUsage)) {
                 doc = pd;
                 if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {

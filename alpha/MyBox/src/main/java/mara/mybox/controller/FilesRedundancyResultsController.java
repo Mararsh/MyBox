@@ -270,7 +270,8 @@ public class FilesRedundancyResultsController extends FilesTreeController {
                 }
 
                 @Override
-                protected void taskQuit() {
+                protected void finalAction() {
+                    super.finalAction();
                     bottomLabel.setText(message("TotalDeletedFiles") + ": " + deleted);
                     TreeItem rootItem = filesTreeView.getRoot();
                     List<TreeItem> digests = new ArrayList();
@@ -295,7 +296,6 @@ public class FilesRedundancyResultsController extends FilesTreeController {
                     if (digests.isEmpty()) {
                         filesTreeView.setRoot(null);
                     }
-                    super.taskQuit();
                     task = null;
                 }
 

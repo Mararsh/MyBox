@@ -543,7 +543,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
             ProcessBuilder pb = new ProcessBuilder(parameters).redirectErrorStream(true);
             process = pb.start();
             String outputs = "", line;
-            try ( BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
+            try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                 while ((line = inReader.readLine()) != null) {
                     outputs += line + "\n";
                 }
@@ -614,7 +614,8 @@ public class ImageOCRBatchController extends BaseBatchImageController {
     }
 
     @Override
-    public void quitProcess() {
+    public void afterTask() {
+        super.afterTask();
         OCRinstance = null;
     }
 

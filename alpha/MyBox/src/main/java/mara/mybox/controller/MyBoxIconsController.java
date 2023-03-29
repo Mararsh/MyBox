@@ -99,7 +99,8 @@ public class MyBoxIconsController extends BaseBatchFileController {
             }
 
             @Override
-            protected void taskQuit() {
+            protected void finalAction() {
+                super.finalAction();
                 tableController.addFiles(0, icons);
                 task = null;
             }
@@ -153,7 +154,7 @@ public class MyBoxIconsController extends BaseBatchFileController {
                 }
                 String tname = resourcePath + StyleTools.ButtonsSourcePath + style.name() + "/" + filename;
                 ImageFileWriters.writeImageFile(image, "png", tname);
-                targetFileGenerated(new File(tname), false);
+                targetFileGenerated(new File(tname));
             }
             return message("Successful");
         } catch (Exception e) {

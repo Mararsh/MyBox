@@ -81,10 +81,10 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
                     }
 
                     @Override
-                    protected void taskQuit() {
-                        super.taskQuit();
-                        quitProcess();
+                    protected void finalAction() {
+                        super.finalAction();
                         task = null;
+                        afterTask();
                     }
 
                 };

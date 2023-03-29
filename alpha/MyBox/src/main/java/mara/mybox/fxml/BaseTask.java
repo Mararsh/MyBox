@@ -91,16 +91,16 @@ public class BaseTask<P> extends Task<P> {
     @Override
     protected void failed() {
         super.failed();
-        whenFailed();
         taskQuit();
+        whenFailed();
         finalAction();
     }
 
     @Override
     protected void cancelled() {
         super.cancelled();
-        whenCanceled();
         taskQuit();
+        whenCanceled();
         finalAction();
     }
 
