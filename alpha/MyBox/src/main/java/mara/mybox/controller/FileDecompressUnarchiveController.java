@@ -306,7 +306,7 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
                 updateLogs(MessageFormat.format(message("FileDecompressedSuccessfully"),
                         decompressedFile, DateTools.datetimeMsDuration(new Date(), startTime), true, true
                 ));
-                targetFileGenerated(decompressedFile);
+                targetFileGenerated(decompressedFile, true);
                 if (archiver != null) {
                     unarchiveFile = decompressedFile;
                     readEntries();

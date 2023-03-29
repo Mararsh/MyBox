@@ -37,6 +37,7 @@ License:    Apache License Version 2.0
       </HBox>
       <TextArea fx:id="namesArea" prefHeight="400.0" />
       <Label fx:id="commentsLabel1" layoutX="20.0" layoutY="60.0" text="%DeleteDirectoryComments" />
+      <CheckBox fx:id="continueCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%ContinueWhenError" wrapText="true" />
       <HBox alignment="CENTER_LEFT" spacing="2.0">
          <children>
             <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" />

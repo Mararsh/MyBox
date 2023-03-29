@@ -101,7 +101,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         if (target == null) {
             return message("Skip");
         }
-        targetFileGenerated(target, true);
+        targetFileGenerated(target, false);
         return message("Successful");
     }
 
@@ -115,6 +115,15 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         if (miaoCheck != null && miaoCheck.isSelected()) {
             SoundTools.miao3();
         }
+        if (targetFiles != null && !targetFiles.isEmpty()) {
+            recordFileWritten(targetFiles.get(0), TargetFileType);
+        } else if (targetFile != null) {
+            recordFileWritten(targetFile, TargetFileType);
+        } else if (finalTargetName != null) {
+            recordFileWritten(new File(finalTargetName), TargetFileType);
+        } else if (targetPath != null) {
+            recordFileWritten(targetPath, TargetPathType);
+        }
         if (!isPreview && openCheck != null && !openCheck.isSelected()) {
             return;
         }
@@ -127,7 +136,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             } else {
                 viewTarget(new File(finalTargetName));
             }
-        } else if (targetFiles.size() > 1) {
+        } else if (!targetFiles.isEmpty()) {
             if (browseTargets) {
                 browseAction();
             } else {
@@ -1003,6 +1012,10 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             path = new File(targetPath, FileNameTools.prefix(srcFile.getName()));
         }
         return super.makeTargetFile(srcFile, path);
+    }
+
+    public boolean targetFileGenerated(File target) {
+        return targetFileGenerated(target, TargetFileType, false);
     }
 
     @Override

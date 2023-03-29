@@ -135,7 +135,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
     }
 
     private void recordFileOpened(File file, int pathType, int fileType) {
-        if (file == null) {
+        if (file == null || !file.exists()) {
             return;
         }
         String fname = file.getAbsolutePath();
@@ -151,7 +151,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
 
     public void recordFileRead(Connection conn, File file, int pathType, int fileType) {
         try {
-            if (conn == null || file == null) {
+            if (conn == null || file == null || !file.exists()) {
                 return;
             }
             String fname = file.getAbsolutePath();
@@ -193,7 +193,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
     }
 
     public void recordFileWritten(File file, int pathType, int fileType) {
-        if (file == null) {
+        if (file == null || !file.exists()) {
             return;
         }
         String fname = file.getAbsolutePath();
@@ -209,7 +209,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
 
     public void recordFileWritten(Connection conn, File file, int pathType, int fileType) {
         try {
-            if (conn == null || file == null) {
+            if (conn == null || file == null || !file.exists()) {
                 return;
             }
             String fname = file.getAbsolutePath();
@@ -247,7 +247,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
     }
 
     public void recordFileAdded(final File file) {
-        if (file == null) {
+        if (file == null || !file.exists()) {
             return;
         }
         String fname = file.getAbsolutePath();

@@ -1,8 +1,11 @@
 package mara.mybox.controller;
 
+import com.jcraft.jsch.ChannelSftp.LsEntry;
+import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpProgressMonitor;
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.Iterator;
 import javafx.fxml.FXML;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
@@ -18,7 +21,6 @@ import static mara.mybox.value.Languages.message;
  */
 public class RemotePathGetController extends RemotePathHandleFilesController {
 
-    protected File targetPath;
     protected long srcLen;
 
     @FXML
@@ -26,6 +28,7 @@ public class RemotePathGetController extends RemotePathHandleFilesController {
 
     public RemotePathGetController() {
         baseTitle = message("RemotePathGet");
+        doneString = message("Downloaded");
     }
 
     @Override
@@ -56,18 +59,32 @@ public class RemotePathGetController extends RemotePathHandleFilesController {
     }
 
     @Override
-    public boolean handleFile(String name) {
+    public boolean handleFile(String srcfile) {
         try {
-            String targetName = "";
-            if (targetName == null) {
+            SftpATTRS attrs = manageController.remoteController.stat(srcfile);
+            if (attrs == null) {
                 return false;
             }
+            srcLen = attrs.getSize();
+            if (attrs.isDir()) {
+                return downDirectory(srcfile, targetPath);
+            } else {
+                return downFile(srcfile, targetPath);
+            }
+        } catch (Exception e) {
+            showLogs(e.toString());
+            return false;
+        }
+    }
 
-            targetName = manageController.remoteController.fixFilename(targetName);
-//            srcLen = srcFile.length();
-            showLogs("get " + name + " " + targetName);
-            manageController.remoteController.sftp.get(name, targetName, new GetMonitor());
-            showLogs(MessageFormat.format(message("FilesGenerated"), targetName));
+    public boolean downFile(String srcfile, File path) {
+        try {
+            File target = new File(path + File.separator + new File(srcfile).getName());
+            target.getParentFile().mkdirs();
+            String tname = target.getAbsolutePath();
+            showLogs("get " + srcfile + " " + tname);
+            manageController.remoteController.sftp.get(srcfile, tname, new GetMonitor());
+            showLogs(MessageFormat.format(message("FilesGenerated"), target));
             return true;
         } catch (Exception e) {
             showLogs(e.toString());
@@ -75,33 +92,47 @@ public class RemotePathGetController extends RemotePathHandleFilesController {
         }
     }
 
-//    public String makeTargetFilename(File srcFile, String targetPath) {
-//        if (srcFile == null || targetPath == null) {
-//            return null;
-//        }
-//        try {
-//            if (srcFile.isDirectory()) {
-//                return makeTargetFilename(srcFile.getName(), "", targetPath);
-//            } else {
-//                String filename = srcFile.getName();
-//                String namePrefix = FileNameTools.prefix(filename);
-//                String nameSuffix;
-//                if (targetFileSuffix != null) {
-//                    nameSuffix = "." + targetFileSuffix;
-//                } else {
-//                    nameSuffix = FileNameTools.suffix(filename);
-//                    if (nameSuffix != null && !nameSuffix.isEmpty()) {
-//                        nameSuffix = "." + nameSuffix;
-//                    } else {
-//                        nameSuffix = "";
-//                    }
-//                }
-//                return makeTargetFilename(namePrefix, nameSuffix, targetPath);
-//            }
-//        } catch (Exception e) {
-//            return null;
-//        }
-//    }
+    public boolean downDirectory(String srcfile, File path) {
+        try {
+            File target = new File(path + File.separator + new File(srcfile).getName());
+            target.getParentFile().mkdirs();
+            Iterator<LsEntry> iterator = manageController.remoteController.ls(srcfile);
+            if (iterator == null) {
+                return false;
+            }
+            boolean ok;
+            while (iterator.hasNext()) {
+                if (task == null || task.isCancelled()) {
+                    return false;
+                }
+                LsEntry entry = iterator.next();
+                String child = entry.getFilename();
+                if (child == null || child.isBlank()
+                        || ".".equals(child) || "..".equals(child)) {
+                    continue;
+                }
+                child = srcfile + "/" + child;
+                SftpATTRS attrs = entry.getAttrs();
+                srcLen = attrs.getSize();
+                if (attrs.isDir()) {
+                    ok = downDirectory(child, target);
+                } else {
+                    ok = downFile(child, target);
+                }
+                if (!ok && !continueCheck.isSelected()) {
+                    if (task != null) {
+                        task.cancel();
+                    }
+                    return false;
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            showLogs(e.toString());
+            return false;
+        }
+    }
+
     private class GetMonitor implements SftpProgressMonitor {
 
         private long len = 0;
@@ -110,9 +141,13 @@ public class RemotePathGetController extends RemotePathHandleFilesController {
         public boolean count(long count) {
             len += count;
             if (manageController.verboseCheck.isSelected() && len % 500 == 0) {
-                updateLogs(message("Status") + ": "
-                        + FloatTools.percentage(len, srcLen) + "%   "
-                        + showFileSize(len) + "/" + showFileSize(srcLen));
+                if (srcLen > 0) {
+                    updateLogs(message("Status") + ": "
+                            + FloatTools.percentage(len, srcLen) + "%   "
+                            + showFileSize(len) + "/" + showFileSize(srcLen));
+                } else {
+                    updateLogs(message("Status") + ": " + showFileSize(len));
+                }
             }
             return true;
         }
@@ -126,6 +161,13 @@ public class RemotePathGetController extends RemotePathHandleFilesController {
         }
     }
 
+    @FXML
+    @Override
+    public void openPath() {
+        File path = targetPathInputController.file();
+        browseURI(path.toURI());
+        recordFileOpened(path);
+    }
 
     /*
         static methods

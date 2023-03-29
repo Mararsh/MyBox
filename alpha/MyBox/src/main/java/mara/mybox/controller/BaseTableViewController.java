@@ -68,7 +68,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
     @FXML
     protected Label dataSizeLabel, selectedLabel, pageLabel;
     @FXML
-    protected CheckBox deleteConfirmCheck, allRowsCheck;
+    protected CheckBox allRowsCheck;
     @FXML
     protected Button moveUpButton, moveDownButton, moveTopButton, refreshButton, deleteItemsButton;
     @FXML
@@ -153,14 +153,6 @@ public abstract class BaseTableViewController<P> extends BaseController {
             });
 
             tableView.setItems(tableData);
-
-            if (deleteConfirmCheck != null) {
-                deleteConfirmCheck.selectedProperty().addListener(
-                        (ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
-                            UserConfig.setBoolean(baseName + "ConfirmDelete", deleteConfirmCheck.isSelected());
-                        });
-                deleteConfirmCheck.setSelected(UserConfig.getBoolean(baseName + "ConfirmDelete", true));
-            }
 
             initColumns();
 
@@ -870,11 +862,6 @@ public abstract class BaseTableViewController<P> extends BaseController {
         if (indice == null || indice.isEmpty()) {
             clearAction();
             return;
-        }
-        if (deleteConfirmCheck != null && deleteConfirmCheck.isSelected()) {
-            if (!PopTools.askSure(getTitle(), message("SureDelete"))) {
-                return;
-            }
         }
         synchronized (this) {
             if (task != null && !task.isQuit()) {

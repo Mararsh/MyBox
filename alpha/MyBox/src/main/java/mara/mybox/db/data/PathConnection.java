@@ -2,6 +2,7 @@ package mara.mybox.db.data;
 
 import java.util.Date;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.AESTools;
 
 /**
  * @Author Mara
@@ -78,7 +79,7 @@ public class PathConnection extends BaseData {
                     data.setUsername(value == null ? null : (String) value);
                     return true;
                 case "password":
-                    data.setPassword(value == null ? null : (String) value);
+                    data.setPassword(value == null ? null : AESTools.decrypt((String) value));
                     return true;
                 case "path":
                     data.setPath(value == null ? null : (String) value);
@@ -122,7 +123,7 @@ public class PathConnection extends BaseData {
             case "username":
                 return data.getUsername();
             case "password":
-                return data.getPassword();
+                return AESTools.encrypt(data.getPassword());
             case "path":
                 return data.getPath();
             case "port":

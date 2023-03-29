@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import com.jcraft.jsch.ChannelSftp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +27,7 @@ import mara.mybox.value.UserConfig;
 public abstract class RemotePathHandleFilesController extends BaseTaskController {
 
     protected RemotePathManageController manageController;
+    protected ChannelSftp sftp;
     protected List<String> names;
     protected int doneCount;
     protected String doneString;
@@ -35,7 +37,7 @@ public abstract class RemotePathHandleFilesController extends BaseTaskController
     @FXML
     protected Label hostLabel;
     @FXML
-    protected CheckBox wrapCheck;
+    protected CheckBox wrapCheck, continueCheck;
 
     public void setParameters(RemotePathManageController manageController) {
         try {
@@ -53,15 +55,23 @@ public abstract class RemotePathHandleFilesController extends BaseTaskController
 
             hostLabel.setText(message("Host") + ": " + manageController.remoteController.host());
 
-            wrapCheck.setSelected(UserConfig.getBoolean(baseName + "Wrap", true));
+            wrapCheck.setSelected(UserConfig.getBoolean("RemotePathFilesWrap", true));
             wrapCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "Wrap", newValue);
-                    namesArea.setWrapText(newValue);
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    UserConfig.setBoolean("RemotePathFilesWrap", nv);
+                    namesArea.setWrapText(nv);
                 }
             });
             namesArea.setWrapText(wrapCheck.isSelected());
+
+            continueCheck.setSelected(UserConfig.getBoolean("RemotePathFilesErrorContinue", true));
+            continueCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    UserConfig.setBoolean("RemotePathFilesErrorContinue", nv);
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -112,17 +122,21 @@ public abstract class RemotePathHandleFilesController extends BaseTaskController
             if (!manageController.checkConnection()) {
                 return false;
             }
+            sftp = manageController.remoteController.sftp;
             doneCount = 0;
             for (String name : names) {
                 if (task == null || task.isCancelled()) {
                     return false;
                 }
+                showLogs(message("SourceFile") + ": " + name);
                 if (handleFile(name)) {
                     showLogs(doneString + ": " + name);
                     doneCount++;
                 } else {
                     showLogs(message("Failed") + ": " + name);
-                    return false;
+                    if (!continueCheck.isSelected()) {
+                        return false;
+                    }
                 }
             }
             return true;
@@ -142,10 +156,9 @@ public abstract class RemotePathHandleFilesController extends BaseTaskController
         if (miaoCheck.isSelected()) {
             SoundTools.miao3();
         }
-        if (manageController == null) {
-            return;
+        if (manageController != null) {
+            manageController.loadPath();
         }
-        manageController.loadPath();
     }
 
     /*

@@ -39,15 +39,15 @@ License:    Apache License Version 2.0
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                     <children>
-                              <TitledPane fx:id="infoPane" minHeight="-Infinity" text="%Info">
-                                 <content>
-                                    <VBox>
-                                       <children>
-                                          <Label fx:id="infoLabel" minHeight="-Infinity" wrapText="true" />
-                                       </children>
-                                    </VBox>
-                                 </content>
-                              </TitledPane>
+                                        <TitledPane fx:id="infoPane" minHeight="-Infinity" text="%Info">
+                                            <content>
+                                                <VBox>
+                                                    <children>
+                                                        <Label fx:id="infoLabel" minHeight="-Infinity" wrapText="true" />
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </TitledPane>
                                         <TitledPane fx:id="formatPane" maxWidth="1.7976931348623157E308" text="%Format">
                                             <content>
                                                 <VBox fx:id="formatBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
@@ -90,16 +90,11 @@ License:    Apache License Version 2.0
                                         </TitledPane>
                                         <TitledPane fx:id="savePane" text="%Save">
                                             <content>
-                                                <VBox spacing="2.0">
+                                                <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
                                                     <children>
-                                                        <CheckBox fx:id="confirmCheck" mnemonicParsing="false" selected="true" text="%ConfirmWhenSave" />
-                                                        <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
-                                                            <children>
-                                                                <CheckBox fx:id="autoSaveCheck" layoutX="32.0" layoutY="32.0" mnemonicParsing="false" selected="true" text="%AutoSave" />
-                                                                <Label text="%IntervalSeconds" />
-                                                                <fx:include fx:id="autoSaveDuration" source="ControlTimeLength.fxml" />
-                                                            </children>
-                                                        </VBox>
+                                                        <CheckBox fx:id="autoSaveCheck" layoutX="32.0" layoutY="32.0" mnemonicParsing="false" selected="true" text="%AutoSave" />
+                                                        <Label text="%IntervalSeconds" />
+                                                        <fx:include fx:id="autoSaveDuration" source="ControlTimeLength.fxml" />
                                                     </children>
                                                 </VBox>
                                             </content>
@@ -263,48 +258,48 @@ License:    Apache License Version 2.0
                                                 <Image url="@../buttons/Red/iconDoubleLeft.png" />
                                             </image>
                                         </ImageView>
-                                              <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#pickSourceFile" onMouseEntered="#popSourceFile">
-                                                  <graphic>
-                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                          <image>
-                                                              <Image url="@../buttons/Red/iconOpen.png" />
-                                                          </image>
-                                                      </ImageView>
-                                                  </graphic>
-                                              </Button>
-                                              <Button fx:id="createButton" mnemonicParsing="false" onAction="#createAction">
-                                                  <graphic>
-                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                          <image>
-                                                              <Image url="@../buttons/Red/iconAdd.png" />
-                                                          </image>
-                                                      </ImageView>
-                                                  </graphic>
-                                              </Button>
-                                              <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                  <image>
-                                                      <Image url="@../buttons/Red/iconTips.png" />
-                                                  </image>
-                                              </ImageView> 
+                                        <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#pickSourceFile" onMouseEntered="#popSourceFile">
+                                            <graphic>
+                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconOpen.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="createButton" mnemonicParsing="false" onAction="#createAction">
+                                            <graphic>
+                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconAdd.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/Red/iconTips.png" />
+                                            </image>
+                                        </ImageView> 
                                         <Label fx:id="editLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                              <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
-                                 <graphic>
-                                    <ImageView fx:id="leftPaneControl1" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconDoubleLeft.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </CheckBox>
-                              <CheckBox fx:id="rightPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconDoubleRight.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </CheckBox>
+                                        <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
+                                            <graphic>
+                                                <ImageView fx:id="leftPaneControl1" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconDoubleLeft.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </CheckBox>
+                                        <CheckBox fx:id="rightPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconDoubleRight.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </CheckBox>
                                         <Button fx:id="menuButton" mnemonicParsing="false" onAction="#menuAction">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

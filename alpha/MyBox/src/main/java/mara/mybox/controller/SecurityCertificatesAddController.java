@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.tools.SecurityTools;
+import mara.mybox.tools.CertificateTools;
 import mara.mybox.value.Languages;
 
 /**
@@ -97,7 +97,7 @@ public class SecurityCertificatesAddController extends BaseController {
                         }
                         if (addressRadio.isSelected()) {
                             try {
-                                error = SecurityTools.installCertificateByHost(
+                                error = CertificateTools.installCertificateByHost(
                                         ksFile.getAbsolutePath(), password,
                                         addressInput.getText(), alias, chainCheck.isSelected());
                             } catch (Exception e) {
@@ -105,7 +105,7 @@ public class SecurityCertificatesAddController extends BaseController {
                             }
                         } else if (fileRadio.isSelected()) {
                             try {
-                                error = SecurityTools.installCertificateByFile(
+                                error = CertificateTools.installCertificateByFile(
                                         ksFile.getAbsolutePath(), password,
                                         sourceFile, alias, chainCheck.isSelected());
                             } catch (Exception e) {
@@ -158,7 +158,7 @@ public class SecurityCertificatesAddController extends BaseController {
                     protected boolean handle() {
                         result = error = null;
                         try {
-                            Certificate[] certs = SecurityTools.getCertificatesByFile(sourceFile);
+                            Certificate[] certs = CertificateTools.getCertificatesByFile(sourceFile);
                             StringBuilder s = new StringBuilder();
                             s.append("<h1  class=\"center\">").append(sourceFile.getAbsolutePath()).append("</h1>\n");
                             for (Certificate cert : certs) {

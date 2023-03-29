@@ -150,7 +150,6 @@ public class ImagesBrowserController extends ImagesBrowserController_Pane {
                 }
             });
 
-            fileBox.disableProperty().bind(Bindings.isEmpty(imageFileList));
             viewPane.disableProperty().bind(Bindings.isEmpty(imageFileList));
             browsePane.disableProperty().bind(Bindings.isEmpty(imageFileList));
             mainBox.disableProperty().bind(Bindings.isEmpty(imageFileList));

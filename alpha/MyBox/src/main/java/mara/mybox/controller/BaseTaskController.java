@@ -114,8 +114,7 @@ public class BaseTaskController extends BaseLogs {
 
             @Override
             protected void whenCanceled() {
-                cancelled = true;
-                updateLogs(message("Cancel"));
+                taskCanceled();
             }
 
             @Override
@@ -159,6 +158,11 @@ public class BaseTaskController extends BaseLogs {
         }
     }
 
+    protected void taskCanceled() {
+        cancelled = true;
+        showLogs(message("Cancel"));
+    }
+
     public void afterTask() {
 
     }
@@ -167,7 +171,9 @@ public class BaseTaskController extends BaseLogs {
     public void openPath() {
         File path = targetPath;
         if (path == null || !path.exists()) {
-            if (targetFile != null) {
+            if (targetPathController != null) {
+                path = targetPathController.file();
+            } else if (targetFile != null) {
                 path = targetFile.getParentFile();
             }
             if (path == null || !path.exists()) {
@@ -176,10 +182,6 @@ public class BaseTaskController extends BaseLogs {
         }
         browseURI(path.toURI());
         recordFileOpened(path);
-    }
-
-    public boolean targetFileGenerated(File target) {
-        return targetFileGenerated(target, TargetFileType, true);
     }
 
     public boolean targetFileGenerated(File target, boolean record) {

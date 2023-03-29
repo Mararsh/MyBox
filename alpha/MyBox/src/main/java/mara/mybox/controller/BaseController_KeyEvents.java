@@ -620,13 +620,13 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
                 return keyESC();
 
         }
-        if (!AppVariables.ShortcutsCanNotOmitCtrlAlt
-                && !isPopup() && !targetIsTextInput()) {
-            if (code != KeyCode.D && code != KeyCode.G) {  // to avoid accidents
-                return controlAltFilter(event);
-            }
+        if (AppVariables.ShortcutsCanNotOmitCtrlAlt || isPopup() || targetIsTextInput()) {
+            return false;
         }
-        return false;
+        if (code == KeyCode.S || code == KeyCode.D || code == KeyCode.G) {  // to avoid accidents
+            return false;
+        }
+        return controlAltFilter(event);
     }
 
     public boolean keyEnter() {

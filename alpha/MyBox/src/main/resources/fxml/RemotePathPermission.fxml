@@ -17,10 +17,9 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="500.0" prefWidth="600.0" spacing="5.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.RemotePathGetController">
+<VBox fx:id="thisPane" prefHeight="500.0" prefWidth="600.0" spacing="5.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.RemotePathPermissionController">
     <children>
-        <Label fx:id="titleLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%RemotePathGet" textAlignment="CENTER" VBox.vgrow="ALWAYS" />
-      <fx:include fx:id="targetPathInput" source="ControlPathInput.fxml" />
+        <Label fx:id="titleLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%RemotePathPermission" textAlignment="CENTER" VBox.vgrow="ALWAYS" />
       <Label fx:id="hostLabel" layoutX="20.0" layoutY="450.0" />
       <HBox alignment="CENTER_LEFT" spacing="2.0">
          <children>
@@ -59,15 +58,6 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-            <Button fx:id="openPathButton" mnemonicParsing="false" onAction="#openPath">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconOpenPath.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
             <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction" styleClass="big" stylesheets="@../styles/MyBox.css">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

@@ -133,7 +133,14 @@ public class RemotePathPutController extends BaseBatchFileController {
     public String handleDirectory(File dir) {
         try {
             dirFilesNumber = dirFilesHandled = 0;
-            handleDirectory(dir, targetPathName);
+            String targetDir = targetPathName;
+            if (createDirectories) {
+                targetDir += "/" + dir.getName();
+                if (!checkDirectory(targetDir)) {
+                    return message("Failed");
+                }
+            }
+            handleDirectory(dir, targetDir);
             return MessageFormat.format(message("DirHandledSummary"), dirFilesNumber, dirFilesHandled);
         } catch (Exception e) {
             showLogs(e.toString());
@@ -160,10 +167,9 @@ public class RemotePathPutController extends BaseBatchFileController {
         if (miaoCheck.isSelected()) {
             SoundTools.miao3();
         }
-        if (manageController == null) {
-            return;
+        if (manageController != null) {
+            manageController.loadPath();
         }
-        manageController.loadPath();
     }
 
     private class PutMonitor implements SftpProgressMonitor {
@@ -174,9 +180,13 @@ public class RemotePathPutController extends BaseBatchFileController {
         public boolean count(long count) {
             len += count;
             if (manageController.verboseCheck.isSelected() && len % 500 == 0) {
-                updateLogs(message("Status") + ": "
-                        + FloatTools.percentage(len, srcLen) + "%   "
-                        + showFileSize(len) + "/" + showFileSize(srcLen));
+                if (srcLen > 0) {
+                    updateLogs(message("Status") + ": "
+                            + FloatTools.percentage(len, srcLen) + "%   "
+                            + showFileSize(len) + "/" + showFileSize(srcLen));
+                } else {
+                    updateLogs(message("Status") + ": " + showFileSize(len));
+                }
             }
             return true;
         }

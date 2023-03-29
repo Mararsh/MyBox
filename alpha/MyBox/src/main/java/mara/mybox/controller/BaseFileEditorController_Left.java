@@ -55,16 +55,6 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
                     }
                 });
             }
-            if (confirmCheck != null) {
-                confirmCheck.setSelected(UserConfig.getBoolean(baseName + "ConfirmSave", true));
-                confirmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                        UserConfig.setBoolean(baseName + "ConfirmSave", confirmCheck.isSelected());
-                    }
-                });
-            }
-
             if (autoSaveCheck != null) {
                 autoSaveCheck.setSelected(UserConfig.getBoolean(baseName + "AutoSave", true));
                 autoSaveCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {

@@ -104,7 +104,6 @@ License:    Apache License Version 2.0
                                                                         </Button>
                                                                     </children>
                                                                 </HBox>
-                                                                <CheckBox fx:id="saveConfirmCheck" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" selected="true" text="%ConfirmWhenSave" />
                                                                 <Separator prefWidth="200.0" />
                                                             </children>
                                                         </VBox>
@@ -196,15 +195,15 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                              <TitledPane fx:id="renderPane" expanded="false" layoutX="10.0" layoutY="404.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Render">
-                                 <content>
-                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                       <children>
-                                          <fx:include fx:id="render" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageRender.fxml" VBox.vgrow="ALWAYS" />
-                                       </children>
-                                    </VBox>
-                                 </content>
-                              </TitledPane>
+                                        <TitledPane fx:id="renderPane" expanded="false" layoutX="10.0" layoutY="404.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Render">
+                                            <content>
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                                    <children>
+                                                        <fx:include fx:id="render" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageRender.fxml" VBox.vgrow="ALWAYS" />
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </TitledPane>
                                         <TitledPane fx:id="browsePane" expanded="false" maxWidth="1.7976931348623157E308" text="%Browse">
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
@@ -672,7 +671,7 @@ License:    Apache License Version 2.0
                                                                             </toggleGroup>
                                                                         </RadioButton>
                                                                         <RadioButton fx:id="saveOpenRadio" mnemonicParsing="false" text="%OpenAfterSaveAs" toggleGroup="$saveAsGroup" />
-                                                      <RadioButton fx:id="saveEditRadio" layoutX="15.0" layoutY="33.0" mnemonicParsing="false" text="%EditAfterSaveAs" toggleGroup="$saveAsGroup" />
+                                                                        <RadioButton fx:id="saveEditRadio" layoutX="15.0" layoutY="33.0" mnemonicParsing="false" text="%EditAfterSaveAs" toggleGroup="$saveAsGroup" />
                                                                         <RadioButton fx:id="saveJustRadio" mnemonicParsing="false" text="%JustSaveAs" toggleGroup="$saveAsGroup" />
                                                                     </children>
                                                                     <VBox.margin>

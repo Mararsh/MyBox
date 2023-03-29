@@ -16,7 +16,6 @@ import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.TransformTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ImageViewTools;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -126,11 +125,6 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
         try {
             if (index >= tableData.size()) {
                 return;
-            }
-            if (deleteConfirmCheck != null && deleteConfirmCheck.isSelected()) {
-                if (!PopTools.askSure(getTitle(), Languages.message("SureDelete"))) {
-                    return;
-                }
             }
             ImageInformation info = tableData.get(index);
             File file = info.getImageFileInformation().getFile();
@@ -458,11 +452,6 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
         try {
             if (selectedIndexes == null || selectedIndexes.isEmpty()) {
                 return;
-            }
-            if (deleteConfirmCheck != null && deleteConfirmCheck.isSelected()) {
-                if (!PopTools.askSure(getTitle(), Languages.message("SureDelete"))) {
-                    return;
-                }
             }
             int count = 0;
             for (int index : selectedIndexes) {

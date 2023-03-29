@@ -86,8 +86,8 @@ A file path can follow the command as argument to be opened directly by MyBox. E
 
 
 ## Limitation        
-* Without enough testings, MyBox has low reliability. Data damage happened in some versions.       
-* New functions being added and codes being improved continually, MyBox has bad stability. Unexpected function failures happened in some versions.      
+* Without enough testings, MyBox has low reliability. Data damage may happen.       
+* New functions being added and codes being improved continually, MyBox has bad stability. Unexpected function failures may happen.      
 * MyBox windows may often be blocked when some Input Method is running. Workaround is to disable/uninstall this Input Method.        
 
 ## Migration

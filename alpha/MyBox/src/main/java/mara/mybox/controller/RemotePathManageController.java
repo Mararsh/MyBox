@@ -92,7 +92,6 @@ public class RemotePathManageController extends FilesTreeController {
     @FXML
     @Override
     public void openPath() {
-        remoteController.taskController = this;
         filesBox.setDisable(true);
         if (!remoteController.pickProfile()) {
             return;
@@ -105,7 +104,6 @@ public class RemotePathManageController extends FilesTreeController {
         if (task != null) {
             task.cancel();
         }
-        remoteController.taskController = this;
         tabPane.getSelectionModel().select(logsTab);
         task = new SingletonTask<Void>(this) {
 
@@ -160,7 +158,7 @@ public class RemotePathManageController extends FilesTreeController {
 
     protected boolean checkConnection() {
         remoteController.task = task;
-        if (remoteController.sshSession != null) {
+        if (remoteController.sshSession != null && remoteController.sshSession.isConnected()) {
             return true;
         }
         return remoteController.connect(task);
@@ -290,11 +288,6 @@ public class RemotePathManageController extends FilesTreeController {
     }
 
     @FXML
-    public void permissionAction() {
-
-    }
-
-    @FXML
     public void copyFileNameAction() {
         TreeItem<FileNode> item = filesTreeView.getSelectionModel().getSelectedItem();
         if (item == null) {
@@ -341,7 +334,6 @@ public class RemotePathManageController extends FilesTreeController {
 
             @Override
             protected void finalAction() {
-                task = null;
                 loadPath();
                 popSuccessful();
             }
@@ -392,12 +384,16 @@ public class RemotePathManageController extends FilesTreeController {
 
             @Override
             protected void finalAction() {
-                task = null;
                 loadPath();
                 popSuccessful();
             }
         };
         start(task);
+    }
+
+    @FXML
+    public void permissionAction() {
+        RemotePathPermissionController.open(this);
     }
 
     @FXML
@@ -441,7 +437,6 @@ public class RemotePathManageController extends FilesTreeController {
 
             @Override
             protected void finalAction() {
-                task = null;
                 loadPath();
                 popSuccessful();
             }

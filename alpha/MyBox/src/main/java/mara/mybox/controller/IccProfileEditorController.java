@@ -86,7 +86,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             tagDisplay, tagNameDisplay, tagTypeDisplay, tagOffsetDisplay, tagSizeDisplay,
             maxDecodeInput;
     @FXML
-    protected CheckBox saveConfirmCheck, embedCheck, independentCheck, subsetCheck,
+    protected CheckBox embedCheck, independentCheck, subsetCheck,
             transparentcyCheck, matteCheck, negativeCheck, bwCheck, paperCheck, texturedCheck,
             isotropicCheck, selfLuminousCheck, idAutoCheck, lutNormalizeCheck, openExportCheck;
     @FXML
@@ -177,15 +177,6 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                 }
             });
 //            embedBox.getSelectionModel().select(0);
-
-            saveConfirmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov,
-                        Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean("IccEditerConfirmSave", newValue);
-                }
-            });
-            saveConfirmCheck.setSelected(UserConfig.getBoolean("IccEditerConfirmSave", true));
 
 //            saveButton.disableProperty().bind(profileVersionInput.styleProperty().isEqualTo(badStyle)
 //                    .or(createTimeInput.styleProperty().isEqualTo(badStyle))
@@ -1819,7 +1810,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
 
             @Override
             public List<VisitHistory> recentPaths() {
-                int pathNumber = AppVariables.fileRecentNumber / 3 + 1;
+                int pathNumber = AppVariables.fileRecentNumber / 4 + 1;
                 return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Xml, pathNumber);
             }
 

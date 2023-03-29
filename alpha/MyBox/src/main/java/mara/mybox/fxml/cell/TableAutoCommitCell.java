@@ -226,6 +226,7 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
             }
             clearEditor();
             setCellValue(value);
+            editingRow = -1;
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -254,7 +255,7 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
     public boolean commit(T value, boolean valid, boolean changed) {
         try {
             TableView<S> table = getTableView();
-            if (valid && valid && table != null && isEditingRow()) {
+            if (valid && changed && table != null && isEditingRow()) {
                 TableColumn<S, T> column = getTableColumn();
                 if (column == null) {
                     cancelEdit();
@@ -270,7 +271,6 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
             if (table != null) {
                 table.edit(-1, null);
             }
-            editingRow = -1;
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e);

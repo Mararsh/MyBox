@@ -25,10 +25,11 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-8-1
  * @License Apache License Version 2.0
  */
-public class SecurityTools {
+public class CertificateTools {
 
     public static String keystore() {
-        String jvm_cacerts = System.getProperty("java.home") + File.separator + "lib" + File.separator + "security" + File.separator + "cacerts";
+        String jvm_cacerts = System.getProperty("java.home") + File.separator + "lib"
+                + File.separator + "security" + File.separator + "cacerts";
         try {
             File file = myboxCacerts();
             if (!file.exists()) {
@@ -55,7 +56,8 @@ public class SecurityTools {
     }
 
     public static File myboxCacerts() {
-        return new File(AppVariables.MyboxDataPath + File.separator + "security" + File.separator + "cacerts_mybox");
+        return new File(AppVariables.MyboxDataPath + File.separator + "security"
+                + File.separator + "cacerts_mybox");
     }
 
     public static void SSLServerSocketInfo() {
@@ -124,7 +126,7 @@ public class SecurityTools {
     }
 
     public static String installCertificates(Certificate[] certs, String[] names) {
-        return installCertificates(SecurityTools.keystore(), SecurityTools.keystorePassword(), certs, names);
+        return installCertificates(CertificateTools.keystore(), CertificateTools.keystorePassword(), certs, names);
     }
 
     public static Certificate[] getCertificatesByFile(File certFile) {
@@ -171,7 +173,7 @@ public class SecurityTools {
     }
 
     public static String installCertificateByFile(File certFile, String alias, boolean wholeChain) {
-        return installCertificateByFile(SecurityTools.keystore(), SecurityTools.keystorePassword(), certFile, alias, wholeChain);
+        return installCertificateByFile(CertificateTools.keystore(), CertificateTools.keystorePassword(), certFile, alias, wholeChain);
     }
 
     public static String installHostsCertificates(List<String> hosts, boolean wholeChain) {
@@ -203,8 +205,8 @@ public class SecurityTools {
             if (certsList.isEmpty()) {
                 return Languages.message("InvalidData");
             }
-            String keyStoreFile = SecurityTools.keystore();
-            String passwd = SecurityTools.keystorePassword();
+            String keyStoreFile = CertificateTools.keystore();
+            String passwd = CertificateTools.keystorePassword();
             Certificate[] certs = new Certificate[certsList.size()];
             String[] names = new String[certsList.size()];
             for (int i = 0; i < namesList.size(); i++) {
@@ -245,7 +247,7 @@ public class SecurityTools {
 
     public static String installCertificateByHost(String host, String alias, boolean wholeChain) {
         try {
-            return installCertificateByHost(SecurityTools.keystore(), SecurityTools.keystorePassword(), host, alias, wholeChain);
+            return installCertificateByHost(CertificateTools.keystore(), CertificateTools.keystorePassword(), host, alias, wholeChain);
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
             return e.toString();

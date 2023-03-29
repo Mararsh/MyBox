@@ -184,9 +184,6 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
                 return;
             }
             autoSaveDurationController.permitInvalid(!autoSaveCheck.isSelected());
-            if (confirmCheck != null) {
-                confirmCheck.setVisible(!autoSaveCheck.isSelected());
-            }
             if (autoSaveTimer != null) {
                 autoSaveTimer.cancel();
                 autoSaveTimer = null;

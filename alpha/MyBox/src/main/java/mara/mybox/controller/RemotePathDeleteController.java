@@ -14,6 +14,7 @@ public class RemotePathDeleteController extends RemotePathHandleFilesController 
 
     public RemotePathDeleteController() {
         baseTitle = message("RemotePathDelete");
+        doneString = message("Deleted");
     }
 
     @Override

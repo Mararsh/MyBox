@@ -51,7 +51,7 @@ public abstract class BaseFileEditorController_Base extends BaseController {
     @FXML
     protected ToggleGroup lineBreakGroup;
     @FXML
-    protected CheckBox targetBomCheck, confirmCheck, autoSaveCheck;
+    protected CheckBox targetBomCheck, autoSaveCheck;
     @FXML
     protected ControlTimeLength autoSaveDurationController;
     @FXML

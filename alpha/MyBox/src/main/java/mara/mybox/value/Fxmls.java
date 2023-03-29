@@ -360,6 +360,7 @@ public class Fxmls {
     public static final String RemotePathPutFxml = "/fxml/RemotePathPut.fxml";
     public static final String RemotePathGetFxml = "/fxml/RemotePathGet.fxml";
     public static final String RemotePathDeleteFxml = "/fxml/RemotePathDelete.fxml";
+    public static final String RemotePathPermissionFxml = "/fxml/RemotePathPermission.fxml";
     public static final String RemotePathSynchronizeFromLocalFxml = "/fxml/RemotePathSynchronizeFromLocal.fxml";
 
 
