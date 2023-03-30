@@ -10,7 +10,10 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -36,10 +39,32 @@ License:    Apache License Version 2.0
          </children>
       </HBox>
       <TextArea fx:id="namesArea" prefHeight="400.0" />
-      <CheckBox fx:id="continueCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%ContinueWhenError" wrapText="true" />
+      <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="449.0" spacing="5.0">
+         <children>
+            <RadioButton fx:id="chmodRadio" mnemonicParsing="false" selected="true" text="chmod">
+               <toggleGroup>
+                  <ToggleGroup fx:id="opGroup" />
+               </toggleGroup>
+            </RadioButton>
+            <RadioButton fx:id="chownRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="chown" toggleGroup="$opGroup" />
+            <RadioButton fx:id="chgrpRadio" layoutX="106.0" layoutY="10.0" mnemonicParsing="false" text="chgrp" toggleGroup="$opGroup" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="428.0" spacing="5.0">
+         <children>
+            <Label text="%Value" />
+            <TextField fx:id="valueInput" />
+         </children>
+      </HBox>
       <HBox alignment="CENTER_LEFT" spacing="2.0">
          <children>
-            <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" />
+            <CheckBox fx:id="dirCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%HandleAllFilesInDirectories" wrapText="true" />
+            <CheckBox fx:id="continueCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%ContinueWhenError" wrapText="true" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" spacing="2.0">
+         <children>
+            <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%MakeSureAccountHasPermission" wrapText="true" HBox.hgrow="ALWAYS" />
             <CheckBox fx:id="miaoCheck" mnemonicParsing="false">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

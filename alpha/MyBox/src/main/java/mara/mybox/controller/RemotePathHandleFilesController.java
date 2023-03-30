@@ -131,7 +131,6 @@ public abstract class RemotePathHandleFilesController extends BaseTaskController
                 showLogs(message("SourceFile") + ": " + name);
                 if (handleFile(name)) {
                     showLogs(doneString + ": " + name);
-                    doneCount++;
                 } else {
                     showLogs(message("Failed") + ": " + name);
                     if (!continueCheck.isSelected()) {
@@ -148,6 +147,14 @@ public abstract class RemotePathHandleFilesController extends BaseTaskController
 
     public boolean handleFile(String name) {
         return false;
+    }
+
+    @Override
+    protected void taskCanceled() {
+        super.taskCanceled();
+        if (manageController != null) {
+            manageController.disconnect();
+        }
     }
 
     @Override

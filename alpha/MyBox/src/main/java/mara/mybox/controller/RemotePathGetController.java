@@ -85,6 +85,7 @@ public class RemotePathGetController extends RemotePathHandleFilesController {
             showLogs("get " + srcfile + " " + tname);
             manageController.remoteController.sftp.get(srcfile, tname, new GetMonitor());
             showLogs(MessageFormat.format(message("FilesGenerated"), target));
+            doneCount++;
             return true;
         } catch (Exception e) {
             showLogs(e.toString());

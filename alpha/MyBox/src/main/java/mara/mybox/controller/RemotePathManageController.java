@@ -330,12 +330,12 @@ public class RemotePathManageController extends FilesTreeController {
             protected void whenCanceled() {
                 cancelled = true;
                 showLogs(message("Cancel"));
+                disconnect();
             }
 
             @Override
             protected void finalAction() {
                 loadPath();
-                popSuccessful();
             }
         };
         start(task);
@@ -380,12 +380,12 @@ public class RemotePathManageController extends FilesTreeController {
             protected void whenCanceled() {
                 cancelled = true;
                 showLogs(message("Cancel"));
+                disconnect();
             }
 
             @Override
             protected void finalAction() {
                 loadPath();
-                popSuccessful();
             }
         };
         start(task);
@@ -426,6 +426,7 @@ public class RemotePathManageController extends FilesTreeController {
                 if (!checkConnection()) {
                     return false;
                 }
+                remoteController.count = 0;
                 return remoteController.clearDirectory(clearName);
             }
 
@@ -433,12 +434,13 @@ public class RemotePathManageController extends FilesTreeController {
             protected void whenCanceled() {
                 cancelled = true;
                 showLogs(message("Cancel"));
+                disconnect();
             }
 
             @Override
             protected void finalAction() {
+                showLogs(message("Deleted") + ": " + remoteController.count);
                 loadPath();
-                popSuccessful();
             }
         };
         start(task);

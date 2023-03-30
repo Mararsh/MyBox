@@ -127,16 +127,24 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
         }
     }
 
-    public List<VisitHistory> read(Connection conn, PreparedStatement statement) {
+    public List<VisitHistory> read(Connection conn, PreparedStatement statement, int count) {
         List<VisitHistory> records = new ArrayList<>();
         try {
             conn.setAutoCommit(true);
+            List<String> names = new ArrayList<>();
             try (ResultSet results = statement.executeQuery();
                     PreparedStatement delete = conn.prepareStatement(Delete_Visit)) {
                 while (results.next()) {
                     VisitHistory data = readData(results);
                     if (valid(data)) {
-                        records.add(data);
+                        String name = data.getResourceValue();
+                        if (!names.contains(name)) {
+                            names.add(name);
+                            records.add(data);
+                            if (count > 0 && records.size() >= count) {
+                                break;
+                            }
+                        }
                     } else {
                         try {
                             delete.setInt(1, data.getResourceType());
@@ -162,12 +170,9 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
         }
         try (Connection conn = DerbyBase.getConnection();
                 PreparedStatement statement = conn.prepareStatement(Query_Resource_Type)) {
-            if (count > 0) {
-                statement.setMaxRows(count);
-            }
             conn.setAutoCommit(true);
             statement.setInt(1, resourceType);
-            records = read(conn, statement);
+            records = read(conn, statement, count);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -189,20 +194,14 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
         try (Connection conn = DerbyBase.getConnection()) {
             if (resourceType <= 0) {
                 try (PreparedStatement statement = conn.prepareStatement(Query_File_Type)) {
-                    if (count > 0) {
-                        statement.setMaxRows(count);
-                    }
                     statement.setInt(1, fileType);
-                    records = read(conn, statement);
+                    records = read(conn, statement, count);
                 }
             } else {
                 try (PreparedStatement statement = conn.prepareStatement(Query_Resource_File_Type)) {
-                    if (count > 0) {
-                        statement.setMaxRows(count);
-                    }
                     statement.setInt(1, resourceType);
                     statement.setInt(2, fileType);
-                    records = read(conn, statement);
+                    records = read(conn, statement, count);
                 }
             }
         } catch (Exception e) {
@@ -227,10 +226,7 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
         sql += " ORDER BY last_visit_time  DESC";
         try (Connection conn = DerbyBase.getConnection();
                 PreparedStatement statement = conn.prepareStatement(sql)) {
-            if (count > 0) {
-                statement.setMaxRows(count);
-            }
-            records = read(conn, statement);
+            records = read(conn, statement, count);
         } catch (Exception e) {
 //            MyBoxLog.debug(e);
         }
@@ -250,41 +246,29 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
             if (resourceType <= 0) {
                 if (fileType <= 0) {
                     try (PreparedStatement statement = conn.prepareStatement(Query_Operation_Type)) {
-                        if (count > 0) {
-                            statement.setMaxRows(count);
-                        }
                         statement.setInt(1, operationType);
-                        records = read(conn, statement);
+                        records = read(conn, statement, count);
                     }
                 } else {
                     try (PreparedStatement statement = conn.prepareStatement(Query_Operation_File_Type)) {
-                        if (count > 0) {
-                            statement.setMaxRows(count);
-                        }
                         statement.setInt(1, fileType);
                         statement.setInt(2, operationType);
-                        records = read(conn, statement);
+                        records = read(conn, statement, count);
                     }
                 }
             } else {
                 if (fileType <= 0) {
                     try (PreparedStatement statement = conn.prepareStatement(Query_Resource_Operation_Type)) {
-                        if (count > 0) {
-                            statement.setMaxRows(count);
-                        }
                         statement.setInt(1, resourceType);
                         statement.setInt(2, operationType);
-                        records = read(conn, statement);
+                        records = read(conn, statement, count);
                     }
                 } else {
                     try (PreparedStatement statement = conn.prepareStatement(Query_Types)) {
-                        if (count > 0) {
-                            statement.setMaxRows(count);
-                        }
                         statement.setInt(1, resourceType);
                         statement.setInt(2, fileType);
                         statement.setInt(3, operationType);
-                        records = read(conn, statement);
+                        records = read(conn, statement, count);
                     }
                 }
             }
@@ -315,10 +299,7 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
         sql += " ORDER BY last_visit_time  DESC  ";
         try (Connection conn = DerbyBase.getConnection();
                 PreparedStatement statement = conn.prepareStatement(sql)) {
-            if (count > 0) {
-                statement.setMaxRows(count);
-            }
-            records = read(conn, statement);
+            records = read(conn, statement, count);
         } catch (Exception e) {
 //            MyBoxLog.debug(e);
         }
@@ -394,12 +375,9 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
                     + " AND SUBSTR(LOWER(resource_value), LENGTH(resource_value) - 3 ) IN ('.png',  '.tif', 'tiff') "
                     + " ORDER BY last_visit_time  DESC  ";
             try (PreparedStatement statement = conn.prepareStatement(sql)) {
-                if (count > 0) {
-                    statement.setMaxRows(count);
-                }
                 statement.setInt(1, ResourceType.File);
                 statement.setInt(2, FileType.Image);
-                records = read(conn, statement);
+                records = read(conn, statement, count);
             }
         } catch (Exception e) {
 //            MyBoxLog.debug(e);
@@ -415,12 +393,9 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
                     + " AND SUBSTR(LOWER(resource_value), LENGTH(resource_value) - 3 ) IN ('.jpg', '.bmp', '.gif', '.pnm', 'wbmp') "
                     + " ORDER BY last_visit_time  DESC  ";
             try (PreparedStatement statement = conn.prepareStatement(sql)) {
-                if (count > 0) {
-                    statement.setMaxRows(count);
-                }
                 statement.setInt(1, ResourceType.File);
                 statement.setInt(2, FileType.Image);
-                records = read(conn, statement);
+                records = read(conn, statement, count);
             }
         } catch (Exception e) {
 //            MyBoxLog.debug(e);

@@ -19,7 +19,10 @@ public class RemotePathDeleteController extends RemotePathHandleFilesController 
 
     @Override
     public boolean handleFile(String name) {
-        return manageController.remoteController.delete(name);
+        manageController.remoteController.count = 0;
+        boolean ok = manageController.remoteController.delete(name);
+        doneCount += manageController.remoteController.count;
+        return ok;
     }
 
     /*

@@ -43,7 +43,7 @@ License:    Apache License Version 2.0
                               <fx:include fx:id="remote" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlRemoteConnection.fxml" VBox.vgrow="ALWAYS" />
                                   <HBox alignment="CENTER_LEFT" spacing="2.0">
                                       <children>
-                                          <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="dark-blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" />
+                                    <Label maxWidth="1.7976931348623157E308" text="%RemotePathManageComments" HBox.hgrow="ALWAYS" />
                                     <Button fx:id="disconnectButton" layoutX="960.0" layoutY="11.0" mnemonicParsing="false" onAction="#disconnect">
                                        <graphic>
                                           <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

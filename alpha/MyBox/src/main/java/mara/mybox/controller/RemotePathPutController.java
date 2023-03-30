@@ -164,6 +164,14 @@ public class RemotePathPutController extends BaseBatchFileController {
     }
 
     @Override
+    protected void taskCanceled() {
+        super.taskCanceled();
+        if (manageController != null) {
+            manageController.disconnect();
+        }
+    }
+
+    @Override
     public void donePost() {
         tableView.refresh();
         if (miaoCheck.isSelected()) {

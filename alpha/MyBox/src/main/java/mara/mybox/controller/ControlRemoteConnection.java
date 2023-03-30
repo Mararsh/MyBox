@@ -39,6 +39,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
     protected ChannelSftp sftp;
     protected TablePathConnection tablePathConnection;
     protected PathConnection currentConnection;
+    protected int count;
 
     @FXML
     protected TableColumn<PathConnection, String> titleColumn, hostColumn, pathColumn;
@@ -498,6 +499,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
             String name = fixFilename(filename);
             showLogs("rm " + name);
             sftp.rm(name);
+            count++;
             return true;
         } catch (Exception e) {
             showLogs(e.toString());
@@ -513,6 +515,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
             }
             showLogs("rmdir " + dirname);
             sftp.rmdir(dirname);
+            count++;
             return true;
         } catch (Exception e) {
             error = e.toString();
@@ -544,6 +547,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
                     if (clearDirectory(child)) {
                         showLogs("rmdir " + child);
                         sftp.rmdir(child);
+                        count++;
                     } else {
                         if (task != null) {
                             task.cancel();
@@ -553,6 +557,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
                 } else {
                     showLogs("rm " + child);
                     sftp.rm(child);
+                    count++;
                 }
             }
             return true;

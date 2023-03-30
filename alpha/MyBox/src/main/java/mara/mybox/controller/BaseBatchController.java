@@ -616,6 +616,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                     @Override
                     protected void whenCanceled() {
                         updateInterface("Canceled");
+                        taskCanceled();
                     }
 
                     @Override
