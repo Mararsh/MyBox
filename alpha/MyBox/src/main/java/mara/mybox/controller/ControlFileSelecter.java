@@ -257,7 +257,11 @@ public class ControlFileSelecter extends BaseController {
                 } else {
                     pathNumber = AppVariables.fileRecentNumber / 4 + 1;
                 }
-                return VisitHistoryTools.getRecentPath(isSource ? SourcePathType : TargetPathType, pathNumber);
+                if (isSource) {
+                    return VisitHistoryTools.getRecentPathRead(SourcePathType, pathNumber);
+                } else {
+                    return VisitHistoryTools.getRecentPathWrite(TargetPathType, pathNumber);
+                }
             }
 
             @Override

@@ -25,8 +25,6 @@ import mara.mybox.value.UserConfig;
  */
 public class TableFileBackup extends BaseTable<FileBackup> {
 
-    public static final int Default_Max_Backups = 10;
-
     public TableFileBackup() {
         tableName = "File_Backup";
         defineColumns();
@@ -77,21 +75,23 @@ public class TableFileBackup extends BaseTable<FileBackup> {
         if (filename == null || filename.isBlank()) {
             return records;
         }
-        int max = UserConfig.getInt("MaxFileBackups", Default_Max_Backups);
+        int max = UserConfig.getInt("MaxFileBackups", FileBackup.Default_Max_Backups);
         if (max <= 0) {
-            max = Default_Max_Backups;
-            UserConfig.setInt("MaxFileBackups", Default_Max_Backups);
+            max = FileBackup.Default_Max_Backups;
+            UserConfig.setInt("MaxFileBackups", FileBackup.Default_Max_Backups);
         }
-        List<FileBackup> invalid = new ArrayList<>();
         try (PreparedStatement statement = conn.prepareStatement(FileQuery)) {
             conn.setAutoCommit(true);
             statement.setString(1, filename);
-            try (ResultSet results = statement.executeQuery()) {
+            try (ResultSet results = statement.executeQuery();
+                    PreparedStatement delete = conn.prepareStatement(deleteStatement())) {
                 while (results.next()) {
                     FileBackup data = readData(results);
                     File backup = data.getBackup();
                     if (backup == null || !backup.exists() || records.size() >= max) {
-                        invalid.add(data);
+                        if (setDeleteStatement(conn, delete, data)) {
+                            delete.executeUpdate();
+                        }
                     } else {
                         records.add(data);
                     }
@@ -100,7 +100,6 @@ public class TableFileBackup extends BaseTable<FileBackup> {
         } catch (Exception e) {
             MyBoxLog.error(e, filename);
         }
-        deleteData(conn, invalid);
         return records;
     }
 

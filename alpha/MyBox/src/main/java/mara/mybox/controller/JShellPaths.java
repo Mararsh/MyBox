@@ -173,7 +173,7 @@ public class JShellPaths extends BaseController {
 
             @Override
             public List<VisitHistory> recentPaths() {
-                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Jar);
+                return VisitHistoryTools.getRecentPathRead(VisitHistory.FileType.Jar);
             }
 
             @Override

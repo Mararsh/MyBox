@@ -3,10 +3,10 @@ package mara.mybox.db.table;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.VisitHistory;
@@ -17,6 +17,7 @@ import mara.mybox.db.data.VisitHistoryTools;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
+import mara.mybox.value.AppVariables;
 
 /**
  * @Author Mara
@@ -24,9 +25,6 @@ import mara.mybox.tools.DateTools;
  * @License Apache License Version 2.0
  */
 public class TableVisitHistory extends BaseTable<VisitHistory> {
-
-    private static final String AllQuery
-            = " SELECT * FROM visit_history  ORDER BY last_visit_time  DESC  ";
 
     public TableVisitHistory() {
         tableName = "visit_history";
@@ -48,120 +46,137 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
         addColumn(new ColumnDefinition("data_more", ColumnDefinition.ColumnType.String).setLength(StringMaxLength));
         addColumn(new ColumnDefinition("last_visit_time", ColumnDefinition.ColumnType.Datetime, true));
         addColumn(new ColumnDefinition("visit_count", ColumnDefinition.ColumnType.Integer));
-        orderColumns = "create_time DESC";
+        orderColumns = "last_visit_time DESC";
         return this;
     }
 
-    public static VisitHistory read(ResultSet results) {
-        try {
-            VisitHistory his = new VisitHistory();
-            his.setResourceType(results.getShort("resource_type"));
-            his.setFileType(results.getShort("file_type"));
-            his.setOperationType(results.getShort("operation_type"));
-            his.setResourceValue(results.getString("resource_value"));
-            his.setDataMore(results.getString("data_more"));
-            his.setLastVisitTime(results.getTimestamp("last_visit_time"));
-            his.setVisitCount(results.getInt("visit_count"));
-            return his;
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return null;
+    private static final String Query_Resource_Type
+            = "SELECT  * FROM visit_history WHERE resource_type=? "
+            + "ORDER BY last_visit_time  DESC";
+
+    private static final String Query_File_Type
+            = "SELECT  * FROM visit_history WHERE file_type=? "
+            + "ORDER BY last_visit_time  DESC";
+
+    private static final String Query_Resource_File_Type
+            = "SELECT  * FROM visit_history WHERE resource_type=? AND file_type=?"
+            + " ORDER BY last_visit_time  DESC";
+
+    private static final String Query_Operation_Type
+            = "SELECT  * FROM visit_history WHERE operation_type=? "
+            + "ORDER BY last_visit_time  DESC";
+
+    private static final String Query_Operation_File_Type
+            = "SELECT  * FROM visit_history WHERE file_type=? AND operation_type=?"
+            + " ORDER BY last_visit_time  DESC";
+
+    private static final String Query_Resource_Operation_Type
+            = "SELECT  * FROM visit_history WHERE resource_type=? AND operation_type=? "
+            + "ORDER BY last_visit_time  DESC";
+
+    private static final String Query_Types
+            = "SELECT  * FROM visit_history WHERE resource_type=? AND file_type=? AND operation_type=? "
+            + "ORDER BY last_visit_time  DESC";
+
+    private static final String Query_More
+            = " SELECT * FROM visit_history WHERE resource_type=? AND file_type=? AND operation_type=?"
+            + " AND resource_value=? AND data_more=?";
+
+    private static final String Update_Visit
+            = "UPDATE visit_history SET visit_count=?, last_visit_time=?"
+            + " WHERE resource_type=? AND file_type=? AND operation_type=? AND  resource_value=?";
+
+    private static final String Update_More
+            = "UPDATE visit_history SET visit_count=?, data_more=?, last_visit_time=?"
+            + " WHERE resource_type=? AND file_type=? AND operation_type=? AND  resource_value=?";
+
+    private static final String Update_Visit_More
+            = "UPDATE visit_history SET visit_count=?, last_visit_time=?"
+            + " WHERE resource_type=? AND file_type=? AND operation_type=?"
+            + " AND resource_value=? AND data_more=?";
+
+    private static final String Insert_Visit
+            = "INSERT INTO visit_history "
+            + "(resource_type, file_type, operation_type, resource_value, last_visit_time, visit_count) "
+            + "VALUES(?,?,?,?,?,?)";
+
+    private static final String Insert_More
+            = "INSERT INTO visit_history "
+            + "(resource_type, file_type, operation_type, resource_value, data_more, last_visit_time, visit_count) "
+            + "VALUES(?,?,?,?,?,?,?)";
+
+    private static final String Delete_Visit
+            = "DELETE FROM visit_history "
+            + " WHERE resource_type=? AND file_type=? AND operation_type=? AND  resource_value=?";
+
+    private static final String Clear_Visit
+            = "DELETE FROM visit_history "
+            + " WHERE resource_type=? AND file_type=? AND operation_type=?";
+
+    @Override
+    public boolean valid(VisitHistory record) {
+        if (record == null) {
+            return false;
+        }
+        int resourceType = record.getResourceType();
+        if (resourceType == ResourceType.File || resourceType == ResourceType.Path) {
+            String fname = record.getResourceValue();
+            return VisitHistoryTools.validFile(fname, resourceType, record.getFileType());
+        } else {
+            return true;
         }
     }
 
-    public static List<VisitHistory> checkValid(Connection conn, List<VisitHistory> records) {
-        if (records == null || records.isEmpty()) {
-            return records;
-        }
-        List<VisitHistory> valid = new ArrayList<>();
-        List<String> names = new ArrayList<>();
-        for (VisitHistory r : records) {
-            int resourceType = r.getResourceType();
-            if (resourceType == ResourceType.File || resourceType == ResourceType.Path) {
-                String fname = r.getResourceValue();
-                try {
-                    if (!VisitHistoryTools.validFile(fname, resourceType, r.getFileType())) {
-                        delete(conn, r);
-                    } else if (!names.contains(fname)) {
-                        names.add(fname);
-                        valid.add(r);
-                    }
-                } catch (Exception e) {
-                }
-            } else {
-                valid.add(r);
-            }
-        }
-        return valid;
-    }
-
-    public static List<VisitHistory> findList(Connection conn, ResultSet results) {
-        List<VisitHistory> records = new ArrayList<>();
-        try {
-            while (results.next()) {
-                VisitHistory his = read(results);
-                if (his != null) {
-                    records.add(his);
-                }
-            }
-        } catch (Exception e) {
-//            MyBoxLog.debug(e);
-        }
-        return checkValid(conn, records);
-    }
-
-    public static List<VisitHistory> find(Connection conn, PreparedStatement statement) {
+    public List<VisitHistory> read(Connection conn, PreparedStatement statement) {
         List<VisitHistory> records = new ArrayList<>();
         try {
             conn.setAutoCommit(true);
-            try ( ResultSet results = statement.executeQuery()) {
-                records = findList(conn, results);
-            } catch (Exception e) {
-//            MyBoxLog.debug(e);
+            try (ResultSet results = statement.executeQuery();
+                    PreparedStatement delete = conn.prepareStatement(Delete_Visit)) {
+                while (results.next()) {
+                    VisitHistory data = readData(results);
+                    if (valid(data)) {
+                        records.add(data);
+                    } else {
+                        try {
+                            delete.setInt(1, data.getResourceType());
+                            delete.setInt(2, data.getFileType());
+                            delete.setInt(3, data.getOperationType());
+                            delete.setString(4, data.getResourceValue());
+                            delete.executeUpdate();
+                        } catch (Exception e) {
+                        }
+                    }
+                }
             }
         } catch (Exception e) {
-//            MyBoxLog.debug(e);
+            MyBoxLog.debug(e);
         }
         return records;
     }
 
-    public static List<VisitHistory> find(int count) {
-        List<VisitHistory> records = new ArrayList<>();
-        try ( Connection conn = DerbyBase.getConnection();
-                 PreparedStatement statement = conn.prepareStatement(AllQuery)) {
-            if (count > 0) {
-                statement.setMaxRows(count);
-            }
-            records = find(conn, statement);
-        } catch (Exception e) {
-//            MyBoxLog.debug(e);
-        }
-        return records;
-    }
-
-    public static List<VisitHistory> find(int resourceType, int count) {
+    public List<VisitHistory> read(int resourceType, int count) {
         List<VisitHistory> records = new ArrayList<>();
         if (resourceType < 0) {
             return records;
         }
-        final String sql = " SELECT  * FROM visit_history "
-                + "  WHERE resource_type=? ORDER BY last_visit_time  DESC  ";
-        try ( Connection conn = DerbyBase.getConnection();
-                 PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (Connection conn = DerbyBase.getConnection();
+                PreparedStatement statement = conn.prepareStatement(Query_Resource_Type)) {
             if (count > 0) {
                 statement.setMaxRows(count);
             }
+            conn.setAutoCommit(true);
             statement.setInt(1, resourceType);
-            records = find(conn, statement);
+            records = read(conn, statement);
         } catch (Exception e) {
-//            MyBoxLog.debug(e);
+            MyBoxLog.error(e);
         }
         return records;
     }
 
-    public static List<VisitHistory> find(int resourceType, int fileType, int count) {
+    public List<VisitHistory> read(int resourceType, int fileType, int count) {
         if (fileType == 0) {
-            return find(resourceType, count);
+            return read(resourceType, count);
         }
         List<VisitHistory> records = new ArrayList<>();
         if (fileType < 0) {
@@ -169,127 +184,107 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
         }
         int[] types = VisitHistory.typeGroup(fileType);
         if (types != null) {
-            return find(resourceType, types, count);
+            return read(resourceType, types, count);
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             if (resourceType <= 0) {
-                final String sql = " SELECT   * FROM visit_history "
-                        + "  WHERE file_type=?  ORDER BY last_visit_time  DESC  ";
-                try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                try (PreparedStatement statement = conn.prepareStatement(Query_File_Type)) {
                     if (count > 0) {
                         statement.setMaxRows(count);
                     }
                     statement.setInt(1, fileType);
-                    records = find(conn, statement);
+                    records = read(conn, statement);
                 }
             } else {
-                final String sql = " SELECT   * FROM visit_history "
-                        + "  WHERE resource_type=?  AND file_type=? "
-                        + " ORDER BY last_visit_time  DESC  ";
-                try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                try (PreparedStatement statement = conn.prepareStatement(Query_Resource_File_Type)) {
                     if (count > 0) {
                         statement.setMaxRows(count);
                     }
                     statement.setInt(1, resourceType);
                     statement.setInt(2, fileType);
-                    records = find(conn, statement);
+                    records = read(conn, statement);
                 }
             }
-
         } catch (Exception e) {
 //            MyBoxLog.debug(e);
         }
         return records;
     }
 
-    public static List<VisitHistory> find(int resourceType, int[] fileTypes, int count) {
+    public List<VisitHistory> read(int resourceType, int[] fileTypes, int count) {
         List<VisitHistory> records = new ArrayList<>();
         if (fileTypes == null || fileTypes.length == 0) {
             return records;
         }
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement statement = conn.createStatement()) {
-            String sql = " SELECT   * FROM visit_history  WHERE ( file_type=" + fileTypes[0];
-            for (int i = 1; i < fileTypes.length; ++i) {
-                sql += " OR file_type=" + fileTypes[i];
-            }
-            sql += " )";
-            if (resourceType > 0) {
-                sql += "  AND resource_type=" + resourceType;
-            }
-            sql += " ORDER BY last_visit_time  DESC  ";
+        String sql = "SELECT * FROM visit_history  WHERE ( file_type=" + fileTypes[0];
+        for (int i = 1; i < fileTypes.length; ++i) {
+            sql += " OR file_type=" + fileTypes[i];
+        }
+        sql += " )";
+        if (resourceType > 0) {
+            sql += "  AND resource_type=" + resourceType;
+        }
+        sql += " ORDER BY last_visit_time  DESC";
+        try (Connection conn = DerbyBase.getConnection();
+                PreparedStatement statement = conn.prepareStatement(sql)) {
             if (count > 0) {
                 statement.setMaxRows(count);
             }
-            try ( ResultSet results = statement.executeQuery(sql)) {
-                records = findList(conn, results);
-            }
+            records = read(conn, statement);
         } catch (Exception e) {
 //            MyBoxLog.debug(e);
         }
         return records;
     }
 
-    public static List<VisitHistory> find(int resourceType, int fileType, int operationType, int count) {
+    public List<VisitHistory> read(int resourceType, int fileType, int operationType, int count) {
         int[] types = VisitHistory.typeGroup(fileType);
         if (types != null) {
-            return find(resourceType, types, operationType, count);
+            return read(resourceType, types, operationType, count);
         }
         if (operationType < 0) {
-            return find(resourceType, fileType, count);
+            return read(resourceType, fileType, count);
         }
         List<VisitHistory> records = new ArrayList<>();
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             if (resourceType <= 0) {
                 if (fileType <= 0) {
-                    final String sql = " SELECT   * FROM visit_history "
-                            + " WHERE  operation_type=? "
-                            + " ORDER BY last_visit_time  DESC  ";
-                    try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                    try (PreparedStatement statement = conn.prepareStatement(Query_Operation_Type)) {
                         if (count > 0) {
                             statement.setMaxRows(count);
                         }
                         statement.setInt(1, operationType);
-                        records = find(conn, statement);
+                        records = read(conn, statement);
                     }
                 } else {
-                    final String sql = " SELECT   * FROM visit_history "
-                            + " WHERE file_type=? AND operation_type=?"
-                            + " ORDER BY last_visit_time  DESC  ";
-                    try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                    try (PreparedStatement statement = conn.prepareStatement(Query_Operation_File_Type)) {
                         if (count > 0) {
                             statement.setMaxRows(count);
                         }
                         statement.setInt(1, fileType);
                         statement.setInt(2, operationType);
-                        records = find(conn, statement);
+                        records = read(conn, statement);
                     }
                 }
             } else {
                 if (fileType <= 0) {
-                    final String sql = " SELECT   * FROM visit_history "
-                            + " WHERE resource_type=? AND operation_type=?"
-                            + " ORDER BY last_visit_time  DESC  ";
-                    try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                    try (PreparedStatement statement = conn.prepareStatement(Query_Resource_Operation_Type)) {
                         if (count > 0) {
                             statement.setMaxRows(count);
                         }
                         statement.setInt(1, resourceType);
                         statement.setInt(2, operationType);
-                        records = find(conn, statement);
+                        records = read(conn, statement);
                     }
                 } else {
-                    final String sql = " SELECT   * FROM visit_history "
-                            + " WHERE resource_type=? AND file_type=? AND operation_type=?"
-                            + " ORDER BY last_visit_time  DESC  ";
-                    try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                    try (PreparedStatement statement = conn.prepareStatement(Query_Types)) {
                         if (count > 0) {
                             statement.setMaxRows(count);
                         }
                         statement.setInt(1, resourceType);
                         statement.setInt(2, fileType);
                         statement.setInt(3, operationType);
-                        records = find(conn, statement);
+                        records = read(conn, statement);
                     }
                 }
             }
@@ -299,77 +294,76 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
         return records;
     }
 
-    public static List<VisitHistory> find(int resourceType, int[] fileTypes, int operationType, int count) {
+    public List<VisitHistory> read(int resourceType, int[] fileTypes, int operationType, int count) {
         if (operationType < 0) {
-            return find(resourceType, fileTypes, count);
+            return read(resourceType, fileTypes, count);
         }
         List<VisitHistory> records = new ArrayList<>();
         if (fileTypes == null || fileTypes.length == 0) {
             return records;
         }
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement statement = conn.createStatement()) {
-            String sql = " SELECT * FROM visit_history WHERE"
-                    + " operation_type=" + operationType
-                    + " AND ( file_type=" + fileTypes[0];
-            for (int i = 1; i < fileTypes.length; ++i) {
-                sql += " OR file_type=" + fileTypes[i];
-            }
-            sql += " )";
-            if (resourceType > 0) {
-                sql += "  AND resource_type=" + resourceType;
-            }
-            sql += " ORDER BY last_visit_time  DESC  ";
+        String sql = " SELECT * FROM visit_history WHERE"
+                + " operation_type=" + operationType
+                + " AND ( file_type=" + fileTypes[0];
+        for (int i = 1; i < fileTypes.length; ++i) {
+            sql += " OR file_type=" + fileTypes[i];
+        }
+        sql += " )";
+        if (resourceType > 0) {
+            sql += "  AND resource_type=" + resourceType;
+        }
+        sql += " ORDER BY last_visit_time  DESC  ";
+        try (Connection conn = DerbyBase.getConnection();
+                PreparedStatement statement = conn.prepareStatement(sql)) {
             if (count > 0) {
                 statement.setMaxRows(count);
             }
-            try ( ResultSet results = statement.executeQuery(sql)) {
-                records = findList(conn, results);
-            }
+            records = read(conn, statement);
         } catch (Exception e) {
-            MyBoxLog.debug(e);
+//            MyBoxLog.debug(e);
         }
         return records;
     }
 
-    public static VisitHistory find(int resourceType, int fileType, int operationType, String value) {
+    public VisitHistory read(int resourceType, int fileType, int operationType, String value) {
         if (resourceType < 0 || fileType < 0 || operationType < 0 || value == null) {
             return null;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
-            return find(conn, resourceType, fileType, operationType, value);
+        try (Connection conn = DerbyBase.getConnection()) {
+            return read(conn, resourceType, fileType, operationType, value);
         } catch (Exception e) {
 //            MyBoxLog.debug(e);
         }
         return null;
     }
 
-    public static VisitHistory find(Connection conn, int resourceType, int fileType, int operationType, String value) {
+    public VisitHistory read(Connection conn, int resourceType, int fileType, int operationType, String value) {
         if (conn == null || resourceType < 0 || operationType < 0 || value == null) {
             return null;
         }
         try {
             if (fileType <= 0) {
-                final String sql = " SELECT * FROM visit_history WHERE resource_type=?"
+                final String sql = "SELECT * FROM visit_history WHERE resource_type=?"
                         + " AND operation_type=? AND  resource_value=?";
-                try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                try (PreparedStatement statement = conn.prepareStatement(sql)) {
                     statement.setMaxRows(1);
                     statement.setInt(1, resourceType);
                     statement.setInt(2, operationType);
                     statement.setString(3, value);
                     VisitHistory his = null;
                     conn.setAutoCommit(true);
-                    try ( ResultSet results = statement.executeQuery()) {
+                    statement.setMaxRows(1);
+                    try (ResultSet results = statement.executeQuery()) {
                         if (results.next()) {
-                            his = read(results);
+                            his = readData(results);
                         }
                     }
                     return his;
                 }
             } else {
-                final String sql = " SELECT * FROM visit_history WHERE resource_type=?"
+                final String sql = "SELECT * FROM visit_history WHERE resource_type=?"
                         + " AND file_type=? AND operation_type=? AND  resource_value=?";
-                try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                try (PreparedStatement statement = conn.prepareStatement(sql)) {
                     statement.setMaxRows(1);
                     statement.setInt(1, resourceType);
                     statement.setInt(2, fileType);
@@ -377,35 +371,35 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
                     statement.setString(4, value);
                     VisitHistory his = null;
                     conn.setAutoCommit(true);
-                    try ( ResultSet results = statement.executeQuery()) {
+                    statement.setMaxRows(1);
+                    try (ResultSet results = statement.executeQuery()) {
                         if (results.next()) {
-                            his = read(results);
+                            his = readData(results);
                         }
                     }
                     return his;
                 }
             }
-
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
         return null;
     }
 
-    public static List<VisitHistory> findAlphaImages(int count) {
+    public List<VisitHistory> readAlphaImages(int count) {
         List<VisitHistory> records = new ArrayList<>();
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             final String sql = " SELECT   * FROM visit_history "
                     + " WHERE resource_type=? AND file_type=? "
                     + " AND SUBSTR(LOWER(resource_value), LENGTH(resource_value) - 3 ) IN ('.png',  '.tif', 'tiff') "
                     + " ORDER BY last_visit_time  DESC  ";
-            try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
                 if (count > 0) {
                     statement.setMaxRows(count);
                 }
                 statement.setInt(1, ResourceType.File);
                 statement.setInt(2, FileType.Image);
-                records = find(conn, statement);
+                records = read(conn, statement);
             }
         } catch (Exception e) {
 //            MyBoxLog.debug(e);
@@ -413,20 +407,20 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
         return records;
     }
 
-    public static List<VisitHistory> findNoAlphaImages(int count) {
+    public List<VisitHistory> readNoAlphaImages(int count) {
         List<VisitHistory> records = new ArrayList<>();
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             final String sql = " SELECT   * FROM visit_history "
                     + " WHERE resource_type=? AND file_type=? "
                     + " AND SUBSTR(LOWER(resource_value), LENGTH(resource_value) - 3 ) IN ('.jpg', '.bmp', '.gif', '.pnm', 'wbmp') "
                     + " ORDER BY last_visit_time  DESC  ";
-            try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+            try (PreparedStatement statement = conn.prepareStatement(sql)) {
                 if (count > 0) {
                     statement.setMaxRows(count);
                 }
                 statement.setInt(1, ResourceType.File);
                 statement.setInt(2, FileType.Image);
-                records = find(conn, statement);
+                records = read(conn, statement);
             }
         } catch (Exception e) {
 //            MyBoxLog.debug(e);
@@ -434,19 +428,15 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
         return records;
     }
 
-    public static boolean update(int resourceType, int fileType, int operationType, String value) {
+    public boolean update(int resourceType, int fileType, int operationType, String value) {
         return update(resourceType, fileType, operationType, value, null);
     }
 
-    public static boolean update(Connection conn, int resourceType, int fileType, int operationType, String value) {
-        return update(conn, resourceType, fileType, operationType, value, null);
-    }
-
-    public static boolean update(int resourceType, int fileType, int operationType, String value, String more) {
+    public boolean update(int resourceType, int fileType, int operationType, String value, String more) {
         if (resourceType < 0 || fileType < 0 || operationType < 0 || value == null) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return update(conn, resourceType, fileType, operationType, value, more);
         } catch (Exception e) {
 //            MyBoxLog.debug(e);
@@ -454,7 +444,11 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
         }
     }
 
-    public static boolean update(Connection conn, int resourceType, int fileType, int operationType, String value, String more) {
+    public boolean update(Connection conn, int resourceType, int fileType, int operationType, String value) {
+        return update(conn, resourceType, fileType, operationType, value, null);
+    }
+
+    public boolean update(Connection conn, int resourceType, int fileType, int operationType, String value, String more) {
         if (resourceType < 0 || fileType < 0 || operationType < 0 || value == null) {
             return false;
         }
@@ -472,18 +466,14 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
                 finalType = FileType.Image;
             }
         }
-
         try {
-            VisitHistory exist = find(conn, resourceType, finalType, operationType, value);
-            Date d = new Date();
+            VisitHistory exist = read(conn, resourceType, finalType, operationType, value);
+            String d = DateTools.datetimeToString(new Date());
             if (exist != null) {
                 if (more == null) {
-                    final String sql = "UPDATE visit_history SET "
-                            + " visit_count=?, last_visit_time=?"
-                            + " WHERE resource_type=? AND file_type=? AND operation_type=? AND  resource_value=?";
-                    try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                    try (PreparedStatement statement = conn.prepareStatement(Update_Visit)) {
                         statement.setInt(1, exist.getVisitCount() + 1);
-                        statement.setString(2, DateTools.datetimeToString(d));
+                        statement.setString(2, d);
                         statement.setInt(3, resourceType);
                         statement.setInt(4, finalType);
                         statement.setInt(5, operationType);
@@ -491,14 +481,10 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
                         return statement.executeUpdate() >= 0;
                     }
                 } else {
-                    final String sql = "UPDATE visit_history SET "
-                            + " visit_count=?, data_more=?, last_visit_time=?"
-                            + " WHERE resource_type=? AND file_type=? AND operation_type=?"
-                            + " AND  resource_value=?";
-                    try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                    try (PreparedStatement statement = conn.prepareStatement(Update_More)) {
                         statement.setInt(1, exist.getVisitCount() + 1);
                         statement.setString(2, more);
-                        statement.setString(3, DateTools.datetimeToString(d));
+                        statement.setString(3, d);
                         statement.setInt(4, resourceType);
                         statement.setInt(5, finalType);
                         statement.setInt(6, operationType);
@@ -507,34 +493,31 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
                     }
                 }
             } else {
+                int ret;
                 if (more == null) {
-                    final String sql = "INSERT INTO visit_history "
-                            + "(resource_type, file_type, operation_type, resource_value, last_visit_time, visit_count) "
-                            + "VALUES(?, ?,?,?,?,? )";
-                    try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                    try (PreparedStatement statement = conn.prepareStatement(Insert_Visit)) {
                         statement.setInt(1, resourceType);
                         statement.setInt(2, finalType);
                         statement.setInt(3, operationType);
                         statement.setString(4, value);
-                        statement.setString(5, DateTools.datetimeToString(d));
+                        statement.setString(5, d);
                         statement.setInt(6, 1);
-                        return statement.executeUpdate() >= 0;
+                        ret = statement.executeUpdate();
                     }
                 } else {
-                    final String sql = "INSERT INTO visit_history "
-                            + "(resource_type, file_type, operation_type, resource_value, data_more, last_visit_time, visit_count) "
-                            + "VALUES(?, ?, ?, ?, ?, ? ,?)";
-                    try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                    try (PreparedStatement statement = conn.prepareStatement(Insert_More)) {
                         statement.setInt(1, resourceType);
                         statement.setInt(2, finalType);
                         statement.setInt(3, operationType);
                         statement.setString(4, value);
                         statement.setString(5, more);
-                        statement.setString(6, DateTools.datetimeToString(d));
+                        statement.setString(6, d);
                         statement.setInt(7, 1);
-                        return statement.executeUpdate() >= 0;
+                        ret = statement.executeUpdate();
                     }
                 }
+                trim(conn, resourceType, fileType, operationType);
+                return ret >= 0;
             }
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -542,20 +525,17 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
         }
     }
 
-    public static boolean updateMenu(int fileType, String name, String fxml) {
+    public boolean updateMenu(int fileType, String name, String fxml) {
         return updateMenu(fileType, OperationType.Access, name, fxml);
     }
 
-    public static boolean updateMenu(int fileType, int operationType, String name, String fxml) {
+    public boolean updateMenu(int fileType, int operationType, String name, String fxml) {
         if (fileType < 0 || operationType < 0 || name == null || fxml == null) {
             return false;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             VisitHistory exist = null;
-            String query = " SELECT * FROM visit_history "
-                    + " WHERE resource_type=? AND file_type=? AND operation_type=?"
-                    + " AND resource_value=? AND data_more=?";
-            try ( PreparedStatement statement = conn.prepareStatement(query)) {
+            try (PreparedStatement statement = conn.prepareStatement(Query_More)) {
                 statement.setInt(1, ResourceType.Menu);
                 statement.setInt(2, fileType);
                 statement.setInt(3, operationType);
@@ -564,16 +544,12 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
                 conn.setAutoCommit(true);
                 ResultSet results = statement.executeQuery();
                 if (results.next()) {
-                    exist = read(results);
+                    exist = readData(results);
                 }
             }
             Date d = new Date();
             if (exist != null) {
-                final String sql = "UPDATE visit_history SET "
-                        + "visit_count=?, last_visit_time=?"
-                        + " WHERE resource_type=? AND file_type=? AND operation_type=?"
-                        + " AND resource_value=? AND data_more=?";
-                try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                try (PreparedStatement statement = conn.prepareStatement(Update_Visit_More)) {
                     statement.setInt(1, exist.getVisitCount() + 1);
                     statement.setString(2, DateTools.datetimeToString(d));
                     statement.setInt(3, ResourceType.Menu);
@@ -583,12 +559,8 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
                     statement.setString(7, fxml);
                     return statement.executeUpdate() >= 0;
                 }
-
             } else {
-                final String sql = "INSERT INTO visit_history "
-                        + "(resource_type, file_type, operation_type, resource_value, data_more, last_visit_time, visit_count) "
-                        + "VALUES(?,?,?,?,?,?,?)";
-                try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+                try (PreparedStatement statement = conn.prepareStatement(Insert_More)) {
                     statement.setInt(1, ResourceType.Menu);
                     statement.setInt(2, fileType);
                     statement.setInt(3, operationType);
@@ -605,13 +577,11 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
         }
     }
 
-    public static boolean delete(Connection conn, int resourceType, int fileType, int operationType, String value) {
+    public boolean delete(Connection conn, int resourceType, int fileType, int operationType, String value) {
         if (conn == null || resourceType < 0 || fileType < 0 || operationType < 0 || value == null) {
             return false;
         }
-        String sql = "DELETE FROM visit_history "
-                + " WHERE resource_type=? AND file_type=? AND operation_type=? AND  resource_value=?";
-        try ( PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (PreparedStatement statement = conn.prepareStatement(Delete_Visit)) {
             statement.setInt(1, resourceType);
             statement.setInt(2, fileType);
             statement.setInt(3, operationType);
@@ -623,31 +593,13 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
         }
     }
 
-    public static boolean delete(int resourceType, int fileType, int operationType, String value) {
-        if (resourceType < 0 || fileType < 0 || operationType < 0 || value == null) {
-            return false;
-        }
-        try ( Connection conn = DerbyBase.getConnection()) {
-            return delete(conn, resourceType, resourceType, operationType, value);
-        } catch (Exception e) {
-//            MyBoxLog.debug(e);
-            return false;
-        }
-    }
-
-    public static boolean delete(VisitHistory v) {
-        return delete(v.getResourceType(), v.getFileType(), v.getOperationType(), v.getResourceValue());
-    }
-
-    public static boolean delete(Connection conn, VisitHistory v) {
+    public boolean delete(Connection conn, VisitHistory v) {
         return delete(conn, v.getResourceType(), v.getFileType(), v.getOperationType(), v.getResourceValue());
     }
 
-    public static boolean clearType(int resourceType, int fileType, int operationType) {
-        final String sql = "DELETE FROM visit_history "
-                + " WHERE resource_type=? AND file_type=? AND operation_type=?";
-        try ( Connection conn = DerbyBase.getConnection();
-                 PreparedStatement statement = conn.prepareStatement(sql)) {
+    public boolean clear(int resourceType, int fileType, int operationType) {
+        try (Connection conn = DerbyBase.getConnection();
+                PreparedStatement statement = conn.prepareStatement(Clear_Visit)) {
             statement.setInt(1, resourceType);
             statement.setInt(2, fileType);
             statement.setInt(3, operationType);
@@ -660,12 +612,56 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
 
     public int clear() {
         final String sql = "DELETE FROM visit_history";
-        try ( Connection conn = DerbyBase.getConnection();
-                 PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (Connection conn = DerbyBase.getConnection();
+                PreparedStatement statement = conn.prepareStatement(sql)) {
             return statement.executeUpdate();
         } catch (Exception e) {
 //            MyBoxLog.debug(e);
             return -1;
+        }
+    }
+
+    public void trim(Connection conn, int resourceType, int fileType, int operationType) {
+        try (PreparedStatement query = conn.prepareStatement(Query_Types);
+                PreparedStatement delete = conn.prepareStatement(Delete_Visit)) {
+            conn.setAutoCommit(true);
+            query.setInt(1, resourceType);
+            query.setInt(2, fileType);
+            query.setInt(3, operationType);
+            int qcount = 0, dcount = 0;
+            try (ResultSet results = query.executeQuery()) {
+                conn.setAutoCommit(false);
+                while (results.next()) {
+                    VisitHistory data = readData(results);
+                    if (++qcount > AppVariables.fileRecentNumber || !valid(data)) {
+                        delete.setInt(1, resourceType);
+                        delete.setInt(2, fileType);
+                        delete.setInt(3, operationType);
+                        delete.setString(4, data.getResourceValue());
+                        delete.addBatch();
+                        if (dcount > 0 && dcount % Database.BatchSize == 0) {
+                            int[] res = delete.executeBatch();
+                            for (int r : res) {
+                                if (r > 0) {
+                                    dcount += r;
+                                }
+                            }
+                            conn.commit();
+                            delete.clearBatch();
+                        }
+                    }
+                }
+                int[] res = delete.executeBatch();
+                for (int r : res) {
+                    if (r > 0) {
+                        dcount += r;
+                    }
+                }
+                conn.commit();
+                conn.setAutoCommit(true);
+            }
+        } catch (Exception e) {
+//            MyBoxLog.error(e);
         }
     }
 

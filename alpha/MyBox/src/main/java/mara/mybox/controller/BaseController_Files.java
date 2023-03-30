@@ -402,7 +402,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
                 if (controller.getAddPathType() <= 0) {
                     controller.AddPathType = controller.SourcePathType;
                 }
-                return VisitHistoryTools.getRecentPath(controller.getAddPathType(), pathNumber);
+                return VisitHistoryTools.getRecentPathRead(controller.getAddPathType(), pathNumber);
             }
 
             @Override
@@ -440,7 +440,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
                 if (controller.getAddPathType() <= 0) {
                     controller.AddPathType = controller.SourcePathType;
                 }
-                return VisitHistoryTools.getRecentPath(controller.getAddPathType(), pathNumber);
+                return VisitHistoryTools.getRecentPathRead(controller.getAddPathType(), pathNumber);
             }
 
             @Override
@@ -478,7 +478,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
                 if (controller.getAddPathType() <= 0) {
                     controller.AddPathType = controller.SourcePathType;
                 }
-                return VisitHistoryTools.getRecentPath(controller.getAddPathType(), pathNumber);
+                return VisitHistoryTools.getRecentPathRead(controller.getAddPathType(), pathNumber);
             }
 
             @Override
@@ -521,7 +521,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
                 if (controller.getAddPathType() <= 0) {
                     controller.AddPathType = controller.SourcePathType;
                 }
-                return VisitHistoryTools.getRecentPath(controller.getAddPathType(), pathNumber);
+                return VisitHistoryTools.getRecentPathRead(controller.getAddPathType(), pathNumber);
             }
 
             @Override

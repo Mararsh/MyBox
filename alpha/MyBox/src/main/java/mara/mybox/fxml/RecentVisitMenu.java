@@ -205,7 +205,9 @@ public abstract class RecentVisitMenu {
         if (his != null) {
             for (VisitHistory h : his) {
                 String pathname = h.getResourceValue();
-                paths.add(pathname);
+                if (!paths.contains(pathname)) {
+                    paths.add(pathname);
+                }
             }
         }
         if (defaultPath != null && !paths.contains(defaultPath)) {
@@ -254,24 +256,27 @@ public abstract class RecentVisitMenu {
     }
 
     public List<VisitHistory> recentSourcePathsBesidesFiles() {
-        int pathNumber = AppVariables.fileRecentNumber / 4 + 1;
-        return VisitHistoryTools.getRecentPath(SourcePathType, pathNumber);
-    }
-
-    public List<VisitHistory> recentTargetPathsBesidesFiles() {
-        int pathNumber = AppVariables.fileRecentNumber / 4 + 1;
+        int pathNumber = AppVariables.fileRecentNumber / 4;
         if (pathNumber == 0) {
             pathNumber = 1;
         }
-        return VisitHistoryTools.getRecentPath(TargetPathType, pathNumber);
+        return VisitHistoryTools.getRecentPathRead(SourcePathType, pathNumber);
+    }
+
+    public List<VisitHistory> recentTargetPathsBesidesFiles() {
+        int pathNumber = AppVariables.fileRecentNumber / 4;
+        if (pathNumber == 0) {
+            pathNumber = 1;
+        }
+        return VisitHistoryTools.getRecentPathWrite(TargetPathType, pathNumber);
     }
 
     public List<VisitHistory> recentSourcePaths() {
-        return VisitHistoryTools.getRecentPath(SourcePathType);
+        return VisitHistoryTools.getRecentPathRead(SourcePathType);
     }
 
     public List<VisitHistory> recentTargetPaths() {
-        return VisitHistoryTools.getRecentPath(TargetPathType);
+        return VisitHistoryTools.getRecentPathWrite(TargetPathType);
     }
 
     public void handleSourcePath(String fname) {

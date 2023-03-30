@@ -653,7 +653,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
 
             @Override
             public List<VisitHistory> recentPaths() {
-                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Image);
+                return VisitHistoryTools.getRecentPathWrite(VisitHistory.FileType.Image);
             }
 
             @Override

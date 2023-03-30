@@ -506,7 +506,7 @@ public class ControlImageFormat extends BaseController {
             @Override
             public List<VisitHistory> recentPaths() {
                 int pathNumber = AppVariables.fileRecentNumber / 3 + 1;
-                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Icc, pathNumber);
+                return VisitHistoryTools.getRecentPathRead(VisitHistory.FileType.Icc, pathNumber);
             }
 
             @Override

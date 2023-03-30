@@ -312,6 +312,9 @@ public class BaseDataAdaptor {
         } else if (data instanceof MyBoxLog) {
             return MyBoxLog.setValue((MyBoxLog) data, name, value);
 
+        } else if (data instanceof VisitHistory) {
+            return VisitHistory.setValue((VisitHistory) data, name, value);
+
         } else if (data instanceof ImageEditHistory) {
             return ImageEditHistory.setValue((ImageEditHistory) data, name, value);
 

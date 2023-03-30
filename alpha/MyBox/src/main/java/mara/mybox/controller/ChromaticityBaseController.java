@@ -138,7 +138,7 @@ public class ChromaticityBaseController extends BaseWebViewController {
 
             @Override
             public List<VisitHistory> recentPaths() {
-                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Text);
+                return VisitHistoryTools.getRecentPathWrite(VisitHistory.FileType.Text);
             }
 
             @Override

@@ -13,6 +13,7 @@ import java.util.concurrent.ScheduledFuture;
 import javafx.beans.property.SimpleBooleanProperty;
 import mara.mybox.controller.AlarmClockController;
 import mara.mybox.db.Database;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ImageClipboardMonitor;
 import mara.mybox.fxml.TextClipboardMonitor;
@@ -62,7 +63,7 @@ public class AppVariables {
             closeCurrentWhenOpenTool = UserConfig.getBoolean("CloseCurrentWhenOpenTool", false);
             recordWindowsSizeLocation = UserConfig.getBoolean("RecordWindowsSizeLocation", true);
             sceneFontSize = UserConfig.getInt("SceneFontSize", 15);
-            fileRecentNumber = UserConfig.getInt("FileRecentNumber", 16);
+            fileRecentNumber = UserConfig.getInt("FileRecentNumber", VisitHistory.Default_Max_Histories);
             iconSize = UserConfig.getInt("IconSize", 20);
             thumbnailWidth = UserConfig.getInt("ThumbnailWidth", 100);
             ControlColor = StyleTools.getConfigStyleColor();

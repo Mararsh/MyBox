@@ -1811,7 +1811,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             @Override
             public List<VisitHistory> recentPaths() {
                 int pathNumber = AppVariables.fileRecentNumber / 4 + 1;
-                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Xml, pathNumber);
+                return VisitHistoryTools.getRecentPathWrite(VisitHistory.FileType.Xml, pathNumber);
             }
 
             @Override
