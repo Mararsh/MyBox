@@ -59,9 +59,10 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
 
     @Override
     public String handleFile(File srcFile, File targetPath) {
-        doc = null;
-        targetFiles = new LinkedHashMap<>();
         try {
+            doc = null;
+            targetFilesCount = 0;
+            targetFiles = new LinkedHashMap<>();
             currentParameters.currentSourceFile = srcFile;
             PdfInformation info = (PdfInformation) tableData.get(currentParameters.currentIndex);
             currentParameters.fromPage = info.getFromPage();
@@ -106,7 +107,7 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
         }
         updateInterface("CompleteFile");
         return MessageFormat.format(Languages.message("HandlePagesGenerateNumber"),
-                currentParameters.toPage - currentParameters.fromPage, targetFiles.size());
+                currentParameters.toPage - currentParameters.fromPage, targetFilesCount);
     }
 
     private Splitter splitter(int from, int to, int size) {

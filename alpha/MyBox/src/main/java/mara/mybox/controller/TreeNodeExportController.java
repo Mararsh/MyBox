@@ -290,7 +290,7 @@ public class TreeNodeExportController extends BaseTaskController {
         }
         count = level = 0;
         firstRow = true;
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             exportNode(conn, selectedNode.getValue(), nodesController.chainName(selectedNode.getParent()));
         } catch (Exception e) {
             updateLogs(e.toString());
@@ -336,12 +336,12 @@ public class TreeNodeExportController extends BaseTaskController {
                     path.mkdirs();
                     framesetNavFile = new File(path.getAbsolutePath() + File.separator + "nav.html");
                     File coverFile = new File(path.getAbsolutePath() + File.separator + "cover.html");
-                    try ( FileWriter coverWriter = new FileWriter(coverFile, charset)) {
+                    try (FileWriter coverWriter = new FileWriter(coverFile, charset)) {
                         writeHtmlHead(coverWriter, nodeName);
                         coverWriter.write("<BODY>\n<BR><BR><BR><BR><H1>" + message("Notes") + "</H1>\n</BODY></HTML>");
                         coverWriter.flush();
                     }
-                    try ( FileWriter framesetWriter = new FileWriter(framesetFile, charset)) {
+                    try (FileWriter framesetWriter = new FileWriter(framesetFile, charset)) {
                         writeHtmlHead(framesetWriter, nodeName);
                         s = new StringBuilder();
                         s.append("<FRAMESET border=2 cols=240,240,*>\n")
@@ -773,7 +773,7 @@ public class TreeNodeExportController extends BaseTaskController {
     @Override
     public void afterSuccess() {
         try {
-            openTarget(null);
+            openTarget();
             if (framesetFile != null && framesetFile.exists()) {
                 WebBrowserController.openFile(framesetFile);
                 return;
@@ -801,7 +801,7 @@ public class TreeNodeExportController extends BaseTaskController {
     }
 
     @Override
-    public void openTarget(ActionEvent event) {
+    public void openTarget() {
         browseURI(targetPath.toURI());
     }
 

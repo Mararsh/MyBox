@@ -83,7 +83,7 @@ public class BaseLogs extends BaseController {
         lastLogTime = new Date().getTime();
     }
 
-    protected void showLogs(String line) {
+    public void showLogs(String line) {
         updateLogs(line, true, true);
     }
 

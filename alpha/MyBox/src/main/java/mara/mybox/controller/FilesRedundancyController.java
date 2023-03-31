@@ -291,7 +291,7 @@ public class FilesRedundancyController extends BaseBatchFileController {
 
     @FXML
     @Override
-    public void openTarget(ActionEvent event) {
+    public void openTarget() {
 
     }
 

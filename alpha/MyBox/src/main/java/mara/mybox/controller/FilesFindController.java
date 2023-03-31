@@ -197,7 +197,7 @@ public class FilesFindController extends BaseBatchFileController {
 
     @FXML
     @Override
-    public void openTarget(ActionEvent event) {
+    public void openTarget() {
 
     }
 

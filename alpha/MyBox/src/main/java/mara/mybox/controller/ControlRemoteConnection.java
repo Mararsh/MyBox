@@ -84,6 +84,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
             loadTableData();
             editProfile(null);
             statusLabel.setText(message("Disconnected"));
+            taskController.setTitle(taskController.baseTitle + " " + message("Disconnected"));
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
@@ -288,6 +289,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
             }
             Platform.runLater(() -> {
                 statusLabel.setText(message("Connected") + ": " + currentConnection.getHost());
+                taskController.setTitle(taskController.baseTitle + " " + statusLabel.getText());
             });
             return true;
         } catch (Exception e) {
@@ -311,6 +313,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
             }
             Platform.runLater(() -> {
                 statusLabel.setText(message("Disconnected"));
+                taskController.setTitle(taskController.baseTitle + " " + statusLabel.getText());
             });
             return true;
         } catch (Exception e) {

@@ -175,6 +175,7 @@ public class DataExportController extends BaseTaskController {
         if (!checkOptions()) {
             return;
         }
+        targetFilesCount = 0;
         targetFiles = new LinkedHashMap<>();
         top = queryController.savedCondition.getTop();
         Platform.runLater(() -> {

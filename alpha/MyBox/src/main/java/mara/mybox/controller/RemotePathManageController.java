@@ -448,7 +448,7 @@ public class RemotePathManageController extends FilesTreeController {
 
     @FXML
     @Override
-    public void openTarget(ActionEvent event) {
+    public void openTarget() {
         try {
 
         } catch (Exception e) {

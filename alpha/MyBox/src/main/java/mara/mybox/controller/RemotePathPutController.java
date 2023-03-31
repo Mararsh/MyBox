@@ -81,6 +81,7 @@ public class RemotePathPutController extends BaseBatchFileController {
     @FXML
     @Override
     public void startAction() {
+        targetFilesCount = 0;
         targetFiles = new LinkedHashMap<>();
         runTask();
     }

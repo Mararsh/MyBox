@@ -9,7 +9,6 @@ import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import mara.mybox.data.FileNode;
 import mara.mybox.data.FileSynchronizeAttributes;
@@ -543,7 +542,7 @@ public class DirectorySynchronizeController extends BaseTaskController {
             SoundTools.miao3();
         }
         if (openCheck.isSelected()) {
-            openTarget(null);
+            openTarget();
         }
     }
 
@@ -581,7 +580,7 @@ public class DirectorySynchronizeController extends BaseTaskController {
 
     @FXML
     @Override
-    public void openTarget(ActionEvent event) {
+    public void openTarget() {
         try {
             browseURI(targetPathInputController.file().toURI());
         } catch (Exception e) {

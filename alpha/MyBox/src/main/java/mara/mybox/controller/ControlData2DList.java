@@ -200,7 +200,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
     @Override
     public boolean checkBeforeLoadingTableData() {
         try (Connection conn = DerbyBase.getConnection();) {
-            tableData2DDefinition.clearInvalid(task, conn, false);
+            tableData2DDefinition.clearInvalid(null, conn, false);
         } catch (Exception e) {
         }
         return true;

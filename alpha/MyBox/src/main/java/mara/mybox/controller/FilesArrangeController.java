@@ -287,6 +287,7 @@ public class FilesArrangeController extends BaseBatchFileController {
             if (!initAttributes()) {
                 return;
             }
+            targetFilesCount = 0;
             targetFiles = new LinkedHashMap<>();
             updateInterface("Started");
             synchronized (this) {
@@ -472,14 +473,14 @@ public class FilesArrangeController extends BaseBatchFileController {
         }
 
         if (operationBarController.openCheck.isSelected()) {
-            openTarget(null);
+            openTarget();
         }
 
     }
 
     @FXML
     @Override
-    public void openTarget(ActionEvent event) {
+    public void openTarget() {
         try {
             browseURI(targetPathInputController.file.toURI());
         } catch (Exception e) {

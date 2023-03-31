@@ -7,7 +7,6 @@ import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -378,11 +377,11 @@ public class FilesRenameController extends BaseBatchFileController {
 
     @Override
     public void viewTarget(File file) {
-        openTarget(null);
+        openTarget();
     }
 
     @Override
-    public void openTarget(ActionEvent event) {
+    public void openTarget() {
         try {
             if (tableData == null || tableData.isEmpty()) {
                 return;

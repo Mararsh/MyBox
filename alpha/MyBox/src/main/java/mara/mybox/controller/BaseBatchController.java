@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.sql.Connection;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,10 +26,8 @@ import javafx.scene.layout.VBox;
 import mara.mybox.data.FileInformation;
 import mara.mybox.data.FileInformation.FileSelectorType;
 import mara.mybox.data.ProcessParameters;
-import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
@@ -114,26 +111,22 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     public void donePost() {
         tableView.refresh();
 
-        if (miaoCheck != null && miaoCheck.isSelected()) {
-            SoundTools.miao3();
-        }
-
         if (!isPreview && openCheck != null && !openCheck.isSelected()) {
             return;
         }
-        if (targetFiles != null && viewTargetPath) {
-            openTarget(null);
-        } else if (targetFiles == null || targetFiles.size() == 1) {
+        if (targetFilesCount > 0 && viewTargetPath) {
+            openTarget();
+        } else if (targetFiles == null || targetFilesCount == 1) {
             if (lastTargetName == null || !new File(lastTargetName).exists()) {
                 alertInformation(message("NoDataNotSupported"));
             } else {
                 viewTarget(new File(lastTargetName));
             }
-        } else if (!targetFiles.isEmpty()) {
+        } else if (targetFilesCount > 0) {
             if (browseTargets) {
                 browseAction();
             } else {
-                openTarget(null);
+                openTarget();
             }
         } else {
             popInformation(message("NoFileGenerated"));
@@ -142,21 +135,15 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
 
     @Override
     public void recordTargetFiles() {
-        if (targetFiles != null && !targetFiles.isEmpty()) {
-            try (Connection conn = DerbyBase.getConnection()) {
-                for (File file : targetFiles.keySet()) {
-                    int type = targetFiles.get(file);
-                    recordFileWritten(conn, file, type, type);
-                }
-            } catch (Exception e) {
-                MyBoxLog.error(e);
+        if (targetFilesCount > 0) {
+            super.recordTargetFiles();
+        } else {
+            File file = lastTargetFile();
+            if (file != null) {
+                recordFileWritten(file, TargetFileType);
+            } else if (targetPath != null) {
+                recordFileWritten(targetPath, TargetPathType);
             }
-        } else if (targetFile != null) {
-            recordFileWritten(targetFile, TargetFileType);
-        } else if (lastTargetName != null) {
-            recordFileWritten(new File(lastTargetName), TargetFileType);
-        } else if (targetPath != null) {
-            recordFileWritten(targetPath, TargetPathType);
         }
     }
 
@@ -169,20 +156,14 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
 
     @FXML
     @Override
-    public void openTarget(ActionEvent event) {
+    public void openTarget() {
         try {
             File path = null;
-            if (lastTargetName != null) {
-                path = new File(lastTargetName).getParentFile();
-            } else if (targetFiles != null && !targetFiles.isEmpty()) {
-                path = targetFiles.keySet().iterator().next().getParentFile();
+            File lastFile = lastTargetFile();
+            if (lastFile != null) {
+                path = lastFile.getParentFile();
             } else if (actualParameters != null && actualParameters.targetPath != null) {
                 path = new File(actualParameters.targetPath);
-            } else if (targetFile != null) {
-                path = targetFile.getParentFile();
-            } else if (targetFileController != null) {
-                String p = targetFileController.text();
-                path = new File(p).getParentFile();
             } else if (targetPathController != null) {
                 String p = targetPathController.text();
                 if (targetPrefixInput != null && targetSubdirCheck != null && targetSubdirCheck.isSelected()) {
@@ -218,9 +199,13 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             ImagesBrowserController controller = ImagesBrowserController.open();
             if (controller != null) {
                 List<File> files = new ArrayList<>();
-                for (File file : targetFiles.keySet()) {
-                    files.add(file);
-                    if (files.size() >= Math.min(9, targetFiles.size())) {
+                for (int type : targetFiles.keySet()) {
+                    List<File> tfiles = targetFiles.get(type);
+                    if (tfiles == null) {
+                        continue;
+                    }
+                    files.addAll(tfiles);
+                    if (files.size() >= 9) {
                         break;
                     }
                 }
@@ -1053,10 +1038,9 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         lastTargetName = tFiles.get(tFiles.size() - 1).getAbsolutePath();
         if (targetFiles == null) {
             targetFiles = new LinkedHashMap<>();
+            targetFilesCount = 0;
         }
-        for (File file : tFiles) {
-            targetFiles.put(file, TargetFileType);
-        }
+        putTargetFile(tFiles, TargetFileType);
         String msg;
         if (tFiles.size() == 1) {
             msg = MessageFormat.format(message("FilesGenerated"), lastTargetName);
@@ -1159,13 +1143,9 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             s += ". " + message("HandledItems") + ":" + totalItemsHandled + space;
             avgString += " " + DoubleTools.scale3((double) cost / totalItemsHandled) + " " + message("PerItem");
         }
-        int count = 0;
-        if (targetFiles != null && !targetFiles.isEmpty()) {
-            count = targetFiles.size();
-            popInformation(MessageFormat.format(message("FilesGenerated"), count));
-        }
-        if (count > 0) {
-            s += MessageFormat.format(message("FilesGenerated"), count) + space;
+        if (targetFilesCount > 0) {
+            popInformation(MessageFormat.format(message("FilesGenerated"), targetFilesCount));
+            s += MessageFormat.format(message("FilesGenerated"), targetFilesCount) + space;
         }
         s += message("Cost") + ": " + DateTools.datetimeMsDuration(new Date(), processStartTime) + "." + space
                 + message("Average") + ":" + avgString + " "

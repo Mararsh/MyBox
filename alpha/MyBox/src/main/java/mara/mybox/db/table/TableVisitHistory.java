@@ -598,7 +598,7 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
 
     public void trim(Connection conn, int resourceType, int fileType, int operationType) {
         try (PreparedStatement query = conn.prepareStatement(Query_Types);
-                PreparedStatement delete = conn.prepareStatement(Delete_Visit)) {
+                PreparedStatement delete = conn.prepareStatement(deleteStatement())) {
             conn.setAutoCommit(true);
             query.setInt(1, resourceType);
             query.setInt(2, fileType);
@@ -609,29 +609,22 @@ public class TableVisitHistory extends BaseTable<VisitHistory> {
                 while (results.next()) {
                     VisitHistory data = readData(results);
                     if (++qcount > AppVariables.fileRecentNumber || !valid(data)) {
-                        delete.setInt(1, resourceType);
-                        delete.setInt(2, fileType);
-                        delete.setInt(3, operationType);
-                        delete.setString(4, data.getResourceValue());
-                        delete.addBatch();
-                        if (dcount > 0 && dcount % Database.BatchSize == 0) {
-                            int[] res = delete.executeBatch();
-                            for (int r : res) {
-                                if (r > 0) {
-                                    dcount += r;
+                        if (setDeleteStatement(conn, delete, data)) {
+                            delete.addBatch();
+                            if (dcount > 0 && (dcount % Database.BatchSize == 0)) {
+                                int[] res = delete.executeBatch();
+                                for (int r : res) {
+                                    if (r > 0) {
+                                        dcount += r;
+                                    }
                                 }
+                                conn.commit();
+                                delete.clearBatch();
                             }
-                            conn.commit();
-                            delete.clearBatch();
                         }
                     }
                 }
-                int[] res = delete.executeBatch();
-                for (int r : res) {
-                    if (r > 0) {
-                        dcount += r;
-                    }
-                }
+                delete.executeBatch();
                 conn.commit();
                 conn.setAutoCommit(true);
             }

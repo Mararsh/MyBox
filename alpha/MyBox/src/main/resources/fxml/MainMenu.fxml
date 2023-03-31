@@ -351,12 +351,13 @@ License:    Apache License Version 2.0
                                 <MenuItem mnemonicParsing="false" onAction="#settingsAction" text="%SettingsDot" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
 
+                                <CheckMenuItem fx:id="shortcutsCanNotOmitCheck" mnemonicParsing="false" onAction="#shortcutsCanNotOmitCtrlAlt" text="%ShortcutsCanNotOmitCtrlAlt" />
+                                <CheckMenuItem fx:id="clearExpiredDataCheck" mnemonicParsing="false" onAction="#clearExpiredDataBeforeExit" text="%ClearExpiredDataBeforeExit" />
                                 <CheckMenuItem fx:id="popColorSetCheck" mnemonicParsing="false" onAction="#popColorSetAction" text="%PopColorSetWhenMouseHovering" />
                                 <CheckMenuItem fx:id="controlPanesCheck" mnemonicParsing="false" onAction="#controlPanesAction" text="%ShowHidePanesWhenMouseHovering" />
                                 <CheckMenuItem fx:id="popRecentCheck" mnemonicParsing="false" onAction="#popRecentAction" text="%PopRecentFiles" />
                                 <CheckMenuItem fx:id="closeCurrentCheck" mnemonicParsing="false" onAction="#closeCurrentAction" text="%CloseCurrentWhenOpenTool" />
                                 <CheckMenuItem fx:id="recordWindowsSizeLocationCheck" mnemonicParsing="false" onAction="#RecordWindowsSizeLocationAction" text="%RecordWindowsSizeLocation" />
-                                <CheckMenuItem fx:id="shortcutsCanNotOmitCheck" mnemonicParsing="false" onAction="#shortcutsCanNotOmitCtrlAlt" text="%ShortcutsCanNotOmitCtrlAlt" />
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 
                                 <Menu fx:id="languagesMenu" mnemonicParsing="false" text="%Languages">
@@ -472,8 +473,8 @@ License:    Apache License Version 2.0
 
                                 <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#openDataPath" text="%OpenDataPath" />
-                                <MenuItem mnemonicParsing="false" onAction="#clearSettings" text="%ClearPersonalSettings" />
                                 <MenuItem mnemonicParsing="false" onAction="#clearExpiredData" text="%ClearExpiredData" />
+                                <MenuItem mnemonicParsing="false" onAction="#clearSettings" text="%ClearPersonalSettings" />
                                 <MenuItem mnemonicParsing="false" onAction="#editConfigFile" text="%EditConfigFile" />
                             </items>
                         </Menu>

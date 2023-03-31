@@ -252,15 +252,6 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                                        <TitledPane fx:id="renderPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Render">
-                                            <content>
-                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                                    <children>
-                                                        <fx:include fx:id="render" source="ControlImageRender.fxml" />
-                                                    </children>
-                                                </VBox>
-                                            </content>
-                                        </TitledPane>
                                         <TitledPane fx:id="editPane" expanded="false" layoutX="10.0" layoutY="433.0" maxWidth="1.7976931348623157E308" text="%Edit">
                                             <content>
                                                 <VBox spacing="2.0">
@@ -376,6 +367,15 @@ License:    Apache License Version 2.0
                                                         </VBox>
                                                     </content>
                                                 </ScrollPane>
+                                            </content>
+                                        </TitledPane>
+                                        <TitledPane fx:id="renderPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Render">
+                                            <content>
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                                    <children>
+                                                        <fx:include fx:id="render" source="ControlImageRender.fxml" />
+                                                    </children>
+                                                </VBox>
                                             </content>
                                         </TitledPane>
                                         <TitledPane fx:id="browsePane" text="%Browse">

@@ -7,7 +7,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
@@ -15,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.FileExtensions;
+import org.apache.commons.io.FileUtils;
 
 /**
  * @Author mara
@@ -79,16 +79,16 @@ public class FileTools {
             if (noEmpty && sourceFile.length() == 0) {
                 return false;
             }
-//            synchronized (targetFile) {
-//                if (!FileDeleteTools.delete(targetFile)) {
-//                    return false;
-//                }
-////                System.gc();
-//                FileUtils.moveFile(sourceFile, targetFile);
-//            }
-            targetFile.getParentFile().mkdirs();
-            Files.move(sourceFile.toPath(), targetFile.toPath(),
-                    StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+            synchronized (targetFile) {
+                if (!FileDeleteTools.delete(targetFile)) {
+                    return false;
+                }
+                System.gc();
+                FileUtils.moveFile(sourceFile, targetFile);
+            }
+//            targetFile.getParentFile().mkdirs();
+//            Files.move(sourceFile.toPath(), targetFile.toPath(),
+//                    StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e, sourceFile + "    " + targetFile);

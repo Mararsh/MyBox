@@ -81,9 +81,9 @@ public class OperationController extends BaseController {
 
     @FXML
     @Override
-    public void openTarget(ActionEvent event) {
+    public void openTarget() {
         if (parentController != null) {
-            parentController.openTarget(event);
+            parentController.openTarget();
         }
     }
 

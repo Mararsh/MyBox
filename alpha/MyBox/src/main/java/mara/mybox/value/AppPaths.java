@@ -61,7 +61,7 @@ public class AppPaths {
         return getPath("imageHistories");
     }
 
-    public static String getImageHisPath(File file, int frame) {
+    public static String getImageHisPath(File file) {
         if (file == null) {
             return null;
         }
@@ -71,9 +71,6 @@ public class AppPaths {
             if (pathname == null) {
                 String fname = file.getName();
                 String subPath = FileNameTools.prefix(fname);
-                if (frame >= 0) {
-                    subPath += "-frame" + frame;
-                }
                 subPath += FileNameTools.suffix(fname);
                 pathname = getImageHisPath() + File.separator + subPath
                         + (new Date()).getTime() + File.separator;

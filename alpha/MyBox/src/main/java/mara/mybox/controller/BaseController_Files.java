@@ -238,6 +238,19 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         }
     }
 
+    public void recordFileWritten(List<File> files, int pathType, int fileType) {
+        if (files == null || files.isEmpty()) {
+            return;
+        }
+        try (Connection conn = DerbyBase.getConnection()) {
+            for (File file : files) {
+                recordFileWritten(conn, file, pathType, fileType);
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     public void recordFileAdded(String file) {
         recordFileOpened(new File(file));
     }
@@ -291,7 +304,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         recordFileOpened(directory);
     }
 
-    public void openTarget(ActionEvent event) {
+    public void openTarget() {
 
     }
 

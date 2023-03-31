@@ -4,15 +4,15 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
+import mara.mybox.controller.BaseTaskController;
+import mara.mybox.db.Database;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.ImageClipboard;
-import mara.mybox.fxml.SingletonTask;
 import static mara.mybox.fxml.WindowTools.recordError;
 import static mara.mybox.fxml.WindowTools.recordInfo;
 import mara.mybox.tools.FileDeleteTools;
+import mara.mybox.value.AppPaths;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -23,7 +23,7 @@ import static mara.mybox.value.Languages.message;
 public class TableImageClipboard extends BaseTable<ImageClipboard> {
 
     public static final String FileQuery
-            = "SELECT * FROM Image_Clipboard  WHERE image_file=? ORDER BY record_time DESC";
+            = "SELECT * FROM Image_Clipboard  WHERE image_file=? OR thumbnail_file=?";
 
     public static final String DeleteFile
             = "DELETE FROM Image_Clipboard  WHERE image_file=?";
@@ -52,100 +52,113 @@ public class TableImageClipboard extends BaseTable<ImageClipboard> {
         return this;
     }
 
-    public void clearImageClipboards(SingletonTask task, Connection conn, List<String> files) {
-        if (conn == null || files == null || files.isEmpty()) {
-            return;
-        }
-        recordInfo(task, FileQuery);
-        try (PreparedStatement statement = conn.prepareStatement(FileQuery)) {
-            conn.setAutoCommit(true);
-            for (String file : files) {
-                if (task != null && task.isCancelled()) {
-                    return;
-                }
-                recordInfo(task, message("Check") + ": " + file);
-                statement.setString(1, file);
-                try (ResultSet results = statement.executeQuery()) {
-                    while (results.next()) {
-                        if (task != null && task.isCancelled()) {
-                            return;
-                        }
-                        ImageClipboard data = readData(results);
-                        recordInfo(task, message("Delete") + ": " + data.getThumbnailFile());
-                        FileDeleteTools.delete(data.getThumbnailFile());
-                    }
-                } catch (Exception e) {
-                    recordError(task, e.toString() + "\n" + tableName);
-                }
-            }
-        } catch (Exception e) {
-            recordError(task, e.toString() + "\n" + tableName);
-        }
-        recordInfo(task, DeleteFile);
-        if (task != null && task.isCancelled()) {
-            return;
-        }
-        try (PreparedStatement statement = conn.prepareStatement(DeleteFile)) {
-            for (String file : files) {
-                if (task != null && task.isCancelled()) {
-                    return;
-                }
-                recordInfo(task, message("Clear") + ": " + file);
-                statement.setString(1, file);
-                statement.executeUpdate();
-            }
-        } catch (Exception e) {
-            recordError(task, e.toString() + "\n" + tableName);
-        }
+    public int clearInvalid(BaseTaskController taskController, Connection conn) {
+        int count = clearInvalidRows(taskController, conn);
+        return count + clearInvalidFiles(taskController, conn);
     }
 
-    public int clearInvalid(SingletonTask task, Connection conn) {
-        int count = 0;
+    public int clearInvalidRows(BaseTaskController taskController, Connection conn) {
+        int rowCount = 0, invalidCount = 0;
         try {
-            recordInfo(task, message("Check") + ": " + tableName);
-            conn.setAutoCommit(true);
-            List<ImageClipboard> invalid = new ArrayList<>();
-            List<String> clear = new ArrayList<>();
+            recordInfo(taskController, message("Check") + ": " + tableName);
             try (PreparedStatement query = conn.prepareStatement(queryAllStatement());
-                    ResultSet results = query.executeQuery()) {
-                while (results.next()) {
-                    if (task != null && task.isCancelled()) {
-                        return -1;
-                    }
-                    ImageClipboard data = readData(results);
-                    File imageFile = data.getImageFile();
-                    if (imageFile == null) {
-                        invalid.add(data);
-                    } else if (!imageFile.exists() && !clear.contains(imageFile.getAbsolutePath())) {
-                        clear.add(imageFile.getAbsolutePath());
-                        recordInfo(task, message("NotFound") + ": " + imageFile.getAbsolutePath());
-                    } else {
+                    PreparedStatement delete = conn.prepareStatement(deleteStatement())) {
+                conn.setAutoCommit(true);
+                try (ResultSet results = query.executeQuery()) {
+                    conn.setAutoCommit(false);
+                    while (results.next()) {
+                        rowCount++;
+                        if (taskController != null && taskController.getTask() != null
+                                && taskController.getTask().isCancelled()) {
+                            return invalidCount;
+                        }
+                        ImageClipboard data = readData(results);
+                        File imageFile = data.getImageFile();
                         File thumbnailFile = data.getThumbnailFile();
-                        if (thumbnailFile == null || !thumbnailFile.exists()) {
-                            invalid.add(data);
+                        if (imageFile == null || !imageFile.exists()
+                                || thumbnailFile == null || !thumbnailFile.exists()) {
+                            if (imageFile != null) {
+                                FileDeleteTools.delete(imageFile);
+                                recordInfo(taskController, message("Delete") + ": " + imageFile);
+                            }
                             if (thumbnailFile != null) {
-                                recordInfo(task, message("NotFound") + ": " + thumbnailFile.getAbsolutePath());
+                                FileDeleteTools.delete(thumbnailFile);
+                                recordInfo(taskController, message("Delete") + ": " + thumbnailFile);
+                            }
+                            if (setDeleteStatement(conn, delete, data)) {
+                                delete.addBatch();
+                                if (invalidCount > 0 && (invalidCount % Database.BatchSize == 0)) {
+                                    int[] res = delete.executeBatch();
+                                    for (int r : res) {
+                                        if (r > 0) {
+                                            invalidCount += r;
+                                        }
+                                    }
+                                    conn.commit();
+                                    delete.clearBatch();
+                                }
                             }
                         }
                     }
+                } catch (Exception e) {
+                    recordError(taskController, e.toString() + "\n" + tableName);
                 }
+                int[] res = delete.executeBatch();
+                for (int r : res) {
+                    if (r > 0) {
+                        invalidCount += r;
+                    }
+                }
+                conn.commit();
             } catch (Exception e) {
-                recordError(task, e.toString() + "\n" + tableName);
-            }
-            count = clear.size() + invalid.size();
-            if (count > 0) {
-                recordInfo(task, message("Invalid") + ": " + clear.size() + " + " + invalid.size());
-                clearImageClipboards(task, conn, clear);
-                if (task != null && task.isCancelled()) {
-                    return -1;
-                }
-                deleteData(conn, invalid);
+                recordError(taskController, e.toString() + "\n" + tableName);
             }
             conn.setAutoCommit(true);
         } catch (Exception e) {
-            recordError(task, e.toString() + "\n" + tableName);
+            recordError(taskController, e.toString() + "\n" + tableName);
         }
-        return count;
+        recordInfo(taskController, message("Checked") + ": " + rowCount + " "
+                + message("Invalid") + ": " + invalidCount);
+        return invalidCount;
+    }
+
+    public int clearInvalidFiles(BaseTaskController taskController, Connection conn) {
+        int invalidCount = 0;
+        try {
+            String icpath = AppPaths.getImageClipboardPath();
+            recordInfo(taskController, message("Check") + ": " + icpath);
+            String[] files = new File(icpath).list();
+            if (files == null || files.length == 0) {
+                return invalidCount;
+            }
+            try (PreparedStatement query = conn.prepareStatement(FileQuery)) {
+                conn.setAutoCommit(true);
+                for (String name : files) {
+                    if (taskController != null && taskController.getTask() != null
+                            && taskController.getTask().isCancelled()) {
+                        return invalidCount;
+                    }
+                    String fname = icpath + File.separator + name;
+                    query.setString(1, fname);
+                    query.setString(2, fname);
+                    try (ResultSet results = query.executeQuery()) {
+                        if (!results.next()) {
+                            invalidCount++;
+                            FileDeleteTools.delete(fname);
+                            recordInfo(taskController, message("Delete") + ": " + fname);
+                        }
+                    } catch (Exception e) {
+                        recordError(taskController, e.toString() + "\n" + name);
+                    }
+                }
+            } catch (Exception ex) {
+                recordError(taskController, ex.toString() + "\n" + tableName);
+            }
+        } catch (Exception exx) {
+            recordError(taskController, exx.toString() + "\n" + tableName);
+        }
+        recordInfo(taskController, message("Invalid") + ": " + invalidCount);
+        return invalidCount;
     }
 
 }

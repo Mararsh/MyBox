@@ -98,7 +98,7 @@ public class RemotePathSynchronizeFromLocalController extends DirectorySynchroni
 
     @FXML
     @Override
-    public void openTarget(ActionEvent event) {
+    public void openTarget() {
         try {
 
         } catch (Exception e) {

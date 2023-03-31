@@ -2,7 +2,6 @@ package mara.mybox.fxml;
 
 import java.io.File;
 import java.net.URL;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -22,17 +21,13 @@ import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import mara.mybox.controller.BaseController;
+import mara.mybox.controller.BaseTaskController;
+import mara.mybox.controller.ClearExpiredDataController;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.DerbyBase.DerbyStatus;
-import mara.mybox.db.table.TableData2DDefinition;
-import mara.mybox.db.table.TableFileBackup;
-import mara.mybox.db.table.TableImageClipboard;
-import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableUserConf;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -385,6 +380,18 @@ public class WindowTools {
     }
 
     public static void appExit() {
+        if (AppVariables.handlingExit) {
+            return;
+        }
+        if (UserConfig.getBoolean("ClearExpiredDataBeforeExit", true)) {
+            AppVariables.handlingExit = true;
+            ClearExpiredDataController.open(true);
+        } else {
+            handleExit();
+        }
+    }
+
+    public static void handleExit() {
         try {
             if (AppVariables.handlingExit) {
                 return;
@@ -399,8 +406,6 @@ public class WindowTools {
             }
             ImageClipboardTools.stopImageClipboardMonitor();
             TextClipboardTools.stopTextClipboardMonitor();
-
-            clearExpiredData(null);
 
             if (AppVariables.scheduledTasks != null && !AppVariables.scheduledTasks.isEmpty()) {
                 if (UserConfig.getBoolean("StopAlarmsWhenExit")) {
@@ -435,7 +440,7 @@ public class WindowTools {
                     MyBoxLog.info("Shut down Derby...");
                     DerbyBase.shutdownEmbeddedDerby();
                 }
-                AppVariables.handlingExit = false;
+//                AppVariables.handlingExit = false;
 
                 Platform.setImplicitExit(true);
                 System.gc();
@@ -452,64 +457,32 @@ public class WindowTools {
 
     }
 
-    public static void recordInfo(SingletonTask task, String info) {
+    public static void taskInfo(SingletonTask task, String info) {
         if (task != null) {
             task.setInfo(info);
-        } else {
-            MyBoxLog.console(info);
         }
+        MyBoxLog.console(info);
     }
 
-    public static void recordError(SingletonTask task, String error) {
+    public static void taskError(SingletonTask task, String error) {
         if (task != null) {
             task.setError(error);
-        } else {
-            MyBoxLog.error(error);
         }
+        MyBoxLog.error(error);
     }
 
-    public static void clearExpiredData(SingletonTask task) {
-        try {
-            recordInfo(task, message("ClearExpiredData") + "...");
-
-            if (task != null && task.isCancelled()) {
-                return;
-            }
-            recordInfo(task, message("Clear") + ": " + AppVariables.MyBoxTempPath);
-            FileDeleteTools.clearDir(AppVariables.MyBoxTempPath);
-
-            if (task != null && task.isCancelled()) {
-                return;
-            }
-            try (Connection conn = DerbyBase.getConnection()) {
-                if (task != null && task.isCancelled()) {
-                    return;
-                }
-                new TableImageClipboard().clearInvalid(task, conn);
-                if (task != null && task.isCancelled()) {
-                    return;
-                }
-                new TableImageEditHistory().clearInvalid(task, conn);
-                if (task != null && task.isCancelled()) {
-                    return;
-                }
-                new TableFileBackup().clearInvalid(task, conn);
-                if (task != null && task.isCancelled()) {
-                    return;
-                }
-                new TableData2DDefinition().clearInvalid(task, conn, true);
-
-            } catch (Exception e) {
-                MyBoxLog.error(e);
-            }
-
-        } catch (Exception e) {
-            if (task != null) {
-                task.setError(e.toString());
-            } else {
-                MyBoxLog.error(e);
-            }
+    public static void recordInfo(BaseTaskController taskController, String info) {
+        if (taskController != null) {
+            taskController.updateLogs(info);
         }
+        MyBoxLog.console(info);
+    }
+
+    public static void recordError(BaseTaskController taskController, String error) {
+        if (taskController != null) {
+            taskController.showLogs(error);
+        }
+        MyBoxLog.error(error);
     }
 
     public static void closeAllPopup() {
