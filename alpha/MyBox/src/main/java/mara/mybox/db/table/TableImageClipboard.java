@@ -118,12 +118,12 @@ public class TableImageClipboard extends BaseTable<ImageClipboard> {
             recordError(taskController, e.toString() + "\n" + tableName);
         }
         recordInfo(taskController, message("Checked") + ": " + rowCount + " "
-                + message("Invalid") + ": " + invalidCount);
+                + message("Expired") + ": " + invalidCount);
         return invalidCount;
     }
 
     public int clearInvalidFiles(BaseTaskController taskController, Connection conn) {
-        int invalidCount = 0;
+        int rowCount = 0, invalidCount = 0;
         try {
             String icpath = AppPaths.getImageClipboardPath();
             recordInfo(taskController, message("Check") + ": " + icpath);
@@ -134,6 +134,7 @@ public class TableImageClipboard extends BaseTable<ImageClipboard> {
             try (PreparedStatement query = conn.prepareStatement(FileQuery)) {
                 conn.setAutoCommit(true);
                 for (String name : files) {
+                    rowCount++;
                     if (taskController != null && taskController.getTask() != null
                             && taskController.getTask().isCancelled()) {
                         return invalidCount;
@@ -157,7 +158,8 @@ public class TableImageClipboard extends BaseTable<ImageClipboard> {
         } catch (Exception exx) {
             recordError(taskController, exx.toString() + "\n" + tableName);
         }
-        recordInfo(taskController, message("Invalid") + ": " + invalidCount);
+        recordInfo(taskController, message("Checked") + ": " + rowCount + " "
+                + message("Expired") + ": " + invalidCount);
         return invalidCount;
     }
 

@@ -1,9 +1,11 @@
 package mara.mybox.controller;
 
+import com.jcraft.jsch.SftpATTRS;
 import java.io.File;
+import java.util.Date;
 import java.util.List;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.layout.VBox;
 import mara.mybox.data.FileNode;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
@@ -17,6 +19,8 @@ public class RemotePathSynchronizeFromLocalController extends DirectorySynchroni
 
     @FXML
     protected ControlRemoteConnection remoteController;
+    @FXML
+    protected VBox sourceBox, remoteBox;
 
     public RemotePathSynchronizeFromLocalController() {
         baseTitle = message("RemotePathSynchronizeFromLocal");
@@ -26,9 +30,6 @@ public class RemotePathSynchronizeFromLocalController extends DirectorySynchroni
     public void initTarget() {
         try {
             remoteController.setParameters(this);
-
-            optionsController.copyAttrCheck.setSelected(false);
-            optionsController.copyAttrCheck.setDisable(true);
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -41,12 +42,19 @@ public class RemotePathSynchronizeFromLocalController extends DirectorySynchroni
     }
 
     @Override
+    public void beforeTask() {
+        super.beforeTask();
+        sourceBox.setDisable(true);
+        remoteBox.setDisable(true);
+    }
+
+    @Override
     public boolean doTask() {
         try {
             return remoteController.connect(task)
                     && synchronize(remoteController.currentConnection.getPath());
         } catch (Exception e) {
-            updateLogs(e.toString(), true, true);
+            showLogs(e.toString());
             return false;
         }
     }
@@ -55,12 +63,8 @@ public class RemotePathSynchronizeFromLocalController extends DirectorySynchroni
     public void afterTask() {
         super.afterTask();
         remoteController.disconnect();
-    }
-
-    @Override
-    public void cancelTask() {
-        super.cancelTask();
-        remoteController.disconnect();
+        sourceBox.setDisable(false);
+        remoteBox.setDisable(false);
     }
 
     @Override
@@ -76,7 +80,7 @@ public class RemotePathSynchronizeFromLocalController extends DirectorySynchroni
     @Override
     public void deleteTargetFile(FileNode targetNode) {
         if (targetNode != null) {
-            remoteController.deleteFile(targetNode.fullName());
+            remoteController.delete(targetNode.fullName());
         }
     }
 
@@ -89,21 +93,49 @@ public class RemotePathSynchronizeFromLocalController extends DirectorySynchroni
 
     @Override
     public boolean copyFile(File sourceFile, FileNode targetNode) {
-        if (targetNode != null) {
-            return remoteController.copyFile(sourceFile, targetNode.fullName());
-        } else {
+        try {
+            if (task == null || task.isCancelled()
+                    || targetNode == null || sourceFile == null
+                    || !sourceFile.exists() || !sourceFile.isFile()) {
+                return false;
+            }
+            String sourceName = sourceFile.getAbsolutePath();
+            String targetName = remoteController.fixFilename(targetNode.fullName());
+            showLogs("put " + sourceName + " " + targetName);
+            remoteController.sftp.put(sourceName, targetName);
+            if (copyAttr.isCopyMTime() || copyAttr.isSetPermissions()) {
+                SftpATTRS attrs = remoteController.stat(targetName);
+                String msg = "setStat: ";
+                if (copyAttr.isSetPermissions()) {
+                    attrs.setPERMISSIONS(copyAttr.getPermissions());
+                    msg += copyAttr.getPermissions();
+                }
+                if (copyAttr.isCopyMTime()) {
+                    int time = (int) (sourceFile.lastModified() / 1000);
+                    attrs.setACMODTIME(time, time);
+                    msg += "  " + new Date(sourceFile.lastModified());
+                }
+                showLogs(msg);
+                remoteController.sftp.setStat(targetName, attrs);
+            }
+            return true;
+        } catch (Exception e) {
+            showLogs(e.toString());
             return false;
         }
+    }
+
+    @Override
+    public boolean isModified(File srcFile, FileNode targetNode) {
+        int stime = (int) (srcFile.lastModified() / 1000);
+        int ttime = (int) (targetNode.getModifyTime() / 1000);
+        return stime > ttime;
     }
 
     @FXML
     @Override
     public void openTarget() {
-        try {
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+        RemotePathManageController.open(remoteController.currentConnection);
     }
 
 }

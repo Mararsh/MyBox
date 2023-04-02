@@ -34,6 +34,7 @@ public class WordViewController extends BaseWebViewController {
 
     @Override
     public boolean loadFile(File file) {
+        openSourceButton.setDisable(true);
         if (file == null) {
             getMyStage().setTitle(getBaseTitle());
             return false;
@@ -57,6 +58,7 @@ public class WordViewController extends BaseWebViewController {
                     sourceFile = file;
                     getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath());
                     webViewController.loadFile(htmlFile);
+                    openSourceButton.setDisable(false);
                 }
 
             };

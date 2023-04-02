@@ -34,7 +34,7 @@ License:    Apache License Version 2.0
                             <content>
                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                                     <content>
-                                        <VBox fx:id="paraBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
+                                        <VBox fx:id="sourceBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                                             <children>
                                                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="10.0" VBox.vgrow="NEVER">
                                                     <children>
@@ -51,7 +51,7 @@ License:    Apache License Version 2.0
                                                         </Button>
                                                     </children>
                                                 </HBox>
-                                    <fx:include fx:id="options" source="ControlSynchronizeOptions.fxml" />
+                                                <fx:include fx:id="options" source="ControlRemoteSynchronizeOptions.fxml" />
                                             </children>
                                             <padding>
                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -63,15 +63,15 @@ License:    Apache License Version 2.0
                         </Tab>
                         <Tab fx:id="targetTab" text="%RemotePath">
                             <content>
-                                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                      <padding>
-                                          <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                      </padding>
-                           <children>
-                              <fx:include fx:id="remote" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlRemoteConnection.fxml" VBox.vgrow="ALWAYS" />
-                              <Label maxWidth="1.7976931348623157E308" text="%RemotePathSynchronizeComments" />
-                           </children>
-                                  </VBox>
+                                <VBox fx:id="remoteBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                    <padding>
+                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </padding>
+                                    <children>
+                                        <fx:include fx:id="remote" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlRemoteConnection.fxml" VBox.vgrow="ALWAYS" />
+                                        <Label maxWidth="1.7976931348623157E308" text="%RemotePathSynchronizeComments" />
+                                    </children>
+                                </VBox>
                             </content>
                         </Tab>
                         <Tab fx:id="logsTab" text="%Logs">

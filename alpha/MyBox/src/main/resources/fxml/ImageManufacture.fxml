@@ -82,28 +82,37 @@ License:    Apache License Version 2.0
                                                         </HBox>
                                                         <VBox fx:id="fileBox" spacing="2.0">
                                                             <children>
-                                                                <HBox alignment="CENTER_LEFT" layoutX="22.0" layoutY="22.0" spacing="2.0">
-                                                                    <children>
-                                                                        <Button fx:id="metaButton" mnemonicParsing="false" onAction="#metaAction">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/Red/iconMeta.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                        <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction">
-                                                                            <graphic>
-                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                    <image>
-                                                                                        <Image url="@../buttons/Red/iconInfo.png" />
-                                                                                    </image>
-                                                                                </ImageView>
-                                                                            </graphic>
-                                                                        </Button>
-                                                                    </children>
-                                                                </HBox>
+                                                <FlowPane alignment="CENTER_LEFT" hgap="5.0" vgap="5.0">
+                                                   <children>
+                                                      <Button fx:id="openSourceButton" mnemonicParsing="false" onAction="#openSourcePath">
+                                                         <graphic>
+                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                               <image>
+                                                                  <Image url="@../buttons/Red/iconOpenPath.png" />
+                                                               </image>
+                                                            </ImageView>
+                                                         </graphic>
+                                                      </Button>
+                                                      <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction">
+                                                         <graphic>
+                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                               <image>
+                                                                  <Image url="@../buttons/Red/iconInfo.png" />
+                                                               </image>
+                                                            </ImageView>
+                                                         </graphic>
+                                                      </Button>
+                                                      <Button fx:id="metaButton" mnemonicParsing="false" onAction="#metaAction">
+                                                         <graphic>
+                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                               <image>
+                                                                  <Image url="@../buttons/Red/iconMeta.png" />
+                                                               </image>
+                                                            </ImageView>
+                                                         </graphic>
+                                                      </Button>
+                                                   </children>
+                                                </FlowPane>
                                                                 <Separator prefWidth="200.0" />
                                                             </children>
                                                         </VBox>

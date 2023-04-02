@@ -62,6 +62,15 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                             </graphic>
                                         </Button>
+                              <Button fx:id="openSourceButton" mnemonicParsing="false" onAction="#openSourcePath">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconOpenPath.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
                                                   <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                       <image>
                                                           <Image url="@../buttons/Red/iconTips.png" />

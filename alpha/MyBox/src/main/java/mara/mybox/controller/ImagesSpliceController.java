@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -81,7 +82,12 @@ public class ImagesSpliceController extends ImageViewerController {
 
             tableData.addListener((ListChangeListener.Change<? extends ImageInformation> change) -> {
                 if (!tableController.hasSampled()) {
-                    okAction();
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            okAction();
+                        }
+                    });
                 }
             });
 
@@ -416,37 +422,35 @@ public class ImagesSpliceController extends ImageViewerController {
             imageLabel.setText("");
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                @Override
-                protected boolean handle() {
-                    if (imageCombine.getArrayType() == ArrayType.SingleColumn) {
-                        image = CombineTools.combineSingleColumn(imageCombine, tableData, false, true);
-                    } else if (imageCombine.getArrayType() == ArrayType.SingleRow) {
-                        image = CombineTools.combineSingleRow(imageCombine, tableData, false, true);
-                    } else if (imageCombine.getArrayType() == ArrayType.ColumnsNumber) {
-                        image = combineImagesColumns(tableData);
-                    } else {
-                        image = null;
-                    }
-                    return image != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    imageView.setImage(image);
-                    setZoomStep(image);
-                    fitSize();
-                    imageLabel.setText(Languages.message("CombinedSize") + ": "
-                            + (int) image.getWidth() + "x" + (int) image.getHeight());
-                }
-
-            };
-            start(task);
+        if (task != null && !task.isQuit()) {
+            return;
         }
+        task = new SingletonTask<Void>(this) {
+            @Override
+            protected boolean handle() {
+                if (imageCombine.getArrayType() == ArrayType.SingleColumn) {
+                    image = CombineTools.combineSingleColumn(imageCombine, tableData, false, true);
+                } else if (imageCombine.getArrayType() == ArrayType.SingleRow) {
+                    image = CombineTools.combineSingleRow(imageCombine, tableData, false, true);
+                } else if (imageCombine.getArrayType() == ArrayType.ColumnsNumber) {
+                    image = combineImagesColumns(tableData);
+                } else {
+                    image = null;
+                }
+                return image != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                imageView.setImage(image);
+                setZoomStep(image);
+                fitSize();
+                imageLabel.setText(Languages.message("CombinedSize") + ": "
+                        + (int) image.getWidth() + "x" + (int) image.getHeight());
+            }
+
+        };
+        start(task);
     }
 
     private Image combineImagesColumns(List<ImageInformation> imageInfos) {

@@ -83,6 +83,10 @@ public class MenuController extends BaseChildController {
             initX = x;
             initY = y;
             thisPane.requestFocus();
+            if (openSourceButton != null) {
+                openSourceButton.setDisable(parentController.sourceFile == null
+                        || !parentController.sourceFile.exists());
+            }
 
             Window window = getMyWindow();
             if (window instanceof Popup) {
@@ -176,6 +180,12 @@ public class MenuController extends BaseChildController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @FXML
+    @Override
+    public void openSourcePath() {
+        parentController.openSourcePath();
     }
 
     @FXML

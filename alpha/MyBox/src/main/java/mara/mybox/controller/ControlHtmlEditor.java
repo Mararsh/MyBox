@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -71,6 +72,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
     protected Parser htmlParser;
     protected HtmlRenderer htmlRender;
     protected String title;
+    protected final SimpleBooleanProperty loadNotify;
 
     protected final ButtonType buttonClose = new ButtonType(message("Close"));
     protected final ButtonType buttonSynchronize = new ButtonType(message("SynchronizeAndClose"));
@@ -95,6 +97,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
 
     public ControlHtmlEditor() {
         TipsLabelKey = "HtmlEditorTips";
+        loadNotify = new SimpleBooleanProperty(false);
     }
 
     @Override
@@ -352,6 +355,8 @@ public class ControlHtmlEditor extends BaseWebViewController {
     public boolean writePanes(String html) {
         fileChanged = false;
         sourceFile = webViewController.sourceFile;
+        loadNotify.set(!loadNotify.get());
+
         isSettingValues = true;
         if (webViewController.address != null) {
             loadRichEditor(webViewController.address);

@@ -46,4 +46,6 @@ public class TimeFormats {
     public static final String DateB = "MM/dd/y";
     public static final String MonthB = "MM/y";
 
+    public static final String DateC = "yyyy/MM/dd";
+
 }

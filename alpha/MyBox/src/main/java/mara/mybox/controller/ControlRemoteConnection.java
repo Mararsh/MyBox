@@ -5,7 +5,6 @@ import com.jcraft.jsch.ChannelSftp.LsEntry;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpATTRS;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -599,24 +598,6 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
         } catch (Exception e) {
             error = e.toString();
             showLogs(error);
-            return false;
-        }
-    }
-
-    public boolean copyFile(File sourceFile, String targetFile) {
-        try {
-            if (task == null || task.isCancelled()
-                    || targetFile == null || targetFile.isBlank()
-                    || sourceFile == null || !sourceFile.exists() || !sourceFile.isFile()) {
-                return false;
-            }
-            String sourceName = sourceFile.getAbsolutePath();
-            String fixedName = fixFilename(targetFile);
-            showLogs("put " + sourceName + " " + fixedName);
-            sftp.put(sourceName, fixedName);
-            return true;
-        } catch (Exception e) {
-            showLogs(e.toString());
             return false;
         }
     }

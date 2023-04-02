@@ -241,6 +241,10 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         });
             }
 
+            if (openSourceButton != null) {
+                openSourceButton.setDisable(true);
+            }
+
             initLeftPaneControl();
             initRightPaneControl();
 

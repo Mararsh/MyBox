@@ -377,7 +377,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
                 recordError(taskController, e.toString() + "\n" + tableName);
             }
             recordInfo(taskController, message("Checked") + ": " + rowCount + " "
-                    + message("Invalid") + ": " + invalidCount);
+                    + message("Expired") + ": " + invalidCount);
 
         } catch (Exception e) {
             recordError(taskController, e.toString() + "\n" + tableName);
@@ -429,7 +429,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
                 recordError(taskController, e.toString() + "\n" + tableName);
             }
             recordInfo(taskController, message("Checked") + ": " + rowCount + " "
-                    + message("Invalid") + ": " + invalidCount);
+                    + message("Expired") + ": " + invalidCount);
         } catch (Exception e) {
             recordError(taskController, e.toString() + "\n" + tableName);
         }
@@ -462,7 +462,7 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
             }
             conn.commit();
             recordInfo(taskController, message("Checked") + ": " + rowCount + " "
-                    + message("Invalid") + ": " + invalidCount);
+                    + message("Expired") + ": " + invalidCount);
         } catch (Exception e) {
             recordError(taskController, e.toString() + "\n" + tableName);
         }

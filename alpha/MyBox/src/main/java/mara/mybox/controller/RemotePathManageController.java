@@ -22,13 +22,16 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.FileNode;
+import mara.mybox.db.data.PathConnection;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
+import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -535,7 +538,7 @@ public class RemotePathManageController extends FilesTreeController {
         });
         items.add(menuItem);
 
-        menuItem = new MenuItem(message("Permission"), StyleTools.getIconImageView("iconPermission.png"));
+        menuItem = new MenuItem(message("SetPermissions"), StyleTools.getIconImageView("iconPermission.png"));
         menuItem.setOnAction((ActionEvent menuItemEvent) -> {
             permissionAction();
         });
@@ -562,6 +565,11 @@ public class RemotePathManageController extends FilesTreeController {
         LocateTools.locateEvent(event, popMenu);
     }
 
+    public void openPath(PathConnection profile) {
+        remoteController.editProfile(profile);
+        openPath();
+    }
+
     @Override
     public void cleanPane() {
         try {
@@ -571,6 +579,22 @@ public class RemotePathManageController extends FilesTreeController {
         } catch (Exception e) {
         }
         super.cleanPane();
+    }
+
+    /*
+        static methods
+     */
+    public static RemotePathManageController open(PathConnection profile) {
+        try {
+            RemotePathManageController controller
+                    = (RemotePathManageController) WindowTools.openStage(Fxmls.RemotePathManageFxml);
+            controller.requestMouse();
+            controller.openPath(profile);
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
     }
 
 }

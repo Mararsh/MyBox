@@ -30,7 +30,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PptViewController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.PptViewController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -57,6 +57,15 @@ License:    Apache License Version 2.0
                                                             </graphic>
                                                         </Button>
                                                         <Label fx:id="imageInfoLabel" minHeight="-Infinity" wrapText="true" />
+                                          <Button fx:id="openSourceButton" mnemonicParsing="false" onAction="#openSourcePath">
+                                             <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/Red/iconOpenPath.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
                                                     </children>
                                                 </VBox>
                                             </content>

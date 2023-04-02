@@ -133,7 +133,7 @@ public class StylePrefix {
             case "settingsClearButton":
                 return new StyleData(id, message("ClearPersonalSettings"), "", "iconClear.png");
             case "settingsOpenButton":
-                return new StyleData(id, message("OpenDataPath"), "", "iconOpen.png");
+                return new StyleData(id, message("OpenDataPath"), "", "iconOpenPath.png");
             case "settingsRecentOKButton":
                 return new StyleData(id, message("OK"), "", "iconOK.png");
             case "settingsJVMButton":

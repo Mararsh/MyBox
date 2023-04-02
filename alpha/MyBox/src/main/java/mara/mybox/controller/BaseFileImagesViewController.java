@@ -330,6 +330,9 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
             bottomLabel.setText("");
             pageLabel.setText("");
             setSourceFile(file);
+            if (openSourceButton != null) {
+                openSourceButton.setDisable(sourceFile == null || !sourceFile.exists());
+            }
             if (thumbTask != null) {
                 thumbTask.cancel();
                 thumbTask = null;

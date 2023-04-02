@@ -335,12 +335,12 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
             recordError(taskController, e.toString() + "\n" + tableName);
         }
         recordInfo(taskController, message("Checked") + ": " + rowCount + " "
-                + message("Invalid") + ": " + invalidCount);
+                + message("Expired") + ": " + invalidCount);
         return invalidCount;
     }
 
     public int clearInvalidFiles(BaseTaskController taskController, Connection conn) {
-        int invalidCount = 0;
+        int rowCount = 0, invalidCount = 0;
         try {
             String ihRootpath = AppPaths.getImageHisPath();
             recordInfo(taskController, message("Check") + ": " + ihRootpath);
@@ -366,6 +366,7 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
                         continue;
                     }
                     for (String name : names) {
+                        rowCount++;
                         if (taskController != null && taskController.getTask() != null
                                 && taskController.getTask().isCancelled()) {
                             return invalidCount;
@@ -398,7 +399,8 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
         } catch (Exception exx) {
             recordError(taskController, exx.toString() + "\n" + tableName);
         }
-        recordInfo(taskController, message("Invalid") + ": " + invalidCount);
+        recordInfo(taskController, message("Checked") + ": " + rowCount + " "
+                + message("Expired") + ": " + invalidCount);
         return invalidCount;
     }
 

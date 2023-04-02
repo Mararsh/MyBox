@@ -196,7 +196,7 @@ public class TableFileBackup extends BaseTable<FileBackup> {
                         File backup = data.getBackup();
                         if (file == null || !file.exists()
                                 || backup == null || !backup.exists()) {
-                            if (FileDeleteTools.delete(backup)) {
+                            if (backup != null && FileDeleteTools.delete(backup)) {
                                 recordInfo(taskController, message("Delete") + ": " + backup);
                             }
                             if (setDeleteStatement(conn, delete, data)) {
@@ -232,7 +232,7 @@ public class TableFileBackup extends BaseTable<FileBackup> {
             recordError(taskController, e.toString() + "\n" + tableName);
         }
         recordInfo(taskController, message("Checked") + ": " + rowCount + " "
-                + message("Invalid") + ": " + invalidCount);
+                + message("Expired") + ": " + invalidCount);
         return invalidCount;
     }
 
@@ -297,7 +297,7 @@ public class TableFileBackup extends BaseTable<FileBackup> {
             recordError(taskController, exx.toString() + "\n" + tableName);
         }
         recordInfo(taskController, message("Checked") + ": " + rowCount + " "
-                + message("Invalid") + ": " + invalidCount);
+                + message("Expired") + ": " + invalidCount);
         return invalidCount;
     }
 
@@ -334,7 +334,7 @@ public class TableFileBackup extends BaseTable<FileBackup> {
         } catch (Exception e) {
             MyBoxLog.error(e + "  " + filename + "  " + backup);
         }
-        FileDeleteTools.delete(new File(backup));
+        FileDeleteTools.delete(backup);
     }
 
 }

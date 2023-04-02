@@ -379,20 +379,27 @@ public class WindowTools {
 
     }
 
-    public static void appExit() {
+    public static synchronized void appExit() {
         if (AppVariables.handlingExit) {
             return;
         }
         if (UserConfig.getBoolean("ClearExpiredDataBeforeExit", true)) {
             AppVariables.handlingExit = true;
-            ClearExpiredDataController.open(true);
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    ClearExpiredDataController.open(true);
+                }
+            });
+
         } else {
             handleExit();
         }
     }
 
-    public static void handleExit() {
+    public static synchronized void handleExit() {
         try {
+            MyBoxLog.debug(AppVariables.handlingExit);
             if (AppVariables.handlingExit) {
                 return;
             }

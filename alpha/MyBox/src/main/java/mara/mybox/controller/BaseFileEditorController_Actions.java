@@ -35,6 +35,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
     }
 
     @FXML
+    @Override
     public void refreshAction() {
         try {
             if (!isSettingValues && sourceFile != null) {

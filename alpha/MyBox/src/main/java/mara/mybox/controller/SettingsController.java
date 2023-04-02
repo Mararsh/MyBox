@@ -72,10 +72,10 @@ public class SettingsController extends BaseController {
     @FXML
     protected ToggleGroup langGroup, pdfMemGroup, controlColorGroup, derbyGroup, splitPanesGroup;
     @FXML
-    protected CheckBox stopAlarmCheck, closeCurrentCheck, recordWindowsSizeLocationCheck,
+    protected CheckBox closeCurrentCheck, recordWindowsSizeLocationCheck, clearExpiredCheck,
             anchorSolidCheck, controlsTextCheck, shortcutsCanNotOmitCheck,
             clearCurrentRootCheck, splitPaneSensitiveCheck,
-            mousePassControlPanesCheck, popColorSetCheck;
+            mousePassControlPanesCheck, popColorSetCheck, stopAlarmCheck;
     @FXML
     protected TextField jvmInput, dataDirInput, batchInput, fileRecentInput, thumbnailWidthInput,
             tiandituWebKeyInput, gaodeWebKeyInput, gaodeServiceKeyInput,
@@ -155,6 +155,7 @@ public class SettingsController extends BaseController {
 
     protected void initSettingValues() {
         try {
+            clearExpiredCheck.setSelected(UserConfig.getBoolean("ClearExpiredDataBeforeExit", true));
             stopAlarmCheck.setSelected(UserConfig.getBoolean("StopAlarmsWhenExit"));
             closeCurrentCheck.setSelected(AppVariables.closeCurrentWhenOpenTool);
 
@@ -718,6 +719,13 @@ public class SettingsController extends BaseController {
                 }
             });
             batchInput.setText(Database.BatchSize + "");
+
+            clearExpiredCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                    UserConfig.setBoolean("ClearExpiredDataBeforeExit", clearExpiredCheck.isSelected());
+                }
+            });
 
             stopAlarmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override

@@ -270,7 +270,7 @@ public class StyleButton {
             return new StyleData(id, message("ColorPalette"), "", "iconColor.png");
         }
         if (id.startsWith("open")) {
-            if (id.startsWith("openPath") || id.startsWith("openTarget")) {
+            if (id.startsWith("openPath") || id.startsWith("openTarget") || id.startsWith("openSource")) {
                 return new StyleData(id, message("OpenDirectory"), "", "iconOpenPath.png");
             }
             switch (id) {
@@ -571,7 +571,7 @@ public class StyleButton {
             return new StyleData(id, message("Disconnect"), "", "iconClose.png");
         }
         if (id.startsWith("permission")) {
-            return new StyleData(id, message("Permission"), "", "iconPermission.png");
+            return new StyleData(id, message("Permissions"), "", "iconPermission.png");
         }
         if (id.startsWith("message")) {
             return new StyleData(id, message("SendMessage"), "", "iconMessage.png");

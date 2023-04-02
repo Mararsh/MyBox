@@ -16,7 +16,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" spacing="5.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MenuWebviewController">
+<VBox fx:id="thisPane" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MenuWebviewController">
     <children>
         <HBox fx:id="topBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
             <children>
@@ -39,7 +39,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button> 
-                <Button fx:id="styleButton" mnemonicParsing="false"  onAction="#showStyles"    onMouseEntered="#popStyles" >
+                <Button fx:id="styleButton" mnemonicParsing="false" onAction="#showStyles" onMouseEntered="#popStyles">
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -143,7 +143,7 @@ License:    Apache License Version 2.0
                 </HBox>
                 <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="146.0" maxWidth="1.7976931348623157E308" spacing="5.0">
                     <children>
-                        <Button fx:id="styleHtmlButton" mnemonicParsing="false"  onAction="#showHtmlStyle"     onMouseEntered="#popHtmlStyle">
+                        <Button fx:id="styleHtmlButton" mnemonicParsing="false" onAction="#showHtmlStyle" onMouseEntered="#popHtmlStyle">
                             <graphic>
                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -179,6 +179,15 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
+                  <Button fx:id="openSourceButton" mnemonicParsing="false" onAction="#openSourcePath">
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconOpenPath.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
                   <Button fx:id="snapshotButton" mnemonicParsing="false" onAction="#snapAction">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

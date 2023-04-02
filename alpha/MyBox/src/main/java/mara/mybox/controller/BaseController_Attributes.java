@@ -85,8 +85,10 @@ public abstract class BaseController_Attributes {
             pasteButton, pasteContentInSystemClipboardButton, loadContentInSystemClipboardButton,
             myBoxClipboardButton, systemClipboardButton, selectButton, selectAllButton, selectNoneButton,
             renameButton, tipsButton, setButton, allButton, menuButton, synchronizeButton, panesMenuButton,
-            firstButton, lastButton, previousButton, nextButton, pageFirstButton, pageLastButton, pagePreviousButton, pageNextButton,
-            infoButton, metaButton, transparentButton, whiteButton, blackButton, withdrawButton;
+            firstButton, lastButton, previousButton, nextButton,
+            pageFirstButton, pageLastButton, pagePreviousButton, pageNextButton,
+            infoButton, metaButton, openSourceButton,
+            transparentButton, whiteButton, blackButton, withdrawButton;
     @FXML
     protected VBox paraBox;
     @FXML

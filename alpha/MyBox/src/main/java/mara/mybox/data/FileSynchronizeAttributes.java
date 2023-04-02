@@ -10,18 +10,20 @@ import java.util.List;
  */
 public class FileSynchronizeAttributes {
 
-    private boolean continueWhenError, conditionalCopy, copySubdir, copyEmpty, copyNew, copyHidden, onlyCopyReadonly;
-    private boolean copyExisted, onlyCopyModified, deleteNotExisteds, notCopySome;
-    private boolean canReplace, copyAttrinutes;
-    private long modifyAfter;
+    private boolean continueWhenError, conditionalCopy, copySubdir, copyEmpty,
+            copyNew, copyHidden, onlyCopyReadonly, copyExisted, onlyCopyModified,
+            deleteNotExisteds, notCopySome, canReplace,
+            copyAttrinutes, copyMTime, setPermissions;
+    private long modifyAfter, copiedFilesNumber, copiedDirectoriesNumber, totalFilesNumber,
+            totalDirectoriesNumber, totalSize, copiedSize, deletedFiles, deletedDirectories,
+            deletedSize, failedDeletedFiles, failedDeletedDirectories, failedDeletedSize;
     private List<String> notCopyNames;
-    private long copiedFilesNumber, copiedDirectoriesNumber, totalFilesNumber, totalDirectoriesNumber, totalSize, copiedSize;
-    private long deletedFiles, deletedDirectories, deletedSize, failedDeletedFiles, failedDeletedDirectories, failedDeletedSize;
+    private int permissions;
 
     public FileSynchronizeAttributes() {
         continueWhenError = conditionalCopy = copySubdir = copyEmpty = copyNew = copyHidden = true;
-        copyExisted = onlyCopyModified = canReplace = copyAttrinutes = true;
-        onlyCopyReadonly = deleteNotExisteds = notCopySome = false;
+        copyExisted = onlyCopyModified = canReplace = copyAttrinutes = copyMTime = true;
+        onlyCopyReadonly = deleteNotExisteds = notCopySome = setPermissions = false;
         copiedFilesNumber = copiedDirectoriesNumber = totalFilesNumber = totalDirectoriesNumber = 0;
         totalSize = copiedSize = deletedFiles = deletedDirectories = deletedSize = 0;
         failedDeletedFiles = failedDeletedDirectories = failedDeletedSize = 0;
@@ -241,6 +243,30 @@ public class FileSynchronizeAttributes {
 
     public void setFailedDeletedSize(long failedDeletedSize) {
         this.failedDeletedSize = failedDeletedSize;
+    }
+
+    public boolean isCopyMTime() {
+        return copyMTime;
+    }
+
+    public void setCopyMTime(boolean copyMTime) {
+        this.copyMTime = copyMTime;
+    }
+
+    public boolean isSetPermissions() {
+        return setPermissions;
+    }
+
+    public void setSetPermissions(boolean setPermissions) {
+        this.setPermissions = setPermissions;
+    }
+
+    public int getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(int permissions) {
+        this.permissions = permissions;
     }
 
 }

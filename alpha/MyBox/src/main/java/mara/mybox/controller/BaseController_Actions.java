@@ -225,6 +225,15 @@ public abstract class BaseController_Actions extends BaseController_Interface {
     }
 
     @FXML
+    public void openSourcePath() {
+        if (sourceFile != null && sourceFile.exists()) {
+            browse(sourceFile.getParentFile());
+        } else {
+            popError(message("NoFileOpened"));
+        }
+    }
+
+    @FXML
     public void infoAction() {
 
     }

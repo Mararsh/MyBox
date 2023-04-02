@@ -79,8 +79,8 @@ public class FileTools {
             if (noEmpty && sourceFile.length() == 0) {
                 return false;
             }
-            synchronized (targetFile) {
-                if (!FileDeleteTools.delete(targetFile)) {
+            synchronized (sourceFile) {
+                if (targetFile.exists() && !FileDeleteTools.delete(targetFile)) {
                     return false;
                 }
                 System.gc();

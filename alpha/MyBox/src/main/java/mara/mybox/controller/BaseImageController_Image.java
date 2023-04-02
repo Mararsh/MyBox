@@ -214,17 +214,21 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         if (metaButton != null) {
             metaButton.setDisable(imageInformation == null);
         }
+        File file = imageFile();
         if (deleteButton != null) {
-            deleteButton.setDisable(imageFile() == null);
+            deleteButton.setDisable(file == null);
         }
         if (renameButton != null) {
-            renameButton.setDisable(imageFile() == null);
+            renameButton.setDisable(file == null);
         }
         if (previousButton != null) {
-            previousButton.setDisable(imageFile() == null);
+            previousButton.setDisable(file == null);
         }
         if (nextButton != null) {
-            nextButton.setDisable(imageFile() == null);
+            nextButton.setDisable(file == null);
+        }
+        if (openSourceButton != null) {
+            openSourceButton.setDisable(file == null || !file.exists());
         }
     }
 

@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -19,6 +20,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.TimeFormats;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -33,15 +35,16 @@ public class ControlSynchronizeOptions extends BaseController {
     @FXML
     protected VBox conditionsBox;
     @FXML
-    protected TextField notCopyInput;
+    protected TextField notCopyInput, permissionInput;
     @FXML
     protected ToggleGroup copyGroup;
     @FXML
     protected RadioButton conditionallyRadio;
     @FXML
-    protected CheckBox copySubdirCheck, copyEmptyCheck, copyNewCheck, copyHiddenCheck, copyReadonlyCheck,
-            copyExistedCheck, copyModifiedCheck, deleteNonExistedCheck, notCopyCheck, copyAttrCheck, continueCheck,
-            deleteSourceCheck;
+    protected CheckBox copySubdirCheck, copyEmptyCheck, copyNewCheck, copyHiddenCheck,
+            copyReadonlyCheck, copyExistedCheck, copyModifiedCheck, deleteNonExistedCheck,
+            notCopyCheck, copyAttrCheck, copyMtimeCheck, permissionCheck,
+            continueCheck, deleteSourceCheck;
     @FXML
     protected DatePicker modifyAfterInput;
 
@@ -142,13 +145,39 @@ public class ControlSynchronizeOptions extends BaseController {
                 }
             });
 
-            copyAttrCheck.setSelected(UserConfig.getBoolean(baseName + "CopyAttr", true));
-            copyAttrCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    UserConfig.setBoolean(baseName + "CopyAttr", nv);
-                }
-            });
+            if (copyAttrCheck != null) {
+                copyAttrCheck.setSelected(UserConfig.getBoolean(baseName + "CopyAttr", true));
+                copyAttrCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                        UserConfig.setBoolean(baseName + "CopyAttr", nv);
+                    }
+                });
+            }
+
+            if (copyMtimeCheck != null) {
+                copyMtimeCheck.setSelected(UserConfig.getBoolean(baseName + "CopyMtime", true));
+                copyMtimeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                        UserConfig.setBoolean(baseName + "CopyMtime", nv);
+                    }
+                });
+            }
+
+            if (permissionCheck != null) {
+                permissionCheck.setSelected(UserConfig.getBoolean(baseName + "SetPermissions", false));
+                permissionCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                        UserConfig.setBoolean(baseName + "SetPermissions", nv);
+                    }
+                });
+            }
+
+            if (permissionInput != null) {
+                permissionInput.setText(UserConfig.getString(baseName + "Permissions", "755"));
+            }
 
             continueCheck.setSelected(UserConfig.getBoolean(baseName + "Continue", true));
             continueCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -179,8 +208,6 @@ public class ControlSynchronizeOptions extends BaseController {
     protected FileSynchronizeAttributes pickOptions() {
         try {
             copyAttr = new FileSynchronizeAttributes();
-            copyAttr.setContinueWhenError(continueCheck.isSelected());
-            copyAttr.setCopyAttrinutes(copyAttrCheck != null ? copyAttrCheck.isSelected() : true);
             copyAttr.setCopyEmpty(copyEmptyCheck.isSelected());
             copyAttr.setConditionalCopy(conditionallyRadio.isSelected());
             copyAttr.setCopyExisted(copyExistedCheck.isSelected());
@@ -198,9 +225,26 @@ public class ControlSynchronizeOptions extends BaseController {
             }
             copyAttr.setNotCopyNames(notCopy);
             copyAttr.setOnlyCopyModified(copyModifiedCheck.isSelected());
-            copyAttr.setModifyAfter(0);
             if (copyAttr.isOnlyCopyModified() && modifyAfterInput.getValue() != null) {
-                copyAttr.setModifyAfter(DateTools.localDateToDate(modifyAfterInput.getValue()).getTime());
+                Date d = DateTools.localDateToDate(modifyAfterInput.getValue());
+                copyAttr.setModifyAfter(d.getTime());
+                TableStringValues.add(interfaceName + "Modify", DateTools.datetimeToString(d, TimeFormats.DateC));
+            } else {
+                copyAttr.setModifyAfter(-Long.MAX_VALUE);
+            }
+            copyAttr.setContinueWhenError(continueCheck.isSelected());
+            copyAttr.setCopyAttrinutes(copyAttrCheck != null ? copyAttrCheck.isSelected() : true);
+            copyAttr.setCopyMTime(copyMtimeCheck != null ? copyMtimeCheck.isSelected() : true);
+            copyAttr.setSetPermissions(permissionCheck != null ? permissionCheck.isSelected() : false);
+            if (copyAttr.isSetPermissions() && permissionInput != null) {
+                try {
+                    int v = Integer.parseInt(permissionInput.getText(), 8);
+                    copyAttr.setPermissions(v);
+                    UserConfig.setString(baseName + "Permissions", permissionInput.getText());
+                } catch (Exception e) {
+                    popError(message("InvalidParameter") + ": " + message("Permissions"));
+                    return null;
+                }
             }
             copyAttr.setDeleteNotExisteds(deleteNonExistedCheck.isSelected());
 

@@ -127,11 +127,22 @@ public class ImageRepeatController extends ImageViewerController {
         originalSize();
         checkRepeatType();
         imageLabel.setText("");
+        if (sourceController.sourceFile != null) {
+            myStage.setTitle(baseTitle + " - " + sourceController.sourceFile);
+        } else {
+            myStage.setTitle(baseTitle);
+        }
     }
 
     public Image sourceImage() {
         sourceController.bgColor = colorSetController.color();
         return sourceController.scopeImage();
+    }
+
+    @FXML
+    @Override
+    public void openSourcePath() {
+        sourceController.openSourcePath();
     }
 
     @FXML

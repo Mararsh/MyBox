@@ -364,6 +364,7 @@ public class MenuImageBaseController extends MenuController {
     }
 
     public void updateImage() {
+        sourceFile = imageController.sourceFile;
         boolean noInfo = imageController.imageInformation == null;
         if (infoButton != null) {
             infoButton.setDisable(noInfo);
@@ -374,10 +375,12 @@ public class MenuImageBaseController extends MenuController {
         if (renameButton != null) {
             renameButton.setDisable(noInfo);
         }
+        if (openSourceButton != null) {
+            openSourceButton.setDisable(sourceFile == null || !sourceFile.exists());
+        }
         if (getMyStage() != null) {
             myStage.setTitle(imageController.getTitle());
         }
-        sourceFile = imageController.sourceFile;
     }
 
     @FXML
