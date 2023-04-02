@@ -5,6 +5,9 @@ import com.jcraft.jsch.ChannelSftp.LsEntry;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpATTRS;
+import com.jcraft.jsch.SftpProgressMonitor;
+import java.io.File;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -24,6 +27,8 @@ import mara.mybox.db.table.TablePathConnection;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.DateTools;
+import static mara.mybox.tools.FileTools.showFileSize;
+import mara.mybox.tools.FloatTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -464,11 +469,61 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
         return -1;
     }
 
-    public boolean put(String srcName, String targetName) {
+    public boolean put(File sourceFile, String target,
+            boolean copyMtime, int permission) {
         try {
-            String tname = fixFilename(targetName);
-            showLogs("put " + srcName + " " + tname);
-            sftp.put(srcName, tname);
+            if (task == null || task.isCancelled()
+                    || target == null || sourceFile == null
+                    || !sourceFile.exists() || !sourceFile.isFile()) {
+                return false;
+            }
+            String sourceName = sourceFile.getAbsolutePath();
+            String targetName = fixFilename(target);
+            showLogs("put " + sourceName + " " + targetName);
+            sftp.put(sourceName, targetName, new ProgressMonitor(sourceFile.length()));
+            showLogs(MessageFormat.format(message("FilesGenerated"), targetName));
+            if (copyMtime || permission > 0) {
+                SftpATTRS attrs = stat(targetName);
+                if (attrs == null) {
+                    return false;
+                }
+                String msg = "";
+                if (permission > 0) {
+                    msg += message("SetPermissions") + ": " + permission;
+                    attrs.setPERMISSIONS(permission);
+                }
+                if (copyMtime) {
+                    int time = (int) (sourceFile.lastModified() / 1000);
+                    attrs.setACMODTIME(time, time);
+                    msg += "  " + message("CopyModifyTime") + ": "
+                            + DateTools.datetimeToString(sourceFile.lastModified());
+                }
+                showLogs(msg);
+                sftp.setStat(targetName, attrs);
+            }
+            return true;
+        } catch (Exception e) {
+            showLogs(e.toString());
+            return false;
+        }
+    }
+
+    public boolean get(String source, SftpATTRS attrs, File targetFile, boolean copyMtime) {
+        try {
+            if (task == null || task.isCancelled()
+                    || targetFile == null || source == null || attrs == null) {
+                return false;
+            }
+            targetFile.getParentFile().mkdirs();
+            String targetName = targetFile.getAbsolutePath();
+            showLogs("get " + source + " " + targetName);
+            sftp.get(source, targetName, new ProgressMonitor(attrs.getSize()));
+            showLogs(MessageFormat.format(message("FilesGenerated"), targetName));
+            if (copyMtime) {
+                long time = attrs.getMTime() * 1000l;
+                showLogs(message("CopyModifyTime") + ": " + DateTools.datetimeToString(time));
+                targetFile.setLastModified(time);
+            }
             return true;
         } catch (Exception e) {
             showLogs(e.toString());
@@ -613,6 +668,39 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
         taskController.updateLogs(log, true, immediate);
         if (task != null) {
             task.setInfo(log);
+        }
+    }
+
+    public class ProgressMonitor implements SftpProgressMonitor {
+
+        private final long srcLen;
+        private long len = 0;
+
+        public ProgressMonitor(long srcLen) {
+            this.srcLen = srcLen;
+        }
+
+        @Override
+        public boolean count(long count) {
+            len += count;
+            if (taskController.verboseCheck.isSelected() && len % 500 == 0) {
+                if (srcLen > 0) {
+                    taskController.updateLogs(message("Status") + ": "
+                            + FloatTools.percentage(len, srcLen) + "%   "
+                            + showFileSize(len) + "/" + showFileSize(srcLen));
+                } else {
+                    taskController.updateLogs(message("Status") + ": " + showFileSize(len));
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public void end() {
+        }
+
+        @Override
+        public void init(int op, String src, String dest, long max) {
         }
     }
 

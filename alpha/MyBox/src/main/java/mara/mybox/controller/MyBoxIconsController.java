@@ -168,7 +168,7 @@ public class MyBoxIconsController extends BaseBatchFileController {
     }
 
     @Override
-    public void donePost() {
+    public void afterTask() {
         SoundTools.miao3();
         popInformation(message("TakeEffectWhenReboot"));
     }

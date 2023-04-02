@@ -12,7 +12,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SoundTools;
 import mara.mybox.tools.CompressTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -156,18 +155,6 @@ public class FilesDecompressUnarchiveBatchController extends BaseBatchFileContro
             updateLogs(e.toString());
             return message("Failed");
         }
-    }
-
-    @Override
-    public void donePost() {
-        tableView.refresh();
-        if (miaoCheck != null && miaoCheck.isSelected()) {
-            SoundTools.miao3();
-        }
-        if (!isPreview && openCheck != null && !openCheck.isSelected()) {
-            return;
-        }
-        openPath();
     }
 
 }

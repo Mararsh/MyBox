@@ -1,8 +1,6 @@
 package mara.mybox.controller;
 
-import com.jcraft.jsch.SftpATTRS;
 import java.io.File;
-import java.util.Date;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
@@ -94,31 +92,11 @@ public class RemotePathSynchronizeFromLocalController extends DirectorySynchroni
     @Override
     public boolean copyFile(File sourceFile, FileNode targetNode) {
         try {
-            if (task == null || task.isCancelled()
-                    || targetNode == null || sourceFile == null
-                    || !sourceFile.exists() || !sourceFile.isFile()) {
+            if (targetNode == null) {
                 return false;
             }
-            String sourceName = sourceFile.getAbsolutePath();
-            String targetName = remoteController.fixFilename(targetNode.fullName());
-            showLogs("put " + sourceName + " " + targetName);
-            remoteController.sftp.put(sourceName, targetName);
-            if (copyAttr.isCopyMTime() || copyAttr.isSetPermissions()) {
-                SftpATTRS attrs = remoteController.stat(targetName);
-                String msg = "setStat: ";
-                if (copyAttr.isSetPermissions()) {
-                    attrs.setPERMISSIONS(copyAttr.getPermissions());
-                    msg += copyAttr.getPermissions();
-                }
-                if (copyAttr.isCopyMTime()) {
-                    int time = (int) (sourceFile.lastModified() / 1000);
-                    attrs.setACMODTIME(time, time);
-                    msg += "  " + new Date(sourceFile.lastModified());
-                }
-                showLogs(msg);
-                remoteController.sftp.setStat(targetName, attrs);
-            }
-            return true;
+            return remoteController.put(sourceFile, targetNode.fullName(),
+                    copyAttr.isCopyMTime(), copyAttr.getPermissions());
         } catch (Exception e) {
             showLogs(e.toString());
             return false;

@@ -173,7 +173,7 @@ License:    Apache License Version 2.0
                                         <HBox fx:id="barBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
                                             <children>
                                                 <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" wrapText="true" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="openPathButton" mnemonicParsing="false" onAction="#openPath">
+                                                <Button fx:id="openPathButton" mnemonicParsing="false" onAction="#openTarget">
                                                     <graphic>
                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                             <image>

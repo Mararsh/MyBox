@@ -7,8 +7,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import mara.mybox.data.FileNode;
 import mara.mybox.data.FileSynchronizeAttributes;
@@ -50,14 +48,6 @@ public class DirectorySynchronizeController extends BaseTaskController {
 
             initTarget();
 
-            openCheck.setSelected(UserConfig.getBoolean(baseName + "OpenTarget", true));
-            openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    UserConfig.setBoolean(baseName + "OpenTarget", openCheck.isSelected());
-                }
-            });
-
             strFailedCopy = message("FailedCopy") + ": ";
             strCreatedSuccessfully = message("CreatedSuccessfully") + ": ";
             strCopySuccessfully = message("CopySuccessfully") + ": ";
@@ -65,8 +55,8 @@ public class DirectorySynchronizeController extends BaseTaskController {
             strFailedDelete = message("FailedDelete") + ": ";
             strFileDeleteSuccessfully = message("FileDeletedSuccessfully") + ": ";
             strDirectoryDeleteSuccessfully = message("DirectoryDeletedSuccessfully") + ": ";
-            strHandlingDirectory = message("HandlingDirectory");
-            strHandled = message("Handled");
+            strHandlingDirectory = message("HandlingDirectory") + ": ";
+            strHandled = message("Handled") + ": ";
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -95,7 +85,7 @@ public class DirectorySynchronizeController extends BaseTaskController {
     protected boolean checkTarget() {
         targetPath = targetPathInputController.file();
         if (targetPath == null) {
-            popError(message("Invlid") + ": " + message("TargetPath"));
+            popError(message("Invalid") + ": " + message("TargetPath"));
             return false;
         }
         if (FileTools.isEqualOrSubPath(targetPath.getAbsolutePath(), sourcePath.getAbsolutePath())) {
@@ -234,7 +224,7 @@ public class DirectorySynchronizeController extends BaseTaskController {
                         copyAttr.setCopiedFilesNumber(copyAttr.getCopiedFilesNumber() + 1);
                         copyAttr.setCopiedSize(copyAttr.getCopiedSize() + len);
                         if (verboseCheck == null || verboseCheck.isSelected()) {
-                            updateLogs(strCopySuccessfully + ": " + copyAttr.getCopiedFilesNumber() + " "
+                            updateLogs(strCopySuccessfully + copyAttr.getCopiedFilesNumber() + " "
                                     + srcFileName + " -> " + targetChildName);
                         }
                     } else if (!copyAttr.isContinueWhenError()) {
@@ -245,7 +235,7 @@ public class DirectorySynchronizeController extends BaseTaskController {
                     }
                 } else if (srcFile.isDirectory() && copyAttr.isCopySubdir()) {
                     if (verboseCheck == null || verboseCheck.isSelected()) {
-                        showLogs(strHandlingDirectory + ": " + srcFileName);
+                        showLogs(strHandlingDirectory + srcFileName);
                     }
                     if (srcFile.listFiles() == null && !copyAttr.isCopyEmpty()) {
                         continue;
@@ -260,7 +250,7 @@ public class DirectorySynchronizeController extends BaseTaskController {
                     if (conditionalCopy(srcFile, targetChildNode)) {
                         copyAttr.setCopiedSize(copyAttr.getCopiedSize() + len);
                         if (verboseCheck == null || verboseCheck.isSelected()) {
-                            updateLogs(strHandled + ": " + srcFileName + " -> " + targetChildName);
+                            updateLogs(strHandled + srcFileName + " -> " + targetChildName);
                         }
                     } else if (!copyAttr.isContinueWhenError()) {
                         if (verboseCheck == null || verboseCheck.isSelected()) {
@@ -307,7 +297,7 @@ public class DirectorySynchronizeController extends BaseTaskController {
                         copyAttr.setCopiedFilesNumber(copyAttr.getCopiedFilesNumber() + 1);
                         copyAttr.setCopiedSize(copyAttr.getCopiedSize() + len);
                         if (verboseCheck == null || verboseCheck.isSelected()) {
-                            updateLogs(strCopySuccessfully + ": " + copyAttr.getCopiedFilesNumber() + " "
+                            updateLogs(strCopySuccessfully + copyAttr.getCopiedFilesNumber() + " "
                                     + srcFileName + " -> " + targetChildName);
                         }
                     } else if (!copyAttr.isContinueWhenError()) {
@@ -328,7 +318,7 @@ public class DirectorySynchronizeController extends BaseTaskController {
                     if (copyWholeDirectory(srcFile, targetChildNode)) {
                         copyAttr.setCopiedSize(copyAttr.getCopiedSize() + len);
                         if (verboseCheck == null || verboseCheck.isSelected()) {
-                            updateLogs(strHandled + ": " + srcFileName + " -> " + targetChildName);
+                            updateLogs(strHandled + srcFileName + " -> " + targetChildName);
                         }
                     } else if (!copyAttr.isContinueWhenError()) {
                         if (verboseCheck == null || verboseCheck.isSelected()) {

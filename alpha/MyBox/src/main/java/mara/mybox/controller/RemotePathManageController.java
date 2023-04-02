@@ -89,12 +89,11 @@ public class RemotePathManageController extends FilesTreeController {
     @FXML
     @Override
     public void startAction() {
-        openPath();
+        goPath();
     }
 
     @FXML
-    @Override
-    public void openPath() {
+    public void goPath() {
         filesBox.setDisable(true);
         if (!remoteController.pickProfile()) {
             return;
@@ -567,7 +566,7 @@ public class RemotePathManageController extends FilesTreeController {
 
     public void openPath(PathConnection profile) {
         remoteController.editProfile(profile);
-        openPath();
+        goPath();
     }
 
     @Override

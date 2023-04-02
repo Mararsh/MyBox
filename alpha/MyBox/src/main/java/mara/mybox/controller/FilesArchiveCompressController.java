@@ -25,7 +25,6 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SoundTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
@@ -431,17 +430,10 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
     }
 
     @Override
-    public void donePost() {
+    public void afterTask() {
         tableView.refresh();
-        if (miaoCheck.isSelected()) {
-            SoundTools.miao3();
-        }
-        if (openCheck.isSelected()) {
-            File path = targetFile.getParentFile();
-            browseURI(path.toURI());
-            recordFileOpened(path);
-        }
-
+        targetPath = targetFile.getParentFile();
+        super.afterTask();
         if (archive == null) {
             return;
         }

@@ -521,21 +521,21 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
 
     @Override
     public void afterTask() {
-        super.afterTask();
         sourceVBox.setDisable(false);
         selectionVBox.setDisable(false);
         targetVBox.setDisable(false);
         if (fileUnarchive.getArchiveSuccess() > 0) {
-            openPath();
+            openTarget();
         }
         if (fileUnarchive.getArchiveFail() > 0) {
             if (fileUnarchive.isCharsetIncorrect()) {
                 alertError(message("CharsetIncorrect"));
             }
         }
-        updateLogs(MessageFormat.format(message("FileUnarchived"),
+        showLogs(MessageFormat.format(message("FileUnarchived"),
                 message("Selected") + ":" + selected.size(),
                 fileUnarchive.getArchiveSuccess(), fileUnarchive.getArchiveFail()));
+        super.afterTask();
     }
 
     /*

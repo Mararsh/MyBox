@@ -1,10 +1,12 @@
 package mara.mybox.controller;
 
-import com.jcraft.jsch.SftpProgressMonitor;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.LinkedHashMap;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
@@ -12,10 +14,9 @@ import mara.mybox.data.FileNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.WindowTools;
-import static mara.mybox.tools.FileTools.showFileSize;
-import mara.mybox.tools.FloatTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -26,12 +27,13 @@ public class RemotePathPutController extends BaseBatchFileController {
 
     protected RemotePathManageController manageController;
     protected String targetPathName;
-    protected long srcLen;
 
     @FXML
     protected TextField targetPathInput;
     @FXML
     protected Label hostLabel;
+    @FXML
+    protected CheckBox copyMtimeCheck;
 
     public RemotePathPutController() {
         baseTitle = message("RemotePathPut");
@@ -56,6 +58,14 @@ public class RemotePathPutController extends BaseBatchFileController {
 
             hostLabel.setText(message("Host") + ": " + manageController.remoteController.host());
 
+            copyMtimeCheck.setSelected(UserConfig.getBoolean(baseName + "CopyMtime", true));
+            copyMtimeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    UserConfig.setBoolean(baseName + "CopyMtime", nv);
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             popError(e.toString());
@@ -69,7 +79,6 @@ public class RemotePathPutController extends BaseBatchFileController {
             popError(message("InvalidParameter") + ": " + message("TargetPath"));
             return false;
         }
-
         if (manageController.task != null) {
             manageController.task.cancel();
         }
@@ -121,11 +130,14 @@ public class RemotePathPutController extends BaseBatchFileController {
                 return message("Skip");
             }
             targetName = manageController.remoteController.fixFilename(targetName);
-            srcLen = srcFile.length();
             showLogs("put " + srcFile.getAbsolutePath() + " " + targetName);
-            manageController.remoteController.sftp.put(srcFile.getAbsolutePath(), targetName, new PutMonitor());
-            showLogs(MessageFormat.format(message("FilesGenerated"), targetName));
-            return message("Successful");
+            if (manageController.remoteController.put(srcFile, targetName,
+                    copyMtimeCheck.isSelected(), -1)) {
+                showLogs(MessageFormat.format(message("FilesGenerated"), targetName));
+                return message("Successful");
+            } else {
+                return message("Failed");
+            }
         } catch (Exception e) {
             showLogs(e.toString());
             return null;
@@ -173,41 +185,13 @@ public class RemotePathPutController extends BaseBatchFileController {
     }
 
     @Override
-    public void donePost() {
+    public void afterTask() {
         tableView.refresh();
         if (miaoCheck.isSelected()) {
             SoundTools.miao3();
         }
         if (manageController != null) {
             manageController.loadPath();
-        }
-    }
-
-    private class PutMonitor implements SftpProgressMonitor {
-
-        private long len = 0;
-
-        @Override
-        public boolean count(long count) {
-            len += count;
-            if (manageController.verboseCheck.isSelected() && len % 500 == 0) {
-                if (srcLen > 0) {
-                    updateLogs(message("Status") + ": "
-                            + FloatTools.percentage(len, srcLen) + "%   "
-                            + showFileSize(len) + "/" + showFileSize(srcLen));
-                } else {
-                    updateLogs(message("Status") + ": " + showFileSize(len));
-                }
-            }
-            return true;
-        }
-
-        @Override
-        public void end() {
-        }
-
-        @Override
-        public void init(int op, String src, String dest, long max) {
         }
     }
 

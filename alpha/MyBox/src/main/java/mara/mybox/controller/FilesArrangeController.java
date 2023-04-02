@@ -410,7 +410,6 @@ public class FilesArrangeController extends BaseBatchFileController {
                                 operationBarController.progressBar.setProgress(1);
                                 disableControls(false);
                             }
-                            donePost();
                     }
 
                 } catch (Exception e) {
@@ -452,8 +451,8 @@ public class FilesArrangeController extends BaseBatchFileController {
     }
 
     @Override
-    public void donePost() {
-        showCost();
+    public void afterTask() {
+        recordTargetFiles();
         updateLogs(Languages.message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + "   "
                 + Languages.message("Cost") + ": " + DateTools.datetimeMsDuration(new Date(), processStartTime), false, true);
         updateLogs(Languages.message("TotalCheckedFiles") + ": " + copyAttr.getTotalFilesNumber() + "   "
@@ -467,7 +466,7 @@ public class FilesArrangeController extends BaseBatchFileController {
                     + Languages.message("TotalDeletedDirectories") + ": " + copyAttr.getDeletedDirectories() + "   "
                     + Languages.message("TotalDeletedSize") + ": " + FileTools.showFileSize(copyAttr.getDeletedSize()), false, true);
         }
-
+        showCost();
         if (operationBarController.miaoCheck.isSelected()) {
             SoundTools.miao3();
         }

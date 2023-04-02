@@ -57,6 +57,15 @@ public class BaseTaskController extends BaseLogs {
                 });
                 miaoCheck.setSelected(UserConfig.getBoolean("Miao", true));
             }
+            if (openCheck != null) {
+                openCheck.setSelected(UserConfig.getBoolean(baseName + "OpenTargetPath", true));
+                openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean(baseName + "OpenTargetPath", openCheck.isSelected());
+                    }
+                });
+            }
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -177,7 +186,8 @@ public class BaseTaskController extends BaseLogs {
     }
 
     @FXML
-    public void openPath() {
+    @Override
+    public void openTarget() {
         File path = targetPath;
         if (path == null || !path.exists()) {
             if (targetPathController != null) {
@@ -215,6 +225,9 @@ public class BaseTaskController extends BaseLogs {
         recordTargetFiles();
         if (miaoCheck != null && miaoCheck.isSelected()) {
             SoundTools.miao3();
+        }
+        if (openCheck != null && openCheck.isSelected()) {
+            openTarget();
         }
     }
 

@@ -427,7 +427,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
     }
 
     @Override
-    public void donePost() {
+    public void afterTask() {
         if (treeController != null) {
             treeController.nodesController.loadTree();
             treeController.tagsController.refreshAction();

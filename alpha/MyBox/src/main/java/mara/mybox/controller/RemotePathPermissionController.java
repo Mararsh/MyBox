@@ -196,6 +196,14 @@ public class RemotePathPermissionController extends RemotePathHandleFilesControl
         }
     }
 
+    @Override
+    public void afterTask() {
+        super.afterTask();
+        if (manageController != null) {
+            manageController.loadPath();
+        }
+    }
+
     /*
         static methods
      */

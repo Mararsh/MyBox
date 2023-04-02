@@ -28,6 +28,7 @@ import mara.mybox.data.FileInformation.FileSelectorType;
 import mara.mybox.data.ProcessParameters;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
@@ -108,9 +109,14 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         return handleFile(srcFile, targetPath == null ? null : new File(targetPath));
     }
 
-    public void donePost() {
+    @Override
+    public void afterTask() {
+        showCost();
         tableView.refresh();
-
+        recordTargetFiles();
+        if (miaoCheck != null && miaoCheck.isSelected()) {
+            SoundTools.miao3();
+        }
         if (!isPreview && openCheck != null && !openCheck.isSelected()) {
             return;
         }
@@ -1108,9 +1114,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                             pauseButton.setDisable(true);
                         }
                         disableControls(false);
-                        donePost();
                     }
-                    showCost();
 
             }
         });

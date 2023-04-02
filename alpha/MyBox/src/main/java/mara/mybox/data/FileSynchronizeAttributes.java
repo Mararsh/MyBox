@@ -27,6 +27,7 @@ public class FileSynchronizeAttributes {
         copiedFilesNumber = copiedDirectoriesNumber = totalFilesNumber = totalDirectoriesNumber = 0;
         totalSize = copiedSize = deletedFiles = deletedDirectories = deletedSize = 0;
         failedDeletedFiles = failedDeletedDirectories = failedDeletedSize = 0;
+        permissions = -1;
     }
 
     public boolean isContinueWhenError() {

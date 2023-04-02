@@ -188,7 +188,7 @@ public class FilesFindController extends BaseBatchFileController {
     }
 
     @Override
-    public void donePost() {
+    public void afterTask() {
         showCost();
         if (miaoCheck.isSelected()) {
             SoundTools.miao3();

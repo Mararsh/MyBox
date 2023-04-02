@@ -399,7 +399,6 @@ public class WindowTools {
 
     public static synchronized void handleExit() {
         try {
-            MyBoxLog.debug(AppVariables.handlingExit);
             if (AppVariables.handlingExit) {
                 return;
             }

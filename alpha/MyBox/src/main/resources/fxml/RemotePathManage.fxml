@@ -35,37 +35,37 @@ License:    Apache License Version 2.0
                     <tabs>
                         <Tab fx:id="remoteTab" text="%RemotePath">
                             <content>
-                                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                      <padding>
-                                          <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                      </padding>
-                           <children>
-                              <fx:include fx:id="remote" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlRemoteConnection.fxml" VBox.vgrow="ALWAYS" />
-                                  <HBox alignment="CENTER_LEFT" spacing="2.0">
-                                      <children>
-                                    <Label maxWidth="1.7976931348623157E308" text="%RemotePathManageComments" HBox.hgrow="ALWAYS" />
-                                    <Button fx:id="disconnectButton" layoutX="960.0" layoutY="11.0" mnemonicParsing="false" onAction="#disconnect">
-                                       <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconClose.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
-                                    <Button fx:id="goPathButton" mnemonicParsing="false" onAction="#openPath">
-                                       <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconGo.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
-                                      </children>
-                                  </HBox>
-                           </children>
-                                  </VBox>
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                    <padding>
+                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </padding>
+                                    <children>
+                                        <fx:include fx:id="remote" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlRemoteConnection.fxml" VBox.vgrow="ALWAYS" />
+                                        <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                            <children>
+                                                <Label maxWidth="1.7976931348623157E308" text="%RemotePathManageComments" HBox.hgrow="ALWAYS" />
+                                                <Button fx:id="disconnectButton" layoutX="960.0" layoutY="11.0" mnemonicParsing="false" onAction="#disconnect">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconClose.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <Button fx:id="goPathButton" mnemonicParsing="false" onAction="#goPath">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconGo.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
                             </content>
                         </Tab>
                         <Tab fx:id="filesTab" text="%Files">
@@ -74,94 +74,94 @@ License:    Apache License Version 2.0
                                     <content>
                                         <VBox fx:id="filesBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                             <children>
-                                    <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="800.0" vgap="2.0">
-                                       <children>
-                                          <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
-                                             <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/Red/iconRefresh.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
-                                          <Button fx:id="clearDirectoryButton" mnemonicParsing="false" onAction="#clearDirectory">
-                                             <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/Red/iconClear.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
-                                          <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction">
-                                             <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/Red/iconDelete.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
-                                          <Button fx:id="permissionButton" layoutX="916.0" layoutY="10.0" mnemonicParsing="false" onAction="#permissionAction">
-                                             <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/Red/iconPermission.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
-                                          <Button fx:id="renameButton" mnemonicParsing="false" onAction="#renameAction">
-                                             <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/Red/iconInput.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
-                                          <Button fx:id="makeDirectoryButton" layoutX="954.0" layoutY="10.0" mnemonicParsing="false" onAction="#makeDirectory">
-                                             <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/Red/iconAdd.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
-                                          <Button fx:id="uploadButton" layoutX="878.0" layoutY="10.0" mnemonicParsing="false" onAction="#putAction">
-                                             <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/Red/iconUpload.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
-                                          <Button fx:id="downloadButton" layoutX="878.0" layoutY="10.0" mnemonicParsing="false" onAction="#getAction">
-                                             <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/Red/iconDownload.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
-                                       </children>
-                                    </FlowPane>
-                                    <TreeTableView fx:id="filesTreeView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
-                                       <columns>
-                                          <TreeTableColumn fx:id="nodeColumn" editable="false" prefWidth="300.0" text="%File" />
-                                          <TreeTableColumn fx:id="sizeColumn" editable="false" prefWidth="100.0" text="%Size" />
-                                          <TreeTableColumn fx:id="typeColumn" editable="false" minWidth="0.0" text="%Type" />
-                                          <TreeTableColumn fx:id="permissionColumn" editable="false" minWidth="0.0" prefWidth="100.0" text="%Permission" />
-                                          <TreeTableColumn fx:id="modifyTimeColumn" editable="false" prefWidth="140.0" text="%ModifiedTime" />
-                                          <TreeTableColumn fx:id="accessTimeColumn" editable="false" prefWidth="140.0" text="%AccessTime" />
-                                          <TreeTableColumn fx:id="uidColumn" editable="false" minWidth="0.0" text="uid" />
-                                          <TreeTableColumn fx:id="gidColumn" editable="false" minWidth="0.0" text="gid" />
-                                       </columns>
-                                    </TreeTableView>
+                                                <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="800.0" vgap="2.0">
+                                                    <children>
+                                                        <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconRefresh.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                        <Button fx:id="clearDirectoryButton" mnemonicParsing="false" onAction="#clearDirectory">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconClear.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                        <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteAction">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconDelete.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                        <Button fx:id="permissionButton" layoutX="916.0" layoutY="10.0" mnemonicParsing="false" onAction="#permissionAction">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconPermission.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                        <Button fx:id="renameButton" mnemonicParsing="false" onAction="#renameAction">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconInput.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                        <Button fx:id="makeDirectoryButton" layoutX="954.0" layoutY="10.0" mnemonicParsing="false" onAction="#makeDirectory">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconAdd.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                        <Button fx:id="uploadButton" layoutX="878.0" layoutY="10.0" mnemonicParsing="false" onAction="#putAction">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconUpload.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                        <Button fx:id="downloadButton" layoutX="878.0" layoutY="10.0" mnemonicParsing="false" onAction="#getAction">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconDownload.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                    </children>
+                                                </FlowPane>
+                                                <TreeTableView fx:id="filesTreeView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                                                    <columns>
+                                                        <TreeTableColumn fx:id="nodeColumn" editable="false" prefWidth="300.0" text="%File" />
+                                                        <TreeTableColumn fx:id="sizeColumn" editable="false" prefWidth="100.0" text="%Size" />
+                                                        <TreeTableColumn fx:id="typeColumn" editable="false" minWidth="0.0" text="%Type" />
+                                                        <TreeTableColumn fx:id="permissionColumn" editable="false" minWidth="0.0" prefWidth="100.0" text="%Permission" />
+                                                        <TreeTableColumn fx:id="modifyTimeColumn" editable="false" prefWidth="140.0" text="%ModifiedTime" />
+                                                        <TreeTableColumn fx:id="accessTimeColumn" editable="false" prefWidth="140.0" text="%AccessTime" />
+                                                        <TreeTableColumn fx:id="uidColumn" editable="false" minWidth="0.0" text="uid" />
+                                                        <TreeTableColumn fx:id="gidColumn" editable="false" minWidth="0.0" text="gid" />
+                                                    </columns>
+                                                </TreeTableView>
                                             </children>
                                             <padding>
                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

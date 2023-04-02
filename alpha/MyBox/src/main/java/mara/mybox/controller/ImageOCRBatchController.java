@@ -601,7 +601,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
     }
 
     @Override
-    public void donePost() {
+    public void afterTask() {
         if (textFiles != null && textFiles.size() > 1 && mergeCheck.isSelected()) {
             File mFile = new File(FileNameTools.append(textFiles.get(0).getAbsolutePath(), "_OCR_merged"));
             if (TextFileTools.mergeTextFiles(textFiles, mFile)) {
@@ -609,14 +609,9 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                 targetFileGenerated(mFile);
             }
         }
-        super.donePost();
-
-    }
-
-    @Override
-    public void afterTask() {
-        super.afterTask();
         OCRinstance = null;
+        super.afterTask();
+
     }
 
 }

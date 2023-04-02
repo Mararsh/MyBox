@@ -2,17 +2,17 @@ package mara.mybox.controller;
 
 import com.jcraft.jsch.ChannelSftp.LsEntry;
 import com.jcraft.jsch.SftpATTRS;
-import com.jcraft.jsch.SftpProgressMonitor;
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.Iterator;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
-import static mara.mybox.tools.FileTools.showFileSize;
-import mara.mybox.tools.FloatTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -21,10 +21,10 @@ import static mara.mybox.value.Languages.message;
  */
 public class RemotePathGetController extends RemotePathHandleFilesController {
 
-    protected long srcLen;
-
     @FXML
     protected ControlPathInput targetPathInputController;
+    @FXML
+    protected CheckBox copyMtimeCheck;
 
     public RemotePathGetController() {
         baseTitle = message("RemotePathGet");
@@ -37,6 +37,14 @@ public class RemotePathGetController extends RemotePathHandleFilesController {
             super.setParameters(manageController);
 
             targetPathInputController.baseName(baseName).init();
+
+            copyMtimeCheck.setSelected(UserConfig.getBoolean(baseName + "CopyMtime", true));
+            copyMtimeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    UserConfig.setBoolean(baseName + "CopyMtime", nv);
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -65,11 +73,10 @@ public class RemotePathGetController extends RemotePathHandleFilesController {
             if (attrs == null) {
                 return false;
             }
-            srcLen = attrs.getSize();
             if (attrs.isDir()) {
                 return downDirectory(srcfile, targetPath);
             } else {
-                return downFile(srcfile, targetPath);
+                return downFile(srcfile, attrs, targetPath);
             }
         } catch (Exception e) {
             showLogs(e.toString());
@@ -77,16 +84,16 @@ public class RemotePathGetController extends RemotePathHandleFilesController {
         }
     }
 
-    public boolean downFile(String srcfile, File path) {
+    public boolean downFile(String srcfile, SftpATTRS attrs, File path) {
         try {
             File target = new File(path + File.separator + new File(srcfile).getName());
-            target.getParentFile().mkdirs();
-            String tname = target.getAbsolutePath();
-            showLogs("get " + srcfile + " " + tname);
-            manageController.remoteController.sftp.get(srcfile, tname, new GetMonitor());
-            showLogs(MessageFormat.format(message("FilesGenerated"), target));
-            doneCount++;
-            return true;
+            if (manageController.remoteController.get(srcfile, attrs,
+                    target, copyMtimeCheck.isSelected())) {
+                doneCount++;
+                return true;
+            } else {
+                return false;
+            }
         } catch (Exception e) {
             showLogs(e.toString());
             return false;
@@ -114,11 +121,10 @@ public class RemotePathGetController extends RemotePathHandleFilesController {
                 }
                 child = srcfile + "/" + child;
                 SftpATTRS attrs = entry.getAttrs();
-                srcLen = attrs.getSize();
                 if (attrs.isDir()) {
                     ok = downDirectory(child, target);
                 } else {
-                    ok = downFile(child, target);
+                    ok = downFile(child, attrs, target);
                 }
                 if (!ok && !continueCheck.isSelected()) {
                     if (task != null) {
@@ -134,40 +140,12 @@ public class RemotePathGetController extends RemotePathHandleFilesController {
         }
     }
 
-    private class GetMonitor implements SftpProgressMonitor {
-
-        private long len = 0;
-
-        @Override
-        public boolean count(long count) {
-            len += count;
-            if (manageController.verboseCheck.isSelected() && len % 500 == 0) {
-                if (srcLen > 0) {
-                    updateLogs(message("Status") + ": "
-                            + FloatTools.percentage(len, srcLen) + "%   "
-                            + showFileSize(len) + "/" + showFileSize(srcLen));
-                } else {
-                    updateLogs(message("Status") + ": " + showFileSize(len));
-                }
-            }
-            return true;
-        }
-
-        @Override
-        public void end() {
-        }
-
-        @Override
-        public void init(int op, String src, String dest, long max) {
-        }
-    }
-
-    @FXML
     @Override
-    public void openPath() {
-        File path = targetPathInputController.file();
-        browseURI(path.toURI());
-        recordFileOpened(path);
+    public void afterTask() {
+        super.afterTask();
+        if (openCheck.isSelected()) {
+            openTarget();
+        }
     }
 
     /*

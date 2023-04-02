@@ -25,6 +25,14 @@ public class RemotePathDeleteController extends RemotePathHandleFilesController 
         return ok;
     }
 
+    @Override
+    public void afterTask() {
+        super.afterTask();
+        if (manageController != null) {
+            manageController.loadPath();
+        }
+    }
+
     /*
         static methods
      */

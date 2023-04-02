@@ -236,6 +236,7 @@ public class ControlSynchronizeOptions extends BaseController {
             copyAttr.setCopyAttrinutes(copyAttrCheck != null ? copyAttrCheck.isSelected() : true);
             copyAttr.setCopyMTime(copyMtimeCheck != null ? copyMtimeCheck.isSelected() : true);
             copyAttr.setSetPermissions(permissionCheck != null ? permissionCheck.isSelected() : false);
+            copyAttr.setPermissions(-1);
             if (copyAttr.isSetPermissions() && permissionInput != null) {
                 try {
                     int v = Integer.parseInt(permissionInput.getText(), 8);
