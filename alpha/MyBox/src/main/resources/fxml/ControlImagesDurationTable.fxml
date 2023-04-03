@@ -24,7 +24,7 @@ License:    Apache License Version 2.0
             <children>
                 <FlowPane hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
                     <children>
-                        <Button fx:id="addFilesButton" mnemonicParsing="false" onAction="#addFilesAction" onMouseEntered="#popFileAdd">
+                        <Button fx:id="addFilesButton" mnemonicParsing="false" onAction="#pickFileAdd" onMouseEntered="#popFileAdd">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -42,7 +42,7 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button fx:id="insertFilesButton" mnemonicParsing="false" onAction="#insertFilesAction" onMouseEntered="#popFileInsert">
+                        <Button fx:id="insertFilesButton" mnemonicParsing="false" onAction="#pickFileInsert" onMouseEntered="#popFileInsert">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>

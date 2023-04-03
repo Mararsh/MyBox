@@ -154,7 +154,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
                         @Override
                         public boolean setCellValue(Long value) {
                             try {
-                                if (!valid(value)) {
+                                if (!valid(value) || !isEditingRow()) {
                                     cancelEdit();
                                     return false;
                                 }
@@ -163,16 +163,13 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
                                     cancelEdit();
                                     return false;
                                 }
-                                if (!super.setCellValue(value)) {
-                                    return false;
-                                }
                                 row.setDuration(value);
                                 if (!isSettingValues) {
                                     Platform.runLater(() -> {
                                         updateLabel();
                                     });
                                 }
-                                return true;
+                                return super.setCellValue(value);
                             } catch (Exception e) {
                                 MyBoxLog.debug(e);
                                 return false;

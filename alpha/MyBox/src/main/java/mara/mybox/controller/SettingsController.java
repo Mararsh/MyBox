@@ -74,7 +74,7 @@ public class SettingsController extends BaseController {
     @FXML
     protected CheckBox closeCurrentCheck, recordWindowsSizeLocationCheck, clearExpiredCheck,
             anchorSolidCheck, controlsTextCheck, shortcutsCanNotOmitCheck,
-            clearCurrentRootCheck, splitPaneSensitiveCheck,
+            copyCurrentDataPathCheck, clearCurrentRootCheck, splitPaneSensitiveCheck,
             mousePassControlPanesCheck, popColorSetCheck, stopAlarmCheck;
     @FXML
     protected TextField jvmInput, dataDirInput, batchInput, fileRecentInput, thumbnailWidthInput,
@@ -572,63 +572,6 @@ public class SettingsController extends BaseController {
     }
 
     @FXML
-    protected void selectDataPath(ActionEvent event) {
-        try {
-            DirectoryChooser chooser = new DirectoryChooser();
-            chooser.setInitialDirectory(new File(AppVariables.MyboxDataPath));
-            File directory = chooser.showDialog(getMyStage());
-            if (directory == null) {
-                return;
-            }
-            recordFileWritten(directory);
-            dataDirInput.setText(directory.getPath());
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
-    protected void changeDataPath(ActionEvent event) {
-        try {
-            String newPath = dataDirInput.getText();
-            if (isSettingValues || newPath == null || newPath.trim().isEmpty()
-                    || newPath.trim().equals(AppVariables.MyboxDataPath)) {
-                return;
-            }
-            if (!PopTools.askSure(getTitle(), message("ChangeDataPathConfirm"))) {
-                return;
-            }
-            popInformation(message("CopyingFilesFromTo"));
-            String oldPath = AppVariables.MyboxDataPath;
-            if (FileCopyTools.copyWholeDirectory(new File(oldPath), new File(newPath), null, false)) {
-                File lckFile = new File(newPath + File.separator
-                        + "mybox_derby" + File.separator + "db.lck");
-                if (lckFile.exists()) {
-                    try {
-                        FileDeleteTools.delete(lckFile);
-                    } catch (Exception e) {
-                        MyBoxLog.error(e.toString());
-                    }
-                }
-                AppVariables.MyboxDataPath = newPath;
-                ConfigTools.writeConfigValue("MyBoxDataPath", newPath);
-                dataDirInput.setStyle(null);
-                if (clearCurrentRootCheck.isSelected()) {
-                    ConfigTools.writeConfigValue("MyBoxOldDataPath", oldPath);
-                }
-                MyBox.restart();
-            } else {
-                popFailed();
-                dataDirInput.setStyle(UserConfig.badStyle());
-            }
-
-        } catch (Exception e) {
-            popFailed();
-            dataDirInput.setStyle(UserConfig.badStyle());
-        }
-    }
-
-    @FXML
     protected void okWebConnectTimeout() {
         try {
             int v = Integer.parseInt(webConnectTimeoutInput.getText());
@@ -736,6 +679,66 @@ public class SettingsController extends BaseController {
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
+        }
+    }
+
+    @FXML
+    protected void selectDataPath(ActionEvent event) {
+        try {
+            DirectoryChooser chooser = new DirectoryChooser();
+            chooser.setInitialDirectory(new File(AppVariables.MyboxDataPath));
+            File directory = chooser.showDialog(getMyStage());
+            if (directory == null) {
+                return;
+            }
+            recordFileWritten(directory);
+            dataDirInput.setText(directory.getPath());
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    protected void changeDataPath(ActionEvent event) {
+        try {
+            String newPath = dataDirInput.getText();
+            if (isSettingValues || newPath == null || newPath.trim().isEmpty()
+                    || newPath.trim().equals(AppVariables.MyboxDataPath)) {
+                return;
+            }
+            String oldPath = AppVariables.MyboxDataPath;
+            if (copyCurrentDataPathCheck.isSelected()) {
+                if (!PopTools.askSure(getTitle(), message("ChangeDataPathConfirm"))) {
+                    return;
+                }
+                popInformation(message("CopyingFilesFromTo"));
+                if (FileCopyTools.copyWholeDirectory(new File(oldPath), new File(newPath), null, false)) {
+                    File lckFile = new File(newPath + File.separator
+                            + "mybox_derby" + File.separator + "db.lck");
+                    if (lckFile.exists()) {
+                        try {
+                            FileDeleteTools.delete(lckFile);
+                        } catch (Exception e) {
+                            MyBoxLog.error(e.toString());
+                        }
+                    }
+
+                } else {
+                    popFailed();
+                    dataDirInput.setStyle(UserConfig.badStyle());
+                }
+            }
+            AppVariables.MyboxDataPath = newPath;
+            ConfigTools.writeConfigValue("MyBoxDataPath", newPath);
+            dataDirInput.setStyle(null);
+            if (clearCurrentRootCheck.isSelected()) {
+                ConfigTools.writeConfigValue("MyBoxOldDataPath", oldPath);
+            }
+            MyBox.restart();
+
+        } catch (Exception e) {
+            popFailed();
+            dataDirInput.setStyle(UserConfig.badStyle());
         }
     }
 

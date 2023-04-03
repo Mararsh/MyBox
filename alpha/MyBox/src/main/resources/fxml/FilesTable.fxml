@@ -23,7 +23,7 @@ License:    Apache License Version 2.0
     <children>
         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
             <children>
-                <Button fx:id="addFilesButton" mnemonicParsing="false" onAction="#addFilesAction" onMouseEntered="#popFileAdd">
+                <Button fx:id="addFilesButton" mnemonicParsing="false" onAction="#pickFileAdd" onMouseEntered="#popFileAdd">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -32,7 +32,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="addDirectoryButton" mnemonicParsing="false" onAction="#addDirectoryAction" onMouseEntered="#popDirectoryAdd">
+                <Button fx:id="addDirectoryButton" mnemonicParsing="false" onAction="#pickDirectoryAdd" onMouseEntered="#popDirectoryAdd">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -41,7 +41,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="insertFilesButton" mnemonicParsing="false" onAction="#insertFilesAction" onMouseEntered="#popFileInsert">
+                <Button fx:id="insertFilesButton" mnemonicParsing="false" onAction="#pickFileInsert" onMouseEntered="#popFileInsert">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -50,7 +50,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="insertDirectoryButton" mnemonicParsing="false" onAction="#insertDirectoryAction" onMouseEntered="#popDirectoryInsert">
+                <Button fx:id="insertDirectoryButton" mnemonicParsing="false" onAction="#pickDirectoryInsert" onMouseEntered="#popDirectoryInsert">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>

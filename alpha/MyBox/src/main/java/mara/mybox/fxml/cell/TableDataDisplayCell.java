@@ -26,7 +26,7 @@ public class TableDataDisplayCell extends TableDataCell {
     }
 
     @Override
-    public boolean commit(String value, boolean valid, boolean changed) {
+    public boolean commit(String value) {
         return true;
     }
 

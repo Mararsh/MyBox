@@ -29,7 +29,6 @@ public abstract class BaseBatchPdfController extends BaseBatchController<PdfInfo
 
     public BaseBatchPdfController() {
         targetSubdirKey = "PdfCreatSubdir";
-        previewKey = "PdfPreview";
     }
 
     @Override
@@ -60,19 +59,9 @@ public abstract class BaseBatchPdfController extends BaseBatchController<PdfInfo
         } catch (Exception e) {
             return false;
         }
-        int page = 0;
-        if (previewInput != null) {
-            try {
-                page = Integer.parseInt(previewInput.getText()) - 1;
-            } catch (Exception e) {
-            }
-        }
-        if (page <= 0) {
-            page = tableData.get(0).getFromPage();
-            if (previewInput != null) {
-                previewInput.setText(page + "");
-            }
-        }
+        PdfInformation info = tableData.get(0);
+        int page = info.getFromPage();
+        previewParameters.password = info.getUserPassword();
         previewParameters.fromPage = page;
         previewParameters.toPage = page;
         previewParameters.startPage = page;
@@ -107,7 +96,7 @@ public abstract class BaseBatchPdfController extends BaseBatchController<PdfInfo
                 currentParameters.startPage = currentParameters.fromPage;
                 currentParameters.currentPage = currentParameters.fromPage;
             }
-            try ( PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
+            try (PDDocument pd = PDDocument.load(currentParameters.currentSourceFile,
                     currentParameters.password, AppVariables.pdfMemUsage)) {
                 doc = pd;
                 if (currentParameters.toPage <= 0 || currentParameters.toPage > doc.getNumberOfPages()) {

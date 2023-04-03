@@ -13,6 +13,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -87,6 +88,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
     protected double rectSize;
     protected Rectangle clickedRect, enteredRect;
     protected DropShadow shadowEffect;
+    protected boolean onlyPickNew;
 
     @FXML
     protected ControlColorPaletteSelector palettesController;
@@ -124,6 +126,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
     public ControlColors() {
         baseTitle = message("ManageColors");
         TipsLabelKey = message("ColorsManageTips");
+        onlyPickNew = true;
     }
 
     @Override
@@ -316,20 +319,24 @@ public class ControlColors extends BaseSysTableController<ColorData> {
             exportButton.disableProperty().bind(Bindings.isEmpty(tableData));
 
             allColumnsCheck.setSelected(UserConfig.getBoolean("ColorsDisplayAllColumns", false));
-            allColumnsCheck.selectedProperty().addListener(
-                    (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
-                        UserConfig.setBoolean("ColorsDisplayAllColumns", allColumnsCheck.isSelected());
-                        checkColumns();
-                        loadTableData();
-                    });
+            allColumnsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    UserConfig.setBoolean("ColorsDisplayAllColumns", allColumnsCheck.isSelected());
+                    checkColumns();
+                    loadTableData();
+                }
+            });
 
             mergeCheck.setSelected(UserConfig.getBoolean("ColorsDisplayMerge", false));
-            mergeCheck.selectedProperty().addListener(
-                    (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
-                        UserConfig.setBoolean("ColorsDisplayMerge", mergeCheck.isSelected());
-                        checkColumns();
-                        loadTableData();
-                    });
+            mergeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    UserConfig.setBoolean("ColorsDisplayMerge", mergeCheck.isSelected());
+                    checkColumns();
+                    loadTableData();
+                }
+            });
 
             checkColumns();
 
@@ -1157,7 +1164,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
                         }
                         colorData.setPaletteid(currentPalette.getCpnid());
                         if (!isAllColors()) {
-                            tableColorPalette.findAndCreate(conn, colorData, false, false);
+                            tableColorPalette.findAndCreate(conn, colorData, false, onlyPickNew);
                         }
                     } catch (Exception e) {
                         error = e.toString();

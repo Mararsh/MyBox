@@ -93,16 +93,13 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
                     @Override
                     public boolean setCellValue(Integer value) {
                         try {
-                            if (value == null || value < 0) {
+                            if (value == null || value < 0 || !isEditingRow()) {
                                 cancelEdit();
-                                return false;
-                            }
-                            if (!super.setCellValue(value)) {
                                 return false;
                             }
                             PdfInformation row = tableData.get(editingRow);
                             row.setFromPage(value);
-                            return true;
+                            return super.setCellValue(value);
                         } catch (Exception e) {
                             MyBoxLog.debug(e);
                             return false;
@@ -121,16 +118,13 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
                     @Override
                     public boolean setCellValue(Integer value) {
                         try {
-                            if (value == null) {
+                            if (value == null || !isEditingRow()) {
                                 cancelEdit();
-                                return false;
-                            }
-                            if (!super.setCellValue(value)) {
                                 return false;
                             }
                             PdfInformation row = tableData.get(editingRow);
                             row.setToPage(value);
-                            return true;
+                            return super.setCellValue(value);
                         } catch (Exception e) {
                             MyBoxLog.debug(e);
                             return false;

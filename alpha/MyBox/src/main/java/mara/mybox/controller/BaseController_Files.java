@@ -4,12 +4,10 @@ import java.io.File;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -399,7 +397,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
     }
 
     @FXML
-    public void popFileAdd(MouseEvent event) {
+    public void showFileAddMenu(Event event) {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
@@ -437,7 +435,23 @@ public abstract class BaseController_Files extends BaseController_Attributes {
     }
 
     @FXML
-    public void popFileInsert(MouseEvent event) {
+    public void pickFileAdd(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            addFilesAction();
+        } else {
+            showFileAddMenu(event);
+        }
+    }
+
+    @FXML
+    public void popFileAdd(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            showFileAddMenu(event);
+        }
+    }
+
+    @FXML
+    public void showFileInsertMenu(Event event) {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
@@ -475,7 +489,23 @@ public abstract class BaseController_Files extends BaseController_Attributes {
     }
 
     @FXML
-    public void popDirectoryAdd(MouseEvent event) {
+    public void pickFileInsert(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            insertFilesAction();
+        } else {
+            showFileInsertMenu(event);
+        }
+    }
+
+    @FXML
+    public void popFileInsert(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            showFileInsertMenu(event);
+        }
+    }
+
+    @FXML
+    public void showDirectoryAddMenu(Event event) {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
@@ -518,7 +548,23 @@ public abstract class BaseController_Files extends BaseController_Attributes {
     }
 
     @FXML
-    public void popDirectoryInsert(MouseEvent event) {
+    public void pickDirectoryAdd(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            addDirectoryAction();
+        } else {
+            showDirectoryAddMenu(event);
+        }
+    }
+
+    @FXML
+    public void popDirectoryAdd(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            showDirectoryAddMenu(event);
+        }
+    }
+
+    @FXML
+    public void showDirectoryInsertMenu(Event event) {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
@@ -558,6 +604,22 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             }
 
         }.pop();
+    }
+
+    @FXML
+    public void pickDirectoryInsert(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            insertDirectoryAction();
+        } else {
+            showDirectoryInsertMenu(event);
+        }
+    }
+
+    @FXML
+    public void popDirectoryInsert(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            showDirectoryInsertMenu(event);
+        }
     }
 
     @FXML

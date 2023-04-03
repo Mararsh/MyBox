@@ -124,7 +124,7 @@ public class DirectorySynchronizeController extends BaseTaskController {
         boolean done;
         FileNode targetNode = targetNode(targetpath);
         if (!targetNode.isExisted()) {
-            targetMkdirs(targetNode);
+            targetMkdirs(sourcePath, targetNode);
             showLogs(strCreatedSuccessfully + targetpath);
         }
         if (copyAttr.isConditionalCopy()) {
@@ -241,11 +241,8 @@ public class DirectorySynchronizeController extends BaseTaskController {
                         continue;
                     }
                     if (!targetChildNode.isExisted()) {
-                        targetMkdirs(targetChildNode);
+                        targetMkdirs(srcFile, targetChildNode);
                         copyAttr.setCopiedDirectoriesNumber(copyAttr.getCopiedDirectoriesNumber() + 1);
-                        if (verboseCheck == null || verboseCheck.isSelected()) {
-                            updateLogs(strCreatedSuccessfully + targetChildName);
-                        }
                     }
                     if (conditionalCopy(srcFile, targetChildNode)) {
                         copyAttr.setCopiedSize(copyAttr.getCopiedSize() + len);
@@ -310,7 +307,7 @@ public class DirectorySynchronizeController extends BaseTaskController {
                     if (verboseCheck == null || verboseCheck.isSelected()) {
                         showLogs(message("HandlingDirectory") + " " + srcFileName);
                     }
-                    targetMkdirs(targetChildNode);
+                    targetMkdirs(srcFile, targetChildNode);
                     copyAttr.setCopiedDirectoriesNumber(copyAttr.getCopiedDirectoriesNumber() + 1);
                     if (verboseCheck == null || verboseCheck.isSelected()) {
                         updateLogs(strCreatedSuccessfully + targetChildName);
@@ -566,8 +563,26 @@ public class DirectorySynchronizeController extends BaseTaskController {
         FileDeleteTools.delete(targetNode.getFileName());
     }
 
-    public void targetMkdirs(FileNode targetNode) {
-        new File(targetNode.getFileName()).mkdirs();
+    public void targetMkdirs(File srcFile, FileNode targetNode) {
+        try {
+            File tFile = new File(targetNode.getFileName());
+            tFile.mkdirs();
+            tFile.setExecutable(true);
+            tFile.setReadable(true);
+            tFile.setWritable(true);
+            if (verboseCheck == null || verboseCheck.isSelected()) {
+                updateLogs(strCreatedSuccessfully + tFile.getAbsolutePath());
+            }
+//            if (copyAttr.isCopyAttrinutes()) {  // this looks not work
+////                tFile.setExecutable(srcFile.canExecute());
+////                tFile.setReadable(srcFile.canRead());
+////                tFile.setWritable(srcFile.canWrite());
+//                tFile.setLastModified(srcFile.lastModified());   
+//            }
+        } catch (Exception e) {
+            showLogs(e.toString());
+        }
+
     }
 
     @FXML

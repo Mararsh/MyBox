@@ -68,7 +68,7 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
                             @Override
                             public boolean setCellValue(String value) {
                                 try {
-                                    if (value == null || value.isBlank()) {
+                                    if (value == null || value.isBlank() || !isEditingRow()) {
                                         return false;
                                     }
                                     for (int i = 0; i < tableData.size(); i++) {
@@ -83,12 +83,9 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
                                         cancelEdit();
                                         return false;
                                     }
-                                    if (!super.setCellValue(value)) {
-                                        return false;
-                                    }
                                     row.setTag(value);
                                     saveTag(row);
-                                    return true;
+                                    return super.setCellValue(value);
                                 } catch (Exception e) {
                                     MyBoxLog.debug(e);
                                     return false;

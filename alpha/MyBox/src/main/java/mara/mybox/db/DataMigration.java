@@ -1542,6 +1542,7 @@ public class DataMigration {
                     FxFileTools.getInternalFile("/doc/zh/MyBox-Overview-zh.pdf", "doc", "MyBox-Overview-zh.pdf", true);
                     FxFileTools.getInternalFile("/doc/en/README.md", "doc", "README-en.md", true);
                     FxFileTools.getInternalFile("/doc/en/MyBox-Overview-en.pdf", "doc", "MyBox-Overview-en.pdf", true);
+                    FileDeleteTools.clearDir(new File(AppVariables.MyboxDataPath + File.separator + "image"));
                     MyBoxLog.info("Internal doc loaded.");
                 } catch (Exception e) {
                     MyBoxLog.console(e.toString());

@@ -83,9 +83,11 @@ public class RemotePathSynchronizeFromLocalController extends DirectorySynchroni
     }
 
     @Override
-    public void targetMkdirs(FileNode targetNode) {
+    public void targetMkdirs(File srcFile, FileNode targetNode) {
         if (targetNode != null) {
-            remoteController.mkdirs(targetNode.fullName());
+            remoteController.mkdirs(targetNode.fullName(),
+                    copyAttr.isCopyMTime() && srcFile != null ? (int) (srcFile.lastModified() / 1000) : -1,
+                    copyAttr.getPermissions());
         }
     }
 

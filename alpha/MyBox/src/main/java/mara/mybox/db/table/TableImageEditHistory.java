@@ -75,13 +75,13 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
         if (filename == null || filename.trim().isEmpty()) {
             return records;
         }
-        int max = UserConfig.getInt("MaxImageHistories", Default_Max_Histories);
-        if (max <= 0) {
-            max = TableImageEditHistory.Default_Max_Histories;
-            UserConfig.setInt("MaxImageHistories", Default_Max_Histories);
-        }
         try (Connection conn = DerbyBase.getConnection();
                 Statement statement = conn.createStatement()) {
+            int max = UserConfig.getInt(conn, "MaxImageHistories", Default_Max_Histories);
+            if (max <= 0) {
+                max = TableImageEditHistory.Default_Max_Histories;
+                UserConfig.setInt(conn, "MaxImageHistories", Default_Max_Histories);
+            }
             List<ImageEditHistory> invalid = new ArrayList<>();
             String sql = " SELECT * FROM Image_Edit_History WHERE image_location='" + filename + "' ORDER BY operation_time DESC";
             try (ResultSet results = statement.executeQuery(sql)) {

@@ -122,18 +122,17 @@ License:    Apache License Version 2.0
                                                         </Button>
                                                     </children>
                                                 </HBox>
-                                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="192.0" spacing="10.0" />
                                                 <CheckBox fx:id="shortcutsCanNotOmitCheck" layoutX="20.0" layoutY="171.0" mnemonicParsing="false" onAction="#shortcutsCanNotOmit" selected="true" text="%ShortcutsCanNotOmitCtrlAlt" />
                                                 <CheckBox fx:id="recordWindowsSizeLocationCheck" mnemonicParsing="false" selected="true" text="%RecordWindowsSizeLocation" />
                                                 <CheckBox fx:id="popColorSetCheck" mnemonicParsing="false" onAction="#popColorSet" selected="true" text="%PopColorSetWhenMouseHovering" />
                                                 <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="159.0" spacing="10.0">
                                                     <children>
-                                                        <CheckBox fx:id="mousePassControlPanesCheck" layoutX="533.0" layoutY="10.0" mnemonicParsing="false" onAction="#mousePassControlPanes" selected="true" text="%ShowHidePanesWhenMouseHovering" />
+                                                        <CheckBox fx:id="mousePassControlPanesCheck" layoutX="533.0" layoutY="10.0" minHeight="-Infinity" mnemonicParsing="false" onAction="#mousePassControlPanes" selected="true" text="%ShowHidePanesWhenMouseHovering" wrapText="true" />
                                                         <CheckBox fx:id="splitPaneSensitiveCheck" mnemonicParsing="false" onAction="#splitPaneSensitive" text="%Sensitive" />
                                                     </children>
                                                 </HBox>
                                                 <CheckBox fx:id="closeCurrentCheck" mnemonicParsing="false" text="%CloseCurrentWhenOpenTool" />
-                                                  <CheckBox fx:id="controlsTextCheck" mnemonicParsing="false" text="%DisplayControlText" />
+                                                <CheckBox fx:id="controlsTextCheck" mnemonicParsing="false" text="%DisplayControlText" />
                                                 <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="66.0" spacing="10.0">
                                                     <children>
                                                         <Label text="%SelectorScrollSize">
@@ -295,6 +294,7 @@ License:    Apache License Version 2.0
                                                             </children>
                                                         </HBox>
                                                         <Label fx:id="currentDataPathLabel" text="%CurrentValue" />
+                                          <CheckBox fx:id="copyCurrentDataPathCheck" layoutX="15.0" layoutY="88.0" mnemonicParsing="false" text="%CopyCurrentDataPathToNewPath" />
                                                         <CheckBox fx:id="clearCurrentRootCheck" mnemonicParsing="false" text="label" />
                                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                                             <children>
@@ -371,7 +371,20 @@ License:    Apache License Version 2.0
                                                         </Button>
                                                     </children>
                                                 </HBox>
-                                    <CheckBox fx:id="clearExpiredCheck" layoutX="20.0" layoutY="324.0" mnemonicParsing="false" selected="true" text="%ClearExpiredDataBeforeExit" />
+                                                <HBox fx:id="fileHisBox1" alignment="CENTER_LEFT" layoutX="20.0" layoutY="256.0" spacing="10.0">
+                                                    <children>
+                                                        <CheckBox fx:id="clearExpiredCheck" mnemonicParsing="false" selected="true" text="%ClearExpiredDataBeforeExit" />
+                                                        <Button fx:id="clearExpiredButton" mnemonicParsing="false" onAction="#clearExpiredData">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconClear.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                    </children>
+                                                </HBox>
                                                 <CheckBox fx:id="stopAlarmCheck" mnemonicParsing="false" selected="true" text="%StopAlarmsExit" visible="false" />
                                             </children>
                                         </VBox>

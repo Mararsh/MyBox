@@ -36,7 +36,7 @@ public class TableDataCell extends TableAutoCommitCell<List<String>, String> {
             if (value != null && supportMultipleLine) {
                 value = value.replaceAll("\\\\n", "\n");
             }
-            return commit(value, valid(value), changed(value));
+            return super.setCellValue(value);
         } catch (Exception e) {
             MyBoxLog.debug(e);
             return false;

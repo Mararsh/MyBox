@@ -27,13 +27,16 @@ public class RemotePathPutController extends BaseBatchFileController {
 
     protected RemotePathManageController manageController;
     protected String targetPathName;
+    protected int permissions;
 
     @FXML
     protected TextField targetPathInput;
     @FXML
     protected Label hostLabel;
     @FXML
-    protected CheckBox copyMtimeCheck;
+    protected CheckBox copyMtimeCheck, permissionCheck;
+    @FXML
+    protected TextField permissionInput;
 
     public RemotePathPutController() {
         baseTitle = message("RemotePathPut");
@@ -66,6 +69,14 @@ public class RemotePathPutController extends BaseBatchFileController {
                 }
             });
 
+            permissionCheck.setSelected(UserConfig.getBoolean(baseName + "SetPermissions", false));
+            permissionCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    UserConfig.setBoolean(baseName + "SetPermissions", nv);
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             popError(e.toString());
@@ -78,6 +89,16 @@ public class RemotePathPutController extends BaseBatchFileController {
         if (targetPathName == null || targetPathName.isBlank()) {
             popError(message("InvalidParameter") + ": " + message("TargetPath"));
             return false;
+        }
+        permissions = -1;
+        if (permissionCheck.isSelected()) {
+            try {
+                permissions = Integer.parseInt(permissionInput.getText(), 8);
+                UserConfig.setString(baseName + "Permissions", permissionInput.getText());
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": " + message("Permissions"));
+                return false;
+            }
         }
         if (manageController.task != null) {
             manageController.task.cancel();
@@ -104,7 +125,8 @@ public class RemotePathPutController extends BaseBatchFileController {
     public boolean beforeHandleFiles() {
         manageController.task = task;
         manageController.remoteController.task = task;
-        return manageController.checkConnection() && checkDirectory(targetPathName);
+        return manageController.checkConnection()
+                && checkDirectory(null, targetPathName);
     }
 
     @Override
@@ -132,7 +154,7 @@ public class RemotePathPutController extends BaseBatchFileController {
             targetName = manageController.remoteController.fixFilename(targetName);
             showLogs("put " + srcFile.getAbsolutePath() + " " + targetName);
             if (manageController.remoteController.put(srcFile, targetName,
-                    copyMtimeCheck.isSelected(), -1)) {
+                    copyMtimeCheck.isSelected(), permissions)) {
                 showLogs(MessageFormat.format(message("FilesGenerated"), targetName));
                 return message("Successful");
             } else {
@@ -151,7 +173,7 @@ public class RemotePathPutController extends BaseBatchFileController {
             String targetDir = targetPathName;
             if (createDirectories) {
                 targetDir += "/" + dir.getName();
-                if (!checkDirectory(targetDir)) {
+                if (!checkDirectory(dir, targetDir)) {
                     return message("Failed");
                 }
             }
@@ -164,12 +186,14 @@ public class RemotePathPutController extends BaseBatchFileController {
     }
 
     @Override
-    public boolean checkDirectory(String pathname) {
+    public boolean checkDirectory(File srcFile, String pathname) {
         try {
             if (pathname == null) {
                 return false;
             }
-            return manageController.remoteController.mkdirs(pathname);
+            return manageController.remoteController.mkdirs(pathname,
+                    copyMtimeCheck.isSelected() && srcFile != null ? (int) (srcFile.lastModified() / 1000) : -1,
+                    permissions);
         } catch (Exception e) {
             showLogs(e.toString());
             return false;

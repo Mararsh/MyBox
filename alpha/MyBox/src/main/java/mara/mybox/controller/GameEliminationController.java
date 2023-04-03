@@ -367,7 +367,7 @@ public class GameEliminationController extends BaseController {
                         @Override
                         public boolean setCellValue(Integer value) {
                             try {
-                                if (!valid(value)) {
+                                if (!valid(value) || !isEditingRow()) {
                                     cancelEdit();
                                     return false;
                                 }

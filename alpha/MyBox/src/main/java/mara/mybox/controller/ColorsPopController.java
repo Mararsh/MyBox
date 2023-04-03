@@ -2,11 +2,16 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -14,6 +19,9 @@ import mara.mybox.value.Languages;
  * @License Apache License Version 2.0
  */
 public class ColorsPopController extends ColorsManageController {
+
+    @FXML
+    protected CheckBox onlyNewCheck;
 
     public ColorsPopController() {
         baseTitle = Languages.message("PickingColorsNow");
@@ -25,6 +33,17 @@ public class ColorsPopController extends ColorsManageController {
             super.initControls();
 
             colorsController.paletteTabPane.getSelectionModel().select(colorsController.colorsTab);
+
+            onlyNewCheck.setSelected(UserConfig.getBoolean("ColorsOnlyPickNew", true));
+            onlyNewCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    UserConfig.setBoolean("ColorsOnlyPickNew", nv);
+                    colorsController.onlyPickNew = nv;
+                }
+            });
+            colorsController.onlyPickNew = onlyNewCheck.isSelected();
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

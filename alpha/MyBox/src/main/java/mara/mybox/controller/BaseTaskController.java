@@ -292,6 +292,10 @@ public class BaseTaskController extends BaseLogs {
                     if (files == null) {
                         continue;
                     }
+                    int size = files.size();
+                    if (size > AppVariables.fileRecentNumber) {
+                        files = files.subList(size - AppVariables.fileRecentNumber, size);
+                    }
                     for (File file : files) {
                         recordFileWritten(conn, file, type, type);
                     }

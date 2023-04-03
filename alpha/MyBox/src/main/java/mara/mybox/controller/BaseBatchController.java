@@ -48,7 +48,7 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class BaseBatchController<T> extends BaseTaskController {
 
-    protected String targetSubdirKey, previewKey;
+    protected String targetSubdirKey;
     protected ObservableList<T> tableData;
     protected TableView<T> tableView;
     protected List<File> sourceFiles;
@@ -70,7 +70,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     @FXML
     protected VBox tableBox, optionsVBox, targetVBox;
     @FXML
-    protected TextField previewInput, acumFromInput, digitInput;
+    protected TextField acumFromInput, digitInput;
     @FXML
     protected CheckBox targetSubdirCheck;
     @FXML
@@ -82,7 +82,6 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
 
     public BaseBatchController() {
         targetSubdirKey = "targetSubdirKey";
-        previewKey = "previewKey";
         browseTargets = viewTargetPath = false;
         allowPaused = false;
 
@@ -278,22 +277,6 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             if (acumFromInput != null) {
                 ValidationTools.setNonnegativeValidation(acumFromInput);
                 acumFromInput.setText("1");
-            }
-
-            if (previewInput != null) {
-                previewInput.setText(UserConfig.getString(previewKey, "1"));
-                ValidationTools.setPositiveValidation(previewInput);
-                previewInput.textProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(
-                            ObservableValue<? extends String> observable,
-                            String oldValue, String newValue) {
-                        if (newValue == null || newValue.isEmpty()) {
-                            return;
-                        }
-                        UserConfig.setString(previewKey, newValue);
-                    }
-                });
             }
 
             initControlsMore();
@@ -893,7 +876,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
                             continue;
                         }
                         String subPathName = makeTargetFilename(srcFile, targetPath);
-                        if (!checkDirectory(subPathName)) {
+                        if (!checkDirectory(srcFile, subPathName)) {
                             return false;
                         }
                         handleDirectory(srcFile, subPathName);
@@ -909,7 +892,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         }
     }
 
-    public boolean checkDirectory(String pathname) {
+    public boolean checkDirectory(File srcFile, String pathname) {
         try {
             if (pathname == null) {
                 return false;

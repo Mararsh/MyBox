@@ -24,7 +24,7 @@ License:    Apache License Version 2.0
     <children>
         <HBox alignment="CENTER_LEFT" spacing="5.0">
             <children>
-                <Button fx:id="addFilesButton" mnemonicParsing="false" onAction="#addFilesAction" onMouseEntered="#popFileAdd">
+                <Button fx:id="addFilesButton" mnemonicParsing="false" onAction="#pickFileAdd" onMouseEntered="#popFileAdd">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>

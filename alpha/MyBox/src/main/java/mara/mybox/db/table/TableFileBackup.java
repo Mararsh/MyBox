@@ -83,10 +83,10 @@ public class TableFileBackup extends BaseTable<FileBackup> {
         if (filename == null || filename.isBlank()) {
             return records;
         }
-        int max = UserConfig.getInt("MaxFileBackups", FileBackup.Default_Max_Backups);
+        int max = UserConfig.getInt(conn, "MaxFileBackups", FileBackup.Default_Max_Backups);
         if (max <= 0) {
             max = FileBackup.Default_Max_Backups;
-            UserConfig.setInt("MaxFileBackups", FileBackup.Default_Max_Backups);
+            UserConfig.setInt(conn, "MaxFileBackups", FileBackup.Default_Max_Backups);
         }
         try (PreparedStatement statement = conn.prepareStatement(FileQuery)) {
             conn.setAutoCommit(true);

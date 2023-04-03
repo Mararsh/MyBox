@@ -35,10 +35,11 @@ public class TableTextAreaEditCell<S> extends TableAutoCommitCell<S, String> {
     @Override
     public boolean setCellValue(String inValue) {
         try {
-            String value = inValue == null ? null : inValue.replaceAll("\\\\n", "\n");
-            boolean changed = changed(value);
-            commit(value, valid(value), changed);
-            return changed;
+            String value = inValue;
+            if (value != null) {
+                value = value.replaceAll("\\\\n", "\n");
+            }
+            return super.setCellValue(value);
         } catch (Exception e) {
             MyBoxLog.debug(e);
             return false;

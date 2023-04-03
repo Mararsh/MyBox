@@ -220,11 +220,13 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
     @Override
     public void commitEdit(T value) {
         try {
-            if (!isEditingRow()) {
+            clearEditor();
+            boolean valid = valid(value);
+            boolean changed = changed(value);
+            if (!isEditingRow() || !valid || !changed) {
                 cancelEdit();
                 return;
             }
-            clearEditor();
             setCellValue(value);
             editingRow = -1;
         } catch (Exception e) {
@@ -234,16 +236,10 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
 
     public boolean setCellValue(T value) {
         try {
-            boolean valid = valid(value);
-            boolean changed = changed(value);
             if (isEditing()) {
-                if (changed && valid) {
-                    super.commitEdit(value);
-                } else {
-                    cancelEdit();
-                }
+                super.commitEdit(value);
             } else {
-                return commit(value, valid, changed);
+                return commit(value);
             }
             return true;
         } catch (Exception e) {
@@ -252,10 +248,10 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
         }
     }
 
-    public boolean commit(T value, boolean valid, boolean changed) {
+    public boolean commit(T value) {
         try {
             TableView<S> table = getTableView();
-            if (valid && changed && table != null && isEditingRow()) {
+            if (table != null && isEditingRow()) {
                 TableColumn<S, T> column = getTableColumn();
                 if (column == null) {
                     cancelEdit();

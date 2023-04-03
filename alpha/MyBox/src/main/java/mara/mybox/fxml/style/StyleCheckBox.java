@@ -88,7 +88,7 @@ public class StyleCheckBox {
             case "tableExpandDirCheck":
                 return new StyleData("tableExpandDirCheck", "", message("ExpandDirectories"), "", "iconUnfold.png");
             case "tableCreateDirCheck":
-                return new StyleData("tableCreateDirCheck", "", message("CreateDirectories"), "", "iconFolderLink.png");
+                return new StyleData("tableCreateDirCheck", "", message("TableCreateDirectories"), "", "iconFolderLink.png");
             case "countDirCheck":
                 return new StyleData("countDirCheck", "", message("CountFilesUnderFolders"), "", "iconFolderBrowse.png");
             case "tableThumbCheck":

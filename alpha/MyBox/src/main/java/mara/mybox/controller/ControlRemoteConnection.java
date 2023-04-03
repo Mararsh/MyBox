@@ -258,7 +258,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
                 }
             }
             showLogs("Login in path: " + currentConnection.getPath());
-            mkdirs(currentConnection.getPath());
+            mkdirs(currentConnection.getPath(), -1, -1);
             return ok;
         } catch (Exception e) {
             showLogs(e.toString());
@@ -469,8 +469,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
         return -1;
     }
 
-    public boolean put(File sourceFile, String target,
-            boolean copyMtime, int permission) {
+    public boolean put(File sourceFile, String target, boolean copyMtime, int permission) {
         try {
             if (task == null || task.isCancelled()
                     || target == null || sourceFile == null
@@ -482,7 +481,24 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
             showLogs("put " + sourceName + " " + targetName);
             sftp.put(sourceName, targetName, new ProgressMonitor(sourceFile.length()));
             showLogs(MessageFormat.format(message("FilesGenerated"), targetName));
-            if (copyMtime || permission > 0) {
+            if (copyMtime) {
+
+            }
+            setStat(targetName, copyMtime ? (int) (sourceFile.lastModified() / 1000) : -1, permission);
+            return true;
+        } catch (Exception e) {
+            showLogs(e.toString());
+            return false;
+        }
+    }
+
+    public boolean setStat(String target, int time, int permission) {
+        try {
+            if (task == null || task.isCancelled() || target == null) {
+                return false;
+            }
+            if (time > 0 || permission > 0) {
+                String targetName = fixFilename(target);
                 SftpATTRS attrs = stat(targetName);
                 if (attrs == null) {
                     return false;
@@ -492,11 +508,10 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
                     msg += message("SetPermissions") + ": " + permission;
                     attrs.setPERMISSIONS(permission);
                 }
-                if (copyMtime) {
-                    int time = (int) (sourceFile.lastModified() / 1000);
+                if (time > 0) {
                     attrs.setACMODTIME(time, time);
                     msg += "  " + message("CopyModifyTime") + ": "
-                            + DateTools.datetimeToString(sourceFile.lastModified());
+                            + DateTools.datetimeToString(time * 1000l);
                 }
                 showLogs(msg);
                 sftp.setStat(targetName, attrs);
@@ -625,6 +640,10 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
     }
 
     public boolean mkdirs(String filename) {
+        return mkdirs(filename, -1, -1);
+    }
+
+    public boolean mkdirs(String filename, int time, int permission) {
         try {
             if (filename == null || filename.isBlank()) {
                 return false;
@@ -646,6 +665,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
                 if (attrs == null) {
                     showLogs("mkdirs " + path);
                     sftp.mkdir(path);
+//                    setStat(path, -1, permission);   // seems can not change mtime of directory 
                 }
                 parent = path;
             }

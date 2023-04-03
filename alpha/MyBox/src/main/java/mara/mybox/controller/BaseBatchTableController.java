@@ -333,58 +333,62 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
                 return;
             }
             task = new SingletonTask<Void>(this) {
-                private boolean changed = false;
+                private List<File> valids;
 
                 @Override
                 protected boolean handle() {
-                    int index = 0;
-                    isSettingValues = true;
-                    while (index < tableData.size()) {
-                        File file = file(index);
-                        if (file.isFile()) {
-                            if (isValidFile(file)) {
-                                index++;
+                    try {
+                        valids = new ArrayList<>();
+                        for (int i = 0; i < tableData.size(); i++) {
+                            if (task == null || task.isCancelled()) {
+                                return false;
+                            }
+                            File file = file(i);
+                            if (file.isDirectory()) {
+                                handleDir(file);
                             } else {
-                                tableData.remove(index);
-                                changed = true;
-                            }
-                            continue;
-                        }
-                        tableData.remove(index);
-                        changed = true;
-                        List<File> files = FileTools.allFiles(file);
-                        if (files == null || files.isEmpty()) {
-                            continue;
-                        }
-                        List<File> valids = new ArrayList<>();
-                        for (File afile : files) {
-                            if (isValidFile(afile)) {
-                                valids.add(afile);
+                                if (isValidFile(file)) {
+                                    valids.add(file);
+                                }
                             }
                         }
-                        if (valids.isEmpty()) {
-                            continue;
-                        }
-                        addFiles(index, valids);
-                        index += valids.size();
+                        return task != null && !task.isCancelled();
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
                     }
-                    isSettingValues = false;
+                }
 
-                    return true;
+                private void handleDir(File dir) {
+                    if (task == null || task.isCancelled() || dir == null) {
+                        return;
+                    }
+                    File[] list = dir.listFiles();
+                    if (list != null) {
+                        for (File file : list) {
+                            if (task == null || task.isCancelled()) {
+                                return;
+                            }
+                            if (file.isDirectory()) {
+                                handleDir(file);
+                            } else {
+                                if (isValidFile(file)) {
+                                    valids.add(file);
+                                }
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 protected void whenSucceeded() {
-                    if (changed) {
-                        tableView.refresh();
-                        tableChanged();
-                    }
+                    tableData.clear();
+                    addFiles(0, valids);
                 }
 
             };
             super.start(task);
         }
-
     }
 
     protected boolean isValidFile(File file) {
@@ -785,10 +789,9 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
         if (files == null || files.isEmpty()) {
             return;
         }
-        recordFileAdded(files.get(0));
         synchronized (this) {
-            if (task != null) {
-                task.cancel();
+            if (task != null && !task.isQuit()) {
+                return;
             }
             task = new SingletonTask<Void>(this) {
 
@@ -797,12 +800,16 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
                 @Override
                 protected boolean handle() {
                     infos = createFiles(files);
+                    if (infos == null) {
+                        return false;
+                    }
+                    recordFileAdded(files.get(0));
                     return true;
                 }
 
                 @Override
                 protected void whenSucceeded() {
-                    if (infos.isEmpty()) {
+                    if (infos == null || infos.isEmpty()) {
                         return;
                     }
                     isSettingValues = true;
@@ -819,7 +826,6 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             };
             start(task);
         }
-
     }
 
     public List<P> createFiles(List<File> files) {
@@ -837,7 +843,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
                 if (t != null) {
                     infos.add(t);
                 }
-                recordFileAdded(file);
+//                recordFileAdded(file);
             }
             return infos;
         } catch (Exception e) {
@@ -877,7 +883,6 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
 
     public void addDirectory(int index, File directory) {
         try {
-            recordFileOpened(directory);
 
             isSettingValues = true;
             P d = create(directory);
@@ -893,7 +898,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             } else {
                 tableChanged();
             }
-
+            recordFileOpened(directory);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

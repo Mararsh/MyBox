@@ -9,9 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.FileExtensions;
 import org.apache.commons.io.FileUtils;
@@ -130,24 +128,6 @@ public class FileTools {
             MyBoxLog.debug(e.toString());
         }
         return size;
-    }
-
-    public static List<File> allFiles(File file) {
-        if (file == null) {
-            return null;
-        }
-        List<File> files = new ArrayList<>();
-        if (file.isFile()) {
-            files.add(file);
-        } else if (file.isDirectory()) {
-            File[] dirFiles = file.listFiles();
-            if (dirFiles != null) {
-                for (File dirFile : dirFiles) {
-                    files.addAll(allFiles(dirFile));
-                }
-            }
-        }
-        return files;
     }
 
     public static boolean same(File file1, File file2) {
