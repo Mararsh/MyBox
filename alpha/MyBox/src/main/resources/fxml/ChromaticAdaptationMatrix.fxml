@@ -101,7 +101,7 @@ License:    Apache License Version 2.0
                                                                 </Button>
                                                             </children>
                                                         </HBox>
-                                                       <fx:include fx:id="webView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlWebView.fxml" VBox.vgrow="ALWAYS" />
+                                                        <fx:include fx:id="webView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlWebView.fxml" VBox.vgrow="ALWAYS" />
                                                     </children>
                                                 </VBox>
                                             </items>
@@ -148,7 +148,7 @@ License:    Apache License Version 2.0
                                         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                             <children>
                                                 <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="exportButton" layoutX="181.0" layoutY="10.0" mnemonicParsing="false" onAction="#exportAction" onMouseEntered="#popExportPath">
+                                                <Button fx:id="exportButton" layoutX="181.0" layoutY="10.0" mnemonicParsing="false" onAction="#pickExportPath" onMouseEntered="#popExportPath">
                                                     <graphic>
                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                             <image>

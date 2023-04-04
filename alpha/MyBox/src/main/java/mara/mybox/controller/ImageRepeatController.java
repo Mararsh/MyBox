@@ -102,6 +102,13 @@ public class ImageRepeatController extends ImageViewerController {
                 }
             });
 
+            sourceController.rectDrawnNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    originalSize();
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

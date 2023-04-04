@@ -19,6 +19,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -870,7 +871,7 @@ public class GameEliminationController extends BaseController {
     }
 
     @FXML
-    public void popSoundFile(MouseEvent event) {
+    public void showSoundFileMenu(Event event) {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
@@ -899,6 +900,23 @@ public class GameEliminationController extends BaseController {
             menu.setDefaultPath("C:\\Windows\\media");
         }
         menu.pop();
+    }
+
+    @FXML
+    public void pickSoundFile(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
+                || AppVariables.fileRecentNumber <= 0) {
+            selectSoundFile();
+        } else {
+            showSoundFileMenu(event);
+        }
+    }
+
+    @FXML
+    public void popSoundFile(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            showSoundFileMenu(event);
+        }
     }
 
     public boolean addImageItem(String address) {

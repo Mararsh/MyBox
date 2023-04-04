@@ -12,6 +12,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -1797,7 +1798,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
     }
 
     @FXML
-    public void popXmlPath(MouseEvent event) {
+    public void showXmlPathMenu(Event event) {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
@@ -1830,6 +1831,23 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             }
 
         }.pop();
+    }
+
+    @FXML
+    public void pickXmlPath(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
+                || AppVariables.fileRecentNumber <= 0) {
+            exportXmlAction();
+        } else {
+            showXmlPathMenu(event);
+        }
+    }
+
+    @FXML
+    public void popXmlPath(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            showXmlPathMenu(event);
+        }
     }
 
     @FXML

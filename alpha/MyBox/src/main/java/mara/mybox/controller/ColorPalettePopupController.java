@@ -11,7 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -73,6 +73,8 @@ public class ColorPalettePopupController extends BaseChildController {
     protected Label label;
     @FXML
     protected Button paletteButton;
+    @FXML
+    protected CheckBox popCheck;
 
     public ColorPalettePopupController() {
         baseTitle = message("ColorPalette");
@@ -110,9 +112,28 @@ public class ColorPalettePopupController extends BaseChildController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
+            NodeStyleTools.setTooltip(popCheck, message("PopColorSetWhenMouseHovering"));
             NodeStyleTools.setTooltip(cancelButton, message("PopupClose"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
+        }
+    }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            popCheck.setSelected(UserConfig.getBoolean("PopColorSetWhenMouseHovering", true));
+            popCheck.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("PopColorSetWhenMouseHovering", popCheck.isSelected());
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -331,18 +352,6 @@ public class ColorPalettePopupController extends BaseChildController {
 
             items.add(new SeparatorMenuItem());
             items.addAll(PaletteTools.paletteExamplesMenu(parentController == null ? myController : parentController));
-
-            items.add(new SeparatorMenuItem());
-
-            CheckMenuItem checkMenu = new CheckMenuItem(message("PopColorSetWhenMouseHovering"));
-            checkMenu.setSelected(UserConfig.getBoolean("PopColorSetWhenMouseHovering", true));
-            checkMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("PopColorSetWhenMouseHovering", checkMenu.isSelected());
-                }
-            });
-            items.add(checkMenu);
 
             items.add(new SeparatorMenuItem());
 

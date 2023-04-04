@@ -93,24 +93,24 @@ License:    Apache License Version 2.0
                                                                                                 </FlowPane>
                                                                                                 <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="310.0" spacing="5.0">
                                                                                                     <children>
-                                                                              <Button fx:id="selectAllElementsButton" mnemonicParsing="false" onAction="#allElements">
-                                                                                 <graphic>
-                                                                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                       <image>
-                                                                                          <Image url="@../buttons/Red/iconSelectAll.png" />
-                                                                                       </image>
-                                                                                    </ImageView>
-                                                                                 </graphic>
-                                                                              </Button>
-                                                                              <Button fx:id="selectNoneElementsButton" mnemonicParsing="false" onAction="#noElements">
-                                                                                 <graphic>
-                                                                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                       <image>
-                                                                                          <Image url="@../buttons/Red/iconSelectNone.png" />
-                                                                                       </image>
-                                                                                    </ImageView>
-                                                                                 </graphic>
-                                                                              </Button>
+                                                                                                        <Button fx:id="selectAllElementsButton" mnemonicParsing="false" onAction="#allElements">
+                                                                                                            <graphic>
+                                                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                                                    <image>
+                                                                                                                        <Image url="@../buttons/Red/iconSelectAll.png" />
+                                                                                                                    </image>
+                                                                                                                </ImageView>
+                                                                                                            </graphic>
+                                                                                                        </Button>
+                                                                                                        <Button fx:id="selectNoneElementsButton" mnemonicParsing="false" onAction="#noElements">
+                                                                                                            <graphic>
+                                                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                                                    <image>
+                                                                                                                        <Image url="@../buttons/Red/iconSelectNone.png" />
+                                                                                                                    </image>
+                                                                                                                </ImageView>
+                                                                                                            </graphic>
+                                                                                                        </Button>
                                                                                                         <CheckBox fx:id="cdGridCheck" mnemonicParsing="false" selected="true" text="%Grid" />
                                                                                                     </children>
                                                                                                 </HBox>
@@ -357,7 +357,7 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </Button>
-                                                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" onMouseEntered="#popDiagramPath">
+                                                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#pickDiagramPath" onMouseEntered="#popDiagramPath">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                             <image>

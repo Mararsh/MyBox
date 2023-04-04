@@ -6,12 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaException;
 import javafx.scene.media.MediaPlayer;
@@ -30,6 +30,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -328,7 +329,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
     }
 
     @FXML
-    public void popMediasLink(MouseEvent event) {
+    public void showMediasLinkMenu(Event event) {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
@@ -366,6 +367,23 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
         };
         menu.setExamples(examples);
         menu.pop();
+    }
+
+    @FXML
+    public void pickMediasLink(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
+                || AppVariables.fileRecentNumber <= 0) {
+            addLinkAction();
+        } else {
+            showMediasLinkMenu(event);
+        }
+    }
+
+    @FXML
+    public void popMediasLink(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            showMediasLinkMenu(event);
+        }
     }
 
     @FXML

@@ -234,7 +234,6 @@ public class ControlFileSelecter extends BaseController {
             return;
         }
         if (AppVariables.fileRecentNumber <= 0) {
-            selectFile();
             return;
         }
         new RecentVisitMenu(this, event) {
@@ -307,7 +306,8 @@ public class ControlFileSelecter extends BaseController {
 
     @FXML
     public void pickRecentFiles(Event event) {
-        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
+                || AppVariables.fileRecentNumber <= 0) {
             selectFile();
         } else {
             showRecentFilesMenu(event);

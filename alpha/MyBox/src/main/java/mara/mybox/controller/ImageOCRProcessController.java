@@ -30,19 +30,13 @@ import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.bufferedimage.TransformTools;
 import mara.mybox.db.data.ConvolutionKernel;
-import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.OCRTools;
 import mara.mybox.value.AppPaths;
-import mara.mybox.value.AppVariables;
-import mara.mybox.value.FileFilters;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -598,85 +592,6 @@ public class ImageOCRProcessController extends ImageViewerController {
                 protected void whenSucceeded() {
                     loadImage(ocrImage);
 
-                }
-
-            };
-            OCRController.start(task);
-        }
-    }
-
-    @FXML
-    public void popSavePreprocess(MouseEvent event) { //
-        if (AppVariables.fileRecentNumber <= 0) {
-            return;
-        }
-        new RecentVisitMenu(this, event) {
-            @Override
-            public List<VisitHistory> recentFiles() {
-                return null;
-            }
-
-            @Override
-            public List<VisitHistory> recentPaths() {
-                return VisitHistoryTools.getRecentPathWrite(VisitHistory.FileType.Image);
-            }
-
-            @Override
-            public void handleSelect() {
-                savePreprocessAction();
-            }
-
-            @Override
-            public void handleFile(String fname) {
-
-            }
-
-            @Override
-            public void handlePath(String fname) {
-                File file = new File(fname);
-                if (!file.exists()) {
-                    handleSelect();
-                    return;
-                }
-                UserConfig.setString(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image), fname);
-                handleSelect();
-            }
-
-        }.pop();
-    }
-
-    @FXML
-    public void savePreprocessAction() {
-        if (imageView.getImage() == null) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-
-            String name = (sourceFile != null ? FileNameTools.prefix(sourceFile.getName()) : "") + "_preprocessed";
-            final File file = chooseSaveFile(UserConfig.getPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image)),
-                    name, FileFilters.ImageExtensionFilter);
-            if (file == null) {
-                return;
-            }
-            recordFileWritten(file, VisitHistory.FileType.Image);
-
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    String format = FileNameTools.suffix(file.getName());
-                    BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imageView.getImage(), null);
-                    return ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (OCRController.LoadCheck.isSelected()) {
-                        OCRController.sourceFileChanged(file);
-                    }
                 }
 
             };

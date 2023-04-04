@@ -34,43 +34,43 @@ License:    Apache License Version 2.0
                 <Hyperlink onAction="#aboutCoordinateSystem" text="%AboutCoordinateSystem" />
             </children>
         </HBox>
-          <VBox fx:id="mapBox" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-              <children>
-                  <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
-                      <children>
-                          <Label text="%Map" />
-                          <RadioButton fx:id="tiandituRadio" mnemonicParsing="false" text="%TianDiTu">
-                              <toggleGroup>
-                                  <ToggleGroup fx:id="mapGroup" />
-                              </toggleGroup>
-                          </RadioButton>
-                          <RadioButton fx:id="gaodeRadio" mnemonicParsing="false" selected="true" text="%GaoDe" toggleGroup="$mapGroup" />
-                      </children>
-                  </FlowPane>
-                  <FlowPane hgap="5.0" layoutX="15.0" layoutY="15.0" vgap="5.0">
-                      <children>
-                          <Label text="%Coordinate" />
-                          <RadioButton fx:id="cgcs2000Radio" mnemonicParsing="false" selected="true" text="CGCS2000">
-                              <toggleGroup>
-                                  <ToggleGroup fx:id="coordinateGroup" />
-                              </toggleGroup>
-                          </RadioButton>
-                          <RadioButton fx:id="gcj02Radio" mnemonicParsing="false" text="GCJ-02" toggleGroup="$coordinateGroup" />
-                      </children>
-                  </FlowPane>
-                  <FlowPane hgap="5.0" layoutX="15.0" layoutY="56.0" vgap="5.0">
-                      <children>
-                          <Label text="%Projection" />
-                          <RadioButton fx:id="mercatorRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%EPSG900913" wrapText="true">
-                              <toggleGroup>
-                                  <ToggleGroup fx:id="projectionGroup" />
-                              </toggleGroup>
-                          </RadioButton>
-                          <RadioButton fx:id="geodeticRadio" minHeight="-Infinity" mnemonicParsing="false" text="%EPSG4326" toggleGroup="$projectionGroup" wrapText="true" />
-                      </children>
-                  </FlowPane>
-              </children>
-          </VBox>
+        <VBox fx:id="mapBox" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+            <children>
+                <FlowPane hgap="5.0" vgap="5.0" VBox.vgrow="NEVER">
+                    <children>
+                        <Label text="%Map" />
+                        <RadioButton fx:id="tiandituRadio" mnemonicParsing="false" text="%TianDiTu">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="mapGroup" />
+                            </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="gaodeRadio" mnemonicParsing="false" selected="true" text="%GaoDe" toggleGroup="$mapGroup" />
+                    </children>
+                </FlowPane>
+                <FlowPane hgap="5.0" layoutX="15.0" layoutY="15.0" vgap="5.0">
+                    <children>
+                        <Label text="%Coordinate" />
+                        <RadioButton fx:id="cgcs2000Radio" mnemonicParsing="false" selected="true" text="CGCS2000">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="coordinateGroup" />
+                            </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="gcj02Radio" mnemonicParsing="false" text="GCJ-02" toggleGroup="$coordinateGroup" />
+                    </children>
+                </FlowPane>
+                <FlowPane hgap="5.0" layoutX="15.0" layoutY="56.0" vgap="5.0">
+                    <children>
+                        <Label text="%Projection" />
+                        <RadioButton fx:id="mercatorRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%EPSG900913" wrapText="true">
+                            <toggleGroup>
+                                <ToggleGroup fx:id="projectionGroup" />
+                            </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="geodeticRadio" minHeight="-Infinity" mnemonicParsing="false" text="%EPSG4326" toggleGroup="$projectionGroup" wrapText="true" />
+                    </children>
+                </FlowPane>
+            </children>
+        </VBox>
         <VBox fx:id="optionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
             <children>
                 <VBox fx:id="sizeBox" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
@@ -105,7 +105,7 @@ License:    Apache License Version 2.0
                             <children>
                                 <RadioButton fx:id="markerImageRadio" mnemonicParsing="false" text="%Image" toggleGroup="$markerImageGroup" />
                                 <TextField fx:id="markerImageInput" prefWidth="160.0" />
-                                <Button fx:id="selectFileMarkerButton" mnemonicParsing="false" onAction="#selectMarkerImage" onMouseEntered="#popMarkerImage">
+                                <Button fx:id="selectFileMarkerButton" mnemonicParsing="false" onAction="#pickMarkerImage" onMouseEntered="#popMarkerImage">
                                     <graphic>
                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                             <image>

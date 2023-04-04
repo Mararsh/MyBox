@@ -138,8 +138,6 @@ public class StylePrefix {
                 return new StyleData(id, message("OK"), "", "iconOK.png");
             case "settingsJVMButton":
                 return new StyleData(id, message("OK"), "", "iconOK.png");
-            case "settingsRecentNotButton":
-                return new StyleData(id, message("NotRecord"), "", "iconCancel.png");
             case "settingsRecentClearButton":
                 return new StyleData(id, message("Clear"), "", "iconClear.png");
             case "settingsChangeRootButton":

@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
@@ -42,6 +43,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
     protected List<Line> maskPolylineLines;
     protected DoubleLines maskPenData;
     protected List<List<Line>> maskPenLines;
+    protected final SimpleBooleanProperty rectDrawnNotify;
 
     @FXML
     protected Rectangle maskRectangleLine, leftCenterHandler, topLeftHandler, topCenterHandler, topRightHandler,
@@ -55,6 +57,10 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
     protected Polygon maskPolygonLine;
     @FXML
     protected Polyline maskPolyline;
+
+    public BaseImageController_Shapes() {
+        rectDrawnNotify = new SimpleBooleanProperty(false);
+    }
 
     @Override
     public void viewSizeChanged(double change) {
@@ -312,7 +318,9 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                     topLeftHandler, topCenterHandler, topRightHandler,
                     bottomLeftHandler, bottomCenterHandler, bottomRightHandler);
             maskRectangleLine.setVisible(false);
+            rectDrawnNotify.set(!rectDrawnNotify.get());
         }
+
     }
 
     public void setDafultMaskRectangleValues() {
@@ -406,6 +414,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             rightCenterHandler.setLayoutX(lineX + maskRectangleLine.getWidth() - anchorHW);
             rightCenterHandler.setLayoutY(lineY + maskRectangleLine.getHeight() / 2 - anchorHW);
 
+            rectDrawnNotify.set(!rectDrawnNotify.get());
             updateLabelsTitle();
             return true;
         } catch (Exception e) {

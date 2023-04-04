@@ -758,14 +758,6 @@ public class SettingsController extends BaseController {
         popSuccessful();
     }
 
-    @FXML
-    protected void noFileHistories(ActionEvent event) {
-        fileRecentInput.setText("0");
-        UserConfig.setInt("FileRecentNumber", 0);
-        AppVariables.fileRecentNumber = 0;
-        popSuccessful();
-    }
-
     public void setDerbyMode() {
         isSettingValues = true;
         if (DerbyStatus.Nerwork == DerbyBase.status) {

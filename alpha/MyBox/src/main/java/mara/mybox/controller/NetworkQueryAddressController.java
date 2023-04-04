@@ -18,7 +18,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.MouseEvent;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import mara.mybox.db.data.VisitHistory;
@@ -283,8 +282,7 @@ public class NetworkQueryAddressController extends HtmlTableController {
         }
     }
 
-    @FXML
-    public void popSaveCert(MouseEvent event) { //
+    public void showSaveCertMenu(Event event) { //
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
@@ -315,6 +313,23 @@ public class NetworkQueryAddressController extends HtmlTableController {
             }
 
         }.setFileType(VisitHistory.FileType.Cert).pop();
+    }
+
+    @FXML
+    public void pickSaveCert(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
+                || AppVariables.fileRecentNumber <= 0) {
+            saveCert();
+        } else {
+            showSaveCertMenu(event);
+        }
+    }
+
+    @FXML
+    public void popSaveCert(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            showSaveCertMenu(event);
+        }
     }
 
 }

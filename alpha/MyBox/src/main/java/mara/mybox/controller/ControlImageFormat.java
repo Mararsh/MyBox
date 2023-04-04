@@ -8,6 +8,7 @@ import java.util.List;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -16,7 +17,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -491,8 +491,7 @@ public class ControlImageFormat extends BaseController {
         attributes.setDensity(dpi);
     }
 
-    @FXML
-    public void popIccFile(MouseEvent event) {
+    public void showIccFileMenu(Event event) {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
@@ -530,6 +529,23 @@ public class ControlImageFormat extends BaseController {
             }
 
         }.pop();
+    }
+
+    @FXML
+    public void pickIccFile(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
+                || AppVariables.fileRecentNumber <= 0) {
+            selectIccAction();
+        } else {
+            showIccFileMenu(event);
+        }
+    }
+
+    @FXML
+    public void popIccFile(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            showIccFileMenu(event);
+        }
     }
 
     @FXML

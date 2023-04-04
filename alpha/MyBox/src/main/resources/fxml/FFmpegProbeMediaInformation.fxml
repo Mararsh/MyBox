@@ -59,7 +59,7 @@ License:    Apache License Version 2.0
                             <children>
                                 <Label text="%Media" />
                                 <TextField fx:id="sourceFileInput" maxWidth="1.7976931348623157E308" promptText="%InputMediaFileOrAddress" HBox.hgrow="ALWAYS" />
-                                <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#selectSourceFile" onMouseEntered="#popMedia">
+                                <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#pickMedia" onMouseEntered="#popMedia">
                                     <graphic>
                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -79,21 +79,21 @@ License:    Apache License Version 2.0
                                 </Button>
                             </children>
                         </HBox>
-                  <HBox alignment="CENTER_LEFT" spacing="5.0">
-                     <children>
-                        <Label text="%Output" />
-                        <RadioButton layoutX="39.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Default">
-                           <toggleGroup>
-                              <ToggleGroup fx:id="outputGroup" />
-                           </toggleGroup>
-                        </RadioButton>
-                        <RadioButton mnemonicParsing="false" text="json" toggleGroup="$outputGroup" />
-                        <RadioButton mnemonicParsing="false" text="xml" toggleGroup="$outputGroup" />
-                        <RadioButton layoutX="89.0" layoutY="10.0" mnemonicParsing="false" text="csv" toggleGroup="$outputGroup" />
-                        <RadioButton layoutX="136.0" layoutY="10.0" mnemonicParsing="false" text="ini" toggleGroup="$outputGroup" />
-                        <RadioButton layoutX="183.0" layoutY="10.0" mnemonicParsing="false" text="flat" toggleGroup="$outputGroup" />
-                     </children>
-                  </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="5.0">
+                            <children>
+                                <Label text="%Output" />
+                                <RadioButton layoutX="39.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="%Default">
+                                    <toggleGroup>
+                                        <ToggleGroup fx:id="outputGroup" />
+                                    </toggleGroup>
+                                </RadioButton>
+                                <RadioButton mnemonicParsing="false" text="json" toggleGroup="$outputGroup" />
+                                <RadioButton mnemonicParsing="false" text="xml" toggleGroup="$outputGroup" />
+                                <RadioButton layoutX="89.0" layoutY="10.0" mnemonicParsing="false" text="csv" toggleGroup="$outputGroup" />
+                                <RadioButton layoutX="136.0" layoutY="10.0" mnemonicParsing="false" text="ini" toggleGroup="$outputGroup" />
+                                <RadioButton layoutX="183.0" layoutY="10.0" mnemonicParsing="false" text="flat" toggleGroup="$outputGroup" />
+                            </children>
+                        </HBox>
                         <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                             <tabs>
                                 <Tab fx:id="formatTab" text="%Format">
@@ -106,33 +106,33 @@ License:    Apache License Version 2.0
                                         <TextArea fx:id="streamsArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
                                     </content>
                                 </Tab>
-                        <Tab fx:id="queryTab" text="%Query">
-                           <content>
-                              <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                 <children>
-                                    <HBox maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
-                                       <children>
-                                          <ComboBox fx:id="querySelector" prefWidth="200.0" />
-                                          <TextField fx:id="queryInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                          <Button fx:id="goButton" mnemonicParsing="false" onAction="#goAction">
-                                             <graphic>
-                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/Red/iconGo.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
-                                       </children>
-                                    </HBox>
-                                    <TextArea fx:id="queryArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
-                                 </children>
-                                 <padding>
-                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                 </padding>
-                              </VBox>
-                           </content>
-                        </Tab>
+                                <Tab fx:id="queryTab" text="%Query">
+                                    <content>
+                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                            <children>
+                                                <HBox maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <ComboBox fx:id="querySelector" prefWidth="200.0" />
+                                                        <TextField fx:id="queryInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                        <Button fx:id="goButton" mnemonicParsing="false" onAction="#goAction">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconGo.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                    </children>
+                                                </HBox>
+                                                <TextArea fx:id="queryArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                                            </children>
+                                            <padding>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                            </padding>
+                                        </VBox>
+                                    </content>
+                                </Tab>
                             </tabs>
                         </TabPane>
                     </children>

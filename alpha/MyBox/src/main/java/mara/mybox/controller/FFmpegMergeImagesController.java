@@ -297,6 +297,10 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
                 parameters.add("-i");
                 parameters.add(audiosListFile.getAbsolutePath());
             }
+
+            parameters.add("-c");
+            parameters.add("copy");
+
             if (ffmpegOptionsController.shortestCheck.isSelected()) {
                 parameters.add("-shortest");
             }

@@ -33,7 +33,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="streamMediaButton" mnemonicParsing="false" onAction="#addLinkAction" onMouseEntered="#popMediasLink">
+                <Button fx:id="streamMediaButton" mnemonicParsing="false" onAction="#pickMediasLink" onMouseEntered="#popMediasLink">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>

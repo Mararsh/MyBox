@@ -12,7 +12,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.DirectoryChooser;
 import jdk.jshell.JShell;
@@ -110,8 +109,7 @@ public class JShellPaths extends BaseController {
         recordFileOpened(file);
     }
 
-    @FXML
-    public void popJarFiles(MouseEvent event) {
+    public void showJarFilesMenu(Event event) {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
@@ -133,6 +131,23 @@ public class JShellPaths extends BaseController {
             }
 
         }.pop();
+    }
+
+    @FXML
+    public void pickJarFiles(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
+                || AppVariables.fileRecentNumber <= 0) {
+            selectJar();
+        } else {
+            showJarFilesMenu(event);
+        }
+    }
+
+    @FXML
+    public void popJarFiles(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            showJarFilesMenu(event);
+        }
     }
 
     @FXML
@@ -160,8 +175,7 @@ public class JShellPaths extends BaseController {
         recordFileOpened(directory);
     }
 
-    @FXML
-    public void popJarPath(MouseEvent event) {
+    public void showJarPathMenu(Event event) {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
@@ -196,6 +210,23 @@ public class JShellPaths extends BaseController {
             }
 
         }.pop();
+    }
+
+    @FXML
+    public void pickJarPath(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
+                || AppVariables.fileRecentNumber <= 0) {
+            selectPath();
+        } else {
+            showJarPathMenu(event);
+        }
+    }
+
+    @FXML
+    public void popJarPath(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            showJarPathMenu(event);
+        }
     }
 
     @FXML

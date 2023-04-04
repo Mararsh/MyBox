@@ -8,6 +8,7 @@ License:    Apache License Version 2.0
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.image.Image?>
@@ -44,6 +45,15 @@ License:    Apache License Version 2.0
                </graphic>
             </Button>
             <Label fx:id="label" maxWidth="1.7976931348623157E308" wrapText="true" HBox.hgrow="ALWAYS" />
+            <CheckBox fx:id="popCheck" mnemonicParsing="false">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconPop.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </CheckBox>
             <Button fx:id="functionsButton" mnemonicParsing="false" onMouseEntered="#popDataMenu">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

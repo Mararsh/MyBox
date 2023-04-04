@@ -10,7 +10,7 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class VisitHistory extends BaseData {
 
-    public static final int Default_Max_Histories = 16;
+    public static final int Default_Max_Histories = 12;
 
     private short resourceType, fileType, operationType;
     private String resourceValue, dataMore;

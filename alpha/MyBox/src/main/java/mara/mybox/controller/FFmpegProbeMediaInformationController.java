@@ -12,6 +12,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
@@ -24,7 +25,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
@@ -174,7 +174,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
     }
 
     @FXML
-    public void popMedia(MouseEvent event) {
+    public void showMediaMenu(Event event) {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
@@ -303,6 +303,23 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
             }
 
         }.pop();
+    }
+
+    @FXML
+    public void pickMedia(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
+                || AppVariables.fileRecentNumber <= 0) {
+            selectSourceFile();
+        } else {
+            showMediaMenu(event);
+        }
+    }
+
+    @FXML
+    public void popMedia(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            showMediaMenu(event);
+        }
     }
 
     @FXML
