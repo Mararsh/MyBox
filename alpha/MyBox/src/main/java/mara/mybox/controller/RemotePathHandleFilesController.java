@@ -83,7 +83,7 @@ public abstract class RemotePathHandleFilesController extends BaseTaskController
         try {
             String texts = namesArea.getText();
             if (texts == null || texts.isBlank()) {
-                popError(message("InvalidParameters"));
+                popError(message("InvalidParameters") + ": " + message("Files"));
                 return false;
             }
             names = new ArrayList<>();
@@ -101,11 +101,11 @@ public abstract class RemotePathHandleFilesController extends BaseTaskController
             if (!checkParameters()) {
                 return false;
             }
-
             if (manageController.task != null) {
                 manageController.task.cancel();
             }
             manageController.tabPane.getSelectionModel().select(manageController.logsTab);
+            manageController.initLogs();
             manageController.requestMouse();
             return true;
         } catch (Exception e) {

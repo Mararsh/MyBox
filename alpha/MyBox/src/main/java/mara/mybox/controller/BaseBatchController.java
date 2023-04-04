@@ -400,7 +400,6 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         }
         isPreview = false;
         if (!makeActualParameters()) {
-            popError(message("InvalidParameters"));
             actualParameters = null;
             return;
         }
@@ -489,6 +488,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     public boolean makeMoreParameters() {
         try {
             if (tableData == null || tableData.isEmpty()) {
+                popError(message("NoData"));
                 actualParameters = null;
                 return false;
             }
@@ -524,7 +524,6 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
 
     public boolean makePreviewParameters() {
         if (!makeActualParameters()) {
-            popError(message("Invalid"));
             actualParameters = null;
             return false;
         }

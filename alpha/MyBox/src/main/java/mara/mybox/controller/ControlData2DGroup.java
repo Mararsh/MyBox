@@ -193,6 +193,7 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
             } else if (conditionsRadio.isSelected()) {
                 groupBox.getChildren().addAll(conditionsBox, labelBox);
                 commentsLabel.setText(message("GroupConditionsComments"));
+                refreshStyle(conditionsBox);
 
             }
 
@@ -505,6 +506,7 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
     public void editAction() {
         int index = selectedIndix();
         if (index < 0) {
+            popError(message("SelectToHandle"));
             return;
         }
         DataFilter selected = tableData.get(index);

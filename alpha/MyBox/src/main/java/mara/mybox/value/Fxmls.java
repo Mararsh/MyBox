@@ -414,7 +414,7 @@ public class Fxmls {
     public static final String TextClipboardPopFxml = "/fxml/TextClipboardPop.fxml";
     public static final String FindReplacePopFxml = "/fxml/FindReplacePop.fxml";
     public static final String FindPopFxml = "/fxml/FindPop.fxml";
-    public static final String ColorsPopFxml = "/fxml/ColorsPop.fxml";
+    public static final String ColorsPickingFxml = "/fxml/ColorsPicking.fxml";
 
     public static final String SettingsFxml = "/fxml/Settings.fxml";
     public static final String ClearExpiredDataFxml = "/fxml/ClearExpiredData.fxml";

@@ -448,16 +448,6 @@ public class RemotePathManageController extends FilesTreeController {
         start(task);
     }
 
-    @FXML
-    @Override
-    public void openTarget() {
-        try {
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
     public void popFunctionsMenu(Event event) {
         if (getMyWindow() == null) {
             return;
@@ -507,7 +497,7 @@ public class RemotePathManageController extends FilesTreeController {
 
         items.add(new SeparatorMenuItem());
 
-        menuItem = new MenuItem(message("MakeDirectory"), StyleTools.getIconImageView("iconAdd.png"));
+        menuItem = new MenuItem(message("MakeDirectory"), StyleTools.getIconImageView("iconNewItem.png"));
         menuItem.setOnAction((ActionEvent menuItemEvent) -> {
             makeDirectory();
         });

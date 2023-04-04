@@ -3,6 +3,13 @@
 # MyBox: Set of Easy Tools
 This is desktop application based on JavaFx to provide simple and easy functions. It's free and open sources.
 
+## Notice         
+Without enough testings, MyBox has low reliability and bad stability. When use MyBox, following may happen:         
+* Files/Data are damaged.       
+* Output wrong results.      
+* Functions fail.      
+* Unexpected behaviours.      
+
 ## Latest Versions       
 Contents of this document may be expired, but its links refer to the latest versions.     
 
@@ -83,12 +90,6 @@ Run following command to launch this program with Jar package:
 
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:        
 <PRE><CODE>     java   -jar   MyBox.jar   /tmp/a1.jpg</CODE></PRE>        
-
-
-## Limitation        
-* Without enough testings, MyBox has low reliability. Data damage may happen.       
-* New functions being added and codes being improved continually, MyBox has bad stability. Unexpected function failures may happen.      
-* MyBox windows may often be blocked when some Input Method is running. Workaround is to disable/uninstall this Input Method.        
 
 ## Migration
 1. Each version has itself's configuration file. New version can copy parameters from existed versions.             

@@ -165,6 +165,9 @@ public class DataMigration {
                 if (lastVersion < 6007001) {
                     updateIn671(conn);
                 }
+                if (lastVersion < 6007002) {
+                    updateIn672();
+                }
             }
             TableStringValues.add(conn, "InstalledVersions", AppValues.AppVersion);
             conn.setAutoCommit(true);
@@ -172,6 +175,29 @@ public class DataMigration {
             MyBoxLog.debug(e.toString());
         }
         return true;
+    }
+
+    private static void updateIn672() {
+        try {
+            MyBoxLog.info("Updating tables in 6.7.2...");
+
+            File dir = new File(AppVariables.MyboxDataPath + File.separator + "image");
+            File[] list = dir.listFiles();
+            if (list == null) {
+                return;
+            }
+            for (File file : list) {
+                if (file.isDirectory()) {
+                    continue;
+                }
+                String name = file.getName();
+                if (name.startsWith("icon") && name.endsWith(".png")) {
+                    file.delete();
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     private static void updateIn671(Connection conn) {
@@ -1542,7 +1568,6 @@ public class DataMigration {
                     FxFileTools.getInternalFile("/doc/zh/MyBox-Overview-zh.pdf", "doc", "MyBox-Overview-zh.pdf", true);
                     FxFileTools.getInternalFile("/doc/en/README.md", "doc", "README-en.md", true);
                     FxFileTools.getInternalFile("/doc/en/MyBox-Overview-en.pdf", "doc", "MyBox-Overview-en.pdf", true);
-                    FileDeleteTools.clearDir(new File(AppVariables.MyboxDataPath + File.separator + "image"));
                     MyBoxLog.info("Internal doc loaded.");
                 } catch (Exception e) {
                     MyBoxLog.console(e.toString());

@@ -2,6 +2,8 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +17,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -29,7 +31,7 @@ public class FunctionsListController extends ControlWebView {
     protected Map<String, MenuItem> map;
 
     public FunctionsListController() {
-        baseTitle = Languages.message("FunctionsList");
+        baseTitle = message("FunctionsList");
     }
 
     @Override
@@ -64,11 +66,14 @@ public class FunctionsListController extends ControlWebView {
         try {
             super.afterSceneLoaded();
 
-            table = new StringTable(Languages.message("FunctionsList"));
+            List<String> names = new ArrayList<>();
+            names.addAll(Arrays.asList(message("Level") + " 1", message("Level") + " 2",
+                    message("Level") + " 3", message("Go")));
+            table = new StringTable(names, message("FunctionsList"));
             map = new HashMap<>();
             List<Menu> menus = mainMenuController.menuBar.getMenus();
             for (Menu menu : menus) {
-                menu(menu, 1);
+                menu(menu, 0);
             }
             webView.getEngine().loadContent(table.html());
 
@@ -94,18 +99,17 @@ public class FunctionsListController extends ControlWebView {
         if (name == null || name.isBlank()) {
             return;
         }
-        String indent = "";
-        for (int i = 0; i < level * 4; i++) {
-            indent += "&nbsp;&nbsp;";
-        }
         String link;
         if (menu.getOnAction() != null) {
-            link = "<a><img src=\"" + goImageFile + "\" onclick=\"alert('" + name + "')\" alt=\"" + Languages.message("Go") + "\"></a>";
+            link = "<a><img src=\"" + goImageFile + "\" onclick=\"alert('" + name + "')\" alt=\"" + message("Go") + "\"></a>";
             map.put(name, menu);
         } else {
             link = "";
         }
-        table.newNameValueRow(indent + name, link);
+        List<String> row = new ArrayList<>();
+        row.addAll(Arrays.asList("", "", "", link));
+        row.set(level, name);
+        table.add(row);
 
     }
 

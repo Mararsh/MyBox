@@ -18,12 +18,12 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-7-22
  * @License Apache License Version 2.0
  */
-public class ColorsPopController extends ColorsManageController {
+public class ColorsPickingController extends ColorsManageController {
 
     @FXML
     protected CheckBox onlyNewCheck;
 
-    public ColorsPopController() {
+    public ColorsPickingController() {
         baseTitle = Languages.message("PickingColorsNow");
     }
 
@@ -83,16 +83,18 @@ public class ColorsPopController extends ColorsManageController {
     /*
         static methods
      */
-    public static ColorsPopController oneOpen(BaseController parent) {
+    public static ColorsPickingController oneOpen(BaseController parent) {
         List<Window> windows = new ArrayList<>();
         windows.addAll(Window.getWindows());
         for (Window window : windows) {
             Object object = window.getUserData();
-            if (object != null && object instanceof ColorsPopController) {
-                ((ColorsPopController) object).close();
+            if (object != null && object instanceof ColorsPickingController) {
+                ((ColorsPickingController) object).close();
             }
         }
-        ColorsPopController controller = (ColorsPopController) WindowTools.openChildStage(parent.getMyStage(), Fxmls.ColorsPopFxml, false);
+        ColorsPickingController controller
+                = (ColorsPickingController) WindowTools.openChildStage(parent.getMyStage(),
+                        Fxmls.ColorsPickingFxml, false);
         controller.setParameters(parent);
         return controller;
     }

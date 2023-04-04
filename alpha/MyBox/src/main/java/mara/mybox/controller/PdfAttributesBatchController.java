@@ -22,7 +22,7 @@ import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
@@ -62,7 +62,7 @@ public class PdfAttributesBatchController extends BaseBatchPdfController {
     protected ToggleGroup protectionGroup;
 
     public PdfAttributesBatchController() {
-        baseTitle = Languages.message("PDFAttributesBatch");
+        baseTitle = message("PDFAttributesBatch");
     }
 
     @Override
@@ -346,11 +346,11 @@ public class PdfAttributesBatchController extends BaseBatchPdfController {
     public boolean makeActualParameters() {
         if (changeProtectionRadio.isSelected()) {
             if (newUserPassword != null || newOwnerPassword != null) {
-                if (!PopTools.askSure(getTitle(), Languages.message("SureSetPasswords"))) {
+                if (!PopTools.askSure(getTitle(), message("SureSetPasswords"))) {
                     return false;
                 }
             } else {
-                if (!PopTools.askSure(getTitle(), Languages.message("SureUnsetPasswords"))) {
+                if (!PopTools.askSure(getTitle(), message("SureUnsetPasswords"))) {
                     return false;
                 }
             }
@@ -366,7 +366,7 @@ public class PdfAttributesBatchController extends BaseBatchPdfController {
             String filePassword = rowInfo.getUserPassword();
             File tmpFile = TmpFileTools.getTempFile();
             FileCopyTools.copyFile(srcFile, tmpFile);
-            try ( PDDocument pd = PDDocument.load(tmpFile, filePassword, AppVariables.pdfMemUsage)) {
+            try (PDDocument pd = PDDocument.load(tmpFile, filePassword, AppVariables.pdfMemUsage)) {
                 PDDocumentInformation docInfo = pd.getDocumentInformation();
                 if (authorCheck.isSelected()) {
                     docInfo.setAuthor(authorInput.getText());
@@ -424,13 +424,13 @@ public class PdfAttributesBatchController extends BaseBatchPdfController {
                 pd.close();
             }
             if (FileTools.rename(tmpFile, srcFile, true)) {
-                return Languages.message("Successful");
+                return message("Successful");
             } else {
-                return Languages.message("Failed");
+                return message("Failed");
             }
 
         } catch (InvalidPasswordException e) {
-            return Languages.message("PasswordIncorrect");
+            return message("PasswordIncorrect");
         } catch (Exception e) {
             return e.toString();
         }

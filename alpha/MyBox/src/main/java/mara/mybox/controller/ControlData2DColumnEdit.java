@@ -427,6 +427,11 @@ public class ControlData2DColumnEdit extends BaseChildController {
             values.add(TimeFormats.Year);
             values.add(TimeFormats.TimeMs);
             values.add(TimeFormats.DatetimeZone);
+            values.add(TimeFormats.DatetimeC);
+            values.add(TimeFormats.DatetimeMsC);
+            values.add(TimeFormats.DateC);
+            values.add(TimeFormats.MonthC);
+            values.add(TimeFormats.DatetimeZoneC);
             values.add(TimeFormats.DatetimeE);
             values.add(TimeFormats.DatetimeMsE);
             values.add(TimeFormats.DateE);
@@ -439,6 +444,8 @@ public class ControlData2DColumnEdit extends BaseChildController {
             values.add(TimeFormats.Date);
             values.add(TimeFormats.Month);
             values.add(TimeFormats.Year);
+            values.add(TimeFormats.DateC);
+            values.add(TimeFormats.MonthC);
             values.add(TimeFormats.DateE);
             values.add(TimeFormats.MonthE);
             popExamples(event, values, message("DateFormat"), HelpTools.simpleDateFormatLink());

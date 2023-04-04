@@ -34,7 +34,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.OCRTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TmpFileTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import net.sourceforge.tess4j.ITessAPI.TessPageIteratorLevel;
 import net.sourceforge.tess4j.ITesseract;
@@ -69,7 +69,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
     protected ControlOCROptions ocrOptionsController;
 
     public ImageOCRBatchController() {
-        baseTitle = Languages.message("ImageOCRBatch");
+        baseTitle = message("ImageOCRBatch");
         browseTargets = false;
     }
 
@@ -134,14 +134,14 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                 }
             });
 
-            algorithmSelector.getItems().addAll(Arrays.asList(Languages.message("EdgeDetection") + "-" + Languages.message("EightNeighborLaplaceInvert"),
-                    Languages.message("EdgeDetection") + "-" + Languages.message("EightNeighborLaplace"),
-                    Languages.message("HSBHistogramEqualization"), Languages.message("GrayHistogramEqualization"),
-                    Languages.message("GrayHistogramStretching"), Languages.message("GrayHistogramShifting"),
-                    Languages.message("UnsharpMasking"),
-                    Languages.message("Enhancement") + "-" + Languages.message("EightNeighborLaplace"),
-                    Languages.message("Enhancement") + "-" + Languages.message("FourNeighborLaplace"),
-                    Languages.message("GaussianBlur"), Languages.message("AverageBlur")
+            algorithmSelector.getItems().addAll(Arrays.asList(message("EdgeDetection") + "-" + message("EightNeighborLaplaceInvert"),
+                    message("EdgeDetection") + "-" + message("EightNeighborLaplace"),
+                    message("HSBHistogramEqualization"), message("GrayHistogramEqualization"),
+                    message("GrayHistogramStretching"), message("GrayHistogramShifting"),
+                    message("UnsharpMasking"),
+                    message("Enhancement") + "-" + message("EightNeighborLaplace"),
+                    message("Enhancement") + "-" + message("FourNeighborLaplace"),
+                    message("GaussianBlur"), message("AverageBlur")
             ));
 
             rotate = 0;
@@ -228,13 +228,13 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                 tesseractVersion = ocrOptionsController.tesseractVersion();
                 File tesseract = ocrOptionsController.tesseractPathController.file();
                 if (!tesseract.exists()) {
-                    popError(Languages.message("InvalidParameters"));
+                    popError(message("InvalidParameters"));
                     ocrOptionsController.tesseractPathController.fileInput.setStyle(UserConfig.badStyle());
                     return false;
                 }
                 File dataPath = ocrOptionsController.dataPathController.file();
                 if (!dataPath.exists()) {
-                    popError(Languages.message("InvalidParameters"));
+                    popError(message("InvalidParameters"));
                     ocrOptionsController.dataPathController.fileInput.setStyle(UserConfig.badStyle());
                     return false;
                 }
@@ -254,7 +254,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                 }
                 TextFileTools.writeFile(configFile, s, Charset.forName("utf-8"));
                 if (!configFile.exists()) {
-                    popError(Languages.message("NotFound") + ":" + configFile);
+                    popError(message("NotFound") + ":" + configFile);
                     return false;
                 }
             }
@@ -279,11 +279,11 @@ public class ImageOCRBatchController extends BaseBatchImageController {
         try {
             File target = makeTargetFile(srcFile, targetPath);
             if (target == null) {
-                return Languages.message("Skip");
+                return message("Skip");
             }
             lastImage = preprocess(srcFile);
             if (lastImage == null) {
-                return Languages.message("Failed");
+                return message("Failed");
             }
 
             boolean ret;
@@ -293,13 +293,13 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                 ret = command(srcFile, target);
             }
             if (ret) {
-                return Languages.message("Successful");
+                return message("Successful");
             } else {
-                return Languages.message("Failed");
+                return message("Failed");
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-            return Languages.message("Failed");
+            return message("Failed");
         }
     }
 
@@ -324,66 +324,66 @@ public class ImageOCRBatchController extends BaseBatchImageController {
 
             String algorithm = algorithmSelector.getValue();
             if (algorithm == null || algorithm.trim().isEmpty()) {
-            } else if (Languages.message("GrayHistogramEqualization").equals(algorithm)) {
+            } else if (message("GrayHistogramEqualization").equals(algorithm)) {
                 ImageContrast imageContrast = new ImageContrast(lastImage,
                         ImageContrast.ContrastAlgorithm.Gray_Histogram_Equalization);
                 lastImage = imageContrast.operateImage();
 
-            } else if (Languages.message("GrayHistogramStretching").equals(algorithm)) {
+            } else if (message("GrayHistogramStretching").equals(algorithm)) {
                 ImageContrast imageContrast = new ImageContrast(lastImage,
                         ImageContrast.ContrastAlgorithm.Gray_Histogram_Stretching);
                 imageContrast.setIntPara1(100);
                 imageContrast.setIntPara2(100);
                 lastImage = imageContrast.operateImage();
 
-            } else if (Languages.message("GrayHistogramShifting").equals(algorithm)) {
+            } else if (message("GrayHistogramShifting").equals(algorithm)) {
                 ImageContrast imageContrast = new ImageContrast(lastImage,
                         ImageContrast.ContrastAlgorithm.Gray_Histogram_Shifting);
                 imageContrast.setIntPara1(80);
                 lastImage = imageContrast.operateImage();
 
-            } else if (Languages.message("HSBHistogramEqualization").equals(algorithm)) {
+            } else if (message("HSBHistogramEqualization").equals(algorithm)) {
                 ImageContrast imageContrast = new ImageContrast(lastImage,
                         ImageContrast.ContrastAlgorithm.HSB_Histogram_Equalization);
                 lastImage = imageContrast.operateImage();
 
-            } else if (Languages.message("UnsharpMasking").equals(algorithm)) {
+            } else if (message("UnsharpMasking").equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeUnsharpMasking(3);
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
                 lastImage = imageConvolution.operateImage();
 
-            } else if ((Languages.message("Enhancement") + "-" + "FourNeighborLaplace").equals(algorithm)) {
+            } else if ((message("Enhancement") + "-" + "FourNeighborLaplace").equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
                 lastImage = imageConvolution.operateImage();
 
-            } else if ((Languages.message("Enhancement") + "-" + "EightNeighborLaplace").equals(algorithm)) {
+            } else if ((message("Enhancement") + "-" + "EightNeighborLaplace").equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
                 lastImage = imageConvolution.operateImage();
 
-            } else if (Languages.message("GaussianBlur").equals(algorithm)) {
+            } else if (message("GaussianBlur").equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeGaussBlur(3);
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
                 lastImage = imageConvolution.operateImage();
 
-            } else if (Languages.message("AverageBlur").equals(algorithm)) {
+            } else if (message("AverageBlur").equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeAverageBlur(1);
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
                 lastImage = imageConvolution.operateImage();
 
-            } else if ((Languages.message("EdgeDetection") + "-" + Languages.message("EightNeighborLaplaceInvert")).equals(algorithm)) {
+            } else if ((message("EdgeDetection") + "-" + message("EightNeighborLaplaceInvert")).equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplaceInvert().setGray(true);
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
                 lastImage = imageConvolution.operateImage();
 
-            } else if ((Languages.message("EdgeDetection") + "-" + Languages.message("EightNeighborLaplace")).equals(algorithm)) {
+            } else if ((message("EdgeDetection") + "-" + message("EightNeighborLaplace")).equals(algorithm)) {
                 ConvolutionKernel kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplace().setGray(true);
                 ImageConvolution imageConvolution = ImageConvolution.create().
                         setImage(lastImage).setKernel(kernel);
@@ -433,7 +433,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                     tmpPrefix, formats, TessPageIteratorLevel.RIL_SYMBOL);
             File tmpTextFile = new File(tmpPrefix + ".txt");
             if (!tmpTextFile.exists()) {
-                updateLogs(Languages.message("Failed" + ":" + tmpTextFile), true, true);
+                updateLogs(message("Failed" + ":" + tmpTextFile), true, true);
                 return false;
             }
             File textFile = new File(actualPrefix + ".txt");
@@ -460,10 +460,10 @@ public class ImageOCRBatchController extends BaseBatchImageController {
             if (ocrOptionsController.wordLevel >= 0) {
                 List<Word> words = OCRinstance.getWords(lastImage, ocrOptionsController.wordLevel);
                 List<String> names = new ArrayList<>();
-                names.addAll(Arrays.asList(Languages.message("Index"),
-                        Languages.message("Contents"), Languages.message("Confidence"),
-                        Languages.message("CoordinateX"), Languages.message("CoordinateY"),
-                        Languages.message("Width"), Languages.message("Height")
+                names.addAll(Arrays.asList(message("Index"),
+                        message("Contents"), message("Confidence"),
+                        message("CoordinateX"), message("CoordinateY"),
+                        message("Width"), message("Height")
                 ));
                 StringTable table = new StringTable(names, srcFile.getAbsolutePath());
                 for (int i = 0; i < words.size(); ++i) {
@@ -487,9 +487,9 @@ public class ImageOCRBatchController extends BaseBatchImageController {
             if (ocrOptionsController.regionLevel >= 0) {
                 List<Rectangle> rectangles = OCRinstance.getSegmentedRegions(lastImage, ocrOptionsController.regionLevel);
                 List<String> names = new ArrayList<>();
-                names.addAll(Arrays.asList(Languages.message("Index"),
-                        Languages.message("CoordinateX"), Languages.message("CoordinateY"),
-                        Languages.message("Width"), Languages.message("Height")
+                names.addAll(Arrays.asList(message("Index"),
+                        message("CoordinateX"), message("CoordinateY"),
+                        message("Width"), message("Height")
                 ));
                 StringTable table = new StringTable(names, srcFile.getAbsolutePath());
                 for (int i = 0; i < rectangles.size(); ++i) {
@@ -554,7 +554,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
 
             File tmpTextFile = new File(tmpPrefix + ".txt");
             if (!tmpTextFile.exists()) {
-                updateLogs(Languages.message("Failed" + ":" + outputs), true, true);
+                updateLogs(message("Failed" + ":" + outputs), true, true);
                 return false;
             }
             File textFile = new File(actualPrefix + ".txt");
@@ -605,7 +605,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
         if (textFiles != null && textFiles.size() > 1 && mergeCheck.isSelected()) {
             File mFile = new File(FileNameTools.append(textFiles.get(0).getAbsolutePath(), "_OCR_merged"));
             if (TextFileTools.mergeTextFiles(textFiles, mFile)) {
-                popInformation(MessageFormat.format(Languages.message("FilesGenerated"), mFile.getAbsolutePath()));
+                popInformation(MessageFormat.format(message("FilesGenerated"), mFile.getAbsolutePath()));
                 targetFileGenerated(mFile);
             }
         }

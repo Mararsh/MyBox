@@ -347,7 +347,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             List<MenuItem> group = new ArrayList<>();
 
             if (addButton != null && addButton.isVisible() && !addButton.isDisabled()) {
-                menu = new MenuItem(message("Add"), StyleTools.getIconImageView("iconAdd.png"));
+                menu = new MenuItem(message("Add"), StyleTools.getIconImageView("iconNewItem.png"));
                 menu.setOnAction((ActionEvent menuItemEvent) -> {
                     addAction();
                 });

@@ -78,7 +78,7 @@ public class FileTools {
                 return false;
             }
             synchronized (sourceFile) {
-                if (targetFile.exists() && !FileDeleteTools.delete(targetFile)) {
+                if (!FileDeleteTools.delete(targetFile)) {
                     return false;
                 }
                 System.gc();

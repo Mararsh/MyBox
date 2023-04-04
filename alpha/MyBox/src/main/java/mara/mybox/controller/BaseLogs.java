@@ -73,7 +73,7 @@ public class BaseLogs extends BaseController {
     public void initLogs() {
         if (logsTextArea != null) {
             if (!logsTextArea.getText().isBlank()) {
-                updateLogs("\n\n", false, true);
+                updateLogs("\n", false, true);
                 return;
             }
         }

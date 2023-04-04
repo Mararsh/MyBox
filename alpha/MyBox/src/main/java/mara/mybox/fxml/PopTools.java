@@ -679,6 +679,11 @@ public class PopTools {
             values.add(DateTools.datetimeToString(d, TimeFormats.Year));
             values.add(DateTools.datetimeToString(d, TimeFormats.TimeMs));
             values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeZone));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeC));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMsC));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DateC));
+            values.add(DateTools.datetimeToString(d, TimeFormats.MonthC));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeZoneC));
             values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeE));
             values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMsE));
             values.add(DateTools.datetimeToString(d, TimeFormats.DateE));
@@ -702,6 +707,8 @@ public class PopTools {
             values.add(DateTools.datetimeToString(d, TimeFormats.Date));
             values.add(DateTools.datetimeToString(d, TimeFormats.Month));
             values.add(DateTools.datetimeToString(d, TimeFormats.Year));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DateC));
+            values.add(DateTools.datetimeToString(d, TimeFormats.MonthC));
             values.add(DateTools.datetimeToString(d, TimeFormats.DateE));
             values.add(DateTools.datetimeToString(d, TimeFormats.MonthE));
             return popDateMenu(parent, inPopMenu, input, mouseEvent, values);
@@ -715,73 +722,41 @@ public class PopTools {
         try {
             List<String> values = new ArrayList<>();
             Date d = new Date();
-            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeA + " G", Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMsA + " G", Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(d, TimeFormats.DateA + " G", Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(d, TimeFormats.MonthA + " G", Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(d, TimeFormats.YearA + " G", Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(d, "G" + TimeFormats.DatetimeA, Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(d, "G" + TimeFormats.DatetimeMsA, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.Datetime + " G", Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMs + " G", Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.Date + " G", Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.Month + " G", Locale.ENGLISH, null));
             values.add(DateTools.datetimeToString(d, "G" + TimeFormats.DateA, Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(d, "G" + TimeFormats.MonthA, Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(d, "G" + TimeFormats.YearA, Locale.ENGLISH, null));
 
             Date bc = DateTools.encodeDate("770-3-9 12:56:33.498 BC");
             values.add(DateTools.datetimeToString(bc, TimeFormats.DatetimeA + " G", Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(bc, TimeFormats.DatetimeMsA + " G", Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(bc, TimeFormats.DateA + " G", Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(bc, TimeFormats.MonthA + " G", Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(bc, TimeFormats.YearA + " G", Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(bc, "G" + TimeFormats.DatetimeA, Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(bc, "G" + TimeFormats.DatetimeMsA, Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(bc, "G" + TimeFormats.DateA, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(bc, TimeFormats.Date + " G", Locale.ENGLISH, null));
             values.add(DateTools.datetimeToString(bc, "G" + TimeFormats.MonthA, Locale.ENGLISH, null));
             values.add(DateTools.datetimeToString(bc, "G" + TimeFormats.YearA, Locale.ENGLISH, null));
 
             if (Languages.isChinese()) {
-                values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeA + " G", Locale.CHINESE, null));
-                values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMsA + " G", Locale.CHINESE, null));
-                values.add(DateTools.datetimeToString(d, TimeFormats.DateA + " G", Locale.CHINESE, null));
-                values.add(DateTools.datetimeToString(d, TimeFormats.MonthA + " G", Locale.CHINESE, null));
-                values.add(DateTools.datetimeToString(d, TimeFormats.YearA + " G", Locale.CHINESE, null));
-                values.add(DateTools.datetimeToString(d, "G" + TimeFormats.DatetimeA, Locale.CHINESE, null));
-                values.add(DateTools.datetimeToString(d, "G" + TimeFormats.DatetimeMsA, Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(d, TimeFormats.Datetime + " G", Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMs + " G", Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(d, TimeFormats.Date + " G", Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(d, TimeFormats.Month + " G", Locale.CHINESE, null));
                 values.add(DateTools.datetimeToString(d, "G" + TimeFormats.DateA, Locale.CHINESE, null));
-                values.add(DateTools.datetimeToString(d, "G" + TimeFormats.MonthA, Locale.CHINESE, null));
-                values.add(DateTools.datetimeToString(d, "G" + TimeFormats.YearA, Locale.CHINESE, null));
 
                 values.add(DateTools.datetimeToString(bc, TimeFormats.DatetimeA + " G", Locale.CHINESE, null));
-                values.add(DateTools.datetimeToString(bc, TimeFormats.DatetimeMsA + " G", Locale.CHINESE, null));
                 values.add(DateTools.datetimeToString(bc, TimeFormats.DateA + " G", Locale.CHINESE, null));
-                values.add(DateTools.datetimeToString(bc, TimeFormats.MonthA + " G", Locale.CHINESE, null));
-                values.add(DateTools.datetimeToString(bc, TimeFormats.YearA + " G", Locale.CHINESE, null));
-                values.add(DateTools.datetimeToString(bc, "G" + TimeFormats.DatetimeA, Locale.CHINESE, null));
-                values.add(DateTools.datetimeToString(bc, "G" + TimeFormats.DatetimeMsA, Locale.CHINESE, null));
-                values.add(DateTools.datetimeToString(bc, "G" + TimeFormats.DateA, Locale.CHINESE, null));
                 values.add(DateTools.datetimeToString(bc, "G" + TimeFormats.MonthA, Locale.CHINESE, null));
                 values.add(DateTools.datetimeToString(bc, "G" + TimeFormats.YearA, Locale.CHINESE, null));
             }
 
-            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeB + " G", Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMsC + " G", Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DateC + " G", Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, "G" + TimeFormats.MonthC, Locale.ENGLISH, null));
+
             values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMsB + " G", Locale.ENGLISH, null));
             values.add(DateTools.datetimeToString(d, TimeFormats.DateB + " G", Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(d, TimeFormats.MonthB + " G", Locale.ENGLISH, null));
             values.add(DateTools.datetimeToString(d, "G" + TimeFormats.DatetimeB, Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(d, "G" + TimeFormats.DatetimeMsB, Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(d, "G" + TimeFormats.DateB, Locale.ENGLISH, null));
             values.add(DateTools.datetimeToString(d, "G" + TimeFormats.MonthB, Locale.ENGLISH, null));
 
-            values.add(DateTools.datetimeToString(d, TimeFormats.Datetime));
-            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMs));
-            values.add(DateTools.datetimeToString(d, TimeFormats.Date));
-            values.add(DateTools.datetimeToString(d, TimeFormats.Month));
-            values.add(DateTools.datetimeToString(d, TimeFormats.Year));
-            values.add(DateTools.datetimeToString(d, TimeFormats.TimeMs));
             values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeZone));
-            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeE));
-            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMsE));
-            values.add(DateTools.datetimeToString(d, TimeFormats.DateE));
-            values.add(DateTools.datetimeToString(d, TimeFormats.MonthE));
             values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeZoneE));
             values.addAll(Arrays.asList(
                     "2020-07-15T36:55:09", "2020-07-10T10:10:10.532 +0800"

@@ -6,7 +6,6 @@ import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ScaleTools;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -259,15 +258,6 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             imageView.setImage(image);
             if (image == null) {
                 return true;
-            }
-
-            if (sampledView != null) {
-                if (imageInformation != null && imageInformation.isIsSampled()) {
-                    NodeStyleTools.setTooltip(sampledView, imageInformation.sampleInformation(image));
-                    sampledView.setVisible(true);
-                } else {
-                    sampledView.setVisible(false);
-                }
             }
 
             if (isPop) {

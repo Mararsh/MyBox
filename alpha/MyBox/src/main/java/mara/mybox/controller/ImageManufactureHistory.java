@@ -23,7 +23,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
-import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -353,7 +352,6 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
             task = new SingletonTask<Void>(this) {
                 private File currentFile;
                 private String finalname;
-                private BufferedImage thumbnail;
                 private List<ImageEditHistory> list;
 
                 @Override
@@ -370,10 +368,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
                         }
                         filename = new File(filename).getAbsolutePath();
                         finalname = new File(filename + ".png").getAbsolutePath();
-                        ImageFileWriters.writeImageFile(bufferedImage, "png", finalname);
-                        thumbnail = ScaleTools.scaleImageWidthKeep(bufferedImage, AppVariables.thumbnailWidth);
-                        String thumbname = new File(filename + "_thumbnail.png").getAbsolutePath();
-                        if (!ImageFileWriters.writeImageFile(thumbnail, "png", thumbname)) {
+                        if (!ImageFileWriters.writeImageFile(bufferedImage, "png", finalname)) {
                             return false;
                         }
                         if (task == null || isCancelled()) {

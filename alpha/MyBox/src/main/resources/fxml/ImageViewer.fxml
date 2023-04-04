@@ -69,11 +69,6 @@ License:    Apache License Version 2.0
                                                                         <Image url="@../buttons/Red/iconTips.png" />
                                                                     </image>
                                                                 </ImageView>
-                                                                <ImageView fx:id="sampledView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/Red/iconSampled.png" />
-                                                                    </image>
-                                                                </ImageView>
                                                             </children>
                                                         </HBox>
                                                         <HBox alignment="CENTER_LEFT" spacing="2.0">
@@ -86,15 +81,15 @@ License:    Apache License Version 2.0
                                                             <children>
                                                                 <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="800.0" vgap="2.0">
                                                                     <children>
-                                                      <Button fx:id="openSourceButton" mnemonicParsing="false" onAction="#openSourcePath">
-                                                         <graphic>
-                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../buttons/Red/iconOpenPath.png" />
-                                                               </image>
-                                                            </ImageView>
-                                                         </graphic>
-                                                      </Button>
+                                                                        <Button fx:id="openSourceButton" mnemonicParsing="false" onAction="#openSourcePath">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/Red/iconOpenPath.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
                                                                         <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction">
                                                                             <graphic>
                                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

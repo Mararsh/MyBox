@@ -281,12 +281,12 @@ public class ControlData2DEditTable extends ControlData2DLoad {
                     if (column.isAuto()) {
                         continue;
                     }
-                    String value = column.savedValue(dataRow.get(c + 1));
+                    String value = dataRow.get(c + 1);
                     String item = null;
                     if (column.isNotNull() && (value == null || value.isBlank())) {
                         item = message("Null");
                     } else if (!column.validValue(value)) {
-                        item = message("DataType");
+                        item = message(column.getType().name());
                     } else if (!data2D.validValue(value)) {
                         item = message("TextDataComments");
                     }

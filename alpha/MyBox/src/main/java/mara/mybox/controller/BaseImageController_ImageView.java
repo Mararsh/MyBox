@@ -62,7 +62,7 @@ public abstract class BaseImageController_ImageView extends BaseController {
     @FXML
     protected AnchorPane maskPane;
     @FXML
-    protected ImageView imageView, sampledView;
+    protected ImageView imageView;
     @FXML
     protected Rectangle borderLine;
     @FXML
@@ -409,14 +409,17 @@ public abstract class BaseImageController_ImageView extends BaseController {
             if (imageChanged) {
                 loadInfo += "\n" + message("ImageChanged");
             }
+            String finalInfo = fileInfo + "\n" + imageInfo + "\n" + loadInfo;
             if (imageInfoLabel != null) {
-                String info = fileInfo + "\n" + imageInfo + "\n" + loadInfo;
-                imageInfoLabel.setText(info);
                 if (imageLabel != null) {
-                    imageLabel.setText(StringTools.replaceLineBreak(loadInfo));
+                    imageLabel.setText(StringTools.replaceLineBreak(finalInfo));
                 }
+                if (imageInformation != null && imageInformation.isIsSampled()) {
+                    finalInfo += "\n-------\n" + imageInformation.sampleInformation(image);
+                }
+                imageInfoLabel.setText(finalInfo);
             } else if (imageLabel != null) {
-                imageLabel.setText(StringTools.replaceLineBreak(fileInfo + "\n" + imageInfo + "\n" + loadInfo));
+                imageLabel.setText(StringTools.replaceLineBreak(finalInfo));
             }
             if (imageView != null && imageView.getImage() != null) {
                 if (borderLine != null) {
@@ -540,7 +543,7 @@ public abstract class BaseImageController_ImageView extends BaseController {
 
     protected void startPickingColor() {
         if (paletteController == null || !paletteController.getMyStage().isShowing()) {
-            paletteController = ColorsPopController.oneOpen(this);
+            paletteController = ColorsPickingController.oneOpen(this);
             if (imageLabel != null) {
                 imageLabelOriginal = new Label(imageLabel.getText());
                 imageLabelOriginal.setStyle(imageLabel.getStyle());

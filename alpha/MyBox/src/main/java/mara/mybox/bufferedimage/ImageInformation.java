@@ -286,7 +286,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
 
     public static BufferedImage readPDF(ImageInformation imageInfo, int width) {
         BufferedImage bufferedImage = null;
-        try ( PDDocument pdfDoc = PDDocument.load(imageInfo.getFile(), AppVariables.pdfMemUsage)) {
+        try (PDDocument pdfDoc = PDDocument.load(imageInfo.getFile(), AppVariables.pdfMemUsage)) {
             bufferedImage = readPDF(null, new PDFRenderer(pdfDoc), ImageType.RGB, imageInfo, width);
             pdfDoc.close();
         } catch (Exception e) {
@@ -367,7 +367,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
 
     public static BufferedImage readPPT(ImageInformation imageInfo, int width) {
         BufferedImage bufferedImage = null;
-        try ( SlideShow ppt = SlideShowFactory.create(imageInfo.getFile())) {
+        try (SlideShow ppt = SlideShowFactory.create(imageInfo.getFile())) {
             bufferedImage = readPPT(null, ppt, imageInfo, width);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -524,7 +524,6 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
                                 bytesSize / (1024 * 1024), requiredMem / (1024 * 1024), availableMem / (1024 * 1024),
                                 sampledWidth, sampledHeight, sampledSize);
                         loading.setInfo(msg);
-                        MyBoxLog.debug(msg);
                     }
 
                 } else {

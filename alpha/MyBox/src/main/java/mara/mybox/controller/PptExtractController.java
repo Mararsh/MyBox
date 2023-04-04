@@ -10,7 +10,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.ByteFileTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.poi.hslf.usermodel.HSLFObjectData;
@@ -42,7 +41,7 @@ public class PptExtractController extends BaseBatchFileController {
             imagesCheck, wordCheck, excelCheck, soundsCheck;
 
     public PptExtractController() {
-        baseTitle = Languages.message("PptExtract");
+        baseTitle = message("PptExtract");
     }
 
     @Override
@@ -99,7 +98,7 @@ public class PptExtractController extends BaseBatchFileController {
                 && !masterCheck.isSelected() && !commentsCheck.isSelected()
                 && !soundsCheck.isSelected() && !imagesCheck.isSelected()
                 && !wordCheck.isSelected() && !excelCheck.isSelected()) {
-            popError(Languages.message("NothingHandled"));
+            popError(message("NothingHandled"));
             return false;
         }
         return super.makeActualParameters();
@@ -115,7 +114,7 @@ public class PptExtractController extends BaseBatchFileController {
     }
 
     public String handlePPT(File srcFile, File targetPath) {
-        try ( HSLFSlideShow ppt = new HSLFSlideShow(new FileInputStream(srcFile));) {
+        try (HSLFSlideShow ppt = new HSLFSlideShow(new FileInputStream(srcFile));) {
             SlideShowExtractor extractor;
             StringBuilder textsBuilder = new StringBuilder();
             if (slidesCheck.isSelected() || notesCheck.isSelected() || masterCheck.isSelected() || commentsCheck.isSelected()) {
@@ -137,7 +136,7 @@ public class PptExtractController extends BaseBatchFileController {
                     if (extractor != null) {
                         String texts = extractor.getText(slide);
                         if (texts != null && !texts.isBlank()) {
-                            textsBuilder.append(Languages.message("Slide")).append(" ").append(slideIndex)
+                            textsBuilder.append(message("Slide")).append(" ").append(slideIndex)
                                     .append(texts)
                                     .append("\n----------------------------------\n\n");
                         }
@@ -213,11 +212,11 @@ public class PptExtractController extends BaseBatchFileController {
             MyBoxLog.console(e);
             return e.toString();
         }
-        return Languages.message("Successful");
+        return message("Successful");
     }
 
     public String handlePPTX(File srcFile, File targetPath) {
-        try ( XMLSlideShow ppt = new XMLSlideShow(new FileInputStream(srcFile))) {
+        try (XMLSlideShow ppt = new XMLSlideShow(new FileInputStream(srcFile))) {
             SlideShowExtractor extractor;
             StringBuilder textsBuilder = new StringBuilder();
             if (slidesCheck.isSelected() || notesCheck.isSelected() || masterCheck.isSelected() || commentsCheck.isSelected()) {
@@ -239,7 +238,7 @@ public class PptExtractController extends BaseBatchFileController {
                     if (extractor != null) {
                         String texts = extractor.getText(slide);
                         if (texts != null && !texts.isBlank()) {
-                            textsBuilder.append(Languages.message("Slide")).append(" ").append(slideIndex)
+                            textsBuilder.append(message("Slide")).append(" ").append(slideIndex)
                                     .append(texts)
                                     .append("\n----------------------------------\n\n");
                         }
@@ -296,7 +295,7 @@ public class PptExtractController extends BaseBatchFileController {
             MyBoxLog.console(e);
             return e.toString();
         }
-        return Languages.message("Successful");
+        return message("Successful");
     }
 
     public File makeObjectFile(File srcFile, int slideIndex, int objIndex, String ext, File targetPath) {

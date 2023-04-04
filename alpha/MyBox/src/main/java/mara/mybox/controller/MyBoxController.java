@@ -8,6 +8,7 @@ import mara.mybox.fxml.HelpTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.AppVariables.scheduledTasks;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.SystemConfig;
 
 /**
  * @Author Mara
@@ -33,6 +34,11 @@ public class MyBoxController extends MyBoxController_About {
 
             if (scheduledTasks != null && !scheduledTasks.isEmpty()) {
                 bottomLabel.setText(MessageFormat.format(message("AlarmClocksRunning"), scheduledTasks.size()));
+            }
+
+            if (!SystemConfig.getBoolean("MyBoxWarningDisplayed", false)) {
+                alertWarning(message("MyBoxWarning"));
+                SystemConfig.setBoolean("MyBoxWarningDisplayed", true);
             }
 
         } catch (Exception e) {

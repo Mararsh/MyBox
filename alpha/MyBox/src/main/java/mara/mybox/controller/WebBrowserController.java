@@ -70,7 +70,8 @@ public class WebBrowserController extends BaseController {
                 public void changed(ObservableValue ov, Tab oldValue, Tab newValue) {
                     WebAddressController controller = tabControllers.get(newValue);
                     if (controller != null) {
-                        setTitle(baseTitle + " - " + controller.webViewController.title());
+                        String title = controller.webViewController.title();
+                        setTitle(baseTitle + title == null ? "" : (" - " + title));
                     }
                 }
             });
@@ -84,7 +85,7 @@ public class WebBrowserController extends BaseController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            StyleTools.setIconTooltips(addTabButton, "iconAdd.png", "");
+            StyleTools.setIconTooltips(addTabButton, "iconAdd.png", message("Add"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }

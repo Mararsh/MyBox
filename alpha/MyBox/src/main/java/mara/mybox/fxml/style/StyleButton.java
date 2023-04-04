@@ -81,7 +81,7 @@ public class StyleButton {
             }
         }
         if (id.startsWith("newItem")) {
-            return new StyleData(id, message("New"), "", "iconNewItem.png");
+            return new StyleData(id, message("Add"), "", "iconNewItem.png");
         }
         if (id.startsWith("add")) {
             switch (id) {
@@ -100,7 +100,7 @@ public class StyleButton {
             }
         }
         if (id.startsWith("makeDirectory")) {
-            return new StyleData(id, message("MakeDirectory"), "", "iconAdd.png");
+            return new StyleData(id, message("MakeDirectory"), "", "iconNewItem.png");
         }
         if (id.startsWith("clear")) {
             switch (id) {

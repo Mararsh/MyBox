@@ -164,11 +164,11 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button fx:id="addButton" mnemonicParsing="false" onAction="#addAction">
+                                <Button fx:id="addRowsButton" mnemonicParsing="false" onAction="#addAction">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../buttons/Red/iconAdd.png" />
+                                                <Image url="@../buttons/Red/iconNewItem.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>

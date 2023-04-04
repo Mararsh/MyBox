@@ -27,12 +27,6 @@ public class TimeFormats {
     public static final String Datetime4 = "yyyy-MM-dd_HH-mm-ss";
     public static final String DatetimeFormat5 = "yyyy.MM.dd HH:mm:ss";
 
-    public static final String DatetimeE = "MM/dd/yyyy HH:mm:ss";
-    public static final String DateE = "MM/dd/yyyy";
-    public static final String MonthE = "MM/yyyy";
-    public static final String DatetimeMsE = "MM/dd/yyyy HH:mm:ss.SSS";
-    public static final String DatetimeZoneE = "MM/dd/yyyy HH:mm:ss Z";
-
     public static final String DatetimeA = "y-MM-dd HH:mm:ss";
     public static final String DatetimeMsA = "y-MM-dd HH:mm:ss.SSS";
     public static final String DateA = "y-MM-dd";
@@ -46,6 +40,16 @@ public class TimeFormats {
     public static final String DateB = "MM/dd/y";
     public static final String MonthB = "MM/y";
 
+    public static final String DatetimeC = "yyyy/MM/dd HH:mm:ss";
+    public static final String DatetimeMsC = "yyyy/MM/dd HH:mm:ss.SSS";
     public static final String DateC = "yyyy/MM/dd";
+    public static final String MonthC = "yyyy/MM";
+    public static final String DatetimeZoneC = "yyyy/MM/dd HH:mm:ss Z";
+
+    public static final String DatetimeE = "MM/dd/yyyy HH:mm:ss";
+    public static final String DateE = "MM/dd/yyyy";
+    public static final String MonthE = "MM/yyyy";
+    public static final String DatetimeMsE = "MM/dd/yyyy HH:mm:ss.SSS";
+    public static final String DatetimeZoneE = "MM/dd/yyyy HH:mm:ss Z";
 
 }
