@@ -519,7 +519,7 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
         super.checkButtons();
         renameColumnsButton.setDisable(data2D == null || data2D.isTable() || tableData.isEmpty());
         addRowsButton.setDisable(data2D == null || data2D.isInternalTable());
-        deleteButton.setDisable(data2D == null || data2D.isInternalTable() || isNoneSelected());
+        deleteRowsButton.setDisable(data2D == null || data2D.isInternalTable() || isNoneSelected());
         randomColorsButton.setDisable(tableData.isEmpty());
     }
 
@@ -556,12 +556,6 @@ public class ControlData2DColumns extends BaseTableViewController<Data2DColumn> 
         column.setColumnName(data.getColumnName() + "_" + message("Copy"));
         column.setIndex(data2D.newColumnIndex());
         return column;
-    }
-
-    @FXML
-    @Override
-    public void addAction() {
-        addRowsAction();
     }
 
     @FXML

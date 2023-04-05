@@ -70,7 +70,8 @@ public abstract class BaseTableViewController<P> extends BaseController {
     @FXML
     protected CheckBox allRowsCheck;
     @FXML
-    protected Button moveUpButton, moveDownButton, moveTopButton, refreshButton, deleteItemsButton;
+    protected Button moveUpButton, moveDownButton, moveTopButton, refreshButton,
+            deleteItemsButton, editItemButton, copyItemButton;
     @FXML
     protected FlowPane paginationPane;
     @FXML
@@ -710,6 +711,9 @@ public abstract class BaseTableViewController<P> extends BaseController {
         if (deleteButton != null) {
             deleteButton.setDisable(none);
         }
+        if (deleteRowsButton != null) {
+            deleteRowsButton.setDisable(none);
+        }
         if (deleteItemsButton != null) {
             deleteItemsButton.setDisable(none);
         }
@@ -719,8 +723,14 @@ public abstract class BaseTableViewController<P> extends BaseController {
         if (editButton != null) {
             editButton.setDisable(none);
         }
+        if (editItemButton != null) {
+            editItemButton.setDisable(none);
+        }
         if (copyButton != null) {
             copyButton.setDisable(none);
+        }
+        if (copyItemButton != null) {
+            copyItemButton.setDisable(none);
         }
         if (clearButton != null) {
             clearButton.setDisable(isEmpty);
@@ -959,6 +969,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
     }
 
     @FXML
+    @Override
     public void deleteRowsAction() {
         List<P> selected = selectedItems();
         if (selected == null || selected.isEmpty()) {

@@ -106,7 +106,7 @@ public class TableFileBackup extends BaseTable<FileBackup> {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e, filename);
+            MyBoxLog.debug(e, filename);
         }
         return records;
     }

@@ -698,7 +698,7 @@ public class ControlWebView extends BaseController {
 
     public String title() {
         String title = webEngine.getTitle();
-        if (title == null) {
+        if (title == null || title.isBlank()) {
             title = address;
         }
         return title;

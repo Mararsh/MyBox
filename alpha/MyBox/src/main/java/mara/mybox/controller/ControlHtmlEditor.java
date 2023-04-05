@@ -96,6 +96,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
     protected Button menuViewButton, synchronizeViewButton, popViewButton;
 
     public ControlHtmlEditor() {
+        baseTitle = message("HtmlEditor");
         TipsLabelKey = "HtmlEditorTips";
         loadNotify = new SimpleBooleanProperty(false);
     }
@@ -154,7 +155,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
                 @Override
                 public void handle(InputEvent event) {
 //                    MyBoxLog.debug("setOnDragExited");
-                    if (isSettingValues) {
+                    if (!isSettingValues) {
                         richEditorChanged(true);
                     }
                 }
@@ -163,7 +164,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
                 @Override
                 public void handle(KeyEvent event) {
 //                    MyBoxLog.debug("setOnKeyReleased");
-                    if (isSettingValues) {
+                    if (!isSettingValues) {
                         richEditorChanged(true);
                     }
                 }
@@ -355,7 +356,6 @@ public class ControlHtmlEditor extends BaseWebViewController {
     public boolean writePanes(String html) {
         fileChanged = false;
         sourceFile = webViewController.sourceFile;
-        loadNotify.set(!loadNotify.get());
 
         isSettingValues = true;
         if (webViewController.address != null) {
@@ -372,6 +372,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
         if (backupController != null) {
             backupController.loadBackups(sourceFile);
         }
+        loadNotify.set(!loadNotify.get());
         return true;
     }
 
@@ -579,6 +580,8 @@ public class ControlHtmlEditor extends BaseWebViewController {
         viewTab.setText(message("View") + (fileChanged ? " *" : ""));
         if (changed) {
             updateFileStatus(true);
+        } else {
+            updateStageTitle();
         }
     }
 
@@ -685,7 +688,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
         }
         Platform.runLater(() -> {
             richEditorController.loadAddress(address);
-            richChanged = false;
+            richEditorChanged(false);
         });
     }
 
@@ -699,7 +702,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
                 contents = "<p>" + message("FrameSetAndSelectFrame") + "</p>";
             }
             richEditorController.writeContents(contents);
-            richChanged = updated;
+            richEditorChanged(updated);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

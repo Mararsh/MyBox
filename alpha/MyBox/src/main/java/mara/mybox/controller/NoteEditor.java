@@ -72,6 +72,12 @@ public class NoteEditor extends ControlHtmlEditor {
     protected void updateStageTitle() {
     }
 
+    @FXML
+    @Override
+    public void saveAction() {
+        notesController.saveAction();
+    }
+
     /*
         html
      */

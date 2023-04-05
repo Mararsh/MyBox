@@ -283,7 +283,9 @@ public class StyleButton {
         if (id.startsWith("delete")) {
             switch (id) {
                 case "deleteButton":
-                    return new StyleData("deleteButton", message("Delete"), "DELETE / CTRL+d / ALT+d", "iconDelete.png");
+                    return new StyleData(id, message("Delete"), "DELETE / CTRL+d / ALT+d", "iconDelete.png");
+                case "deleteRowsButton":
+                    return new StyleData(id, message("DeleteRows"), "DELETE / CTRL+d / ALT+d", "iconDelete.png");
                 default:
                     return new StyleData(id, message("Delete"), "", "iconDelete.png");
             }
@@ -602,12 +604,6 @@ public class StyleButton {
         if (id.startsWith("columnsDelete")) {
             return new StyleData(id, message("DeleteColumns"), "", "iconColumnDelete.png");
         }
-        if (id.startsWith("rowsAdd")) {
-            return new StyleData(id, message("AddRows"), "", "iconRowAdd.png");
-        }
-        if (id.startsWith("rowsDelete")) {
-            return new StyleData(id, message("DeleteRows"), "", "iconRowDelete.png");
-        }
         if (id.startsWith("set")) {
             switch (id) {
                 case "setButton":
@@ -823,8 +819,6 @@ public class StyleButton {
                 return new StyleData(id, message("China"), "", "iconChina.png");
             case "globalButton":
                 return new StyleData(id, message("Global"), "", "iconGlobal.png");
-            case "rowDeleteButton":
-                return new StyleData(id, message("Delete"), "", "iconRowDelete.png");
             default:
                 return null;
         }

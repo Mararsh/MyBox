@@ -627,7 +627,7 @@ public class PopTools {
 
             controller.addFlowPane(setButtons);
             controller.addNode(new Separator());
-            controller.addNode(new Label(message("RightClickToDelete")));
+            controller.addNode(new Label(message("PopValuesComments")));
 
             List<String> values = TableStringValues.max(name, max);
             List<Node> buttons = new ArrayList<>();

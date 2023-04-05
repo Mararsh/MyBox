@@ -37,7 +37,7 @@ public class MyBoxController extends MyBoxController_About {
             }
 
             if (!SystemConfig.getBoolean("MyBoxWarningDisplayed", false)) {
-                alertWarning(message("MyBoxWarning"));
+                alertInformation(message("MyBoxWarning"));
                 SystemConfig.setBoolean("MyBoxWarningDisplayed", true);
             }
 

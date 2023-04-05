@@ -387,6 +387,11 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
                 deleteAction();
             }
             return true;
+        } else if (deleteRowsButton != null) {
+            if (!deleteRowsButton.isDisabled() && deleteRowsButton.isVisible()) {
+                deleteRowsAction();
+            }
+            return true;
         }
         return false;
     }

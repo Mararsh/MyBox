@@ -285,6 +285,7 @@ public class BaseWebViewController extends BaseController {
     }
 
     @FXML
+    @Override
     public void refreshAction() {
         if (webViewController == null) {
             return;
