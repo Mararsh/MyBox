@@ -50,7 +50,7 @@ License:    Apache License Version 2.0
                            </children>
                         </FlowPane>
                         <Separator prefWidth="200.0" />
-                        <Label maxWidth="1.7976931348623157E308" text="%CreateFileComments" />
+                        <Label maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%CreateFileComments" wrapText="true" />
                             </children>
                         </VBox>
                     </content>

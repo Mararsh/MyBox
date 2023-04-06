@@ -105,7 +105,8 @@ public abstract class PixelsBlend {
     }
 
     protected void makeAlpha() {
-        alpha = (int) (foreColor.getAlpha() * opacity + backColor.getAlpha() * (1.0f - opacity));
+        float w = fixedOpacity(opacity);
+        alpha = (int) (foreColor.getAlpha() * w + backColor.getAlpha() * (1.0f - w));
     }
 
     public BufferedImage blend(BufferedImage foreImage, BufferedImage backImage, int x, int y) {
@@ -163,15 +164,26 @@ public abstract class PixelsBlend {
         return newColor;
     }
 
+    public static float fixedOpacity(float v) {
+        if (v > 1f) {
+            return 1f;
+        } else if (v < 0) {
+            return 0f;
+        } else {
+            return v;
+        }
+    }
+
     public static int blendValues(int A, int B, float weight) {
-        return (int) (A * weight + B * (1.0f - weight));
+        float w = fixedOpacity(weight);
+        return (int) (A * w + B * (1.0f - w));
     }
 
     public static PixelsBlend blender(ImagesBlendMode blendMode, float opacity,
             boolean orderReversed, boolean ignoreTransparent) {
         return PixelsBlendFactory.create(blendMode)
                 .setBlendMode(blendMode)
-                .setOpacity(opacity)
+                .setOpacity(fixedOpacity(opacity))
                 .setOrderReversed(orderReversed)
                 .setIgnoreTransparency(ignoreTransparent);
     }
@@ -221,7 +233,7 @@ public abstract class PixelsBlend {
     }
 
     public PixelsBlend setOpacity(float opacity) {
-        this.opacity = opacity;
+        this.opacity = fixedOpacity(opacity);
         return this;
     }
 

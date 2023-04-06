@@ -20,10 +20,10 @@ License:    Apache License Version 2.0
 <VBox fx:id="thisPane" prefHeight="500.0" prefWidth="600.0" spacing="5.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.RemotePathDeleteController">
     <children>
         <Label fx:id="titleLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%RemotePathDelete" textAlignment="CENTER" VBox.vgrow="ALWAYS" />
-      <Label fx:id="hostLabel" layoutX="20.0" layoutY="450.0" />
+      <Label fx:id="hostLabel" layoutX="20.0" layoutY="450.0" minHeight="-Infinity" wrapText="true" />
       <HBox alignment="CENTER_LEFT" spacing="2.0">
          <children>
-                <Label fx:id="commentsLabel" maxWidth="1.7976931348623157E308" text="%OneFileEachLine" HBox.hgrow="ALWAYS" />
+                <Label fx:id="commentsLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%OneFileEachLine" wrapText="true" HBox.hgrow="ALWAYS" />
             <CheckBox fx:id="wrapCheck" mnemonicParsing="false">
                <graphic>
                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -36,7 +36,7 @@ License:    Apache License Version 2.0
          </children>
       </HBox>
       <TextArea fx:id="namesArea" prefHeight="400.0" />
-      <Label fx:id="commentsLabel1" layoutX="20.0" layoutY="60.0" text="%DeleteDirectoryComments" />
+      <Label fx:id="commentsLabel1" layoutX="20.0" layoutY="60.0" minHeight="-Infinity" text="%DeleteDirectoryComments" wrapText="true" />
       <CheckBox fx:id="continueCheck" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%ContinueWhenError" wrapText="true" />
       <HBox alignment="CENTER_LEFT" spacing="2.0">
          <children>

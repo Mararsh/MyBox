@@ -37,26 +37,28 @@ The latest versions and all archived versions can be downloaded in following add
      - Logic about "node A is sub-node of node B" has bug.                                                             
      - Function "ffmepg convert medias" does not work.                                                             
      - Interface behavious of Html Editor are unexpected.                                                             
+     - Calculation of "Splice Images" are inaccurate.                                                             
      - Option "pop menu when hovering button" does not work in some interfaces.                                                                                    
  
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.2)                           
 
 ## Notice         
-Without enough testings, MyBox has low reliability and bad stability. When use MyBox, following may happen:         
+Without enough testings, MyBox has low reliability and bad stability. When use MyBox, following may happen:        
+ 
 * Files/Data are damaged.       
 * Output wrong results.      
 * Functions fail.      
 * Unexpected behaviours.      
 
-## Download and Execution
+# Download and Execution
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory. 
 
-### Source Codes          
+## Source Codes          
 | Source Codes | Developement Guide | Packing Steps |           
 | --- | --- | --- | 
 | [MyBox-src.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-src.zip)   65M-  | [pdf](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-en.pdf) | [html](https://mara-mybox.sourceforge.io/pack_steps_en.html) |
            
-### Self-contain packages
+## Self-contain packages
 Self-contain packages include all files and need not java env nor installation.      
 
 | Platform | Link | Size  | Launcher |        
@@ -67,7 +69,7 @@ Self-contain packages include all files and need not java env nor installation.
 
 User can double click the launcher to start MyBox or run it by command line. The default "Open Method" of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file's name.        
 
-### Jar
+## Jar
 When JRE or JDK([Oracle jdk](https://www.oracle.com/technetwork/java/javase/downloads/index.html) or [open jdk](http://jdk.java.net/)) is installed, jar can run:        
    
 | Platform | Link | Size  | Requirements |        

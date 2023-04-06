@@ -22,10 +22,10 @@ License:    Apache License Version 2.0
     <children>
         <Label fx:id="titleLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" text="%RemotePathGet" textAlignment="CENTER" VBox.vgrow="ALWAYS" />
         <fx:include fx:id="targetPathInput" source="ControlPathInput.fxml" />
-        <Label fx:id="hostLabel" layoutX="20.0" layoutY="450.0" />
+        <Label fx:id="hostLabel" layoutX="20.0" layoutY="450.0" minHeight="-Infinity" wrapText="true" />
         <HBox alignment="CENTER_LEFT" spacing="2.0">
             <children>
-                <Label fx:id="commentsLabel" maxWidth="1.7976931348623157E308" text="%OneFileEachLine" HBox.hgrow="ALWAYS" />
+                <Label fx:id="commentsLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%OneFileEachLine" wrapText="true" HBox.hgrow="ALWAYS" />
                 <CheckBox fx:id="wrapCheck" mnemonicParsing="false">
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">

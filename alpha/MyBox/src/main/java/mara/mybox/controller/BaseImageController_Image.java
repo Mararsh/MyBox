@@ -62,8 +62,18 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
 
                 @Override
                 protected boolean handle() {
+                    if (framesNumber <= 0) {
+                        framesNumber = 1;
+                    }
+                    int frame = index;
+                    if (frame < 0) {
+                        frame = framesNumber - 1;
+                    }
+                    if (frame >= framesNumber) {
+                        frame = 0;
+                    }
                     loadedInfo = new ImageInformation(file);
-                    loadedInfo.setIndex(index);
+                    loadedInfo.setIndex(frame);
                     loadedInfo.setRequiredWidth(width);
                     loadedInfo.setTask(loadTask);
                     loadedInfo = ImageFileReaders.makeInfo(loadedInfo, onlyInformation);

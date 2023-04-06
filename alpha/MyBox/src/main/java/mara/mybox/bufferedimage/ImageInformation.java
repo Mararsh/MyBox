@@ -41,8 +41,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
     protected ImageFileInformation imageFileInformation;
     protected ImageInformation self;
     protected int index, imageType, sampleScale, dpi, xscale, yscale;
-    protected double width, height, regionWidth, regionHeight,
-            requiredWidth, maxWidth, thumbnailRotation;
+    protected double width, height, requiredWidth, maxWidth, thumbnailRotation;
     protected String colorSpace, pixelsString, loadSizeString, fileSizeString,
             profileName, profileCompressionMethod, metaDataXml, error;
     protected boolean isMultipleFrames, isSampled, isScaled, needSample;
@@ -559,11 +558,19 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
         return width;
     }
 
+    public double getPickedWidth() {
+        return region != null ? region.getWidth() : getWidth();
+    }
+
     public double getHeight() {
         if (height <= 0 && image != null) {
             height = image.getHeight();
         }
         return height;
+    }
+
+    public double getPickedHeight() {
+        return region != null ? region.getHeight() : getHeight();
     }
 
     public String getPixelsString() {
@@ -799,22 +806,6 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
     public ImageInformation setYscale(int yscale) {
         this.yscale = yscale;
         return this;
-    }
-
-    public double getRegionWidth() {
-        return regionWidth;
-    }
-
-    public void setRegionWidth(double regionWidth) {
-        this.regionWidth = regionWidth;
-    }
-
-    public double getRegionHeight() {
-        return regionHeight;
-    }
-
-    public void setRegionHeight(double regionHeight) {
-        this.regionHeight = regionHeight;
     }
 
     public double getRequiredWidth() {
@@ -1507,14 +1498,6 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
 
     public void setDpi(int dpi) {
         this.dpi = dpi;
-    }
-
-    public void setRegionWidth(int regionWidth) {
-        this.regionWidth = regionWidth;
-    }
-
-    public void setRegionHeight(int regionHeight) {
-        this.regionHeight = regionHeight;
     }
 
     public SingletonTask getTask() {

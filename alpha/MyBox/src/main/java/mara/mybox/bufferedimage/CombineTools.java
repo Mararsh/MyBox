@@ -25,41 +25,38 @@ public class CombineTools {
             return null;
         }
         try {
-            int x = imageCombine.getMarginsValue();
-            int y = imageCombine.getMarginsValue();
-            double imageWidth;
-            double imageHeight;
-            double totalWidth = 0;
-            double totalHeight = 0;
-            double maxHeight = 0;
-            double minHeight = Integer.MAX_VALUE;
+            int imageWidth;
+            int imageHeight;
+            int totalWidth = 0;
+            int totalHeight = 0;
+            int maxHeight = 0;
+            int minHeight = Integer.MAX_VALUE;
             int sizeType = imageCombine.getSizeType();
-            if (isPart) {
-                y = 0;
-            }
             if (sizeType == ImageCombine.CombineSizeType.AlignAsBigger) {
                 for (ImageInformation imageInfo : images) {
-                    imageHeight = imageInfo.getHeight();
+                    imageHeight = (int) imageInfo.getPickedHeight();
                     if (imageHeight > maxHeight) {
                         maxHeight = imageHeight;
                     }
                 }
             } else if (sizeType == ImageCombine.CombineSizeType.AlignAsSmaller) {
                 for (ImageInformation imageInfo : images) {
-                    imageHeight = imageInfo.getHeight();
+                    imageHeight = (int) imageInfo.getPickedHeight();
                     if (imageHeight < minHeight) {
                         minHeight = imageHeight;
                     }
                 }
             }
+            int x = isPart ? 0 : imageCombine.getMarginsValue();
+            int y = isPart ? 0 : imageCombine.getMarginsValue();
             List<Integer> xs = new ArrayList<>();
             List<Integer> ys = new ArrayList<>();
             List<Integer> widths = new ArrayList<>();
             List<Integer> heights = new ArrayList<>();
             for (int i = 0; i < images.size(); i++) {
                 ImageInformation imageInfo = images.get(i);
-                imageWidth = imageInfo.getWidth();
-                imageHeight = imageInfo.getHeight();
+                imageWidth = (int) imageInfo.getPickedWidth();
+                imageHeight = (int) imageInfo.getPickedHeight();
                 if (sizeType == ImageCombine.CombineSizeType.KeepSize
                         || sizeType == ImageCombine.CombineSizeType.TotalWidth
                         || sizeType == ImageCombine.CombineSizeType.TotalHeight) {
@@ -78,15 +75,16 @@ public class CombineTools {
                 }
                 xs.add(x);
                 ys.add(y);
-                widths.add((int) imageWidth);
-                heights.add((int) imageHeight);
+                widths.add(imageWidth);
+                heights.add(imageHeight);
                 x += imageWidth + imageCombine.getIntervalValue();
                 if (imageHeight > totalHeight) {
                     totalHeight = imageHeight;
                 }
             }
-            totalWidth = x + imageCombine.getMarginsValue() - imageCombine.getIntervalValue();
+            totalWidth = x - imageCombine.getIntervalValue();
             if (!isPart) {
+                totalWidth += imageCombine.getMarginsValue();
                 totalHeight += 2 * imageCombine.getMarginsValue();
             }
             Image newImage = combineImages(images, (int) totalWidth, (int) totalHeight,
@@ -101,8 +99,9 @@ public class CombineTools {
         }
     }
 
-    public static BufferedImage combineSingleColumn(List<Image> images) {
-        if (images == null || images.isEmpty()) {
+    public static Image combineSingleColumn(ImageCombine imageCombine,
+            List<ImageInformation> imageInfos, boolean isPart, boolean careTotal) {
+        if (imageCombine == null || imageInfos == null) {
             return null;
         }
         try {
@@ -110,71 +109,33 @@ public class CombineTools {
             int imageHeight;
             int totalWidth = 0;
             int totalHeight = 0;
-            for (Image image : images) {
-                imageWidth = (int) image.getWidth();
-                if (totalWidth < imageWidth) {
-                    totalWidth = imageWidth;
-                }
-                totalHeight += (int) image.getHeight();
-            }
-            BufferedImage target = new BufferedImage(totalWidth, totalHeight, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g = target.createGraphics();
-            if (AppVariables.imageRenderHints != null) {
-                g.addRenderingHints(AppVariables.imageRenderHints);
-            }
-            int x = 0;
-            int y = 0;
-            for (Image image : images) {
-                BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-                imageWidth = (int) image.getWidth();
-                imageHeight = (int) image.getHeight();
-                g.drawImage(source, x, y, imageWidth, imageHeight, null);
-                y += imageHeight;
-            }
-            return target;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
-    }
-
-    public static Image combineSingleColumn(ImageCombine imageCombine,
-            List<ImageInformation> imageInfos, boolean isPart, boolean careTotal) {
-        if (imageCombine == null || imageInfos == null) {
-            return null;
-        }
-        try {
-            int x = imageCombine.getMarginsValue();
-            int y = x;
-            double imageWidth;
-            double imageHeight;
-            double totalWidth = 0;
-            double totalHeight = 0;
-            double maxWidth = 0;
-            double minWidth = Integer.MAX_VALUE;
+            int maxWidth = 0;
+            int minWidth = Integer.MAX_VALUE;
             int sizeType = imageCombine.getSizeType();
             if (sizeType == ImageCombine.CombineSizeType.AlignAsBigger) {
                 for (ImageInformation imageInfo : imageInfos) {
-                    imageWidth = imageInfo.getWidth();
+                    imageWidth = (int) imageInfo.getPickedWidth();
                     if (imageWidth > maxWidth) {
                         maxWidth = imageWidth;
                     }
                 }
             } else if (sizeType == ImageCombine.CombineSizeType.AlignAsSmaller) {
                 for (ImageInformation imageInfo : imageInfos) {
-                    imageWidth = imageInfo.getWidth();
+                    imageWidth = (int) imageInfo.getPickedWidth();
                     if (imageWidth < minWidth) {
                         minWidth = imageWidth;
                     }
                 }
             }
+            int x = isPart ? 0 : imageCombine.getMarginsValue();
+            int y = isPart ? 0 : imageCombine.getMarginsValue();
             List<Integer> xs = new ArrayList<>();
             List<Integer> ys = new ArrayList<>();
             List<Integer> widths = new ArrayList<>();
             List<Integer> heights = new ArrayList<>();
             for (ImageInformation imageInfo : imageInfos) {
-                imageWidth = imageInfo.getWidth();
-                imageHeight = imageInfo.getHeight();
+                imageWidth = (int) imageInfo.getPickedWidth();
+                imageHeight = (int) imageInfo.getPickedHeight();
                 if (sizeType == ImageCombine.CombineSizeType.KeepSize
                         || sizeType == ImageCombine.CombineSizeType.TotalWidth
                         || sizeType == ImageCombine.CombineSizeType.TotalHeight) {
@@ -199,14 +160,16 @@ public class CombineTools {
                 ys.add(y);
                 widths.add((int) imageWidth);
                 heights.add((int) imageHeight);
-                x = imageCombine.getMarginsValue();
                 y += imageHeight + imageCombine.getIntervalValue();
                 if (imageWidth > totalWidth) {
                     totalWidth = imageWidth;
                 }
             }
-            totalWidth += 2 * imageCombine.getMarginsValue();
-            totalHeight = y + imageCombine.getMarginsValue() - imageCombine.getIntervalValue();
+            totalHeight = y - imageCombine.getIntervalValue();
+            if (!isPart) {
+                totalWidth += 2 * imageCombine.getMarginsValue();
+                totalHeight += imageCombine.getMarginsValue();
+            }
             Image newImage = combineImages(imageInfos, (int) totalWidth, (int) totalHeight,
                     FxColorTools.toAwtColor(imageCombine.getBgColor()), xs, ys,
                     widths, heights, imageCombine.getTotalWidthValue(), imageCombine.getTotalHeightValue(),

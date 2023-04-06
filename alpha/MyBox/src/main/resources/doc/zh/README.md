@@ -37,26 +37,28 @@
      - “树中节点A是节点B的子节点”的判定逻辑不够严密。                                                             
      - 功能“ffmpeg转换媒体”失效。                                                                                                                                                                        
      - 网页编辑器的界面行为非预期。                                                                                                                                                                        
+     - “拼接图片”的计算不准确。                                                                                                                                                                        
      - 选项“悬停按钮时弹出菜单”在一些界面没有生效。                                                                                                                                                                        
  
 [此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.2)             
              
 ## 注意       
-MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出现以下情况：       
+MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出现以下情况：      
+ 
 * 毁坏文件/数据。       
 * 输出错误的结果。       
 * 功能失效。       
 * 非预期的行为。    
 
-## 下载与运行
+# 下载与运行
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases)目录下。      
 
-### 源码
+## 源码
 | 源码 | 开发指南 | 打包步骤 |           
 | --- | --- | --- | 
 | [MyBox-src.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-src.zip)   65M-  | [pdf](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-zh.pdf) | [html](https://mara-mybox.sourceforge.io/pack_steps.html) |
            
-### 自包含程序包
+## 自包含程序包
 自包含的程序包无需java环境、无需安装、解包可用。     
 
 | 平台 | 链接 | 大小 | 启动文件 |
@@ -68,7 +70,7 @@ MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出�
 双击或者用命令行执行包内的启动文件即可运行程序。可以把图片/文本/PDF文件的打开方式关联到MyBox，这样双击文件名就直接是用MyBox打开了。        
   
 
-### Jar包
+## Jar包
 在已安装JRE或者JDK [Oracle jdk](https://www.oracle.com/technetwork/java/javase/downloads/index.html)或[open jdk](http://jdk.java.net/)均可）的环境下，可以下载jar包。       
 
 | 平台 | 链接 | 大小 | 运行需要 |

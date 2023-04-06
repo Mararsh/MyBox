@@ -29,7 +29,7 @@ public class ClearExpiredDataController extends BaseTaskController {
 
     @FXML
     protected CheckBox tmpFilesCheck, imageClipboardCheck, imageEditHistoriesCheck,
-            filesBackupsCheck, data2dCheck;
+            filesBackupsCheck, data2dCheck, autoCheck;
 
     public ClearExpiredDataController() {
         baseTitle = message("ClearExpiredData");
@@ -77,6 +77,14 @@ public class ClearExpiredDataController extends BaseTaskController {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     UserConfig.setBoolean(baseName + "Data2d", nv);
+                }
+            });
+
+            autoCheck.setSelected(UserConfig.getBoolean("ClearExpiredDataBeforeExit", true));
+            autoCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                    UserConfig.setBoolean("ClearExpiredDataBeforeExit", autoCheck.isSelected());
                 }
             });
 

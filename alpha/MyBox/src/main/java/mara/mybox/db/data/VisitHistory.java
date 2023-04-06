@@ -96,7 +96,8 @@ public class VisitHistory extends BaseData {
             return types;
 
         } else if (fileType == FileType.ImagesList) {
-            int[] types = {FileType.Image, FileType.PDF, FileType.PPT};
+            int[] types = {FileType.Image, FileType.Gif, FileType.Tif,
+                FileType.MultipleFrames, FileType.PDF, FileType.PPT};
             return types;
 
         } else {

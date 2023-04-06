@@ -96,6 +96,8 @@ public class ImagesSpliceController extends ImageViewerController {
             initTargetSection();
 
             saveButton.disableProperty().bind(Bindings.isEmpty(tableData));
+            leftPaneCheck.setSelected(true);
+            rightPaneCheck.setSelected(true);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -472,7 +474,7 @@ public class ImagesSpliceController extends ImageViewerController {
                 Image rowImage = CombineTools.combineSingleRow(imageCombine, rowImages, true, false);
                 rows.add(new ImageInformation(rowImage));
             }
-            Image newImage = CombineTools.combineSingleColumn(imageCombine, rows, true, true);
+            Image newImage = CombineTools.combineSingleColumn(imageCombine, rows, false, true);
             return newImage;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

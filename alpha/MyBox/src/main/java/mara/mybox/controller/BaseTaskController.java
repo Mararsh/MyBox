@@ -18,6 +18,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -217,7 +218,7 @@ public class BaseTaskController extends BaseLogs {
         }
         putTargetFile(target, type);
         showLogs(MessageFormat.format(message("FilesGenerated"), lastTargetName) + " "
-                + message("Size") + ": " + target.length());
+                + message("Size") + ": " + FileTools.showFileSize(target.length()));
         return true;
     }
 

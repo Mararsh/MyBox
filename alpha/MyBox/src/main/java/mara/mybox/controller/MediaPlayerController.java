@@ -368,7 +368,7 @@ public class MediaPlayerController extends BaseController {
         }
         mediaView.setFitWidth(myStage.getWidth());
         mediaView.setFitHeight(myStage.getHeight());
-        rightPaneControl.setVisible(false);
+        rightPaneControl.setDisable(true);
         playerControlBox.setVisible(false);
 
         fullScreenButton.setSelected(true);
@@ -405,7 +405,7 @@ public class MediaPlayerController extends BaseController {
             leftBox.getChildren().add(playerControlBox);
         }
         playerControlBox.setVisible(true);
-        rightPaneControl.setVisible(true);
+        rightPaneControl.setDisable(false);
         mediaView.setFitWidth(playerBox.getWidth() - 5);
         mediaView.setFitHeight(playerBox.getHeight() - playerControlBox.getHeight() - 5);
 

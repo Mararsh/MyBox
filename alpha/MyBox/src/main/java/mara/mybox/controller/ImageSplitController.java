@@ -613,6 +613,9 @@ public class ImageSplitController extends BaseImagesListController {
     }
 
     public synchronized void makeList() {
+        if (imageInfos == null) {
+            return;
+        }
         imageInfos.clear();
         if (!splitValid.get()) {
             return;

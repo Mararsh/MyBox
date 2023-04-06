@@ -49,12 +49,6 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                 if (operationBox != null) {
                     operationBox.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
                 }
-                if (leftPaneControl != null) {
-                    leftPaneControl.visibleProperty().bind(Bindings.isNotNull(imageView.imageProperty()));
-                }
-                if (rightPaneControl != null) {
-                    rightPaneControl.visibleProperty().bind(Bindings.isNotNull(imageView.imageProperty()));
-                }
             }
 
             if (selectAreaCheck != null) {
@@ -77,6 +71,12 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                         checkPickingColor();
                     }
                 });
+            }
+
+            if (leftPaneCheck != null) {
+                leftPaneCheck.setSelected(true);
+            } else {
+                showLeftPane();
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -613,8 +613,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                     if (bufferedImage == null || task == null || isCancelled()) {
                         return false;
                     }
-                    boolean multipleFrames = srcFile != null && framesNumber > 1;
-                    if (multipleFrames) {
+                    if (srcFile != null && framesNumber > 1) {
                         error = ImageFileWriters.writeFrame(srcFile, frameIndex, bufferedImage, newfile, null);
                         return error == null;
                     } else {
