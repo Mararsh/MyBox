@@ -23,6 +23,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.IconTools;
+import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -65,6 +66,9 @@ public class WebAddressController extends BaseWebViewController {
     public void goAction() {
         if (!checkBeforeNextAction() || addressInput == null) {
             return;
+        }
+        if (addressTab != null) {
+            addressTab.setText(StringTools.end(addressInput.getText(), 10));
         }
         boolean ret = webViewController.loadAddress(addressInput.getText());
         if (ret) {
@@ -167,8 +171,7 @@ public class WebAddressController extends BaseWebViewController {
     public void pageLoaded() {
         try {
             if (addressTab != null) {
-                String title = webEngine.getTitle();
-                addressTab.setText(title != null ? title.substring(0, Math.min(10, title.length())) : "");
+                addressTab.setText(StringTools.end(webViewController.title(), 10));
             }
             super.pageLoaded();
         } catch (Exception e) {

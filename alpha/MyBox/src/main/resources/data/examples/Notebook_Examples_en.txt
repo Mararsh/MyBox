@@ -1,29 +1,16 @@
 ##MyBox#
-MyBoxTreeRoot;;;
-Notebook
-
-##MyBox#
-Notebook
 Notebook Cover
 Notes are information pieces in html format.<br>
 Notebook is collection of notes and notebooks.<br>
 Notebooks are organized as a tree.
 
 ##MyBox#
-Notebook
-Notebook
-
-##MyBox#
-Notebook > Notebook
-Note Examples
+Examples
+Web Address
 Tags:Need supplementary;;;0xfff2dfff
 
 ##MyBox#
-Notebook > Notebook > Note Examples
-Web Address
-
-##MyBox#
-Notebook > Notebook > Note Examples > Web Address
+Examples > Web Address
 Search
 Tags:To be determined ;;;0xedd1d8ff;;;Like;;;0x0d3928ff;;;Important;;;0x003472ff
 <a target=_blank href="https://www.wikipedia.org/">wikipedia</a><br>
@@ -36,7 +23,7 @@ Tags:To be determined ;;;0xedd1d8ff;;;Like;;;0x0d3928ff;;;Important;;;0x003472ff
 <a target=_blank href="https://www.baidu.com/">baidu</a><br>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Web Address
+Examples > Web Address
 Life in Chinese
 Tags:To be determined ;;;0xedd1d8ff;;;Urgent;;;0xc32136ff
 <a target=_blank href="http://gjzwfw.www.gov.cn/index.html">国家政务服务平台</a><br>
@@ -46,7 +33,7 @@ Tags:To be determined ;;;0xedd1d8ff;;;Urgent;;;0xc32136ff
 <a target=_blank href="http://www.bankcomm.com">Bank of Communications</a><br>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Web Address
+Examples > Web Address
 Articles/Data in English
 Tags:To be determined ;;;0xedd1d8ff;;;Important;;;0x003472ff
 <a target=_blank href="https://www.cn-ki.net/">iData</a><br>
@@ -65,7 +52,7 @@ Tags:To be determined ;;;0xedd1d8ff;;;Important;;;0x003472ff
 <a target=_blank href="https://www.ieee.org/">IEEE</a><br>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Web Address
+Examples > Web Address
 Articles/Data in Chinese
 Tags:To be determined ;;;0xedd1d8ff;;;Important;;;0x003472ff
 <a target=_blank href="http://www.stats.gov.cn">国家数据</a><br>
@@ -90,7 +77,7 @@ Tags:To be determined ;;;0xedd1d8ff;;;Important;;;0x003472ff
 <a target=_blank href="http://www.biftmuseum.com">北京服装学院民族服饰博物馆</a><br>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Web Address
+Examples > Web Address
 Study in English
 Tags:Need supplementary;;;0xfff2dfff
 <a target=_blank href="https://www.bilibili.com/video/BV1zx411g7gq">MIT 18.06 Linear Algebra</a><br>
@@ -99,7 +86,7 @@ Tags:Need supplementary;;;0xfff2dfff
 <a target=_blank href="https://open.163.com/newview/movie/courseintro?newurl=M8FH262HJ">Learning From Data</a><br>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Web Address
+Examples > Web Address
 Study in Chinese
 Tags:Need supplementary;;;0xfff2dfff;;;Important;;;0x003472ff
 <a target=_blank href="https://github.com/QSCTech/zju-icicles">浙江大学课程</a><br>
@@ -115,7 +102,7 @@ Tags:Need supplementary;;;0xfff2dfff;;;Important;;;0x003472ff
 <a target=_blank href="https://www.bilibili.com/video/BV1Dt411p7ce">高中语文-文言文全套精讲</a><br>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Web Address
+Examples > Web Address
 Novels in Chinese
 Tags:Need supplementary;;;0xfff2dfff;;;Like;;;0x0d3928ff
 <a target=_blank href="https://www.kunnu.com">鲲弩小说</a><br>
@@ -129,7 +116,7 @@ Tags:Need supplementary;;;0xfff2dfff;;;Like;;;0x0d3928ff
 <a target=_blank href="https://www.xxsy.net">潇湘书院</a><br>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Web Address
+Examples > Web Address
 Entertainment in Chinese
 Tags:Need supplementary;;;0xfff2dfff;;;Like;;;0x0d3928ff
 <a target=_blank href="https://tv.cctv.com/2022/08/27/VIDARmuWi2Ebs0b0NSsA1Ao7220827.shtml">诗画中国</a><br>
@@ -149,12 +136,12 @@ Tags:Need supplementary;;;0xfff2dfff;;;Like;;;0x0d3928ff
 <a target=_blank href="https://www.bilibili.com/video/BV11x411j7As">梁祝-范瑞娟 傅全香</a><br>
 
 ##MyBox#
-Notebook > Notebook > Note Examples
+Examples
 My Data
 Tags:Need supplementary;;;0xfff2dfff;;;Important;;;0x003472ff
 
 ##MyBox#
-Notebook > Notebook > Note Examples > My Data
+Examples > My Data
 My eyes
 <p>Radian: 84</p>
 <table>
@@ -165,7 +152,7 @@ My eyes
 </table>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > My Data
+Examples > My Data
 My weight
 <table>
     <tr><th> Time </th><th> Weight(kg) </th></tr>
@@ -175,7 +162,7 @@ My weight
 </table>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > My Data
+Examples > My Data
 My height
 <table>
     <tr><th> Time </th><th> Height(cm) </th></tr>
@@ -185,7 +172,7 @@ My height
 </table>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > My Data
+Examples > My Data
 My menstruation
 <table>
                 <tbody><tr><td>Year/Month</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td></tr>
@@ -196,7 +183,7 @@ My menstruation
 </table>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > My Data
+Examples > My Data
 My money
 <table>
     <tr><th> Time </th><th> Total </th><th> Bank A </th><th> Bank B </th><th> Bank C </th></tr>
@@ -206,11 +193,11 @@ My money
 </table>
 
 ##MyBox#
-Notebook > Notebook > Note Examples
+Examples
 Common knowledge
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Common knowledge
+Examples > Common knowledge
 Size of coat
 <table>
                 <tr><td>Size</td><td>Coat Length</td><td>Shoulder</td><td>Sleeve</td><td>Chest</td><td>Waist</td></tr>
@@ -226,12 +213,12 @@ Size of coat
             </table>
 
 ##MyBox#
-Notebook > Notebook > Note Examples
+Examples
 Contacts
 Tags:Need supplementary;;;0xfff2dfff
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Contacts
+Examples > Contacts
 Relative
 Tags:Important;;;0x003472ff
 <table>
@@ -242,7 +229,7 @@ Tags:Important;;;0x003472ff
 </tbody></table>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Contacts
+Examples > Contacts
 Work
 <table>
     <tr><th> Relationship </th><th> Name </th><th> Phone </th><th> Email </th><th> Address </th><th> Comments </th></tr>
@@ -252,12 +239,12 @@ Work
 </table>
 
 ##MyBox#
-Notebook > Notebook > Note Examples
+Examples
 Coding
 Tags:Need supplementary;;;0xfff2dfff
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Coding
+Examples > Coding
 Coding Address
 Tags:To be determined ;;;0xedd1d8ff
 <a target=_blank href="https://sourceforge.net">sourceforge</a><br>
@@ -274,7 +261,7 @@ Tags:To be determined ;;;0xedd1d8ff
 <a target=_blank href="https://mvnrepository.com/">mvnrepository</a><br>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Coding
+Examples > Coding
 sftp to sourceforge (to upload large files)
 <PRE><CODE>
 C:\Users\mara>sftp mararsh@frs.sourceforge.net
@@ -290,7 +277,7 @@ Access the files:  https://sourceforge.net/projects/mara-mybox/files/
 
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Coding
+Examples > Coding
 sftp to sourceforge (to upload website files)
 <PRE><CODE>
 C:\Users\mara>sftp mararsh@frs.sourceforge.net
@@ -305,11 +292,11 @@ Access the website:  https://mara-mybox.sourceforge.io/index.html
 
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Coding
+Examples > Coding
 javafx
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Coding > javafx
+Examples > Coding > javafx
 Items in one sentence about javafx
 Tags:Need supplementary;;;0xfff2dfff;;;Like;;;0x0d3928ff
 <ol>
@@ -337,11 +324,11 @@ Tags:Need supplementary;;;0xfff2dfff;;;Like;;;0x0d3928ff
 </ol>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Coding > javafx
+Examples > Coding > javafx
 Examples
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Coding > javafx > Examples
+Examples > Coding > javafx > Examples
 ChangeListener<String>
 <PRE><CODE>
 input.textProperty().addListener(new ChangeListener<String>() {
@@ -353,7 +340,7 @@ input.textProperty().addListener(new ChangeListener<String>() {
 </CODE></PRE>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Coding > javafx > Examples
+Examples > Coding > javafx > Examples
 setOnMouseClicked
 <PRE><CODE>
 control.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -365,7 +352,7 @@ control.setOnMouseClicked(new EventHandler<MouseEvent>() {
 </CODE></PRE>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Coding > javafx > Examples
+Examples > Coding > javafx > Examples
 disableProperty().bind
 <PRE><CODE>
 startButton.disableProperty().bind(
@@ -376,11 +363,11 @@ startButton.disableProperty().bind(
 </CODE></PRE>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Coding
+Examples > Coding
 java
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Coding > java
+Examples > Coding > java
 Items in one sentence about java
 Tags:Need supplementary;;;0xfff2dfff;;;Like;;;0x0d3928ff
 <ol>

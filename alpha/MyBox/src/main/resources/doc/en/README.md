@@ -37,7 +37,7 @@ The latest versions and all archived versions can be downloaded in following add
      - Logic about "node A is sub-node of node B" has bug.                                                             
      - Function "ffmepg convert medias" does not work.                                                             
      - Interface behavious of Html Editor are unexpected.                                                             
-     - Calculation of "Splice Images" are inaccurate.                                                             
+     - Calculation of "Splice Images" and "Split Image" are inaccurate.                                                             
      - Option "pop menu when hovering button" does not work in some interfaces.                                                                                    
  
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.2)                           

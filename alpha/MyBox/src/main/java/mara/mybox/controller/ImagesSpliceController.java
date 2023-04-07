@@ -9,7 +9,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -482,9 +481,43 @@ public class ImagesSpliceController extends ImageViewerController {
         }
     }
 
-    @FXML
-    protected void newWindow(ActionEvent event) {
-        ImageViewerController.openImage(image);
+    public void load(List<ImageInformation> imageInfos) {
+        if (imageInfos == null || imageInfos.isEmpty()) {
+            return;
+        }
+        if (task != null && !task.isQuit()) {
+            return;
+        }
+        task = new SingletonTask<Void>(this) {
+
+            List<ImageInformation> data;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    data = new ArrayList<>();
+                    for (ImageInformation imageInfo : imageInfos) {
+                        Image iimage = imageInfo.loadImage();
+                        if (iimage == null) {
+                            continue;
+                        }
+                        data.add(new ImageInformation(iimage));
+                    }
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                tableController.tableData.setAll(data);
+            }
+
+        };
+        start(task);
+
     }
 
     @FXML
@@ -496,10 +529,10 @@ public class ImagesSpliceController extends ImageViewerController {
     /*
         static methods
      */
-    public static ImagesSpliceController open(List<ImageInformation> images) {
+    public static ImagesSpliceController open(List<ImageInformation> imageInfos) {
         try {
             ImagesSpliceController controller = (ImagesSpliceController) WindowTools.openStage(Fxmls.ImagesSpliceFxml);
-            controller.tableController.tableData.setAll(images);
+            controller.load(imageInfos);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

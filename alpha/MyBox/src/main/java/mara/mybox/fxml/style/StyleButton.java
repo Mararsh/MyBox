@@ -273,12 +273,7 @@ public class StyleButton {
             if (id.startsWith("openPath") || id.startsWith("openTarget") || id.startsWith("openSource")) {
                 return new StyleData(id, message("OpenDirectory"), "", "iconOpenPath.png");
             }
-            switch (id) {
-                case "openWindowButton":
-                    return new StyleData(id, message("OpenInNewWindow"), "", "iconWindow.png");
-                default:
-                    return new StyleData(id, message("Open"), "", "iconOpen.png");
-            }
+            return new StyleData(id, message("Open"), "", "iconOpen.png");
         }
         if (id.startsWith("delete")) {
             switch (id) {

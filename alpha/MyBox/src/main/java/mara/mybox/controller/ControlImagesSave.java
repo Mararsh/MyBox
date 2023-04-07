@@ -343,7 +343,7 @@ public class ControlImagesSave extends BaseController {
     protected void checkPptMargin() {
         try {
             int v = Integer.parseInt(pptMarginInput.getText());
-            if (v > 0) {
+            if (v >= 0) {
                 pptMargin = v;
                 pptMarginInput.setStyle(null);
                 UserConfig.setInt(baseName + "PptMargin", v);

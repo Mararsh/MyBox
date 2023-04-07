@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -1565,6 +1566,17 @@ public class DataMigration {
                             if (name.startsWith("icon") && name.endsWith(".png")) {
                                 file.delete();
                             }
+                        }
+                    }
+
+                    String path = AppVariables.MyboxDataPath + File.separator + "data" + File.separator;
+                    List<String> names = new ArrayList<>();
+                    names.addAll(Arrays.asList("Notebook_Examples_en.txt", "Notebook_Examples_zh.txt",
+                            "WebFavorite_Examples_en.txt", "WebFavorite_Examples_zh.txt"));
+                    for (String name : names) {
+                        try {
+                            new File(path + name).delete();
+                        } catch (Exception e) {
                         }
                     }
 

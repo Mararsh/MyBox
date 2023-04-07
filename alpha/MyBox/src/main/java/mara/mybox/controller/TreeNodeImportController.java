@@ -121,8 +121,8 @@ public class TreeNodeImportController extends BaseBatchFileController {
             return -1;
         }
         File validFile = FileTools.removeBOM(file);
-        try ( Connection conn = DerbyBase.getConnection();
-                 BufferedReader reader = new BufferedReader(new FileReader(validFile, TextFileTools.charset(validFile)))) {
+        try (Connection conn = DerbyBase.getConnection();
+                BufferedReader reader = new BufferedReader(new FileReader(validFile, TextFileTools.charset(validFile)))) {
             conn.setAutoCommit(false);
             rootNode = tableTreeNode.findAndCreateRoot(conn, category);
             if (rootNode == null) {
@@ -357,7 +357,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
             }
             TreeNode currentNode = null;
             if (parentid < 0) {
-                if (name.equals(category) || name.equals(message("category"))) {
+                if (name.equals(category) || name.equals(message(category))) {
                     currentNode = tableTreeNode.findAndCreateRoot(conn, category);
                 }
             } else {

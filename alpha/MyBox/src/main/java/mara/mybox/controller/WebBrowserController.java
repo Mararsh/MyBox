@@ -71,7 +71,11 @@ public class WebBrowserController extends BaseController {
                     WebAddressController controller = tabControllers.get(newValue);
                     if (controller != null) {
                         String title = controller.webViewController.title();
-                        setTitle(baseTitle + title == null ? "" : (" - " + title));
+                        if (title == null) {
+                            setTitle(baseTitle);
+                        } else {
+                            setTitle(baseTitle + " - " + title);
+                        }
                     }
                 }
             });
