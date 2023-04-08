@@ -31,19 +31,14 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.input.InputEvent;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
-import javafx.scene.web.HTMLEditor;
 import javafx.stage.Stage;
 import mara.mybox.data.HtmlNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -64,7 +59,6 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlHtmlEditor extends BaseWebViewController {
 
-    protected HTMLEditor richEditor;
     protected boolean codesChanged, domChanged, richChanged,
             mdChanged, textsChanged, fileChanged;
     protected MutableDataHolder htmlOptions;
@@ -147,40 +141,10 @@ public class ControlHtmlEditor extends BaseWebViewController {
 
     protected void initRichEdtiorTab() {
         try {
-            richEditor = richEditorController.htmlEditor;
-
-            // https://stackoverflow.com/questions/31894239/javafx-htmleditor-how-to-implement-a-changelistener
-            // As my testing, only DragEvent.DRAG_EXITED, KeyEvent.KEY_TYPED, KeyEvent.KEY_RELEASED working for HtmlEdior
-            richEditor.setOnDragExited(new EventHandler<InputEvent>() {
-                @Override
-                public void handle(InputEvent event) {
-//                    MyBoxLog.debug("setOnDragExited");
-                    if (!isSettingValues) {
-                        richEditorChanged(true);
-                    }
-                }
-            });
-            richEditor.setOnKeyReleased(new EventHandler<KeyEvent>() {
-                @Override
-                public void handle(KeyEvent event) {
-//                    MyBoxLog.debug("setOnKeyReleased");
-                    if (!isSettingValues) {
-                        richEditorChanged(true);
-                    }
-                }
-            });
-
-            richEditorController.pageLoadingNotify.addListener(new ChangeListener<Boolean>() {
+            richEditorController.textChanged.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldv, Boolean newv) {
-                    richEditorPageLoading();
-                }
-            });
-
-            richEditorController.pageLoadedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldv, Boolean newv) {
-                    richEditorPageLoaded();
+                    richEditorChanged(true);
                 }
             });
         } catch (Exception e) {
@@ -358,11 +322,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
         sourceFile = webViewController.sourceFile;
 
         isSettingValues = true;
-        if (webViewController.address != null) {
-            loadRichEditor(webViewController.address);
-        } else {
-            loadRichEditor(html, false);
-        }
+        loadRichEditor(html, false);
         loadHtmlCodes(html, false);
         loadDom(html, false);
         loadMarkdown(html, false);
@@ -673,25 +633,6 @@ public class ControlHtmlEditor extends BaseWebViewController {
     /*
         rich editor
      */
-    protected void richEditorPageLoading() {
-        richEditor.setDisable(true);
-    }
-
-    protected void richEditorPageLoaded() {
-        richEditor.setDisable(false);
-        richEditorChanged(richChanged);
-    }
-
-    public void loadRichEditor(String address) {
-        if (!tabPane.getTabs().contains(richEditorTab)) {
-            return;
-        }
-        Platform.runLater(() -> {
-            richEditorController.loadAddress(address);
-            richEditorChanged(false);
-        });
-    }
-
     public void loadRichEditor(String html, boolean updated) {
         if (!tabPane.getTabs().contains(richEditorTab)) {
             return;
@@ -701,7 +642,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
             if (StringTools.include(html, "<FRAMESET ", true)) {
                 contents = "<p>" + message("FrameSetAndSelectFrame") + "</p>";
             }
-            richEditorController.writeContents(contents);
+            richEditorController.loadContents(contents);
             richEditorChanged(updated);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -709,7 +650,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
     }
 
     public String htmlByRichEditor() {
-        return richEditorController.loadedHtml();
+        return richEditorController.getContents();
     }
 
     protected void richEditorChanged(boolean changed) {
@@ -720,27 +661,15 @@ public class ControlHtmlEditor extends BaseWebViewController {
         if (c != null && !c.isEmpty()) {
             len = c.length();
         }
-        richEditorController.setWebViewLabel(message("CharactersNumber") + ": " + StringTools.format(len));
+        richEditorController.setLabel(message("CharactersNumber") + ": " + StringTools.format(len));
         if (changed) {
             updateFileStatus(true);
         }
     }
 
     @FXML
-    protected void showRichEditorStyle(Event event) {
-        PopTools.popHtmlStyle(event, richEditorController);
-    }
-
-    @FXML
-    protected void popRichEditorStyle(Event event) {
-        if (UserConfig.getBoolean("HtmlStylesPopWhenMouseHovering", false)) {
-            showRichEditorStyle(event);
-        }
-    }
-
-    @FXML
     public void clearRichEditor() {
-        richEditorController.loadContents(null);
+        richEditorController.loadContents("");
     }
 
     /*
@@ -854,7 +783,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
                 return true;
 
             } else if (tab == richEditorTab) {
-                HtmlPopController.openWebView(this, WebViewTools.webview(richEditor));
+                HtmlPopController.openHtml(this, richEditorController.getContents());
                 return true;
 
             } else if (tab == textsTab) {
@@ -987,8 +916,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
                 return menuViewAction();
 
             } else if (tab == codesTab) {
-                Point2D localToScreen = codesArea.localToScreen(codesArea.getWidth() - 80, 80);
-                MenuHtmlCodesController.open(this, codesArea, localToScreen.getX(), localToScreen.getY());
+                MenuHtmlCodesController.open(this, codesArea);
                 return true;
 
             } else if (tab == domTab) {
@@ -996,18 +924,15 @@ public class ControlHtmlEditor extends BaseWebViewController {
                 return true;
 
             } else if (tab == richEditorTab) {
-                Point2D localToScreen = richEditor.localToScreen(richEditor.getWidth() - 80, 80);
-                MenuWebviewController.pop(richEditorController, null, localToScreen.getX(), localToScreen.getY());
+                MenuHtmlCodesController.open(this, richEditorController.htmlEditor);
                 return true;
 
             } else if (tab == markdownTab) {
-                Point2D localToScreen = markdownArea.localToScreen(markdownArea.getWidth() - 80, 80);
-                MenuMarkdownEditController.open(this, markdownArea, localToScreen.getX(), localToScreen.getY());
+                MenuMarkdownEditController.open(this, markdownArea);
                 return true;
 
             } else if (tab == textsTab) {
-                Point2D localToScreen = textsArea.localToScreen(textsArea.getWidth() - 80, 80);
-                MenuTextEditController.open(this, textsArea, localToScreen.getX(), localToScreen.getY());
+                MenuTextEditController.open(this, textsArea);
                 return true;
 
             }
@@ -1049,7 +974,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == codesTab) {
-                clearTexts();
+                clearCodes();
 
             } else if (tab == domTab) {
                 domController.clearDom();
@@ -1446,7 +1371,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
     @Override
     public void cleanPane() {
         try {
-            richEditor.setUserData(null);
+
         } catch (Exception e) {
         }
         super.cleanPane();

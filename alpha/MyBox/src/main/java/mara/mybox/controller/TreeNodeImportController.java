@@ -10,7 +10,6 @@ import java.util.Map;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
 import javafx.scene.paint.Color;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Tag;
@@ -44,11 +43,11 @@ public class TreeNodeImportController extends BaseBatchFileController {
     protected TableTag tableTag;
     protected TreeNode rootNode;
     protected String category;
+    protected Map<String, TreeNode> parents;
+    protected boolean isWebFavorite, downIcon;
 
     @FXML
-    protected RadioButton overrideRadio, createRadio, skipRadio;
-    @FXML
-    protected CheckBox iconCheck;
+    protected CheckBox replaceCheck, iconCheck;
     @FXML
     protected Label formatLabel;
 
@@ -85,7 +84,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
             return;
         }
         isSettingValues = true;
-        overrideRadio.setSelected(true);
+        replaceCheck.setSelected(true);
         isSettingValues = false;
         startFile(file);
     }
@@ -98,6 +97,15 @@ public class TreeNodeImportController extends BaseBatchFileController {
         if (tableTreeNode == null) {
             tableTreeNode = new TableTreeNode();
         }
+        parents = new HashMap<>();
+        rootNode = tableTreeNode.findAndCreateRoot(category);
+        if (rootNode == null) {
+            return false;
+        }
+        parents.put(rootNode.getTitle(), rootNode);
+        parents.put(message(rootNode.getTitle()), rootNode);
+        isWebFavorite = TreeNode.WebFavorite.equals(category);
+        downIcon = iconCheck.isSelected();
         return super.makeMoreParameters();
     }
 
@@ -124,10 +132,6 @@ public class TreeNodeImportController extends BaseBatchFileController {
         try (Connection conn = DerbyBase.getConnection();
                 BufferedReader reader = new BufferedReader(new FileReader(validFile, TextFileTools.charset(validFile)))) {
             conn.setAutoCommit(false);
-            rootNode = tableTreeNode.findAndCreateRoot(conn, category);
-            if (rootNode == null) {
-                return -1;
-            }
             String line;
             while ((line = reader.readLine()) != null && line.isBlank()) {
             }
@@ -137,7 +141,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
                 return importByBlankLine(conn, reader, line);
             }
         } catch (Exception e) {
-            updateLogs(e.toString());
+            showLogs(e.toString());
             return -1;
         }
     }
@@ -152,13 +156,8 @@ public class TreeNodeImportController extends BaseBatchFileController {
             String line = firstLine, name, value, more, tagsString;
             Date time;
             long parentid, baseTime = new Date().getTime();
-            Map<String, TreeNode> parents = new HashMap<>();
-            parents.put(rootNode.getTitle(), rootNode);
-            parents.put(message(rootNode.getTitle()), rootNode);
-            boolean isWebFavorite = TreeNode.WebFavorite.equals(category);
-            boolean downIcon = iconCheck.isSelected();
             while (line != null) {
-                parentid = getParent(conn, parents, line);
+                parentid = getParent(conn, line);
                 if (parentid < -1) {
                     break;
                 }
@@ -240,13 +239,9 @@ public class TreeNodeImportController extends BaseBatchFileController {
             String line, name, value, more, tagsString;
             Date time;
             long parentid, baseTime = new Date().getTime();
-            Map<String, TreeNode> parents = new HashMap<>();
-            parents.put(rootNode.getTitle(), rootNode);
-            parents.put(message(rootNode.getTitle()), rootNode);
-            boolean isWebFavorite = TreeNode.WebFavorite.equals(category);
             int morePrefixLen = TreeNode.MorePrefix.length();
             while ((line = reader.readLine()) != null && !line.isBlank()) {
-                parentid = getParent(conn, parents, line);
+                parentid = getParent(conn, line);
                 if (parentid < -1) {
                     break;
                 }
@@ -318,33 +313,55 @@ public class TreeNodeImportController extends BaseBatchFileController {
             }
             conn.commit();
         } catch (Exception e) {
-            updateLogs(e.toString());
+            showLogs(e.toString());
         }
         return count;
     }
 
-    public long getParent(Connection conn, Map<String, TreeNode> parents, String parentChain) {
+    public long getParent(Connection conn, String parentChain) {
         try {
             if (TreeNode.RootIdentify.equals(parentChain)) {
                 return -1;
             } else {
                 TreeNode parentNode;
+                long parentid = rootNode.getNodeid();
                 if (parents.containsKey(parentChain)) {
                     parentNode = parents.get(parentChain);
+                    parentid = parentNode.getNodeid();
                 } else {
-                    parentNode = tableTreeNode.findAndCreateChain(conn, rootNode.getNodeid(), parentChain);
-                    if (parentNode == null) {
-                        return -2;
+                    String chain = parentChain;
+                    String prefix = rootNode.getTitle() + TreeNode.NodeSeparater;
+                    if (chain.startsWith(prefix)) {
+                        chain = chain.substring(prefix.length());
+                    } else {
+                        prefix = message(rootNode.getTitle()) + TreeNode.NodeSeparater;
+                        if (chain.startsWith(prefix)) {
+                            chain = chain.substring(prefix.length());
+                        } else {
+                            prefix = "";
+                        }
                     }
-                    if (parents.size() > 20) {
-                        parents.clear();
+                    String[] nodes = chain.split(TreeNode.NodeSeparater);
+                    for (String node : nodes) {
+                        parentNode = tableTreeNode.find(conn, parentid, node);
+                        if (parentNode == null) {
+                            parentNode = TreeNode.create()
+                                    .setCategory(category)
+                                    .setParentid(parentid)
+                                    .setUpdateTime(new Date())
+                                    .setTitle(node);
+                            parentNode = tableTreeNode.insertData(conn, parentNode);
+                        }
+                        parentid = parentNode.getNodeid();
+                        parents.put(prefix + node, parentNode);
+                        prefix = prefix + node + TreeNode.NodeSeparater;
                     }
-                    parents.put(parentChain, parentNode);
                 }
-                return parentNode.getNodeid();
+                return parentid;
             }
         } catch (Exception e) {
-            updateLogs(e.toString());
+            showLogs(e.toString());
+            MyBoxLog.console(e);
             return -3;
         }
     }
@@ -361,20 +378,19 @@ public class TreeNodeImportController extends BaseBatchFileController {
                     currentNode = tableTreeNode.findAndCreateRoot(conn, category);
                 }
             } else {
-                if (!createRadio.isSelected()) {
-                    conn.commit();
-                    currentNode = tableTreeNode.find(conn, parentid, name);
-                }
+                currentNode = tableTreeNode.find(conn, parentid, name);
                 if (currentNode != null) {
-                    if (overrideRadio.isSelected()) {
+                    if (replaceCheck.isSelected()) {
                         currentNode.setValue(value == null ? null : value.trim())
                                 .setMore(more == null || more.isBlank() ? null : more)
                                 .setUpdateTime(time);
                         currentNode = tableTreeNode.updateData(conn, currentNode);
                     }
                 } else {
-                    currentNode = TreeNode.create().setParentid(parentid)
-                            .setCategory(category).setTitle(name)
+                    currentNode = TreeNode.create()
+                            .setCategory(category)
+                            .setParentid(parentid)
+                            .setTitle(name)
                             .setValue(value == null ? null : value.trim())
                             .setMore(more == null || more.isBlank() ? null : more)
                             .setUpdateTime(time);
@@ -387,8 +403,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
             writeTags(conn, currentNode.getNodeid(), tags);
             return true;
         } catch (Exception e) {
-            updateLogs(e.toString());
-            MyBoxLog.debug(e);
+            showLogs(e.toString());
             return false;
         }
     }
@@ -421,8 +436,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
                 }
             }
         } catch (Exception e) {
-            updateLogs(e.toString());
-            MyBoxLog.debug(e);
+            showLogs(e.toString());
         }
     }
 

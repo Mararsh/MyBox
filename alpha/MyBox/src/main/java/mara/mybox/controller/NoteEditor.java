@@ -93,7 +93,7 @@ public class NoteEditor extends ControlHtmlEditor {
 
     @Override
     public String htmlByRichEditor() {
-        return HtmlReadTools.body(richEditor.getHtmlText(), false);
+        return HtmlReadTools.body(richEditorController.getContents(), false);
     }
 
 }

@@ -27,7 +27,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
@@ -544,12 +543,12 @@ public class ControlWebView extends BaseController {
                 setStyle(UserConfig.getString(prefix + "HtmlStyle", defaultStyle));
             }
 
-            if (!(this instanceof ControlHtmlRichEditor)) {
-                try {
-                    executeScript("document.body.contentEditable=" + UserConfig.getBoolean("WebViewEditable", false));
-                } catch (Exception e) {
-                }
-            }
+//            if (!(this instanceof ControlHtmlRichEditor)) {
+//                try {
+//                    executeScript("document.body.contentEditable=" + UserConfig.getBoolean("WebViewEditable", false));
+//                } catch (Exception e) {
+//                }
+//            }
             if (null == scrollType) {
                 executeScript("setTimeout(window.scrollTo(" + scrollLeft + "," + scrollTop + "), 1000);");
             } else {
@@ -1484,18 +1483,17 @@ public class ControlWebView extends BaseController {
                 });
                 items.add(menu);
 
-                if (!(this instanceof ControlHtmlRichEditor)) {
-                    CheckMenuItem editableMenu = new CheckMenuItem(message("Editable"), StyleTools.getIconImageView("iconEdit.png"));
-                    editableMenu.setSelected(UserConfig.getBoolean("WebViewEditable", false));
-                    editableMenu.setOnAction(new EventHandler<ActionEvent>() {
-                        @Override
-                        public void handle(ActionEvent event) {
-                            setEditable(editableMenu.isSelected());
-                        }
-                    });
-                    items.add(editableMenu);
-                }
-
+//                if (!(this instanceof ControlHtmlRichEditor)) {
+//                    CheckMenuItem editableMenu = new CheckMenuItem(message("Editable"), StyleTools.getIconImageView("iconEdit.png"));
+//                    editableMenu.setSelected(UserConfig.getBoolean("WebViewEditable", false));
+//                    editableMenu.setOnAction(new EventHandler<ActionEvent>() {
+//                        @Override
+//                        public void handle(ActionEvent event) {
+//                            setEditable(editableMenu.isSelected());
+//                        }
+//                    });
+//                    items.add(editableMenu);
+//                }
                 items.add(new SeparatorMenuItem());
 
             }

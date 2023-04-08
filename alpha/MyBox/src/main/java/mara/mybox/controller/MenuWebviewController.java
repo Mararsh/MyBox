@@ -3,8 +3,6 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -92,25 +90,24 @@ public class MenuWebviewController extends MenuController {
 
             checkWebviewPane();
 
-            if (webViewController instanceof ControlHtmlRichEditor) {
-                setTitleid(((ControlHtmlRichEditor) webViewController).htmlEditor.getId());
-            } else {
-                setTitleid(webView.getId());
-            }
-
-            if (webViewController instanceof ControlHtmlRichEditor) {
-                editableCheck.setVisible(false);
-            } else {
-                editableCheck.setVisible(true);
-                editableCheck.setSelected(UserConfig.getBoolean("WebViewEditable", false));
-                editableCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldv, Boolean newv) {
-                        webViewController.setEditable(editableCheck.isSelected());
-                    }
-                });
-            }
-
+//            if (webViewController instanceof ControlHtmlRichEditor) {
+//                setTitleid(((ControlHtmlRichEditor) webViewController).htmlEditor.getId());
+//            } else {
+//                setTitleid(webView.getId());
+//            }
+//
+//            if (webViewController instanceof ControlHtmlRichEditor) {
+//                editableCheck.setVisible(false);
+//            } else {
+//                editableCheck.setVisible(true);
+//                editableCheck.setSelected(UserConfig.getBoolean("WebViewEditable", false));
+//                editableCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+//                    @Override
+//                    public void changed(ObservableValue ov, Boolean oldv, Boolean newv) {
+//                        webViewController.setEditable(editableCheck.isSelected());
+//                    }
+//                });
+//            }
             super.setParameters(webViewController, webView, x, y);
 
         } catch (Exception e) {

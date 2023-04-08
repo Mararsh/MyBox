@@ -57,7 +57,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
             = "SELECT * FROM Tree_Node WHERE nodeid=?";
 
     public static final String QueryRoot
-            = "SELECT * FROM Tree_Node WHERE category=? AND nodeid=parentid ORDER BY nodeid ASC";
+            = "SELECT * FROM Tree_Node WHERE category=? ORDER BY nodeid ASC";
 
     public static final String QueryChildren
             = "SELECT * FROM Tree_Node WHERE parentid=? AND nodeid<>parentid";
@@ -93,7 +93,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
         if (id < 0) {
             return null;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return find(conn, id);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -105,7 +105,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
         if (conn == null || id < 0) {
             return null;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(QueryID)) {
+        try (PreparedStatement statement = conn.prepareStatement(QueryID)) {
             statement.setLong(1, id);
             return query(conn, statement);
         } catch (Exception e) {
@@ -115,7 +115,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
     }
 
     public List<TreeNode> findRoots(String category) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return findRoots(conn, category);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -127,7 +127,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
         if (conn == null || category == null) {
             return null;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(QueryRoot)) {
+        try (PreparedStatement statement = conn.prepareStatement(QueryRoot)) {
             statement.setString(1, category);
             return query(statement);
         } catch (Exception e) {
@@ -140,7 +140,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
         if (parent < 0) {
             return null;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return children(conn, parent);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -152,7 +152,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
         if (conn == null || parent < 0) {
             return null;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(QueryChildren)) {
+        try (PreparedStatement statement = conn.prepareStatement(QueryChildren)) {
             statement.setLong(1, parent);
             return query(statement);
         } catch (Exception e) {
@@ -165,7 +165,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
         if (id <= 0) {
             return null;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return ancestor(conn, id);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -198,7 +198,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
         if (title == null || title.isBlank()) {
             return null;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return find(conn, parent, title);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -210,7 +210,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
         if (conn == null || title == null || title.isBlank()) {
             return null;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(QueryTitle)) {
+        try (PreparedStatement statement = conn.prepareStatement(QueryTitle)) {
             statement.setLong(1, parent);
             statement.setString(2, title);
             return query(conn, statement);
@@ -224,7 +224,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
         if (title == null || title.isBlank()) {
             return null;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return findAndCreate(conn, parent, title);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -270,7 +270,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
     }
 
     public TreeNode findAndCreateRoot(String category) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return findAndCreateRoot(conn, category);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -290,7 +290,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
     }
 
     public List<TreeNode> findAndCreateRoots(String category) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return findAndCreateRoots(conn, category);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -322,20 +322,26 @@ public class TableTreeNode extends BaseTable<TreeNode> {
         return roots;
     }
 
-    public TreeNode findAndCreateChain(Connection conn, long rootid, String ownerChain) {
-        if (conn == null || ownerChain == null || ownerChain.isBlank()) {
+    public TreeNode findAndCreateChain(Connection conn, TreeNode categoryRoot, String ownerChain) {
+        if (conn == null || categoryRoot == null || ownerChain == null || ownerChain.isBlank()) {
             return null;
         }
         try {
-            String[] nodes = ownerChain.split(TreeNode.NodeSeparater);
-            long ownerid = rootid;
+            long parentid = categoryRoot.getNodeid();
+            String chain = ownerChain;
+            if (chain.startsWith(categoryRoot.getTitle() + TreeNode.NodeSeparater)) {
+                chain = chain.substring((categoryRoot.getTitle() + TreeNode.NodeSeparater).length());
+            } else if (chain.startsWith(message(categoryRoot.getTitle()) + TreeNode.NodeSeparater)) {
+                chain = chain.substring((message(categoryRoot.getTitle()) + TreeNode.NodeSeparater).length());
+            }
+            String[] nodes = chain.split(TreeNode.NodeSeparater);
             TreeNode owner = null;
             for (String node : nodes) {
-                owner = findAndCreate(conn, ownerid, node);
+                owner = findAndCreate(conn, parentid, node);
                 if (owner == null) {
                     return null;
                 }
-                ownerid = owner.getNodeid();
+                parentid = owner.getNodeid();
             }
             return owner;
         } catch (Exception e) {
@@ -361,7 +367,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
 
     public List<TreeNode> decentants(Connection conn, long parentid, long start, long size) {
         List<TreeNode> children = new ArrayList<>();
-        try ( PreparedStatement query = conn.prepareStatement(QueryChildren)) {
+        try (PreparedStatement query = conn.prepareStatement(QueryChildren)) {
             decentants(conn, query, parentid, start, size, children, 0);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -381,7 +387,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
             boolean ok = false;
             query.setLong(1, parentid);
             conn.setAutoCommit(true);
-            try ( ResultSet nresults = query.executeQuery()) {
+            try (ResultSet nresults = query.executeQuery()) {
                 while (nresults.next()) {
                     TreeNode data = readData(nresults);
                     if (data != null) {
@@ -421,7 +427,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
             return 0;
         }
         int count = 0;
-        try ( PreparedStatement sizeQuery = conn.prepareStatement(ChildrenCount)) {
+        try (PreparedStatement sizeQuery = conn.prepareStatement(ChildrenCount)) {
             count = decentantsSize(conn, sizeQuery, parentid);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -456,7 +462,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
         try {
             sizeQuery.setLong(1, parent);
             sizeQuery.getConnection().setAutoCommit(true);
-            try ( ResultSet results = sizeQuery.executeQuery()) {
+            try (ResultSet results = sizeQuery.executeQuery()) {
                 if (results != null && results.next()) {
                     size = results.getInt(1);
                 }
@@ -473,7 +479,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
         if (parent < 0) {
             return 0;
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return childrenSize(conn, parent);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -486,7 +492,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
             return 0;
         }
         int size = 0;
-        try ( PreparedStatement sizeQuery = conn.prepareStatement(ChildrenCount)) {
+        try (PreparedStatement sizeQuery = conn.prepareStatement(ChildrenCount)) {
             size = childrenSize(sizeQuery, parent);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -496,10 +502,10 @@ public class TableTreeNode extends BaseTable<TreeNode> {
 
     public boolean childrenEmpty(Connection conn, long parent) {
         boolean isEmpty = true;
-        try ( PreparedStatement statement = conn.prepareStatement(ChildrenEmpty)) {
+        try (PreparedStatement statement = conn.prepareStatement(ChildrenEmpty)) {
             statement.setLong(1, parent);
             conn.setAutoCommit(true);
-            try ( ResultSet results = statement.executeQuery()) {
+            try (ResultSet results = statement.executeQuery()) {
                 isEmpty = results == null || !results.next();
             }
         } catch (Exception e) {
@@ -509,7 +515,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
     }
 
     public int categorySize(String category) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return categorySize(conn, category);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -522,10 +528,10 @@ public class TableTreeNode extends BaseTable<TreeNode> {
             return 0;
         }
         int size = 0;
-        try ( PreparedStatement statement = conn.prepareStatement(CategoryCount)) {
+        try (PreparedStatement statement = conn.prepareStatement(CategoryCount)) {
             statement.setString(1, category);
             conn.setAutoCommit(true);
-            try ( ResultSet results = statement.executeQuery()) {
+            try (ResultSet results = statement.executeQuery()) {
                 if (results != null && results.next()) {
                     size = results.getInt(1);
                 }
@@ -540,11 +546,11 @@ public class TableTreeNode extends BaseTable<TreeNode> {
 
     public boolean categoryEmpty(String category) {
         boolean isEmpty = true;
-        try ( Connection conn = DerbyBase.getConnection();
-                 PreparedStatement statement = conn.prepareStatement(CategoryEmpty)) {
+        try (Connection conn = DerbyBase.getConnection();
+                PreparedStatement statement = conn.prepareStatement(CategoryEmpty)) {
             statement.setString(1, category);
             conn.setAutoCommit(true);
-            try ( ResultSet results = statement.executeQuery()) {
+            try (ResultSet results = statement.executeQuery()) {
                 isEmpty = results == null || !results.next();
             } catch (Exception e) {
                 MyBoxLog.error(e);
@@ -556,7 +562,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
     }
 
     public int deleteChildren(long parent) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             return deleteChildren(conn, parent);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -565,7 +571,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
     }
 
     public int deleteChildren(Connection conn, long parent) {
-        try ( PreparedStatement statement = conn.prepareStatement(DeleteChildren)) {
+        try (PreparedStatement statement = conn.prepareStatement(DeleteChildren)) {
             statement.setLong(1, parent);
             return statement.executeUpdate();
         } catch (Exception e) {
@@ -587,7 +593,7 @@ public class TableTreeNode extends BaseTable<TreeNode> {
     }
 
     public List<Date> times(String category) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             conn.setReadOnly(true);
             return times(conn, category);
         } catch (Exception e) {
@@ -601,10 +607,10 @@ public class TableTreeNode extends BaseTable<TreeNode> {
         if (conn == null) {
             return times;
         }
-        try ( PreparedStatement statement = conn.prepareStatement(Times)) {
+        try (PreparedStatement statement = conn.prepareStatement(Times)) {
             statement.setString(1, category);
             conn.setAutoCommit(true);
-            try ( ResultSet results = statement.executeQuery()) {
+            try (ResultSet results = statement.executeQuery()) {
                 while (results.next()) {
                     Date time = results.getTimestamp("update_time");
                     if (time != null) {

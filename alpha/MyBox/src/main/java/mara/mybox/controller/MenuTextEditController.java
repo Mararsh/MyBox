@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.IndexRange;
@@ -14,6 +15,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
@@ -391,6 +393,19 @@ public class MenuTextEditController extends MenuTextBaseController {
                     parent.getMyWindow(), Fxmls.MenuTextEditFxml, false);
             controller.setParameters(parent, node, x, y);
             return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static MenuTextEditController open(BaseController parent, Region node) {
+        try {
+            if (parent == null || node == null) {
+                return null;
+            }
+            Point2D localToScreen = node.localToScreen(node.getWidth() - 80, 80);
+            return MenuTextEditController.open(parent, node, localToScreen.getX(), localToScreen.getY());
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;

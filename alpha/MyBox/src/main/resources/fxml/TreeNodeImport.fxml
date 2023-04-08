@@ -10,21 +10,19 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.TreeNodeImportController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.TreeNodeImportController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -46,19 +44,12 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                                                     <children>
-                                                        <VBox spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                                            <children>
-                                                                <Label text="%WhenFileNodesExisted" />
-                                                                <RadioButton fx:id="overrideRadio" mnemonicParsing="false" selected="true" text="%Override">
-                                                                    <toggleGroup>
-                                                                        <ToggleGroup fx:id="sameGroup" />
-                                                                    </toggleGroup>
-                                                                </RadioButton>
-                                                                <RadioButton fx:id="createRadio" layoutX="20.0" layoutY="393.0" mnemonicParsing="false" text="%Create" toggleGroup="$sameGroup" />
-                                                                <RadioButton fx:id="skipRadio" layoutX="20.0" layoutY="347.0" mnemonicParsing="false" text="%Skip" toggleGroup="$sameGroup" />
-                                                            </children>
-                                                        </VBox>
-                                                        <CheckBox fx:id="iconCheck" mnemonicParsing="false" text="%DownloadIcons" />
+                                          <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                             <children>
+                                                <CheckBox fx:id="replaceCheck" mnemonicParsing="false" text="%ReplaceExistedData" />
+                                                              <CheckBox fx:id="iconCheck" mnemonicParsing="false" text="%DownloadIcons" />
+                                             </children>
+                                          </HBox>
                                                         <Separator prefWidth="200.0" />
                                                         <Label fx:id="formatLabel" minHeight="-Infinity" text="%TreeImportComments" wrapText="true" />
                                                     </children>
