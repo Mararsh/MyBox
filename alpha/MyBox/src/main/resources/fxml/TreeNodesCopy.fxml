@@ -12,26 +12,27 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.ToggleGroup?>
-<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.control.TreeTableColumn?>
+<?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="700.0" spacing="5.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.TreeNodesCopyController">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="700.0" spacing="5.0" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.TreeNodesCopyController">
     <children>
-      <FlowPane hgap="2.0" vgap="2.0">
-         <children>
-            <RadioButton fx:id="nodeAndDescendantsRadio" mnemonicParsing="false" selected="true" text="%CopyNodeAndDescendants">
-               <toggleGroup>
-                  <ToggleGroup fx:id="copyGroup" />
-               </toggleGroup>
-            </RadioButton>
-            <RadioButton fx:id="descendantsRadio" mnemonicParsing="false" text="%CopyDescendants" toggleGroup="$copyGroup" />
-            <RadioButton fx:id="nodeRadio" mnemonicParsing="false" text="%CopyNode" toggleGroup="$copyGroup" />
-         </children>
-      </FlowPane>
+        <FlowPane hgap="2.0" vgap="2.0">
+            <children>
+                <RadioButton fx:id="nodeAndDescendantsRadio" mnemonicParsing="false" selected="true" text="%CopyNodeAndDescendants">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="copyGroup" />
+                    </toggleGroup>
+                </RadioButton>
+                <RadioButton fx:id="descendantsRadio" mnemonicParsing="false" text="%CopyDescendants" toggleGroup="$copyGroup" />
+                <RadioButton fx:id="nodeRadio" mnemonicParsing="false" text="%CopyNode" toggleGroup="$copyGroup" />
+            </children>
+        </FlowPane>
         <Separator prefWidth="200.0" />
         <HBox alignment="CENTER_LEFT" layoutX="30.0" layoutY="537.0" spacing="5.0">
             <children>
@@ -56,7 +57,14 @@ License:    Apache License Version 2.0
                 </Button>
             </children>
         </HBox>
-        <TreeView fx:id="treeView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+        <TreeTableView fx:id="infoTree" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+            <columns>
+                <TreeTableColumn fx:id="titleColumn" prefWidth="200.0" text="%Title" />
+                <TreeTableColumn fx:id="hierarchyColumn" prefWidth="120.0" text="%HierarchyNumber" />
+                <TreeTableColumn fx:id="valueColumn" prefWidth="120.0" text="%Value" />
+                <TreeTableColumn fx:id="timeColumn" prefWidth="140.0" text="%ModifiedTime" />
+            </columns>
+        </TreeTableView>
         <HBox alignment="CENTER_RIGHT" spacing="5.0" VBox.vgrow="NEVER">
             <children>
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">

@@ -47,6 +47,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -67,7 +68,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     protected TreeNode loadedParent;
 
     @FXML
-    protected TreeNodesController nodesController;
+    protected ControlTreeInfoManage nodesController;
     @FXML
     protected TableColumn<TreeNode, Long> nodeidColumn;
     @FXML
@@ -128,7 +129,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         try {
             super.initControls();
 
-            nodesController.setParameters(this, true);
+            nodesController.setParameters(this);
 
             if (UserConfig.getBoolean(baseName + "AllDescendants", false)) {
                 descendantsRadio.setSelected(true);
@@ -383,7 +384,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
                 break;
             }
         }
-        nodesController.updateChild(nodesController.find(nodeController.parentNode), nodeController.currentNode);
+        nodesController.updateChild(nodeController.parentNode, nodeController.currentNode);
     }
 
     public void newNodeSaved() {
@@ -417,8 +418,18 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         tree
      */
     public void loadTree(TreeNode selectedNode) {
-        if (!nodesController.loadExamples()) {
+        try {
+            File file = TreeNode.exampleFile(category);
+            if (file != null && tableTreeNode.categoryEmpty(category)) {
+                if (AppVariables.isTesting
+                        || PopTools.askSure(getTitle(), message("ImportExamples") + ": " + message(category))) {
+                    nodesController.importExamples();
+                    return;
+                }
+            }
             nodesController.loadTree(selectedNode);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 

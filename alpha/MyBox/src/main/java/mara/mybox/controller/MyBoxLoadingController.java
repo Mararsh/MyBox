@@ -89,8 +89,7 @@ public class MyBoxLoadingController implements Initializable {
                         info(MessageFormat.format(message(lang, "LoadingDatabase"), AppVariables.MyBoxDerbyPath));
                         DerbyBase.status = DerbyBase.DerbyStatus.NotConnected;
                         String initDB = DerbyBase.startDerby();
-                        if (DerbyBase.status != DerbyBase.DerbyStatus.Embedded
-                                && DerbyBase.status != DerbyBase.DerbyStatus.Nerwork) {
+                        if (!DerbyBase.isStarted()) {
                             Platform.runLater(() -> {
                                 PopTools.alertWarning(null, initDB);
                                 MyBoxLog.console(initDB);

@@ -16,21 +16,24 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-4-30
  * @License Apache License Version 2.0
  */
-public class TreeNodesMoveController extends TreeNodesController {
+public class TreeNodesMoveController extends ControlTreeInfoSelect {
+
+    protected TreeManageController manageController;
 
     public TreeNodesMoveController() {
         baseTitle = message("Move");
     }
 
-    public void setParameters(TreeManageController treeController) {
-        this.manageController = treeController;
-        setCaller(treeController.nodesController);
+    public void setParameters(TreeManageController manageController) {
+        this.manageController = manageController;
+        setCaller(manageController.nodesController);
     }
 
     @FXML
     @Override
     public void okAction() {
-        if (manageController == null || !manageController.getMyStage().isShowing()) {
+        if (manageController == null || manageController.getMyStage() == null
+                || !manageController.getMyStage().isShowing()) {
             return;
         }
         synchronized (this) {
@@ -40,7 +43,7 @@ public class TreeNodesMoveController extends TreeNodesController {
                 manageController.getMyStage().requestFocus();
                 return;
             }
-            TreeItem<TreeNode> targetItem = treeView.getSelectionModel().getSelectedItem();
+            TreeItem<TreeNode> targetItem = selected();
             if (targetItem == null) {
                 alertError(message("SelectNodeMoveInto"));
                 return;

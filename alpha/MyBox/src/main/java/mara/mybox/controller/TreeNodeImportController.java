@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -28,6 +30,7 @@ import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -36,14 +39,13 @@ import static mara.mybox.value.Languages.message;
  */
 public class TreeNodeImportController extends BaseBatchFileController {
 
-    protected TreeManageController treeController;
-    protected TreeNodesController nodesController;
+    protected BaseTreeInfoController nodesController;
     protected TableTreeNode tableTreeNode;
     protected TableTreeNodeTag tableTreeNodeTag;
     protected TableTag tableTag;
     protected TreeNode rootNode;
     protected String category;
-    protected Map<String, TreeNode> parents;
+    protected Map<String, Long> parents;
     protected boolean isWebFavorite, downIcon;
 
     @FXML
@@ -60,22 +62,35 @@ public class TreeNodeImportController extends BaseBatchFileController {
         setFileType(VisitHistory.FileType.Text);
     }
 
-    public void setManage(TreeManageController treeController) {
-        this.treeController = treeController;
-        tableTreeNode = treeController.tableTreeNode;
-        tableTreeNodeTag = treeController.tableTreeNodeTag;
-        tableTag = treeController.tableTag;
-        category = treeController.category;
-        iconCheck.setVisible(treeController instanceof WebFavoritesController);
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            replaceCheck.setSelected(UserConfig.getBoolean(baseName + "ReplaceExisted", true));
+
+            replaceCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldv, Boolean newv) {
+                    UserConfig.setBoolean(baseName + "ReplaceExisted", newv);
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
-    public void setManage(TreeNodesController nodeController) {
+    public void setCaller(BaseTreeInfoController nodeController) {
         this.nodesController = nodeController;
         tableTreeNode = nodeController.tableTreeNode;
         tableTreeNodeTag = nodeController.tableTreeNodeTag;
         tableTag = new TableTag();
         category = nodeController.category;
-        iconCheck.setVisible(false);
+        iconCheck.setVisible(
+                (nodeController instanceof ControlTreeInfoManage)
+                && (category.equals(TreeNode.WebFavorite)
+                || category.equals(message(TreeNode.WebFavorite))));
     }
 
     public void importExamples() {
@@ -102,8 +117,8 @@ public class TreeNodeImportController extends BaseBatchFileController {
         if (rootNode == null) {
             return false;
         }
-        parents.put(rootNode.getTitle(), rootNode);
-        parents.put(message(rootNode.getTitle()), rootNode);
+        parents.put(rootNode.getTitle(), rootNode.getNodeid());
+        parents.put(message(rootNode.getTitle()), rootNode.getNodeid());
         isWebFavorite = TreeNode.WebFavorite.equals(category);
         downIcon = iconCheck.isSelected();
         return super.makeMoreParameters();
@@ -323,11 +338,10 @@ public class TreeNodeImportController extends BaseBatchFileController {
             if (TreeNode.RootIdentify.equals(parentChain)) {
                 return -1;
             } else {
-                TreeNode parentNode;
+
                 long parentid = rootNode.getNodeid();
                 if (parents.containsKey(parentChain)) {
-                    parentNode = parents.get(parentChain);
-                    parentid = parentNode.getNodeid();
+                    parentid = parents.get(parentChain);
                 } else {
                     String chain = parentChain;
                     String prefix = rootNode.getTitle() + TreeNode.NodeSeparater;
@@ -343,7 +357,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
                     }
                     String[] nodes = chain.split(TreeNode.NodeSeparater);
                     for (String node : nodes) {
-                        parentNode = tableTreeNode.find(conn, parentid, node);
+                        TreeNode parentNode = tableTreeNode.find(conn, parentid, node);
                         if (parentNode == null) {
                             parentNode = TreeNode.create()
                                     .setCategory(category)
@@ -353,7 +367,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
                             parentNode = tableTreeNode.insertData(conn, parentNode);
                         }
                         parentid = parentNode.getNodeid();
-                        parents.put(prefix + node, parentNode);
+                        parents.put(prefix + node, parentid);
                         prefix = prefix + node + TreeNode.NodeSeparater;
                     }
                 }
@@ -442,20 +456,17 @@ public class TreeNodeImportController extends BaseBatchFileController {
 
     @Override
     public void afterTask() {
-        if (treeController != null) {
-            treeController.nodesController.loadTree();
-            treeController.tagsController.refreshAction();
-            treeController.refreshTimes();
-            if (!AppVariables.isTesting) {
-                treeController.alertInformation(message("Imported") + ": " + totalItemsHandled);
-            }
-            closeStage();
-        } else if (nodesController != null) {
+        if (nodesController != null) {
             nodesController.loadTree();
             if (!AppVariables.isTesting) {
                 nodesController.alertInformation(message("Imported") + ": " + totalItemsHandled);
             }
             closeStage();
+
+            if (nodesController instanceof ControlTreeInfoManage) {
+                ((ControlTreeInfoManage) nodesController).afterImport();
+            }
+
         } else {
             tableView.refresh();
             if (miaoCheck != null && miaoCheck.isSelected()) {

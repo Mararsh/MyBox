@@ -21,7 +21,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-10-15
  * @License Apache License Version 2.0
  */
-public class ControlRowFilterRefer extends TreeNodesController {
+public class ControlRowFilterRefer extends BaseTreeInfoController {
 
     @FXML
     protected TextArea scriptInput;
@@ -70,7 +70,6 @@ public class ControlRowFilterRefer extends TreeNodesController {
         editNode(item);
     }
 
-    @Override
     protected void editNode(TreeItem<TreeNode> item) {
         if (item == null) {
             return;

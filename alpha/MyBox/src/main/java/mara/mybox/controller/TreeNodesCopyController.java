@@ -19,7 +19,9 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-3-9
  * @License Apache License Version 2.0
  */
-public class TreeNodesCopyController extends TreeNodesController {
+public class TreeNodesCopyController extends ControlTreeInfoSelect {
+
+    protected TreeManageController manageController;
 
     @FXML
     protected RadioButton nodeAndDescendantsRadio, descendantsRadio, nodeRadio;
@@ -28,15 +30,16 @@ public class TreeNodesCopyController extends TreeNodesController {
         baseTitle = message("Copy");
     }
 
-    public void setParamters(TreeManageController treeController) {
-        this.manageController = treeController;
-        setCaller(treeController.nodesController);
+    public void setParamters(TreeManageController manageController) {
+        this.manageController = manageController;
+        setCaller(manageController.nodesController);
     }
 
     @FXML
     @Override
     public void okAction() {
-        if (manageController == null || manageController.getMyStage() == null || !manageController.getMyStage().isShowing()) {
+        if (manageController == null || manageController.getMyStage() == null
+                || !manageController.getMyStage().isShowing()) {
             return;
         }
         List<TreeNode> nodes = manageController.selectedItems();
@@ -45,7 +48,7 @@ public class TreeNodesCopyController extends TreeNodesController {
             manageController.getMyStage().requestFocus();
             return;
         }
-        TreeItem<TreeNode> targetItem = treeView.getSelectionModel().getSelectedItem();
+        TreeItem<TreeNode> targetItem = selected();
         if (targetItem == null) {
             alertError(message("SelectNodeCopyInto"));
             return;
@@ -66,7 +69,7 @@ public class TreeNodesCopyController extends TreeNodesController {
 
                 @Override
                 protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
+                    try (Connection conn = DerbyBase.getConnection()) {
                         for (TreeNode sourceNode : nodes) {
                             if (nodeAndDescendantsRadio.isSelected()) {
                                 ok = copyNodeAndDescendants(conn, sourceNode, targetNode);

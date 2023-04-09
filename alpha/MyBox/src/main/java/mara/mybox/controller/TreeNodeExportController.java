@@ -17,7 +17,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.TreeTableView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
@@ -52,7 +52,7 @@ public class TreeNodeExportController extends BaseTaskController {
     protected TreeManageController treeController;
     protected TableTreeNode tableTreeNode;
     protected TableTreeNodeTag tableTreeNodeTag;
-    protected TreeView<TreeNode> treeView;
+    protected TreeTableView<TreeNode> infoTree;
     protected TreeItem<TreeNode> selectedNode;
     protected File textsFile, xmlFile, jsonFile, htmlFile, framesetFile, framesetNavFile;
     protected FileWriter textsWriter, htmlWriter, xmlWriter, jsonWriter, framesetNavWriter;
@@ -62,7 +62,7 @@ public class TreeNodeExportController extends BaseTaskController {
     protected boolean firstRow;
 
     @FXML
-    protected TreeNodesController nodesController;
+    protected ControlTreeInfoSelect nodesController;
     @FXML
     protected CheckBox timeCheck, tagsCheck, iconCheck,
             textsCheck, htmlCheck, xmlCheck, jsonCheck, framesetCheck;
@@ -79,7 +79,7 @@ public class TreeNodeExportController extends BaseTaskController {
     public void initControls() {
         try {
             super.initControls();
-            treeView = nodesController.treeView;
+            infoTree = nodesController.infoTree;
 
             timeCheck.setSelected(UserConfig.getBoolean(baseName + "Time", false));
             timeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -165,7 +165,7 @@ public class TreeNodeExportController extends BaseTaskController {
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(targetPathController.valid.not()
-                    .or(treeView.getSelectionModel().selectedItemProperty().isNull())
+                    .or(infoTree.getSelectionModel().selectedItemProperty().isNull())
             );
 
         } catch (Exception e) {
@@ -196,9 +196,9 @@ public class TreeNodeExportController extends BaseTaskController {
         }
         nodesController.setCaller(treeController.nodesController);
         if (item == null) {
-            treeView.getSelectionModel().select(treeView.getRoot());
+            infoTree.getSelectionModel().select(infoTree.getRoot());
         } else {
-            treeView.getSelectionModel().select(item);
+            infoTree.getSelectionModel().select(item);
         }
     }
 
@@ -220,15 +220,8 @@ public class TreeNodeExportController extends BaseTaskController {
                 return false;
             }
         }
-        selectedNode = treeView.getSelectionModel().getSelectedItem();
-        if (selectedNode == null) {
-            selectedNode = treeView.getRoot();
-            if (selectedNode == null) {
-                popError(message("SelectToHandle"));
-                return false;
-            }
-        }
-        if (selectedNode.getValue() == null) {
+        selectedNode = nodesController.selected();
+        if (selectedNode == null || selectedNode.getValue() == null) {
             popError(message("SelectToHandle"));
             return false;
         }

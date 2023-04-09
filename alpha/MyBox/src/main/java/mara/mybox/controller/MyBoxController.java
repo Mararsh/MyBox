@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.text.MessageFormat;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.value.AppValues;
@@ -36,7 +37,7 @@ public class MyBoxController extends MyBoxController_About {
                 bottomLabel.setText(MessageFormat.format(message("AlarmClocksRunning"), scheduledTasks.size()));
             }
 
-            if (!SystemConfig.getBoolean("MyBoxWarningDisplayed", false)) {
+            if (DerbyBase.isStarted() && !SystemConfig.getBoolean("MyBoxWarningDisplayed", false)) {
                 alertInformation(message("MyBoxWarning"));
                 SystemConfig.setBoolean("MyBoxWarningDisplayed", true);
             }

@@ -15,7 +15,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-4-27
  * @License Apache License Version 2.0
  */
-public class TreeNodeCopyController extends TreeNodesController {
+public class TreeNodeCopyController extends ControlTreeInfoSelect {
 
     protected TreeNode sourceNode;
 
@@ -28,7 +28,7 @@ public class TreeNodeCopyController extends TreeNodesController {
         baseTitle = message("CopyNode");
     }
 
-    public void setCaller(TreeNodesController nodesController, TreeNode sourceNode, String name) {
+    public void setCaller(BaseTreeInfoController nodesController, TreeNode sourceNode, String name) {
         this.sourceNode = sourceNode;
         sourceLabel.setText(message("NodeCopyed") + ":\n" + name);
         ignoreNode = sourceNode;
@@ -47,7 +47,7 @@ public class TreeNodeCopyController extends TreeNodesController {
             alertError(message("SelectToHandle"));
             return;
         }
-        TreeItem<TreeNode> targetItem = treeView.getSelectionModel().getSelectedItem();
+        TreeItem<TreeNode> targetItem = selected();
         if (targetItem == null) {
             alertError(message("SelectNodeCopyInto"));
             return;
@@ -65,7 +65,7 @@ public class TreeNodeCopyController extends TreeNodesController {
 
                 @Override
                 protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
+                    try (Connection conn = DerbyBase.getConnection()) {
                         if (nodeAndDescendantsRadio.isSelected()) {
                             ok = copyNodeAndDescendants(conn, sourceNode, targetNode);
                         } else if (descendantsRadio.isSelected()) {

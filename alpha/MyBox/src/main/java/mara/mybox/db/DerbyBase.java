@@ -278,6 +278,11 @@ public class DerbyBase {
         return started;
     }
 
+    public static boolean isStarted() {
+        return DerbyBase.status == DerbyStatus.Embedded
+                || DerbyBase.status == DerbyStatus.Nerwork;
+    }
+
     // Upper case
     public static List<String> allTables(Connection conn) {
         try {

@@ -2,7 +2,6 @@ package mara.mybox.fxml.cell;
 
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
-import javafx.scene.text.Text;
 import javafx.util.Callback;
 import mara.mybox.tools.FileTools;
 
@@ -19,8 +18,6 @@ public class TreeTableFileSizeCell<T> extends TreeTableCell<T, Long>
     @Override
     public TreeTableCell<T, Long> call(TreeTableColumn<T, Long> param) {
         TreeTableCell<T, Long> cell = new TreeTableCell<T, Long>() {
-            private final Text text = new Text();
-
             @Override
             protected void updateItem(final Long item, boolean empty) {
                 super.updateItem(item, empty);
@@ -29,8 +26,8 @@ public class TreeTableFileSizeCell<T> extends TreeTableCell<T, Long>
                     setGraphic(null);
                     return;
                 }
-                text.setText(FileTools.showFileSize(item));
-                setGraphic(text);
+                setText(FileTools.showFileSize(item));
+                setGraphic(null);
             }
         };
         return cell;

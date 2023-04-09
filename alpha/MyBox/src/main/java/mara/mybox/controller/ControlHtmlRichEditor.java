@@ -44,6 +44,7 @@ public class ControlHtmlRichEditor extends BaseController {
                     textChanged();
                 }
             });
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -51,22 +52,19 @@ public class ControlHtmlRichEditor extends BaseController {
 
     public void textChanged() {
         String currentText = getContents();
-        if (!isSettingValues) {
-            if (lastText == null || lastText.isEmpty()) {
-                if (currentText != null && !currentText.isEmpty()) {
-                    textChanged.set(!textChanged.get());
-                }
-            } else if (!lastText.equals(currentText)) {
+        if (lastText == null || lastText.isEmpty()) {
+            if (currentText != null && !currentText.isEmpty()) {
                 textChanged.set(!textChanged.get());
             }
+        } else if (!lastText.equals(currentText)) {
+            textChanged.set(!textChanged.get());
         }
         lastText = currentText;
     }
 
     public void loadContents(String contents) {
-        isSettingValues = true;
         htmlEditor.setHtmlText(contents);
-        isSettingValues = false;
+        lastText = getContents();
     }
 
     public String getContents() {

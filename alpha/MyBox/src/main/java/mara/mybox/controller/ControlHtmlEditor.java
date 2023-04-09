@@ -924,7 +924,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
                 return true;
 
             } else if (tab == richEditorTab) {
-                MenuHtmlCodesController.open(this, richEditorController.htmlEditor);
+//                MenuHtmlCodesController.open(this, richEditorController.htmlEditor);
                 return true;
 
             } else if (tab == markdownTab) {

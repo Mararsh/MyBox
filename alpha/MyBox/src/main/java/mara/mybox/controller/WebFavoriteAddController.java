@@ -6,6 +6,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.table.TableTreeNode;
+import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
@@ -18,7 +19,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-3-29
  * @License Apache License Version 2.0
  */
-public class WebFavoriteAddController extends TreeNodesController {
+public class WebFavoriteAddController extends BaseTreeInfoController {
 
     protected String title, address;
 
@@ -30,18 +31,18 @@ public class WebFavoriteAddController extends TreeNodesController {
     }
 
     @Override
-    public void afterSceneLoaded() {
+    public void initControls() {
         try {
-            super.afterSceneLoaded();
+            super.initControls();
 
-            super.setManager(null, false);
-            manageController = null;
             tableTreeNode = new TableTreeNode();
+            tableTreeNodeTag = new TableTreeNodeTag();
             category = TreeNode.WebFavorite;
 
             loadTree();
+
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -65,7 +66,7 @@ public class WebFavoriteAddController extends TreeNodesController {
         if (title == null || title.isBlank()) {
             title = address;
         }
-        TreeItem<TreeNode> selectedItem = treeView.getSelectionModel().getSelectedItem();
+        TreeItem<TreeNode> selectedItem = selected();
         if (selectedItem == null) {
             alertError(message("SelectNodeAddInto"));
             return;

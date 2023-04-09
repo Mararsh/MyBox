@@ -256,7 +256,7 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
                 if (column == null) {
                     cancelEdit();
                 } else {
-                    TablePosition<S, T> pos = new TablePosition<>(table, editingRow, column); // instead of tbl.getEditingCell()
+                    TablePosition<S, T> pos = new TablePosition<>(table, editingRow, column);
                     CellEditEvent<S, T> ev = new CellEditEvent<>(table, pos, TableColumn.editCommitEvent(), value);
                     Event.fireEvent(column, ev);
                     updateItem(value, false);

@@ -20,6 +20,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.robot.Robot;
 import mara.mybox.data.HtmlNode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.cell.TreeTableHierachyCell;
+import mara.mybox.fxml.cell.TreeTableTextTrimCell;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
@@ -45,13 +47,17 @@ public class BaseHtmlDomTreeController extends BaseController {
         try {
             super.initControls();
 
-            hierarchyColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("hierarchyNumber"));
+            hierarchyColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("tag"));
+            hierarchyColumn.setCellFactory(new TreeTableHierachyCell());
             tagColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("tag"));
-            textColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("textStart"));
+            textColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("wholeText"));
+            textColumn.setCellFactory(new TreeTableTextTrimCell());
             idColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("id"));
             classnameColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("classname"));
-            dataColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("dataStart"));
-            rvalueColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("valueStart"));
+            dataColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("data"));
+            dataColumn.setCellFactory(new TreeTableTextTrimCell());
+            rvalueColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("value"));
+            rvalueColumn.setCellFactory(new TreeTableTextTrimCell());
 
             domTree.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
             domTree.setOnMouseClicked(new EventHandler<MouseEvent>() {
