@@ -462,11 +462,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
                 nodesController.alertInformation(message("Imported") + ": " + totalItemsHandled);
             }
             closeStage();
-
-            if (nodesController instanceof ControlTreeInfoManage) {
-                ((ControlTreeInfoManage) nodesController).afterImport();
-            }
-
+            nodesController.afterImport();
         } else {
             tableView.refresh();
             if (miaoCheck != null && miaoCheck.isSelected()) {

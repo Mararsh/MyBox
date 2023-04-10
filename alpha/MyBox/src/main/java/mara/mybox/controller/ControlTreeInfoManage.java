@@ -19,7 +19,6 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.tools.StringTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -37,7 +36,6 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
     public void setParameters(TreeManageController parent) {
         this.parentController = parent;
         this.baseName = parent.baseName;
-        this.ignoreNode = getIgnoreNode();
         manageController = parent;
         tableTreeNode = parent.tableTreeNode;
         tableTreeNodeTag = parent.tableTreeNodeTag;
@@ -46,7 +44,8 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
         nodeExecutable = manageController != null
                 && (manageController.startButton != null || manageController.goButton != null
                 || (manageController.nodeController != null
-                && (manageController.nodeController.startButton != null || manageController.nodeController.goButton != null)));
+                && (manageController.nodeController.startButton != null
+                || manageController.nodeController.goButton != null)));
     }
 
     public String chainName(Connection conn, TreeNode node) {
@@ -104,15 +103,10 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
     }
 
     @Override
-    protected List<MenuItem> makeFunctionsMenu(TreeItem<TreeNode> item) {
-        TreeItem<TreeNode> targetItem = item == null ? infoTree.getRoot() : item;
-        boolean isRoot = targetItem == null || isRoot(targetItem.getValue());
+    protected List<MenuItem> makeFunctionsMenu(TreeItem<TreeNode> treeItem) {
+        boolean isRoot = treeItem == null || isRoot(treeItem.getValue());
 
         List<MenuItem> items = new ArrayList<>();
-        MenuItem menu = new MenuItem(StringTools.menuSuffix(chainName(targetItem)));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        items.add(menu);
-        items.add(new SeparatorMenuItem());
 
         Menu clickMenu = new Menu(message("WhenClickNode"), StyleTools.getIconImageView("iconSelect.png"));
         ToggleGroup clickGroup = new ToggleGroup();
@@ -192,7 +186,7 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
         Menu dataMenu = new Menu(message("Data"), StyleTools.getIconImageView("iconData.png"));
         items.add(dataMenu);
 
-        menu = new MenuItem(message("TreeView"), StyleTools.getIconImageView("iconHtml.png"));
+        MenuItem menu = new MenuItem(message("TreeView"), StyleTools.getIconImageView("iconHtml.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             infoTree();
         });
@@ -206,7 +200,7 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
 
         menu = new MenuItem(message("Export"), StyleTools.getIconImageView("iconExport.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            exportNode(targetItem);
+            exportNode(treeItem);
         });
         dataMenu.getItems().add(menu);
 
@@ -218,24 +212,6 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
 
         Menu viewMenu = new Menu(message("View"), StyleTools.getIconImageView("iconView.png"));
         items.add(viewMenu);
-
-        menu = new MenuItem(message("LoadChildren"), StyleTools.getIconImageView("iconList.png"));
-        menu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                listChildren(item);
-            }
-        });
-        viewMenu.getItems().add(menu);
-
-        menu = new MenuItem(message("LoadDescendants"), StyleTools.getIconImageView("iconList.png"));
-        menu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                listDescentants(item);
-            }
-        });
-        viewMenu.getItems().add(menu);
 
         menu = new MenuItem(message("Unfold"), StyleTools.getIconImageView("iconPlus.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -249,9 +225,27 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
         });
         viewMenu.getItems().add(menu);
 
+        menu = new MenuItem(message("LoadChildren"), StyleTools.getIconImageView("iconList.png"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                listChildren(treeItem);
+            }
+        });
+        viewMenu.getItems().add(menu);
+
+        menu = new MenuItem(message("LoadDescendants"), StyleTools.getIconImageView("iconList.png"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                listDescentants(treeItem);
+            }
+        });
+        viewMenu.getItems().add(menu);
+
         menu = new MenuItem(message("EditNode"), StyleTools.getIconImageView("iconEdit.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            editNode(targetItem);
+            editNode(treeItem);
         });
         items.add(menu);
 
@@ -259,40 +253,40 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
         menu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                pasteNode(targetItem);
+                pasteNode(treeItem);
             }
         });
         items.add(menu);
 
         menu = new MenuItem(message("AddNode"), StyleTools.getIconImageView("iconAdd.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            addNode(targetItem);
+            addNode(treeItem);
         });
         items.add(menu);
 
         menu = new MenuItem(message("DeleteNode"), StyleTools.getIconImageView("iconDelete.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            deleteNode(targetItem);
+            deleteNode(treeItem);
         });
         items.add(menu);
 
         menu = new MenuItem(message("RenameNode"), StyleTools.getIconImageView("iconInput.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            renameNode(targetItem);
+            renameNode(treeItem);
         });
         menu.setDisable(isRoot);
         items.add(menu);
 
         menu = new MenuItem(message("CopyNodes"), StyleTools.getIconImageView("iconCopy.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            copyNode(targetItem);
+            copyNode(treeItem);
         });
         menu.setDisable(isRoot);
         items.add(menu);
 
         menu = new MenuItem(message("MoveNodes"), StyleTools.getIconImageView("iconRef.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            moveNode(targetItem);
+            moveNode(treeItem);
         });
         menu.setDisable(isRoot);
         items.add(menu);
@@ -475,6 +469,7 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
         controller.setCaller(this);
     }
 
+    @Override
     protected void afterImport() {
         manageController.tagsController.refreshAction();
         manageController.refreshTimes();

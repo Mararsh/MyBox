@@ -126,10 +126,10 @@ public class ControlHtmlEditor extends BaseWebViewController {
             tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
                 @Override
                 public void changed(ObservableValue ov, Tab oldValue, Tab newValue) {
-                    TextClipboardPopController.closeAll();
+                    tabChanged();
                 }
             });
-
+            tabChanged();
             showTabs();
 
             NodeStyleTools.refreshStyle(thisPane);
@@ -580,6 +580,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
     @FXML
     public void clearCodes() {
         codesArea.clear();
+        codesChanged(true);
     }
 
     @FXML
@@ -630,6 +631,11 @@ public class ControlHtmlEditor extends BaseWebViewController {
         domChanged(true);
     }
 
+    public void clearDom() {
+        domController.clearDom();
+        domChanged(true);
+    }
+
     /*
         rich editor
      */
@@ -670,6 +676,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
     @FXML
     public void clearRichEditor() {
         richEditorController.loadContents("");
+        richEditorChanged(true);
     }
 
     /*
@@ -718,6 +725,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
     @FXML
     protected void clearMarkdown() {
         markdownArea.clear();
+        markdownChanged(true);
     }
 
     /*
@@ -760,6 +768,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
     @FXML
     protected void clearTexts() {
         textsArea.clear();
+        textsChanged(true);
     }
 
 
@@ -977,7 +986,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
                 clearCodes();
 
             } else if (tab == domTab) {
-                domController.clearDom();
+                clearDom();
 
             } else if (tab == richEditorTab) {
                 clearRichEditor();
@@ -997,6 +1006,18 @@ public class ControlHtmlEditor extends BaseWebViewController {
     /*
         panes
      */
+    public void tabChanged() {
+        try {
+            TextClipboardPopController.closeAll();
+            Tab tab = tabPane.getSelectionModel().getSelectedItem();
+            clearButton.setDisable(tab == viewTab);
+            popButton.setDisable(tab == domTab);
+            menuButton.setDisable(tab == richEditorTab);
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
     public void showTabs() {
         try {
             if (!UserConfig.getBoolean(baseName + "ShowDomTab", true)) {
@@ -1366,15 +1387,6 @@ public class ControlHtmlEditor extends BaseWebViewController {
                 return result.get() == buttonNotSave;
             }
         }
-    }
-
-    @Override
-    public void cleanPane() {
-        try {
-
-        } catch (Exception e) {
-        }
-        super.cleanPane();
     }
 
     /*

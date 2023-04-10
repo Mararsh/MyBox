@@ -29,64 +29,78 @@ public class TreeNodesMoveController extends ControlTreeInfoSelect {
         setCaller(manageController.nodesController);
     }
 
+    @Override
+    public boolean isAvoidNode(TreeNode node) {
+        List<TreeNode> nodes = manageController.selectedItems();
+        if (nodes == null || nodes.isEmpty()) {
+            return false;
+        }
+        for (TreeNode sourceNode : nodes) {
+            if (equal(node, sourceNode)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @FXML
     @Override
-    public void okAction() {
+    public synchronized void okAction() {
         if (manageController == null || manageController.getMyStage() == null
                 || !manageController.getMyStage().isShowing()) {
             return;
         }
-        synchronized (this) {
-            List<TreeNode> nodes = manageController.selectedItems();
-            if (nodes == null || nodes.isEmpty()) {
-                alertError(message("NoData"));
-                manageController.getMyStage().requestFocus();
-                return;
-            }
-            TreeItem<TreeNode> targetItem = selected();
-            if (targetItem == null) {
-                alertError(message("SelectNodeMoveInto"));
-                return;
-            }
-            TreeNode targetNode = targetItem.getValue();
-            if (targetNode == null) {
-                return;
-            }
-            if (equal(targetNode, manageController.loadedParent)) {
-                alertError(message("TargetShouldDifferentWithSource"));
-                return;
-            }
-            long parentid = targetNode.getNodeid();
-            if (task != null) {
-                task.cancel();
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private int count;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        for (TreeNode node : nodes) {
-                            node.setParentid(parentid);
-                        }
-                        count = tableTreeNode.updateList(nodes);
-                        return count > 0;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    manageController.popInformation(message("Moved") + ": " + count);
-                    manageController.nodesMoved(targetNode, nodes);
-                    closeStage();
-                }
-            };
-            start(task);
+        List<TreeNode> nodes = manageController.selectedItems();
+        if (nodes == null || nodes.isEmpty()) {
+            alertError(message("NoData"));
+            manageController.getMyStage().requestFocus();
+            return;
         }
+        TreeItem<TreeNode> targetItem = selected();
+        if (targetItem == null) {
+            alertError(message("SelectNodeMoveInto"));
+            return;
+        }
+        TreeNode targetNode = targetItem.getValue();
+        if (targetNode == null) {
+            return;
+        }
+        for (TreeNode sourceNode : nodes) {
+            if (equalOrDescendant(targetItem, find(sourceNode))) {
+                alertError(message("TreeTargetComments"));
+                return;
+            }
+        }
+        long parentid = targetNode.getNodeid();
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+
+            private int count;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    for (TreeNode node : nodes) {
+                        node.setParentid(parentid);
+                    }
+                    count = tableTreeNode.updateList(nodes);
+                    return count > 0;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                manageController.popInformation(message("Moved") + ": " + count);
+                manageController.nodesMoved(targetNode, nodes);
+                closeStage();
+            }
+        };
+        start(task);
     }
 
     /*

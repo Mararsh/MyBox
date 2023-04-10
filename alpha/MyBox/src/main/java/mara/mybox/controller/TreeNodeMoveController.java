@@ -28,13 +28,12 @@ public class TreeNodeMoveController extends ControlTreeInfoSelect {
         manager = nodesController;
         this.sourceNode = sourceNode;
         sourceLabel.setText(message("NodeMoved") + ":\n" + name);
-        ignoreNode = sourceNode;
         setCaller(nodesController);
     }
 
     @Override
-    public TreeNode getIgnoreNode() {
-        return sourceNode;
+    public boolean isAvoidNode(TreeNode node) {
+        return equal(node, sourceNode);
     }
 
     @FXML
@@ -54,6 +53,10 @@ public class TreeNodeMoveController extends ControlTreeInfoSelect {
             }
             TreeNode targetNode = targetItem.getValue();
             if (targetNode == null) {
+                return;
+            }
+            if (equalOrDescendant(targetItem, find(sourceNode))) {
+                alertError(message("TreeTargetComments"));
                 return;
             }
             task = new SingletonTask<Void>(this) {

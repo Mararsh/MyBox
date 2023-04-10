@@ -16,6 +16,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
@@ -23,6 +24,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.robot.Robot;
+import javafx.util.Callback;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.TreeNode;
 import static mara.mybox.db.data.TreeNode.NodeSeparater;
@@ -38,6 +40,7 @@ import mara.mybox.fxml.cell.TreeTableDateCell;
 import mara.mybox.fxml.cell.TreeTableHierachyCell;
 import mara.mybox.fxml.cell.TreeTableTextTrimCell;
 import mara.mybox.fxml.style.HtmlStyles;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
@@ -51,8 +54,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class BaseTreeInfoController extends BaseController {
 
-    protected static final int AutoExpandThreshold = 1000;
-    protected TreeNode ignoreNode = null;
+    protected static final int AutoExpandThreshold = 500;
     protected boolean expandAll, nodeExecutable;
     protected final SimpleBooleanProperty loadedNotify;
     protected TableTreeNode tableTreeNode;
@@ -95,7 +97,30 @@ public class BaseTreeInfoController extends BaseController {
             hierarchyColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("title"));
             hierarchyColumn.setCellFactory(new TreeTableHierachyCell());
             titleColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("title"));
-            titleColumn.setCellFactory(new TreeTableTextTrimCell());
+            titleColumn.setCellFactory(new Callback<TreeTableColumn<TreeNode, String>, TreeTableCell<TreeNode, String>>() {
+                @Override
+                public TreeTableCell<TreeNode, String> call(TreeTableColumn<TreeNode, String> param) {
+
+                    TreeTableCell<TreeNode, String> cell = new TreeTableCell<TreeNode, String>() {
+                        @Override
+                        public void updateItem(String item, boolean empty) {
+                            if (empty || item == null) {
+                                setText(null);
+                                setGraphic(null);
+                                return;
+                            }
+                            setText(StringTools.abbreviate(item, 60));
+                            setGraphic(null);
+                            if (isAvoidNode(getTableRow().getItem())) {
+                                setStyle(NodeStyleTools.darkRedTextStyle());
+                            } else {
+                                setStyle(null);
+                            }
+                        }
+                    };
+                    return cell;
+                }
+            });
             valueColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("value"));
             valueColumn.setCellFactory(new TreeTableTextTrimCell());
             timeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("updateTime"));
@@ -148,8 +173,7 @@ public class BaseTreeInfoController extends BaseController {
                 try (Connection conn = DerbyBase.getConnection()) {
                     TreeNode rootNode = root(conn);
                     rootItem = new TreeItem(rootNode);
-                    ignoreNode = getIgnoreNode();
-                    int size = categorySize(conn);
+                    int size = tableTreeNode.categorySize(conn, category);
                     if (size < 1) {
                         return true;
                     }
@@ -236,18 +260,14 @@ public class BaseTreeInfoController extends BaseController {
         if (node == null) {
             return;
         }
-        ignoreNode = getIgnoreNode();
         List<TreeNode> children = children(conn, node);
         if (children != null) {
             for (int i = 0; i < children.size(); i++) {
                 TreeNode child = children.get(i);
-                if (ignoreNode != null && equal(child, ignoreNode)) {
-                    continue;
-                }
                 TreeItem<TreeNode> childNode = new TreeItem(child);
+                item.getChildren().add(childNode);
                 expandChildren(conn, childNode);
                 childNode.setExpanded(true);
-                item.getChildren().add(childNode);
             }
         }
         item.setExpanded(true);
@@ -297,13 +317,9 @@ public class BaseTreeInfoController extends BaseController {
         if (node == null) {
             return;
         }
-        ignoreNode = getIgnoreNode();
         List<TreeNode> children = children(conn, node);
         if (children != null) {
             for (TreeNode child : children) {
-                if (ignoreNode != null && equal(child, ignoreNode)) {
-                    continue;
-                }
                 TreeItem<TreeNode> childItem = new TreeItem(child);
                 item.getChildren().add(childItem);
                 childItem.setExpanded(false);
@@ -354,6 +370,34 @@ public class BaseTreeInfoController extends BaseController {
     /*
         values
      */
+    public TreeNode root(Connection conn) {
+        return tableTreeNode.findAndCreateRoot(conn, category);
+    }
+
+    public List<TreeNode> children(Connection conn, TreeNode node) {
+        return tableTreeNode.children(conn, id(node));
+    }
+
+    public List<TreeNode> ancestor(Connection conn, TreeNode node) {
+        return tableTreeNode.ancestor(conn, id(node));
+    }
+
+    public List<TreeItem<TreeNode>> ancestor(TreeItem<TreeNode> item) {
+        if (item == null) {
+            return null;
+        }
+        List<TreeItem<TreeNode>> ancestor = null;
+        TreeItem<TreeNode> parent = item.getParent();
+        if (parent != null) {
+            ancestor = ancestor(parent);
+            if (ancestor == null) {
+                ancestor = new ArrayList<>();
+            }
+            ancestor.add(parent);
+        }
+        return ancestor;
+    }
+
     public TreeItem<TreeNode> selected() {
         if (infoTree == null) {
             return null;
@@ -365,12 +409,18 @@ public class BaseTreeInfoController extends BaseController {
         return selecteItem;
     }
 
-    public TreeNode getIgnoreNode() {
-        return ignoreNode;
+    public long id(TreeNode node) {
+        if (node == null) {
+            return -1;
+        }
+        return node.getNodeid();
     }
 
-    public boolean equal(TreeNode node1, TreeNode node2) {
-        return id(node1) == id(node2);
+    public String name(TreeNode node) {
+        if (node == null) {
+            return null;
+        }
+        return node.getTitle();
     }
 
     protected boolean isRoot(TreeNode node) {
@@ -380,62 +430,31 @@ public class BaseTreeInfoController extends BaseController {
         return equal(infoTree.getRoot().getValue(), node);
     }
 
-    public String chainName(TreeItem<TreeNode> node) {
-        if (node == null) {
+    public String chainName(TreeItem<TreeNode> item) {
+        if (item == null) {
             return null;
         }
         String chainName = "";
-        List<TreeItem<TreeNode>> ancestor = ancestor(node);
+        List<TreeItem<TreeNode>> ancestor = ancestor(item);
         if (ancestor != null) {
             for (TreeItem<TreeNode> a : ancestor) {
                 chainName += name(a.getValue()) + NodeSeparater;
             }
         }
-        chainName += name(node.getValue());
+        chainName += name(item.getValue());
         return chainName;
     }
 
-    public TreeNode root(Connection conn) {
-        return tableTreeNode.findAndCreateRoot(conn, category);
+    public boolean isAvoidNode(TreeNode node) {
+        return false;
     }
 
-    public int categorySize(Connection conn) {
-        return tableTreeNode.categorySize(conn, category);
+    public boolean equal(TreeNode node1, TreeNode node2) {
+        return id(node1) == id(node2);
     }
 
     public boolean childrenEmpty(Connection conn, TreeNode node) {
         return tableTreeNode.childrenEmpty(conn, id(node));
-    }
-
-    public long id(TreeNode node) {
-        if (node == null) {
-            return -1;
-        }
-        return node.getNodeid();
-    }
-
-    public List<TreeNode> children(Connection conn, TreeNode node) {
-        return tableTreeNode.children(conn, id(node));
-    }
-
-    public List<TreeNode> ancestor(Connection conn, TreeNode node) {
-        return tableTreeNode.ancestor(conn, id(node));
-    }
-
-    public List<TreeItem<TreeNode>> ancestor(TreeItem<TreeNode> node) {
-        if (node == null) {
-            return null;
-        }
-        List<TreeItem<TreeNode>> ancestor = null;
-        TreeItem<TreeNode> parent = node.getParent();
-        if (parent != null) {
-            ancestor = ancestor(parent);
-            if (ancestor == null) {
-                ancestor = new ArrayList<>();
-            }
-            ancestor.add(parent);
-        }
-        return ancestor;
     }
 
     public TreeNode dummy() {
@@ -449,32 +468,45 @@ public class BaseTreeInfoController extends BaseController {
         return node.getTitle() != null;
     }
 
-    public String name(TreeNode node) {
-        if (node == null) {
-            return null;
+    public boolean equalOrDescendant(TreeItem<TreeNode> item1, TreeItem<TreeNode> item2) {
+        if (item1 == null || item2 == null) {
+            return false;
         }
-        return node.getTitle();
+        TreeNode node1 = item1.getValue();
+        TreeNode node2 = item2.getValue();
+        if (node1 == null || node2 == null) {
+            return false;
+        }
+        if (node1.getNodeid() == node2.getNodeid()) {
+            return true;
+        }
+        return equalOrDescendant(item1.getParent(), item2);
     }
+
 
     /*
         actions
      */
     @FXML
     public void popFunctionsMenu(MouseEvent event) {
-        if (isSettingValues) {
-            return;
-        }
         popFunctionsMenu(event, selected());
     }
 
-    public void popFunctionsMenu(MouseEvent event, TreeItem<TreeNode> node) {
-        if (getMyWindow() == null) {
+    public void popFunctionsMenu(MouseEvent event, TreeItem<TreeNode> treeItem) {
+        if (isSettingValues || getMyWindow() == null) {
             return;
         }
-        List<MenuItem> items = makeFunctionsMenu(node);
+        List<MenuItem> items = new ArrayList<>();
+        MenuItem menu = new MenuItem(StringTools.menuSuffix(chainName(treeItem)));
+        menu.setStyle("-fx-text-fill: #2e598a;");
+        items.add(menu);
+
         items.add(new SeparatorMenuItem());
 
-        MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
+        items.addAll(makeFunctionsMenu(treeItem));
+        items.add(new SeparatorMenuItem());
+
+        menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
         menu.setStyle("-fx-text-fill: #2e598a;");
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             if (popMenu != null && popMenu.isShowing()) {
@@ -499,15 +531,8 @@ public class BaseTreeInfoController extends BaseController {
     }
 
     protected List<MenuItem> makeFunctionsMenu(TreeItem<TreeNode> item) {
-        TreeItem<TreeNode> targetItem = item == null ? infoTree.getRoot() : item;
-
         List<MenuItem> items = new ArrayList<>();
-        MenuItem menu = new MenuItem(StringTools.menuSuffix(chainName(targetItem)));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        items.add(menu);
-        items.add(new SeparatorMenuItem());
-
-        menu = new MenuItem(message("Manage"), StyleTools.getIconImageView("iconData.png"));
+        MenuItem menu = new MenuItem(message("Manage"), StyleTools.getIconImageView("iconData.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             openManager();
         });
@@ -517,7 +542,7 @@ public class BaseTreeInfoController extends BaseController {
 
         menu = new MenuItem(message("AddNode"), StyleTools.getIconImageView("iconAdd.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            addNode(targetItem);
+            addNode(item);
         });
         items.add(menu);
 
@@ -618,6 +643,9 @@ public class BaseTreeInfoController extends BaseController {
                 = (TreeNodeImportController) WindowTools.openChildStage(getMyWindow(), Fxmls.TreeNodeImportFxml);
         controller.setCaller(this);
         controller.importExamples();
+    }
+
+    protected void afterImport() {
     }
 
     public void select(TreeItem<TreeNode> nodeitem) {

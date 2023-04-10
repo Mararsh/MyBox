@@ -20,24 +20,24 @@ License:    Apache License Version 2.0
         <HBox fx:id="buttonsBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
             <children>
                 <Label fx:id="titleLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Select" wrapText="true" HBox.hgrow="ALWAYS" />
-                <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconRefresh.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button fx:id="functionsButton" mnemonicParsing="false" onMouseEntered="#popFunctionsMenu">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconFunction.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
+            <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconRefresh.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="functionsButton" mnemonicParsing="false" onMouseEntered="#popFunctionsMenu">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconFunction.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
             </children>
         </HBox>
         <TreeTableView fx:id="infoTree" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
@@ -45,7 +45,7 @@ License:    Apache License Version 2.0
                 <TreeTableColumn fx:id="titleColumn" prefWidth="200.0" text="%Title" />
                 <TreeTableColumn fx:id="hierarchyColumn" prefWidth="120.0" text="%HierarchyNumber" />
                 <TreeTableColumn fx:id="valueColumn" prefWidth="120.0" text="%Value" />
-                <TreeTableColumn fx:id="timeColumn" prefWidth="140.0" text="%ModifiedTime" />
+                <TreeTableColumn fx:id="timeColumn" prefWidth="180.0" text="%ModifiedTime" />
             </columns>
         </TreeTableView>
     </children>

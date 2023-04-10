@@ -89,7 +89,7 @@ public class DirectorySynchronizeController extends BaseTaskController {
             return false;
         }
         if (FileTools.isEqualOrSubPath(targetPath.getAbsolutePath(), sourcePath.getAbsolutePath())) {
-            popError(message("TargetPathShouldNotSourceSub"));
+            popError(message("TreeTargetComments"));
             return false;
         }
         targetPath.setWritable(true);

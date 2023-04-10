@@ -31,13 +31,12 @@ public class TreeNodeCopyController extends ControlTreeInfoSelect {
     public void setCaller(BaseTreeInfoController nodesController, TreeNode sourceNode, String name) {
         this.sourceNode = sourceNode;
         sourceLabel.setText(message("NodeCopyed") + ":\n" + name);
-        ignoreNode = sourceNode;
         setCaller(nodesController);
     }
 
     @Override
-    public TreeNode getIgnoreNode() {
-        return sourceNode;
+    public boolean isAvoidNode(TreeNode node) {
+        return equal(node, sourceNode);
     }
 
     @FXML
@@ -55,6 +54,10 @@ public class TreeNodeCopyController extends ControlTreeInfoSelect {
         TreeNode targetNode = targetItem.getValue();
         if (targetNode == null) {
             alertError(message("SelectNodeCopyInto"));
+            return;
+        }
+        if (equalOrDescendant(targetItem, find(sourceNode))) {
+            alertError(message("TreeTargetComments"));
             return;
         }
         synchronized (this) {

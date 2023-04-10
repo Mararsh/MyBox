@@ -35,6 +35,20 @@ public class TreeNodesCopyController extends ControlTreeInfoSelect {
         setCaller(manageController.nodesController);
     }
 
+    @Override
+    public boolean isAvoidNode(TreeNode node) {
+        List<TreeNode> nodes = manageController.selectedItems();
+        if (nodes == null || nodes.isEmpty()) {
+            return false;
+        }
+        for (TreeNode sourceNode : nodes) {
+            if (equal(node, sourceNode)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @FXML
     @Override
     public void okAction() {
@@ -57,9 +71,11 @@ public class TreeNodesCopyController extends ControlTreeInfoSelect {
         if (targetNode == null) {
             return;
         }
-        if (equal(targetNode, manageController.loadedParent)) {
-            alertError(message("TargetShouldDifferentWithSource"));
-            return;
+        for (TreeNode sourceNode : nodes) {
+            if (equalOrDescendant(targetItem, find(sourceNode))) {
+                alertError(message("TreeTargetComments"));
+                return;
+            }
         }
         synchronized (this) {
             if (task != null) {

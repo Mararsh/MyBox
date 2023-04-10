@@ -22,16 +22,15 @@ public class ControlTreeInfoSelect extends BaseTreeInfoController {
         }
         this.parentController = caller;
         this.baseName = caller.baseName;
-        this.ignoreNode = getIgnoreNode();
         this.caller = caller;
         tableTreeNode = caller.tableTreeNode;
         tableTreeNodeTag = caller.tableTreeNodeTag;
         category = caller.category;
-        cloneTree(caller.infoTree, infoTree, getIgnoreNode());
+        cloneTree(caller.infoTree);
     }
 
-    public void cloneTree(TreeTableView<TreeNode> sourceTreeView, TreeTableView<TreeNode> targetTreeView, TreeNode ignore) {
-        if (sourceTreeView == null || targetTreeView == null) {
+    public void cloneTree(TreeTableView<TreeNode> sourceTreeView) {
+        if (sourceTreeView == null) {
             return;
         }
         TreeItem<TreeNode> sourceRoot = sourceTreeView.getRoot();
@@ -39,19 +38,12 @@ public class ControlTreeInfoSelect extends BaseTreeInfoController {
             return;
         }
         TreeItem<TreeNode> targetRoot = new TreeItem(sourceRoot.getValue());
-        targetTreeView.setRoot(targetRoot);
+        infoTree.setRoot(targetRoot);
         targetRoot.setExpanded(sourceRoot.isExpanded());
-        cloneNode(sourceRoot, targetRoot, ignore);
-        TreeItem<TreeNode> selected = sourceTreeView.getSelectionModel().getSelectedItem();
-        if (selected != null) {
-            TreeNode sourceSelected = selected.getValue();
-            if (ignore == null || !equal(ignore, sourceSelected)) {
-                select(targetTreeView, sourceSelected);
-            }
-        }
+        cloneNode(sourceRoot, targetRoot);
     }
 
-    public void cloneNode(TreeItem<TreeNode> sourceNode, TreeItem<TreeNode> targetNode, TreeNode ignore) {
+    public void cloneNode(TreeItem<TreeNode> sourceNode, TreeItem<TreeNode> targetNode) {
         if (sourceNode == null || targetNode == null) {
             return;
         }
@@ -60,13 +52,10 @@ public class ControlTreeInfoSelect extends BaseTreeInfoController {
             return;
         }
         for (TreeItem<TreeNode> sourceChild : sourceChildren) {
-            if (ignore != null && equal(sourceChild.getValue(), ignore)) {
-                continue;
-            }
             TreeItem<TreeNode> targetChild = new TreeItem<>(sourceChild.getValue());
-            targetChild.setExpanded(sourceChild.isExpanded());
             targetNode.getChildren().add(targetChild);
-            cloneNode(sourceChild, targetChild, ignore);
+            targetChild.setExpanded(sourceChild.isExpanded());
+            cloneNode(sourceChild, targetChild);
         }
     }
 
@@ -137,13 +126,6 @@ public class ControlTreeInfoSelect extends BaseTreeInfoController {
             }
             return false;
         }
-    }
-
-    public void select(TreeTableView<TreeNode> infoTree, TreeNode node) {
-        if (infoTree == null || node == null) {
-            return;
-        }
-        select(find(infoTree.getRoot(), node));
     }
 
 }

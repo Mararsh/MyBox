@@ -27,6 +27,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
@@ -543,12 +544,10 @@ public class ControlWebView extends BaseController {
                 setStyle(UserConfig.getString(prefix + "HtmlStyle", defaultStyle));
             }
 
-//            if (!(this instanceof ControlHtmlRichEditor)) {
-//                try {
-//                    executeScript("document.body.contentEditable=" + UserConfig.getBoolean("WebViewEditable", false));
-//                } catch (Exception e) {
-//                }
-//            }
+            try {
+                executeScript("document.body.contentEditable=" + UserConfig.getBoolean("WebViewEditable", false));
+            } catch (Exception e) {
+            }
             if (null == scrollType) {
                 executeScript("setTimeout(window.scrollTo(" + scrollLeft + "," + scrollTop + "), 1000);");
             } else {
@@ -1483,20 +1482,18 @@ public class ControlWebView extends BaseController {
                 });
                 items.add(menu);
 
-//                if (!(this instanceof ControlHtmlRichEditor)) {
-//                    CheckMenuItem editableMenu = new CheckMenuItem(message("Editable"), StyleTools.getIconImageView("iconEdit.png"));
-//                    editableMenu.setSelected(UserConfig.getBoolean("WebViewEditable", false));
-//                    editableMenu.setOnAction(new EventHandler<ActionEvent>() {
-//                        @Override
-//                        public void handle(ActionEvent event) {
-//                            setEditable(editableMenu.isSelected());
-//                        }
-//                    });
-//                    items.add(editableMenu);
-//                }
-                items.add(new SeparatorMenuItem());
-
             }
+
+            CheckMenuItem editableMenu = new CheckMenuItem(message("Editable"), StyleTools.getIconImageView("iconEdit.png"));
+            editableMenu.setSelected(UserConfig.getBoolean("WebViewEditable", false));
+            editableMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    setEditable(editableMenu.isSelected());
+                }
+            });
+            items.add(editableMenu);
+            items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
             menu.setStyle("-fx-text-fill: #2e598a;");
@@ -1560,8 +1557,7 @@ public class ControlWebView extends BaseController {
                 try {
                     NodeList aList = doc.getElementsByTagName("a");
                     if (aList == null || aList.getLength() < 1) {
-                        error = message("NoData");
-                        return false;
+                        return true;
                     }
                     List<String> names = new ArrayList<>();
                     names.addAll(Arrays.asList(message("Index"), message("Link"), message("Name"), message("Title"),
@@ -1617,7 +1613,11 @@ public class ControlWebView extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                table.htmlTable();
+                if (table == null) {
+                    popInformation(message("NoData"));
+                } else {
+                    table.htmlTable();
+                }
             }
 
         };
@@ -1640,8 +1640,7 @@ public class ControlWebView extends BaseController {
                 try {
                     NodeList aList = doc.getElementsByTagName("img");
                     if (aList == null || aList.getLength() < 1) {
-                        error = message("NoData");
-                        return false;
+                        return true;
                     }
                     List<String> names = new ArrayList<>();
                     names.addAll(Arrays.asList(message("Index"), message("Link"), message("Name"), message("Title"),
@@ -1696,7 +1695,11 @@ public class ControlWebView extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                table.htmlTable();
+                if (table == null) {
+                    popInformation(message("NoData"));
+                } else {
+                    table.htmlTable();
+                }
             }
 
         };
@@ -1717,18 +1720,18 @@ public class ControlWebView extends BaseController {
             @Override
             protected boolean handle() {
                 toc = HtmlReadTools.toc(html, 8);
-                if (toc == null || toc.isBlank()) {
-                    error = message("NoData");
-                    return false;
-                }
                 return true;
             }
 
             @Override
             protected void whenSucceeded() {
-                TextEditorController c = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-                c.loadContents(toc);
-                c.toFront();
+                if (toc == null || toc.isBlank()) {
+                    popInformation(message("NoData"));
+                } else {
+                    TextEditorController c = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
+                    c.loadContents(toc);
+                    c.toFront();
+                }
             }
 
         };
@@ -1748,18 +1751,18 @@ public class ControlWebView extends BaseController {
             @Override
             protected boolean handle() {
                 texts = HtmlWriteTools.htmlToText(html);
-                if (texts == null || texts.isBlank()) {
-                    error = message("NoData");
-                    return false;
-                }
                 return true;
             }
 
             @Override
             protected void whenSucceeded() {
-                TextEditorController c = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
-                c.loadContents(texts);
-                c.toFront();
+                if (texts == null || texts.isBlank()) {
+                    popInformation(message("NoData"));
+                } else {
+                    TextEditorController c = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
+                    c.loadContents(texts);
+                    c.toFront();
+                }
             }
 
         };
@@ -1779,18 +1782,18 @@ public class ControlWebView extends BaseController {
             @Override
             protected boolean handle() {
                 tables = HtmlReadTools.Tables(html, title);
-                if (tables == null || tables.isEmpty()) {
-                    error = message("NoData");
-                    return false;
-                }
                 return true;
             }
 
             @Override
             protected void whenSucceeded() {
-                DataFileCSVController c = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
-                c.loadData(tables);
-                c.toFront();
+                if (tables == null || tables.isEmpty()) {
+                    popInformation(message("NoData"));
+                } else {
+                    DataFileCSVController c = (DataFileCSVController) WindowTools.openStage(Fxmls.DataFileCSVFxml);
+                    c.loadData(tables);
+                    c.toFront();
+                }
             }
 
         };

@@ -1133,7 +1133,16 @@ public class ControlColors extends BaseSysTableController<ColorData> {
 //            showRightPane();
             infoController.displayHtml(color.html());
         }
+        checkButtons();
+    }
+
+    @Override
+    protected void checkButtons() {
+        if (isSettingValues) {
+            return;
+        }
         super.checkButtons();
+        popButton.setDisable(isNoneSelected());
     }
 
     @FXML

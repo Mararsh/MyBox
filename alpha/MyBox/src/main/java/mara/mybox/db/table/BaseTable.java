@@ -1388,7 +1388,7 @@ public abstract class BaseTable<D> {
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             for (int i = 0; i < dataList.size(); ++i) {
                 D data = dataList.get(i);
-                if (!setDeleteStatement(conn, statement, data)) {
+                if (!setUpdateStatement(conn, statement, data)) {
                     continue;
                 }
                 statement.addBatch();

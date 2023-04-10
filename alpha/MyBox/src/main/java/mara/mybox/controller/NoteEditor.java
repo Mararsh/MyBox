@@ -41,6 +41,20 @@ public class NoteEditor extends ControlHtmlEditor {
         }
     }
 
+    @Override
+    public void tabChanged() {
+        try {
+            TextClipboardPopController.closeAll();
+            Tab tab = tabPane.getSelectionModel().getSelectedItem();
+            clearButton.setDisable(tab == viewTab || tab == attributesTab);
+            popButton.setDisable(tab == domTab || tab == attributesTab);
+            menuButton.setDisable(tab == richEditorTab || tab == attributesTab);
+            synchronizeButton.setDisable(tab == attributesTab);
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
     public void attributesChanged() {
         attributesTab.setText(message("Attributes") + (attributesController.nodeChanged ? " *" : ""));
     }

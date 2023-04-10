@@ -71,7 +71,7 @@ public class FileCopyTools {
                 return false;
             }
             if (FileTools.isEqualOrSubPath(targetPath.getAbsolutePath(), sourcePath.getAbsolutePath())) {
-                MyBoxLog.error(message("TargetPathShouldNotSourceSub"));
+                MyBoxLog.error(message("TreeTargetComments"));
                 return false;
             }
             if (attr == null) {

@@ -98,7 +98,7 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
             certArea.setText(selected.getCertificates());
             deleteButton.setDisable(false);
         }
-        super.checkButtons();
+        checkButtons();
     }
 
     @Override
