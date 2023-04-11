@@ -30,7 +30,7 @@ public class TreeNodesMoveController extends ControlTreeInfoSelect {
     }
 
     @Override
-    public boolean isAvoidNode(TreeNode node) {
+    public boolean isSourceNode(TreeNode node) {
         List<TreeNode> nodes = manageController.selectedItems();
         if (nodes == null || nodes.isEmpty()) {
             return false;

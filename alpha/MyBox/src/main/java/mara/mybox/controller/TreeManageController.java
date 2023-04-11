@@ -337,10 +337,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     }
 
     public void nodesCopied(TreeNode parent) {
-        if (parent == null) {
-            return;
-        }
-        nodesController.loadChildren(nodesController.find(parent));
+        nodesController.updateParent(parent);
     }
 
     public void nodesDeleted() {
@@ -384,7 +381,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
                 break;
             }
         }
-        nodesController.updateChild(nodeController.parentNode, nodeController.currentNode);
+        nodesController.updateParent(nodeController.parentNode);
     }
 
     public void newNodeSaved() {
@@ -487,46 +484,43 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             conditionBox.applyCss();
             return;
         }
-        synchronized (this) {
-            SingletonTask bookTask = new SingletonTask<Void>(this) {
-                private List<TreeNode> ancestor;
+        SingletonTask bookTask = new SingletonTask<Void>(this) {
+            private List<TreeNode> ancestor;
 
-                @Override
-                protected boolean handle() {
-                    ancestor = tableTreeNode.ancestor(loadedParent.getNodeid());
-                    return true;
-                }
+            @Override
+            protected boolean handle() {
+                ancestor = tableTreeNode.ancestor(loadedParent.getNodeid());
+                return true;
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    List<Node> nodes = new ArrayList<>();
-                    if (ancestor != null) {
-                        for (TreeNode node : ancestor) {
-                            Hyperlink link = new Hyperlink(node.getTitle());
-                            link.setWrapText(true);
-                            link.setMinHeight(Region.USE_PREF_SIZE);
-                            link.setOnAction(new EventHandler<ActionEvent>() {
-                                @Override
-                                public void handle(ActionEvent event) {
-                                    loadNodes(node);
-                                }
-                            });
-                            nodes.add(link);
-                            nodes.add(new Label(">"));
-                        }
+            @Override
+            protected void whenSucceeded() {
+                List<Node> nodes = new ArrayList<>();
+                if (ancestor != null) {
+                    for (TreeNode node : ancestor) {
+                        Hyperlink link = new Hyperlink(node.getTitle());
+                        link.setWrapText(true);
+                        link.setMinHeight(Region.USE_PREF_SIZE);
+                        link.setOnAction(new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent event) {
+                                loadNodes(node);
+                            }
+                        });
+                        nodes.add(link);
+                        nodes.add(new Label(">"));
                     }
-                    Label label = new Label(loadedParent.getTitle());
-                    label.setWrapText(true);
-                    label.setMinHeight(Region.USE_PREF_SIZE);
-                    nodes.add(label);
-                    namesPane.getChildren().setAll(nodes);
-                    conditionBox.getChildren().setAll(namesPane, nodeGroupPane);
-                    conditionBox.applyCss();
                 }
-            };
-            start(bookTask, false);
-        }
-
+                Label label = new Label(loadedParent.getTitle());
+                label.setWrapText(true);
+                label.setMinHeight(Region.USE_PREF_SIZE);
+                nodes.add(label);
+                namesPane.getChildren().setAll(nodes);
+                conditionBox.getChildren().setAll(namesPane, nodeGroupPane);
+                conditionBox.applyCss();
+            }
+        };
+        start(bookTask, false);
     }
 
     @Override

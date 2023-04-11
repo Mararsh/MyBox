@@ -49,6 +49,10 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
     @FXML
     protected Button queryTagsButton, deleteTagsButton;
 
+    public TreeTagsController() {
+        loadInBackground = true;
+    }
+
     @Override
     public void initColumns() {
         try {

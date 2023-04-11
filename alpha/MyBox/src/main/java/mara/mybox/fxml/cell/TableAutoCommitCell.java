@@ -278,6 +278,7 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
     public void cancelEdit() {
         super.cancelEdit();
         editingRow = -1;
+        updateItem(getItem(), false);
     }
 
     /*

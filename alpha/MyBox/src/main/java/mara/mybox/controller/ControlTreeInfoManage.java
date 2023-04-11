@@ -12,6 +12,7 @@ import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
+import javafx.scene.input.MouseEvent;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.TreeNode;
 import static mara.mybox.db.data.TreeNode.NodeSeparater;
@@ -31,7 +32,6 @@ import mara.mybox.value.UserConfig;
 public class ControlTreeInfoManage extends BaseTreeInfoController {
 
     protected TreeManageController manageController;
-    protected String defaultClickAction = "PopMenu";
 
     public void setParameters(TreeManageController parent) {
         this.parentController = parent;
@@ -56,10 +56,10 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
         List<TreeNode> ancestor = ancestor(conn, node);
         if (ancestor != null) {
             for (TreeNode a : ancestor) {
-                chainName += name(a) + NodeSeparater;
+                chainName += a.getTitle() + NodeSeparater;
             }
         }
-        chainName += name(node);
+        chainName += node.getTitle();
         return chainName;
     }
 
@@ -68,38 +68,86 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
         if (item == null) {
             return;
         }
-        String clickAction = UserConfig.getString(baseName + "TreeWhenClickNode", defaultClickAction);
-        if (null == clickAction) {
-            popFunctionsMenu(null, item);
-        } else {
-            switch (clickAction) {
-                case "PopMenu":
-                    popFunctionsMenu(null, item);
-                    break;
-                case "Edit":
-                    editNode(item);
-                    break;
-                case "Paste":
-                    pasteNode(item);
-                    break;
-                case "Execute":
-                    executeNode(item);
-                    break;
-                case "LoadChildren":
-                    listChildren(item);
-                    break;
-                case "LoadDescendants":
-                    listDescentants(item);
-                    break;
-                default:
-                    break;
-            }
+        String clickAction = UserConfig.getString(baseName + "TreeWhenClickNode", "DoNothing");
+        switch (clickAction) {
+            case "PopMenu":
+                popFunctionsMenu(null, item);
+                break;
+            case "Edit":
+                editNode(item);
+                break;
+            case "Paste":
+                pasteNode(item);
+                break;
+            case "Execute":
+                executeNode(item);
+                break;
+            case "LoadChildren":
+                listChildren(item);
+                break;
+            case "LoadDescendants":
+                listDescentants(item);
+                break;
+            default:
+                break;
         }
     }
 
     @Override
     protected void doubleClicked(TreeItem<TreeNode> item) {
         editNode(item);
+    }
+
+    @FXML
+    public void popViewMenu(MouseEvent event) {
+        if (isSettingValues || getMyWindow() == null) {
+            return;
+        }
+        List<MenuItem> items = new ArrayList<>();
+
+        MenuItem menu = new MenuItem(message("UnfoldNode"), StyleTools.getIconImageView("iconPlus.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            unfoldNode();
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("UnfoldNodeAndDescendants"), StyleTools.getIconImageView("iconPlus.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            unfoldNodeAndDecendants();
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("FoldNode"), StyleTools.getIconImageView("iconMinus.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            foldNode();
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("FoldNodeAndDescendants"), StyleTools.getIconImageView("iconMinus.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            foldNodeAndDecendants();
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("TreeView"), StyleTools.getIconImageView("iconHtml.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            infoTree();
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("Examples"), StyleTools.getIconImageView("iconExamples.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            importExamples();
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            refreshAction();
+        });
+        items.add(menu);
+
+        popMenu(infoTree, items);
     }
 
     @Override
@@ -110,10 +158,20 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
 
         Menu clickMenu = new Menu(message("WhenClickNode"), StyleTools.getIconImageView("iconSelect.png"));
         ToggleGroup clickGroup = new ToggleGroup();
-        String currentClick = UserConfig.getString(baseName + "TreeWhenClickNode", defaultClickAction);
+        String currentClick = UserConfig.getString(baseName + "TreeWhenClickNode", "DoNothing");
+
+        RadioMenuItem nothingMenu = new RadioMenuItem(message("DoNothing"));
+        nothingMenu.setSelected(currentClick == null || "DoNothing".equals(currentClick));
+        nothingMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setString(baseName + "TreeWhenClickNode", "DoNothing");
+            }
+        });
+        nothingMenu.setToggleGroup(clickGroup);
 
         RadioMenuItem clickPopMenu = new RadioMenuItem(message("PopMenu"), StyleTools.getIconImageView("iconMenu.png"));
-        clickPopMenu.setSelected(currentClick == null || "PopMenu".equals(currentClick));
+        clickPopMenu.setSelected("PopMenu".equals(currentClick));
         clickPopMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -142,7 +200,7 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
         });
         pasteNodeMenu.setToggleGroup(clickGroup);
 
-        clickMenu.getItems().addAll(clickPopMenu, editNodeMenu, pasteNodeMenu);
+        clickMenu.getItems().addAll(nothingMenu, clickPopMenu, editNodeMenu, pasteNodeMenu);
 
         if (nodeExecutable) {
             RadioMenuItem executeNodeMenu = new RadioMenuItem(message("Execute"), StyleTools.getIconImageView("iconGo.png"));
@@ -213,15 +271,27 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
         Menu viewMenu = new Menu(message("View"), StyleTools.getIconImageView("iconView.png"));
         items.add(viewMenu);
 
-        menu = new MenuItem(message("Unfold"), StyleTools.getIconImageView("iconPlus.png"));
+        menu = new MenuItem(message("UnfoldNode"), StyleTools.getIconImageView("iconPlus.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            unfoldNodes();
+            unfoldNode();
         });
         viewMenu.getItems().add(menu);
 
-        menu = new MenuItem(message("Fold"), StyleTools.getIconImageView("iconMinus.png"));
+        menu = new MenuItem(message("UnfoldNodeAndDescendants"), StyleTools.getIconImageView("iconPlus.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            foldNodes();
+            unfoldNodeAndDecendants();
+        });
+        viewMenu.getItems().add(menu);
+
+        menu = new MenuItem(message("FoldNode"), StyleTools.getIconImageView("iconMinus.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            foldNode();
+        });
+        viewMenu.getItems().add(menu);
+
+        menu = new MenuItem(message("FoldNodeAndDescendants"), StyleTools.getIconImageView("iconMinus.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            foldNodeAndDecendants();
         });
         viewMenu.getItems().add(menu);
 
@@ -240,6 +310,12 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
             public void handle(ActionEvent event) {
                 listDescentants(treeItem);
             }
+        });
+        viewMenu.getItems().add(menu);
+
+        menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            refreshAction();
         });
         viewMenu.getItems().add(menu);
 
@@ -360,7 +436,7 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
                 }
 
             };
-            start(task);
+            start(task, infoTree);
         }
     }
 
@@ -379,7 +455,7 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
             return;
         }
         String chainName = chainName(item);
-        String name = PopTools.askValue(getBaseTitle(), chainName, message("RenameNode"), name(nodeValue) + "m");
+        String name = PopTools.askValue(getBaseTitle(), chainName, message("RenameNode"), nodeValue.getTitle() + "m");
         if (name == null || name.isBlank()) {
             return;
         }
@@ -409,7 +485,7 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
                     popSuccessful();
                 }
             };
-            start(task);
+            start(task, infoTree);
         }
     }
 
@@ -487,24 +563,6 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
             return;
         }
         manageController.loadDescendants(item.getValue());
-    }
-
-    protected void updateChild(TreeNode parent, TreeNode node) {
-        if (parent == null || node == null) {
-            return;
-        }
-        TreeItem<TreeNode> parentItem = find(parent);
-        if (parentItem == null) {
-            return;
-        }
-        for (TreeItem<TreeNode> child : parentItem.getChildren()) {
-            TreeNode childNode = child.getValue();
-            if (childNode != null && equal(node, childNode)) {
-                child.setValue(node);
-                return;
-            }
-        }
-        loadChildren(parentItem);
     }
 
     @FXML

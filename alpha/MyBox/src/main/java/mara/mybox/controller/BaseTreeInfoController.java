@@ -10,7 +10,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
@@ -23,7 +22,6 @@ import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.robot.Robot;
 import javafx.util.Callback;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.TreeNode;
@@ -54,7 +52,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class BaseTreeInfoController extends BaseController {
 
-    protected static final int AutoExpandThreshold = 500;
+    protected static final int AutoExpandThreshold = 100;
     protected boolean expandAll, nodeExecutable;
     protected final SimpleBooleanProperty loadedNotify;
     protected TableTreeNode tableTreeNode;
@@ -111,7 +109,7 @@ public class BaseTreeInfoController extends BaseController {
                             }
                             setText(StringTools.abbreviate(item, 60));
                             setGraphic(null);
-                            if (isAvoidNode(getTableRow().getItem())) {
+                            if (isSourceNode(getTableRow().getItem())) {
                                 setStyle(NodeStyleTools.darkRedTextStyle());
                             } else {
                                 setStyle(null);
@@ -164,7 +162,6 @@ public class BaseTreeInfoController extends BaseController {
             task.cancel();
         }
         task = new SingletonTask<Void>(this) {
-            private boolean expand;
             private TreeItem<TreeNode> rootItem;
 
             @Override
@@ -177,12 +174,8 @@ public class BaseTreeInfoController extends BaseController {
                     if (size < 1) {
                         return true;
                     }
-                    expand = size <= AutoExpandThreshold;
-                    if (expand) {
-                        expandChildren(conn, rootItem);
-                    } else {
-                        loadChildren(conn, rootItem);
-                    }
+                    rootItem.getChildren().add(new TreeItem(new TreeNode()));
+                    unfold(conn, rootItem, size > AutoExpandThreshold);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -192,150 +185,110 @@ public class BaseTreeInfoController extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                infoTree.setRoot(rootItem);
-                rootItem.setExpanded(true);
-                if (selectNode != null) {
-                    TreeItem<TreeNode> selecItem = find(selectNode);
-                    if (selecItem != null) {
-                        select(selecItem);
-                    } else {
-                        select(rootItem);
-                    }
-                }
             }
 
             @Override
             protected void finalAction() {
                 super.finalAction();
+                infoTree.setRoot(rootItem);
+                rootItem.setExpanded(true);
+                if (selectNode != null) {
+                    select(find(selectNode));
+                }
                 notifyLoaded();
             }
 
         };
-        start(task);
+        start(task, infoTree);
+    }
+
+    protected void unfold(Connection conn, TreeItem<TreeNode> item, boolean descendants) {
+        if (item == null || item.isLeaf()) {
+            return;
+        }
+        if (loaded(item)) {
+            for (TreeItem<TreeNode> childItem : item.getChildren()) {
+                if (descendants) {
+                    unfold(conn, childItem, descendants);
+                } else {
+                    childItem.setExpanded(false);
+                }
+            }
+        } else {
+            item.getChildren().clear();
+            TreeNode node = item.getValue();
+            if (node == null) {
+                return;
+            }
+            List<TreeNode> children = tableTreeNode.children(conn, node.getNodeid());
+            if (children != null) {
+                for (TreeNode childNode : children) {
+                    TreeItem<TreeNode> childItem = new TreeItem(childNode);
+                    item.getChildren().add(childItem);
+                    if (!tableTreeNode.childrenEmpty(conn, childNode.getNodeid())) {
+                        childItem.expandedProperty().addListener(
+                                (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
+                                    if (newVal && !childItem.isLeaf() && !loaded(childItem)) {
+                                        unfold(childItem, false);
+                                    }
+                                });
+                        TreeItem<TreeNode> dummyItem = new TreeItem(new TreeNode());
+                        childItem.getChildren().add(dummyItem);
+                    }
+                    if (descendants) {
+                        unfold(conn, childItem, descendants);
+                    } else {
+                        childItem.setExpanded(false);
+                    }
+                }
+            }
+        }
+        item.setExpanded(true);
+    }
+
+    protected boolean loaded(TreeItem<TreeNode> item) {
+        try {
+            return item.getChildren().get(0).getValue().getTitle() != null;
+        } catch (Exception e) {
+            return true;
+        }
+    }
+
+    protected void unfold(TreeItem<TreeNode> item, boolean descendants) {
+        if (item == null) {
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    unfold(conn, item, descendants);
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                infoTree.refresh();
+            }
+        };
+        start(task, infoTree);
     }
 
     public void itemSelected(TreeItem<TreeNode> item) {
-    }
-
-    protected void expandChildren(TreeItem<TreeNode> item) {
-        if (item == null) {
-            return;
-        }
-        TreeNode node = item.getValue();
-        if (node == null) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    try (Connection conn = DerbyBase.getConnection()) {
-                        expandChildren(conn, item);
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    infoTree.refresh();
-                }
-            };
-            start(task);
-        }
-    }
-
-    protected void expandChildren(Connection conn, TreeItem<TreeNode> item) {
-        if (conn == null || item == null) {
-            return;
-        }
-        item.getChildren().clear();
-        TreeNode node = item.getValue();
-        if (node == null) {
-            return;
-        }
-        List<TreeNode> children = children(conn, node);
-        if (children != null) {
-            for (int i = 0; i < children.size(); i++) {
-                TreeNode child = children.get(i);
-                TreeItem<TreeNode> childNode = new TreeItem(child);
-                item.getChildren().add(childNode);
-                expandChildren(conn, childNode);
-                childNode.setExpanded(true);
-            }
-        }
-        item.setExpanded(true);
-    }
-
-    protected void loadChildren(TreeItem<TreeNode> item) {
-        if (item == null) {
-            return;
-        }
-        TreeNode node = item.getValue();
-        if (node == null) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    try (Connection conn = DerbyBase.getConnection()) {
-                        loadChildren(conn, item);
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    infoTree.refresh();
-                }
-            };
-            start(task);
-
-        }
-    }
-
-    protected void loadChildren(Connection conn, TreeItem<TreeNode> item) {
-        if (conn == null || item == null) {
-            return;
-        }
-        item.getChildren().clear();
-        TreeNode node = item.getValue();
-        if (node == null) {
-            return;
-        }
-        List<TreeNode> children = children(conn, node);
-        if (children != null) {
-            for (TreeNode child : children) {
-                TreeItem<TreeNode> childItem = new TreeItem(child);
-                item.getChildren().add(childItem);
-                childItem.setExpanded(false);
-                if (!childrenEmpty(conn, child)) {
-                    childItem.expandedProperty().addListener(
-                            (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
-                                if (newVal && !childItem.isLeaf() && !loaded(childItem)) {
-                                    loadChildren(childItem);
-                                }
-                            });
-                    TreeItem<TreeNode> dummyItem = new TreeItem(dummy());
-                    childItem.getChildren().add(dummyItem);
-                }
-            }
-        }
-        item.setExpanded(true);
     }
 
     protected void addNewNode(TreeItem<TreeNode> item, TreeNode node, boolean select) {
@@ -347,18 +300,6 @@ public class BaseTreeInfoController extends BaseController {
         child.setExpanded(false);
         if (select) {
             select(item);
-        }
-    }
-
-    protected boolean loaded(TreeItem<TreeNode> item) {
-        if (item == null || item.isLeaf()) {
-            return true;
-        }
-        try {
-            TreeItem<TreeNode> child = (TreeItem<TreeNode>) (item.getChildren().get(0));
-            return isDummy(child.getValue());
-        } catch (Exception e) {
-            return true;
         }
     }
 
@@ -374,12 +315,8 @@ public class BaseTreeInfoController extends BaseController {
         return tableTreeNode.findAndCreateRoot(conn, category);
     }
 
-    public List<TreeNode> children(Connection conn, TreeNode node) {
-        return tableTreeNode.children(conn, id(node));
-    }
-
     public List<TreeNode> ancestor(Connection conn, TreeNode node) {
-        return tableTreeNode.ancestor(conn, id(node));
+        return tableTreeNode.ancestor(conn, node.getNodeid());
     }
 
     public List<TreeItem<TreeNode>> ancestor(TreeItem<TreeNode> item) {
@@ -409,20 +346,6 @@ public class BaseTreeInfoController extends BaseController {
         return selecteItem;
     }
 
-    public long id(TreeNode node) {
-        if (node == null) {
-            return -1;
-        }
-        return node.getNodeid();
-    }
-
-    public String name(TreeNode node) {
-        if (node == null) {
-            return null;
-        }
-        return node.getTitle();
-    }
-
     protected boolean isRoot(TreeNode node) {
         if (infoTree.getRoot() == null || node == null) {
             return false;
@@ -438,34 +361,22 @@ public class BaseTreeInfoController extends BaseController {
         List<TreeItem<TreeNode>> ancestor = ancestor(item);
         if (ancestor != null) {
             for (TreeItem<TreeNode> a : ancestor) {
-                chainName += name(a.getValue()) + NodeSeparater;
+                chainName += a.getValue().getTitle() + NodeSeparater;
             }
         }
-        chainName += name(item.getValue());
+        chainName += item.getValue().getTitle();
         return chainName;
     }
 
-    public boolean isAvoidNode(TreeNode node) {
+    public boolean isSourceNode(TreeNode node) {
         return false;
     }
 
     public boolean equal(TreeNode node1, TreeNode node2) {
-        return id(node1) == id(node2);
-    }
-
-    public boolean childrenEmpty(Connection conn, TreeNode node) {
-        return tableTreeNode.childrenEmpty(conn, id(node));
-    }
-
-    public TreeNode dummy() {
-        return new TreeNode();
-    }
-
-    public boolean isDummy(TreeNode node) {
-        if (node == null) {
+        if (node1 == null || node2 == null) {
             return false;
         }
-        return node.getTitle() != null;
+        return node1.getNodeid() == node2.getNodeid();
     }
 
     public boolean equalOrDescendant(TreeItem<TreeNode> item1, TreeItem<TreeNode> item2) {
@@ -497,37 +408,15 @@ public class BaseTreeInfoController extends BaseController {
             return;
         }
         List<MenuItem> items = new ArrayList<>();
-        MenuItem menu = new MenuItem(StringTools.menuSuffix(chainName(treeItem)));
+        MenuItem menu = new MenuItem(StringTools.menuSuffix(treeItem.getValue().getTitle()));
         menu.setStyle("-fx-text-fill: #2e598a;");
         items.add(menu);
 
         items.add(new SeparatorMenuItem());
 
         items.addAll(makeFunctionsMenu(treeItem));
-        items.add(new SeparatorMenuItem());
 
-        menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = null;
-        });
-        items.add(menu);
-
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-        }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        popMenu.getItems().addAll(items);
-        if (event == null) {
-            Robot r = new Robot();
-            popMenu.show(infoTree, r.getMouseX() + 40, r.getMouseY() + 20);
-        } else {
-            popMenu.show(infoTree, event.getScreenX(), event.getScreenY());
-        }
+        popMenu(infoTree, items);
     }
 
     protected List<MenuItem> makeFunctionsMenu(TreeItem<TreeNode> item) {
@@ -552,15 +441,33 @@ public class BaseTreeInfoController extends BaseController {
         });
         items.add(menu);
 
-        menu = new MenuItem(message("Unfold"), StyleTools.getIconImageView("iconPlus.png"));
+        menu = new MenuItem(message("UnfoldNode"), StyleTools.getIconImageView("iconPlus.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            unfoldNodes();
+            unfoldNode();
         });
         items.add(menu);
 
-        menu = new MenuItem(message("Fold"), StyleTools.getIconImageView("iconMinus.png"));
+        menu = new MenuItem(message("UnfoldNodeAndDescendants"), StyleTools.getIconImageView("iconPlus.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            foldNodes();
+            unfoldNodeAndDecendants();
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("FoldNode"), StyleTools.getIconImageView("iconMinus.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            foldNode();
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("FoldNodeAndDescendants"), StyleTools.getIconImageView("iconMinus.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            foldNodeAndDecendants();
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            refreshAction();
         });
         items.add(menu);
 
@@ -608,33 +515,50 @@ public class BaseTreeInfoController extends BaseController {
                     popSuccessful();
                 }
 
+                @Override
+                protected void finalAction() {
+                    super.finalAction();
+                }
+
             };
-            start(task);
+            start(task, infoTree);
         }
     }
 
     @FXML
-    protected void foldNodes() {
-        fold(selected());
+    protected void foldNode() {
+        fold(selected(), false);
     }
 
     @FXML
-    protected void unfoldNodes() {
-        expandChildren(selected());
+    protected void foldNodeAndDecendants() {
+        fold(selected(), true);
     }
 
-    protected void fold(TreeItem<TreeNode> node) {
-        if (node == null) {
+    protected void fold(TreeItem<TreeNode> item, boolean descendants) {
+        if (item == null) {
             return;
         }
-        List<TreeItem<TreeNode>> children = node.getChildren();
-        if (children != null) {
-            for (TreeItem<TreeNode> child : children) {
-                fold(child);
-                child.setExpanded(false);
+        if (descendants) {
+            List<TreeItem<TreeNode>> children = item.getChildren();
+            if (children != null) {
+                for (TreeItem<TreeNode> child : children) {
+                    fold(child, true);
+                    child.setExpanded(false);
+                }
             }
         }
-        node.setExpanded(false);
+        item.setExpanded(false);
+    }
+
+    @FXML
+    protected void unfoldNode() {
+        unfold(selected(), false);
+    }
+
+    @FXML
+    protected void unfoldNodeAndDecendants() {
+        unfold(selected(), true);
     }
 
     @FXML
@@ -701,6 +625,15 @@ public class BaseTreeInfoController extends BaseController {
         return newNode;
     }
 
+    public void updateParent(TreeNode node) {
+        TreeItem<TreeNode> treeItem = find(node);
+        if (treeItem == null) {
+            return;
+        }
+        treeItem.setValue(node);
+        unfold(treeItem, false);
+    }
+
     public TreeManageController openManager() {
         if (category == null) {
             return null;
@@ -742,70 +675,65 @@ public class BaseTreeInfoController extends BaseController {
         if (nodeValue == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
+        SingletonTask infoTask = new SingletonTask<Void>(this) {
+            private StringBuilder s;
+
+            @Override
+            protected boolean handle() {
+                s = new StringBuilder();
+                // https://www.jb51.net/article/116957.htm
+                s.append(" <script>\n"
+                        + "    function nodeClicked(id) {\n"
+                        + "      var obj = document.getElementById(id);\n"
+                        + "      var objv = obj.style.display;\n"
+                        + "      if (objv == 'none') {\n"
+                        + "        obj.style.display = 'block';\n"
+                        + "      } else {\n"
+                        + "        obj.style.display = 'none';\n"
+                        + "      }\n"
+                        + "    }\n"
+                        + "    function showClass(className, show) {\n"
+                        + "      var nodes = document.getElementsByClassName(className);  　\n"
+                        + "      if ( show) {\n"
+                        + "           for (var i = 0 ; i < nodes.length; i++) {\n"
+                        + "              nodes[i].style.display = '';\n"
+                        + "           }\n"
+                        + "       } else {\n"
+                        + "           for (var i = 0 ; i < nodes.length; i++) {\n"
+                        + "              nodes[i].style.display = 'none';\n"
+                        + "           }\n"
+                        + "       }\n"
+                        + "    }\n"
+                        + "  </script>\n\n");
+                s.append("<DIV>\n")
+                        .append("<DIV>\n")
+                        .append("    <INPUT type=\"checkbox\" checked onclick=\"showClass('TreeNode', this.checked);\">")
+                        .append(message("Unfold")).append("</INPUT>\n")
+                        .append("    <INPUT type=\"checkbox\" checked onclick=\"showClass('SerialNumber', this.checked);\">")
+                        .append(message("HierarchyNumber")).append("</INPUT>\n")
+                        .append("    <INPUT type=\"checkbox\" checked onclick=\"showClass('NodeTag', this.checked);\">")
+                        .append(message("Tags")).append("</INPUT>\n")
+                        .append("    <INPUT type=\"checkbox\" checked onclick=\"showClass('nodeValue', this.checked);\">")
+                        .append(message("Values")).append("</INPUT>\n")
+                        .append("</DIV>\n")
+                        .append("<HR>\n");
+                try (Connection conn = DerbyBase.getConnection()) {
+                    treeView(conn, nodeValue, 4, "", s);
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                s.append("\n<HR>\n<TreeNode style=\"font-size:0.8em\">* ").append(message("HtmlEditableComments")).append("</P>\n");
+                return true;
             }
-            task = new SingletonTask<Void>(this) {
-                private StringBuilder s;
 
-                @Override
-                protected boolean handle() {
-                    s = new StringBuilder();
-                    // https://www.jb51.net/article/116957.htm
-                    s.append(" <script>\n"
-                            + "    function nodeClicked(id) {\n"
-                            + "      var obj = document.getElementById(id);\n"
-                            + "      var objv = obj.style.display;\n"
-                            + "      if (objv == 'none') {\n"
-                            + "        obj.style.display = 'block';\n"
-                            + "      } else {\n"
-                            + "        obj.style.display = 'none';\n"
-                            + "      }\n"
-                            + "    }\n"
-                            + "    function showClass(className, show) {\n"
-                            + "      var nodes = document.getElementsByClassName(className);  　\n"
-                            + "      if ( show) {\n"
-                            + "           for (var i = 0 ; i < nodes.length; i++) {\n"
-                            + "              nodes[i].style.display = '';\n"
-                            + "           }\n"
-                            + "       } else {\n"
-                            + "           for (var i = 0 ; i < nodes.length; i++) {\n"
-                            + "              nodes[i].style.display = 'none';\n"
-                            + "           }\n"
-                            + "       }\n"
-                            + "    }\n"
-                            + "  </script>\n\n");
-                    s.append("<DIV>\n")
-                            .append("<DIV>\n")
-                            .append("    <INPUT type=\"checkbox\" checked onclick=\"showClass('TreeNode', this.checked);\">")
-                            .append(message("Unfold")).append("</INPUT>\n")
-                            .append("    <INPUT type=\"checkbox\" checked onclick=\"showClass('SerialNumber', this.checked);\">")
-                            .append(message("HierarchyNumber")).append("</INPUT>\n")
-                            .append("    <INPUT type=\"checkbox\" checked onclick=\"showClass('NodeTag', this.checked);\">")
-                            .append(message("Tags")).append("</INPUT>\n")
-                            .append("    <INPUT type=\"checkbox\" checked onclick=\"showClass('nodeValue', this.checked);\">")
-                            .append(message("Values")).append("</INPUT>\n")
-                            .append("</DIV>\n")
-                            .append("<HR>\n");
-                    try (Connection conn = DerbyBase.getConnection()) {
-                        treeView(conn, nodeValue, 4, "", s);
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    s.append("\n<HR>\n<TreeNode style=\"font-size:0.8em\">* ").append(message("HtmlEditableComments")).append("</P>\n");
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    WebAddressController c = WebBrowserController.openHtml(
-                            HtmlWriteTools.html(chainName(node), HtmlStyles.styleValue("Default"), s.toString()), true);
-                }
-            };
-            start(task);
-        }
+            @Override
+            protected void whenSucceeded() {
+                WebAddressController c = WebBrowserController.openHtml(
+                        HtmlWriteTools.html(chainName(node), HtmlStyles.styleValue("Default"), s.toString()), true);
+            }
+        };
+        start(infoTask, false);
     }
 
     protected void treeView(Connection conn, TreeNode node, int indent, String serialNumber, StringBuilder s) {
@@ -813,7 +741,7 @@ public class BaseTreeInfoController extends BaseController {
             if (conn == null || node == null) {
                 return;
             }
-            List<TreeNode> children = children(conn, node);
+            List<TreeNode> children = tableTreeNode.children(conn, node.getNodeid());
             String indentNode = " ".repeat(indent);
             String spaceNode = "&nbsp;".repeat(indent);
             String nodePageid = "item" + node.getNodeid();

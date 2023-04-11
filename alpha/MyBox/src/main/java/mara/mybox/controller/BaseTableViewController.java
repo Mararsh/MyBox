@@ -219,7 +219,11 @@ public abstract class BaseTableViewController<P> extends BaseController {
             }
 
         };
-        start(task, !loadInBackground, message("LoadingTableData"));
+        if (loadInBackground) {
+            start(task, tableView);
+        } else {
+            start(task, true, message("LoadingTableData"));
+        }
     }
 
     protected void countPagination(Connection conn, long page) {

@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.net.URI;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javafx.concurrent.Task;
@@ -12,8 +13,12 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.layout.Region;
+import javafx.scene.robot.Robot;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.dev.MyBoxLog;
@@ -22,6 +27,7 @@ import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -537,6 +543,35 @@ public abstract class BaseController_Actions extends BaseController_Interface {
             MyBoxLog.debug(e.toString());
         }
 
+    }
+
+    public void popMenu(Node node, List<MenuItem> menuItems) {
+        if (node == null || menuItems == null || menuItems.isEmpty()) {
+            return;
+        }
+        List<MenuItem> items = new ArrayList<>();
+        items.addAll(menuItems);
+        items.add(new SeparatorMenuItem());
+
+        MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
+        menu.setStyle("-fx-text-fill: #2e598a;");
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = null;
+        });
+        items.add(menu);
+
+        if (popMenu != null && popMenu.isShowing()) {
+            popMenu.hide();
+        }
+        popMenu = new ContextMenu();
+        popMenu.setAutoHide(true);
+        popMenu.getItems().addAll(items);
+
+        Robot r = new Robot();
+        popMenu.show(node, r.getMouseX() + 10, r.getMouseY() + 10);
     }
 
 }

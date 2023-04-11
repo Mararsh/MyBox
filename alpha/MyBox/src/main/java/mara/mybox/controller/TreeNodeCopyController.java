@@ -35,7 +35,7 @@ public class TreeNodeCopyController extends ControlTreeInfoSelect {
     }
 
     @Override
-    public boolean isAvoidNode(TreeNode node) {
+    public boolean isSourceNode(TreeNode node) {
         return equal(node, sourceNode);
     }
 
