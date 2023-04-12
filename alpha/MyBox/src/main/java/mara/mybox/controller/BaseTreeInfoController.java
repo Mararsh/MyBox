@@ -33,6 +33,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TreeTableDateCell;
 import mara.mybox.fxml.cell.TreeTableHierachyCell;
@@ -52,7 +53,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class BaseTreeInfoController extends BaseController {
 
-    protected static final int AutoExpandThreshold = 100;
+    protected static final int AutoExpandThreshold = 500;
     protected boolean expandAll, nodeExecutable;
     protected final SimpleBooleanProperty loadedNotify;
     protected TableTreeNode tableTreeNode;
@@ -161,6 +162,7 @@ public class BaseTreeInfoController extends BaseController {
         if (task != null) {
             task.cancel();
         }
+        infoTree.setRoot(null);
         task = new SingletonTask<Void>(this) {
             private TreeItem<TreeNode> rootItem;
 
@@ -175,7 +177,7 @@ public class BaseTreeInfoController extends BaseController {
                         return true;
                     }
                     rootItem.getChildren().add(new TreeItem(new TreeNode()));
-                    unfold(conn, rootItem, size > AutoExpandThreshold);
+                    unfold(conn, rootItem, size < AutoExpandThreshold);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -209,7 +211,7 @@ public class BaseTreeInfoController extends BaseController {
         if (loaded(item)) {
             for (TreeItem<TreeNode> childItem : item.getChildren()) {
                 if (descendants) {
-                    unfold(conn, childItem, descendants);
+                    unfold(conn, childItem, true);
                 } else {
                     childItem.setExpanded(false);
                 }
@@ -236,7 +238,7 @@ public class BaseTreeInfoController extends BaseController {
                         childItem.getChildren().add(dummyItem);
                     }
                     if (descendants) {
-                        unfold(conn, childItem, descendants);
+                        unfold(conn, childItem, true);
                     } else {
                         childItem.setExpanded(false);
                     }
@@ -416,7 +418,7 @@ public class BaseTreeInfoController extends BaseController {
 
         items.addAll(makeFunctionsMenu(treeItem));
 
-        popMenu(infoTree, items);
+        popMouseMenu(event, items);
     }
 
     protected List<MenuItem> makeFunctionsMenu(TreeItem<TreeNode> item) {
@@ -428,18 +430,6 @@ public class BaseTreeInfoController extends BaseController {
         items.add(menu);
 
         items.add(new SeparatorMenuItem());
-
-        menu = new MenuItem(message("AddNode"), StyleTools.getIconImageView("iconAdd.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            addNode(item);
-        });
-        items.add(menu);
-
-        menu = new MenuItem(message("Examples"), StyleTools.getIconImageView("iconExamples.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            importExamples();
-        });
-        items.add(menu);
 
         menu = new MenuItem(message("UnfoldNode"), StyleTools.getIconImageView("iconPlus.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -462,6 +452,32 @@ public class BaseTreeInfoController extends BaseController {
         menu = new MenuItem(message("FoldNodeAndDescendants"), StyleTools.getIconImageView("iconMinus.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             foldNodeAndDecendants();
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("CopyValue"), StyleTools.getIconImageView("iconCopySystem.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            TextClipboardTools.copyToSystemClipboard(this, item.getValue().getValue());
+        });
+        menu.setDisable(item == null);
+        items.add(menu);
+
+        menu = new MenuItem(message("CopyTitle"), StyleTools.getIconImageView("iconCopySystem.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            TextClipboardTools.copyToSystemClipboard(this, item.getValue().getTitle());
+        });
+        menu.setDisable(item == null);
+        items.add(menu);
+
+        menu = new MenuItem(message("AddNode"), StyleTools.getIconImageView("iconAdd.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            addNode(item);
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("Examples"), StyleTools.getIconImageView("iconExamples.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            importExamples();
         });
         items.add(menu);
 

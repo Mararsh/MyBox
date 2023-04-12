@@ -1,8 +1,10 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -19,8 +21,6 @@ public abstract class MyBoxController_File extends MyBoxController_Image {
 
     @FXML
     protected void showFileMenu(MouseEvent event) {
-        hideMenu(event);
-
         MenuItem filesArrangement = new MenuItem(Languages.message("FilesArrangement"));
         filesArrangement.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.FilesArrangementFxml);
@@ -122,27 +122,15 @@ public abstract class MyBoxController_File extends MyBoxController_Image {
                 filesArchiveCompress, filesCompress
         );
 
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        popMenu.getItems().addAll(
-                filesArrangement, dirSynchronize, new SeparatorMenuItem(),
+        List<MenuItem> items = new ArrayList<>();
+        items.addAll(Arrays.asList(filesArrangement, dirSynchronize, new SeparatorMenuItem(),
                 archiveCompressMenu, new SeparatorMenuItem(),
                 fileCut, filesMerge, new SeparatorMenuItem(),
                 filesFind, filesRedundancy, filesCompare, new SeparatorMenuItem(),
                 filesRename, filesCopy, filesMove, new SeparatorMenuItem(),
-                fileDeleteMenu
-        );
+                fileDeleteMenu));
 
-        popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem closeMenu = new MenuItem(Languages.message("PopupClose"));
-        closeMenu.setStyle("-fx-text-fill: #2e598a;");
-        closeMenu.setOnAction((ActionEvent cevent) -> {
-            popMenu.hide();
-            popMenu = null;
-        });
-        popMenu.getItems().add(closeMenu);
-
-        showMenu(fileBox, event);
+        popCenterMenu(fileBox, items);
 
     }
 

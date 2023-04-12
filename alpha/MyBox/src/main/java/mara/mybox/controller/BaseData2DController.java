@@ -11,13 +11,11 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.Data2DExampleTools;
 import mara.mybox.data2d.DataFileCSV;
@@ -32,7 +30,6 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2D;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.CsvTools;
@@ -242,17 +239,9 @@ public abstract class BaseData2DController extends BaseController {
     @FXML
     protected void examplesMenu(Event event) {
         try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-
-            popMenu.getItems().addAll(Data2DExampleTools.examplesMenu(dataController));
-
-            popMenu.getItems().add(new SeparatorMenuItem());
+            List<MenuItem> items = new ArrayList<>();
+            items.addAll(Data2DExampleTools.examplesMenu(dataController));
+            items.add(new SeparatorMenuItem());
 
             CheckMenuItem pMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
             pMenu.setSelected(UserConfig.getBoolean("Data2DExamplesPopWhenMouseHovering", true));
@@ -262,19 +251,9 @@ public abstract class BaseData2DController extends BaseController {
                     UserConfig.setBoolean("Data2DExamplesPopWhenMouseHovering", pMenu.isSelected());
                 }
             });
-            popMenu.getItems().add(pMenu);
+            items.add(pMenu);
 
-            MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
-
-            LocateTools.locateBelow((Region) event.getSource(), popMenu);
+            popEventMenu(event, items);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

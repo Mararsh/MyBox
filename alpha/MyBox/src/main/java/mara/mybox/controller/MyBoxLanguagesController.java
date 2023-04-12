@@ -19,12 +19,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -481,23 +479,7 @@ public class MyBoxLanguagesController extends BaseController {
         });
         items.add(menu);
 
-        items.add(new SeparatorMenuItem());
-        menu = new MenuItem(Languages.message("PopupClose"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = null;
-        });
-        items.add(menu);
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-        }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        popMenu.getItems().addAll(items);
-        popMenu.show(tableView, event.getScreenX(), event.getScreenY());
+        popMouseMenu(event, items);
     }
 
     @FXML

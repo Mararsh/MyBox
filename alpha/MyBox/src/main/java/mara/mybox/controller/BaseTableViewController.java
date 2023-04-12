@@ -11,12 +11,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -29,13 +27,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Region;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
@@ -324,24 +320,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         if (items == null || items.isEmpty()) {
             return;
         }
-        items.add(new SeparatorMenuItem());
-        MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = null;
-        });
-        items.add(menu);
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-        }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        popMenu.getItems().addAll(items);
-        popMenu.show(tableView, event.getScreenX(), event.getScreenY());
-
+        popMouseMenu(event, items);
     }
 
     protected List<MenuItem> makeTableContextMenu() {
@@ -769,50 +748,33 @@ public abstract class BaseTableViewController<P> extends BaseController {
     @FXML
     public void popAddMenu(MouseEvent mouseEvent) {
         try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+            List<MenuItem> items = new ArrayList<>();
 
-            MenuItem menu;
-
-            menu = new MenuItem(message("AddInFront"));
+            MenuItem menu = new MenuItem(message("AddInFront"));
             menu.setOnAction((ActionEvent event) -> {
                 addRows(0, 1);
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("AddInEnd"));
             menu.setOnAction((ActionEvent event) -> {
                 addRows(-1, 1);
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("AddBeforeSelected"));
             menu.setOnAction((ActionEvent event) -> {
                 addRows(selectedIndix(), 1);
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("AddAfterSelected"));
             menu.setOnAction((ActionEvent event) -> {
                 addRows(selectedIndix() + 1, 1);
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
-
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            popMouseMenu(mouseEvent, items);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

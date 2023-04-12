@@ -1,12 +1,12 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -14,13 +14,11 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Callback;
 import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.ListColorCell;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -171,36 +169,22 @@ public abstract class ImageManufactureScopeController_Colors extends ImageManufa
     @FXML
     public void popSaveColorsMenu(MouseEvent mouseEvent) {
         try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+            List<MenuItem> items = new ArrayList<>();
 
             MenuItem menu = new MenuItem(Languages.message("SaveInPalette"));
             menu.setOnAction((ActionEvent event) -> {
                 saveColorsInPalette();
             });
-            popMenu.getItems().add(menu);
-            popMenu.getItems().add(new SeparatorMenuItem());
+            items.add(menu);
+            items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(Languages.message("SaveInColorsLibrary"));
             menu.setOnAction((ActionEvent event) -> {
                 saveColorsInTable();
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-
-            menu = new MenuItem(Languages.message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event) -> {
-                popMenu.hide();
-                popMenu = null;
-            });
-            popMenu.getItems().add(menu);
-
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            popMouseMenu(mouseEvent, items);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

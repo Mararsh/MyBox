@@ -23,7 +23,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -40,7 +39,6 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -58,14 +56,12 @@ import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fximage.PaletteTools;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableColorCell;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
@@ -466,27 +462,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
         });
         items.add(menu);
 
-        items.add(new SeparatorMenuItem());
-        menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = null;
-        });
-        items.add(menu);
-
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-        }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        popMenu.getItems().addAll(items);
-        LocateTools.locateEvent(event, popMenu);
-
-        popMenu.show(tableView, event.getScreenX(), event.getScreenY());
-
+        popMouseMenu(event, items);
     }
 
     @FXML
@@ -701,53 +677,47 @@ public class ControlColors extends BaseSysTableController<ColorData> {
     @FXML
     protected void showExportMenu(Event event) {
         try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+            List<MenuItem> items = new ArrayList<>();
 
-            MenuItem menu;
-
-            menu = new MenuItem(message("ExportAllData") + " - CSV");
+            MenuItem menu = new MenuItem(message("ExportAllData") + " - CSV");
             menu.setOnAction((ActionEvent e) -> {
                 exportCSV("all");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("ExportCurrentPage") + " - CSV");
             menu.setOnAction((ActionEvent e) -> {
                 exportCSV("page");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("ExportSelectedData") + " - CSV");
             menu.setOnAction((ActionEvent e) -> {
                 exportCSV("selected");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
-            popMenu.getItems().add(new SeparatorMenuItem());
+            items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("ExportAllData") + " - Html");
             menu.setOnAction((ActionEvent e) -> {
                 exportHtml("all");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("ExportCurrentPage") + " - Html");
             menu.setOnAction((ActionEvent e) -> {
                 exportHtml("page");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("ExportSelectedData") + " - Html");
             menu.setOnAction((ActionEvent e) -> {
                 exportHtml("selected");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
-            popMenu.getItems().add(new SeparatorMenuItem());
+            items.add(new SeparatorMenuItem());
 
             CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
             hoverMenu.setSelected(UserConfig.getBoolean("ColorExportMenuPopWhenMouseHovering", false));
@@ -757,17 +727,9 @@ public class ControlColors extends BaseSysTableController<ColorData> {
                     UserConfig.setBoolean("ColorExportMenuPopWhenMouseHovering", hoverMenu.isSelected());
                 }
             });
-            popMenu.getItems().add(hoverMenu);
+            items.add(hoverMenu);
 
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent e) -> {
-                popMenu.hide();
-                popMenu = null;
-            });
-            popMenu.getItems().add(menu);
-
-            LocateTools.locateBelow((Region) event.getSource(), popMenu);
+            popEventMenu(event, items);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

@@ -1,10 +1,11 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.value.Fxmls;
@@ -19,8 +20,6 @@ public abstract class MyBoxController_About extends MyBoxController_Settings {
 
     @FXML
     protected void showAboutMenu(MouseEvent event) {
-        hideMenu(event);
-
         MenuItem ReadMe = new MenuItem(Languages.message("ReadMe"));
         ReadMe.setOnAction((ActionEvent event1) -> {
             HelpTools.readMe(myController);
@@ -36,22 +35,10 @@ public abstract class MyBoxController_About extends MyBoxController_Settings {
             openStage(Fxmls.ShortcutsFxml);
         });
 
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        popMenu.getItems().addAll(
-                ReadMe, Shortcuts, FunctionsList
-        );
+        List<MenuItem> items = new ArrayList<>();
+        items.addAll(Arrays.asList(ReadMe, FunctionsList, Shortcuts));
 
-        popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem closeMenu = new MenuItem(Languages.message("PopupClose"));
-        closeMenu.setStyle("-fx-text-fill: #2e598a;");
-        closeMenu.setOnAction((ActionEvent cevent) -> {
-            popMenu.hide();
-            popMenu = null;
-        });
-        popMenu.getItems().add(closeMenu);
-
-        showMenu(aboutBox, event);
+        popCenterMenu(aboutBox, items);
 
     }
 

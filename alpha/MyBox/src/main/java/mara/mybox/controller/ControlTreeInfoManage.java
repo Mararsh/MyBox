@@ -18,6 +18,7 @@ import mara.mybox.db.data.TreeNode;
 import static mara.mybox.db.data.TreeNode.NodeSeparater;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Fxmls;
@@ -99,7 +100,7 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
     }
 
     @FXML
-    public void popViewMenu(MouseEvent event) {
+    public void popOperationsMenu(MouseEvent event) {
         if (isSettingValues || getMyWindow() == null) {
             return;
         }
@@ -147,7 +148,7 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
         });
         items.add(menu);
 
-        popMenu(infoTree, items);
+        popMouseMenu(event, items);
     }
 
     @Override
@@ -319,20 +320,7 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
         });
         viewMenu.getItems().add(menu);
 
-        menu = new MenuItem(message("EditNode"), StyleTools.getIconImageView("iconEdit.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            editNode(treeItem);
-        });
-        items.add(menu);
-
-        menu = new MenuItem(message("PasteNodeValueToCurrentEdit"), StyleTools.getIconImageView("iconPaste.png"));
-        menu.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                pasteNode(treeItem);
-            }
-        });
-        items.add(menu);
+        items.add(new SeparatorMenuItem());
 
         menu = new MenuItem(message("AddNode"), StyleTools.getIconImageView("iconAdd.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
@@ -365,6 +353,37 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
             moveNode(treeItem);
         });
         menu.setDisable(isRoot);
+        items.add(menu);
+
+        items.add(new SeparatorMenuItem());
+
+        menu = new MenuItem(message("EditNode"), StyleTools.getIconImageView("iconEdit.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            editNode(treeItem);
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("PasteNodeValueToCurrentEdit"), StyleTools.getIconImageView("iconPaste.png"));
+        menu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                pasteNode(treeItem);
+            }
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("CopyValue"), StyleTools.getIconImageView("iconCopySystem.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            TextClipboardTools.copyToSystemClipboard(this, treeItem.getValue().getValue());
+        });
+        menu.setDisable(treeItem == null);
+        items.add(menu);
+
+        menu = new MenuItem(message("CopyTitle"), StyleTools.getIconImageView("iconCopySystem.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            TextClipboardTools.copyToSystemClipboard(this, treeItem.getValue().getTitle());
+        });
+        menu.setDisable(treeItem == null);
         items.add(menu);
 
         return items;

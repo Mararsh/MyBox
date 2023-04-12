@@ -1,18 +1,16 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.Region;
 import javafx.stage.DirectoryChooser;
 import jdk.jshell.JShell;
 import mara.mybox.db.data.VisitHistory;
@@ -20,10 +18,8 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.JShellTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -232,19 +228,13 @@ public class JShellPaths extends BaseController {
     @FXML
     protected void showExamplesMenu(Event event) {
         try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+            List<MenuItem> items = new ArrayList<>();
 
-            MenuItem menu;
-
-            menu = new MenuItem(message("MyBoxClassPaths"));
+            MenuItem menu = new MenuItem(message("MyBoxClassPaths"));
             menu.setOnAction((ActionEvent e) -> {
                 pathInput.setText(System.getProperty("java.class.path"));
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
             hoverMenu.setSelected(UserConfig.getBoolean("JShellPathsPopWhenMouseHovering", false));
@@ -254,20 +244,9 @@ public class JShellPaths extends BaseController {
                     UserConfig.setBoolean("JShellPathsPopWhenMouseHovering", hoverMenu.isSelected());
                 }
             });
-            popMenu.getItems().add(hoverMenu);
+            items.add(hoverMenu);
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
-
-            LocateTools.locateBelow((Region) event.getSource(), popMenu);
+            popEventMenu(event, items);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

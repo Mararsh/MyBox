@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.ImageView;
@@ -133,24 +132,7 @@ public abstract class ImagesBrowserController_Menu extends ImagesBrowserControll
         });
         items.add(menu);
 
-        items.add(new SeparatorMenuItem());
-        menu = new MenuItem(Languages.message("PopupClose"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = null;
-        });
-        items.add(menu);
-
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-        }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        popMenu.getItems().addAll(items);
-        popMenu.show(iView, event.getScreenX(), event.getScreenY());
+        popMenu(iView, items, event.getScreenX(), event.getScreenY());
 
     }
 
@@ -222,23 +204,7 @@ public abstract class ImagesBrowserController_Menu extends ImagesBrowserControll
         });
         items.add(menu);
 
-        items.add(new SeparatorMenuItem());
-        menu = new MenuItem(Languages.message("PopupClose"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = null;
-        });
-        items.add(menu);
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-        }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        popMenu.getItems().addAll(items);
-        popMenu.show(tableView, event.getScreenX(), event.getScreenY());
+        popMouseMenu(event, items);
 
     }
 

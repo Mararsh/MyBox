@@ -6,7 +6,6 @@ import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
@@ -14,7 +13,6 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.QueryCondition;
@@ -22,11 +20,9 @@ import mara.mybox.db.data.QueryCondition.DataOperation;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.TableQueryCondition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
@@ -550,19 +546,14 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
     @FXML
     protected void popQueryMenu(MouseEvent mouseEvent) {
         try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
+            List<MenuItem> items = new ArrayList<>();
             MenuItem menu = new MenuItem(message("QueryAsCondition") + "\nF1 / CTRL+q / ALT+Q");
             menu.setOnAction((ActionEvent event) -> {
                 queryData();
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
-            popMenu.getItems().add(new SeparatorMenuItem());
+            items.add(new SeparatorMenuItem());
             menu = new MenuItem(message("InputConditions"));
             menu.setOnAction((ActionEvent event) -> {
                 QueryCondition condition = QueryCondition.create()
@@ -572,37 +563,27 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
                 DataQueryController controller = (DataQueryController) openStage(Fxmls.DataQueryFxml);
                 controller.setValue(this, condition, tableDefinitionString, prefixEditable, supportTop);
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             List<QueryCondition> list = TableQueryCondition.readList(tableName,
                     DataOperation.QueryData,
                     AppVariables.fileRecentNumber > 0 ? AppVariables.fileRecentNumber : 15);
             if (list != null && !list.isEmpty()) {
-                popMenu.getItems().add(new SeparatorMenuItem());
+                items.add(new SeparatorMenuItem());
                 menu = new MenuItem(message("RecentUsedConditions"));
                 menu.setStyle("-fx-text-fill: #2e598a;");
-                popMenu.getItems().add(menu);
+                items.add(menu);
                 for (QueryCondition condition : list) {
                     menu = new MenuItem(condition.getTitle().replaceAll("</br>|\n", " "));
                     menu.setOnAction((ActionEvent event) -> {
                         queryCondition = condition;
                         loadTableData();
                     });
-                    popMenu.getItems().add(menu);
+                    items.add(menu);
                 }
             }
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event) -> {
-                popMenu.hide();
-                popMenu = null;
-            });
-            popMenu.getItems().add(menu);
-
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
-
+            popMouseMenu(mouseEvent, items);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -612,33 +593,27 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
     @FXML
     protected void popClearMenu(MouseEvent mouseEvent) {
         try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+            List<MenuItem> items = new ArrayList<>();
 
-            MenuItem menu;
-
-            menu = new MenuItem(message("ClearAsConditionTrees") + "\nCTRL+r / ALT+r");
+            MenuItem menu = new MenuItem(message("ClearAsConditionTrees") + "\nCTRL+r / ALT+r");
             menu.setOnAction((ActionEvent event) -> {
                 clear(message("ClearAsConditionTrees"));
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("ClearSelectedDataInPage"));
             menu.setOnAction((ActionEvent event) -> {
                 clear(message("ClearSelectedDataInPage"));
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("ClearCurrentPage"));
             menu.setOnAction((ActionEvent event) -> {
                 clear(message("ClearCurrentPage"));
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
-            popMenu.getItems().add(new SeparatorMenuItem());
+            items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("InputConditions"));
             menu.setOnAction((ActionEvent event) -> {
@@ -649,17 +624,17 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
                 DataQueryController controller = (DataQueryController) openStage(Fxmls.DataQueryFxml);
                 controller.setValue(this, condition, tableDefinitionString, prefixEditable, supportTop);
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             List<QueryCondition> list = TableQueryCondition.readList(
                     tableName, DataOperation.ClearData,
                     AppVariables.fileRecentNumber > 0 ? AppVariables.fileRecentNumber : 15);
             if (list != null && !list.isEmpty()) {
-                popMenu.getItems().add(new SeparatorMenuItem());
+                items.add(new SeparatorMenuItem());
 
                 menu = new MenuItem(message("RecentUsedConditions"));
                 menu.setStyle("-fx-text-fill: #2e598a;");
-                popMenu.getItems().add(menu);
+                items.add(menu);
 
                 for (QueryCondition condition : list) {
                     menu = new MenuItem(condition.getTitle().replaceAll("</br>|\n", " "));
@@ -667,21 +642,11 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
                         clearCondition = condition;
                         clearAsConditions();
                     });
-                    popMenu.getItems().add(menu);
+                    items.add(menu);
                 }
             }
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event) -> {
-                popMenu.hide();
-                popMenu = null;
-            });
-            popMenu.getItems().add(menu);
-
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
-
+            popMouseMenu(mouseEvent, items);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -817,19 +782,13 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
     @FXML
     protected void popExportMenu(MouseEvent mouseEvent) {
         try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+            List<MenuItem> items = new ArrayList<>();
 
-            MenuItem menu;
-
-            menu = new MenuItem(message("ExportAsCondition") + "\nF3 / CTRL+e / ALT+E");
+            MenuItem menu = new MenuItem(message("ExportAsCondition") + "\nF3 / CTRL+e / ALT+E");
             menu.setOnAction((ActionEvent event) -> {
                 exportData();
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             if (queryCondition != null && tableData != null && !tableData.isEmpty()) {
                 menu = new MenuItem(message("ExportCurrentPage"));
@@ -850,10 +809,10 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
                     DataExportController controller = dataExporter();
                     controller.currentPage(this, condition, tableDefinitionString, prefixEditable, supportTop);
                 });
-                popMenu.getItems().add(menu);
+                items.add(menu);
             }
 
-            popMenu.getItems().add(new SeparatorMenuItem());
+            items.add(new SeparatorMenuItem());
             menu = new MenuItem(message("InputConditions"));
             menu.setOnAction((ActionEvent event) -> {
                 QueryCondition condition = QueryCondition.create()
@@ -863,37 +822,27 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
                 DataExportController controller = dataExporter();
                 controller.setValues(this, condition, tableDefinitionString, prefixEditable, supportTop);
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             List<QueryCondition> list = TableQueryCondition.readList(
                     tableName, DataOperation.ExportData,
                     AppVariables.fileRecentNumber > 0 ? AppVariables.fileRecentNumber : 15);
             if (list != null && !list.isEmpty()) {
-                popMenu.getItems().add(new SeparatorMenuItem());
+                items.add(new SeparatorMenuItem());
                 menu = new MenuItem(message("RecentUsedConditions"));
                 menu.setStyle("-fx-text-fill: #2e598a;");
-                popMenu.getItems().add(menu);
+                items.add(menu);
                 for (QueryCondition condition : list) {
                     menu = new MenuItem(condition.getTitle().replaceAll("</br>|\n", " "));
                     menu.setOnAction((ActionEvent event) -> {
                         DataExportController controller = dataExporter();
                         controller.setValues(this, condition, tableDefinitionString, prefixEditable, supportTop);
                     });
-                    popMenu.getItems().add(menu);
+                    items.add(menu);
                 }
             }
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event) -> {
-                popMenu.hide();
-                popMenu = null;
-            });
-            popMenu.getItems().add(menu);
-
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
-
+            popMouseMenu(mouseEvent, items);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

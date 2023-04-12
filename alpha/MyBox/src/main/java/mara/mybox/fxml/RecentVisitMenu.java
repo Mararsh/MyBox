@@ -7,10 +7,10 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.stage.FileChooser;
+import mara.mybox.controller.BaseController;
 import mara.mybox.controller.BaseController_Files;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
@@ -26,15 +26,15 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class RecentVisitMenu {
 
-    protected final BaseController_Files controller;
-    protected final Event event;
+    protected BaseController controller;
+    protected Event event;
     protected List<String> examples;
     protected int SourceFileType, SourcePathType, AddFileType, AddPathType, TargetFileType, TargetPathType;
     protected List<FileChooser.ExtensionFilter> sourceExtensionFilter;
     protected String baseName, defaultPath;
 
     public RecentVisitMenu(BaseController_Files controller, Event event) {
-        this.controller = controller;
+        this.controller = (BaseController) controller;
         this.event = event;
         this.baseName = controller.getBaseName();
         SourceFileType = controller.getSourceFileType();
@@ -65,18 +65,13 @@ public abstract class RecentVisitMenu {
             if (controller == null || event == null) {
                 return;
             }
-            ContextMenu popMenu = controller.getPopMenu();
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+            List<MenuItem> items = new ArrayList<>();
 
             MenuItem menu = new MenuItem(message("Select..."));
             menu.setOnAction((ActionEvent event1) -> {
                 handleSelect();
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             List<VisitHistory> opened = recentFiles();
             if (opened != null && !opened.isEmpty()) {
@@ -88,16 +83,16 @@ public abstract class RecentVisitMenu {
                     }
                 }
                 if (!files.isEmpty()) {
-                    popMenu.getItems().add(new SeparatorMenuItem());
+                    items.add(new SeparatorMenuItem());
                     menu = new MenuItem(message("RecentOpenedFiles"));
                     menu.setStyle("-fx-text-fill: #2e598a;");
-                    popMenu.getItems().add(menu);
+                    items.add(menu);
                     for (String fname : files) {
                         menu = new MenuItem(StringTools.menuSuffix(fname));
                         menu.setOnAction((ActionEvent event1) -> {
                             handleFile(fname);
                         });
-                        popMenu.getItems().add(menu);
+                        items.add(menu);
                     }
                 }
 
@@ -111,16 +106,16 @@ public abstract class RecentVisitMenu {
                         }
                     }
                     if (!files.isEmpty()) {
-                        popMenu.getItems().add(new SeparatorMenuItem());
+                        items.add(new SeparatorMenuItem());
                         menu = new MenuItem(message("RecentWrittenFiles"));
                         menu.setStyle("-fx-text-fill: #2e598a;");
-                        popMenu.getItems().add(menu);
+                        items.add(menu);
                         for (String fname : files) {
                             menu = new MenuItem(StringTools.menuSuffix(fname));
                             menu.setOnAction((ActionEvent event1) -> {
                                 handleFile(fname);
                             });
-                            popMenu.getItems().add(menu);
+                            items.add(menu);
                         }
                     }
                 }
@@ -128,34 +123,34 @@ public abstract class RecentVisitMenu {
             }
 
             if (examples != null && !examples.isEmpty()) {
-                popMenu.getItems().add(new SeparatorMenuItem());
+                items.add(new SeparatorMenuItem());
                 menu = new MenuItem(message("Examples"));
                 menu.setStyle("-fx-text-fill: #2e598a;");
-                popMenu.getItems().add(menu);
+                items.add(menu);
                 for (String example : examples) {
                     menu = new MenuItem(StringTools.menuSuffix(example));
                     menu.setOnAction((ActionEvent event1) -> {
                         handleFile(example);
                     });
-                    popMenu.getItems().add(menu);
+                    items.add(menu);
                 }
             }
             List<String> paths = paths();
             if (paths != null && !paths.isEmpty()) {
-                popMenu.getItems().add(new SeparatorMenuItem());
+                items.add(new SeparatorMenuItem());
                 menu = new MenuItem(message("RecentAccessedDirectories"));
                 menu.setStyle("-fx-text-fill: #2e598a;");
-                popMenu.getItems().add(menu);
+                items.add(menu);
                 for (String path : paths) {
                     menu = new MenuItem(StringTools.menuSuffix(path));
                     menu.setOnAction((ActionEvent event1) -> {
                         handlePath(path);
                     });
-                    popMenu.getItems().add(menu);
+                    items.add(menu);
                 }
             }
 
-            popMenu.getItems().add(new SeparatorMenuItem());
+            items.add(new SeparatorMenuItem());
 
             CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
             hoverMenu.setSelected(UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true));
@@ -165,18 +160,9 @@ public abstract class RecentVisitMenu {
                     UserConfig.setBoolean("RecentVisitMenuPopWhenMouseHovering", hoverMenu.isSelected());
                 }
             });
-            popMenu.getItems().add(hoverMenu);
+            items.add(hoverMenu);
 
-            menu = new MenuItem(message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event1) -> {
-                controller.getPopMenu().hide();
-                controller.setPopMenu(null);
-            });
-            popMenu.getItems().add(menu);
-
-            controller.setPopMenu(popMenu);
-            LocateTools.locateEvent(event, popMenu);
+            controller.popEventMenu(event, items);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

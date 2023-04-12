@@ -2,10 +2,10 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
@@ -14,7 +14,6 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import mara.mybox.data.GeoCoordinateSystem;
 import mara.mybox.db.data.BaseDataAdaptor;
@@ -24,7 +23,6 @@ import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.FxFileTools;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableCoordinateSystemCell;
 import mara.mybox.fxml.cell.TableLatitudeCell;
@@ -335,21 +333,15 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
     @Override
     protected void popImportMenu(MouseEvent mouseEvent) {
         try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+            List<MenuItem> items = new ArrayList<>();
 
-            MenuItem menu;
-
-            menu = new MenuItem(Languages.message("ImportGeographyCodeExternalCSVFormat"));
+            MenuItem menu = new MenuItem(Languages.message("ImportGeographyCodeExternalCSVFormat"));
             menu.setOnAction((ActionEvent event) -> {
                 GeographyCodeImportExternalCSVController controller
                         = (GeographyCodeImportExternalCSVController) openStage(Fxmls.GeographyCodeImportExternalCSVFxml);
                 controller.parent = this;
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(Languages.message("ImportGeographyCodeGeonamesFormat"));
             menu.setOnAction((ActionEvent event) -> {
@@ -357,32 +349,22 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
                         = (GeographyCodeImportGeonamesFileController) openStage(Fxmls.GeographyCodeImportGeonamesFileFxml);
                 controller.parent = this;
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
-            popMenu.getItems().add(new SeparatorMenuItem());
+            items.add(new SeparatorMenuItem());
             menu = new MenuItem(Languages.message("RecoverGeographyCodePredefined"));
             menu.setOnAction((ActionEvent event) -> {
                 predefined();
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
-//            popMenu.getItems().add(new SeparatorMenuItem());
+//            items.add(new SeparatorMenuItem());
 //            menu = new MenuItem(message("ImportChinaTowns"));
 //            menu.setOnAction((ActionEvent event) -> {
 //                importChinaTowns();
 //            });
-//            popMenu.getItems().add(menu);
-            popMenu.getItems().add(new SeparatorMenuItem());
-
-            menu = new MenuItem(Languages.message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event) -> {
-                popMenu.hide();
-                popMenu = null;
-            });
-            popMenu.getItems().add(menu);
-
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+//            items.add(menu);
+            popMouseMenu(mouseEvent, items);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -439,35 +421,22 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
     @Override
     protected void popSetMenu(MouseEvent mouseEvent) {
         try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+            List<MenuItem> items = new ArrayList<>();
 
             MenuItem menu = new MenuItem(Languages.message("SetAsPredefinedData"));
             menu.setOnAction((ActionEvent event) -> {
                 setSelectedData(true);
             });
-            popMenu.getItems().add(menu);
-            popMenu.getItems().add(new SeparatorMenuItem());
+            items.add(menu);
+            items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(Languages.message("SetAsInputtedData"));
             menu.setOnAction((ActionEvent event) -> {
                 setSelectedData(false);
             });
-            popMenu.getItems().add(menu);
-            popMenu.getItems().add(new SeparatorMenuItem());
+            items.add(menu);
 
-            menu = new MenuItem(Languages.message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event) -> {
-                popMenu.hide();
-                popMenu = null;
-            });
-            popMenu.getItems().add(menu);
-
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            popMouseMenu(mouseEvent, items);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

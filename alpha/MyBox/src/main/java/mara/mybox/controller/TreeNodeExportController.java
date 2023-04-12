@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -12,14 +13,11 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.TreeNode;
@@ -29,9 +27,7 @@ import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.style.HtmlStyles;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.JsonTools;
@@ -231,12 +227,7 @@ public class TreeNodeExportController extends BaseTaskController {
     @FXML
     public void popDefaultStyle(MouseEvent mouseEvent) {
         try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
+            List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
             for (HtmlStyles.HtmlStyle style : HtmlStyles.HtmlStyle.values()) {
                 menu = new MenuItem(message(style.name()));
@@ -247,21 +238,10 @@ public class TreeNodeExportController extends BaseTaskController {
                         UserConfig.setString(baseName + "Style", styleInput.getText());
                     }
                 });
-                popMenu.getItems().add(menu);
+                items.add(menu);
             }
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
-
-            LocateTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
+            popMouseMenu(mouseEvent, items);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

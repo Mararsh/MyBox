@@ -1,8 +1,10 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -19,8 +21,6 @@ public abstract class MyBoxController_Media extends MyBoxController_Data {
 
     @FXML
     protected void showMediaMenu(MouseEvent event) {
-        hideMenu(event);
-
         MenuItem mediaPlayer = new MenuItem(Languages.message("MediaPlayer"));
         mediaPlayer.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.MediaPlayerFxml);
@@ -89,28 +89,15 @@ public abstract class MyBoxController_Media extends MyBoxController_Data {
             loadScene(Fxmls.GameMineFxml);
         });
 
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        popMenu.getItems().addAll(
-                mediaPlayer, mediaLists, new SeparatorMenuItem(),
+        List<MenuItem> items = new ArrayList<>();
+        items.addAll(Arrays.asList(mediaPlayer, mediaLists, new SeparatorMenuItem(),
                 screenRecorder,
                 FFmpegConversionMenu, FFmpegMergeMenu,
                 FFprobe, FFmpegInformation, new SeparatorMenuItem(),
                 //                alarmClock, new SeparatorMenuItem(),
-                GameElimniation, GameMine
-        );
+                GameElimniation, GameMine));
 
-        popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem closeMenu = new MenuItem(Languages.message("PopupClose"));
-        closeMenu.setStyle("-fx-text-fill: #2e598a;");
-        closeMenu.setOnAction((ActionEvent cevent) -> {
-            popMenu.hide();
-            popMenu = null;
-        });
-        popMenu.getItems().add(closeMenu);
-
-        showMenu(mediaBox, event);
-
+        popCenterMenu(mediaBox, items);
     }
 
 }

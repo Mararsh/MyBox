@@ -1,8 +1,10 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -19,8 +21,6 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
 
     @FXML
     protected void showImageMenu(MouseEvent event) {
-        hideMenu(event);
-
         MenuItem imageViewer = new MenuItem(message("ImageViewer"));
         imageViewer.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.ImageViewerFxml);
@@ -71,26 +71,15 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
             ImageInSystemClipboardController.oneOpen();
         });
 
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        popMenu.getItems().addAll(
-                imageViewer, EditImage,
+        List<MenuItem> items = new ArrayList<>();
+        items.addAll(Arrays.asList(imageViewer, EditImage,
                 //                EditSVG,
                 imageManufactureMenu(), manufactureBatchMenu(),
                 ImageAnalyse, ImagesPlay, imagesBrowser, new SeparatorMenuItem(),
                 ManageColors, QueryColor, colorSpaceMenu(), new SeparatorMenuItem(),
-                ImagesInMyBoxClipboard, ImagesInSystemClipboard, miscellaneousMenu());
+                ImagesInMyBoxClipboard, ImagesInSystemClipboard, miscellaneousMenu()));
 
-        popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem closeMenu = new MenuItem(message("PopupClose"));
-        closeMenu.setStyle("-fx-text-fill: #2e598a;");
-        closeMenu.setOnAction((ActionEvent cevent) -> {
-            popMenu.hide();
-            popMenu = null;
-        });
-        popMenu.getItems().add(closeMenu);
-
-        showMenu(imageBox, event);
+        popCenterMenu(imageBox, items);
 
     }
 

@@ -9,7 +9,9 @@ import java.util.Optional;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -17,6 +19,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.robot.Robot;
 import javafx.stage.Modality;
@@ -545,7 +548,41 @@ public abstract class BaseController_Actions extends BaseController_Interface {
 
     }
 
-    public void popMenu(Node node, List<MenuItem> menuItems) {
+    public void popMouseMenu(MouseEvent event, List<MenuItem> menuItems) {
+        if (event == null || menuItems == null || menuItems.isEmpty()) {
+            return;
+        }
+        popMenu((Region) event.getSource(), menuItems, event.getScreenX(), event.getScreenY());
+    }
+
+    public void popEventMenu(Event event, List<MenuItem> menuItems) {
+        if (event == null || menuItems == null || menuItems.isEmpty()) {
+            return;
+        }
+        Node node = (Region) event.getSource();
+        Bounds bounds = node.localToScreen(node.getBoundsInLocal());
+        popMenu(node, menuItems, bounds.getMinX() + 2, bounds.getMinY() + bounds.getHeight());
+    }
+
+    public void popNodeMenu(Node node, List<MenuItem> menuItems) {
+        if (node == null || menuItems == null || menuItems.isEmpty()) {
+            return;
+        }
+        Robot r = new Robot();
+        popMenu(node, menuItems, r.getMouseX() + 10, r.getMouseY() + 10);
+    }
+
+    public void popCenterMenu(Node node, List<MenuItem> menuItems) {
+        if (node == null || menuItems == null || menuItems.isEmpty()) {
+            return;
+        }
+        Bounds bounds = node.localToScreen(node.getBoundsInLocal());
+        popMenu(node, menuItems,
+                bounds.getMinX() + bounds.getWidth() / 2,
+                bounds.getMinY() + bounds.getHeight() / 2);
+    }
+
+    public void popMenu(Node node, List<MenuItem> menuItems, double x, double y) {
         if (node == null || menuItems == null || menuItems.isEmpty()) {
             return;
         }
@@ -570,8 +607,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         popMenu.setAutoHide(true);
         popMenu.getItems().addAll(items);
 
-        Robot r = new Robot();
-        popMenu.show(node, r.getMouseX() + 10, r.getMouseY() + 10);
+        popMenu.show(node, x, y);
     }
 
 }

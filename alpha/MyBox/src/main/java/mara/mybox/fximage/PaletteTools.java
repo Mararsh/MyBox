@@ -6,9 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.paint.Color;
 import javafx.stage.Window;
 import mara.mybox.bufferedimage.ColorConvertTools;
@@ -25,11 +23,9 @@ import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.StyleData;
 import mara.mybox.fxml.style.StyleData.StyleColor;
-import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Colors.color;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -44,27 +40,9 @@ public class PaletteTools {
 
     public static void popPaletteExamplesMenu(BaseController parent, Event event) {
         try {
-            ContextMenu pMenu = parent.getPopMenu();
-            if (pMenu != null && pMenu.isShowing()) {
-                pMenu.hide();
-            }
-            ContextMenu popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
-            popMenu.getItems().addAll(paletteExamplesMenu(parent));
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-
-            MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent e) -> {
-                popMenu.hide();
-            });
-            popMenu.getItems().add(menu);
-
-            parent.setPopMenu(popMenu);
-            LocateTools.locateEvent(event, popMenu);
-
+            List<MenuItem> items = new ArrayList<>();
+            items.addAll(paletteExamplesMenu(parent));
+            parent.popEventMenu(event, items);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

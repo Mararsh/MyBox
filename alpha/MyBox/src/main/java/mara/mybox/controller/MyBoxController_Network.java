@@ -1,8 +1,10 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseEvent;
@@ -18,8 +20,6 @@ public abstract class MyBoxController_Network extends MyBoxController_File {
 
     @FXML
     protected void showNetworkMenu(MouseEvent event) {
-        hideMenu(event);
-
         MenuItem weiboSnap = new MenuItem(message("WeiboSnap"));
         weiboSnap.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.WeiboSnapFxml);
@@ -75,25 +75,13 @@ public abstract class MyBoxController_Network extends MyBoxController_File {
             loadScene(Fxmls.SecurityCertificatesFxml);
         });
 
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        popMenu.getItems().addAll(
-                webBrowserHtml, WebFavorites, WebHistories, new SeparatorMenuItem(),
+        List<MenuItem> items = new ArrayList<>();
+        items.addAll(Arrays.asList(webBrowserHtml, WebFavorites, WebHistories, new SeparatorMenuItem(),
                 RemotePathManage, RemotePathSynchronizeFromLocal, new SeparatorMenuItem(),
                 QueryAddress, QueryDNSBatch, ConvertUrl, SecurityCertificates, new SeparatorMenuItem(),
-                DownloadFirstLevelLinks, weiboSnap
-        );
+                DownloadFirstLevelLinks, weiboSnap));
 
-        popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem closeMenu = new MenuItem(message("PopupClose"));
-        closeMenu.setStyle("-fx-text-fill: #2e598a;");
-        closeMenu.setOnAction((ActionEvent cevent) -> {
-            popMenu.hide();
-            popMenu = null;
-        });
-        popMenu.getItems().add(closeMenu);
-
-        showMenu(networkBox, event);
+        popCenterMenu(networkBox, items);
 
     }
 

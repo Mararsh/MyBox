@@ -8,17 +8,14 @@ import java.util.Date;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Region;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataInternalTable;
 import mara.mybox.data2d.DataTable;
@@ -27,7 +24,6 @@ import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableNumberCell;
@@ -428,62 +424,44 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
             return;
         }
         try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
-            MenuItem menu;
-
-            menu = new MenuItem("CSV", StyleTools.getIconImageView("iconCSV.png"));
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu = new MenuItem("CSV", StyleTools.getIconImageView("iconCSV.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DDefinition.openType(Data2DDefinition.Type.CSV);
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("Excel", StyleTools.getIconImageView("iconExcel.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DDefinition.openType(Data2DDefinition.Type.Excel);
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("Texts"), StyleTools.getIconImageView("iconTxt.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DDefinition.openType(Data2DDefinition.Type.Texts);
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("Matrix"), StyleTools.getIconImageView("iconMatrix.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DDefinition.openType(Data2DDefinition.Type.Matrix);
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("DatabaseTable"), StyleTools.getIconImageView("iconDatabase.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DDefinition.openType(Data2DDefinition.Type.DatabaseTable);
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("MyBoxClipboard"), StyleTools.getIconImageView("iconClipboard.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DDefinition.openType(Data2DDefinition.Type.MyBoxClipboard);
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
-
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            popMouseMenu(mouseEvent, items);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

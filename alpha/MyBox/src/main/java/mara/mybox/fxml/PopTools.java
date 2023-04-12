@@ -302,19 +302,14 @@ public class PopTools {
             if (event == null || controller == null) {
                 return null;
             }
-            ContextMenu cMenu = controller.getPopMenu();
-            if (cMenu != null && cMenu.isShowing()) {
-                cMenu.hide();
-            }
-            final ContextMenu popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+            List<MenuItem> items = new ArrayList<>();
 
             String baseName = controller.getBaseName();
 
             MenuItem menu = new MenuItem(message("HtmlStyle"));
             menu.setStyle("-fx-text-fill: #2e598a;");
-            popMenu.getItems().add(menu);
-            popMenu.getItems().add(new SeparatorMenuItem());
+            items.add(menu);
+            items.add(new SeparatorMenuItem());
 
             ToggleGroup sgroup = new ToggleGroup();
             String prefix = UserConfig.getBoolean(baseName + "ShareHtmlStyle", true) ? "AllInterface" : baseName;
@@ -329,7 +324,7 @@ public class PopTools {
             });
             rmenu.setSelected(currentStyle == null);
             rmenu.setToggleGroup(sgroup);
-            popMenu.getItems().add(rmenu);
+            items.add(rmenu);
 
             boolean predefinedValue = false;
             for (HtmlStyles.HtmlStyle style : HtmlStyles.HtmlStyle.values()) {
@@ -344,7 +339,7 @@ public class PopTools {
                 boolean isCurrent = currentStyle != null && currentStyle.equals(styleValue);
                 rmenu.setSelected(isCurrent);
                 rmenu.setToggleGroup(sgroup);
-                popMenu.getItems().add(rmenu);
+                items.add(rmenu);
                 if (isCurrent) {
                     predefinedValue = true;
                 }
@@ -375,9 +370,9 @@ public class PopTools {
             });
             rmenu.setSelected(currentStyle != null && !predefinedValue);
             rmenu.setToggleGroup(sgroup);
-            popMenu.getItems().add(rmenu);
+            items.add(rmenu);
 
-            popMenu.getItems().add(new SeparatorMenuItem());
+            items.add(new SeparatorMenuItem());
 
             CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
             hoverMenu.setSelected(UserConfig.getBoolean("HtmlStylesPopWhenMouseHovering", false));
@@ -387,7 +382,7 @@ public class PopTools {
                     UserConfig.setBoolean("HtmlStylesPopWhenMouseHovering", hoverMenu.isSelected());
                 }
             });
-            popMenu.getItems().add(hoverMenu);
+            items.add(hoverMenu);
 
             CheckMenuItem checkMenu = new CheckMenuItem(message("ShareAllInterface"));
             checkMenu.setSelected(UserConfig.getBoolean(baseName + "ShareHtmlStyle", true));
@@ -397,9 +392,9 @@ public class PopTools {
                     UserConfig.setBoolean(baseName + "ShareHtmlStyle", checkMenu.isSelected());
                 }
             });
-            popMenu.getItems().add(checkMenu);
+            items.add(checkMenu);
 
-            popMenu.getItems().add(new SeparatorMenuItem());
+            items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("CssEn"));
             menu.setStyle("-fx-text-fill: blue;");
@@ -409,7 +404,7 @@ public class PopTools {
                     controller.openLink(HelpTools.cssEnLink());
                 }
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("CssZh"));
             menu.setStyle("-fx-text-fill: blue;");
@@ -419,22 +414,10 @@ public class PopTools {
                     controller.openLink(HelpTools.cssZhLink());
                 }
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
-            controller.setPopMenu(popMenu);
-            LocateTools.locateCenter((Region) event.getSource(), popMenu);
-            return popMenu;
+            controller.popEventMenu(event, items);
+            return controller.getPopMenu();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
@@ -443,14 +426,13 @@ public class PopTools {
 
     public static ContextMenu popWindowStyles(BaseController parent, String baseStyle, Event event) {
         try {
-            ContextMenu popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+            List<MenuItem> items = new ArrayList<>();
 
             String baseName = parent.getBaseName();
             MenuItem menu = new MenuItem(message("WindowStyle"));
             menu.setStyle("-fx-text-fill: #2e598a;");
-            popMenu.getItems().add(menu);
-            popMenu.getItems().add(new SeparatorMenuItem());
+            items.add(menu);
+            items.add(new SeparatorMenuItem());
 
             Map<String, String> styles = new LinkedHashMap<>();
             styles.put("None", "");
@@ -476,9 +458,9 @@ public class PopTools {
                 });
                 rmenu.setSelected(currentStyle != null && currentStyle.equals(style));
                 rmenu.setToggleGroup(sgroup);
-                popMenu.getItems().add(rmenu);
+                items.add(rmenu);
             }
-            popMenu.getItems().add(new SeparatorMenuItem());
+            items.add(new SeparatorMenuItem());
 
             CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
             hoverMenu.setSelected(UserConfig.getBoolean("WindowStylesPopWhenMouseHovering", false));
@@ -488,7 +470,7 @@ public class PopTools {
                     UserConfig.setBoolean("WindowStylesPopWhenMouseHovering", hoverMenu.isSelected());
                 }
             });
-            popMenu.getItems().add(hoverMenu);
+            items.add(hoverMenu);
 
             CheckMenuItem checkMenu = new CheckMenuItem(message("ShareAllInterface"));
             checkMenu.setSelected(UserConfig.getBoolean(baseName + "ShareWindowStyle", true));
@@ -498,25 +480,10 @@ public class PopTools {
                     UserConfig.setBoolean(baseName + "ShareWindowStyle", checkMenu.isSelected());
                 }
             });
-            popMenu.getItems().add(checkMenu);
+            items.add(checkMenu);
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
-
-            parent.closePopup();
-            parent.setPopMenu(popMenu);
-
-            LocateTools.locateEvent(event, popMenu);
-            return popMenu;
+            parent.popEventMenu(event, items);
+            return parent.getPopMenu();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
@@ -800,20 +767,18 @@ public class PopTools {
             if (values == null || values.isEmpty()) {
                 return inPopMenu;
             }
-            final ContextMenu popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+            List<MenuItem> items = new ArrayList<>();
 
             MenuItem menu;
             for (String value : values) {
                 menu = new MenuItem(value);
                 menu.setOnAction((ActionEvent event) -> {
                     input.setText(value);
-                    popMenu.requestFocus();
                     input.requestFocus();
                 });
-                popMenu.getItems().add(menu);
+                items.add(menu);
             }
-            popMenu.getItems().add(new SeparatorMenuItem());
+            items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("DateFormat"));
             menu.setStyle("-fx-text-fill: blue;");
@@ -823,20 +788,10 @@ public class PopTools {
                     parent.openLink(HelpTools.simpleDateFormatLink());
                 }
             });
-            popMenu.getItems().add(menu);
-            popMenu.getItems().add(new SeparatorMenuItem());
+            items.add(menu);
 
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
-            LocateTools.locateMouse(mouseEvent, popMenu);
-            return popMenu;
+            parent.popEventMenu(mouseEvent, items);
+            return parent.getPopMenu();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
@@ -1114,9 +1069,7 @@ public class PopTools {
             if (ePopMenu != null && ePopMenu.isShowing()) {
                 ePopMenu.hide();
             }
-            ContextMenu popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-            popMenu.setAutoFix(true);
+            List<MenuItem> items = new ArrayList<>();
 
             MenuItem menu;
 
@@ -1126,22 +1079,10 @@ public class PopTools {
                 menu.setOnAction((ActionEvent event) -> {
                     scriptInput.replaceText(scriptInput.getSelection(), c);
                 });
-                popMenu.getItems().add(menu);
+                items.add(menu);
             }
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
-
-            parent.setPopMenu(popMenu);
-            LocateTools.locateMouse(scriptInput, popMenu);
+            parent.popNodeMenu(scriptInput, items);
         } catch (Exception e) {
         }
     }

@@ -1,20 +1,14 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import mara.mybox.db.table.BaseTable;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LocateTools;
-import static mara.mybox.value.Languages.message;
-
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -41,37 +35,20 @@ public class ControlCSVEdit extends BaseController {
             if (tableDefinition == null) {
                 return;
             }
-            if (parentController.popMenu != null && parentController.popMenu.isShowing()) {
-                parentController.popMenu.hide();
-            }
-            parentController.popMenu = new ContextMenu();
-            popMenu = parentController.popMenu;
-            popMenu.setAutoHide(true);
-
-            MenuItem menu;
-
-            menu = new MenuItem(Languages.message("InputCSVNecessaryFields"));
+            List<MenuItem> items = new ArrayList<>();
+            MenuItem menu = new MenuItem(Languages.message("InputCSVNecessaryFields"));
             menu.setOnAction((ActionEvent event) -> {
                 editCSVFile(tableDefinition.importNecessaryFields());
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(Languages.message("InputCSVAllFields"));
             menu.setOnAction((ActionEvent event) -> {
                 editCSVFile(tableDefinition.importAllFields());
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(Languages.message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event) -> {
-                popMenu.hide();
-                popMenu = null;
-            });
-            popMenu.getItems().add(menu);
-
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            parentController.popMouseMenu(mouseEvent, items);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

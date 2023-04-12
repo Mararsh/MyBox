@@ -6,7 +6,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
@@ -17,7 +16,6 @@ import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.robot.Robot;
 import mara.mybox.data.HtmlNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.cell.TreeTableHierachyCell;
@@ -401,28 +399,7 @@ public class BaseHtmlDomTreeController extends BaseController {
             items.addAll(more);
         }
 
-        menuItem = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-        menuItem.setStyle("-fx-text-fill: #2e598a;");
-        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = null;
-        });
-        items.add(menuItem);
-
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-        }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        popMenu.getItems().addAll(items);
-        if (event == null) {
-            Robot r = new Robot();
-            popMenu.show(domTree, r.getMouseX() + 40, r.getMouseY() + 20);
-        } else {
-            popMenu.show(domTree, event.getScreenX(), event.getScreenY());
-        }
+        popMouseMenu(event, items);
     }
 
     @FXML

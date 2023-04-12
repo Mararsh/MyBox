@@ -30,7 +30,6 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
     protected TextField maxInput;
 
     public ControlData2DRowFilter() {
-        TipsLabelKey = "RowFilterTips";
         category = TreeNode.RowFilter;
     }
 

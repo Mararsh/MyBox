@@ -15,12 +15,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import mara.mybox.bufferedimage.ImageBinary;
 import mara.mybox.bufferedimage.ImageContrast;
 import mara.mybox.bufferedimage.ImageContrast.ContrastAlgorithm;
@@ -31,7 +28,6 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.bufferedimage.TransformTools;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -250,31 +246,17 @@ public class ImageOCRProcessController extends ImageViewerController {
                     Languages.message("GaussianBlur"), Languages.message("AverageBlur")
             ));
 
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
+            List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
             for (String algorithm : algorithms) {
                 menu = new MenuItem(algorithm);
                 menu.setOnAction((ActionEvent event) -> {
                     algorithm(algorithm);
                 });
-                popMenu.getItems().add(menu);
+                items.add(menu);
             }
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(Languages.message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event) -> {
-                popMenu.hide();
-                popMenu = null;
-            });
-            popMenu.getItems().add(menu);
-
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            popMouseMenu(mouseEvent, items);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

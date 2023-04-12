@@ -10,6 +10,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
@@ -31,7 +32,6 @@ public class RowFilterEditor extends TreeNodeEditor {
     protected TextField maxInput;
 
     public RowFilterEditor() {
-        TipsLabelKey = "RowFilterTips";
         defaultExt = "js";
     }
 
@@ -168,6 +168,11 @@ public class RowFilterEditor extends TreeNodeEditor {
     @FXML
     protected void showScriptHistories(Event event) {
         PopTools.popStringValues(this, valueInput, event, interfaceName + "Histories", false, true);
+    }
+
+    @FXML
+    public void aboutRowExpression() {
+        openLink(HelpTools.aboutRowExpression());
     }
 
 }

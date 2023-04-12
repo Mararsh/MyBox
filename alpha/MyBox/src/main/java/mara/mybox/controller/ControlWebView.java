@@ -28,7 +28,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -37,7 +36,6 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import javafx.scene.web.PromptData;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebErrorEvent;
@@ -50,7 +48,6 @@ import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ImageClipboardTools;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
@@ -298,6 +295,9 @@ public class ControlWebView extends BaseController {
 
     public synchronized void docEvent(org.w3c.dom.events.Event ev) {
         try {
+            if (ev == null) {
+                return;
+            }
             String domEventType = ev.getType();
             String tag = null, href = null;
             if (ev.getTarget() != null) {
@@ -475,8 +475,20 @@ public class ControlWebView extends BaseController {
      */
     private void ready() {
         try {
-            clearDoc();
+            if (timer != null) {
+                timer.cancel();
+            }
+            framesDoc.clear();
+            charset = Charset.defaultCharset();
             pageLoadingNotify.set(!pageLoadingNotify.get());
+            Document doc = webEngine.getDocument();
+            if (doc != null) {
+                EventTarget t = (EventTarget) doc.getDocumentElement();
+                t.removeEventListener("contextmenu", docListener, false);
+                t.removeEventListener("click", docListener, false);
+                t.removeEventListener("mouseover", docListener, false);
+                t.removeEventListener("mouseout", docListener, false);
+            }
         } catch (Exception e) {
             MyBoxLog.console(e);
         }
@@ -484,15 +496,16 @@ public class ControlWebView extends BaseController {
 
     private void running() {
         try {
-            timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    Platform.runLater(() -> {
-                        initDoc(webEngine.getDocument());
-                    });
-                }
-            }, 300, 1000);
+            // Exceptions happen if add listeners before doc is complete. Give up.
+//            timer = new Timer();
+//            timer.schedule(new TimerTask() {
+//                @Override
+//                public void run() {
+//                    Platform.runLater(() -> {
+//                        initDoc(webEngine.getDocument());
+//                    });
+//                }
+//            }, 300, 1000);
         } catch (Exception e) {
             MyBoxLog.console(e);
         }
@@ -507,16 +520,41 @@ public class ControlWebView extends BaseController {
             if (jsObject == null) {
                 return false;
             }
-            if (timer != null) {
-                timer.cancel();
-            }
             jsObject.setMember("control", this);
+//            executeScript("if ( document.readyState==\"complete\" || document.readyState==\"interactive\") {alert('setDocListeners');control.setDocListeners();}");
+//                        initDoc(webEngine.getDocument());
+
             setDocListeners(doc);
-            charset = charset();
             return true;
         } catch (Exception e) {
             MyBoxLog.console(e);
             return false;
+        }
+    }
+
+    public void setDocListeners() {
+        try {
+            if (timer != null) {
+                timer.cancel();
+            }
+//            MyBoxLog.console(executeScript("document.readyState"));
+            Document doc = webEngine.getDocument();
+            if (doc == null) {
+                return;
+            }
+            charset = charset();
+            EventTarget t = (EventTarget) doc.getDocumentElement();
+            t.removeEventListener("contextmenu", docListener, false);
+            t.removeEventListener("click", docListener, false);
+            t.removeEventListener("mouseover", docListener, false);
+            t.removeEventListener("mouseout", docListener, false);
+
+            t.addEventListener("contextmenu", docListener, false);
+            t.addEventListener("click", docListener, false);
+            t.addEventListener("mouseover", docListener, false);
+            t.addEventListener("mouseout", docListener, false);
+        } catch (Exception e) {
+            MyBoxLog.console(e);
         }
     }
 
@@ -526,10 +564,15 @@ public class ControlWebView extends BaseController {
                 return;
             }
             EventTarget t = (EventTarget) doc.getDocumentElement();
-            t.addEventListener("contextmenu", docListener, true);
-            t.addEventListener("click", docListener, true);
-            t.addEventListener("mouseover", docListener, true);
-            t.addEventListener("mouseout", docListener, true);
+            t.removeEventListener("contextmenu", docListener, false);
+            t.removeEventListener("click", docListener, false);
+            t.removeEventListener("mouseover", docListener, false);
+            t.removeEventListener("mouseout", docListener, false);
+
+            t.addEventListener("contextmenu", docListener, false);
+            t.addEventListener("click", docListener, false);
+            t.addEventListener("mouseover", docListener, false);
+            t.addEventListener("mouseout", docListener, false);
         } catch (Exception e) {
             MyBoxLog.console(e);
         }
@@ -537,6 +580,9 @@ public class ControlWebView extends BaseController {
 
     private void succeeded() {
         try {
+            if (timer != null) {
+                timer.cancel();
+            }
             if (initStyle != null) {
                 writeStyle(initStyle);
             } else {
@@ -640,26 +686,6 @@ public class ControlWebView extends BaseController {
             setDocListeners(frame);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-        }
-    }
-
-    private void clearDoc() {
-        try {
-            if (timer != null) {
-                timer.cancel();
-            }
-            Document doc = webEngine.getDocument();
-            if (doc != null) {
-                EventTarget t = (EventTarget) doc.getDocumentElement();
-                t.removeEventListener("contextmenu", docListener, true);
-                t.removeEventListener("click", docListener, true);
-                t.removeEventListener("mouseover", docListener, true);
-                t.removeEventListener("mouseout", docListener, true);
-            }
-            framesDoc.clear();
-            charset = Charset.defaultCharset();
-        } catch (Exception e) {
-            MyBoxLog.console(e);
         }
     }
 
@@ -994,27 +1020,12 @@ public class ControlWebView extends BaseController {
         });
         copyMenu.getItems().add(menu);
 
-        items.add(new SeparatorMenuItem());
-        menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            if (popMenu != null) {
-                popMenu.hide();
-                popMenu = null;
-            }
-        });
-        items.add(menu);
-
         closePopup();
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        popMenu.getItems().addAll(items);
+        popMenu(webView, items, linkX, linkY);
         if (parentController != null) {
             parentController.closePopup();
             parentController.setPopMenu(popMenu);
         }
-        popMenu.show(webView, linkX, linkY);
-
     }
 
     public void popElementMenu(Element element) {
@@ -1174,15 +1185,8 @@ public class ControlWebView extends BaseController {
             }
 
             items.addAll(operationsMenu());
-            items.add(new SeparatorMenuItem());
 
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-            popMenu.getItems().addAll(items);
-            LocateTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
+            popMouseMenu(mouseEvent, items);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -1493,25 +1497,8 @@ public class ControlWebView extends BaseController {
                 }
             });
             items.add(editableMenu);
-            items.add(new SeparatorMenuItem());
 
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                if (popMenu != null && popMenu.isShowing()) {
-                    popMenu.hide();
-                }
-                popMenu = null;
-            });
-            items.add(menu);
-
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-            popMenu.getItems().addAll(items);
-            LocateTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
+            popMouseMenu(mouseEvent, items);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

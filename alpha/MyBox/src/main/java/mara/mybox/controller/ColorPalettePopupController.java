@@ -12,7 +12,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
@@ -35,11 +34,9 @@ import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.PaletteTools;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -315,24 +312,7 @@ public class ColorPalettePopupController extends BaseChildController {
             });
             items.add(menu);
 
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                if (popMenu != null && popMenu.isShowing()) {
-                    popMenu.hide();
-                }
-                popMenu = null;
-            });
-            items.add(menu);
-
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-            popMenu.getItems().addAll(items);
-
-            LocateTools.locateMouse(mouseEvent, popMenu);
+            popMouseMenu(mouseEvent, items);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -353,26 +333,7 @@ public class ColorPalettePopupController extends BaseChildController {
             items.add(new SeparatorMenuItem());
             items.addAll(PaletteTools.paletteExamplesMenu(parentController == null ? myController : parentController));
 
-            items.add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                if (popMenu != null && popMenu.isShowing()) {
-                    popMenu.hide();
-                }
-                popMenu = null;
-            });
-            items.add(menu);
-
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-            popMenu.getItems().addAll(items);
-
-            LocateTools.locateMouse(mouseEvent, popMenu);
+            popMouseMenu(mouseEvent, items);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

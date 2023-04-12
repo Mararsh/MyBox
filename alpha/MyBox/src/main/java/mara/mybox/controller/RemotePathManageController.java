@@ -11,7 +11,6 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
@@ -24,7 +23,6 @@ import javafx.scene.layout.VBox;
 import mara.mybox.data.FileNode;
 import mara.mybox.db.data.PathConnection;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
@@ -533,25 +531,7 @@ public class RemotePathManageController extends FilesTreeController {
         });
         items.add(menuItem);
 
-        items.add(new SeparatorMenuItem());
-
-        menuItem = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-        menuItem.setStyle("-fx-text-fill: #2e598a;");
-        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = null;
-        });
-        items.add(menuItem);
-
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-        }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        popMenu.getItems().addAll(items);
-        LocateTools.locateEvent(event, popMenu);
+        popEventMenu(event, items);
     }
 
     public void openPath(PathConnection profile) {

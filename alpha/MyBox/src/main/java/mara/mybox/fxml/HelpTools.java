@@ -177,6 +177,18 @@ public class HelpTools {
         }
     }
 
+    public static File aboutRowExpression() {
+        try {
+            String lang = Languages.getLangName();
+            File file = FxFileTools.getInternalFile("/doc/" + lang + "/about-row-expression-" + lang + ".html",
+                    "doc", "about-row-expression-" + lang + ".html");
+            return file;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
     public static void imageStories(BaseController controller) {
         SingletonTask task = new SingletonTask<Void>(controller) {
             private File htmFile;
