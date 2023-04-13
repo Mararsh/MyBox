@@ -53,7 +53,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     protected TableView<T> tableView;
     protected List<File> sourceFiles;
     protected List<String> filesPassword;
-    protected boolean sourceCheckSubdir, allowPaused, browseTargets, viewTargetPath, createDirectories;
+    protected boolean sourceCheckSubdir, createDirectories, allowPaused, browseTargets, viewTargetPath;
     protected boolean isPreview, paused;
     protected long dirFilesNumber, dirFilesHandled, totalFilesHandled = 0, totalItemsHandled = 0;
     protected long fileSelectorSize, fileSelectorTime;
@@ -431,10 +431,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         actualParameters.currentIndex = 0;
         targetPath = null;
 
-        sourceCheckSubdir = true;
-        if (tableController.tableSubdirCheck != null) {
-            sourceCheckSubdir = tableController.tableSubdirCheck.isSelected();
-        }
+        sourceCheckSubdir = UserConfig.getBoolean("FilesTableHandleSubdir", true);
 
         fileSelectorType = tableController.fileSelectorType;
         sourceFilesSelector = null;
@@ -467,8 +464,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             UserConfig.setBoolean(targetSubdirKey, actualParameters.targetSubDir);
         }
 
-        createDirectories = tableController.tableCreateDirCheck != null
-                && tableController.tableCreateDirCheck.isSelected();
+        createDirectories = UserConfig.getBoolean("FilesTableCreateSubdir", true);
 
         actualParameters.fromPage = 1;
         actualParameters.toPage = 0;

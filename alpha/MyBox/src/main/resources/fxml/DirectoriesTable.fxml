@@ -80,15 +80,15 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <CheckBox fx:id="countDirCheck" mnemonicParsing="false" selected="true">
+                <Button fx:id="settingsButton" layoutX="337.0" layoutY="10.0" mnemonicParsing="false" onAction="#showSettingsMenu" onMouseEntered="#popSettingsMenu">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/Red/iconFolderBrowse.png" />
+                                <Image url="@../buttons/Red/iconSetting.png" />
                             </image>
-                        </ImageView>
+                        </ImageView> 
                     </graphic>
-                </CheckBox>
+                </Button>
             </children>
         </FlowPane>
         <TableView fx:id="tableView"  editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">

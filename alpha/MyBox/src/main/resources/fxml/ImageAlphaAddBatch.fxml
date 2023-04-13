@@ -31,7 +31,7 @@ License:    Apache License Version 2.0
                     <tabs>
                         <Tab fx:id="sourceTab" text="%SourceFiles">
                             <content>
-                                <fx:include fx:id="table" source="FilesTable.fxml" HBox.hgrow="ALWAYS" />
+                                <fx:include fx:id="table" source="ControlFilesTable.fxml" HBox.hgrow="ALWAYS" />
                             </content>
                         </Tab>
                         <Tab fx:id="optionsTab" text="%Options">
@@ -66,7 +66,7 @@ License:    Apache License Version 2.0
                                                                             <graphic>
                                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                     <image>
-                                                                                        <Image url="@../buttons/Red/iconFolderImage.png" />
+                                                                                        <Image url="@../buttons/Red/iconOpen.png" />
                                                                                     </image>
                                                                                 </ImageView>
                                                                             </graphic>

@@ -40,7 +40,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
     protected List<String> videoDevices, audioDevices;
 
     @FXML
-    protected CheckBox audioCheck, videoCheck, miaoCheck;
+    protected CheckBox audioCheck, videoCheck;
     @FXML
     protected VBox videoBox;
     @FXML
@@ -73,14 +73,6 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
     public void initControls() {
         try {
             super.initControls();
-
-            miaoCheck.setSelected(UserConfig.getBoolean("FFmpegScreenRecorderMiao", true));
-            miaoCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    UserConfig.setBoolean("FFmpegScreenRecorderMiao", nv);
-                }
-            });
 
             audioCheck.setSelected(UserConfig.getBoolean("FFmpegScreenRecorderAudio", true));
             audioCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {

@@ -30,7 +30,7 @@ public class Colors {
                 color = dark ? "0x9E004FFF" : "0xFFFFFFFF";
                 break;
             case Orange:
-                color = dark ? "0x622A1DFF" : "0xFFF2B2FF";
+                color = dark ? "0x622A1DFF" : "0xFFF8D8FF";
                 break;
             case Green:
                 color = dark ? "0x0D3928FF" : "0xE0F0E9FF";

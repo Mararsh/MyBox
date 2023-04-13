@@ -139,7 +139,26 @@ public class StyleButton {
             return new StyleData(id, message("Select"), "", "iconOpen.png");
         }
         if (id.startsWith("selectPath")) {
-            return new StyleData(id, message("Select"), "", "iconFolder.png");
+            return new StyleData(id, message("Select"), "", "iconOpenPath.png");
+        }
+        if (id.startsWith("selectAll")) {
+            switch (id) {
+                case "selectAllButton":
+                    return new StyleData(id, message("SelectAll"), "CTRL+a / ALT+a", "iconSelectAll.png");
+                default:
+                    return new StyleData(id, message("SelectAll"), "", "iconSelectAll.png");
+            }
+        }
+        if (id.startsWith("selectNone")) {
+            switch (id) {
+                case "selectNoneButton":
+                    return new StyleData(id, message("UnselectAll"), "CTRL+o / ALT+O", "iconSelectNone.png");
+                default:
+                    return new StyleData(id, message("UnselectAll"), "", "iconSelectNone.png");
+            }
+        }
+        if (id.startsWith("select")) {
+            return new StyleData(id, message("Select"), "", "iconSelect.png");
         }
         if (id.startsWith("mybox")) {
             return new StyleData(id, "MyBox", "", "iconMyBox.png");
@@ -176,10 +195,6 @@ public class StyleButton {
             switch (id) {
                 case "recoverButton":
                     return new StyleData("recoverButton", message("Recover"), "F3 / CTRL+r / ALT+r", "iconRecover.png");
-                case "recoveryAllButton":
-                    return new StyleData("recoveryAllButton", message("RecoverAll"), "", "iconRecover.png");
-                case "recoverySelectedButton":
-                    return new StyleData("recoverySelectedButton", message("RecoverSelected"), "", "iconFileRestore.png");
                 default:
                     return new StyleData(id, message("Recover"), "", "iconRecover.png");
             }
@@ -344,28 +359,10 @@ public class StyleButton {
         if (id.startsWith("size")) {
             return new StyleData(id, message("Size"), "", "iconSplit.png");
         }
-        if (id.startsWith("selectImage")) {
-            return new StyleData(id, message("Image"), "", "iconFolderImage.png");
-        }
         if (id.startsWith("equal")) {
             return new StyleData(id, message("EqualTo"), "", "iconEqual.png");
         }
-        if (id.startsWith("selectAll")) {
-            switch (id) {
-                case "selectAllButton":
-                    return new StyleData(id, message("SelectAll"), "CTRL+a / ALT+a", "iconSelectAll.png");
-                default:
-                    return new StyleData(id, message("SelectAll"), "", "iconSelectAll.png");
-            }
-        }
-        if (id.startsWith("selectNone")) {
-            switch (id) {
-                case "selectNoneButton":
-                    return new StyleData(id, message("UnselectAll"), "CTRL+o / ALT+O", "iconSelectNone.png");
-                default:
-                    return new StyleData(id, message("UnselectAll"), "", "iconSelectNone.png");
-            }
-        }
+
         if (id.startsWith("use")) {
             return new StyleData(id, message("Use"), "", "iconYes.png");
         }
@@ -504,9 +501,6 @@ public class StyleButton {
         if (id.startsWith("ssl")) {
             return new StyleData(id, "SSL", "", "iconSSL.png");
         }
-        if (id.startsWith("ignore")) {
-            return new StyleData(id, message("Ignore"), "", "iconIgnore.png");
-        }
         if (id.startsWith("github")) {
             return new StyleData(id, "github", "", "iconGithub.png");
         }
@@ -596,9 +590,6 @@ public class StyleButton {
         if (id.startsWith("columnsAdd")) {
             return new StyleData(id, message("AddColumns"), "", "iconColumnAdd.png");
         }
-        if (id.startsWith("columnsDelete")) {
-            return new StyleData(id, message("DeleteColumns"), "", "iconColumnDelete.png");
-        }
         if (id.startsWith("set")) {
             switch (id) {
                 case "setButton":
@@ -652,8 +643,6 @@ public class StyleButton {
                     return new StyleData("insertFilesButton", message("InsertFiles"), "", "iconFileInsert.png");
                 case "insertDirectoryButton":
                     return new StyleData("insertDirectoryButton", message("InsertDirectory"), "", "iconFolderInsert.png");
-                default:
-                    return new StyleData(id, message("Insert"), "", "iconInsert.png");
             }
         }
         if (id.startsWith("XYChart")) {
@@ -674,16 +663,10 @@ public class StyleButton {
             return null;
         }
         switch (id) {
-            case "selectButton":
-                return new StyleData(id, message("Select"), "", "iconSelect.png");
-            case "unselectButton":
-                return new StyleData(id, message("Unselect"), "", "iconSelectNone.png");
             case "cropButton":
                 return new StyleData("cropButton", message("Crop"), "CTRL+x / ALT+x", "iconCrop.png");
             case "metaButton":
                 return new StyleData("metaButton", message("MetaData"), "", "iconMeta.png");
-            case "pButton":
-                return new StyleData(id, message("Paragraph"), "", "iconP.png");
             case "brButton":
                 return new StyleData(id, message("Newline"), "", "iconBr.png");
             case "statisticButton":
@@ -744,8 +727,6 @@ public class StyleButton {
                 return new StyleData("filterButton", message("Filter"), "", "iconFilter.png");
             case "pauseButton":
                 return new StyleData("pauseButton", message("Pause"), "", "iconPause.png");
-            case "pixSelectButton":
-                return new StyleData("pixSelectButton", message("Select"), "", "iconOpen.png");
             case "loadButton":
                 return new StyleData("loadButton", message("Load"), "", "iconGo.png");
             case "increaseButton":
@@ -756,10 +737,6 @@ public class StyleButton {
                 return new StyleData("invertButton", message("Invert"), "", "iconInvert.png");
             case "originalButton":
                 return new StyleData("originalButton", message("OriginalSize"), "", "iconOriginalSize.png");
-            case "suggestButton":
-                return new StyleData("suggestButton", message("SuggestedSettings"), "", "iconIdea.png");
-            case "originalImageButton":
-                return new StyleData("originalImageButton", message("OriginalImage"), "", "iconPhoto.png");
             case "xmlButton":
                 return new StyleData("xmlButton", "XML", "", "iconXML.png");
             case "refreshHeaderButton":
@@ -778,10 +755,6 @@ public class StyleButton {
                 return new StyleData("valueOkButton", message("OK"), "", "iconOK.png");
             case "multiplyButton":
                 return new StyleData("multiplyButton", message("Multiply"), "", "iconMultiply.png");
-            case "iccSelectButton":
-                return new StyleData("iccSelectButton", message("Select"), "", "iconOpen.png");
-            case "ocrPathButton":
-                return new StyleData("ocrPathButton", message("Select"), "", "iconOpen.png");
             case "blackwhiteButton":
                 return new StyleData("blackwhiteButton", message("BlackOrWhite"), "", "iconBlackWhite.png");
             case "greyButton":
@@ -798,8 +771,6 @@ public class StyleButton {
                 return new StyleData("pageFirstButton", message("FirstPage"), "ALT+HOME", "iconFirst.png");
             case "pageLastButton":
                 return new StyleData("pageLastButton", message("LastPage"), "ALT+END", "iconLast.png");
-            case "allButton":
-                return new StyleData("allButton", message("All"), "CTRL+a", "iconCheckAll.png");
             case "refreshHtmlButton":
                 return new StyleData("refreshHtmlButton", message("Refresh"), "", "iconRefresh.png");
             case "refreshTextButton":
@@ -812,8 +783,6 @@ public class StyleButton {
                 return new StyleData(id, message("PickColor"), message("ColorPickerComments"), "", "iconPickColor.png");
             case "chinaButton":
                 return new StyleData(id, message("China"), "", "iconChina.png");
-            case "globalButton":
-                return new StyleData(id, message("Global"), "", "iconGlobal.png");
             default:
                 return null;
         }

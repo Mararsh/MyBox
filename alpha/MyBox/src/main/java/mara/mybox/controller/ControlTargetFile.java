@@ -150,7 +150,7 @@ public class ControlTargetFile extends ControlFileSelecter {
         try {
             String targetPrefix = targetPath.getAbsolutePath() + File.separator
                     + FileNameTools.filter(namePrefix);
-            if (appendTimestampCheck != null && appendTimestampCheck.isSelected()) {
+            if (appendTimestampCheck == null || appendTimestampCheck.isSelected()) {
                 targetPrefix += "_" + DateTools.nowFileString();
             }
             String targetSuffix = FileNameTools.filter(nameSuffix);

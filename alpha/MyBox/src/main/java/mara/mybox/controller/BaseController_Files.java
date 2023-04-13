@@ -728,13 +728,12 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         }
     }
 
-    public String defaultTargetName(String prefix) {
-        String defaultName = prefix != null ? prefix : "";
+    public String defaultTargetName() {
         if (sourceFile != null) {
-            defaultName += FileNameTools.filter(FileNameTools.prefix(sourceFile.getName())) + "_";
+            return FileNameTools.prefix(sourceFile.getName());
+        } else {
+            return DateTools.nowFileString();
         }
-        defaultName += DateTools.nowFileString();
-        return defaultName;
     }
 
     public File defaultTargetPath(int type) {
@@ -754,7 +753,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
     }
 
     public File chooseSaveFile() {
-        return chooseSaveFile(defaultTargetPath(TargetPathType), defaultTargetName(""), targetExtensionFilter);
+        return chooseSaveFile(defaultTargetPath(TargetPathType), defaultTargetName(), targetExtensionFilter);
     }
 
     public File chooseSaveFile(String defaultName) {
@@ -762,7 +761,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
     }
 
     public File chooseSaveFile(int type) {
-        return chooseSaveFile(defaultTargetPath(type), defaultTargetName(""), defaultFilter(type));
+        return chooseSaveFile(defaultTargetPath(type), defaultTargetName(), defaultFilter(type));
     }
 
     public File chooseSaveFile(int type, String defaultName) {

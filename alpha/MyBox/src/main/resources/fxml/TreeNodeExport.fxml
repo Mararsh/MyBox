@@ -79,8 +79,16 @@ License:    Apache License Version 2.0
                                                         </FlowPane>
                                                         <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                             <children>
-                                                                <Label text="%HtmlStyle" />
-                                                                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                                <Label maxWidth="1.7976931348623157E308" text="%HtmlStyle" HBox.hgrow="ALWAYS" />
+                                                <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showHtmlHelps" onMouseEntered="#popHtmlHelps">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/iconClaw.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
                                                                 <Button fx:id="styleButton" mnemonicParsing="false" onMouseEntered="#popDefaultStyle">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

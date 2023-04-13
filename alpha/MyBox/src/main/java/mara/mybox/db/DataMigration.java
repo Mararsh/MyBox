@@ -78,14 +78,14 @@ public class DataMigration {
             int lastVersion = DevTools.lastVersion(conn);
             int currentVersion = DevTools.myboxVersion(AppValues.AppVersion);
             if (SystemConfig.getBoolean("IsAlpha", false) && !AppValues.Alpha) {
-                reloadInternalDoc();
+                reloadInternalResources();
             }
             SystemConfig.setBoolean("IsAlpha", AppValues.Alpha);
             if (lastVersion == currentVersion) {
                 return true;
             }
             MyBoxLog.info("Last version: " + lastVersion + " " + "Current version: " + currentVersion);
-            reloadInternalDoc();
+            reloadInternalResources();
             if (lastVersion > 0) {
 
                 if (lastVersion < 6002001) {
@@ -1534,7 +1534,7 @@ public class DataMigration {
     /*
         common
      */
-    private static void reloadInternalDoc() {
+    private static void reloadInternalResources() {
         new Thread() {
             @Override
             public void run() {
@@ -1556,6 +1556,20 @@ public class DataMigration {
                     }
 
                     dir = new File(AppVariables.MyboxDataPath + File.separator + "image");
+                    list = dir.listFiles();
+                    if (list != null) {
+                        for (File file : list) {
+                            if (file.isDirectory()) {
+                                continue;
+                            }
+                            String name = file.getName();
+                            if (name.startsWith("icon") && name.endsWith(".png")) {
+                                file.delete();
+                            }
+                        }
+                    }
+
+                    dir = new File(AppVariables.MyboxDataPath + File.separator + "buttons");
                     list = dir.listFiles();
                     if (list != null) {
                         for (File file : list) {

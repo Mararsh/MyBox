@@ -32,7 +32,7 @@ License:    Apache License Version 2.0
                     <tabs>
                         <Tab fx:id="sourceTab" text="%SourceFiles">
                             <content>
-                                <fx:include fx:id="table" source="FilesTable.fxml" HBox.hgrow="ALWAYS" />
+                                <fx:include fx:id="table" source="ControlFilesTable.fxml" HBox.hgrow="ALWAYS" />
                             </content>
                         </Tab>
                         <Tab fx:id="optionsTab" text="%Options">

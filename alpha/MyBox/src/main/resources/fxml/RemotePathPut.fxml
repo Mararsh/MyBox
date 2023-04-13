@@ -26,7 +26,7 @@ License:    Apache License Version 2.0
             <tabs>
                 <Tab fx:id="sourceTab" text="%SourceFiles">
                     <content>
-                        <fx:include fx:id="table" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="FilesTable.fxml" />
+                        <fx:include fx:id="table" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlFilesTable.fxml" />
                     </content>
                 </Tab>
                 <Tab fx:id="targetTab" text="%TargetPath">

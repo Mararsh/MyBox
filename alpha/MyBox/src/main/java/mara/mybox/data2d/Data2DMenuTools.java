@@ -265,7 +265,7 @@ public class Data2DMenuTools {
 
             Menu calMenu = new Menu(message("Calculation"), StyleTools.getIconImageView("iconCalculator.png"));
 
-            menu = new MenuItem(message("RowExpression"), StyleTools.getIconImageView("iconCalculate.png"));
+            menu = new MenuItem(message("RowExpression"), StyleTools.getIconImageView("iconNewItem.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DRowExpressionController.open(controller);
             });

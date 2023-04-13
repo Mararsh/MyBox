@@ -49,8 +49,8 @@ import jdk.jshell.JShell;
 import jdk.jshell.SourceCodeAnalysis;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.ControlWebView;
+import mara.mybox.controller.HtmlStyleInputController;
 import mara.mybox.controller.MenuController;
-import mara.mybox.controller.TextInputController;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.HtmlStyles;
@@ -351,7 +351,7 @@ public class PopTools {
 
                 @Override
                 public void handle(ActionEvent event) {
-                    TextInputController inputController = TextInputController.open(controller,
+                    HtmlStyleInputController inputController = HtmlStyleInputController.open(controller,
                             message("Style"), UserConfig.getString(prefix + "HtmlStyle", null));
                     getListener = new ChangeListener<Boolean>() {
                         @Override
@@ -393,28 +393,6 @@ public class PopTools {
                 }
             });
             items.add(checkMenu);
-
-            items.add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("CssEn"));
-            menu.setStyle("-fx-text-fill: blue;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    controller.openLink(HelpTools.cssEnLink());
-                }
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("CssZh"));
-            menu.setStyle("-fx-text-fill: blue;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    controller.openLink(HelpTools.cssZhLink());
-                }
-            });
-            items.add(menu);
 
             controller.popEventMenu(event, items);
             return controller.getPopMenu();
@@ -510,13 +488,6 @@ public class PopTools {
     /*
         saved values
      */
-//    public static void popStringValues(BaseController parent, TextInputControl input, Event event, String name) {
-//        popStringValues(parent, input, event, name, false);
-//    }
-//
-//    public static void popStringValues(BaseController parent, TextInputControl input, Event event, String name, boolean alwaysClear) {
-//        popStringValues(parent, input, event, name, false, false);
-//    }
     public static void popStringValues(BaseController parent, TextInputControl input, Event event,
             String name, boolean alwaysClear, boolean checkPop) {
         try {

@@ -1,8 +1,15 @@
 package mara.mybox.fxml;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.controller.BaseController;
+import mara.mybox.controller.WebBrowserController;
 import mara.mybox.data.ImageItem;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
@@ -13,6 +20,7 @@ import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -31,7 +39,6 @@ public class HelpTools {
             if (html == null) {
                 return;
             }
-            html = html.replaceAll("href=\"", "target=_blank href=\"");
             html = html.replaceAll("href=\"", "target=_blank href=\"");
             TextFileTools.writeFile(htmlFile, html);
             PopTools.browseURI(controller, htmlFile.toURI());
@@ -60,11 +67,11 @@ public class HelpTools {
             table.newLinkRow("", "https://www.w3.org/TR/css-color-4/#lab-to-rgb");
             table.newLinkRow("ChromaticAdaptation", "http://brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html");
             table.newLinkRow("ChromaticityDiagram", "http://demonstrations.wolfram.com/CIEChromaticityDiagram/");
-            table.newLinkRow("ArtHuesWheel", "https://redyellowblue.org/ryb-color-model/");
+            table.newLinkRow("ArtHuesWheel", "https://blog.csdn.net/weixin_44938037/article/details/90599711");
             table.newLinkRow("", "https://stackoverflow.com/questions/4945457/conversion-between-rgb-and-ryb-color-spaces");
             table.newLinkRow("", "https://math.stackexchange.com/questions/305395/ryb-and-rgb-color-space-conversion");
             table.newLinkRow("", "http://bahamas10.github.io/ryb/about.html");
-            table.newLinkRow("", "https://blog.csdn.net/weixin_44938037/article/details/90599711");
+            table.newLinkRow("", "https://redyellowblue.org/ryb-color-model/");
 
             File htmFile = HtmlWriteTools.writeHtml(table.html());
             return htmFile;
@@ -264,6 +271,10 @@ public class HelpTools {
         return "https://docs.oracle.com/en/java/javase/18/docs/api/java.desktop/java/awt/RenderingHints.html";
     }
 
+    public static String cssLink() {
+        return "https://www.w3.org/TR/CSS/#css";
+    }
+
     public static String cssEnLink() {
         return "https://developer.mozilla.org/en-US/docs/web/css/reference";
     }
@@ -290,6 +301,96 @@ public class HelpTools {
 
     public static String javaScriptEnLink() {
         return "https://developer.mozilla.org/en-US/docs/Web/JavaScript";
+    }
+
+    public static List<MenuItem> htmlHelps(BaseController controller) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+
+            MenuItem menuItem = new MenuItem(message("HtmlTutorial") + " - " + message("English"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.htmlEnLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("HtmlTutorial") + " - " + message("Chinese"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.htmlZhLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            items.add(new SeparatorMenuItem());
+
+            menuItem = new MenuItem(message("JavaScriptTutorial") + " - " + message("English"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.javaScriptEnLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("JavaScriptTutorial") + " - " + message("Chinese"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.javaScriptZhLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            items.add(new SeparatorMenuItem());
+
+            menuItem = new MenuItem(message("CssTutorial") + " - " + message("English"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.cssEnLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("CssTutorial") + " - " + message("Chinese"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.cssZhLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("CssReference"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.cssLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
+            hoverMenu.setSelected(UserConfig.getBoolean("HtmlHelpsPopWhenMouseHovering", false));
+            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("HtmlHelpsPopWhenMouseHovering", hoverMenu.isSelected());
+                }
+            });
+            items.add(hoverMenu);
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
     }
 
 }

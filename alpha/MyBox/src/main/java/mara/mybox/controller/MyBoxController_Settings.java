@@ -125,7 +125,7 @@ public abstract class MyBoxController_Settings extends MyBoxController_Recent {
 
         List<MenuItem> items = new ArrayList<>();
         items.addAll(langItems);
-        items.addAll(Arrays.asList(derbyServer, mybox, new SeparatorMenuItem(), settings));
+        items.addAll(Arrays.asList(new SeparatorMenuItem(), derbyServer, mybox, new SeparatorMenuItem(), settings));
 
         popCenterMenu(settingsBox, items);
 

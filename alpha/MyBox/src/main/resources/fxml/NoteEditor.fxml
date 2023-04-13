@@ -23,7 +23,7 @@ License:    Apache License Version 2.0
     <children>
         <HBox alignment="CENTER_RIGHT" spacing="2.0">
             <children>
-            <Button fx:id="helpButton" mnemonicParsing="false" onMouseEntered="#popHelpMenu">
+            <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showHtmlHelps"  onMouseEntered="#popHtmlHelps">
                <graphic>
                   <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                      <image>

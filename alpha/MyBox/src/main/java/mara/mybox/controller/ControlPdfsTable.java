@@ -93,7 +93,7 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
                     @Override
                     public boolean setCellValue(Integer value) {
                         try {
-                            if (value == null || value < 0 || !isEditingRow()) {
+                            if (value == null || value <= 0 || !isEditingRow()) {
                                 cancelEdit();
                                 return false;
                             }
@@ -179,14 +179,6 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
             setAllOrSelectedButton.disableProperty().bind(fromInput.styleProperty().isEqualTo(UserConfig.badStyle())
                     .or(toInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
-
-            tableSubdirCheck.setSelected(UserConfig.getBoolean("PDFTableSubDir", true));
-            tableSubdirCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean("PDFTableSubDir", tableSubdirCheck.isSelected());
-                }
-            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

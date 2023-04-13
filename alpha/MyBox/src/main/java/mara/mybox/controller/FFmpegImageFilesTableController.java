@@ -25,7 +25,7 @@ import mara.mybox.value.UserConfig;
 /*
     T must be subClass of FileInformation
  */
-public class FFmpegImageFilesTableController extends FilesTableController {
+public class FFmpegImageFilesTableController extends ControlFilesTable {
 
     protected long duration;
 

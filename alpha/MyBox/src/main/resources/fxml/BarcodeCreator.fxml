@@ -96,11 +96,11 @@ License:    Apache License Version 2.0
                                                                 <ComboBox fx:id="barRatioSelecor" editable="true" prefWidth="80.0" HBox.hgrow="NEVER" />
                                                                 <Label fx:id="label11" text="%QuietZoneWidth" />
                                                                 <TextField fx:id="quietWidthInput" prefWidth="60.0" />
-                                                                <Button fx:id="suggestButton" mnemonicParsing="false" onAction="#suggestedSettings">
+                                                                <Button fx:id="defaultButton" mnemonicParsing="false" onAction="#suggestedSettings">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
-                                                                                <Image url="@../buttons/Red/iconIdea.png" />
+                                                                                <Image url="@../buttons/Red/iconDefault.png" />
                                                                             </image>
                                                                         </ImageView>
                                                                     </graphic>

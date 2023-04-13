@@ -92,25 +92,34 @@ License:    Apache License Version 2.0
                     </VBox.margin>
                 </TabPane>
                 <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" spacing="5.0">
-                    <children>       
-                            <CheckBox fx:id="openCheck" mnemonicParsing="false" selected="true">
-                                <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                        <image>
-                                            <Image url="@../buttons/Red/iconOpenPath.png" />
-                                        </image>
-                                    </ImageView>
-                                </graphic>
-                            </CheckBox>
-                  <Button fx:id="openPathButton" mnemonicParsing="false" onAction="#openPath">
+                    <children>
+                  <CheckBox fx:id="miaoRecordCheck" mnemonicParsing="false" selected="true">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../buttons/Red/iconOpenPath.png" />
+                              <Image url="@../buttons/Red/iconCat.png" />
                            </image>
                         </ImageView>
                      </graphic>
-                  </Button>
+                  </CheckBox>       
+                        <CheckBox fx:id="openCheck" mnemonicParsing="false" selected="true">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconOpenPath.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </CheckBox>
+                        <Button fx:id="openTargetButton" mnemonicParsing="false" onAction="#openTarget">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconOpenPath.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                         <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction" styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

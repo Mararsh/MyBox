@@ -544,11 +544,12 @@ public class ControlWebView extends BaseController {
             }
             charset = charset();
             EventTarget t = (EventTarget) doc.getDocumentElement();
-            t.removeEventListener("contextmenu", docListener, false);
-            t.removeEventListener("click", docListener, false);
-            t.removeEventListener("mouseover", docListener, false);
-            t.removeEventListener("mouseout", docListener, false);
+//            t.removeEventListener("contextmenu", docListener, false);
+//            t.removeEventListener("click", docListener, false);
+//            t.removeEventListener("mouseover", docListener, false);
+//            t.removeEventListener("mouseout", docListener, false);
 
+            MyBoxLog.debug("here");
             t.addEventListener("contextmenu", docListener, false);
             t.addEventListener("click", docListener, false);
             t.addEventListener("mouseover", docListener, false);
@@ -939,7 +940,7 @@ public class ControlWebView extends BaseController {
         items.add(menu);
 
         if (tag.equalsIgnoreCase("img")) {
-            Menu imageMenu = new Menu(message("Image"), StyleTools.getIconImageView("iconFlower.png"));
+            Menu imageMenu = new Menu(message("Image"), StyleTools.getIconImageView("iconSample.png"));
             items.add(imageMenu);
             if (ImageClipboardTools.isMonitoringCopy()) {
                 menu = new MenuItem(message("CopyImageToClipboards"), StyleTools.getIconImageView("iconCopySystem.png"));
@@ -1280,10 +1281,6 @@ public class ControlWebView extends BaseController {
             operationsMenu.getItems().setAll(operationsMenu());
             items.add(operationsMenu);
 
-            if (!linkInNewTab) {
-                items.add(clickedMenu());
-            }
-
             items.add(new SeparatorMenuItem());
 
             Menu viewMenu = new Menu(message("View"), StyleTools.getIconImageView("iconView.png"));
@@ -1464,7 +1461,7 @@ public class ControlWebView extends BaseController {
                 menu.setDisable(isFrameset || doc == null);
                 extractMenu.getItems().add(menu);
 
-                menu = new MenuItem(message("Images"), StyleTools.getIconImageView("iconFlower.png"));
+                menu = new MenuItem(message("Images"), StyleTools.getIconImageView("iconSample.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     images();
                 });
@@ -1497,6 +1494,10 @@ public class ControlWebView extends BaseController {
                 }
             });
             items.add(editableMenu);
+
+            if (!linkInNewTab) {
+                items.add(clickedMenu());
+            }
 
             popMouseMenu(mouseEvent, items);
 

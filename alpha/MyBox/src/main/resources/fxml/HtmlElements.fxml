@@ -112,6 +112,15 @@ License:    Apache License Version 2.0
                                         </HBox>
                                         <HBox fx:id="elementsBox" alignment="CENTER_LEFT" spacing="5.0">
                                             <children>
+                                    <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showHtmlHelps"  onMouseEntered="#popHtmlHelps">
+                                       <graphic>
+                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/iconClaw.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
                                                 <Button fx:id="historyElementButton" mnemonicParsing="false" onAction="#showElementHistories" onMouseEntered="#popElementHistories">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

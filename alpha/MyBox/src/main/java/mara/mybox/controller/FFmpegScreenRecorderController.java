@@ -41,9 +41,9 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
     @FXML
     protected FFmpegScreenRecorderOptionsController optionsController;
     @FXML
-    protected CheckBox openCheck;
-    @FXML
     protected TextField commandInput;
+    @FXML
+    protected CheckBox miaoRecordCheck;
 
     public FFmpegScreenRecorderController() {
         baseTitle = message("FFmpegScreenRecorder");
@@ -71,6 +71,14 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
             super.initControls();
 
             optionsController.setParameters(this);
+
+            miaoRecordCheck.setSelected(UserConfig.getBoolean("FFmpegScreenRecorderMiao", true));
+            miaoRecordCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    UserConfig.setBoolean("FFmpegScreenRecorderMiao", nv);
+                }
+            });
 
             os = SystemTools.os();
 
@@ -171,7 +179,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
     @Override
     public boolean doTask() {
         try {
-            if (optionsController.miaoCheck.isSelected()) {
+            if (miaoRecordCheck.isSelected()) {
                 SoundTools.BenWu();
             }
             if (timer != null) {
@@ -221,7 +229,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
                 process = null;
             }
             stopping.set(false);
-            if (optionsController.miaoCheck.isSelected()) {
+            if (miaoRecordCheck.isSelected()) {
                 SoundTools.miao7();
             }
             showLogs(message("Exit"));

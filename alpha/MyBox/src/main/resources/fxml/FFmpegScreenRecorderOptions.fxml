@@ -87,7 +87,6 @@ License:    Apache License Version 2.0
                                             </HBox.margin>
                                         </Label>
                                         <fx:include fx:id="duration" source="ControlTimeLength.fxml" />
-                                        <CheckBox fx:id="miaoCheck" mnemonicParsing="false" text="%Miaow" />
                                     </children>
                                 </HBox>
                                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">

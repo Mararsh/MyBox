@@ -72,7 +72,7 @@ public class ImagesPlayController extends BaseImagesListController {
     @FXML
     protected VBox fileVBox, imageBox, pdfBox;
     @FXML
-    protected TextField fromInput, toInput;
+    protected TextField fromInput, toInput, passwordInput;
     @FXML
     protected FlowPane framesPane;
     @FXML
@@ -403,13 +403,15 @@ public class ImagesPlayController extends BaseImagesListController {
             if (sourceFile == null) {
                 return;
             }
-            pdfDoc = PDDocument.load(sourceFile, AppVariables.pdfMemUsage);
+            pdfDoc = PDDocument.load(sourceFile, passwordInput.getText(), AppVariables.pdfMemUsage);
             pdfRenderer = new PDFRenderer(pdfDoc);
         } catch (Exception e) {
+            pdfDoc = null;
             if (task != null) {
                 task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
             }
-            MyBoxLog.error(e.toString());
         }
     }
 

@@ -104,42 +104,15 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <CheckBox fx:id="tableSubdirCheck" mnemonicParsing="false" selected="true">
+                <Button fx:id="settingsButton" layoutX="337.0" layoutY="10.0" mnemonicParsing="false" onAction="#showSettingsMenu" onMouseEntered="#popSettingsMenu">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/Red/iconFolder.png" />
+                                <Image url="@../buttons/Red/iconSetting.png" />
                             </image>
-                        </ImageView>
+                        </ImageView> 
                     </graphic>
-                </CheckBox>
-                <CheckBox fx:id="tableCreateDirCheck" mnemonicParsing="false" selected="true">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconFolderLink.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </CheckBox>
-                <CheckBox fx:id="countDirCheck" mnemonicParsing="false" selected="true">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconFolderBrowse.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </CheckBox>
-                <CheckBox fx:id="tableExpandDirCheck" mnemonicParsing="false">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconUnfold.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </CheckBox>
+                </Button>
                 <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                 <ImageView fx:id="rightTipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                     <image>

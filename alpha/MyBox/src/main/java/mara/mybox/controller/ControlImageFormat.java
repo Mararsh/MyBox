@@ -10,7 +10,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
@@ -62,8 +61,6 @@ public class ControlImageFormat extends BaseController {
     protected VBox colorspaceBox, compressBox, binaryBox;
     @FXML
     protected HBox profileBox;
-    @FXML
-    protected Button iccSelectButton;
     @FXML
     protected RadioButton pngRadio, jpgRadio, tifRadio, gifRadio, bmpRadio, pnmRadio, wbmpRadio, icoRadio, pcxRadio,
             alphaKeepRadio, alphaRemoveRadio, alphaPreKeepRadio, alphaPreReomveRadio;

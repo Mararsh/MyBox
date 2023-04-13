@@ -97,7 +97,7 @@ public abstract class BaseController_Attributes {
     @FXML
     protected ImageView tipsView, rightTipsView, linksView, leftPaneControl, rightPaneControl;
     @FXML
-    protected CheckBox topCheck, saveCloseCheck, rightPaneCheck, leftPaneCheck;
+    protected CheckBox topCheck, rightPaneCheck, leftPaneCheck;
     @FXML
     protected ToggleGroup saveAsGroup, fileTypeGroup;
     @FXML

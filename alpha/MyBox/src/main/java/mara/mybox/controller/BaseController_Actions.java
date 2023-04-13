@@ -548,6 +548,18 @@ public abstract class BaseController_Actions extends BaseController_Interface {
 
     }
 
+    @FXML
+    protected void popHtmlHelps(Event event) {
+        if (UserConfig.getBoolean("HtmlHelpsPopWhenMouseHovering", false)) {
+            showHtmlHelps(event);
+        }
+    }
+
+    @FXML
+    protected void showHtmlHelps(Event event) {
+        popEventMenu(event, HelpTools.htmlHelps(myController));
+    }
+
     public void popMouseMenu(MouseEvent event, List<MenuItem> menuItems) {
         if (event == null || menuItems == null || menuItems.isEmpty()) {
             return;

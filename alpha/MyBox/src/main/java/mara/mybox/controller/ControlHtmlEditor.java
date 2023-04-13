@@ -34,7 +34,6 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import mara.mybox.data.HtmlNode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -1258,53 +1257,6 @@ public class ControlHtmlEditor extends BaseWebViewController {
 
         popMouseMenu(mouseEvent, items);
 
-    }
-
-    @FXML
-    public void popHelpMenu(MouseEvent mouseEvent) {
-        try {
-            List<MenuItem> items = new ArrayList<>();
-
-            MenuItem menuItem = new MenuItem(message("HtmlTutorial") + " - " + message("English"));
-            menuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    myController.openLink(HelpTools.htmlEnLink());
-                }
-            });
-            items.add(menuItem);
-
-            menuItem = new MenuItem(message("JavaScriptTutorial") + " - " + message("English"));
-            menuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    myController.openLink(HelpTools.javaScriptEnLink());
-                }
-            });
-            items.add(menuItem);
-
-            menuItem = new MenuItem(message("HtmlTutorial") + " - " + message("Chinese"));
-            menuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    myController.openLink(HelpTools.htmlZhLink());
-                }
-            });
-            items.add(menuItem);
-
-            menuItem = new MenuItem(message("JavaScriptTutorial") + " - " + message("Chinese"));
-            menuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    myController.openLink(HelpTools.javaScriptZhLink());
-                }
-            });
-            items.add(menuItem);
-
-            popMouseMenu(mouseEvent, items);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
     }
 
     @Override

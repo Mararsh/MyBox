@@ -3,6 +3,8 @@ package mara.mybox.controller;
 import java.io.File;
 import java.security.cert.Certificate;
 import java.util.Optional;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
@@ -14,6 +16,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.CertificateTools;
 import mara.mybox.value.Languages;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -29,7 +32,7 @@ public class SecurityCertificatesAddController extends BaseController {
     @FXML
     protected RadioButton addressRadio, fileRadio;
     @FXML
-    protected CheckBox chainCheck;
+    protected CheckBox saveCloseCheck, chainCheck;
 
     public SecurityCertificatesAddController() {
         baseTitle = Languages.message("SecurityCertificates");
@@ -38,6 +41,25 @@ public class SecurityCertificatesAddController extends BaseController {
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.Certificate, VisitHistory.FileType.Html);
+    }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            saveCloseCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov,
+                        Boolean oldVal, Boolean newVal) {
+                    UserConfig.setBoolean(interfaceName + "SaveClose", saveCloseCheck.isSelected());
+                }
+            });
+            saveCloseCheck.setSelected(UserConfig.getBoolean(interfaceName + "SaveClose", false));
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     @FXML
