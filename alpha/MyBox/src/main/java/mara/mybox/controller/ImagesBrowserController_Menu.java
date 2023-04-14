@@ -204,7 +204,7 @@ public abstract class ImagesBrowserController_Menu extends ImagesBrowserControll
         });
         items.add(menu);
 
-        popMouseMenu(event, items);
+        popEventMenu(event, items);
 
     }
 

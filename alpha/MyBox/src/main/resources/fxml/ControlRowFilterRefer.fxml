@@ -67,7 +67,7 @@ License:    Apache License Version 2.0
                                                     <children>
                                                         <HBox fx:id="buttonsBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                                                             <children>
-                                                                <Button fx:id="functionsButton" mnemonicParsing="false" onMouseEntered="#popFunctionsMenu">
+                                                                <Button fx:id="functionsButton" mnemonicParsing="false" onAction="#showFunctionsMenu" onMouseEntered="#popFunctionsMenu">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                             <image>

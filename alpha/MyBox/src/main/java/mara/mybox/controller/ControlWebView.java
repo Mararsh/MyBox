@@ -24,6 +24,7 @@ import static javafx.concurrent.Worker.State.READY;
 import static javafx.concurrent.Worker.State.SUCCEEDED;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
@@ -35,7 +36,7 @@ import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.robot.Robot;
 import javafx.scene.web.PromptData;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebErrorEvent;
@@ -81,7 +82,7 @@ import org.w3c.dom.events.EventTarget;
 public class ControlWebView extends BaseController {
 
     protected WebEngine webEngine;
-    protected double linkX, linkY, scrollTop, scrollLeft;
+    protected double scrollTop, scrollLeft;
     protected ScrollType scrollType;
     protected float zoomScale;
     protected String address, contents, style, defaultStyle, initStyle;
@@ -104,7 +105,6 @@ public class ControlWebView extends BaseController {
     }
 
     public ControlWebView() {
-        linkX = linkY = -1;
         zoomScale = 1.0f;
         framesDoc = new HashMap<>();
         charset = Charset.defaultCharset();
@@ -157,13 +157,6 @@ public class ControlWebView extends BaseController {
                 @Override
                 public void changed(ObservableValue ov, Worker.State oldState, Worker.State newState) {
                     worker(newState);
-                }
-            });
-
-            webView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent mouseEvent) {
-                    mouseClicked(mouseEvent);
                 }
             });
 
@@ -275,22 +268,6 @@ public class ControlWebView extends BaseController {
                 MyBoxLog.error(e);
             }
         });
-    }
-
-    public void mouseClicked(MouseEvent mouseEvent) {
-        try {
-            linkX = mouseEvent.getScreenX();
-            linkY = mouseEvent.getScreenY();
-//            MyBoxLog.console(linkX + " " + linkY);
-            Platform.runLater(() -> {
-                closePopup();
-                if (parentController != null) {
-                    parentController.closePopup();
-                }
-            });
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
     }
 
     public synchronized void docEvent(org.w3c.dom.events.Event ev) {
@@ -860,7 +837,7 @@ public class ControlWebView extends BaseController {
     }
 
     public void popLinkMenu(HtmlElement htmlElement) {
-        if (linkX < 0 || linkY < 0 || htmlElement == null) {
+        if (htmlElement == null) {
             return;
         }
         String href = htmlElement.getHref();
@@ -1022,7 +999,7 @@ public class ControlWebView extends BaseController {
         copyMenu.getItems().add(menu);
 
         closePopup();
-        popMenu(webView, items, linkX, linkY);
+        popNodeMenu(webView, items);
         if (parentController != null) {
             parentController.closePopup();
             parentController.setPopMenu(popMenu);
@@ -1031,10 +1008,8 @@ public class ControlWebView extends BaseController {
 
     public void popElementMenu(Element element) {
         try {
-            if (linkX < 0 || linkY < 0) {
-                return;
-            }
-            MenuWebviewController.pop(this, element, linkX, linkY);
+            Robot robot = new Robot();
+            MenuWebviewController.pop(this, element, robot.getMouseX() + 10, robot.getMouseY() + 10);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -1173,7 +1148,14 @@ public class ControlWebView extends BaseController {
     }
 
     @FXML
-    public void popOperationsMenu(MouseEvent mouseEvent) {
+    public void popOperationsMenu(Event event) {
+        if (UserConfig.getBoolean("WebviewOperationsPopWhenMouseHovering", true)) {
+            showOperationsMenu(event);
+        }
+    }
+
+    @FXML
+    public void showOperationsMenu(Event event) {
         try {
             List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
@@ -1187,7 +1169,19 @@ public class ControlWebView extends BaseController {
 
             items.addAll(operationsMenu());
 
-            popMouseMenu(mouseEvent, items);
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            popItem.setSelected(UserConfig.getBoolean("WebviewOperationsPopWhenMouseHovering", true));
+            popItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("WebviewOperationsPopWhenMouseHovering", popItem.isSelected());
+                }
+            });
+            items.add(popItem);
+
+            popEventMenu(event, items);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -1261,7 +1255,7 @@ public class ControlWebView extends BaseController {
     }
 
     @FXML
-    public void popFunctionsMenu(MouseEvent mouseEvent) {
+    public void showFunctionsMenu(Event fevent) {
         try {
             String html = loadedHtml();
             Document doc = webEngine.getDocument();
@@ -1483,6 +1477,12 @@ public class ControlWebView extends BaseController {
                 });
                 items.add(menu);
 
+            } else {
+                items.add(new SeparatorMenuItem());
+            }
+
+            if (!linkInNewTab) {
+                items.add(clickedMenu());
             }
 
             CheckMenuItem editableMenu = new CheckMenuItem(message("Editable"), StyleTools.getIconImageView("iconEdit.png"));
@@ -1495,11 +1495,17 @@ public class ControlWebView extends BaseController {
             });
             items.add(editableMenu);
 
-            if (!linkInNewTab) {
-                items.add(clickedMenu());
-            }
+            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            popItem.setSelected(UserConfig.getBoolean("WebviewFunctionsPopWhenMouseHovering", true));
+            popItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("WebviewFunctionsPopWhenMouseHovering", popItem.isSelected());
+                }
+            });
+            items.add(popItem);
 
-            popMouseMenu(mouseEvent, items);
+            popEventMenu(fevent, items);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

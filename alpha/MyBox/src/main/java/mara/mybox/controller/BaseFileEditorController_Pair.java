@@ -5,12 +5,14 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -128,7 +130,14 @@ public abstract class BaseFileEditorController_Pair extends BaseFileEditorContro
     }
 
     @FXML
-    public void popPanesMenu(MouseEvent mouseEvent) {
+    public void popPanesMenu(Event event) {
+        if (UserConfig.getBoolean(baseName + "PanesPopWhenMouseHovering", false)) {
+            showPanesMenu(event);
+        }
+    }
+
+    @FXML
+    public void showPanesMenu(Event event) {
         try {
             List<MenuItem> items = new ArrayList<>();
 
@@ -159,7 +168,19 @@ public abstract class BaseFileEditorController_Pair extends BaseFileEditorContro
             });
             items.add(scrollMenu);
 
-            popMouseMenu(mouseEvent, items);
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            hoverMenu.setSelected(UserConfig.getBoolean(baseName + "PanesPopWhenMouseHovering", false));
+            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean(baseName + "PanesPopWhenMouseHovering", hoverMenu.isSelected());
+                }
+            });
+            items.add(hoverMenu);
+
+            popEventMenu(event, items);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

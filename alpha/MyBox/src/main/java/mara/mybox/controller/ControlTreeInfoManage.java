@@ -4,15 +4,16 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
-import javafx.scene.input.MouseEvent;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.TreeNode;
 import static mara.mybox.db.data.TreeNode.NodeSeparater;
@@ -72,7 +73,7 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
         String clickAction = UserConfig.getString(baseName + "TreeWhenClickNode", "DoNothing");
         switch (clickAction) {
             case "PopMenu":
-                popFunctionsMenu(null, item);
+                showItemMenu(item);
                 break;
             case "Edit":
                 editNode(item);
@@ -100,7 +101,14 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
     }
 
     @FXML
-    public void popOperationsMenu(MouseEvent event) {
+    public void popOperationsMenu(Event event) {
+        if (UserConfig.getBoolean(baseName + "TreeOperationsPopWhenMouseHovering", true)) {
+            showOperationsMenu(event);
+        }
+    }
+
+    @FXML
+    public void showOperationsMenu(Event event) {
         if (isSettingValues || getMyWindow() == null) {
             return;
         }
@@ -148,11 +156,23 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
         });
         items.add(menu);
 
-        popMouseMenu(event, items);
+        items.add(new SeparatorMenuItem());
+
+        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+        popItem.setSelected(UserConfig.getBoolean(baseName + "TreeOperationsPopWhenMouseHovering", true));
+        popItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setBoolean(baseName + "TreeOperationsPopWhenMouseHovering", popItem.isSelected());
+            }
+        });
+        items.add(popItem);
+
+        popEventMenu(event, items);
     }
 
     @Override
-    protected List<MenuItem> makeFunctionsMenu(TreeItem<TreeNode> treeItem) {
+    protected List<MenuItem> functionItems(TreeItem<TreeNode> treeItem) {
         boolean isRoot = treeItem == null || isRoot(treeItem.getValue());
 
         List<MenuItem> items = new ArrayList<>();

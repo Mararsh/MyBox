@@ -14,6 +14,7 @@ import mara.mybox.data.ImageItem;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.HtmlStyles;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.MarkdownTools;
 import mara.mybox.tools.TextFileTools;
@@ -376,7 +377,7 @@ public class HelpTools {
 
             items.add(new SeparatorMenuItem());
 
-            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
             hoverMenu.setSelected(UserConfig.getBoolean("HtmlHelpsPopWhenMouseHovering", false));
             hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override

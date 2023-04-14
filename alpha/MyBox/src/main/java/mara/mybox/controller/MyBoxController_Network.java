@@ -4,12 +4,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.input.MouseEvent;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -19,7 +23,14 @@ import static mara.mybox.value.Languages.message;
 public abstract class MyBoxController_Network extends MyBoxController_File {
 
     @FXML
-    protected void showNetworkMenu(MouseEvent event) {
+    public void popNetworkMenu(Event event) {
+        if (UserConfig.getBoolean("MyBoxHomeMenuPopWhenMouseHovering", true)) {
+            showNetworkMenu(event);
+        }
+    }
+
+    @FXML
+    protected void showNetworkMenu(Event event) {
         MenuItem weiboSnap = new MenuItem(message("WeiboSnap"));
         weiboSnap.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.WeiboSnapFxml);
@@ -80,6 +91,18 @@ public abstract class MyBoxController_Network extends MyBoxController_File {
                 RemotePathManage, RemotePathSynchronizeFromLocal, new SeparatorMenuItem(),
                 QueryAddress, QueryDNSBatch, ConvertUrl, SecurityCertificates, new SeparatorMenuItem(),
                 DownloadFirstLevelLinks, weiboSnap));
+
+        items.add(new SeparatorMenuItem());
+
+        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+        popItem.setSelected(UserConfig.getBoolean("MyBoxHomeMenuPopWhenMouseHovering", true));
+        popItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setBoolean("MyBoxHomeMenuPopWhenMouseHovering", popItem.isSelected());
+            }
+        });
+        items.add(popItem);
 
         popCenterMenu(networkBox, items);
 

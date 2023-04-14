@@ -184,7 +184,7 @@ public abstract class ImageManufactureScopeController_Colors extends ImageManufa
             });
             items.add(menu);
 
-            popMouseMenu(mouseEvent, items);
+            popEventMenu(mouseEvent, items);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

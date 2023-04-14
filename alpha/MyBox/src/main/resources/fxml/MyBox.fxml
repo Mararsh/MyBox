@@ -31,7 +31,7 @@ License:    Apache License Version 2.0
                         <Font size="18.0" />
                     </font>
                 </Label>
-            <Hyperlink maxWidth="1.7976931348623157E308" minHeight="-Infinity" onAction="#stories" text="%StoriesOfImages" wrapText="true" />
+                <Hyperlink maxWidth="1.7976931348623157E308" minHeight="-Infinity" onAction="#stories" text="%StoriesOfImages" wrapText="true" />
             </children>
             <padding>
                 <Insets left="5.0" right="5.0" />
@@ -49,7 +49,7 @@ License:    Apache License Version 2.0
             <children>
                 <HBox alignment="CENTER" spacing="10.0">
                     <children>
-                        <VBox fx:id="documentBox" alignment="CENTER" onMouseEntered="#showDocumentMenu" prefHeight="150.0" prefWidth="250.0">
+                        <VBox fx:id="documentBox" alignment="CENTER" onMouseClicked="#showDocumentMenu" onMouseEntered="#popDocumentMenu" prefHeight="150.0" prefWidth="250.0">
                             <children>
                                 <HBox alignment="CENTER" maxHeight="150.0" maxWidth="150.0" prefHeight="150.0" prefWidth="150.0">
                                     <children>
@@ -67,7 +67,7 @@ License:    Apache License Version 2.0
                                 </Label>
                             </children>
                         </VBox>
-                        <VBox fx:id="imageBox" alignment="CENTER" onMouseEntered="#showImageMenu" prefHeight="150.0" prefWidth="250.0">
+                        <VBox fx:id="imageBox" alignment="CENTER" onMouseClicked="#showImageMenu" onMouseEntered="#popImageMenu" prefHeight="150.0" prefWidth="250.0">
                             <children>
                                 <HBox alignment="CENTER" maxHeight="150.0" maxWidth="150.0" prefHeight="150.0" prefWidth="150.0" VBox.vgrow="NEVER">
                                     <children>
@@ -85,7 +85,7 @@ License:    Apache License Version 2.0
                                 </Label>
                             </children>
                         </VBox>
-                        <VBox fx:id="fileBox" alignment="CENTER" onMouseEntered="#showFileMenu" prefHeight="150.0" prefWidth="250.0">
+                        <VBox fx:id="fileBox" alignment="CENTER" onMouseClicked="#showFileMenu" onMouseEntered="#popFileMenu" prefHeight="150.0" prefWidth="250.0">
                             <children>
                                 <HBox alignment="CENTER" maxHeight="150.0" maxWidth="150.0" prefHeight="150.0" prefWidth="150.0" VBox.vgrow="NEVER">
                                     <children>
@@ -107,7 +107,7 @@ License:    Apache License Version 2.0
                 </HBox>
                 <HBox alignment="CENTER" spacing="10.0">
                     <children>
-                        <VBox fx:id="networkBox" alignment="CENTER" onMouseEntered="#showNetworkMenu" prefHeight="150.0" prefWidth="250.0">
+                        <VBox fx:id="networkBox" alignment="CENTER" onMouseClicked="#showNetworkMenu" onMouseEntered="#popNetworkMenu" prefHeight="150.0" prefWidth="250.0">
                             <children>
                                 <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -121,7 +121,7 @@ License:    Apache License Version 2.0
                                 </Label>
                             </children>
                         </VBox>
-                        <VBox fx:id="dataBox" alignment="CENTER" onMouseEntered="#showDataMenu" prefHeight="150.0" prefWidth="250.0">
+                        <VBox fx:id="dataBox" alignment="CENTER" onMouseClicked="#showDataMenu" onMouseEntered="#popDataMenu" prefHeight="150.0" prefWidth="250.0">
                             <children>
                                 <HBox alignment="CENTER" maxHeight="200.0" maxWidth="200.0" prefHeight="200.0" prefWidth="200.0">
                                     <children>
@@ -139,7 +139,7 @@ License:    Apache License Version 2.0
                                 </Label>
                             </children>
                         </VBox>
-                        <VBox fx:id="mediaBox" alignment="CENTER" onMouseEntered="#showMediaMenu" prefHeight="150.0" prefWidth="250.0">
+                        <VBox fx:id="mediaBox" alignment="CENTER" onMouseClicked="#showMediaMenu" onMouseEntered="#popMediaMenu" prefHeight="150.0" prefWidth="250.0">
                             <children>
                                 <HBox alignment="CENTER" maxHeight="200.0" maxWidth="200.0" prefHeight="200.0" prefWidth="200.0">
                                     <children>
@@ -161,7 +161,7 @@ License:    Apache License Version 2.0
                 </HBox>
                 <HBox alignment="CENTER" spacing="10.0">
                     <children>
-                        <VBox fx:id="recentBox" alignment="CENTER" onMouseEntered="#showRecentMenu" prefHeight="150.0" prefWidth="250.0">
+                        <VBox fx:id="recentBox" alignment="CENTER" onMouseClicked="#showRecentMenu" onMouseEntered="#popRecentMenu" prefHeight="150.0" prefWidth="250.0">
                             <children>
                                 <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -175,7 +175,7 @@ License:    Apache License Version 2.0
                                 </Label>
                             </children>
                         </VBox>
-                        <VBox fx:id="settingsBox" alignment="CENTER" onMouseEntered="#showSettingsMenu" prefHeight="150.0" prefWidth="250.0">
+                        <VBox fx:id="settingsBox" alignment="CENTER" onMouseClicked="#showSettingsMenu" onMouseEntered="#popSettingsMenu" prefHeight="150.0" prefWidth="250.0">
                             <children>
                                 <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -189,7 +189,7 @@ License:    Apache License Version 2.0
                                 </Label>
                             </children>
                         </VBox>
-                        <VBox fx:id="aboutBox" alignment="CENTER" layoutX="384.0" layoutY="10.0" onMouseEntered="#showAboutMenu" prefHeight="150.0" prefWidth="250.0">
+                        <VBox fx:id="aboutBox" alignment="CENTER" layoutX="384.0" layoutY="10.0" onMouseClicked="#showAboutMenu" onMouseEntered="#popAboutMenu" prefHeight="150.0" prefWidth="250.0">
                             <children>
                                 <ImageView fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
                                     <image>

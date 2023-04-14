@@ -4,13 +4,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.input.MouseEvent;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -20,7 +25,14 @@ import mara.mybox.value.Languages;
 public abstract class MyBoxController_File extends MyBoxController_Image {
 
     @FXML
-    protected void showFileMenu(MouseEvent event) {
+    public void popFileMenu(Event event) {
+        if (UserConfig.getBoolean("MyBoxHomeMenuPopWhenMouseHovering", true)) {
+            showFileMenu(event);
+        }
+    }
+
+    @FXML
+    protected void showFileMenu(Event event) {
         MenuItem filesArrangement = new MenuItem(Languages.message("FilesArrangement"));
         filesArrangement.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.FilesArrangementFxml);
@@ -129,6 +141,18 @@ public abstract class MyBoxController_File extends MyBoxController_Image {
                 filesFind, filesRedundancy, filesCompare, new SeparatorMenuItem(),
                 filesRename, filesCopy, filesMove, new SeparatorMenuItem(),
                 fileDeleteMenu));
+
+        items.add(new SeparatorMenuItem());
+
+        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+        popItem.setSelected(UserConfig.getBoolean("MyBoxHomeMenuPopWhenMouseHovering", true));
+        popItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setBoolean("MyBoxHomeMenuPopWhenMouseHovering", popItem.isSelected());
+            }
+        });
+        items.add(popItem);
 
         popCenterMenu(fileBox, items);
 

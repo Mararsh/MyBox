@@ -9,6 +9,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
@@ -17,7 +18,6 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.db.data.ImageClipboard;
@@ -348,7 +348,14 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     }
 
     @FXML
-    public void popFunctionsMenu(MouseEvent mouseEvent) {
+    public void popFunctionsMenu(Event event) {
+        if (UserConfig.getBoolean("ImageFunctionsPopWhenMouseHovering", true)) {
+            showFunctionsMenu(event);
+        }
+    }
+
+    @FXML
+    public void showFunctionsMenu(Event fevent) {
         try {
             List<MenuItem> items = new ArrayList<>();
 
@@ -489,7 +496,17 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             });
             items.add(menu);
 
-            popMouseMenu(mouseEvent, items);
+            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            popItem.setSelected(UserConfig.getBoolean("ImageFunctionsPopWhenMouseHovering", true));
+            popItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("ImageFunctionsPopWhenMouseHovering", popItem.isSelected());
+                }
+            });
+            items.add(popItem);
+
+            popEventMenu(fevent, items);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

@@ -59,7 +59,7 @@ License:    Apache License Version 2.0
                                                                     <graphic>
                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
-                                                                                <Image url="@../buttons/Red/iconOpen.png" />
+                                                                                <Image url="@../buttons/Red/iconSelectFile.png" />
                                                                             </image>
                                                                         </ImageView>
                                                                     </graphic>
@@ -492,7 +492,7 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </Button>
-                                                                <Button fx:id="functionsButton" mnemonicParsing="false" onMouseEntered="#popFunctionsMenu">
+                                                                <Button fx:id="functionsButton" mnemonicParsing="false" onAction="#showFunctionsMenu" onMouseEntered="#popFunctionsMenu">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                             <image>

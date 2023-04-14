@@ -7,7 +7,6 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -75,7 +74,7 @@ public class RemotePathManageController extends FilesTreeController {
                         popMenu.hide();
                     }
                     if (event.getButton() == MouseButton.SECONDARY) {
-                        popFunctionsMenu(event);
+                        showFunctionsMenu(event);
                     }
                 }
             });
@@ -446,7 +445,7 @@ public class RemotePathManageController extends FilesTreeController {
         start(task);
     }
 
-    public void popFunctionsMenu(Event event) {
+    public void showFunctionsMenu(MouseEvent event) {
         if (getMyWindow() == null) {
             return;
         }

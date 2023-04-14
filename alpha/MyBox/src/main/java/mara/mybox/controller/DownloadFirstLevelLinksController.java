@@ -678,7 +678,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
             });
             items.add(menu);
 
-            popMouseMenu(mouseEvent, items);
+            popEventMenu(mouseEvent, items);
 
         } catch (Exception e) {
             MyBoxLog.console(e.toString());

@@ -374,16 +374,6 @@ public class PopTools {
 
             items.add(new SeparatorMenuItem());
 
-            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
-            hoverMenu.setSelected(UserConfig.getBoolean("HtmlStylesPopWhenMouseHovering", false));
-            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("HtmlStylesPopWhenMouseHovering", hoverMenu.isSelected());
-                }
-            });
-            items.add(hoverMenu);
-
             CheckMenuItem checkMenu = new CheckMenuItem(message("ShareAllInterface"));
             checkMenu.setSelected(UserConfig.getBoolean(baseName + "ShareHtmlStyle", true));
             checkMenu.setOnAction(new EventHandler<ActionEvent>() {
@@ -393,6 +383,16 @@ public class PopTools {
                 }
             });
             items.add(checkMenu);
+
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            hoverMenu.setSelected(UserConfig.getBoolean("HtmlStylesPopWhenMouseHovering", false));
+            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("HtmlStylesPopWhenMouseHovering", hoverMenu.isSelected());
+                }
+            });
+            items.add(hoverMenu);
 
             controller.popEventMenu(event, items);
             return controller.getPopMenu();
@@ -440,16 +440,6 @@ public class PopTools {
             }
             items.add(new SeparatorMenuItem());
 
-            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
-            hoverMenu.setSelected(UserConfig.getBoolean("WindowStylesPopWhenMouseHovering", false));
-            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("WindowStylesPopWhenMouseHovering", hoverMenu.isSelected());
-                }
-            });
-            items.add(hoverMenu);
-
             CheckMenuItem checkMenu = new CheckMenuItem(message("ShareAllInterface"));
             checkMenu.setSelected(UserConfig.getBoolean(baseName + "ShareWindowStyle", true));
             checkMenu.setOnAction(new EventHandler<ActionEvent>() {
@@ -459,6 +449,16 @@ public class PopTools {
                 }
             });
             items.add(checkMenu);
+
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            hoverMenu.setSelected(UserConfig.getBoolean("WindowStylesPopWhenMouseHovering", false));
+            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("WindowStylesPopWhenMouseHovering", hoverMenu.isSelected());
+                }
+            });
+            items.add(hoverMenu);
 
             parent.popEventMenu(event, items);
             return parent.getPopMenu();

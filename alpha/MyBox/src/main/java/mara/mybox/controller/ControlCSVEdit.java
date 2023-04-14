@@ -48,7 +48,7 @@ public class ControlCSVEdit extends BaseController {
             });
             items.add(menu);
 
-            parentController.popMouseMenu(mouseEvent, items);
+            parentController.popEventMenu(mouseEvent, items);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

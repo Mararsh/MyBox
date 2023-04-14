@@ -25,11 +25,11 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import mara.mybox.data.HtmlNode;
@@ -37,6 +37,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
@@ -1147,7 +1148,14 @@ public class ControlHtmlEditor extends BaseWebViewController {
     }
 
     @FXML
-    public void popPanesMenu(MouseEvent mouseEvent) {
+    public void popPanesMenu(Event event) {
+        if (UserConfig.getBoolean("HtmlPanesPopWhenMouseHovering", false)) {
+            showPanesMenu(event);
+        }
+    }
+
+    @FXML
+    public void showPanesMenu(Event event) {
         List<MenuItem> items = new ArrayList<>();
 
         CheckMenuItem domMenu = new CheckMenuItem("DOM");
@@ -1255,7 +1263,19 @@ public class ControlHtmlEditor extends BaseWebViewController {
         });
         items.add(textsMenu);
 
-        popMouseMenu(mouseEvent, items);
+        items.add(new SeparatorMenuItem());
+
+        CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+        hoverMenu.setSelected(UserConfig.getBoolean("HtmlPanesPopWhenMouseHovering", false));
+        hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setBoolean("HtmlPanesPopWhenMouseHovering", hoverMenu.isSelected());
+            }
+        });
+        items.add(hoverMenu);
+
+        popEventMenu(event, items);
 
     }
 

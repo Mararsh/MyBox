@@ -115,7 +115,7 @@ public class StylePrefix {
             case "scopeClearColorsButton":
                 return new StyleData(id, message("Clear"), "", "iconClear.png");
             case "scopeOutlineFileButton":
-                return new StyleData(id, message("Open"), "", "iconOpen.png");
+                return new StyleData(id, message("Open"), "", "iconSelectFile.png");
             case "scopeOutlineKeepRatioCheck":
                 return new StyleData(id, message("KeepRatio"), "", "iconAspectRatio.png");
             default:

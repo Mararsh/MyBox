@@ -234,9 +234,18 @@ public class MenuWebviewController extends MenuController {
     }
 
     @FXML
-    @Override
-    public void popFunctionsMenu(MouseEvent mouseEvent) {
-        webViewController.popFunctionsMenu(mouseEvent);
+    public void popFunctionsMenu(Event event) {
+        if (UserConfig.getBoolean("WebviewFunctionsPopWhenMouseHovering", true)) {
+            showFunctionsMenu(event);
+        }
+    }
+
+    @FXML
+    public void showFunctionsMenu(Event event) {
+        if (webViewController == null) {
+            return;
+        }
+        webViewController.showFunctionsMenu(event);
     }
 
     @FXML

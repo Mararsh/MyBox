@@ -11,7 +11,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ValidationTools;
@@ -384,9 +383,15 @@ public class MenuImageBaseController extends MenuController {
     }
 
     @FXML
-    @Override
-    public void popFunctionsMenu(MouseEvent mouseEvent) {
-        imageController.popFunctionsMenu(mouseEvent);
+    public void popFunctionsMenu(Event event) {
+        if (UserConfig.getBoolean("ImageFunctionsPopWhenMouseHovering", true)) {
+            showFunctionsMenu(event);
+        }
+    }
+
+    @FXML
+    public void showFunctionsMenu(Event event) {
+        imageController.showFunctionsMenu(event);
     }
 
     @FXML

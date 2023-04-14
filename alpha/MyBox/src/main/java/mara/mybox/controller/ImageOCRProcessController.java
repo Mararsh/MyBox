@@ -256,7 +256,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                 items.add(menu);
             }
 
-            popMouseMenu(mouseEvent, items);
+            popEventMenu(mouseEvent, items);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

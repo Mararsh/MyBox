@@ -479,7 +479,7 @@ public class MyBoxLanguagesController extends BaseController {
         });
         items.add(menu);
 
-        popMouseMenu(event, items);
+        popEventMenu(event, items);
     }
 
     @FXML

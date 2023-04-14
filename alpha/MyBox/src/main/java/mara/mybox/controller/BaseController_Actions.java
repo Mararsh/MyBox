@@ -19,7 +19,6 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.robot.Robot;
 import javafx.stage.Modality;
@@ -560,28 +559,19 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         popEventMenu(event, HelpTools.htmlHelps(myController));
     }
 
-    public void popMouseMenu(MouseEvent event, List<MenuItem> menuItems) {
-        if (event == null || menuItems == null || menuItems.isEmpty()) {
-            return;
-        }
-        popMenu((Region) event.getSource(), menuItems, event.getScreenX(), event.getScreenY());
-    }
-
     public void popEventMenu(Event event, List<MenuItem> menuItems) {
         if (event == null || menuItems == null || menuItems.isEmpty()) {
             return;
         }
-        Node node = (Region) event.getSource();
-        Bounds bounds = node.localToScreen(node.getBoundsInLocal());
-        popMenu(node, menuItems, bounds.getMinX() + 2, bounds.getMinY() + bounds.getHeight());
+        popNodeMenu((Node) event.getSource(), menuItems);
     }
 
     public void popNodeMenu(Node node, List<MenuItem> menuItems) {
         if (node == null || menuItems == null || menuItems.isEmpty()) {
             return;
         }
-        Robot r = new Robot();
-        popMenu(node, menuItems, r.getMouseX() + 10, r.getMouseY() + 10);
+        Robot robot = new Robot();
+        popMenu(node, menuItems, robot.getMouseX() + 10, robot.getMouseY() + 10);
     }
 
     public void popCenterMenu(Node node, List<MenuItem> menuItems) {

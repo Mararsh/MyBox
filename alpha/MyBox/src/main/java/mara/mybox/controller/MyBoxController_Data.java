@@ -4,13 +4,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.input.MouseEvent;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -20,7 +24,14 @@ import static mara.mybox.value.Languages.message;
 public abstract class MyBoxController_Data extends MyBoxController_Network {
 
     @FXML
-    protected void showDataMenu(MouseEvent event) {
+    public void popDataMenu(Event event) {
+        if (UserConfig.getBoolean("MyBoxHomeMenuPopWhenMouseHovering", true)) {
+            showDataMenu(event);
+        }
+    }
+
+    @FXML
+    protected void showDataMenu(Event event) {
         MenuItem DataManufacture = new MenuItem(message("DataManufacture"));
         DataManufacture.setOnAction((ActionEvent event1) -> {
             DataManufactureController c = (DataManufactureController) loadScene(Fxmls.DataManufactureFxml);
@@ -229,6 +240,18 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
                 DataInSystemClipboard, DataInMyBoxClipboard, new SeparatorMenuItem(),
                 calculation, MathFunction, new SeparatorMenuItem(),
                 Location, miscellaneousMenu));
+
+        items.add(new SeparatorMenuItem());
+
+        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+        popItem.setSelected(UserConfig.getBoolean("MyBoxHomeMenuPopWhenMouseHovering", true));
+        popItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setBoolean("MyBoxHomeMenuPopWhenMouseHovering", popItem.isSelected());
+            }
+        });
+        items.add(popItem);
 
         popCenterMenu(dataBox, items);
 

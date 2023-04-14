@@ -87,7 +87,7 @@ public class Data2DMenuTools {
             dataMenu.getItems().add(new SeparatorMenuItem());
 
             if (data2D != null && data2D.isDataFile()) {
-                menu = new MenuItem(message("Open"), StyleTools.getIconImageView("iconOpen.png"));
+                menu = new MenuItem(message("Open"), StyleTools.getIconImageView("iconSelectFile.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     controller.selectSourceFile();
                 });

@@ -62,6 +62,7 @@ import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableColorCell;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
@@ -172,7 +173,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
                 @Override
                 public void handle(MouseEvent event) {
                     if (event != null && event.getButton() == MouseButton.SECONDARY) {
-                        popFunctionsMenu(event);
+                        popNodeMenu(palettesController.palettesList, makeFunctionsMenu());
                     }
                 }
             });
@@ -403,10 +404,32 @@ public class ControlColors extends BaseSysTableController<ColorData> {
     }
 
     @FXML
-    public void popFunctionsMenu(MouseEvent event) {
-        if (isSettingValues) {
-            return;
+    public void popFunctionsMenu(Event event) {
+        if (UserConfig.getBoolean("ColorsFunctionsPopWhenMouseHovering", true)) {
+            showFunctionsMenu(event);
         }
+    }
+
+    @FXML
+    public void showFunctionsMenu(Event event) {
+        List<MenuItem> items = makeFunctionsMenu();
+
+        items.add(new SeparatorMenuItem());
+        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+        popItem.setSelected(UserConfig.getBoolean("ColorsFunctionsPopWhenMouseHovering", true));
+        popItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setBoolean("ColorsFunctionsPopWhenMouseHovering", popItem.isSelected());
+            }
+        });
+        items.add(popItem);
+
+        popEventMenu(event, items);
+    }
+
+    @FXML
+    public List<MenuItem> makeFunctionsMenu() {
         ColorPaletteName palette = palettesController.palettesList.getSelectionModel().getSelectedItem();
         boolean isAll = palette.getName().equals(palettesController.allColors.getName());
         List<MenuItem> items = new ArrayList<>();
@@ -462,7 +485,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
         });
         items.add(menu);
 
-        popMouseMenu(event, items);
+        return items;
     }
 
     @FXML
@@ -719,7 +742,7 @@ public class ControlColors extends BaseSysTableController<ColorData> {
 
             items.add(new SeparatorMenuItem());
 
-            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
             hoverMenu.setSelected(UserConfig.getBoolean("ColorExportMenuPopWhenMouseHovering", false));
             hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override

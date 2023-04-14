@@ -1078,7 +1078,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
 
         items.add(new SeparatorMenuItem());
 
-        CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
+        CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
         hoverMenu.setSelected(UserConfig.getBoolean("FilesTablePopWhenMouseHovering", true));
         hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override

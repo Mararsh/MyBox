@@ -76,7 +76,7 @@ public class HtmlDomMoveController extends HtmlDomCopyController {
                 error = message("SelectNodeCopyInto");
                 return false;
             }
-            List<TreeItem<HtmlNode>> sourcesItems = sourceController.selected();
+            List<TreeItem<HtmlNode>> sourcesItems = sourceController.selectedItems();
             Element editElement = editorItem.getValue().getElement();
             List<TreeItem<HtmlNode>> manageItems = new ArrayList<>();
             for (TreeItem<HtmlNode> sourceItem : sourcesItems) {

@@ -136,10 +136,10 @@ public class StyleButton {
             return new StyleData(id, message("Complete"), "", "iconYes.png");
         }
         if (id.startsWith("selectFile")) {
-            return new StyleData(id, message("Select"), "", "iconOpen.png");
+            return new StyleData(id, message("SelectFile"), "", "iconSelectFile.png");
         }
         if (id.startsWith("selectPath")) {
-            return new StyleData(id, message("Select"), "", "iconOpenPath.png");
+            return new StyleData(id, message("SelectPath"), "", "iconSelectPath.png");
         }
         if (id.startsWith("selectAll")) {
             switch (id) {
@@ -288,7 +288,7 @@ public class StyleButton {
             if (id.startsWith("openPath") || id.startsWith("openTarget") || id.startsWith("openSource")) {
                 return new StyleData(id, message("OpenDirectory"), "", "iconOpenPath.png");
             }
-            return new StyleData(id, message("Open"), "", "iconOpen.png");
+            return new StyleData(id, message("Open"), "", "iconSelectFile.png");
         }
         if (id.startsWith("delete")) {
             switch (id) {

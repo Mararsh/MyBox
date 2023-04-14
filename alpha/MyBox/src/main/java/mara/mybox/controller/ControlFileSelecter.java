@@ -7,7 +7,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Region;
@@ -36,8 +35,6 @@ public class ControlFileSelecter extends BaseController {
     protected Label label;
     @FXML
     protected TextField fileInput;
-    @FXML
-    protected Button selectPathButton;
 
     public ControlFileSelecter() {
         isSource = true;

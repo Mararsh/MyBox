@@ -15,6 +15,7 @@ import mara.mybox.controller.BaseController_Files;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -152,7 +153,7 @@ public abstract class RecentVisitMenu {
 
             items.add(new SeparatorMenuItem());
 
-            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
             hoverMenu.setSelected(UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true));
             hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override

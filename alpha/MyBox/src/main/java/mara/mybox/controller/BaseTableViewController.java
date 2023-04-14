@@ -320,7 +320,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         if (items == null || items.isEmpty()) {
             return;
         }
-        popMouseMenu(event, items);
+        popEventMenu(event, items);
     }
 
     protected List<MenuItem> makeTableContextMenu() {
@@ -774,7 +774,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             });
             items.add(menu);
 
-            popMouseMenu(mouseEvent, items);
+            popEventMenu(mouseEvent, items);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

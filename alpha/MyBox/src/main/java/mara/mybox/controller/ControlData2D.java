@@ -21,7 +21,6 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
@@ -642,18 +641,14 @@ public class ControlData2D extends BaseController {
         interface
      */
     @FXML
-    public void popFunctionsMenu(MouseEvent mouseEvent) {
-        if (UserConfig.getBoolean(interfaceName + "FunctionsPopWhenMouseHovering", true)) {
-            functionsMenu(mouseEvent);
+    public void popFunctionsMenu(Event event) {
+        if (UserConfig.getBoolean("Data2DFunctionsPopWhenMouseHovering", true)) {
+            showFunctionsMenu(event);
         }
     }
 
     @FXML
-    public void showFunctionsMenu(ActionEvent event) {
-        functionsMenu(event);
-    }
-
-    public void functionsMenu(Event menuEvent) {
+    public void showFunctionsMenu(Event event) {
         try {
             setData(tableController.data2D);
 
@@ -681,17 +676,17 @@ public class ControlData2D extends BaseController {
                 items.add(new SeparatorMenuItem());
             }
 
-            CheckMenuItem passPop = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
-            passPop.setSelected(UserConfig.getBoolean(interfaceName + "FunctionsPopWhenMouseHovering", true));
-            passPop.setOnAction(new EventHandler<ActionEvent>() {
+            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            popItem.setSelected(UserConfig.getBoolean("Data2DFunctionsPopWhenMouseHovering", true));
+            popItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(interfaceName + "FunctionsPopWhenMouseHovering", passPop.isSelected());
+                    UserConfig.setBoolean("Data2DFunctionsPopWhenMouseHovering", popItem.isSelected());
                 }
             });
-            items.add(passPop);
+            items.add(popItem);
 
-            popEventMenu(menuEvent, items);
+            popEventMenu(event, items);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

@@ -20,6 +20,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.RecentVisitMenu;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.JShellTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -236,7 +237,7 @@ public class JShellPaths extends BaseController {
             });
             items.add(menu);
 
-            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
             hoverMenu.setSelected(UserConfig.getBoolean("JShellPathsPopWhenMouseHovering", false));
             hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override

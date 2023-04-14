@@ -7,7 +7,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import mara.mybox.db.data.VisitHistory;
@@ -214,19 +213,33 @@ public class BaseWebViewController extends BaseController {
     }
 
     @FXML
-    public void popOperationsMenu(MouseEvent mouseEvent) {
-        if (webViewController == null) {
-            return;
+    public void popOperationsMenu(Event event) {
+        if (UserConfig.getBoolean("WebviewOperationsPopWhenMouseHovering", true)) {
+            showOperationsMenu(event);
         }
-        webViewController.popOperationsMenu(mouseEvent);
     }
 
     @FXML
-    public void popFunctionsMenu(MouseEvent mouseEvent) {
+    public void showOperationsMenu(Event event) {
         if (webViewController == null) {
             return;
         }
-        webViewController.popFunctionsMenu(mouseEvent);
+        webViewController.showOperationsMenu(event);
+    }
+
+    @FXML
+    public void popFunctionsMenu(Event event) {
+        if (UserConfig.getBoolean("WebviewFunctionsPopWhenMouseHovering", true)) {
+            showFunctionsMenu(event);
+        }
+    }
+
+    @FXML
+    public void showFunctionsMenu(Event event) {
+        if (webViewController == null) {
+            return;
+        }
+        webViewController.showFunctionsMenu(event);
     }
 
     @FXML

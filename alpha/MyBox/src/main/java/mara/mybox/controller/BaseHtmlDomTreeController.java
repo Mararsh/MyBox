@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
@@ -23,6 +25,7 @@ import mara.mybox.fxml.cell.TreeTableTextTrimCell;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -64,9 +67,9 @@ public class BaseHtmlDomTreeController extends BaseController {
                     if (popMenu != null && popMenu.isShowing()) {
                         popMenu.hide();
                     }
-                    TreeItem<HtmlNode> item = domTree.getSelectionModel().getSelectedItem();
+                    TreeItem<HtmlNode> item = selected();
                     if (event.getButton() == MouseButton.SECONDARY) {
-                        popFunctionsMenu(event, item);
+                        popNodeMenu(domTree, makeFunctionsMenu(item));
                     } else {
                         treeClicked(event, item);
                     }
@@ -232,6 +235,11 @@ public class BaseHtmlDomTreeController extends BaseController {
         }
     }
 
+    public TreeItem<HtmlNode> selected() {
+        TreeItem<HtmlNode> item = domTree.getSelectionModel().getSelectedItem();
+        return validItem(item);
+    }
+
     public TreeItem<HtmlNode> validItem(TreeItem<HtmlNode> item) {
         TreeItem<HtmlNode> validItem = item;
         if (validItem == null) {
@@ -330,15 +338,16 @@ public class BaseHtmlDomTreeController extends BaseController {
 
     @FXML
     public void foldAction() {
-        setExpanded(domTree.getSelectionModel().getSelectedItem(), false);
+        setExpanded(selected(), false);
     }
 
     @FXML
     public void unfoldAction() {
-        setExpanded(domTree.getSelectionModel().getSelectedItem(), true);
+        setExpanded(selected(), true);
     }
 
     @FXML
+    @Override
     public void refreshAction() {
         updateTreeItem(domTree.getRoot());
     }
@@ -358,13 +367,34 @@ public class BaseHtmlDomTreeController extends BaseController {
         }
     }
 
-    public void popFunctionsMenu(MouseEvent event, TreeItem<HtmlNode> inItem) {
-        if (getMyWindow() == null) {
-            return;
+    @FXML
+    public void popFunctionsMenu(Event event) {
+        if (UserConfig.getBoolean(baseName + "DomFunctionsPopWhenMouseHovering", true)) {
+            showFunctionsMenu(event);
         }
+    }
+
+    @FXML
+    public void showFunctionsMenu(Event event) {
+        List<MenuItem> items = makeFunctionsMenu(selected());
+
+        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+        popItem.setSelected(UserConfig.getBoolean(baseName + "DomFunctionsPopWhenMouseHovering", true));
+        popItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setBoolean(baseName + "DomFunctionsPopWhenMouseHovering", popItem.isSelected());
+            }
+        });
+        items.add(popItem);
+
+        popEventMenu(event, items);
+    }
+
+    public List<MenuItem> makeFunctionsMenu(TreeItem<HtmlNode> inItem) {
         TreeItem<HtmlNode> item = validItem(inItem);
         if (item == null) {
-            return;
+            return null;
         }
         List<MenuItem> items = new ArrayList<>();
         MenuItem menuItem = new MenuItem(StringTools.menuPrefix(label(item)));
@@ -397,14 +427,9 @@ public class BaseHtmlDomTreeController extends BaseController {
         List<MenuItem> more = moreMenu(item);
         if (more != null) {
             items.addAll(more);
+
         }
-
-        popMouseMenu(event, items);
-    }
-
-    @FXML
-    public void popFunctionsMenu(MouseEvent event) {
-        popFunctionsMenu(event, domTree.getSelectionModel().getSelectedItem());
+        return items;
     }
 
     public List<MenuItem> viewMenu(TreeItem<HtmlNode> item) {

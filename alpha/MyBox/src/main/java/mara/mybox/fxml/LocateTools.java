@@ -1,7 +1,6 @@
 package mara.mybox.fxml;
 
 import java.awt.Point;
-import java.awt.Robot;
 import javafx.event.Event;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
@@ -9,6 +8,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
+import javafx.scene.robot.Robot;
 import javafx.stage.PopupWindow;
 import javafx.stage.Stage;
 import mara.mybox.dev.MyBoxLog;

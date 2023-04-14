@@ -4,13 +4,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.input.MouseEvent;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -20,7 +24,14 @@ import static mara.mybox.value.Languages.message;
 public abstract class MyBoxController_Image extends MyBoxController_Document {
 
     @FXML
-    protected void showImageMenu(MouseEvent event) {
+    public void popImageMenu(Event event) {
+        if (UserConfig.getBoolean("MyBoxHomeMenuPopWhenMouseHovering", true)) {
+            showImageMenu(event);
+        }
+    }
+
+    @FXML
+    protected void showImageMenu(Event event) {
         MenuItem imageViewer = new MenuItem(message("ImageViewer"));
         imageViewer.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.ImageViewerFxml);
@@ -78,6 +89,18 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
                 ImageAnalyse, ImagesPlay, imagesBrowser, new SeparatorMenuItem(),
                 ManageColors, QueryColor, colorSpaceMenu(), new SeparatorMenuItem(),
                 ImagesInMyBoxClipboard, ImagesInSystemClipboard, miscellaneousMenu()));
+
+        items.add(new SeparatorMenuItem());
+
+        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+        popItem.setSelected(UserConfig.getBoolean("MyBoxHomeMenuPopWhenMouseHovering", true));
+        popItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setBoolean("MyBoxHomeMenuPopWhenMouseHovering", popItem.isSelected());
+            }
+        });
+        items.add(popItem);
 
         popCenterMenu(imageBox, items);
 

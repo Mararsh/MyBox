@@ -31,6 +31,7 @@ import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.TimeFormats;
@@ -512,7 +513,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             items.add(menu);
             items.add(new SeparatorMenuItem());
 
-            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
             hoverMenu.setSelected(UserConfig.getBoolean("Data2DColumnEditPopWhenMouseHovering", true));
             hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override

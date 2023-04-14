@@ -583,7 +583,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
                 }
             }
 
-            popMouseMenu(mouseEvent, items);
+            popEventMenu(mouseEvent, items);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -646,7 +646,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
                 }
             }
 
-            popMouseMenu(mouseEvent, items);
+            popEventMenu(mouseEvent, items);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -842,7 +842,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
                 }
             }
 
-            popMouseMenu(mouseEvent, items);
+            popEventMenu(mouseEvent, items);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
