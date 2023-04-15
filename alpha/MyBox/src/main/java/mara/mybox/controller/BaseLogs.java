@@ -36,7 +36,7 @@ public class BaseLogs extends BaseController {
         try {
             super.initControls();
 
-            logsMaxChars = UserConfig.getInt("TaskMaxLinesNumber", 5000);
+            logsMaxChars = UserConfig.getInt("TaskMaxLinesNumber", 50000);
             if (logsMaxChars <= 0) {
                 logsMaxChars = 5000;
             }

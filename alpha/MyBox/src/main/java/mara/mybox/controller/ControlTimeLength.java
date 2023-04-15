@@ -5,7 +5,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -62,7 +62,7 @@ public class ControlTimeLength extends BaseController {
 //        MyBoxLog.debug(name + " " + defaultValue + " " + value);
         lengthSelector.getItems().clear();
         if (permitNotSet) {
-            lengthSelector.getItems().add(Languages.message("NotSet"));
+            lengthSelector.getItems().add(message("NotSet"));
         }
         if (permitZero) {
             lengthSelector.getItems().add("0");
@@ -70,19 +70,19 @@ public class ControlTimeLength extends BaseController {
         if (isSeconds) {
             lengthSelector.getItems().addAll(Arrays.asList(
                     "10", "5", "15", "20", "30", "45",
-                    "60   1 " + Languages.message("Minutes"), "180   3 " + Languages.message("Minutes"),
-                    "300   5 " + Languages.message("Minutes"), "600   10 " + Languages.message("Minutes"),
-                    "900   15 " + Languages.message("Minutes"), "1800   30 " + Languages.message("Minutes"),
-                    "3600   1 " + Languages.message("Hours"), "5400   1.5 " + Languages.message("Hours"),
-                    "7200   2 " + Languages.message("Hours")
+                    "60   1 " + message("Minutes"), "180   3 " + message("Minutes"),
+                    "300   5 " + message("Minutes"), "600   10 " + message("Minutes"),
+                    "900   15 " + message("Minutes"), "1800   30 " + message("Minutes"),
+                    "3600   1 " + message("Hours"), "5400   1.5 " + message("Hours"),
+                    "7200   2 " + message("Hours")
             ));
         } else {  // milliseconds
             lengthSelector.getItems().addAll(Arrays.asList(
                     "200", "500", "1000", "50", "100", "300", "800",
-                    "1000   1 " + Languages.message("Seconds"), "1500   1.5 " + Languages.message("Seconds"),
-                    "2000   2 " + Languages.message("Seconds"), "3000   3 " + Languages.message("Seconds"),
-                    "5000   5 " + Languages.message("Seconds"), "10000   10 " + Languages.message("Seconds"),
-                    "15000   15 " + Languages.message("Seconds"), "30000   30 " + Languages.message("Seconds")
+                    "1000   1 " + message("Seconds"), "1500   1.5 " + message("Seconds"),
+                    "2000   2 " + message("Seconds"), "3000   3 " + message("Seconds"),
+                    "5000   5 " + message("Seconds"), "10000   10 " + message("Seconds"),
+                    "15000   15 " + message("Seconds"), "30000   30 " + message("Seconds")
             ));
         }
         if (defaultValue > 0 || (permitZero && defaultValue == 0)) {
@@ -129,10 +129,10 @@ public class ControlTimeLength extends BaseController {
 //        MyBoxLog.debug(name + " " + this.defaultValue + " " + value);
         if (name != null) {
             String saved = UserConfig.getString(name, this.defaultValue + "");
-            if ("-1".equals(saved) || Languages.message("NotSet").equals(saved)) {
+            if ("-1".equals(saved) || message("NotSet").equals(saved)) {
                 value = -1;
                 if (permitNotSet) {
-                    lengthSelector.getSelectionModel().select(Languages.message("NotSet"));
+                    lengthSelector.getSelectionModel().select(message("NotSet"));
                 }
             } else {
                 try {
@@ -153,7 +153,7 @@ public class ControlTimeLength extends BaseController {
     public boolean select(long inValue) {
         if (inValue < 0) {
             if (permitNotSet) {
-                lengthSelector.getSelectionModel().select(Languages.message("NotSet"));
+                lengthSelector.getSelectionModel().select(message("NotSet"));
                 return true;
             } else {
                 return false;

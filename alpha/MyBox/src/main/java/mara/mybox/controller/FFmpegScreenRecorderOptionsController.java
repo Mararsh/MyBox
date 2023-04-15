@@ -177,15 +177,16 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                 return;
             }
             videoDevices = new ArrayList<>();
-            videoDevices.add(message("Screen"));
             audioDevices = new ArrayList<>();
             os = SystemTools.os();
             switch (os) {
                 case "win":
+                    videoDevices.add(message("Screen"));
                     checkDevicesWin();
                     break;
                 case "linux":
                     windowRadio.setDisable(true);
+                    videoDevices.add(message("Screen"));
                     videoBox.getChildren().remove(windowBox);
                     audioDevices.add("alsa");
                     break;
@@ -265,7 +266,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                             continue;
                         }
                         name = name.substring(0, pos);
-                        videoDevices.add(name);
+//                        videoDevices.add(name);
                     } else if (line.contains("DirectShow video devices")) {
                         videoNext = true;
                         audioNext = false;
@@ -283,7 +284,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                             continue;
                         }
                         name = name.substring(0, pos);
-                        videoDevices.add(name);
+//                        videoDevices.add(name);
                     } else if (audioNext) {
                         pos = line.indexOf(prefix);
                         if (pos < 0) {

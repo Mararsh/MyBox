@@ -137,7 +137,6 @@ public class Data2DTargetExportController extends BaseTaskController {
                 @Override
                 public void run() {
                     Platform.runLater(() -> {
-                        browseURI(targetPath.toURI());
                         convertController.openFiles();
                         close();
                     });

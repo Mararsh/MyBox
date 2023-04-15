@@ -96,18 +96,6 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
                     });
             checkExt();
 
-            startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(
-                    targetFileController.valid.not()
-                            .or(optionsController.executableInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-                            .or(optionsController.titleInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-                            .or(optionsController.xInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-                            .or(optionsController.yInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-                            .or(optionsController.widthInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-                            .or(optionsController.heightInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-                            .or(stopping)
-            );
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -142,7 +130,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
 
     public boolean pickTarget() {
         try {
-            targetFile = targetFileController.file;
+            targetFile = targetFileController.file();
             if (targetFile == null) {
                 popError(message("InvalidParameter") + ": " + message("TargetFile"));
                 return false;
@@ -158,15 +146,16 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
 
     @Override
     public void startTask() {
-        if (optionsController.delayController.value > 0) {
-            showLogs(message("Delay") + ": " + optionsController.delayController.value + " " + message("Seconds"));
+        long delay = optionsController.delayController.value;
+        if (delay > 0) {
+            showLogs(message("Delay") + ": " + delay + " " + message("Seconds"));
             timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
                     superStartTask();
                 }
-            }, optionsController.delayController.value * 1000);
+            }, delay * 1000);
         } else {
             superStartTask();
         }
@@ -189,6 +178,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
             List<String> parameters = optionsController.makeParameters(null);
             process = optionsController.startProcess(this, parameters, targetFile);
             if (process == null) {
+                cancelTask();
                 return false;
             }
             showLogs(message("Started"));
