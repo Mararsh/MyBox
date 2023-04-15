@@ -10,6 +10,7 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -28,7 +29,9 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import mara.mybox.bufferedimage.PixelsBlend;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -495,14 +498,16 @@ public class ControlImageText extends BaseController {
     }
 
     public boolean checkText() {
-        if (textArea.getText().isEmpty()) {
+        text = text();
+        if (text == null || text.isEmpty()) {
             textArea.setStyle(UserConfig.badStyle());
             return false;
         } else {
             textArea.setStyle(null);
-            UserConfig.setString(baseName + "TextValue", textArea.getText());
+            UserConfig.setString(baseName + "TextValue", text);
+            TableStringValues.add("ImageTextHistories", text);
+            return true;
         }
-        return true;
     }
 
     public boolean checkXY() {
@@ -711,6 +716,18 @@ public class ControlImageText extends BaseController {
     @FXML
     public void goBorders() {
         goAction();
+    }
+
+    @FXML
+    protected void showTextHistories(Event event) {
+        PopTools.popStringValues(this, textArea, event, "ImageTextHistories", false, true);
+    }
+
+    @FXML
+    public void popTextHistories(Event event) {
+        if (UserConfig.getBoolean("ImageTextHistoriesPopWhenMouseHovering", false)) {
+            showTextHistories(event);
+        }
     }
 
     /*

@@ -488,11 +488,11 @@ public class PopTools {
     /*
         saved values
      */
-    public static void popStringValues(BaseController parent, TextInputControl input, Event event,
+    public static void popStringValues(BaseController parent, TextInputControl input, Event pevent,
             String name, boolean alwaysClear, boolean checkPop) {
         try {
             int max = UserConfig.getInt(name + "MaxSaved", 20);
-            MenuController controller = MenuController.open(parent, input, event);
+            MenuController controller = MenuController.open(parent, input, pevent);
 
             List<Node> setButtons = new ArrayList<>();
             Button clearInputButton = new Button(message("ClearInputArea"));
@@ -589,7 +589,7 @@ public class PopTools {
                         if (event.getButton() == MouseButton.SECONDARY) {
                             TableStringValues.delete(name, value);
                             controller.close();
-                            popStringValues(parent, input, event, name, alwaysClear, checkPop);
+                            popStringValues(parent, input, pevent, name, alwaysClear, checkPop);
                         }
                     }
                 });

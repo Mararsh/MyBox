@@ -503,8 +503,13 @@ public class ControlPlay extends BaseController {
         toFrame = -1;
         isSettingValues = true;
         frameSelector.getItems().clear();
-        totalLabel.setText("");
         isSettingValues = false;
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                totalLabel.setText("");
+            }
+        });
     }
 
     @FXML

@@ -332,15 +332,9 @@ public class ControlWebView extends BaseController {
                         } else if (!"AsPage".equals(clickAction)) {
                             ev.preventDefault();
                             if (clickAction == null || "PopMenu".equals(clickAction)) {
-                                timer = new Timer();
-                                timer.schedule(new TimerTask() {
-                                    @Override
-                                    public void run() {
-                                        Platform.runLater(() -> {
-                                            popLinkMenu(htmlElement);
-                                        });
-                                    }
-                                }, 100);
+                                Platform.runLater(() -> {
+                                    popLinkMenu(htmlElement);
+                                });
                             } else if ("Load".equals(clickAction)) {
                                 loadAddress(htmlElement.getFinalAddress());
                             } else {
@@ -350,28 +344,16 @@ public class ControlWebView extends BaseController {
                     }
                 } else if ("contextmenu".equals(domEventType)) {
                     ev.preventDefault();
-                    timer = new Timer();
-                    timer.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            Platform.runLater(() -> {
-                                popLinkMenu(htmlElement);
-                            });
-                        }
-                    }, 100);
+                    Platform.runLater(() -> {
+                        popLinkMenu(htmlElement);
+                    });
                 }
 
             } else if ("contextmenu".equals(domEventType) && !"frame".equalsIgnoreCase(tag)) {
                 ev.preventDefault();
-                timer = new Timer();
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        Platform.runLater(() -> {
-                            popElementMenu(element);
-                        });
-                    }
-                }, 100);
+                Platform.runLater(() -> {
+                    popElementMenu(element);
+                });
             }
             MenuWebviewController menu = MenuWebviewController.running(webView);
             if (menu != null) {

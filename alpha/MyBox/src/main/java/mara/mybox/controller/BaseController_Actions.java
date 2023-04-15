@@ -571,7 +571,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
             return;
         }
         Robot robot = new Robot();
-        popMenu(node, menuItems, robot.getMouseX() + 10, robot.getMouseY() + 10);
+        popMenu(node, menuItems, robot.getMouseX() + 10, robot.getMouseY() + 10, true);
     }
 
     public void popCenterMenu(Node node, List<MenuItem> menuItems) {
@@ -581,16 +581,20 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         Bounds bounds = node.localToScreen(node.getBoundsInLocal());
         popMenu(node, menuItems,
                 bounds.getMinX() + bounds.getWidth() / 2,
-                bounds.getMinY() + bounds.getHeight() / 2);
+                bounds.getMinY() + bounds.getHeight() / 2,
+                false);
     }
 
-    public void popMenu(Node node, List<MenuItem> menuItems, double x, double y) {
+    public void popMenu(Node node, List<MenuItem> menuItems, double x, double y, boolean separator) {
         if (node == null || menuItems == null || menuItems.isEmpty()) {
             return;
         }
         List<MenuItem> items = new ArrayList<>();
         items.addAll(menuItems);
-        items.add(new SeparatorMenuItem());
+
+        if (separator) {
+            items.add(new SeparatorMenuItem());
+        }
 
         MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
         menu.setStyle("-fx-text-fill: #2e598a;");

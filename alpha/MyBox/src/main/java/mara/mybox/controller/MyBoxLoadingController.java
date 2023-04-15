@@ -179,6 +179,9 @@ public class MyBoxLoadingController implements Initializable {
                         } else {
                             ControllerTools.openMyBox(myStage);
                         }
+                        if (myStage != null) {
+                            myStage.close();
+                        }
                     });
 
                 }

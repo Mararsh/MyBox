@@ -176,8 +176,8 @@ public class HelpTools {
     public static File aboutGroupingRows() {
         try {
             String lang = Languages.getLangName();
-            File file = FxFileTools.getInternalFile("/doc/" + lang + "/about-grouping-" + lang + ".html",
-                    "doc", "about-grouping-" + lang + ".html");
+            File file = FxFileTools.getInternalFile("/doc/" + lang + "/MyBox-about-grouping-" + lang + ".html",
+                    "doc", "MyBox-about-grouping-" + lang + ".html");
             return file;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -188,8 +188,8 @@ public class HelpTools {
     public static File aboutRowExpression() {
         try {
             String lang = Languages.getLangName();
-            File file = FxFileTools.getInternalFile("/doc/" + lang + "/about-row-expression-" + lang + ".html",
-                    "doc", "about-row-expression-" + lang + ".html");
+            File file = FxFileTools.getInternalFile("/doc/" + lang + "/MyBox-about-row-expression-" + lang + ".html",
+                    "doc", "MyBox-about-row-expression-" + lang + ".html");
             return file;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

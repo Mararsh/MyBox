@@ -19,14 +19,15 @@ The latest versions and all archived versions can be downloaded in following add
 2023-4-12 v6.7.2                
                 
 * Added:                                   
-     - Manage Remote Path(SFTP).                                                             
-     - Synchronize Remote Directory from Local.                    
-     - Clear Expired Data.                                                                                                                                                                                                     
+     - Manage remote path(SFTP).                                                             
+     - Synchronize remote directory from local.                    
+     - Clear expired data.                                                                                                                                                                                                     
 * Improved:                                   
      - Option to disable omission of Ctrl/Alt in shortcuts.(To avoid misoperations)                                                             
      - Always disable omission of Ctrl/Alt in shortcuts of following buttons: Save, Delete, Clear. (To avoid accidents)                                                                          
      - Values can be validated when edit data.                                                            
      - List all available video devices and audio devices when run Screen Recorder.                                                                                
+     - Expand tree information as required.                                                            
 * Removed:                                 
      - No option "high dpi icons" any more.                                                             
      - Not support resume for "Directory Synchronize".                                                             
@@ -35,10 +36,12 @@ The latest versions and all archived versions can be downloaded in following add
      - When edit data, should not apply modification to all new rows.                                                             
      - When edit/add data rows, values should not be validated automatically.                                                             
      - Logic about "node A is sub-node of node B" has bug.                                                             
+     - Fail to mode nodes in tree information.                                                             
      - Function "ffmepg convert medias" does not work.                                                             
      - Interface behavious of Html Editor are unexpected.                                                             
      - Calculation of "Splice Images" and "Split Image" are inaccurate.                                                             
      - Option "pop menu when hovering button" does not work in some interfaces.                                                                                    
+     - Fail to play PDF which has password.                                                             
  
 [Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.2)                           
 
@@ -140,6 +143,7 @@ Function "Settings" can be used to change configuration values.
 | Examples - JavaScript          | 6.6.1   | 2022-11-16 | [html](https://mara-mybox.sourceforge.io/mybox_examples_javascript_en.html)                                                                                                                                                                                                                     | [html](https://mara-mybox.sourceforge.io/mybox_examples_javascript.html)                                                                                                                                                                                                                                    |              
 | Examples - Math Function       | 6.6.1   | 2022-11-16 | [html](https://mara-mybox.sourceforge.io/mybox_examples_math_funtion_en.html)                                                                                                                                                                                                                   | [html](https://mara-mybox.sourceforge.io/mybox_examples_math_funtion.html)                                                                                                                                                                                                                                    |              
 | Examples - Row Filter          | 6.6.1   | 2022-11-16 | [html](https://mara-mybox.sourceforge.io/mybox_examples_row_filter_en.html)                                                                                                                                                                                                                     | [html](https://mara-mybox.sourceforge.io/mybox_examples_row_filter.html)                                                                                                                                                                                                                                    |              
+| About - row expression         | 6.7.2   | 2023-4-12   | [html](https://mara-mybox.sourceforge.io/mybox_about_row_expression_en.html)                                                                                                                                                                                                                     | [html](https://mara-mybox.sourceforge.io/mybox_about_row_expression.html)                                                                                                                                                                                                                                    |
 | About - data grouping          | 6.7.1   | 2023-3-13   | [html](https://mara-mybox.sourceforge.io/mybox_about_grouping_en.html)                                                                                                                                                                                                                     | [html](https://mara-mybox.sourceforge.io/mybox_about_grouping.html)                                                                                                                                                                                                                                    |
 | About - Color                  | 6.6.1   | 2022-11-16 | [html](https://mara-mybox.sourceforge.io/mybox_about_color_en.html)                                                                                                                                                                                                                             | [html](https://mara-mybox.sourceforge.io/mybox_about_color.html)                                                                                                                                                                                                                                    |              
 | About - Coordinate System      | 6.6.1   | 2022-11-16 | [html](https://mara-mybox.sourceforge.io/mybox_about_coordinate_system_en.html)                                                                                                                                                                                                                 | [html](https://mara-mybox.sourceforge.io/mybox_about_coordinate_system.html)                                                                                                                                                                                                                                    |              
@@ -299,7 +303,7 @@ Example,  the new language is named as "aa", and its resource file is "Messages_
 6. User can view and edit definitons and data of database tables in paginated tables, and execute SQL statements.                   
 7. To implement data sorting, tranposing, statistic, and grouping, MyBox will create temporary database tables, and clear them in time.            
 
-## Assit Coding            
+## Assit Coding Self            
 
 1. Monitor memory/CPU usage in real time.
 2. Adjust logging online.       

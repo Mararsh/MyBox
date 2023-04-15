@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -14,14 +13,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
@@ -34,7 +31,6 @@ import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.apache.pdfbox.pdmodel.interactive.action.PDActionGoTo;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
@@ -49,10 +45,10 @@ import org.apache.pdfbox.rendering.PDFRenderer;
  * @License Apache License Version 2.0
  */
 public class PdfViewController extends PdfViewController_Html {
-    
+
     protected SimpleBooleanProperty infoLoaded;
     protected SingletonTask outlineTask;
-    
+
     @FXML
     protected CheckBox transparentBackgroundCheck, bookmarksCheck,
             wrapTextsCheck, refreshSwitchTextsCheck, refreshChangeTextsCheck,
@@ -62,12 +58,12 @@ public class PdfViewController extends PdfViewController_Html {
     protected ScrollPane outlineScrollPane;
     @FXML
     protected TreeView outlineTree;
-    
+
     public PdfViewController() {
         baseTitle = message("PdfView");
         TipsLabelKey = "PdfViewTips";
     }
-    
+
     @Override
     public void initValues() {
         try {
@@ -77,22 +73,22 @@ public class PdfViewController extends PdfViewController_Html {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.PDF, VisitHistory.FileType.Image);
     }
-    
+
     @Override
     public void initControls() {
         try {
             super.initControls();
-            
+
             if (ocrOptionsController != null) {
                 ocrOptionsController.setParameters(this, false, false);
             }
             initTabPane();
-            
+
             if (bookmarksCheck != null) {
                 bookmarksCheck.setSelected(UserConfig.getBoolean(baseName + "Bookmarks", true));
                 bookmarksCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -103,7 +99,7 @@ public class PdfViewController extends PdfViewController_Html {
                     }
                 });
             }
-            
+
             if (transparentBackgroundCheck != null) {
                 transparentBackgroundCheck.setSelected(UserConfig.getBoolean(baseName + "Transparent", false));
                 transparentBackgroundCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -114,12 +110,12 @@ public class PdfViewController extends PdfViewController_Html {
                     }
                 });
             }
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     protected void initTabPane() {
         try {
             tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
@@ -143,7 +139,7 @@ public class PdfViewController extends PdfViewController_Html {
                     }
                 }
             });
-            
+
             wrapTextsCheck.setSelected(UserConfig.getBoolean(baseName + "WrapTexts", true));
             wrapTextsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -153,7 +149,7 @@ public class PdfViewController extends PdfViewController_Html {
                 }
             });
             textsArea.setWrapText(wrapTextsCheck.isSelected());
-            
+
             refreshSwitchTextsCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshSwitchTexts", true));
             refreshSwitchTextsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -161,7 +157,7 @@ public class PdfViewController extends PdfViewController_Html {
                     UserConfig.setBoolean(baseName + "RefreshSwitchTexts", newValue);
                 }
             });
-            
+
             refreshChangeTextsCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshChangeTexts", false));
             refreshChangeTextsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -169,7 +165,7 @@ public class PdfViewController extends PdfViewController_Html {
                     UserConfig.setBoolean(baseName + "RefreshChangeTexts", newValue);
                 }
             });
-            
+
             wrapOCRCheck.setSelected(UserConfig.getBoolean(baseName + "WrapOCR", true));
             wrapOCRCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -179,7 +175,7 @@ public class PdfViewController extends PdfViewController_Html {
                 }
             });
             ocrArea.setWrapText(wrapTextsCheck.isSelected());
-            
+
             refreshSwitchOCRCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshSwitchOCR", true));
             refreshSwitchOCRCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -187,7 +183,7 @@ public class PdfViewController extends PdfViewController_Html {
                     UserConfig.setBoolean(baseName + "RefreshSwitchOCR", newValue);
                 }
             });
-            
+
             refreshChangeOCRCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshChangeOCR", false));
             refreshChangeOCRCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -195,7 +191,7 @@ public class PdfViewController extends PdfViewController_Html {
                     UserConfig.setBoolean(baseName + "RefreshChangeOCR", newValue);
                 }
             });
-            
+
             refreshSwitchHtmlCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshSwitchHtml", true));
             refreshSwitchHtmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -203,7 +199,7 @@ public class PdfViewController extends PdfViewController_Html {
                     UserConfig.setBoolean(baseName + "RefreshSwitchHtml", newValue);
                 }
             });
-            
+
             refreshChangeHtmlCheck.setSelected(UserConfig.getBoolean(baseName + "RefreshChangeHtml", false));
             refreshChangeHtmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -211,12 +207,12 @@ public class PdfViewController extends PdfViewController_Html {
                     UserConfig.setBoolean(baseName + "RefreshChangeHtml", newValue);
                 }
             });
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     protected void checkOutline() {
         if (!infoLoaded.get()) {
             return;
@@ -226,16 +222,16 @@ public class PdfViewController extends PdfViewController_Html {
                 mainPane.getItems().add(mainPane.getItems().size() - 1, outlineScrollPane);
             }
             loadOutline();
-            
+
         } else {
             if (mainPane.getItems().contains(outlineScrollPane)) {
                 mainPane.getItems().remove(outlineScrollPane);
             }
         }
         adjustSplitPane();
-        
+
     }
-    
+
     @Override
     public void sourceFileChanged(File file) {
         if (file == null) {
@@ -243,7 +239,7 @@ public class PdfViewController extends PdfViewController_Html {
         }
         loadFile(file, null, 0);
     }
-    
+
     public void loadFile(File file, PdfInformation pdfInfo, int page) {
         try {
             initPage(file, page);
@@ -270,12 +266,12 @@ public class PdfViewController extends PdfViewController_Html {
                 pdfInformation = new PdfInformation(sourceFile);
                 loadInformation(null);
             }
-            
+
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
-    
+
     @Override
     public void setSourceFile(File file) {
         super.setSourceFile(file);
@@ -283,7 +279,7 @@ public class PdfViewController extends PdfViewController_Html {
         textsPage = -1;
         htmlPage = -1;
     }
-    
+
     public void loadInformation(String inPassword) {
         if (pdfInformation == null) {
             if (sourceFile == null) {
@@ -301,29 +297,20 @@ public class PdfViewController extends PdfViewController_Html {
             isSettingValues = false;
             pageLabel.setText("");
             task = new SingletonTask<Void>(this) {
-                protected boolean pop;
-                
+
                 @Override
                 protected boolean handle() {
                     setTotalPages(0);
-                    try (PDDocument doc = PDDocument.load(sourceFile, inPassword, AppVariables.pdfMemUsage)) {
-                        password = inPassword;
-                        pdfInformation.setUserPassword(inPassword);
-                        pdfInformation.readInfo(doc);
-                        infoLoaded.set(true);
-                        doc.close();
-                        ok = true;
-                    } catch (InvalidPasswordException e) {
-                        pop = true;
-                        return false;
-                    } catch (Exception e) {
-                        error = e.toString();
+                    if (!PdfInformation.readPDF(pdfInformation)) {
+                        error = pdfInformation.getError();
                         return false;
                     }
+                    password = pdfInformation.getUserPassword();
+                    infoLoaded.set(true);
                     setTotalPages(pdfInformation.getNumberOfPages());
                     return framesNumber > 0;
                 }
-                
+
                 @Override
                 protected void whenSucceeded() {
                     List<String> pages = new ArrayList<>();
@@ -340,33 +327,12 @@ public class PdfViewController extends PdfViewController_Html {
                     checkOutline();
                     checkThumbs();
                 }
-                
-                @Override
-                protected void whenFailed() {
-                    if (pop) {
-                        TextInputDialog dialog = new TextInputDialog();
-                        dialog.setContentText(message("UserPassword"));
-                        Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-                        stage.setAlwaysOnTop(true);
-                        stage.toFront();
-                        Optional<String> result = dialog.showAndWait();
-                        if (result.isPresent()) {
-                            loadInformation(result.get());
-                        }
-                        return;
-                    }
-                    if (error != null) {
-                        popError(message(error));
-                    } else {
-                        popFailed();
-                    }
-                }
-                
+
             };
             start(task, message("LoadingFileInfo"));
         }
     }
-    
+
     @Override
     protected Image readPageImage() {
         try {
@@ -378,7 +344,7 @@ public class PdfViewController extends PdfViewController_Html {
             return null;
         }
     }
-    
+
     @Override
     public void setImage(Image image, int percent) {
         if (imageView == null) {
@@ -394,7 +360,7 @@ public class PdfViewController extends PdfViewController_Html {
             convertHtml();
         }
     }
-    
+
     protected void loadOutline() {
         if (!infoLoaded.get()) {
             return;
@@ -407,7 +373,7 @@ public class PdfViewController extends PdfViewController_Html {
             outlineRoot.setExpanded(true);
             outlineTree.setRoot(outlineRoot);
             outlineTask = new SingletonTask<Void>(this) {
-                
+
                 @Override
                 protected boolean handle() {
                     try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
@@ -423,7 +389,7 @@ public class PdfViewController extends PdfViewController_Html {
                     }
                     return true;
                 }
-                
+
                 @Override
                 protected void whenFailed() {
                     if (error != null) {
@@ -432,12 +398,12 @@ public class PdfViewController extends PdfViewController_Html {
                         popFailed();
                     }
                 }
-                
+
             };
             start(outlineTask, false);
         }
     }
-    
+
     protected void loadOutlineItem(PDOutlineNode parentOutlineItem, TreeItem parentTreeItem) {
         try {
             PDOutlineItem childOutlineItem = parentOutlineItem.getFirstChild();
@@ -474,9 +440,9 @@ public class PdfViewController extends PdfViewController_Html {
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
-        
+
     }
-    
+
     @Override
     protected boolean loadThumbs(List<Integer> missed) {
         try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
@@ -505,7 +471,7 @@ public class PdfViewController extends PdfViewController_Html {
         }
         return true;
     }
-    
+
     @FXML
     @Override
     public void infoAction() {
@@ -519,7 +485,7 @@ public class PdfViewController extends PdfViewController_Html {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     @Override
     public void cleanPane() {
         try {
@@ -548,17 +514,11 @@ public class PdfViewController extends PdfViewController_Html {
         }
         super.cleanPane();
     }
-    
+
     @FXML
     @Override
     public void playAction() {
-        try {
-            ImagesPlayController controller = (ImagesPlayController) openStage(Fxmls.ImagesPlayFxml);
-            controller.passwordInput.setText(password);
-            controller.sourceFileChanged(sourceFile);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+        ImagesPlayController.playPDF(sourceFile, password);
     }
 
     /*
@@ -579,5 +539,5 @@ public class PdfViewController extends PdfViewController_Html {
             return null;
         }
     }
-    
+
 }

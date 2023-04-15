@@ -279,7 +279,7 @@ public class ImageInformation extends ImageFileInformation implements Cloneable 
 
     public static BufferedImage readPDF(ImageInformation imageInfo, int width) {
         BufferedImage bufferedImage = null;
-        try (PDDocument pdfDoc = PDDocument.load(imageInfo.getFile(), AppVariables.pdfMemUsage)) {
+        try (PDDocument pdfDoc = PDDocument.load(imageInfo.getFile(), imageInfo.getPassword(), AppVariables.pdfMemUsage)) {
             bufferedImage = readPDF(null, new PDFRenderer(pdfDoc), ImageType.RGB, imageInfo, width);
             pdfDoc.close();
         } catch (Exception e) {

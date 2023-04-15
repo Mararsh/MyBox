@@ -115,12 +115,6 @@ License:    Apache License Version 2.0
                                                         </FlowPane>
                                                         <VBox fx:id="pdfBox" spacing="2.0">
                                                             <children>
-                                                <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" spacing="5.0">
-                                                   <children>
-                                                      <Label text="%Password" />
-                                                      <TextField fx:id="passwordInput" prefWidth="100.0" />
-                                                   </children>
-                                                </HBox>
                                                                 <HBox alignment="CENTER_LEFT" layoutX="32.0" layoutY="90.0" spacing="5.0">
                                                                     <children>
                                                                         <Label text="dpi" />

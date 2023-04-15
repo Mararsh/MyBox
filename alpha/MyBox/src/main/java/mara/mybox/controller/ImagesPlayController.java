@@ -3,6 +3,7 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -12,12 +13,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
@@ -26,6 +29,7 @@ import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.FileNameTools;
@@ -35,6 +39,7 @@ import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.poi.sl.usermodel.Slide;
@@ -49,7 +54,7 @@ import org.apache.poi.sl.usermodel.SlideShowFactory;
 public class ImagesPlayController extends BaseImagesListController {
 
     protected int queueSize, fromFrame, toFrame;
-    protected String fileFormat;
+    protected String fileFormat, pdfPassword, inPassword;
     protected LoadingController loading;
     protected long memoryThreadhold;
     protected Thread loadThread;
@@ -72,7 +77,7 @@ public class ImagesPlayController extends BaseImagesListController {
     @FXML
     protected VBox fileVBox, imageBox, pdfBox;
     @FXML
-    protected TextField fromInput, toInput, passwordInput;
+    protected TextField fromInput, toInput;
     @FXML
     protected FlowPane framesPane;
     @FXML
@@ -199,6 +204,7 @@ public class ImagesPlayController extends BaseImagesListController {
         frameIndex = 0;
         sourceFile = null;
         fileFormat = null;
+        pdfPassword = null;
         image = null;
         imageInformation = null;
         imageInfos.clear();
@@ -374,7 +380,8 @@ public class ImagesPlayController extends BaseImagesListController {
             pdfRadio.setSelected(true);
         });
         try {
-            openPDF();
+            openPDF(inPassword);
+            inPassword = null;
             if (pdfDoc == null) {
                 return false;
             }
@@ -388,6 +395,7 @@ public class ImagesPlayController extends BaseImagesListController {
                 imageInfo.setIndex(i);
                 imageInfo.setDuration(playController.timeValue);
                 imageInfo.setDpi(dpi);
+                imageInfo.setPassword(pdfPassword);
                 imageInfos.add(imageInfo);
             }
         } catch (Exception e) {
@@ -397,21 +405,47 @@ public class ImagesPlayController extends BaseImagesListController {
         return true;
     }
 
-    protected void openPDF() {
+    protected void openPDF(String password) {
+        closeFile();
+        if (sourceFile == null) {
+            return;
+        }
         try {
-            closeFile();
-            if (sourceFile == null) {
-                return;
+            pdfDoc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage);
+            pdfPassword = password;
+        } catch (InvalidPasswordException e) {
+            try {
+                Platform.runLater(() -> {
+                    TextInputDialog dialog = new TextInputDialog();
+                    dialog.setContentText(message("UserPassword"));
+                    Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+                    stage.setAlwaysOnTop(true);
+                    stage.toFront();
+                    Optional<String> result = dialog.showAndWait();
+                    if (result.isPresent()) {
+                        pdfPassword = result.get();
+                    }
+                    synchronized (sourceFile) {
+                        sourceFile.notifyAll();
+                    }
+                });
+                synchronized (sourceFile) {
+                    sourceFile.wait();
+                }
+                try {
+                    pdfDoc = PDDocument.load(sourceFile, pdfPassword, AppVariables.pdfMemUsage);
+                } catch (Exception ee) {
+                    error = ee.toString();
+                    sourceFile = null;
+                }
+            } catch (Exception eee) {
+                error = eee.toString();
             }
-            pdfDoc = PDDocument.load(sourceFile, passwordInput.getText(), AppVariables.pdfMemUsage);
+        } catch (Exception eeee) {
+            error = eeee.toString();
+        }
+        if (pdfDoc != null) {
             pdfRenderer = new PDFRenderer(pdfDoc);
-        } catch (Exception e) {
-            pdfDoc = null;
-            if (task != null) {
-                task.setError(e.toString());
-            } else {
-                MyBoxLog.error(e);
-            }
         }
     }
 
@@ -561,7 +595,10 @@ public class ImagesPlayController extends BaseImagesListController {
                 info.loadThumbnail(loadWidth);
             } else if (fileFormat.equalsIgnoreCase("pdf")) {
                 if (pdfRenderer == null) {
-                    openPDF();
+                    openPDF(pdfPassword);
+                }
+                if (pdfRenderer == null) {
+                    return null;
                 }
                 ImageInformation.readPDF(null, pdfRenderer, pdfImageType, info, loadWidth);
 
@@ -701,6 +738,24 @@ public class ImagesPlayController extends BaseImagesListController {
         } catch (Exception e) {
         }
         super.cleanPane();
+    }
+
+    /*
+        static
+     */
+    public static ImagesPlayController playPDF(File file, String password) {
+        try {
+            ImagesPlayController controller = (ImagesPlayController) WindowTools.openStage(Fxmls.ImagesPlayFxml);
+            if (controller != null) {
+                controller.requestMouse();
+                controller.inPassword = password;
+                controller.sourceFileChanged(file);
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
     }
 
 }

@@ -132,7 +132,7 @@ public abstract class ImagesBrowserController_Menu extends ImagesBrowserControll
         });
         items.add(menu);
 
-        popMenu(iView, items, event.getScreenX(), event.getScreenY());
+        popMenu(iView, items, event.getScreenX(), event.getScreenY(), true);
 
     }
 
