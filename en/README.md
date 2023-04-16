@@ -32,7 +32,7 @@ The latest versions and all archived versions can be downloaded in following add
      - When edit data, should not apply modification to all new rows.                                                             
      - When edit/add data rows, values should not be validated automatically.                                                             
      - Logic about "node A is sub-node of node B" has bug.                                                             
-     - Fail to mode nodes in tree information.                                                             
+     - Fail to move nodes in tree information.                                                             
      - Function "ffmepg convert medias" does not work.                                                             
      - Interface behavious of Html Editor are unexpected.                                                             
      - Calculation of "Splice Images" and "Split Image" are inaccurate.                                                             
