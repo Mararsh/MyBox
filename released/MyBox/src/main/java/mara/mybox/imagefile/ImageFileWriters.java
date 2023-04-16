@@ -275,7 +275,7 @@ public class ImageFileWriters {
                             try {
                                 Object d = gifInfos.get(readIndex).getNativeAttribute("delayTime");
                                 if (d != null) {
-                                    duration = Integer.valueOf((String) d) * 10;
+                                    duration = Integer.parseInt((String) d) * 10;
                                 }
                             } catch (Exception e) {
                             }

@@ -137,7 +137,7 @@ public class MediaPlayerController extends BaseController {
                             repeat = MediaPlayer.INDEFINITE;
                             return;
                         }
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v <= 0) {
                             repeat = MediaPlayer.INDEFINITE;
                         } else {
@@ -159,7 +159,7 @@ public class MediaPlayerController extends BaseController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        double v = Double.valueOf(newValue);
+                        double v = Double.parseDouble(newValue);
                         if (v <= 0 || v > 8) {
                             speedSelector.getEditor().setStyle(UserConfig.badStyle());
                         } else {
@@ -368,7 +368,7 @@ public class MediaPlayerController extends BaseController {
         }
         mediaView.setFitWidth(myStage.getWidth());
         mediaView.setFitHeight(myStage.getHeight());
-        rightPaneControl.setVisible(false);
+        rightPaneControl.setDisable(true);
         playerControlBox.setVisible(false);
 
         fullScreenButton.setSelected(true);
@@ -405,7 +405,7 @@ public class MediaPlayerController extends BaseController {
             leftBox.getChildren().add(playerControlBox);
         }
         playerControlBox.setVisible(true);
-        rightPaneControl.setVisible(true);
+        rightPaneControl.setDisable(false);
         mediaView.setFitWidth(playerBox.getWidth() - 5);
         mediaView.setFitHeight(playerBox.getHeight() - playerControlBox.getHeight() - 5);
 

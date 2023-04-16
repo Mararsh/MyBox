@@ -15,12 +15,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import mara.mybox.bufferedimage.ImageBinary;
 import mara.mybox.bufferedimage.ImageContrast;
 import mara.mybox.bufferedimage.ImageContrast.ContrastAlgorithm;
@@ -30,19 +28,12 @@ import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.bufferedimage.TransformTools;
 import mara.mybox.db.data.ConvolutionKernel;
-import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.OCRTools;
 import mara.mybox.value.AppPaths;
-import mara.mybox.value.AppVariables;
-import mara.mybox.value.FileFilters;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -80,7 +71,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                         if (newV == null || newV.isEmpty()) {
                             return;
                         }
-                        float f = Float.valueOf(newV);
+                        float f = Float.parseFloat(newV);
                         if (f > 0) {
                             scale = f;
                             scaleSelector.getEditor().setStyle(null);
@@ -105,7 +96,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                         if (newV == null || newV.isEmpty()) {
                             return;
                         }
-                        int i = Integer.valueOf(newV);
+                        int i = Integer.parseInt(newV);
                         if (i > 0) {
                             threshold = i;
                             binarySelector.getEditor().setStyle(null);
@@ -129,7 +120,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                         if (newV == null || newV.isEmpty()) {
                             return;
                         }
-                        rotate = Integer.valueOf(newV);
+                        rotate = Integer.parseInt(newV);
                     } catch (Exception e) {
 
                     }
@@ -256,31 +247,19 @@ public class ImageOCRProcessController extends ImageViewerController {
                     Languages.message("GaussianBlur"), Languages.message("AverageBlur")
             ));
 
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
+            List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
             for (String algorithm : algorithms) {
                 menu = new MenuItem(algorithm);
                 menu.setOnAction((ActionEvent event) -> {
                     algorithm(algorithm);
                 });
-                popMenu.getItems().add(menu);
+                items.add(menu);
             }
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(Languages.message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event) -> {
-                popMenu.hide();
-                popMenu = null;
-            });
-            popMenu.getItems().add(menu);
+            items.add(new SeparatorMenuItem());
 
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            popEventMenu(mouseEvent, items);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -598,85 +577,6 @@ public class ImageOCRProcessController extends ImageViewerController {
                 protected void whenSucceeded() {
                     loadImage(ocrImage);
 
-                }
-
-            };
-            OCRController.start(task);
-        }
-    }
-
-    @FXML
-    public void popSavePreprocess(MouseEvent event) { //
-        if (AppVariables.fileRecentNumber <= 0) {
-            return;
-        }
-        new RecentVisitMenu(this, event) {
-            @Override
-            public List<VisitHistory> recentFiles() {
-                return null;
-            }
-
-            @Override
-            public List<VisitHistory> recentPaths() {
-                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Image);
-            }
-
-            @Override
-            public void handleSelect() {
-                savePreprocessAction();
-            }
-
-            @Override
-            public void handleFile(String fname) {
-
-            }
-
-            @Override
-            public void handlePath(String fname) {
-                File file = new File(fname);
-                if (!file.exists()) {
-                    handleSelect();
-                    return;
-                }
-                UserConfig.setString(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image), fname);
-                handleSelect();
-            }
-
-        }.pop();
-    }
-
-    @FXML
-    public void savePreprocessAction() {
-        if (imageView.getImage() == null) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-
-            String name = (sourceFile != null ? FileNameTools.prefix(sourceFile.getName()) : "") + "_preprocessed";
-            final File file = chooseSaveFile(UserConfig.getPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Image)),
-                    name, FileFilters.ImageExtensionFilter);
-            if (file == null) {
-                return;
-            }
-            recordFileWritten(file, VisitHistory.FileType.Image);
-
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    String format = FileNameTools.suffix(file.getName());
-                    BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imageView.getImage(), null);
-                    return ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (OCRController.LoadCheck.isSelected()) {
-                        OCRController.sourceFileChanged(file);
-                    }
                 }
 
             };

@@ -17,7 +17,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppVariables;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.fit.pdfdom.PDFDomTree;
@@ -169,14 +168,14 @@ public abstract class PdfViewController_Html extends PdfViewController_Texts {
                     subPath.mkdirs();
                     domConfig.setFontHandler(new PDFResourceToDirHandler(subPath));
                     domConfig.setImageHandler(new PDFResourceToDirHandler(subPath));
-                    try ( PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
+                    try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
                         PDFDomTree parser = new PDFDomTree(domConfig);
                         parser.setStartPage(frameIndex + 1);
                         parser.setEndPage(frameIndex + 1);
                         parser.setPageStart(title);
 //                    MyBoxLog.debug(parser.getSpacingTolerance());
 //                    parser.setSpacingTolerance(0f);
-                        try ( Writer output = new PrintWriter(htmlFile, "utf-8")) {
+                        try (Writer output = new PrintWriter(htmlFile, "utf-8")) {
                             try {
                                 parser.writeText(doc, output);
                             } catch (Exception e) {
@@ -207,8 +206,7 @@ public abstract class PdfViewController_Html extends PdfViewController_Texts {
 
     @FXML
     public void editHtml() {
-        HtmlEditorController controller = (HtmlEditorController) openStage(Fxmls.HtmlEditorFxml);
-        controller.loadContents(webViewController.loadedHtml());
+        HtmlEditorController.openHtml(webViewController.loadedHtml());
     }
 
 }

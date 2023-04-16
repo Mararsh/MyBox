@@ -496,6 +496,8 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             });
             items.add(menu);
 
+            items.add(new SeparatorMenuItem());
+
             CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
             popItem.setSelected(UserConfig.getBoolean("ImageFunctionsPopWhenMouseHovering", true));
             popItem.setOnAction(new EventHandler<ActionEvent>() {

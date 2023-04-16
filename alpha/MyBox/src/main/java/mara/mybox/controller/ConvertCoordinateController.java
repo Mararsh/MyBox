@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.web.WebView;
@@ -541,6 +542,8 @@ public class ConvertCoordinateController extends BaseMapController {
                 dmsInput.setText("纬度-32度04分10.461秒");
             });
             items.add(menu);
+
+            items.add(new SeparatorMenuItem());
 
             popEventMenu(mouseEvent, items);
 

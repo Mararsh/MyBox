@@ -338,7 +338,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
             interval = interval <= 0 ? istep : interval;
             float opacity = 0.1f;
             try {
-                opacity = Float.valueOf(UserConfig.getString("GridLinesOpacity", "0.1"));
+                opacity = Float.parseFloat(UserConfig.getString("GridLinesOpacity", "0.1"));
             } catch (Exception e) {
             }
             for (int i = interval; i < imageWidth; i += interval) {
@@ -395,7 +395,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
             double w = imageWidth * wratio;
             float opacity = 0.1f;
             try {
-                opacity = Float.valueOf(UserConfig.getString("GridLinesOpacity", "0.1"));
+                opacity = Float.parseFloat(UserConfig.getString("GridLinesOpacity", "0.1"));
             } catch (Exception e) {
             }
             for (int j = interval; j < imageHeight; j += interval) {

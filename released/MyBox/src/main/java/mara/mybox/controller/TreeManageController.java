@@ -47,6 +47,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -67,7 +68,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     protected TreeNode loadedParent;
 
     @FXML
-    protected TreeNodesController nodesController;
+    protected ControlTreeInfoManage nodesController;
     @FXML
     protected TableColumn<TreeNode, Long> nodeidColumn;
     @FXML
@@ -128,7 +129,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         try {
             super.initControls();
 
-            nodesController.setParameters(this, true);
+            nodesController.setParameters(this);
 
             if (UserConfig.getBoolean(baseName + "AllDescendants", false)) {
                 descendantsRadio.setSelected(true);
@@ -336,10 +337,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     }
 
     public void nodesCopied(TreeNode parent) {
-        if (parent == null) {
-            return;
-        }
-        nodesController.loadChildren(nodesController.find(parent));
+        nodesController.updateParent(parent);
     }
 
     public void nodesDeleted() {
@@ -383,7 +381,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
                 break;
             }
         }
-        nodesController.updateChild(nodesController.find(nodeController.parentNode), nodeController.currentNode);
+        nodesController.updateParent(nodeController.parentNode);
     }
 
     public void newNodeSaved() {
@@ -417,8 +415,18 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         tree
      */
     public void loadTree(TreeNode selectedNode) {
-        if (!nodesController.loadExamples()) {
+        try {
+            File file = TreeNode.exampleFile(category);
+            if (file != null && tableTreeNode.categoryEmpty(category)) {
+                if (AppVariables.isTesting
+                        || PopTools.askSure(getTitle(), message("ImportExamples") + ": " + message(category))) {
+                    nodesController.importExamples();
+                    return;
+                }
+            }
             nodesController.loadTree(selectedNode);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 
@@ -476,46 +484,43 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             conditionBox.applyCss();
             return;
         }
-        synchronized (this) {
-            SingletonTask bookTask = new SingletonTask<Void>(this) {
-                private List<TreeNode> ancestor;
+        SingletonTask bookTask = new SingletonTask<Void>(this) {
+            private List<TreeNode> ancestor;
 
-                @Override
-                protected boolean handle() {
-                    ancestor = tableTreeNode.ancestor(loadedParent.getNodeid());
-                    return true;
-                }
+            @Override
+            protected boolean handle() {
+                ancestor = tableTreeNode.ancestor(loadedParent.getNodeid());
+                return true;
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    List<Node> nodes = new ArrayList<>();
-                    if (ancestor != null) {
-                        for (TreeNode node : ancestor) {
-                            Hyperlink link = new Hyperlink(node.getTitle());
-                            link.setWrapText(true);
-                            link.setMinHeight(Region.USE_PREF_SIZE);
-                            link.setOnAction(new EventHandler<ActionEvent>() {
-                                @Override
-                                public void handle(ActionEvent event) {
-                                    loadNodes(node);
-                                }
-                            });
-                            nodes.add(link);
-                            nodes.add(new Label(">"));
-                        }
+            @Override
+            protected void whenSucceeded() {
+                List<Node> nodes = new ArrayList<>();
+                if (ancestor != null) {
+                    for (TreeNode node : ancestor) {
+                        Hyperlink link = new Hyperlink(node.getTitle());
+                        link.setWrapText(true);
+                        link.setMinHeight(Region.USE_PREF_SIZE);
+                        link.setOnAction(new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent event) {
+                                loadNodes(node);
+                            }
+                        });
+                        nodes.add(link);
+                        nodes.add(new Label(">"));
                     }
-                    Label label = new Label(loadedParent.getTitle());
-                    label.setWrapText(true);
-                    label.setMinHeight(Region.USE_PREF_SIZE);
-                    nodes.add(label);
-                    namesPane.getChildren().setAll(nodes);
-                    conditionBox.getChildren().setAll(namesPane, nodeGroupPane);
-                    conditionBox.applyCss();
                 }
-            };
-            start(bookTask, false);
-        }
-
+                Label label = new Label(loadedParent.getTitle());
+                label.setWrapText(true);
+                label.setMinHeight(Region.USE_PREF_SIZE);
+                nodes.add(label);
+                namesPane.getChildren().setAll(nodes);
+                conditionBox.getChildren().setAll(namesPane, nodeGroupPane);
+                conditionBox.applyCss();
+            }
+        };
+        start(bookTask, false);
     }
 
     @Override

@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -14,14 +13,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
@@ -34,7 +31,6 @@ import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.apache.pdfbox.pdmodel.interactive.action.PDActionGoTo;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
@@ -301,25 +297,16 @@ public class PdfViewController extends PdfViewController_Html {
             isSettingValues = false;
             pageLabel.setText("");
             task = new SingletonTask<Void>(this) {
-                protected boolean pop;
 
                 @Override
                 protected boolean handle() {
                     setTotalPages(0);
-                    try ( PDDocument doc = PDDocument.load(sourceFile, inPassword, AppVariables.pdfMemUsage)) {
-                        password = inPassword;
-                        pdfInformation.setUserPassword(inPassword);
-                        pdfInformation.readInfo(doc);
-                        infoLoaded.set(true);
-                        doc.close();
-                        ok = true;
-                    } catch (InvalidPasswordException e) {
-                        pop = true;
-                        return false;
-                    } catch (Exception e) {
-                        error = e.toString();
+                    if (!PdfInformation.readPDF(pdfInformation)) {
+                        error = pdfInformation.getError();
                         return false;
                     }
+                    password = pdfInformation.getUserPassword();
+                    infoLoaded.set(true);
                     setTotalPages(pdfInformation.getNumberOfPages());
                     return framesNumber > 0;
                 }
@@ -339,27 +326,6 @@ public class PdfViewController extends PdfViewController_Html {
                     loadPage();
                     checkOutline();
                     checkThumbs();
-                }
-
-                @Override
-                protected void whenFailed() {
-                    if (pop) {
-                        TextInputDialog dialog = new TextInputDialog();
-                        dialog.setContentText(message("UserPassword"));
-                        Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-                        stage.setAlwaysOnTop(true);
-                        stage.toFront();
-                        Optional<String> result = dialog.showAndWait();
-                        if (result.isPresent()) {
-                            loadInformation(result.get());
-                        }
-                        return;
-                    }
-                    if (error != null) {
-                        popError(message(error));
-                    } else {
-                        popFailed();
-                    }
                 }
 
             };
@@ -410,7 +376,7 @@ public class PdfViewController extends PdfViewController_Html {
 
                 @Override
                 protected boolean handle() {
-                    try ( PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
+                    try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
                         PDDocumentOutline outline = doc.getDocumentCatalog().getDocumentOutline();
                         if (outline != null) {
                             loadOutlineItem(outline, outlineRoot);
@@ -479,7 +445,7 @@ public class PdfViewController extends PdfViewController_Html {
 
     @Override
     protected boolean loadThumbs(List<Integer> missed) {
-        try ( PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
+        try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
             PDFRenderer renderer = new PDFRenderer(doc);
             for (Integer index : missed) {
                 if (thumbTask == null || thumbTask.isCancelled()) {
@@ -547,6 +513,12 @@ public class PdfViewController extends PdfViewController_Html {
         } catch (Exception e) {
         }
         super.cleanPane();
+    }
+
+    @FXML
+    @Override
+    public void playAction() {
+        ImagesPlayController.playPDF(sourceFile, password);
     }
 
     /*

@@ -17,7 +17,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" alignment="CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.OperationController">
+<VBox fx:id="thisPane" alignment="CENTER" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.OperationController">
     <children>
         <HBox fx:id="barBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
             <children>
@@ -33,24 +33,6 @@ License:    Apache License Version 2.0
                 <Button fx:id="pauseButton" disable="true" mnemonicParsing="false" onAction="#pauseProcess" text="%Pause" visible="false" HBox.hgrow="NEVER" />
                 <ProgressBar fx:id="progressBar" maxWidth="1.7976931348623157E308" progress="0.0" HBox.hgrow="ALWAYS" />
                 <Label fx:id="progressValue" prefWidth="110.0" HBox.hgrow="NEVER" />
-                <Button fx:id="openTargetButton" mnemonicParsing="false" onAction="#openTarget" HBox.hgrow="NEVER">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconOpen.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <CheckBox fx:id="openCheck" mnemonicParsing="false">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconOpenPath.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </CheckBox>
                 <CheckBox fx:id="miaoCheck" mnemonicParsing="false" HBox.hgrow="NEVER">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -60,11 +42,29 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </CheckBox>
+                <CheckBox fx:id="openCheck" mnemonicParsing="false">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconOpenPath.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </CheckBox>
+                <Button fx:id="openTargetButton" mnemonicParsing="false" onAction="#openTarget" HBox.hgrow="NEVER">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconOpenPath.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
             </children>
             <VBox.margin>
                 <Insets />
             </VBox.margin>
         </HBox>
-          <TextField fx:id="statusLabel" editable="false" focusTraversable="false" maxWidth="1.7976931348623157E308" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" />
+        <TextField fx:id="statusInput" editable="false" focusTraversable="false" maxWidth="1.7976931348623157E308" styleClass="copyable-label" stylesheets="@../styles/MyBox.css" />
     </children>
 </VBox>

@@ -306,16 +306,16 @@ public class ImageGifFile {
                 if (javax_imageio_gif_stream.containsKey("LogicalScreenDescriptor")) {
                     Map<String, Object> LogicalScreenDescriptor = javax_imageio_gif_stream.get("LogicalScreenDescriptor").get(0);
                     if (LogicalScreenDescriptor.containsKey("logicalScreenWidth")) {
-                        info.setNativeAttribute("logicalScreenWidth", Integer.valueOf((String) LogicalScreenDescriptor.get("logicalScreenWidth")));
+                        info.setNativeAttribute("logicalScreenWidth", Integer.parseInt((String) LogicalScreenDescriptor.get("logicalScreenWidth")));
                     }
                     if (LogicalScreenDescriptor.containsKey("logicalScreenHeight")) {
-                        info.setNativeAttribute("logicalScreenHeight", Integer.valueOf((String) LogicalScreenDescriptor.get("logicalScreenHeight")));
+                        info.setNativeAttribute("logicalScreenHeight", Integer.parseInt((String) LogicalScreenDescriptor.get("logicalScreenHeight")));
                     }
                     if (LogicalScreenDescriptor.containsKey("colorResolution")) {
-                        info.setNativeAttribute("colorResolution", Integer.valueOf((String) LogicalScreenDescriptor.get("colorResolution")));
+                        info.setNativeAttribute("colorResolution", Integer.parseInt((String) LogicalScreenDescriptor.get("colorResolution")));
                     }
                     if (LogicalScreenDescriptor.containsKey("pixelAspectRatio")) {
-                        int v = Integer.valueOf((String) LogicalScreenDescriptor.get("pixelAspectRatio"));
+                        int v = Integer.parseInt((String) LogicalScreenDescriptor.get("pixelAspectRatio"));
                         if (v == 0) {
                             info.setNativeAttribute("pixelAspectRatio", 1);
                         } else {
@@ -326,10 +326,10 @@ public class ImageGifFile {
                 if (javax_imageio_gif_stream.containsKey("GlobalColorTable")) {
                     Map<String, Object> GlobalColorTable = javax_imageio_gif_stream.get("GlobalColorTable").get(0);
                     if (GlobalColorTable.containsKey("sizeOfGlobalColorTable")) {
-                        info.setNativeAttribute("sizeOfGlobalColorTable", Integer.valueOf((String) GlobalColorTable.get("sizeOfGlobalColorTable")));
+                        info.setNativeAttribute("sizeOfGlobalColorTable", Integer.parseInt((String) GlobalColorTable.get("sizeOfGlobalColorTable")));
                     }
                     if (GlobalColorTable.containsKey("backgroundColorIndex")) {
-                        info.setNativeAttribute("backgroundColorIndex", Integer.valueOf((String) GlobalColorTable.get("backgroundColorIndex")));
+                        info.setNativeAttribute("backgroundColorIndex", Integer.parseInt((String) GlobalColorTable.get("backgroundColorIndex")));
                     }
                     if (GlobalColorTable.containsKey("sortFlag")) {
                         info.setNativeAttribute("sortFlag", (String) GlobalColorTable.get("sortFlag"));
@@ -384,7 +384,7 @@ public class ImageGifFile {
                     if (GraphicControlExtension.containsKey("delayTime")) {   // in hundredths of a second
                         info.setNativeAttribute("delayTime", GraphicControlExtension.get("delayTime"));
                         try {
-                            int v = Integer.valueOf((String) GraphicControlExtension.get("delayTime"));
+                            int v = Integer.parseInt((String) GraphicControlExtension.get("delayTime"));
                             info.setDuration(v * 10);
                         } catch (Exception e) {
                         }

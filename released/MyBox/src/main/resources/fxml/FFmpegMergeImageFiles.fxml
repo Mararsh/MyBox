@@ -8,6 +8,7 @@ License:    Apache License Version 2.0
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
@@ -27,11 +28,11 @@ License:    Apache License Version 2.0
     <center>
         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
             <children>
-                <TabPane fx:id="batchTabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                     <tabs>
                         <Tab fx:id="imagesTab" text="%Images">
                             <content>
-                                <fx:include fx:id="table" source="FFmpegImageFilesTable.fxml" HBox.hgrow="ALWAYS" />
+                                <fx:include fx:id="table" source="FFmpegImageControlFilesTable.fxml" HBox.hgrow="ALWAYS" />
                             </content>
                         </Tab>
                         <Tab fx:id="audiosTab" text="%Audios">
@@ -76,6 +77,7 @@ License:    Apache License Version 2.0
                                             <children>
                                                 <Label text="%MaxCharacters" />
                                                 <TextField fx:id="maxCharsinput" prefWidth="80.0" text="5000" />
+                                    <CheckBox fx:id="verboseCheck" mnemonicParsing="false" selected="true" text="%VerboseLogs" />
                                                 <Button fx:id="clearButton1" mnemonicParsing="false" onAction="#clearLogs">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

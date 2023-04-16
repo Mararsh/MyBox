@@ -87,7 +87,7 @@ public class Data2DMenuTools {
             dataMenu.getItems().add(new SeparatorMenuItem());
 
             if (data2D != null && data2D.isDataFile()) {
-                menu = new MenuItem(message("Open"), StyleTools.getIconImageView("iconOpen.png"));
+                menu = new MenuItem(message("Open"), StyleTools.getIconImageView("iconSelectFile.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     controller.selectSourceFile();
                 });
@@ -265,7 +265,7 @@ public class Data2DMenuTools {
 
             Menu calMenu = new Menu(message("Calculation"), StyleTools.getIconImageView("iconCalculator.png"));
 
-            menu = new MenuItem(message("RowExpression"), StyleTools.getIconImageView("iconCalculate.png"));
+            menu = new MenuItem(message("RowExpression"), StyleTools.getIconImageView("iconNewItem.png"));
             menu.setOnAction((ActionEvent event) -> {
                 Data2DRowExpressionController.open(controller);
             });

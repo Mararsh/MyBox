@@ -260,7 +260,7 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
 
     private void checkSize() {
         try {
-            width = Integer.valueOf(widthBox.getSelectionModel().getSelectedItem());
+            width = Integer.parseInt(widthBox.getSelectionModel().getSelectedItem());
             if (width > 2 && width % 2 != 0) {
                 ValidationTools.setEditorNormal(widthBox);
             } else {
@@ -273,7 +273,7 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
         }
 
         try {
-            height = Integer.valueOf(heightBox.getSelectionModel().getSelectedItem());
+            height = Integer.parseInt(heightBox.getSelectionModel().getSelectedItem());
             if (height > 2 && height % 2 != 0) {
                 ValidationTools.setEditorNormal(heightBox);
             } else {
@@ -368,7 +368,7 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
             for (int i = 0; i < width; ++i) {
                 TextField valueInput = matrixInputs[j][i];
                 try {
-                    matrixValues[j][i] = Float.valueOf(valueInput.getText());
+                    matrixValues[j][i] = Float.parseFloat(valueInput.getText());
                     valueInput.setStyle(null);
                 } catch (Exception e) {
                     matrixValid = false;

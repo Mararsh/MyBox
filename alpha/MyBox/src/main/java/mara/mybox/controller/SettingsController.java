@@ -73,7 +73,7 @@ public class SettingsController extends BaseController {
     protected ToggleGroup langGroup, pdfMemGroup, controlColorGroup, derbyGroup, splitPanesGroup;
     @FXML
     protected CheckBox closeCurrentCheck, recordWindowsSizeLocationCheck, clearExpiredCheck,
-            anchorSolidCheck, controlsTextCheck, shortcutsCanNotOmitCheck,
+            anchorSolidCheck, controlsTextCheck, shortcutsCanNotOmitCheck, icons40pxCheck,
             copyCurrentDataPathCheck, clearCurrentRootCheck, splitPaneSensitiveCheck,
             mousePassControlPanesCheck, popColorSetCheck, stopAlarmCheck;
     @FXML
@@ -189,6 +189,7 @@ public class SettingsController extends BaseController {
             }
 
             controlsTextCheck.setSelected(AppVariables.controlDisplayText);
+            icons40pxCheck.setSelected(AppVariables.icons40px);
             splitPaneSensitiveCheck.setSelected(UserConfig.getBoolean("ControlSplitPanesSensitive", false));
             mousePassControlPanesCheck.setSelected(UserConfig.getBoolean("MousePassControlPanes", true));
             popColorSetCheck.setSelected(UserConfig.getBoolean("PopColorSetWhenMouseHovering", true));
@@ -294,6 +295,18 @@ public class SettingsController extends BaseController {
                     }
                     AppVariables.controlDisplayText = controlsTextCheck.isSelected();
                     UserConfig.setBoolean("ControlDisplayText", AppVariables.controlDisplayText);
+                    refreshInterfaceAll();
+                }
+            });
+
+            icons40pxCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    AppVariables.icons40px = icons40pxCheck.isSelected();
+                    UserConfig.setBoolean("Icons40px", AppVariables.icons40px);
                     refreshInterfaceAll();
                 }
             });

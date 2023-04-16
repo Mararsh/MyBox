@@ -130,7 +130,7 @@ public class PdfCompressImagesBatchController extends PdfImagesConvertBatchContr
     protected void checkJpegQuality() {
         jpegQuality = 100;
         try {
-            jpegQuality = Integer.valueOf(jpegBox.getSelectionModel().getSelectedItem());
+            jpegQuality = Integer.parseInt(jpegBox.getSelectionModel().getSelectedItem());
             if (jpegQuality >= 0 && jpegQuality <= 100) {
                 jpegBox.setStyle(null);
             } else {
@@ -148,7 +148,7 @@ public class PdfCompressImagesBatchController extends PdfImagesConvertBatchContr
                 thresholdInput.setStyle(null);
                 return;
             }
-            threshold = Integer.valueOf(thresholdInput.getText());
+            threshold = Integer.parseInt(thresholdInput.getText());
             if (threshold >= 0 && threshold <= 255) {
                 thresholdInput.setStyle(null);
             } else {

@@ -28,11 +28,11 @@ License:    Apache License Version 2.0
     <center>
         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
             <children>
-                <TabPane fx:id="batchTabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                     <tabs>
                         <Tab fx:id="sourceTab" text="%SourceFiles">
                             <content>
-                                <fx:include fx:id="table" source="FilesTable.fxml" />
+                                <fx:include fx:id="table" source="ControlFilesTable.fxml" />
                             </content>
                         </Tab>
                         <Tab fx:id="optionsTab" text="%Options">

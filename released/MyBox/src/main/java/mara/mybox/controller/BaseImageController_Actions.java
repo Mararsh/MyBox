@@ -2,22 +2,22 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.db.data.ImageClipboard;
@@ -25,7 +25,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.CropTools;
 import mara.mybox.fximage.TransformTools;
 import mara.mybox.fxml.ImageClipboardTools;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -49,12 +48,6 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                 if (operationBox != null) {
                     operationBox.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
                 }
-                if (leftPaneControl != null) {
-                    leftPaneControl.visibleProperty().bind(Bindings.isNotNull(imageView.imageProperty()));
-                }
-                if (rightPaneControl != null) {
-                    rightPaneControl.visibleProperty().bind(Bindings.isNotNull(imageView.imageProperty()));
-                }
             }
 
             if (selectAreaCheck != null) {
@@ -77,6 +70,12 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                         checkPickingColor();
                     }
                 });
+            }
+
+            if (leftPaneCheck != null) {
+                leftPaneCheck.setSelected(true);
+            } else {
+                showLeftPane();
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -349,13 +348,16 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     }
 
     @FXML
-    public void popFunctionsMenu(MouseEvent mouseEvent) {
+    public void popFunctionsMenu(Event event) {
+        if (UserConfig.getBoolean("ImageFunctionsPopWhenMouseHovering", true)) {
+            showFunctionsMenu(event);
+        }
+    }
+
+    @FXML
+    public void showFunctionsMenu(Event fevent) {
         try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+            List<MenuItem> items = new ArrayList<>();
 
             MenuItem menu;
 
@@ -368,12 +370,12 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                         UserConfig.setBoolean(baseName + "HandleSelectArea", handleSelectCheck.isSelected());
                     }
                 });
-                popMenu.getItems().add(handleSelectCheck);
-                popMenu.getItems().add(new SeparatorMenuItem());
+                items.add(handleSelectCheck);
+                items.add(new SeparatorMenuItem());
             }
 
             Menu viewMenu = new Menu(message("View"), StyleTools.getIconImageView("iconView.png"));
-            popMenu.getItems().add(viewMenu);
+            items.add(viewMenu);
 
             menu = new MenuItem(message("Pop"), StyleTools.getIconImageView("iconPop.png"));
             menu.setOnAction((ActionEvent event) -> {
@@ -414,10 +416,10 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             menu.setOnAction((ActionEvent event) -> {
                 manufactureAction();
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             Menu handleMenu = new Menu(message("Operation"), StyleTools.getIconImageView("iconAnalyse.png"));
-            popMenu.getItems().add(handleMenu);
+            items.add(handleMenu);
 
             menu = new MenuItem(message("Statistic"), StyleTools.getIconImageView("iconStatistic.png"));
             menu.setOnAction((ActionEvent event) -> {
@@ -460,7 +462,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             }
 
             Menu copyMenu = new Menu(message("Copy"), StyleTools.getIconImageView("iconCopy.png"));
-            popMenu.getItems().add(copyMenu);
+            items.add(copyMenu);
 
             menu = new MenuItem(message("CopyToSystemClipboard"), StyleTools.getIconImageView("iconCopySystem.png"));
             menu.setOnAction((ActionEvent event) -> {
@@ -487,25 +489,26 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             });
             copyMenu.getItems().add(menu);
 
-            popMenu.getItems().add(new SeparatorMenuItem());
+            items.add(new SeparatorMenuItem());
             menu = new MenuItem(message("Settings"), StyleTools.getIconImageView("iconSetting.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 settings();
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            popItem.setSelected(UserConfig.getBoolean("ImageFunctionsPopWhenMouseHovering", true));
+            popItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    popMenu.hide();
+                    UserConfig.setBoolean("ImageFunctionsPopWhenMouseHovering", popItem.isSelected());
                 }
             });
-            popMenu.getItems().add(menu);
+            items.add(popItem);
 
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            popEventMenu(fevent, items);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -613,8 +616,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                     if (bufferedImage == null || task == null || isCancelled()) {
                         return false;
                     }
-                    boolean multipleFrames = srcFile != null && framesNumber > 1;
-                    if (multipleFrames) {
+                    if (srcFile != null && framesNumber > 1) {
                         error = ImageFileWriters.writeFrame(srcFile, frameIndex, bufferedImage, newfile, null);
                         return error == null;
                     } else {

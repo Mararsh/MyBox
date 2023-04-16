@@ -1,7 +1,6 @@
 package mara.mybox.fxml;
 
 import java.awt.Point;
-import java.awt.Robot;
 import javafx.event.Event;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
@@ -9,6 +8,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
+import javafx.scene.robot.Robot;
 import javafx.stage.PopupWindow;
 import javafx.stage.Stage;
 import mara.mybox.dev.MyBoxLog;
@@ -101,8 +101,20 @@ public class LocateTools {
     }
 
     public static void locateEvent(Event event, PopupWindow window) {
-        Point2D everntCoord = LocateTools.getScreenCoordinate(event);
-        window.show((Node) event.getSource(), everntCoord.getX(), everntCoord.getY() + LocateTools.PopOffsetY);
+        if (window == null || event == null) {
+            return;
+        }
+        double x, y;
+        try {
+            Point2D everntCoord = LocateTools.getScreenCoordinate(event);
+            x = everntCoord.getX();
+            y = everntCoord.getY() + LocateTools.PopOffsetY;
+        } catch (Exception e) {
+            javafx.scene.robot.Robot r = new javafx.scene.robot.Robot();
+            x = r.getMouseX();
+            y = r.getMouseY() + PopOffsetY;
+        }
+        window.show((Node) event.getSource(), x, y);
     }
 
     public static void locateMouse(Node owner, PopupWindow window) {

@@ -82,7 +82,7 @@ public class HtmlSnapController extends WebAddressController {
                 @Override
                 public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v > 0) {
                             delay = v * 1000;
                             UserConfig.setInt(baseName + "Delay", v);

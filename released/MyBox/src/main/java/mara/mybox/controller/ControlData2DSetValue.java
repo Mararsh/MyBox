@@ -254,7 +254,7 @@ public class ControlData2DSetValue extends BaseController {
                 setValue.setType(SetValue.ValueType.SuffixNumber).setFillZero(false).setAotoDigit(false);
                 int start;
                 try {
-                    start = Integer.valueOf(startInput.getText().trim());
+                    start = Integer.parseInt(startInput.getText().trim());
                     UserConfig.setInt(baseName + "Start", start);
                 } catch (Exception e) {
                     outError(message("Invalid") + ": " + message("AddSequenceNumber") + " - " + message("Start"));
@@ -269,7 +269,7 @@ public class ControlData2DSetValue extends BaseController {
                             digit = 0;
                             setValue.setAotoDigit(true);
                         } else {
-                            digit = Integer.valueOf(digitInput.getText());
+                            digit = Integer.parseInt(digitInput.getText());
                         }
                         UserConfig.setInt(baseName + "Digit", digit);
                     } catch (Exception e) {

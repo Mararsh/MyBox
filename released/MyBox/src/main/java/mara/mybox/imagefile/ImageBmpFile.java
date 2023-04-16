@@ -144,31 +144,31 @@ public class ImageBmpFile {
             if (javax_imageio_bmp.containsKey("Width")) {
                 Map<String, Object> Width = javax_imageio_bmp.get("Width").get(0);
                 if (Width.containsKey("value")) {
-                    info.setWidth(Integer.valueOf((String) Width.get("value")));
+                    info.setWidth(Integer.parseInt((String) Width.get("value")));
                 }
             }
             if (javax_imageio_bmp.containsKey("Height")) {
                 Map<String, Object> Height = javax_imageio_bmp.get("Height").get(0);
                 if (Height.containsKey("value")) {
-                    info.setHeight(Integer.valueOf((String) Height.get("value")));
+                    info.setHeight(Integer.parseInt((String) Height.get("value")));
                 }
             }
             if (javax_imageio_bmp.containsKey("X")) {    // PixelsPerMeter
                 Map<String, Object> X = javax_imageio_bmp.get("X").get(0);
                 if (X.containsKey("value")) {
-                    info.setXDpi(ImageConvertTools.dpm2dpi(Integer.valueOf((String) X.get("value"))));
+                    info.setXDpi(ImageConvertTools.dpm2dpi(Integer.parseInt((String) X.get("value"))));
                 }
             }
             if (javax_imageio_bmp.containsKey("Y")) {   // PixelsPerMeter
                 Map<String, Object> Y = javax_imageio_bmp.get("Y").get(0);
                 if (Y.containsKey("value")) {
-                    info.setYDpi(ImageConvertTools.dpm2dpi(Integer.valueOf((String) Y.get("value"))));
+                    info.setYDpi(ImageConvertTools.dpm2dpi(Integer.parseInt((String) Y.get("value"))));
                 }
             }
             if (javax_imageio_bmp.containsKey("BitsPerPixel")) {
                 Map<String, Object> BitsPerPixel = javax_imageio_bmp.get("BitsPerPixel").get(0);
                 if (BitsPerPixel.containsKey("value")) {
-                    info.setBitDepth(Integer.valueOf((String) BitsPerPixel.get("value")));
+                    info.setBitDepth(Integer.parseInt((String) BitsPerPixel.get("value")));
                 }
             }
             if (javax_imageio_bmp.containsKey("Compression")) {

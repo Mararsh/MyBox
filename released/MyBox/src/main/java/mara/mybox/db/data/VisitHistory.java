@@ -10,6 +10,8 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class VisitHistory extends BaseData {
 
+    public static final int Default_Max_Histories = 12;
+
     private short resourceType, fileType, operationType;
     private String resourceValue, dataMore;
     private Date lastVisitTime;
@@ -94,7 +96,8 @@ public class VisitHistory extends BaseData {
             return types;
 
         } else if (fileType == FileType.ImagesList) {
-            int[] types = {FileType.Image, FileType.PDF, FileType.PPT};
+            int[] types = {FileType.Image, FileType.Gif, FileType.Tif,
+                FileType.MultipleFrames, FileType.PDF, FileType.PPT};
             return types;
 
         } else {
@@ -185,56 +188,63 @@ public class VisitHistory extends BaseData {
         return resourceType;
     }
 
-    public void setResourceType(short resourceType) {
+    public VisitHistory setResourceType(short resourceType) {
         this.resourceType = resourceType;
+        return this;
     }
 
     public short getFileType() {
         return fileType;
     }
 
-    public void setFileType(short fileType) {
+    public VisitHistory setFileType(short fileType) {
         this.fileType = fileType;
+        return this;
     }
 
     public short getOperationType() {
         return operationType;
     }
 
-    public void setOperationType(short operationType) {
+    public VisitHistory setOperationType(short operationType) {
         this.operationType = operationType;
+        return this;
     }
 
     public String getResourceValue() {
         return resourceValue;
     }
 
-    public void setResourceValue(String resourceValue) {
+    public VisitHistory setResourceValue(String resourceValue) {
         this.resourceValue = resourceValue;
+        return this;
     }
 
     public String getDataMore() {
         return dataMore;
     }
 
-    public void setDataMore(String dataMore) {
+    public VisitHistory setDataMore(String dataMore) {
         this.dataMore = dataMore;
+        return this;
     }
 
     public Date getLastVisitTime() {
         return lastVisitTime;
     }
 
-    public void setLastVisitTime(Date lastVisitTime) {
+    public VisitHistory setLastVisitTime(Date lastVisitTime) {
         this.lastVisitTime = lastVisitTime;
+        return this;
     }
 
     public int getVisitCount() {
         return visitCount;
     }
 
-    public void setVisitCount(int visitCount) {
+    public VisitHistory setVisitCount(int visitCount) {
         this.visitCount = visitCount;
+        return this;
     }
 
 }

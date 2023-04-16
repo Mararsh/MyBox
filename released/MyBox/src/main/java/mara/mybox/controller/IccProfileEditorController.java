@@ -12,6 +12,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -86,7 +87,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             tagDisplay, tagNameDisplay, tagTypeDisplay, tagOffsetDisplay, tagSizeDisplay,
             maxDecodeInput;
     @FXML
-    protected CheckBox saveConfirmCheck, embedCheck, independentCheck, subsetCheck,
+    protected CheckBox embedCheck, independentCheck, subsetCheck,
             transparentcyCheck, matteCheck, negativeCheck, bwCheck, paperCheck, texturedCheck,
             isotropicCheck, selfLuminousCheck, idAutoCheck, lutNormalizeCheck, openExportCheck;
     @FXML
@@ -177,15 +178,6 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                 }
             });
 //            embedBox.getSelectionModel().select(0);
-
-            saveConfirmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov,
-                        Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean("IccEditerConfirmSave", newValue);
-                }
-            });
-            saveConfirmCheck.setSelected(UserConfig.getBoolean("IccEditerConfirmSave", true));
 
 //            saveButton.disableProperty().bind(profileVersionInput.styleProperty().isEqualTo(badStyle)
 //                    .or(createTimeInput.styleProperty().isEqualTo(badStyle))
@@ -1806,7 +1798,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
     }
 
     @FXML
-    public void popXmlPath(MouseEvent event) {
+    public void showXmlPathMenu(Event event) {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
@@ -1819,8 +1811,8 @@ public class IccProfileEditorController extends ChromaticityBaseController {
 
             @Override
             public List<VisitHistory> recentPaths() {
-                int pathNumber = AppVariables.fileRecentNumber / 3 + 1;
-                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Xml, pathNumber);
+                int pathNumber = AppVariables.fileRecentNumber / 4 + 1;
+                return VisitHistoryTools.getRecentPathWrite(VisitHistory.FileType.Xml, pathNumber);
             }
 
             @Override
@@ -1842,12 +1834,28 @@ public class IccProfileEditorController extends ChromaticityBaseController {
     }
 
     @FXML
+    public void pickXmlPath(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
+                || AppVariables.fileRecentNumber <= 0) {
+            exportXmlAction();
+        } else {
+            showXmlPathMenu(event);
+        }
+    }
+
+    @FXML
+    public void popXmlPath(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            showXmlPathMenu(event);
+        }
+    }
+
+    @FXML
     public void exportXmlAction() {
 //        if (!validateInputs()) {
 //            return;
 //        }
-
-        String name = null;
+        String name;
         if (isIccFile) {
             name = FileNameTools.prefix(sourceFile.getName());
         } else {

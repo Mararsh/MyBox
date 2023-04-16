@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
@@ -38,13 +37,15 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     @FXML
     protected ToggleGroup langGroup;
     @FXML
-    protected CheckMenuItem closeCurrentCheck, recordWindowsSizeLocationCheck, popRecentCheck, popColorSetCheck, controlPanesCheck,
-            controlTextCheck, hidpiIconsCheck;
+    protected CheckMenuItem shortcutsCanNotOmitCheck, clearExpiredDataCheck,
+            closeCurrentCheck, recordWindowsSizeLocationCheck, popRecentCheck,
+            popColorSetCheck, controlPanesCheck, controlTextCheck;
     @FXML
     protected RadioMenuItem chineseMenuItem, englishMenuItem,
             font12MenuItem, font15MenuItem, font17MenuItem,
             normalIconMenuItem, bigIconMenuItem, smallIconMenuItem,
-            pinkMenuItem, redMenuItem, blueMenuItem, lightBlueMenuItem, orangeMenuItem, greenMenuItem, colorCustomizeMenuItem;
+            pinkMenuItem, redMenuItem, blueMenuItem, lightBlueMenuItem, orangeMenuItem,
+            greenMenuItem, colorCustomizeMenuItem;
     @FXML
     protected Rectangle colorCustomizeRect;
     @FXML
@@ -82,11 +83,12 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
         checkFontSize();
         checkIconSize();
         controlTextCheck.setSelected(AppVariables.controlDisplayText);
-        hidpiIconsCheck.setSelected(AppVariables.hidpiIcons);
         closeCurrentCheck.setSelected(AppVariables.closeCurrentWhenOpenTool);
         recordWindowsSizeLocationCheck.setSelected(AppVariables.recordWindowsSizeLocation);
         popRecentCheck.setSelected(AppVariables.fileRecentNumber > 0);
         popColorSetCheck.setSelected(UserConfig.getBoolean("PopColorSetWhenMouseHovering", true));
+        shortcutsCanNotOmitCheck.setSelected(AppVariables.ShortcutsCanNotOmitCtrlAlt);
+        clearExpiredDataCheck.setSelected(UserConfig.getBoolean("ClearExpiredDataBeforeExit", true));
         controlPanesCheck.setSelected(UserConfig.getBoolean("MousePassControlPanes", true));
         checkControlColor();
     }
@@ -316,22 +318,6 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     }
 
     @FXML
-    protected void hidpiIcons(ActionEvent event) {
-        AppVariables.hidpiIcons = hidpiIconsCheck.isSelected();
-        UserConfig.setBoolean("HidpiIcons", AppVariables.hidpiIcons);
-        if (AppVariables.hidpiIcons) {
-            if (Toolkit.getDefaultToolkit().getScreenResolution() <= 120) {
-                parentController.alertInformation(Languages.message("HidpiIconsComments"));
-            }
-        } else {
-            if (Toolkit.getDefaultToolkit().getScreenResolution() > 120) {
-                parentController.alertInformation(Languages.message("HidpiIconsComments"));
-            }
-        }
-        refreshInterfaceAll();
-    }
-
-    @FXML
     protected void closeCurrentAction() {
         UserConfig.setBoolean("CloseCurrentWhenOpenTool", closeCurrentCheck.isSelected());
         AppVariables.closeCurrentWhenOpenTool = closeCurrentCheck.isSelected();
@@ -356,6 +342,17 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     @FXML
     protected void popColorSetAction() {
         UserConfig.setBoolean("PopColorSetWhenMouseHovering", popColorSetCheck.isSelected());
+    }
+
+    @FXML
+    protected void shortcutsCanNotOmitCtrlAlt() {
+        AppVariables.ShortcutsCanNotOmitCtrlAlt = shortcutsCanNotOmitCheck.isSelected();
+        UserConfig.setBoolean("ShortcutsCanNotOmitCtrlAlt", AppVariables.ShortcutsCanNotOmitCtrlAlt);
+    }
+
+    @FXML
+    protected void clearExpiredDataBeforeExit() {
+        UserConfig.setBoolean("ClearExpiredDataBeforeExit", clearExpiredDataCheck.isSelected());
     }
 
     @FXML

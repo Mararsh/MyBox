@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import mara.mybox.data.FileSynchronizeAttributes;
 import mara.mybox.dev.MyBoxLog;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -67,6 +68,10 @@ public class FileCopyTools {
     public static boolean copyWholeDirectory(File sourcePath, File targetPath, FileSynchronizeAttributes attr, boolean clearTarget) {
         try {
             if (sourcePath == null || !sourcePath.exists() || !sourcePath.isDirectory()) {
+                return false;
+            }
+            if (FileTools.isEqualOrSubPath(targetPath.getAbsolutePath(), sourcePath.getAbsolutePath())) {
+                MyBoxLog.error(message("TreeTargetComments"));
                 return false;
             }
             if (attr == null) {

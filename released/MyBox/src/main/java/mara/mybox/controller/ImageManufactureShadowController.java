@@ -46,7 +46,7 @@ public class ImageManufactureShadowController extends ImageManufactureOperationC
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v >= 0) {
                             shadow = v;
                             UserConfig.setString("ImageShadowSize", newValue);

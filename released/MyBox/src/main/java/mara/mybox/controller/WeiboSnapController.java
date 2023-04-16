@@ -196,7 +196,7 @@ public class WeiboSnapController extends BaseController {
                     return;
                 }
                 try {
-                    int v = Integer.valueOf(startPageInput.getText());
+                    int v = Integer.parseInt(startPageInput.getText());
                     if (v >= 1) {
                         startPageInput.setStyle(null);
                         startPage = v;
@@ -220,7 +220,7 @@ public class WeiboSnapController extends BaseController {
                     return;
                 }
                 try {
-                    int v = Integer.valueOf(likeStartPageInput.getText());
+                    int v = Integer.parseInt(likeStartPageInput.getText());
                     if (v >= 1) {
                         likeStartPageInput.setStyle(null);
                         likeStartPage = v;
@@ -326,7 +326,7 @@ public class WeiboSnapController extends BaseController {
             public void changed(ObservableValue<? extends String> ov,
                     String oldValue, String newValue) {
                 try {
-                    zoomScale = Float.valueOf(newValue);
+                    zoomScale = Float.parseFloat(newValue);
                     if (zoomScale > 0) {
                         UserConfig.setString(baseName + "Zoom", zoomScale + "");
                         if (zoomScale > 2) {
@@ -358,7 +358,7 @@ public class WeiboSnapController extends BaseController {
                         ValidationTools.setEditorNormal(widthBox);
                         return;
                     }
-                    webWidth = Integer.valueOf(newValue);
+                    webWidth = Integer.parseInt(newValue);
                     if (webWidth > 0) {
                         ValidationTools.setEditorNormal(widthBox);
                     } else {
@@ -449,7 +449,7 @@ public class WeiboSnapController extends BaseController {
     private void checkJpegQuality() {
         jpegQuality = 100;
         try {
-            jpegQuality = Integer.valueOf(jpegBox.getSelectionModel().getSelectedItem());
+            jpegQuality = Integer.parseInt(jpegBox.getSelectionModel().getSelectedItem());
             if (jpegQuality >= 0 && jpegQuality <= 100) {
                 jpegBox.setStyle(null);
             } else {
@@ -467,7 +467,7 @@ public class WeiboSnapController extends BaseController {
                 thresholdInput.setStyle(null);
                 return;
             }
-            threshold = Integer.valueOf(thresholdInput.getText());
+            threshold = Integer.parseInt(thresholdInput.getText());
             if (threshold >= 0 && threshold <= 255) {
                 thresholdInput.setStyle(null);
             } else {
@@ -537,7 +537,7 @@ public class WeiboSnapController extends BaseController {
             public void changed(ObservableValue<? extends String> ov,
                     String oldValue, String newValue) {
                 try {
-                    marginSize = Integer.valueOf(newValue);
+                    marginSize = Integer.parseInt(newValue);
                     if (marginSize >= 0) {
                         ValidationTools.setEditorNormal(MarginsBox);
                     } else {
@@ -559,7 +559,7 @@ public class WeiboSnapController extends BaseController {
             public void changed(ObservableValue<? extends String> ov,
                     String oldValue, String newValue) {
                 try {
-                    pdfScale = Integer.valueOf(newValue);
+                    pdfScale = Integer.parseInt(newValue);
                     if (pdfScale >= 0) {
                         ValidationTools.setEditorNormal(pdfScaleBox);
                     } else {
@@ -708,7 +708,7 @@ public class WeiboSnapController extends BaseController {
             return;
         }
         try {
-            pageWidth = Integer.valueOf(customWidthInput.getText());
+            pageWidth = Integer.parseInt(customWidthInput.getText());
             if (pageWidth > 0) {
                 customWidthInput.setStyle(null);
             } else {
@@ -721,7 +721,7 @@ public class WeiboSnapController extends BaseController {
         }
 
         try {
-            pageHeight = Integer.valueOf(customHeightInput.getText());
+            pageHeight = Integer.parseInt(customHeightInput.getText());
             if (pageHeight > 0) {
                 customHeightInput.setStyle(null);
             } else {
@@ -743,7 +743,7 @@ public class WeiboSnapController extends BaseController {
             public void changed(ObservableValue<? extends String> ov,
                     String oldValue, String newValue) {
                 try {
-                    retry = Integer.valueOf(newValue);
+                    retry = Integer.parseInt(newValue);
                     if (retry > 0) {
                         UserConfig.setString(baseName + "Retry", retry + "");
                     } else {

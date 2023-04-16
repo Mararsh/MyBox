@@ -17,8 +17,8 @@ import javafx.scene.layout.HBox;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.converter.IntegerStringFromatConverter;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
+import mara.mybox.fxml.converter.IntegerStringFromatConverter;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.Languages;
@@ -91,20 +91,19 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
                         = new TableAutoCommitCell<PdfInformation, Integer>(new IntegerStringFromatConverter()) {
 
                     @Override
-                    public void commitEdit(Integer value) {
+                    public boolean setCellValue(Integer value) {
                         try {
-                            int rowIndex = rowIndex();
-                            if (rowIndex < 0 || value == null || value < 0) {
+                            if (value == null || value <= 0 || !isEditingRow()) {
                                 cancelEdit();
-                                return;
+                                return false;
                             }
-                            super.commitEdit(value);
-                            PdfInformation row = tableData.get(rowIndex);
+                            PdfInformation row = tableData.get(editingRow);
                             row.setFromPage(value);
+                            return super.setCellValue(value);
                         } catch (Exception e) {
                             MyBoxLog.debug(e);
+                            return false;
                         }
-
                     }
                 };
                 return cell;
@@ -117,18 +116,18 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
                         = new TableAutoCommitCell<PdfInformation, Integer>(new IntegerStringFromatConverter()) {
 
                     @Override
-                    public void commitEdit(Integer value) {
+                    public boolean setCellValue(Integer value) {
                         try {
-                            int rowIndex = rowIndex();
-                            if (rowIndex < 0 || value == null) {
+                            if (value == null || !isEditingRow()) {
                                 cancelEdit();
-                                return;
+                                return false;
                             }
-                            super.commitEdit(value);
-                            PdfInformation row = tableData.get(rowIndex);
+                            PdfInformation row = tableData.get(editingRow);
                             row.setToPage(value);
+                            return super.setCellValue(value);
                         } catch (Exception e) {
                             MyBoxLog.debug(e);
+                            return false;
                         }
 
                     }
@@ -180,14 +179,6 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
             setAllOrSelectedButton.disableProperty().bind(fromInput.styleProperty().isEqualTo(UserConfig.badStyle())
                     .or(toInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
-
-            tableSubdirCheck.setSelected(UserConfig.getBoolean("PDFTableSubDir", true));
-            tableSubdirCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean("PDFTableSubDir", tableSubdirCheck.isSelected());
-                }
-            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

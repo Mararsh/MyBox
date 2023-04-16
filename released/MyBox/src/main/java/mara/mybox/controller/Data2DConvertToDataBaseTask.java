@@ -44,6 +44,8 @@ public class Data2DConvertToDataBaseTask extends Data2DTableCreateController {
     @Override
     public void beforeTask() {
         try {
+            super.beforeTask();
+
             convertController.dataVBox.setDisable(true);
             convertController.attributesBox.setDisable(true);
             convertController.filterVBox.setDisable(true);
@@ -61,7 +63,7 @@ public class Data2DConvertToDataBaseTask extends Data2DTableCreateController {
 
     @Override
     public boolean doTask() {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             attributesController.columnIndices = convertController.checkedColsIndices;
             if (!attributesController.createTable(conn)) {
                 return false;
@@ -98,6 +100,7 @@ public class Data2DConvertToDataBaseTask extends Data2DTableCreateController {
     @Override
     public void afterTask() {
         try {
+            super.afterTask();
             convertController.dataVBox.setDisable(false);
             convertController.filterVBox.setDisable(false);
             convertController.attributesBox.setDisable(false);

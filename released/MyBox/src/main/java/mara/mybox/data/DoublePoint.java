@@ -73,7 +73,7 @@ public class DoublePoint {
             if (vs == null || vs.length < 2) {
                 return null;
             }
-            return new DoublePoint(Double.valueOf(vs[0]), Double.valueOf(vs[1]));
+            return new DoublePoint(Double.parseDouble(vs[0]), Double.parseDouble(vs[1]));
         } catch (Exception e) {
             return null;
         }

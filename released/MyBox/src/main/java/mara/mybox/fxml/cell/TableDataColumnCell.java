@@ -21,12 +21,13 @@ public class TableDataColumnCell<S, T> extends TableAutoCommitCell<S, T> {
     }
 
     @Override
-    public void startEdit() {
-        Data2DColumnEditController.open(columnsControl, rowIndex());
+    public void editCell() {
+        Data2DColumnEditController.open(columnsControl, editingRow);
     }
 
     @Override
-    public void commitEdit(T value) {
+    public boolean setCellValue(T value) {
+        return true;
     }
 
     public static <S, T> Callback<TableColumn<S, T>, TableCell<S, T>> create(ControlData2DColumns columnsControl) {

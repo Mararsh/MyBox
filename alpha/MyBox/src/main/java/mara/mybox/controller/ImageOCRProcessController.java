@@ -16,6 +16,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.bufferedimage.ImageBinary;
@@ -255,6 +256,8 @@ public class ImageOCRProcessController extends ImageViewerController {
                 });
                 items.add(menu);
             }
+
+            items.add(new SeparatorMenuItem());
 
             popEventMenu(mouseEvent, items);
 

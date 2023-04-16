@@ -489,22 +489,22 @@ public class XYChartMaker<X, Y> extends XYChartOptions<X, Y> {
                 categoryName = xyChart.getXAxis().getLabel();
                 category = item.getXValue() == null ? "" : item.getXValue().toString();
                 if (categoryIsNumbers) {
-                    categoryDis = NumberTools.format(ChartTools.realValue(xCoordinate, Double.valueOf(category)), scale);
+                    categoryDis = NumberTools.format(ChartTools.realValue(xCoordinate, Double.parseDouble(category)), scale);
                 } else {
                     categoryDis = category;
                 }
                 number = item.getYValue() == null ? "" : item.getYValue().toString();
-                numberDis = NumberTools.format(ChartTools.realValue(yCoordinate, Double.valueOf(number)), scale);
+                numberDis = NumberTools.format(ChartTools.realValue(yCoordinate, Double.parseDouble(number)), scale);
             } else {
                 categoryName = xyChart.getYAxis().getLabel();
                 category = item.getYValue() == null ? "" : item.getYValue().toString();
                 if (categoryIsNumbers) {
-                    categoryDis = NumberTools.format(ChartTools.realValue(yCoordinate, Double.valueOf(category)), scale);
+                    categoryDis = NumberTools.format(ChartTools.realValue(yCoordinate, Double.parseDouble(category)), scale);
                 } else {
                     categoryDis = category;
                 }
                 number = item.getXValue() == null ? "" : item.getXValue().toString();
-                numberDis = NumberTools.format(ChartTools.realValue(xCoordinate, Double.valueOf(number)), scale);
+                numberDis = NumberTools.format(ChartTools.realValue(xCoordinate, Double.parseDouble(number)), scale);
             }
 
             if (item.getExtraValue() != null) {

@@ -970,7 +970,7 @@ public class DataTableGroup {
                                 String v = column.toString(tmpRow.getColumnValue(tmpColName));
                                 rowStrings.add(v);
                             }
-                            rowIndex = Long.valueOf(rowStrings.get(1));
+                            rowIndex = Long.parseLong(rowStrings.get(1));
                             if (filter.filterDataRow(tmpData, rowStrings, rowIndex)) {
                                 if (++groupCurrentSize <= fmax) {
                                     writeRow(tmpRow);

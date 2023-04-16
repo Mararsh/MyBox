@@ -3,17 +3,23 @@ package mara.mybox.controller;
 import java.io.File;
 import java.net.URI;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.Region;
+import javafx.scene.robot.Robot;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mara.mybox.dev.MyBoxLog;
@@ -22,7 +28,7 @@ import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
-import static mara.mybox.fxml.WindowTools.recordError;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -110,6 +116,11 @@ public abstract class BaseController_Actions extends BaseController_Interface {
 
     @FXML
     public void addRowsAction() {
+
+    }
+
+    @FXML
+    public void deleteRowsAction() {
 
     }
 
@@ -226,6 +237,15 @@ public abstract class BaseController_Actions extends BaseController_Interface {
     }
 
     @FXML
+    public void openSourcePath() {
+        if (sourceFile != null && sourceFile.exists()) {
+            browse(sourceFile.getParentFile());
+        } else {
+            popError(message("NoFileOpened"));
+        }
+    }
+
+    @FXML
     public void infoAction() {
 
     }
@@ -291,6 +311,11 @@ public abstract class BaseController_Actions extends BaseController_Interface {
     }
 
     @FXML
+    public void refreshAction() {
+
+    }
+
+    @FXML
     public boolean popAction() {
         return false;
     }
@@ -346,44 +371,15 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         }
     }
 
+    @FXML
     public void clearExpiredData() {
-        if (task != null && !task.isQuit()) {
-            return;
-        }
-        task = new SingletonTask<Void>(myController) {
-
-            private String info;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    WindowTools.clearExpiredData(task);
-                    info = task.getInfo();
-                    return true;
-                } catch (Exception e) {
-                    recordError(task, e.toString());
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                if (info != null && !info.isBlank()) {
-                    TextPopController.loadText(myController, info);
-                } else {
-                    popSuccessful();
-                }
-            }
-        };
-        start(task);
+        ClearExpiredDataController.open(false);
     }
 
     public void view(File file) {
-        ControllerTools.openTarget(null, file.getAbsolutePath());
-    }
-
-    public void view(String file) {
-        ControllerTools.openTarget(null, file);
+        if (file != null) {
+            ControllerTools.openTarget(file.getAbsolutePath());
+        }
     }
 
     public void browse(File file) {
@@ -548,6 +544,70 @@ public abstract class BaseController_Actions extends BaseController_Interface {
             MyBoxLog.debug(e.toString());
         }
 
+    }
+
+    @FXML
+    protected void popHtmlHelps(Event event) {
+        if (UserConfig.getBoolean("HtmlHelpsPopWhenMouseHovering", false)) {
+            showHtmlHelps(event);
+        }
+    }
+
+    @FXML
+    protected void showHtmlHelps(Event event) {
+        popEventMenu(event, HelpTools.htmlHelps(myController));
+    }
+
+    public void popEventMenu(Event event, List<MenuItem> menuItems) {
+        if (event == null || menuItems == null || menuItems.isEmpty()) {
+            return;
+        }
+        popNodeMenu((Node) event.getSource(), menuItems);
+    }
+
+    public void popNodeMenu(Node node, List<MenuItem> menuItems) {
+        if (node == null || menuItems == null || menuItems.isEmpty()) {
+            return;
+        }
+        Robot robot = new Robot();
+        popMenu(node, menuItems, robot.getMouseX() + 10, robot.getMouseY() + 10);
+    }
+
+    public void popCenterMenu(Node node, List<MenuItem> menuItems) {
+        if (node == null || menuItems == null || menuItems.isEmpty()) {
+            return;
+        }
+        Bounds bounds = node.localToScreen(node.getBoundsInLocal());
+        popMenu(node, menuItems,
+                bounds.getMinX() + bounds.getWidth() / 2,
+                bounds.getMinY() + bounds.getHeight() / 2);
+    }
+
+    public void popMenu(Node node, List<MenuItem> menuItems, double x, double y) {
+        if (node == null || menuItems == null || menuItems.isEmpty()) {
+            return;
+        }
+        List<MenuItem> items = new ArrayList<>();
+        items.addAll(menuItems);
+
+        MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
+        menu.setStyle("-fx-text-fill: #2e598a;");
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            if (popMenu != null && popMenu.isShowing()) {
+                popMenu.hide();
+            }
+            popMenu = null;
+        });
+        items.add(menu);
+
+        if (popMenu != null && popMenu.isShowing()) {
+            popMenu.hide();
+        }
+        popMenu = new ContextMenu();
+        popMenu.setAutoHide(true);
+        popMenu.getItems().addAll(items);
+
+        popMenu.show(node, x, y);
     }
 
 }

@@ -9,7 +9,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -83,6 +82,10 @@ public class MenuController extends BaseChildController {
             initX = x;
             initY = y;
             thisPane.requestFocus();
+            if (openSourceButton != null) {
+                openSourceButton.setDisable(parentController.sourceFile == null
+                        || !parentController.sourceFile.exists());
+            }
 
             Window window = getMyWindow();
             if (window instanceof Popup) {
@@ -179,8 +182,9 @@ public class MenuController extends BaseChildController {
     }
 
     @FXML
-    public void popFunctionsMenu(MouseEvent mouseEvent) {
-
+    @Override
+    public void openSourcePath() {
+        parentController.openSourcePath();
     }
 
     @FXML

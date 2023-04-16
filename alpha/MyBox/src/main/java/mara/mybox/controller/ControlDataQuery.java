@@ -11,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
@@ -392,6 +393,8 @@ public class ControlDataQuery extends BaseController {
             });
             items.add(menu);
 
+            items.add(new SeparatorMenuItem());
+
             popEventMenu(mouseEvent, items);
 
         } catch (Exception e) {
@@ -427,6 +430,8 @@ public class ControlDataQuery extends BaseController {
                 whereInput.insertText(whereInput.getAnchor(), "FALSE ");
             });
             items.add(menu);
+
+            items.add(new SeparatorMenuItem());
 
             popEventMenu(mouseEvent, items);
 

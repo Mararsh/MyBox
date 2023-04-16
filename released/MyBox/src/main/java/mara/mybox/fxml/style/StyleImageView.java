@@ -16,9 +16,6 @@ public class StyleImageView {
         if (id.startsWith("rightTips")) {
             return new StyleData(id, "", "", "iconTipsRight.png");
         }
-        if (id.startsWith("sample")) {
-            return new StyleData(id, "", "", "iconSampled.png");
-        }
         if (id.startsWith("leftPane")) {
             return new StyleData(id, "", "F4", "iconDoubleLeft.png");
         }

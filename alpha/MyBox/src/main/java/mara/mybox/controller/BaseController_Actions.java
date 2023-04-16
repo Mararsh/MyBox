@@ -18,7 +18,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.layout.Region;
 import javafx.scene.robot.Robot;
 import javafx.stage.Modality;
@@ -571,7 +570,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
             return;
         }
         Robot robot = new Robot();
-        popMenu(node, menuItems, robot.getMouseX() + 10, robot.getMouseY() + 10, true);
+        popMenu(node, menuItems, robot.getMouseX() + 10, robot.getMouseY() + 10);
     }
 
     public void popCenterMenu(Node node, List<MenuItem> menuItems) {
@@ -581,20 +580,15 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         Bounds bounds = node.localToScreen(node.getBoundsInLocal());
         popMenu(node, menuItems,
                 bounds.getMinX() + bounds.getWidth() / 2,
-                bounds.getMinY() + bounds.getHeight() / 2,
-                false);
+                bounds.getMinY() + bounds.getHeight() / 2);
     }
 
-    public void popMenu(Node node, List<MenuItem> menuItems, double x, double y, boolean separator) {
+    public void popMenu(Node node, List<MenuItem> menuItems, double x, double y) {
         if (node == null || menuItems == null || menuItems.isEmpty()) {
             return;
         }
         List<MenuItem> items = new ArrayList<>();
         items.addAll(menuItems);
-
-        if (separator) {
-            items.add(new SeparatorMenuItem());
-        }
 
         MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
         menu.setStyle("-fx-text-fill: #2e598a;");

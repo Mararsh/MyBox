@@ -26,7 +26,7 @@ import mara.mybox.value.AppVariables;
 public class NodeStyleTools {
 
     public static String errorDataStyle() {
-        return "-fx-background-color: #e5fbe5;";
+        return "-fx-background-color: #FFF0F5;";
     }
 
     public static String blueTextStyle() {

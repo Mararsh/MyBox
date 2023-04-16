@@ -147,7 +147,7 @@ License:    Apache License Version 2.0
                                         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                             <children>
                                                 <Label maxWidth="1.7976931348623157E308" visible="false" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="saveCertButton" mnemonicParsing="false" onAction="#saveCert" onMouseEntered="#popSaveCert">
+                                                <Button fx:id="saveCertButton" mnemonicParsing="false" onAction="#pickSaveCert" onMouseEntered="#popSaveCert">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>

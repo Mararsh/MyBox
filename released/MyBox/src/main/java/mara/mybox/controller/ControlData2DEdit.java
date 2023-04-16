@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.input.KeyEvent;
 import mara.mybox.data2d.Data2D;
@@ -28,8 +27,6 @@ public class ControlData2DEdit extends BaseController {
     protected ControlData2DEditCSV csvController;
     @FXML
     protected ControlData2DEditTable tableController;
-    @FXML
-    protected Button deleteRowsButton;
 
     protected void setParameters(ControlData2D dataController) {
         try {

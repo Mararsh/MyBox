@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -13,7 +14,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -21,7 +21,6 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
@@ -36,7 +35,6 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Languages;
@@ -422,7 +420,7 @@ public class ControlData2D extends BaseController {
         if (task != null && !task.isQuit()) {
             return;
         }
-        if (checkBeforeSave() < 0) {
+        if (!tableController.verifyData() || checkBeforeSave() < 0) {
             return;
         }
         if (manageController != null && manageController instanceof DataManufactureController) {
@@ -633,6 +631,7 @@ public class ControlData2D extends BaseController {
     }
 
     @FXML
+    @Override
     public void refreshAction() {
         goPage();
     }
@@ -642,71 +641,52 @@ public class ControlData2D extends BaseController {
         interface
      */
     @FXML
-    public void popFunctionsMenu(MouseEvent mouseEvent) {
-        if (UserConfig.getBoolean(interfaceName + "FunctionsPopWhenMouseHovering", true)) {
-            functionsMenu(mouseEvent);
+    public void popFunctionsMenu(Event event) {
+        if (UserConfig.getBoolean("Data2DFunctionsPopWhenMouseHovering", true)) {
+            showFunctionsMenu(event);
         }
     }
 
     @FXML
-    public void showFunctionsMenu(ActionEvent event) {
-        functionsMenu(event);
-    }
-
-    public void functionsMenu(Event menuEvent) {
+    public void showFunctionsMenu(Event event) {
         try {
             setData(tableController.data2D);
 
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+            List<MenuItem> items = new ArrayList<>();
 
-            popMenu.getItems().addAll(Data2DMenuTools.dataMenu(this));
+            items.add(Data2DMenuTools.dataMenu(this));
 
-            popMenu.getItems().add(new SeparatorMenuItem());
+            items.add(new SeparatorMenuItem());
 
-            popMenu.getItems().addAll(Data2DMenuTools.modifyMenu(this));
+            items.add(Data2DMenuTools.modifyMenu(this));
 
-            popMenu.getItems().add(new SeparatorMenuItem());
+            items.add(new SeparatorMenuItem());
 
-            popMenu.getItems().addAll(Data2DMenuTools.trimMenu(tableController));
-            popMenu.getItems().addAll(Data2DMenuTools.calMenu(tableController));
-            popMenu.getItems().addAll(Data2DMenuTools.chartsMenu(tableController));
-            popMenu.getItems().addAll(Data2DMenuTools.groupChartsMenu(tableController));
+            items.add(Data2DMenuTools.trimMenu(tableController));
+            items.add(Data2DMenuTools.calMenu(tableController));
+            items.add(Data2DMenuTools.chartsMenu(tableController));
+            items.add(Data2DMenuTools.groupChartsMenu(tableController));
 
-            popMenu.getItems().add(new SeparatorMenuItem());
+            items.add(new SeparatorMenuItem());
 
             if (data2D.isDataFile() || data2D.isUserTable() || data2D.isClipboard()) {
                 Menu examplesMenu = new Menu(message("Examples"), StyleTools.getIconImageView("iconExamples.png"));
                 examplesMenu.getItems().addAll(Data2DExampleTools.examplesMenu(this));
-                popMenu.getItems().add(examplesMenu);
-                popMenu.getItems().add(new SeparatorMenuItem());
+                items.add(examplesMenu);
+                items.add(new SeparatorMenuItem());
             }
 
-            CheckMenuItem passPop = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
-            passPop.setSelected(UserConfig.getBoolean(interfaceName + "FunctionsPopWhenMouseHovering", true));
-            passPop.setOnAction(new EventHandler<ActionEvent>() {
+            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            popItem.setSelected(UserConfig.getBoolean("Data2DFunctionsPopWhenMouseHovering", true));
+            popItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(interfaceName + "FunctionsPopWhenMouseHovering", passPop.isSelected());
+                    UserConfig.setBoolean("Data2DFunctionsPopWhenMouseHovering", popItem.isSelected());
                 }
             });
-            popMenu.getItems().add(passPop);
+            items.add(popItem);
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-            MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
-
-            LocateTools.locateBelow((Region) menuEvent.getSource(), popMenu);
+            popEventMenu(event, items);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

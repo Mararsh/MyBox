@@ -21,8 +21,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import mara.mybox.db.data.FileBackup;
+import static mara.mybox.db.data.FileBackup.Default_Max_Backups;
 import mara.mybox.db.table.TableFileBackup;
-import static mara.mybox.db.table.TableFileBackup.Default_Max_Backups;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.PopTools;
@@ -138,7 +138,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(maxBackupsInput.getText());
+                        int v = Integer.parseInt(maxBackupsInput.getText());
                         if (v >= 0) {
                             maxBackups = v;
                             UserConfig.setInt("MaxFileBackups", v);
@@ -205,8 +205,8 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
     }
 
     public synchronized void loadBackups() {
-        tableData.clear();
         if (sourceFile == null || !backupCheck.isSelected()) {
+            tableData.clear();
             return;
         }
         if (backgroundTask != null) {
@@ -231,8 +231,17 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
 
             @Override
             protected void whenSucceeded() {
-                if (list != null && currentFile.equals(sourceFile)) {
-                    tableData.setAll(list);
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                if (currentFile.equals(sourceFile)) {
+                    if (list != null && !list.isEmpty()) {
+                        tableData.setAll(list);
+                    } else {
+                        tableData.clear();
+                    }
                 }
             }
 
@@ -364,7 +373,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
         if (selected == null) {
             return;
         }
-        ControllerTools.openTarget(null, selected.getBackup().getAbsolutePath(), true);
+        ControllerTools.openTarget(selected.getBackup().getAbsolutePath(), true);
     }
 
     @FXML

@@ -189,7 +189,7 @@ public class ControlImagesSave extends BaseController {
                         savedWidth = -1;
                     } else {
                         try {
-                            savedWidth = Integer.valueOf(newValue);
+                            savedWidth = Integer.parseInt(newValue);
                             ValidationTools.setEditorNormal(savedWidthSelector);
                         } catch (Exception e) {
                             ValidationTools.setEditorBadStyle(savedWidthSelector);
@@ -266,7 +266,7 @@ public class ControlImagesSave extends BaseController {
 
     protected void checkGifSize() {
         try {
-            int v = Integer.valueOf(gifWidthInput.getText());
+            int v = Integer.parseInt(gifWidthInput.getText());
             if (v > 0) {
                 gifWidth = v;
                 gifWidthInput.setStyle(null);
@@ -312,7 +312,7 @@ public class ControlImagesSave extends BaseController {
 
     protected void checkPptWidth() {
         try {
-            int v = Integer.valueOf(pptWidthInput.getText());
+            int v = Integer.parseInt(pptWidthInput.getText());
             if (v > 0) {
                 pptWidth = v;
                 pptWidthInput.setStyle(null);
@@ -327,7 +327,7 @@ public class ControlImagesSave extends BaseController {
 
     protected void checkPptHeight() {
         try {
-            int v = Integer.valueOf(pptHeightInput.getText());
+            int v = Integer.parseInt(pptHeightInput.getText());
             if (v > 0) {
                 pptHeight = v;
                 pptHeightInput.setStyle(null);
@@ -342,8 +342,8 @@ public class ControlImagesSave extends BaseController {
 
     protected void checkPptMargin() {
         try {
-            int v = Integer.valueOf(pptMarginInput.getText());
-            if (v > 0) {
+            int v = Integer.parseInt(pptMarginInput.getText());
+            if (v >= 0) {
                 pptMargin = v;
                 pptMarginInput.setStyle(null);
                 UserConfig.setInt(baseName + "PptMargin", v);

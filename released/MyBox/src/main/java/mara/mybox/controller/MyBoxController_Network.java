@@ -1,13 +1,19 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.ContextMenu;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.input.MouseEvent;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -17,73 +23,88 @@ import mara.mybox.value.Languages;
 public abstract class MyBoxController_Network extends MyBoxController_File {
 
     @FXML
-    protected void showNetworkMenu(MouseEvent event) {
-        hideMenu(event);
+    public void popNetworkMenu(Event event) {
+        if (UserConfig.getBoolean("MyBoxHomeMenuPopWhenMouseHovering", true)) {
+            showNetworkMenu(event);
+        }
+    }
 
-        MenuItem weiboSnap = new MenuItem(Languages.message("WeiboSnap"));
+    @FXML
+    protected void showNetworkMenu(Event event) {
+        MenuItem weiboSnap = new MenuItem(message("WeiboSnap"));
         weiboSnap.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.WeiboSnapFxml);
         });
 
-        MenuItem webBrowserHtml = new MenuItem(Languages.message("WebBrowser"));
+        MenuItem webBrowserHtml = new MenuItem(message("WebBrowser"));
         webBrowserHtml.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.WebBrowserFxml);
         });
 
-        MenuItem WebFavorites = new MenuItem(Languages.message("WebFavorites"));
+        MenuItem WebFavorites = new MenuItem(message("WebFavorites"));
         WebFavorites.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.WebFavoritesFxml);
         });
 
-        MenuItem WebHistories = new MenuItem(Languages.message("WebHistories"));
+        MenuItem WebHistories = new MenuItem(message("WebHistories"));
         WebHistories.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.WebHistoriesFxml);
         });
 
-        MenuItem ConvertUrl = new MenuItem(Languages.message("ConvertUrl"));
+        MenuItem ConvertUrl = new MenuItem(message("ConvertUrl"));
         ConvertUrl.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.NetworkConvertUrlFxml);
         });
 
-        MenuItem QueryAddress = new MenuItem(Languages.message("QueryNetworkAddress"));
+        MenuItem QueryAddress = new MenuItem(message("QueryNetworkAddress"));
         QueryAddress.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.NetworkQueryAddressFxml);
         });
 
-        MenuItem QueryDNSBatch = new MenuItem(Languages.message("QueryDNSBatch"));
+        MenuItem QueryDNSBatch = new MenuItem(message("QueryDNSBatch"));
         QueryDNSBatch.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.NetworkQueryDNSBatchFxml);
         });
 
-        MenuItem DownloadFirstLevelLinks = new MenuItem(Languages.message("DownloadHtmls"));
+        MenuItem DownloadFirstLevelLinks = new MenuItem(message("DownloadHtmls"));
         DownloadFirstLevelLinks.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.DownloadFirstLevelLinksFxml);
         });
 
-        MenuItem SecurityCertificates = new MenuItem(Languages.message("SecurityCertificates"));
+        MenuItem RemotePathManage = new MenuItem(message("RemotePathManage"));
+        RemotePathManage.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.RemotePathManageFxml);
+        });
+
+        MenuItem RemotePathSynchronizeFromLocal = new MenuItem(message("RemotePathSynchronizeFromLocal"));
+        RemotePathSynchronizeFromLocal.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.RemotePathSynchronizeFromLocalFxml);
+        });
+
+        MenuItem SecurityCertificates = new MenuItem(message("SecurityCertificates"));
         SecurityCertificates.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.SecurityCertificatesFxml);
         });
 
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        popMenu.getItems().addAll(
-                webBrowserHtml, WebFavorites, WebHistories, new SeparatorMenuItem(),
-                QueryAddress, QueryDNSBatch, ConvertUrl, new SeparatorMenuItem(),
-                DownloadFirstLevelLinks, weiboSnap, new SeparatorMenuItem(),
-                SecurityCertificates
-        );
+        List<MenuItem> items = new ArrayList<>();
+        items.addAll(Arrays.asList(webBrowserHtml, WebFavorites, WebHistories, new SeparatorMenuItem(),
+                RemotePathManage, RemotePathSynchronizeFromLocal, new SeparatorMenuItem(),
+                QueryAddress, QueryDNSBatch, ConvertUrl, SecurityCertificates, new SeparatorMenuItem(),
+                DownloadFirstLevelLinks, weiboSnap));
 
-        popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem closeMenu = new MenuItem(Languages.message("PopupClose"));
-        closeMenu.setStyle("-fx-text-fill: #2e598a;");
-        closeMenu.setOnAction((ActionEvent cevent) -> {
-            popMenu.hide();
-            popMenu = null;
+        items.add(new SeparatorMenuItem());
+
+        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+        popItem.setSelected(UserConfig.getBoolean("MyBoxHomeMenuPopWhenMouseHovering", true));
+        popItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setBoolean("MyBoxHomeMenuPopWhenMouseHovering", popItem.isSelected());
+            }
         });
-        popMenu.getItems().add(closeMenu);
+        items.add(popItem);
 
-        showMenu(networkBox, event);
+        popCenterMenu(networkBox, items);
 
     }
 

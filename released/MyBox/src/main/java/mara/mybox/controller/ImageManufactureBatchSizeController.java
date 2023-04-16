@@ -168,7 +168,7 @@ public class ImageManufactureBatchSizeController extends BaseImageManufactureBat
 
     private void checkScale() {
         try {
-            scale = Float.valueOf(scaleBox.getSelectionModel().getSelectedItem());
+            scale = Float.parseFloat(scaleBox.getSelectionModel().getSelectedItem());
             if (scale >= 0) {
                 ValidationTools.setEditorNormal(scaleBox);
             } else {
@@ -182,7 +182,7 @@ public class ImageManufactureBatchSizeController extends BaseImageManufactureBat
 
     private void checkCustomWidth() {
         try {
-            customWidth = Integer.valueOf(customWidthInput.getText());
+            customWidth = Integer.parseInt(customWidthInput.getText());
             if (customWidth > 0) {
                 customWidthInput.setStyle(null);
             } else {
@@ -195,7 +195,7 @@ public class ImageManufactureBatchSizeController extends BaseImageManufactureBat
 
     private void checkCustomHeight() {
         try {
-            customHeight = Integer.valueOf(customHeightInput.getText());
+            customHeight = Integer.parseInt(customHeightInput.getText());
             if (customHeight > 0) {
                 customHeightInput.setStyle(null);
             } else {
@@ -208,7 +208,7 @@ public class ImageManufactureBatchSizeController extends BaseImageManufactureBat
 
     private void checkKeepWidth() {
         try {
-            keepWidth = Integer.valueOf(keepWidthInput.getText());
+            keepWidth = Integer.parseInt(keepWidthInput.getText());
             if (keepWidth > 0) {
                 keepWidthInput.setStyle(null);
             } else {
@@ -222,7 +222,7 @@ public class ImageManufactureBatchSizeController extends BaseImageManufactureBat
 
     private void checkKeepHeight() {
         try {
-            keepHeight = Integer.valueOf(keepHeightInput.getText());
+            keepHeight = Integer.parseInt(keepHeightInput.getText());
             if (keepHeight > 0) {
                 keepHeightInput.setStyle(null);
             } else {

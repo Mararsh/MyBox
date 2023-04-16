@@ -335,7 +335,7 @@ public class ColorData extends BaseData {
         row.add("<DIV style=\"width: 50px;  background-color:" + complementaryData.getRgb() + "; \">&nbsp;&nbsp;&nbsp;</DIV>");
         table.add(row);
         row = new ArrayList<>();
-        row.addAll(Arrays.asList(message("Value"), getColorValue() + "", invertData.getColorValue() + "", complementaryData.getColorValue() + ""));
+        row.addAll(Arrays.asList(message("Name"), getColorName() + "", invertData.getColorName() + "", complementaryData.getColorName() + ""));
         table.add(row);
         row = new ArrayList<>();
         row.addAll(Arrays.asList("RGBA", getRgba(), invertData.getRgba(), complementaryData.getRgba()));
@@ -402,6 +402,9 @@ public class ColorData extends BaseData {
         table.add(row);
         row = new ArrayList<>();
         row.addAll(Arrays.asList("LCH(uv)", getLchuv(), invertData.getLchuv(), complementaryData.getLchuv()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList(message("Value"), getColorValue() + "", invertData.getColorValue() + "", complementaryData.getColorValue() + ""));
         table.add(row);
         return HtmlWriteTools.html(message("Color"), HtmlStyles.styleValue("TableStyle"), table.body());
     }

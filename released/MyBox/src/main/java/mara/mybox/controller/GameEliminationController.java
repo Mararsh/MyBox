@@ -19,6 +19,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -365,21 +366,22 @@ public class GameEliminationController extends BaseController {
                         }
 
                         @Override
-                        public void commitEdit(Integer value) {
+                        public boolean setCellValue(Integer value) {
                             try {
-                                int rowIndex = rowIndex();
-                                if (rowIndex < 0 || !valid(value)) {
+                                if (!valid(value) || !isEditingRow()) {
                                     cancelEdit();
-                                    return;
+                                    return false;
                                 }
-                                ScoreRuler row = scoreRulersData.get(rowIndex);
+                                ScoreRuler row = scoreRulersData.get(editingRow);
                                 if (row == null || value == null || value < 0) {
-                                    return;
+                                    cancelEdit();
+                                    return false;
                                 }
-                                super.commitEdit(value);
                                 row.score = value;
+                                return super.setCellValue(value);
                             } catch (Exception e) {
                                 MyBoxLog.debug(e);
+                                return false;
                             }
                         }
                     };
@@ -869,7 +871,7 @@ public class GameEliminationController extends BaseController {
     }
 
     @FXML
-    public void popSoundFile(MouseEvent event) {
+    public void showSoundFileMenu(Event event) {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
@@ -898,6 +900,23 @@ public class GameEliminationController extends BaseController {
             menu.setDefaultPath("C:\\Windows\\media");
         }
         menu.pop();
+    }
+
+    @FXML
+    public void pickSoundFile(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
+                || AppVariables.fileRecentNumber <= 0) {
+            selectSoundFile();
+        } else {
+            showSoundFileMenu(event);
+        }
+    }
+
+    @FXML
+    public void popSoundFile(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            showSoundFileMenu(event);
+        }
     }
 
     public boolean addImageItem(String address) {

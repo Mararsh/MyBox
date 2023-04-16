@@ -1,14 +1,27 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.sql.Connection;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
+import mara.mybox.db.DerbyBase;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
+import mara.mybox.tools.FileTools;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -19,11 +32,45 @@ public class BaseTaskController extends BaseLogs {
 
     protected boolean cancelled, successed;
     protected Date startTime, endTime;
+    protected LinkedHashMap<Integer, List<File>> targetFiles;
+    protected String lastTargetName;
+    protected int targetFilesCount;
 
     @FXML
     protected Tab logsTab;
+    @FXML
+    protected CheckBox miaoCheck, openCheck;
 
     public BaseTaskController() {
+    }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            if (miaoCheck != null) {
+                miaoCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean("Miao", newValue);
+                    }
+                });
+                miaoCheck.setSelected(UserConfig.getBoolean("Miao", true));
+            }
+            if (openCheck != null) {
+                openCheck.setSelected(UserConfig.getBoolean(baseName + "OpenTargetPath", true));
+                openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        UserConfig.setBoolean(baseName + "OpenTargetPath", openCheck.isSelected());
+                    }
+                });
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
     }
 
     public boolean checkOptions() {
@@ -33,6 +80,10 @@ public class BaseTaskController extends BaseLogs {
     @FXML
     @Override
     public void startAction() {
+        runTask();
+    }
+
+    public void runTask() {
         if (startButton != null && startButton.getUserData() != null) {
             StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
             startButton.applyCss();
@@ -63,6 +114,9 @@ public class BaseTaskController extends BaseLogs {
     public void beforeTask() {
         cancelled = false;
         successed = false;
+        targetFilesCount = 0;
+        targetFiles = new LinkedHashMap<>();
+        initLogs();
     }
 
     public void startTask() {
@@ -83,13 +137,12 @@ public class BaseTaskController extends BaseLogs {
 
             @Override
             protected void whenCanceled() {
-                cancelled = true;
-                updateLogs(message("Cancel"));
+                taskCanceled();
             }
 
             @Override
             protected void finalAction() {
-                endTime = new Date();
+                super.taskQuit();
                 task = null;
                 if (startButton != null) {
                     StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
@@ -117,52 +170,141 @@ public class BaseTaskController extends BaseLogs {
             task.cancel();
             task = null;
         }
-
     }
 
     @Override
     public void cancelAction() {
-        if (task != null) {
+        if (task != null && !task.isQuit()) {
             cancelTask();
         } else {
             close();
         }
     }
 
-    public void afterTask() {
-
+    protected void taskCanceled() {
+        cancelled = true;
+        showLogs(message("Cancel"));
     }
 
     @FXML
-    public void openPath() {
-        if (targetPath == null || !targetPath.exists()) {
-            return;
+    @Override
+    public void openTarget() {
+        File path = targetPath;
+        if (path == null || !path.exists()) {
+            if (targetPathController != null) {
+                path = targetPathController.file();
+            } else if (targetFile != null) {
+                path = targetFile.getParentFile();
+            }
+            if (path == null || !path.exists()) {
+                return;
+            }
         }
-        browseURI(targetPath.toURI());
-        recordFileOpened(targetPath);
+        browseURI(path.toURI());
+        recordFileOpened(path);
     }
 
     public boolean targetFileGenerated(File target) {
-        return targetFileGenerated(target, TargetFileType, true);
-    }
-
-    public boolean targetFileGenerated(File target, boolean record) {
-        return targetFileGenerated(target, TargetFileType, record);
+        return targetFileGenerated(target, TargetFileType);
     }
 
     public boolean targetFileGenerated(File target, int type) {
-        return targetFileGenerated(target, type, true);
-    }
-
-    public boolean targetFileGenerated(File target, int type, boolean record) {
-        if (target == null || !target.exists() || target.length() == 0) {
+        if (target == null || !target.exists()) {
             return false;
         }
-        updateLogs(MessageFormat.format(message("FilesGenerated"), target.getAbsolutePath()));
-        if (record) {
-            recordFileWritten(target, type, type);
+        if (targetFiles == null) {
+            targetFilesCount = 0;
+            targetFiles = new LinkedHashMap<>();
         }
+        putTargetFile(target, type);
+        showLogs(MessageFormat.format(message("FilesGenerated"), lastTargetName) + " "
+                + message("Size") + ": " + FileTools.showFileSize(target.length()));
         return true;
+    }
+
+    public void afterTask() {
+        recordTargetFiles();
+        if (miaoCheck != null && miaoCheck.isSelected()) {
+            SoundTools.miao3();
+        }
+        if (openCheck != null && openCheck.isSelected()) {
+            openTarget();
+        }
+    }
+
+    public File lastTargetFile() {
+        if (lastTargetName != null) {
+            return new File(lastTargetName);
+        } else if (targetFile != null) {
+            return targetFile;
+        } else if (targetFileController != null) {
+            return targetFileController.file();
+        }
+        return null;
+    }
+
+    public void putTargetFile(File target, int type) {
+        try {
+            targetFilesCount++;
+            lastTargetName = target.getAbsolutePath();
+            List<File> files = targetFiles.get(type);
+            if (files == null) {
+                files = new ArrayList<>();
+            }
+            files.add(target);
+            int size = files.size();
+            if (size > AppVariables.fileRecentNumber) {
+                files = files.subList(size - AppVariables.fileRecentNumber, size);
+            }
+            targetFiles.put(type, files);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void putTargetFile(List<File> tfiles, int type) {
+        try {
+            if (tfiles == null || tfiles.isEmpty()) {
+                return;
+            }
+            int size = tfiles.size();
+            targetFilesCount += size;
+            lastTargetName = tfiles.get(size - 1).getAbsolutePath();
+            List<File> files = targetFiles.get(type);
+            if (files == null) {
+                files = new ArrayList<>();
+            }
+            files.addAll(tfiles);
+            size = files.size();
+            if (size > AppVariables.fileRecentNumber) {
+                files = files.subList(size - AppVariables.fileRecentNumber, size);
+            }
+            targetFiles.put(type, files);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void recordTargetFiles() {
+        if (targetFiles != null && !targetFiles.isEmpty()) {
+            try (Connection conn = DerbyBase.getConnection()) {
+                for (int type : targetFiles.keySet()) {
+                    List<File> files = targetFiles.get(type);
+                    if (files == null) {
+                        continue;
+                    }
+                    int size = files.size();
+                    if (size > AppVariables.fileRecentNumber) {
+                        files = files.subList(size - AppVariables.fileRecentNumber, size);
+                    }
+                    for (File file : files) {
+                        recordFileWritten(conn, file, type, type);
+                    }
+                }
+            } catch (Exception e) {
+                MyBoxLog.error(e);
+            }
+        }
     }
 
     @Override

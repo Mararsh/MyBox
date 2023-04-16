@@ -2,13 +2,9 @@ package mara.mybox.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
-import mara.mybox.fxml.NodeTools;
-import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.tools.FileDeleteTools;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -31,8 +27,7 @@ public class FilesDeleteNestedDirectoriesController extends BaseBatchFileControl
     public void initControls() {
         try {
             super.initControls();
-            tableController.countDirCheck.setSelected(false);
-            tableController.countDirCheck.setVisible(false);
+
             operationBarController.deleteOpenControls();
 
         } catch (Exception e) {
@@ -44,6 +39,10 @@ public class FilesDeleteNestedDirectoriesController extends BaseBatchFileControl
     public boolean makeMoreParameters() {
         totalDeleted = 0;
         return super.makeMoreParameters();
+    }
+
+    public boolean countDirectories() {
+        return false;
     }
 
     @Override
@@ -76,7 +75,7 @@ public class FilesDeleteNestedDirectoriesController extends BaseBatchFileControl
     }
 
     @Override
-    public void donePost() {
+    public void afterTask() {
         tableView.refresh();
 
         if (miaoCheck != null && miaoCheck.isSelected()) {

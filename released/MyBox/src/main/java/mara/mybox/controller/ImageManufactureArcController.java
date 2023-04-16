@@ -45,7 +45,7 @@ public class ImageManufactureArcController extends ImageManufactureOperationCont
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v >= 0) {
                             arc = v;
                             UserConfig.setInt(baseName + "Arc", arc);

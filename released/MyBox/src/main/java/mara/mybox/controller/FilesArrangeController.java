@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -286,7 +287,8 @@ public class FilesArrangeController extends BaseBatchFileController {
             if (!initAttributes()) {
                 return;
             }
-
+            targetFilesCount = 0;
+            targetFiles = new LinkedHashMap<>();
             updateInterface("Started");
             synchronized (this) {
                 if (task != null && !task.isQuit()) {
@@ -315,6 +317,14 @@ public class FilesArrangeController extends BaseBatchFileController {
                         super.failed();
                         updateInterface("Failed");
                     }
+
+                    @Override
+                    protected void finalAction() {
+                        super.finalAction();
+                        task = null;
+                        afterTask();
+                    }
+
                 };
                 start(task, false);
             }
@@ -339,7 +349,7 @@ public class FilesArrangeController extends BaseBatchFileController {
                     }
                     switch (newStatus) {
                         case "Started":
-                            operationBarController.statusLabel.setText(Languages.message("Handling...") + " "
+                            operationBarController.statusInput.setText(Languages.message("Handling...") + " "
                                     + Languages.message("StartTime")
                                     + ": " + DateTools.datetimeToString(processStartTime));
                             StyleTools.setNameIcon(startButton, Languages.message("Stop"), "iconStop.png");
@@ -400,7 +410,6 @@ public class FilesArrangeController extends BaseBatchFileController {
                                 operationBarController.progressBar.setProgress(1);
                                 disableControls(false);
                             }
-                            donePost();
                     }
 
                 } catch (Exception e) {
@@ -414,12 +423,12 @@ public class FilesArrangeController extends BaseBatchFileController {
     @Override
     public void disableControls(boolean disable) {
         paraBox.setDisable(disable);
-        batchTabPane.getSelectionModel().select(logsTab);
+        tabPane.getSelectionModel().select(logsTab);
     }
 
     @Override
     public void showCost() {
-        if (operationBarController.statusLabel == null) {
+        if (operationBarController.statusInput == null) {
             return;
         }
         long cost = new Date().getTime() - processStartTime.getTime();
@@ -438,12 +447,12 @@ public class FilesArrangeController extends BaseBatchFileController {
                 + Languages.message("Average") + ": " + avg + " " + Languages.message("SecondsPerItem") + ". "
                 + Languages.message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + ", "
                 + Languages.message("EndTime") + ": " + DateTools.datetimeToString(new Date());
-        operationBarController.statusLabel.setText(s);
+        operationBarController.statusInput.setText(s);
     }
 
     @Override
-    public void donePost() {
-        showCost();
+    public void afterTask() {
+        recordTargetFiles();
         updateLogs(Languages.message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + "   "
                 + Languages.message("Cost") + ": " + DateTools.datetimeMsDuration(new Date(), processStartTime), false, true);
         updateLogs(Languages.message("TotalCheckedFiles") + ": " + copyAttr.getTotalFilesNumber() + "   "
@@ -457,20 +466,20 @@ public class FilesArrangeController extends BaseBatchFileController {
                     + Languages.message("TotalDeletedDirectories") + ": " + copyAttr.getDeletedDirectories() + "   "
                     + Languages.message("TotalDeletedSize") + ": " + FileTools.showFileSize(copyAttr.getDeletedSize()), false, true);
         }
-
+        showCost();
         if (operationBarController.miaoCheck.isSelected()) {
             SoundTools.miao3();
         }
 
         if (operationBarController.openCheck.isSelected()) {
-            openTarget(null);
+            openTarget();
         }
 
     }
 
     @FXML
     @Override
-    public void openTarget(ActionEvent event) {
+    public void openTarget() {
         try {
             browseURI(targetPathInputController.file.toURI());
         } catch (Exception e) {

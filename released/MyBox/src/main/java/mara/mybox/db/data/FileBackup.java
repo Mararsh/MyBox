@@ -11,6 +11,8 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class FileBackup extends BaseData {
 
+    public static final int Default_Max_Backups = 20;
+
     protected long fbid;
     protected File file, backup;
     protected Date recordTime;

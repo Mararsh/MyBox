@@ -128,14 +128,14 @@ public class Data2DChartPieController extends BaseData2DChartController {
             double sum = 0, value;
             for (List<String> data : chartData) {
                 try {
-                    sum += Double.valueOf(data.get(valueIndex));
+                    sum += Double.parseDouble(data.get(valueIndex));
                 } catch (Exception e) {
                 }
             }
             List<List<String>> pdata = new ArrayList<>();
             for (List<String> row : chartData) {
                 try {
-                    value = Double.valueOf(row.get(valueIndex));
+                    value = Double.parseDouble(row.get(valueIndex));
                     row.add(DoubleTools.percentage(value, sum, scale));
                     pdata.add(row);
                 } catch (Exception e) {

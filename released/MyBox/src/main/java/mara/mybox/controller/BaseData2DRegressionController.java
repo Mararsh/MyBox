@@ -3,11 +3,11 @@ package mara.mybox.controller;
 import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.input.MouseEvent;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.value.UserConfig;
@@ -95,8 +95,15 @@ public class BaseData2DRegressionController extends BaseData2DChartController {
     }
 
     @FXML
-    public void popModelMenu(MouseEvent mouseEvent) {
-        modelController.popFunctionsMenu(mouseEvent);
+    public void popModelMenu(Event event) {
+        if (UserConfig.getBoolean("WebviewFunctionsPopWhenMouseHovering", true)) {
+            showModelMenu(event);
+        }
+    }
+
+    @FXML
+    public void showModelMenu(Event event) {
+        modelController.showFunctionsMenu(event);
     }
 
     @FXML

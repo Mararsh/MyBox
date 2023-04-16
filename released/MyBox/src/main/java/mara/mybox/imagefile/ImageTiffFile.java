@@ -209,13 +209,13 @@ public class ImageTiffFile {
                     }
                     switch (name) {
                         case "ImageWidth":
-                            info.setWidth(Integer.valueOf(values.get(0)));
+                            info.setWidth(Integer.parseInt(values.get(0)));
                             break;
                         case "ImageLength":
-                            info.setHeight(Integer.valueOf(values.get(0)));
+                            info.setHeight(Integer.parseInt(values.get(0)));
                             break;
                         case "ResolutionUnit":
-                            unit = Integer.valueOf(values.get(0));
+                            unit = Integer.parseInt(values.get(0));
                             break;
                         case "XResolution":
                             x = getRationalValue(values.get(0));
@@ -247,7 +247,7 @@ public class ImageTiffFile {
         if (pos > 0) {
             vv = v.substring(0, pos);
         }
-        return Integer.valueOf(vv);
+        return Integer.parseInt(vv);
     }
 
 }

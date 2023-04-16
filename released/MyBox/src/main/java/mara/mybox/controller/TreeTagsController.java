@@ -49,6 +49,10 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
     @FXML
     protected Button queryTagsButton, deleteTagsButton;
 
+    public TreeTagsController() {
+        loadInBackground = true;
+    }
+
     @Override
     public void initColumns() {
         try {
@@ -66,33 +70,29 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
                         TableAutoCommitCell<Tag, String> cell = new TableAutoCommitCell<Tag, String>(new DefaultStringConverter()) {
 
                             @Override
-                            public void commitEdit(String value) {
+                            public boolean setCellValue(String value) {
                                 try {
-                                    if (value == null || value.isBlank()) {
-                                        return;
+                                    if (value == null || value.isBlank() || !isEditingRow()) {
+                                        return false;
                                     }
                                     for (int i = 0; i < tableData.size(); i++) {
                                         String tagName = tableData.get(i).getTag();
                                         if (value.equals(tagName)) {
                                             cancelEdit();
-                                            return;
+                                            return false;
                                         }
                                     }
-                                    int rowIndex = rowIndex();
-                                    if (rowIndex < 0) {
-                                        cancelEdit();
-                                        return;
-                                    }
-                                    Tag row = tableData.get(rowIndex);
+                                    Tag row = tableData.get(editingRow);
                                     if (row == null) {
                                         cancelEdit();
-                                        return;
+                                        return false;
                                     }
-                                    super.commitEdit(value);
                                     row.setTag(value);
                                     saveTag(row);
+                                    return super.setCellValue(value);
                                 } catch (Exception e) {
                                     MyBoxLog.debug(e);
+                                    return false;
                                 }
                             }
 
@@ -193,7 +193,7 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
 
                 @Override
                 protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
+                    try (Connection conn = DerbyBase.getConnection()) {
                         tag = tableTag.insertData(conn, new Tag(category, name));
                         if (forCurrentNode && tag != null && currentNode != null) {
                             tableTreeNodeTag.insertData(conn,

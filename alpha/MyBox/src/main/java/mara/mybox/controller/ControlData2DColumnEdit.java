@@ -511,6 +511,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
                 }
             });
             items.add(menu);
+
             items.add(new SeparatorMenuItem());
 
             CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));

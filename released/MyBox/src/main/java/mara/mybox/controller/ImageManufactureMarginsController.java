@@ -183,7 +183,7 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
 
     private void checkMarginWidth() {
         try {
-            int v = Integer.valueOf(marginWidthBox.getValue());
+            int v = Integer.parseInt(marginWidthBox.getValue());
             if (v > 0) {
                 addedWidth = v;
                 UserConfig.setInt("ImageMarginsWidth", v);
@@ -198,7 +198,7 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
 
     protected void checkColorDistance() {
         try {
-            int v = Integer.valueOf(distanceInput.getText());
+            int v = Integer.parseInt(distanceInput.getText());
             if (distance >= 0 && distance <= 255) {
                 distance = v;
                 distanceInput.setStyle(null);

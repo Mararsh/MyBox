@@ -91,7 +91,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
                     public ObservableValue<Integer> call(TableColumn.CellDataFeatures<List<String>, Integer> param) {
                         try {
                             List<String> row = (List<String>) param.getValue();
-                            Integer v = Integer.valueOf(row.get(0));
+                            Integer v = Integer.parseInt(row.get(0));
                             if (v < 0) {
                                 return null;
                             }
@@ -231,7 +231,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
             @Override
             protected boolean handle() {
-                try ( Connection conn = DerbyBase.getConnection()) {
+                try (Connection conn = DerbyBase.getConnection()) {
                     data2D.startTask(task, null);
                     data2D.readDataDefinition(conn);
                     if (isCancelled()) {

@@ -8,7 +8,6 @@ import javafx.util.Callback;
 import mara.mybox.controller.ControlData2DLoad;
 import mara.mybox.controller.TextInputController;
 import mara.mybox.db.data.Data2DColumn;
-import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -24,7 +23,7 @@ public class TableDataEditCell extends TableDataCell {
     }
 
     @Override
-    public void startEdit() {
+    public void editCell() {
         String s = getItem();
         if (supportMultipleLine && s != null && s.contains("\n")) {
             TextInputController inputController = TextInputController.open(dataControl, name(), s);
@@ -40,17 +39,7 @@ public class TableDataEditCell extends TableDataCell {
             inputController.getNotify().addListener(getListener);
 
         } else {
-            super.startEdit();
-        }
-    }
-
-    @Override
-    public void commitEdit(String inValue) {
-        try {
-            clearEditor();
-            setCellValue(inValue);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
+            super.editCell();
         }
     }
 

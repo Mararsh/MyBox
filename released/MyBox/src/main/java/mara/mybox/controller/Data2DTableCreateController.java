@@ -83,7 +83,7 @@ public class Data2DTableCreateController extends BaseTaskController {
 
     @Override
     public boolean checkOptions() {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             boolean ok = attributesController.checkOptions(conn, false);
             if (!ok) {
                 tabPane.getSelectionModel().select(attributesTab);
@@ -97,6 +97,7 @@ public class Data2DTableCreateController extends BaseTaskController {
 
     @Override
     public void beforeTask() {
+        super.beforeTask();
         attributesBox.setDisable(true);
         optionsBox.setDisable(true);
 
@@ -109,7 +110,7 @@ public class Data2DTableCreateController extends BaseTaskController {
 
     @Override
     public boolean doTask() {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             if (!attributesController.createTable(conn)) {
                 return false;
             }
@@ -141,6 +142,7 @@ public class Data2DTableCreateController extends BaseTaskController {
     @Override
     public void afterTask() {
         try {
+            super.afterTask();
             attributesBox.setDisable(successed);
             optionsBox.setDisable(successed);
             startButton.setDisable(successed);

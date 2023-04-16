@@ -2,16 +2,15 @@
  <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta charset="UTF-8">
- <meta http-equiv="cache-control" content="no-cache">
   <style>body { margin:0 auto; } table { max-width:95%; margin : 10px; border-style: solid; border-width:2px; border-collapse: collapse;} th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;} th { font-weight:bold; text-align:center;} tr { height: 1.2em; } .center { text-align:center; max-width:95%; } .valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;} .boldText { font-weight:bold; } body { width: 900px; } img { max-width: 900px; } .valueText { color:#2e598a; }</style>
  </head>
  <body>
-  <h1><a target=_blank href="https://github.com/Mararsh/MyBox">中文ReadMe</a> <img src="https://mara-mybox.sourceforge.io/iconGo.png" alt="ReadMe"></h1>
+  <h1><a target=_blank href="https://github.com/Mararsh/MyBox">中文ReadMe</a> <img src="./iconGo.png" alt="ReadMe"></h1>
   <h1>MyBox: Set of Easy Tools</h1>
   <p>This is desktop application based on JavaFx to provide simple and easy functions. It’s free and open sources.</p>
   <h2>Latest Versions</h2>
   <p>Contents of this document may be expired, but its links refer to the latest versions.</p>
-  <p>The latest versions can be downloaded in following addresses:</p>
+  <p>The latest versions and all archived versions can be downloaded in following addresses:</p>
   <table>
    <thead>
     <tr>
@@ -24,7 +23,7 @@
     <tr>
      <td>github</td>
      <td><a target=_blank href="https://github.com/Mararsh/MyBox/releases">https://github.com/Mararsh/MyBox/releases</a></td>
-     <td><a target=_blank href="https://mararsh.github.io/readme-en.html">English</a> <a target=_blank href="https://mararsh.github.io/readme-zh.html">Chinese</a></td>
+     <td><a target=_blank href="https://mararsh.github.io/MyBox/readme-en.html">English</a> <a target=_blank href="https://mararsh.github.io/MyBox/readme-zh.html">Chinese</a></td>
     </tr>
     <tr>
      <td>sourceforge</td>
@@ -39,50 +38,64 @@
    </tbody>
   </table>
   <h2>What’s New</h2>
-  <p>2023-3-13 v6.7.1</p>
+  <p>2023-4-16 v6.7.2</p>
   <ul>
    <li>Added: 
     <ul>
-     <li>Edit mode of html: DOM.</li>
-     <li>Manufacture image: blend colors against selected scope.</li>
-     <li>Set http-equiv in batch.</li>
-     <li>Can customized colors of buttons.</li>
+     <li>Manage remote path(SFTP).</li>
+     <li>Synchronize remote directory from local.</li>
+     <li>Clear expired data.</li>
     </ul></li>
    <li>Improved: 
     <ul>
-     <li>Manufacture image: select whether replace hue/saturation/brightness when replace colors.</li>
-     <li>New attributes of color: RYB angle, RGB invert, and RYB complementary. And more examples of color palettes.</li>
-     <li>Can set scroll size for selectors.</li>
-     <li>Link menus work before html page is loaded completely.</li>
-     <li>Parse html with jsoup.</li>
-     <li>Option about whether pop menu/window when hover over buttons.</li>
-     <li>Links in ReadMe refer to latest versions.</li>
-     <li>Set JAVA_HOME in packing scripts.</li>
+     <li>Option to disable omission of Ctrl/Alt in shortcuts.(To avoid misoperations)</li>
+     <li>Always disable omission of Ctrl/Alt in shortcuts of following buttons: Save, Delete, Clear. (To avoid accidents)</li>
+     <li>Values can be validated when edit data.</li>
+     <li>Display and manage tree information in tree table view.</li>
     </ul></li>
-   <li>Removed: 
-    <ul>
-     <li>Not support setting interface styles any more.</li>
-     <li>Remove unuseful sliders in some interfaces.</li>
-     <li>Names of packages do not contain version number any more.</li>
-    </ul></li>
-   <li>Both Java and JavaFx are upgraded to v19.</li>
    <li>Solved problems: 
     <ul>
-     <li>All file backups may be cleared when add file backup.</li>
-     <li>Fail to load map when image file of points is not existed.</li>
-     <li>Fail to add address as favorite.</li>
-     <li>Visit histories of paths do not work in some interfaces.</li>
-     <li>Handle location incorrectly when paste images in batch.</li>
-     <li>Shorcuts dot not work when edit colors of image.</li>
-     <li>Edit histories are not saved for Javascript.</li>
+     <li>When edit data, values in other rows may be tampered. (Serious bug since 2019)</li>
+     <li>When edit data, should not apply modification to all new rows.</li>
+     <li>When edit/add data rows, values should not be validated automatically.</li>
+     <li>Logic about “node A is sub-node of node B” has bug.</li>
+     <li>Fail to mode nodes in tree information.</li>
+     <li>Function “ffmepg convert medias” does not work.</li>
+     <li>Interface behavious of Html Editor are unexpected.</li>
+     <li>Calculation of “Splice Images” and “Split Image” are inaccurate.</li>
+     <li>Option “pop menu when hovering button” does not work in some interfaces.</li>
+     <li>Fail to play PDF which has password.</li>
     </ul></li>
   </ul>
-  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.1">Closed requirements/bugs in this version</a></p>
-  <h2>Download and Execution</h2>
+  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.2">Closed requirements/bugs in this version</a></p>
+  <h2>Notice</h2>
+  <p>Without enough testings, MyBox has low reliability and bad stability. When use MyBox, following may happen:</p>
+  <ul>
+   <li>Files/Data are damaged.</li>
+   <li>Output wrong results.</li>
+   <li>Functions fail.</li>
+   <li>Unexpected behaviours.</li>
+  </ul>
+  <h1>Download and Execution</h1>
   <p>Packages of each version have been uploaded at <a target=_blank href="https://github.com/Mararsh/MyBox/releases?">Releases</a> directory.</p>
-  <h3>Source Codes</h3>
-  <p><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-src.zip">MyBox-src.zip</a> 65MB-<br> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-en.pdf">Developement Guide</a> <a target=_blank href="https://mara-mybox.sourceforge.io/pack_steps_en.html">Packing Steps</a></p>
-  <h3>Self-contain packages</h3>
+  <h2>Source Codes</h2>
+  <table>
+   <thead>
+    <tr>
+     <th>Source Codes</th>
+     <th>Developement Guide</th>
+     <th>Packing Steps</th>
+    </tr>
+   </thead>
+   <tbody>
+    <tr>
+     <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-src.zip">MyBox-src.zip</a> 65M-</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-en.pdf">pdf</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/pack_steps_en.html">html</a></td>
+    </tr>
+   </tbody>
+  </table>
+  <h2>Self-contain packages</h2>
   <p>Self-contain packages include all files and need not java env nor installation.</p>
   <table>
    <thead>
@@ -115,7 +128,7 @@
    </tbody>
   </table>
   <p>User can double click the launcher to start MyBox or run it by command line. The default “Open Method” of image/text/PDF files can be associated to MyBox and a file can be opened directly by MyBox by double clicking the file’s name.</p>
-  <h3>Jar</h3>
+  <h2>Jar</h2>
   <p>When JRE or JDK(<a target=_blank href="https://www.oracle.com/technetwork/java/javase/downloads/index.html">Oracle jdk</a> or <a target=_blank href="http://jdk.java.net/">open jdk</a>) is installed, jar can run:</p>
   <table>
    <thead>
@@ -151,12 +164,6 @@
   <pre><code>     java   -jar   MyBox.jar</code></pre>
   <p>A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:</p>
   <pre><code>     java   -jar   MyBox.jar   /tmp/a1.jpg</code></pre>
-  <h2>Limitation</h2>
-  <ul>
-   <li>Without enough testings, MyBox has low reliability. Data damage happened in some versions.</li>
-   <li>New functions being added and codes being improved continually, MyBox has bad stability. Unexpected function failures happened in some versions.</li>
-   <li>MyBox windows may often be blocked when some Input Method is running. Workaround is to disable/uninstall this Input Method.</li>
-  </ul>
   <h2>Migration</h2>
   <ol>
    <li>Each version has itself’s configuration file. New version can copy parameters from existed versions.</li>
@@ -241,29 +248,29 @@
    <tbody>
     <tr>
      <td>Development Logs</td>
-     <td>6.7.1</td>
-     <td>2023-3-13</td>
+     <td>6.7.2</td>
+     <td>2023-4-16</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs.html">html</a></td>
     </tr>
     <tr>
      <td>Shortcuts</td>
-     <td>6.7.1</td>
-     <td>2023-3-13</td>
+     <td>6.7.2</td>
+     <td>2023-4-16</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_shortcuts_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_shortcuts.html">html</a></td>
     </tr>
     <tr>
      <td>Functions list</td>
-     <td>6.7.1</td>
-     <td>2023-3-13</td>
+     <td>6.7.2</td>
+     <td>2023-4-16</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_functions_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_functions.html">html</a></td>
     </tr>
     <tr>
      <td>Packing Steps</td>
-     <td>6.7.1</td>
-     <td>2023-3-13</td>
+     <td>6.7.2</td>
+     <td>2023-4-16</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/pack_steps_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/pack_steps.html">html</a></td>
     </tr>
@@ -276,8 +283,8 @@
     </tr>
     <tr>
      <td>User Guide - Overview</td>
-     <td>6.7.1</td>
-     <td>2023-3-13</td>
+     <td>6.7.2</td>
+     <td>2023-4-16</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/en/MyBox-Overview-en/MyBox-Overview-en.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/zh/MyBox-Overview-zh/MyBox-Overview-zh.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.odt">odt</a></td>
     </tr>
@@ -311,7 +318,7 @@
     </tr>
     <tr>
      <td>User Guide - Network Tools</td>
-     <td>6.7.1</td>
+     <td>6.7.2</td>
      <td>2023-3-13</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/en/MyBox-NetworkTools-en/MyBox-NetworkTools-en.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-NetworkTools-en.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-NetworkTools-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/zh/MyBox-NetworkTools-zh/MyBox-NetworkTools-zh.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-NetworkTools-zh.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-NetworkTools-zh.odt">odt</a></td>
@@ -346,8 +353,8 @@
     </tr>
     <tr>
      <td>Examples - Notes</td>
-     <td>6.7.1</td>
-     <td>2023-3-13</td>
+     <td>6.7.2</td>
+     <td>2023-4-16</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_notes_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_notes.html">html</a></td>
     </tr>
@@ -392,6 +399,13 @@
      <td>2022-11-16</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_row_filter_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_examples_row_filter.html">html</a></td>
+    </tr>
+    <tr>
+     <td>About - row expression</td>
+     <td>6.7.2</td>
+     <td>2023-4-16</td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_row_expression_en.html">html</a></td>
+     <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_about_row_expression.html">html</a></td>
     </tr>
     <tr>
      <td>About - data grouping</td>
@@ -521,8 +535,8 @@
     </tr>
     <tr>
      <td>Palette - MyBox Colors</td>
-     <td>6.7.1</td>
-     <td>2023-3-13</td>
+     <td>6.7.2</td>
+     <td>2023-4-16</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_mybox_en.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_mybox_all_en.html">all</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_mybox.html">rgba</a> <a target=_blank href="https://mara-mybox.sourceforge.io/mybox_palette_mybox_all.html">all</a></td>
     </tr>
@@ -535,8 +549,8 @@
     </tr>
     <tr>
      <td>Stories of Images</td>
-     <td>6.7.1</td>
-     <td>2023-3-13</td>
+     <td>6.7.2</td>
+     <td>2023-4-16</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/en/MyBox-StoriesOfImages-en.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/zh/MyBox-StoriesOfImages-zh.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.odt">odt</a></td>
     </tr>
@@ -848,6 +862,11 @@
      <td>art colors</td>
      <td><a target=_blank href="https://blog.csdn.net/weixin_44938037/article/details/90599711">https://blog.csdn.net/weixin_44938037/article/details/90599711</a></td>
     </tr>
+    <tr>
+     <td>jsch</td>
+     <td>sftp</td>
+     <td><a target=_blank href="http://www.jcraft.com/jsch/">http://www.jcraft.com/jsch/</a></td>
+    </tr>
    </tbody>
   </table>
   <h1>Features</h1>
@@ -882,7 +901,7 @@
   <h2>Personal</h2>
   <ol>
    <li>All functions are executed in local host.</li>
-   <li>All data are saved in local host.</li>
+   <li>All data are stored in local host.</li>
    <li>No register/login/DataCenter/Cloud.</li>
    <li>Access network only when user requests.</li>
    <li>Only read/write data which user need.</li>
@@ -926,12 +945,12 @@
      <li>Processes of local host can visit the database in port 1527 and becomes its clients.</li>
      <li>Processes out of local host can not visit the database directly.</li>
     </ul></li>
-   <li>MyBox internal tables save the data required by all functions. User can access and modify the internal data online.</li>
+   <li>MyBox internal tables store the data required by all functions. User can access and modify the internal data online.</li>
    <li>User can define customized database tables.</li>
    <li>User can view and edit definitons and data of database tables in paginated tables, and execute SQL statements.</li>
    <li>To implement data sorting, tranposing, statistic, and grouping, MyBox will create temporary database tables, and clear them in time.</li>
   </ol>
-  <h2>Assit Coding</h2>
+  <h2>Assit Coding Self</h2>
   <ol>
    <li>Monitor memory/CPU usage in real time.</li>
    <li>Adjust logging online.</li>
@@ -941,8 +960,9 @@
    <li>All kinds of documents.</li>
   </ol>
   <h1>Snapshots</h1>
-  <p><img src="https://mara-mybox.sourceforge.io/snap-cover-en.jpg" alt="Snap-cover"></p>
-  <p><img src="https://mara-mybox.sourceforge.io/snap-interface-en.jpg" alt="Snap-interface"></p>
-  <p><img src="https://mara-mybox.sourceforge.io/snap-table-en.jpg" alt="Snap-table"></p>
+  <p><img src="./snap-cover-en.jpg" alt="Snap-cover"></p>
+  <p><img src="./snap-interface-en.jpg" alt="Snap-interface"></p>
+  <p><img src="./snap-table-en.jpg" alt="Snap-table"></p>
+<br>
  </body>
 </html>

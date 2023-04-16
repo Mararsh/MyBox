@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
@@ -17,7 +15,6 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -49,14 +46,6 @@ public class Data2DExportController extends BaseData2DHandleController {
             super.initControls();
 
             notSelectColumnsInTable(false);
-
-            openCheck.setSelected(UserConfig.getBoolean(baseName + "OpenGenerated", false));
-            openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "OpenGenerated", openCheck.isSelected());
-                }
-            });
 
             okButton = startButton;
 

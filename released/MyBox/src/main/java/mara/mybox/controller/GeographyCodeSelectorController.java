@@ -208,7 +208,7 @@ public class GeographyCodeSelectorController extends BaseController {
                         for (int i = codeLevel + 1; i <= 9; i++) {
                             String ic = "level=" + i;
                             for (int j = codeLevel + 1; j < i; j++) {
-                                GeographyCodeLevel jLevel = new GeographyCodeLevel(Short.valueOf(j + ""));
+                                GeographyCodeLevel jLevel = new GeographyCodeLevel(Short.parseShort(j + ""));
                                 ic += " AND " + jLevel.getKey() + "<=0 ";
                             }
                             if (condition.isBlank()) {

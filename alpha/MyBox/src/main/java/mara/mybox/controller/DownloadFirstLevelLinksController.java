@@ -678,6 +678,8 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
             });
             items.add(menu);
 
+            items.add(new SeparatorMenuItem());
+
             popEventMenu(mouseEvent, items);
 
         } catch (Exception e) {

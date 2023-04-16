@@ -273,7 +273,7 @@ public class ControlDataConvert extends BaseController {
                             return;
                         }
                         try {
-                            int v = Integer.valueOf(newValue);
+                            int v = Integer.parseInt(newValue);
                             if (v > 0) {
                                 maxLines = v;
                                 ValidationTools.setEditorNormal(maxLinesSelector);

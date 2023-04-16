@@ -340,7 +340,7 @@ public class TmpTable extends DataTable {
                 List<String> values;
                 long index;
                 if (includeRowNumber) {
-                    index = Long.valueOf(row.get(0));
+                    index = Long.parseLong(row.get(0));
                     data2DRow.setColumnValue(column(1).getColumnName(), index);
                     values = row.subList(1, row.size());
                 } else {

@@ -2,8 +2,10 @@ package mara.mybox.data2d;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
@@ -309,6 +311,41 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         }
     }
 
+    public boolean verifyData() {
+        try {
+            List<List<String>> pageData = tableData();
+            List<String> names = new ArrayList<>();
+            names.addAll(Arrays.asList(message("Row"), message("Column"), message("Invalid")));
+            StringTable stringTable = new StringTable(names, displayName());
+            for (int r = 0; r < pageData.size(); r++) {
+                List<String> dataRow = pageData.get(r);
+                for (int c = 0; c < columns.size(); c++) {
+                    Data2DColumn column = columns.get(c);
+                    String value = dataRow.get(c + 1);
+                    String item = null;
+                    if (column.isNotNull() && (value == null || value.isBlank())) {
+                        item = message("Null");
+                    } else if (column.validValue(value)) {
+                        item = message("DataType");
+                    } else if (validValue(value)) {
+                        item = message("TextDataComments");
+                    }
+                    if (item == null) {
+                        continue;
+                    }
+                    List<String> invalid = new ArrayList<>();
+                    invalid.addAll(Arrays.asList((r + 1) + "", (c + 1) + "", item));
+                    stringTable.add(invalid);
+                }
+            }
+
+            return true;
+        } catch (Exception e) {
+            error = e.toString();
+            return false;
+        }
+    }
+
     /*
         table view
      */
@@ -328,7 +365,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
             return -1;
         }
         try {
-            return Long.valueOf(tableData().get(row).get(0));
+            return Long.parseLong(tableData().get(row).get(0));
         } catch (Exception e) {
             return -1;
         }

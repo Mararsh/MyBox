@@ -20,19 +20,19 @@ import org.jsoup.nodes.Element;
  * @License Apache License Version 2.0
  */
 public class ControlHtmlDomSource extends BaseHtmlDomTreeController {
-    
+
     private List<TreeItem<HtmlNode>> selected;
-    
+
     @FXML
     protected Label topLabel;
     @FXML
     protected TreeTableColumn<HtmlNode, Boolean> selectColumn;
-    
+
     @Override
     public void initControls() {
         try {
             super.initControls();
-            
+
             selectColumn.setCellValueFactory(
                     new Callback<TreeTableColumn.CellDataFeatures<HtmlNode, Boolean>, ObservableValue<Boolean>>() {
                 @Override
@@ -44,16 +44,16 @@ public class ControlHtmlDomSource extends BaseHtmlDomTreeController {
                 }
             });
             selectColumn.setCellFactory(CheckBoxTreeTableCell.forTreeTableColumn(selectColumn));
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public void load(Element element, TreeItem<HtmlNode> item) {
         try {
             super.loadElement(element);
-            
+
             if (item != null) {
                 TreeItem<HtmlNode> sourceItem = find(hierarchyNumber(item));
                 if (sourceItem != null) {
@@ -64,15 +64,15 @@ public class ControlHtmlDomSource extends BaseHtmlDomTreeController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-        
+
     }
-    
-    public List<TreeItem<HtmlNode>> selected() {
+
+    public List<TreeItem<HtmlNode>> selectedItems() {
         selected = new ArrayList<>();
         checkSelected(domTree.getRoot());
         return selected;
     }
-    
+
     private void checkSelected(TreeItem<HtmlNode> item) {
         try {
             if (item == null) {
@@ -95,11 +95,11 @@ public class ControlHtmlDomSource extends BaseHtmlDomTreeController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-        
+
     }
-    
+
     public void setLabel(String label) {
         topLabel.setText(label);
     }
-    
+
 }

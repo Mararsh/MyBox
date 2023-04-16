@@ -1,14 +1,20 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.ContextMenu;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.input.MouseEvent;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -18,9 +24,14 @@ import static mara.mybox.value.Languages.message;
 public abstract class MyBoxController_Data extends MyBoxController_Network {
 
     @FXML
-    protected void showDataMenu(MouseEvent event) {
-        hideMenu(event);
+    public void popDataMenu(Event event) {
+        if (UserConfig.getBoolean("MyBoxHomeMenuPopWhenMouseHovering", true)) {
+            showDataMenu(event);
+        }
+    }
 
+    @FXML
+    protected void showDataMenu(Event event) {
         MenuItem DataManufacture = new MenuItem(message("DataManufacture"));
         DataManufacture.setOnAction((ActionEvent event1) -> {
             DataManufactureController c = (DataManufactureController) loadScene(Fxmls.DataManufactureFxml);
@@ -223,26 +234,26 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
                 TTC2TTF
         );
 
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        popMenu.getItems().addAll(
-                DataManufacture, ManageData, SpliceData, RowFilter, new SeparatorMenuItem(),
-                DataFile, matrix, database, DataInSystemClipboard, DataInMyBoxClipboard, new SeparatorMenuItem(),
+        List<MenuItem> items = new ArrayList<>();
+        items.addAll(Arrays.asList(
+                DataManufacture, DataFile, matrix, database, ManageData, SpliceData, RowFilter,
+                DataInSystemClipboard, DataInMyBoxClipboard, new SeparatorMenuItem(),
                 calculation, MathFunction, new SeparatorMenuItem(),
-                Location, new SeparatorMenuItem(),
-                miscellaneousMenu
-        );
+                Location, miscellaneousMenu));
 
-        popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem closeMenu = new MenuItem(message("PopupClose"));
-        closeMenu.setStyle("-fx-text-fill: #2e598a;");
-        closeMenu.setOnAction((ActionEvent cevent) -> {
-            popMenu.hide();
-            popMenu = null;
+        items.add(new SeparatorMenuItem());
+
+        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+        popItem.setSelected(UserConfig.getBoolean("MyBoxHomeMenuPopWhenMouseHovering", true));
+        popItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setBoolean("MyBoxHomeMenuPopWhenMouseHovering", popItem.isSelected());
+            }
         });
-        popMenu.getItems().add(closeMenu);
+        items.add(popItem);
 
-        showMenu(dataBox, event);
+        popCenterMenu(dataBox, items);
 
     }
 

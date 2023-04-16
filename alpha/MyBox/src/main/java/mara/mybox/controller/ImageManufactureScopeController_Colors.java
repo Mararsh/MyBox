@@ -184,6 +184,8 @@ public abstract class ImageManufactureScopeController_Colors extends ImageManufa
             });
             items.add(menu);
 
+            items.add(new SeparatorMenuItem());
+
             popEventMenu(mouseEvent, items);
 
         } catch (Exception e) {

@@ -13,7 +13,7 @@ public class IntegerStringFromatConverter extends StringConverter<Integer> {
     @Override
     public Integer fromString(String value) {
         try {
-            return Integer.valueOf(value.trim().replaceAll(",", ""));
+            return Integer.parseInt(value.trim().replaceAll(",", ""));
         } catch (Exception e) {
             return null;
         }

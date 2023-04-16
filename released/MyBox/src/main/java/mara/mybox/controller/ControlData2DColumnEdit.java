@@ -10,7 +10,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.SeparatorMenuItem;
@@ -30,7 +29,6 @@ import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.HelpTools;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -427,6 +425,11 @@ public class ControlData2DColumnEdit extends BaseChildController {
             values.add(TimeFormats.Year);
             values.add(TimeFormats.TimeMs);
             values.add(TimeFormats.DatetimeZone);
+            values.add(TimeFormats.DatetimeC);
+            values.add(TimeFormats.DatetimeMsC);
+            values.add(TimeFormats.DateC);
+            values.add(TimeFormats.MonthC);
+            values.add(TimeFormats.DatetimeZoneC);
             values.add(TimeFormats.DatetimeE);
             values.add(TimeFormats.DatetimeMsE);
             values.add(TimeFormats.DateE);
@@ -439,6 +442,8 @@ public class ControlData2DColumnEdit extends BaseChildController {
             values.add(TimeFormats.Date);
             values.add(TimeFormats.Month);
             values.add(TimeFormats.Year);
+            values.add(TimeFormats.DateC);
+            values.add(TimeFormats.MonthC);
             values.add(TimeFormats.DateE);
             values.add(TimeFormats.MonthE);
             popExamples(event, values, message("DateFormat"), HelpTools.simpleDateFormatLink());
@@ -473,11 +478,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             if (values == null || values.isEmpty()) {
                 return;
             }
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+            List<MenuItem> items = new ArrayList<>();
 
             MenuItem menu = new MenuItem(message("ClearInputArea"));
             menu.setOnAction(new EventHandler<ActionEvent>() {
@@ -486,8 +487,8 @@ public class ControlData2DColumnEdit extends BaseChildController {
                     formatInput.clear();
                 }
             });
-            popMenu.getItems().add(menu);
-            popMenu.getItems().add(new SeparatorMenuItem());
+            items.add(menu);
+            items.add(new SeparatorMenuItem());
 
             for (String value : values) {
                 menu = new MenuItem(value);
@@ -497,9 +498,9 @@ public class ControlData2DColumnEdit extends BaseChildController {
                         formatInput.setText(value);
                     }
                 });
-                popMenu.getItems().add(menu);
+                items.add(menu);
             }
-            popMenu.getItems().add(new SeparatorMenuItem());
+            items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(linkName);
             menu.setStyle("-fx-text-fill: blue;");
@@ -509,10 +510,11 @@ public class ControlData2DColumnEdit extends BaseChildController {
                     myController.openLink(linkAddress);
                 }
             });
-            popMenu.getItems().add(menu);
-            popMenu.getItems().add(new SeparatorMenuItem());
+            items.add(menu);
 
-            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
             hoverMenu.setSelected(UserConfig.getBoolean("Data2DColumnEditPopWhenMouseHovering", true));
             hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -520,18 +522,9 @@ public class ControlData2DColumnEdit extends BaseChildController {
                     UserConfig.setBoolean("Data2DColumnEditPopWhenMouseHovering", hoverMenu.isSelected());
                 }
             });
-            popMenu.getItems().add(hoverMenu);
+            items.add(hoverMenu);
 
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
-            LocateTools.locateEvent(event, popMenu);
+            popEventMenu(event, items);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

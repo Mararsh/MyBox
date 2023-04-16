@@ -1,17 +1,29 @@
 package mara.mybox.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.Clipboard;
+import javafx.scene.layout.Region;
+import javafx.stage.Stage;
+import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -23,7 +35,9 @@ public class ControlData2DEditTable extends ControlData2DLoad {
     protected SimpleBooleanProperty columnChangedNotify;
 
     @FXML
-    protected Button headerButton;
+    protected Button headerButton, verifyButton;
+    @FXML
+    protected CheckBox verifyCheck;
 
     public ControlData2DEditTable() {
         TipsLabelKey = "Data2DTips";
@@ -36,6 +50,8 @@ public class ControlData2DEditTable extends ControlData2DLoad {
         try {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(headerButton, new Tooltip(message("FirstLineDefineNames")));
+            NodeStyleTools.setTooltip(verifyButton, new Tooltip(message("VerifyPageData")));
+            NodeStyleTools.setTooltip(verifyCheck, new Tooltip(message("VerifyDataWhenSave")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -60,6 +76,15 @@ public class ControlData2DEditTable extends ControlData2DLoad {
             saveButton = dataController.saveButton;
 
             initPagination();
+
+            verifyCheck.setSelected(UserConfig.getBoolean("Data2DVerifyBeforeSave", false));
+            verifyCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
+                    UserConfig.setBoolean("Data2DVerifyBeforeSave", verifyCheck.isSelected());
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -70,7 +95,7 @@ public class ControlData2DEditTable extends ControlData2DLoad {
         try {
             super.setData(data);
 
-            headerButton.setVisible(data2D.isTmpData() || data2D.isDataFile() || data.isClipboard());
+            headerButton.setDisable(!data2D.isTmpData() && !data2D.isDataFile() && !data.isClipboard());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -232,6 +257,78 @@ public class ControlData2DEditTable extends ControlData2DLoad {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @FXML
+    public void verifyAction() {
+        StringTable results = verifyResults();
+        if (results.isEmpty()) {
+            popInformation(message("AllValuesValid"), 5000);
+            return;
+        }
+        results.htmlTable();
+    }
+
+    public StringTable verifyResults() {
+        try {
+            List<String> names = new ArrayList<>();
+            names.addAll(Arrays.asList(message("Row"), message("Column"), message("Invalid")));
+            StringTable stringTable = new StringTable(names, data2D.displayName());
+            for (int r = 0; r < tableData.size(); r++) {
+                List<String> dataRow = tableData.get(r);
+                for (int c = 0; c < data2D.columnsNumber(); c++) {
+                    Data2DColumn column = data2D.column(c);
+                    if (column.isAuto()) {
+                        continue;
+                    }
+                    String value = dataRow.get(c + 1);
+                    String item = null;
+                    if (column.isNotNull() && (value == null || value.isBlank())) {
+                        item = message("Null");
+                    } else if (!column.validValue(value)) {
+                        item = message(column.getType().name());
+                    } else if (!data2D.validValue(value)) {
+                        item = message("TextDataComments");
+                    }
+                    if (item == null) {
+                        continue;
+                    }
+                    List<String> invalid = new ArrayList<>();
+                    invalid.addAll(Arrays.asList((r + 1) + "", column.getColumnName(), item));
+                    stringTable.add(invalid);
+                }
+            }
+            return stringTable;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public boolean verifyData() {
+        if (!verifyCheck.isSelected()) {
+            return true;
+        }
+        StringTable results = verifyResults();
+        if (results.isEmpty()) {
+            return true;
+        }
+        results.htmlTable();
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(getMyStage().getTitle());
+        alert.setHeaderText(getMyStage().getTitle());
+        alert.setContentText(message("IgnoreInvalidAndSave"));
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        ButtonType buttonSave = new ButtonType(message("Save"));
+        ButtonType buttonCancel = new ButtonType(message("Cancel"));
+        alert.getButtonTypes().setAll(buttonSave, buttonCancel);
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.setAlwaysOnTop(true);
+        stage.toFront();
+
+        Optional<ButtonType> result = alert.showAndWait();
+        return result != null && result.isPresent() && result.get() == buttonSave;
     }
 
     @Override

@@ -1,18 +1,17 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -131,13 +130,16 @@ public abstract class BaseFileEditorController_Pair extends BaseFileEditorContro
     }
 
     @FXML
-    public void popPanesMenu(MouseEvent mouseEvent) {
+    public void popPanesMenu(Event event) {
+        if (UserConfig.getBoolean(baseName + "PanesPopWhenMouseHovering", false)) {
+            showPanesMenu(event);
+        }
+    }
+
+    @FXML
+    public void showPanesMenu(Event event) {
         try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+            List<MenuItem> items = new ArrayList<>();
 
             CheckMenuItem updateMenu = new CheckMenuItem(message("UpdateSynchronously"));
             updateMenu.setSelected(UserConfig.getBoolean(baseName + "UpdateSynchronously", false));
@@ -150,7 +152,7 @@ public abstract class BaseFileEditorController_Pair extends BaseFileEditorContro
                     }
                 }
             });
-            popMenu.getItems().add(updateMenu);
+            items.add(updateMenu);
 
             CheckMenuItem scrollMenu = new CheckMenuItem(message("ScrollSynchronously"));
             scrollMenu.setSelected(UserConfig.getBoolean(baseName + "ScrollSynchronously", false));
@@ -164,20 +166,21 @@ public abstract class BaseFileEditorController_Pair extends BaseFileEditorContro
                     }
                 }
             });
-            popMenu.getItems().add(scrollMenu);
+            items.add(scrollMenu);
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-            MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            hoverMenu.setSelected(UserConfig.getBoolean(baseName + "PanesPopWhenMouseHovering", false));
+            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    popMenu.hide();
+                    UserConfig.setBoolean(baseName + "PanesPopWhenMouseHovering", hoverMenu.isSelected());
                 }
             });
-            popMenu.getItems().add(menu);
+            items.add(hoverMenu);
 
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            popEventMenu(event, items);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

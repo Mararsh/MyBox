@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -9,7 +10,9 @@ import javafx.util.Callback;
 import mara.mybox.data.ShortCut;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -22,6 +25,8 @@ public class ShortcutsController extends BaseTableViewController<ShortCut> {
     protected TableColumn<ShortCut, String> keyColumn, actionColumn, altColumn;
     @FXML
     protected TableColumn<ShortCut, ImageView> iconColumn;
+    @FXML
+    protected CheckBox omitCheck;
 
     public ShortcutsController() {
         baseTitle = message("Shortcuts");
@@ -67,6 +72,8 @@ public class ShortcutsController extends BaseTableViewController<ShortCut> {
     public void afterSceneLoaded() {
         try {
             super.afterSceneLoaded();
+
+            omitCheck.setSelected(AppVariables.ShortcutsCanNotOmitCtrlAlt);
 
             tableData.add(new ShortCut("F1", "",
                     message("Start") + " / " + message("OK") + " / " + message("Synchronize") + " / " + message("Set") + " / " + message("Query"),
@@ -139,6 +146,12 @@ public class ShortcutsController extends BaseTableViewController<ShortCut> {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @FXML
+    public void setOmit() {
+        AppVariables.ShortcutsCanNotOmitCtrlAlt = omitCheck.isSelected();
+        UserConfig.setBoolean("ShortcutsCanNotOmitCtrlAlt", AppVariables.ShortcutsCanNotOmitCtrlAlt);
     }
 
     @FXML

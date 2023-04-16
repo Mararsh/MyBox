@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.dev.MyBoxLog;
@@ -47,6 +48,8 @@ public class ControlCSVEdit extends BaseController {
                 editCSVFile(tableDefinition.importAllFields());
             });
             items.add(menu);
+
+            items.add(new SeparatorMenuItem());
 
             parentController.popEventMenu(mouseEvent, items);
 

@@ -51,7 +51,7 @@ License:    Apache License Version 2.0
                                                                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                                                     </padding>
                                                                     <children>
-                                                                        <fx:include fx:id="nodes" source="TreeNodes.fxml" />
+                                                                        <fx:include fx:id="nodes" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlTreeInfoManage.fxml" VBox.vgrow="ALWAYS" />
                                                                     </children>
                                                                 </VBox>
                                                             </content>
@@ -96,7 +96,7 @@ License:    Apache License Version 2.0
                                                                         </HBox>
                                                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
                                                                             <children>
-                                                                                <Button fx:id="historyFindButton" mnemonicParsing="false"   onAction="#showFindHistories" onMouseEntered="#popFindHistories" >
+                                                                                <Button fx:id="historyFindButton" mnemonicParsing="false" onAction="#showFindHistories" onMouseEntered="#popFindHistories">
                                                                                     <graphic>
                                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                                             <image>
@@ -306,7 +306,7 @@ License:    Apache License Version 2.0
                                     </CheckBox>
                                     <CheckBox fx:id="nodesListCheck" minWidth="-Infinity" mnemonicParsing="false">
                                        <graphic>
-                                          <ImageView fx:id="leftPaneControl1" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView  fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@../buttons/Red/iconList.png" />
                                              </image>
@@ -369,7 +369,7 @@ License:    Apache License Version 2.0
                 <Insets />
             </BorderPane.margin>
             <padding>
-                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
             </padding>
         </VBox>
     </center>

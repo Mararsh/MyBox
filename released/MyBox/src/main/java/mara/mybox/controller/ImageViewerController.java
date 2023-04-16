@@ -15,7 +15,6 @@ import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -33,10 +32,9 @@ import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
-import static mara.mybox.fxml.WindowTools.openScene;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -66,8 +64,6 @@ public class ImageViewerController extends BaseImageController {
     protected VBox panesBox, contentBox, fileBox, saveAsBox;
     @FXML
     protected FlowPane saveFramesPane;
-    @FXML
-    protected CheckBox deleteConfirmCheck, saveConfirmCheck;
     @FXML
     protected ToggleGroup sortGroup, framesSaveGroup;
     @FXML
@@ -132,7 +128,7 @@ public class ImageViewerController extends BaseImageController {
                             loadWidth = -1;
                         } else {
                             try {
-                                loadWidth = Integer.valueOf(newValue);
+                                loadWidth = Integer.parseInt(newValue);
                                 ValidationTools.setEditorNormal(loadWidthBox);
                             } catch (Exception e) {
                                 ValidationTools.setEditorBadStyle(loadWidthBox);
@@ -142,26 +138,6 @@ public class ImageViewerController extends BaseImageController {
                         setLoadWidth();
                     }
                 });
-            }
-
-            if (deleteConfirmCheck != null) {
-                deleteConfirmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(baseName + "ConfirmDelete", deleteConfirmCheck.isSelected());
-                    }
-                });
-                deleteConfirmCheck.setSelected(UserConfig.getBoolean(baseName + "ConfirmDelete", true));
-            }
-
-            if (saveConfirmCheck != null) {
-                saveConfirmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(baseName + "ConfirmSave", saveConfirmCheck.isSelected());
-                    }
-                });
-                saveConfirmCheck.setSelected(UserConfig.getBoolean(baseName + "ConfirmSave", true));
             }
 
         } catch (Exception e) {
@@ -319,14 +295,6 @@ public class ImageViewerController extends BaseImageController {
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void afterInfoLoaded() {
-        super.afterInfoLoaded();
-        if (deleteConfirmCheck != null) {
-            deleteConfirmCheck.setDisable(imageFile() == null);
         }
     }
 
@@ -599,16 +567,10 @@ public class ImageViewerController extends BaseImageController {
             targetFile = srcFile;
         }
         try {
-            String ask = null;
             if (imageInformation != null && imageInformation.isIsScaled()) {
-                ask = message("SureSaveScaled");
-            } else if (srcFile != null && saveConfirmCheck != null && saveConfirmCheck.isSelected()) {
-                ask = message("SureOverrideFile");
-            }
-            if (ask != null) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle(getMyStage().getTitle());
-                alert.setContentText(ask);
+                alert.setContentText(message("SureSaveScaled"));
                 alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
                 ButtonType buttonSave = new ButtonType(message("Save"));
                 ButtonType buttonSaveAs = new ButtonType(message("SaveAs"));
@@ -806,11 +768,6 @@ public class ImageViewerController extends BaseImageController {
         if (sfile == null) {
             return false;
         }
-        if (deleteConfirmCheck != null && deleteConfirmCheck.isSelected()) {
-            if (!PopTools.askSure(getTitle(), message("SureDelete"))) {
-                return false;
-            }
-        }
         if (FileDeleteTools.delete(sfile)) {
             popSuccessful();
             return true;
@@ -897,14 +854,11 @@ public class ImageViewerController extends BaseImageController {
     /*
         static methods
      */
-    public static ImageViewerController openFile(Stage stage, File file) {
+    public static ImageViewerController open() {
         try {
-            ImageViewerController controller = (ImageViewerController) openScene(stage, Fxmls.ImageViewerFxml);
+            ImageViewerController controller = (ImageViewerController) WindowTools.openStage(Fxmls.ImageViewerFxml);
             if (controller != null) {
                 controller.requestMouse();
-                if (file != null) {
-                    controller.loadImageFile(file);
-                }
             }
             return controller;
         } catch (Exception e) {
@@ -913,20 +867,17 @@ public class ImageViewerController extends BaseImageController {
         }
     }
 
-    public static ImageViewerController open() {
-        return open(null);
-    }
-
-    public static ImageViewerController open(Stage stage) {
-        return openFile(null, null);
-    }
-
     public static ImageViewerController openFile(File file) {
-        return openFile(null, file);
-    }
-
-    public static ImageViewerController openFileName(String file) {
-        return openFile(null, new File(file));
+        try {
+            ImageViewerController controller = open();
+            if (controller != null && file != null) {
+                controller.loadImageFile(file);
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
     }
 
     public static ImageViewerController openImage(Image image) {

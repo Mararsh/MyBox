@@ -292,8 +292,12 @@ Examples > Entertainment > Chinese
 http://www.radio.cn/pc-portal/sanji/zhibo_2.html?channelname=0&name=1395534&title=radio
 
 Examples > Entertainment > Chinese
-品味书香
-http://www.radio.cn/pc-portal/sanji/zhibo_2.html?channelname=0&name=1395682&title=radio
+中国相声榜
+http://www.radio.cn/pc-portal/sanji/zhibo_2.html?channelname=0&name=1395673&title=radio
+
+Examples > Entertainment > Chinese
+老外看点
+http://www.radio.cn/pc-portal/sanji/zhibo_2.html?channelname=0&name=1437094&title=radio
 
 Examples > Entertainment > Chinese
 蜻蜓FM

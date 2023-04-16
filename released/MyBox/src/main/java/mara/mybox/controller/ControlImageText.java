@@ -10,6 +10,7 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -28,7 +29,9 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import mara.mybox.bufferedimage.PixelsBlend;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -181,7 +184,7 @@ public class ControlImageText extends BaseController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v >= 0) {
                             lineHeight = v;
                         } else {
@@ -306,7 +309,7 @@ public class ControlImageText extends BaseController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v >= 0) {
                             angle = v;
                             UserConfig.setInt(baseName + "TextAngle", v);
@@ -406,7 +409,7 @@ public class ControlImageText extends BaseController {
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     bordersStrokeWidth = 0;
                     try {
-                        bordersStrokeWidth = Integer.valueOf(newValue);
+                        bordersStrokeWidth = Integer.parseInt(newValue);
                         if (bordersStrokeWidth < 0) {
                             bordersStrokeWidth = 0;
                         }
@@ -440,7 +443,7 @@ public class ControlImageText extends BaseController {
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     bordersArc = 0;
                     try {
-                        bordersArc = Integer.valueOf(newValue);
+                        bordersArc = Integer.parseInt(newValue);
                         if (bordersArc < 0) {
                             bordersArc = 0;
                         }
@@ -463,7 +466,7 @@ public class ControlImageText extends BaseController {
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     bordersOpacity = 0.5f;
                     try {
-                        bordersOpacity = Float.valueOf(newValue);
+                        bordersOpacity = Float.parseFloat(newValue);
                         if (bordersOpacity < 0.0f || bordersOpacity > 1.0f) {
                             bordersOpacity = 0.5f;
                         }
@@ -495,14 +498,16 @@ public class ControlImageText extends BaseController {
     }
 
     public boolean checkText() {
-        if (textArea.getText().isEmpty()) {
+        text = text();
+        if (text == null || text.isEmpty()) {
             textArea.setStyle(UserConfig.badStyle());
             return false;
         } else {
             textArea.setStyle(null);
-            UserConfig.setString(baseName + "TextValue", textArea.getText());
+            UserConfig.setString(baseName + "TextValue", text);
+            TableStringValues.add("ImageTextHistories", text);
+            return true;
         }
-        return true;
     }
 
     public boolean checkXY() {
@@ -573,7 +578,7 @@ public class ControlImageText extends BaseController {
 
     public boolean checkMargin() {
         try {
-            int v = Integer.valueOf(marginInput.getText());
+            int v = Integer.parseInt(marginInput.getText());
             if (v >= 0) {
                 margin = v;
                 UserConfig.setInt(baseName + "Margin", margin);
@@ -699,7 +704,7 @@ public class ControlImageText extends BaseController {
 
     public boolean checkBordersMargin() {
         try {
-            bordersMargin = Integer.valueOf(bordersMarginInput.getText());
+            bordersMargin = Integer.parseInt(bordersMarginInput.getText());
             UserConfig.setInt(baseName + "BordersMargin", bordersMargin);
         } catch (Exception e) {
             bordersMarginInput.setStyle(UserConfig.badStyle());
@@ -711,6 +716,18 @@ public class ControlImageText extends BaseController {
     @FXML
     public void goBorders() {
         goAction();
+    }
+
+    @FXML
+    protected void showTextHistories(Event event) {
+        PopTools.popStringValues(this, textArea, event, "ImageTextHistories", false, true);
+    }
+
+    @FXML
+    public void popTextHistories(Event event) {
+        if (UserConfig.getBoolean("ImageTextHistoriesPopWhenMouseHovering", false)) {
+            showTextHistories(event);
+        }
     }
 
     /*

@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.text.MessageFormat;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
@@ -62,13 +63,14 @@ public class PptSplitController extends BaseBatchFileController {
     public String handleFile(File srcFile, File targetPath) {
         try {
             int total;
-
-            try ( SlideShow ppt = SlideShowFactory.create(srcFile)) {
+            try (SlideShow ppt = SlideShowFactory.create(srcFile)) {
                 total = ppt.getSlides().size();
             } catch (Exception e) {
                 MyBoxLog.error(e.toString());
                 return e.toString();
             }
+            targetFilesCount = 0;
+            targetFiles = new LinkedHashMap<>();
             String suffix = FileNameTools.suffix(srcFile.getName());
             switch (splitController.splitType) {
                 case Size:
@@ -87,7 +89,7 @@ public class PptSplitController extends BaseBatchFileController {
             updateInterface("CompleteFile");
             totalItemsHandled += total;
             return MessageFormat.format(Languages.message("HandlePagesGenerateNumber"),
-                    totalItemsHandled, targetFiles.size());
+                    totalItemsHandled, targetFilesCount);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return e.toString();
@@ -168,7 +170,7 @@ public class PptSplitController extends BaseBatchFileController {
 
     // Include start, and exlucde end. Both start and end are 0-based
     protected boolean savePPT(File srcFile, File targetFile, int start, int end) {
-        try ( HSLFSlideShow ppt = new HSLFSlideShow(new FileInputStream(srcFile))) {
+        try (HSLFSlideShow ppt = new HSLFSlideShow(new FileInputStream(srcFile))) {
             List<HSLFSlide> slides = ppt.getSlides();
             int total = slides.size();
             if (start > end || start >= total) {
@@ -206,8 +208,8 @@ public class PptSplitController extends BaseBatchFileController {
 
     // Include start, and exlucde end. Both start and end are 0-based
     protected boolean savePPTX(File srcFile, File targetFile, int start, int end) {
-        try ( XMLSlideShow ppt = new XMLSlideShow(new FileInputStream(srcFile));
-                 FileOutputStream out = new FileOutputStream(targetFile)) {
+        try (XMLSlideShow ppt = new XMLSlideShow(new FileInputStream(srcFile));
+                FileOutputStream out = new FileOutputStream(targetFile)) {
             List<XSLFSlide> slides = ppt.getSlides();
             int total = slides.size();
             // Looks need not remove shapes for pptx in current version

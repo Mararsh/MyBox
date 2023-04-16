@@ -32,11 +32,11 @@ License:    Apache License Version 2.0
                         <Label text="%File" />
                         <Label text="1" />
                         <TextField fx:id="file1Input" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                        <Button fx:id="selectFile1Button" mnemonicParsing="false" onAction="#selectFile1" onMouseEntered="#popFile1">
+                        <Button fx:id="selectFile1Button" mnemonicParsing="false" onAction="#pickFile1" onMouseEntered="#popFile1">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/Red/iconOpen.png" />
+                                        <Image url="@../buttons/Red/iconSelectFile.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -48,11 +48,11 @@ License:    Apache License Version 2.0
                         <Label text="%File" />
                         <Label text="2" />
                         <TextField fx:id="file2Input" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                        <Button fx:id="selectFile2Button" mnemonicParsing="false" onAction="#selectFile2" onMouseEntered="#popFile2">
+                        <Button fx:id="selectFile2Button" mnemonicParsing="false" onAction="#pickFile2" onMouseEntered="#popFile2">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/Red/iconOpen.png" />
+                                        <Image url="@../buttons/Red/iconSelectFile.png" />
                                     </image>
                                 </ImageView>
                             </graphic>

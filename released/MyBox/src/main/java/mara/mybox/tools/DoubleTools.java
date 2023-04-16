@@ -53,7 +53,7 @@ public class DoubleTools {
 
     public static double toDouble(String string, InvalidAs invalidAs) {
         try {
-            double d = Double.valueOf(string.replaceAll(",", ""));
+            double d = Double.parseDouble(string.replaceAll(",", ""));
             if (invalidDouble(d)) {
                 if (StringTools.isTrue(string)) {
                     return 1;

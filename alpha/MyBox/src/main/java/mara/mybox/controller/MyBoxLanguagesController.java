@@ -23,6 +23,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -478,6 +479,8 @@ public class MyBoxLanguagesController extends BaseController {
             copyChinese();
         });
         items.add(menu);
+
+        items.add(new SeparatorMenuItem());
 
         popEventMenu(event, items);
     }

@@ -71,9 +71,9 @@ public class FileUnarchive {
         if (aFactory == null) {
             aFactory = new ArchiveStreamFactory();
         }
-        try ( BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(sourceFile))) {
+        try (BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(sourceFile))) {
             if (archiver != null && aFactory.getInputStreamArchiveNames().contains(archiver)) {
-                try ( ArchiveInputStream in = aFactory.createArchiveInputStream(archiver, fileIn, charset)) {
+                try (ArchiveInputStream in = aFactory.createArchiveInputStream(archiver, fileIn, charset)) {
                     unarchive(in);
                 } catch (Exception e) {
                     unarchive(fileIn);
@@ -92,7 +92,7 @@ public class FileUnarchive {
             if (archiver == null) {
                 return;
             }
-            try ( ArchiveInputStream in = aFactory.createArchiveInputStream(archiver, fileIn, charset)) {
+            try (ArchiveInputStream in = aFactory.createArchiveInputStream(archiver, fileIn, charset)) {
                 unarchive(in);
             } catch (Exception ex) {
                 taskController.updateLogs(ex.toString());
@@ -132,14 +132,14 @@ public class FileUnarchive {
                     archiveSuccess++;
                     continue;
                 }
-                try ( OutputStream o = Files.newOutputStream(tfile.toPath())) {
+                try (OutputStream o = Files.newOutputStream(tfile.toPath())) {
                     IOUtils.copy(in, o);
                 } catch (Exception e) {
                     recordError(e.toString());
                     continue;
                 }
                 if (verbose) {
-                    taskController.targetFileGenerated(tfile, false);
+                    taskController.targetFileGenerated(tfile);
                 }
                 archiveSuccess++;
             }
@@ -149,7 +149,7 @@ public class FileUnarchive {
     }
 
     protected void unarchive7z() {
-        try ( SevenZFile sevenZFile = new SevenZFile(sourceFile)) {
+        try (SevenZFile sevenZFile = new SevenZFile(sourceFile)) {
             SevenZArchiveEntry entry;
             File tfile;
             while ((entry = sevenZFile.getNextEntry()) != null) {
@@ -170,7 +170,7 @@ public class FileUnarchive {
                     archiveSuccess++;
                     continue;
                 }
-                try ( FileOutputStream out = new FileOutputStream(tfile)) {
+                try (FileOutputStream out = new FileOutputStream(tfile)) {
                     byte[] content = new byte[(int) entry.getSize()];
                     sevenZFile.read(content, 0, content.length);
                     out.write(content);
@@ -179,7 +179,7 @@ public class FileUnarchive {
                     continue;
                 }
                 if (verbose) {
-                    taskController.targetFileGenerated(tfile, false);
+                    taskController.targetFileGenerated(tfile);
                 }
                 archiveSuccess++;
             }
@@ -189,7 +189,7 @@ public class FileUnarchive {
     }
 
     protected void unarchiveZip() {
-        try ( ZipFile zipFile = new ZipFile(sourceFile, charset)) {
+        try (ZipFile zipFile = new ZipFile(sourceFile, charset)) {
             Enumeration<ZipArchiveEntry> zEntries = zipFile.getEntries();
             File tfile;
             while (zEntries.hasMoreElements()) {
@@ -211,12 +211,12 @@ public class FileUnarchive {
                     archiveSuccess++;
                     continue;
                 }
-                try ( FileOutputStream out = new FileOutputStream(tfile);
-                         InputStream in = zipFile.getInputStream(entry)) {
+                try (FileOutputStream out = new FileOutputStream(tfile);
+                        InputStream in = zipFile.getInputStream(entry)) {
                     if (in != null) {
                         IOUtils.copy(in, out);
                         if (verbose) {
-                            taskController.targetFileGenerated(tfile, false);
+                            taskController.targetFileGenerated(tfile);
                         }
                     }
                 } catch (Exception e) {

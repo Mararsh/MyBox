@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -22,7 +23,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -30,19 +30,11 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.input.InputEvent;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
-import javafx.scene.web.HTMLEditor;
 import javafx.stage.Stage;
 import mara.mybox.data.HtmlNode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.HelpTools;
-import mara.mybox.fxml.LocateTools;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -63,7 +55,6 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlHtmlEditor extends BaseWebViewController {
 
-    protected HTMLEditor richEditor;
     protected boolean codesChanged, domChanged, richChanged,
             mdChanged, textsChanged, fileChanged;
     protected MutableDataHolder htmlOptions;
@@ -71,6 +62,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
     protected Parser htmlParser;
     protected HtmlRenderer htmlRender;
     protected String title;
+    protected final SimpleBooleanProperty loadNotify;
 
     protected final ButtonType buttonClose = new ButtonType(message("Close"));
     protected final ButtonType buttonSynchronize = new ButtonType(message("SynchronizeAndClose"));
@@ -94,7 +86,9 @@ public class ControlHtmlEditor extends BaseWebViewController {
     protected Button menuViewButton, synchronizeViewButton, popViewButton;
 
     public ControlHtmlEditor() {
+        baseTitle = message("HtmlEditor");
         TipsLabelKey = "HtmlEditorTips";
+        loadNotify = new SimpleBooleanProperty(false);
     }
 
     @Override
@@ -128,10 +122,10 @@ public class ControlHtmlEditor extends BaseWebViewController {
             tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
                 @Override
                 public void changed(ObservableValue ov, Tab oldValue, Tab newValue) {
-                    TextClipboardPopController.closeAll();
+                    tabChanged();
                 }
             });
-
+            tabChanged();
             showTabs();
 
             NodeStyleTools.refreshStyle(thisPane);
@@ -143,40 +137,10 @@ public class ControlHtmlEditor extends BaseWebViewController {
 
     protected void initRichEdtiorTab() {
         try {
-            richEditor = richEditorController.htmlEditor;
-
-            // https://stackoverflow.com/questions/31894239/javafx-htmleditor-how-to-implement-a-changelistener
-            // As my testing, only DragEvent.DRAG_EXITED, KeyEvent.KEY_TYPED, KeyEvent.KEY_RELEASED working for HtmlEdior
-            richEditor.setOnDragExited(new EventHandler<InputEvent>() {
-                @Override
-                public void handle(InputEvent event) {
-//                    MyBoxLog.debug("setOnDragExited");
-                    if (isSettingValues) {
-                        richEditorChanged(true);
-                    }
-                }
-            });
-            richEditor.setOnKeyReleased(new EventHandler<KeyEvent>() {
-                @Override
-                public void handle(KeyEvent event) {
-//                    MyBoxLog.debug("setOnKeyReleased");
-                    if (isSettingValues) {
-                        richEditorChanged(true);
-                    }
-                }
-            });
-
-            richEditorController.pageLoadingNotify.addListener(new ChangeListener<Boolean>() {
+            richEditorController.textChanged.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldv, Boolean newv) {
-                    richEditorPageLoading();
-                }
-            });
-
-            richEditorController.pageLoadedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldv, Boolean newv) {
-                    richEditorPageLoaded();
+                    richEditorChanged(true);
                 }
             });
         } catch (Exception e) {
@@ -352,12 +316,9 @@ public class ControlHtmlEditor extends BaseWebViewController {
     public boolean writePanes(String html) {
         fileChanged = false;
         sourceFile = webViewController.sourceFile;
+
         isSettingValues = true;
-        if (webViewController.address != null) {
-            loadRichEditor(webViewController.address);
-        } else {
-            loadRichEditor(html, false);
-        }
+        loadRichEditor(html, false);
         loadHtmlCodes(html, false);
         loadDom(html, false);
         loadMarkdown(html, false);
@@ -367,6 +328,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
         if (backupController != null) {
             backupController.loadBackups(sourceFile);
         }
+        loadNotify.set(!loadNotify.get());
         return true;
     }
 
@@ -574,6 +536,8 @@ public class ControlHtmlEditor extends BaseWebViewController {
         viewTab.setText(message("View") + (fileChanged ? " *" : ""));
         if (changed) {
             updateFileStatus(true);
+        } else {
+            updateStageTitle();
         }
     }
 
@@ -612,6 +576,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
     @FXML
     public void clearCodes() {
         codesArea.clear();
+        codesChanged(true);
     }
 
     @FXML
@@ -662,28 +627,14 @@ public class ControlHtmlEditor extends BaseWebViewController {
         domChanged(true);
     }
 
+    public void clearDom() {
+        domController.clearDom();
+        domChanged(true);
+    }
+
     /*
         rich editor
      */
-    protected void richEditorPageLoading() {
-        richEditor.setDisable(true);
-    }
-
-    protected void richEditorPageLoaded() {
-        richEditor.setDisable(false);
-        richEditorChanged(richChanged);
-    }
-
-    public void loadRichEditor(String address) {
-        if (!tabPane.getTabs().contains(richEditorTab)) {
-            return;
-        }
-        Platform.runLater(() -> {
-            richEditorController.loadAddress(address);
-            richChanged = false;
-        });
-    }
-
     public void loadRichEditor(String html, boolean updated) {
         if (!tabPane.getTabs().contains(richEditorTab)) {
             return;
@@ -693,15 +644,15 @@ public class ControlHtmlEditor extends BaseWebViewController {
             if (StringTools.include(html, "<FRAMESET ", true)) {
                 contents = "<p>" + message("FrameSetAndSelectFrame") + "</p>";
             }
-            richEditorController.writeContents(contents);
-            richChanged = updated;
+            richEditorController.loadContents(contents);
+            richEditorChanged(updated);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
     public String htmlByRichEditor() {
-        return richEditorController.loadedHtml();
+        return richEditorController.getContents();
     }
 
     protected void richEditorChanged(boolean changed) {
@@ -712,27 +663,16 @@ public class ControlHtmlEditor extends BaseWebViewController {
         if (c != null && !c.isEmpty()) {
             len = c.length();
         }
-        richEditorController.setWebViewLabel(message("CharactersNumber") + ": " + StringTools.format(len));
+        richEditorController.setLabel(message("CharactersNumber") + ": " + StringTools.format(len));
         if (changed) {
             updateFileStatus(true);
         }
     }
 
     @FXML
-    protected void showRichEditorStyle(Event event) {
-        PopTools.popHtmlStyle(event, richEditorController);
-    }
-
-    @FXML
-    protected void popRichEditorStyle(Event event) {
-        if (UserConfig.getBoolean("HtmlStylesPopWhenMouseHovering", false)) {
-            showRichEditorStyle(event);
-        }
-    }
-
-    @FXML
     public void clearRichEditor() {
-        richEditorController.loadContents(null);
+        richEditorController.loadContents("");
+        richEditorChanged(true);
     }
 
     /*
@@ -781,6 +721,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
     @FXML
     protected void clearMarkdown() {
         markdownArea.clear();
+        markdownChanged(true);
     }
 
     /*
@@ -823,6 +764,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
     @FXML
     protected void clearTexts() {
         textsArea.clear();
+        textsChanged(true);
     }
 
 
@@ -846,7 +788,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
                 return true;
 
             } else if (tab == richEditorTab) {
-                HtmlPopController.openWebView(this, WebViewTools.webview(richEditor));
+                HtmlPopController.openHtml(this, richEditorController.getContents());
                 return true;
 
             } else if (tab == textsTab) {
@@ -979,8 +921,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
                 return menuViewAction();
 
             } else if (tab == codesTab) {
-                Point2D localToScreen = codesArea.localToScreen(codesArea.getWidth() - 80, 80);
-                MenuHtmlCodesController.open(this, codesArea, localToScreen.getX(), localToScreen.getY());
+                MenuHtmlCodesController.open(this, codesArea);
                 return true;
 
             } else if (tab == domTab) {
@@ -988,18 +929,15 @@ public class ControlHtmlEditor extends BaseWebViewController {
                 return true;
 
             } else if (tab == richEditorTab) {
-                Point2D localToScreen = richEditor.localToScreen(richEditor.getWidth() - 80, 80);
-                MenuWebviewController.pop(richEditorController, null, localToScreen.getX(), localToScreen.getY());
+//                MenuHtmlCodesController.open(this, richEditorController.htmlEditor);
                 return true;
 
             } else if (tab == markdownTab) {
-                Point2D localToScreen = markdownArea.localToScreen(markdownArea.getWidth() - 80, 80);
-                MenuMarkdownEditController.open(this, markdownArea, localToScreen.getX(), localToScreen.getY());
+                MenuMarkdownEditController.open(this, markdownArea);
                 return true;
 
             } else if (tab == textsTab) {
-                Point2D localToScreen = textsArea.localToScreen(textsArea.getWidth() - 80, 80);
-                MenuTextEditController.open(this, textsArea, localToScreen.getX(), localToScreen.getY());
+                MenuTextEditController.open(this, textsArea);
                 return true;
 
             }
@@ -1041,10 +979,10 @@ public class ControlHtmlEditor extends BaseWebViewController {
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == codesTab) {
-                clearTexts();
+                clearCodes();
 
             } else if (tab == domTab) {
-                domController.clearDom();
+                clearDom();
 
             } else if (tab == richEditorTab) {
                 clearRichEditor();
@@ -1064,6 +1002,18 @@ public class ControlHtmlEditor extends BaseWebViewController {
     /*
         panes
      */
+    public void tabChanged() {
+        try {
+            TextClipboardPopController.closeAll();
+            Tab tab = tabPane.getSelectionModel().getSelectedItem();
+            clearButton.setDisable(tab == viewTab);
+            popButton.setDisable(tab == domTab);
+            menuButton.setDisable(tab == richEditorTab);
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
     public void showTabs() {
         try {
             if (!UserConfig.getBoolean(baseName + "ShowDomTab", true)) {
@@ -1198,211 +1148,135 @@ public class ControlHtmlEditor extends BaseWebViewController {
     }
 
     @FXML
-    public void popPanesMenu(MouseEvent mouseEvent) {
-        try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
-            List<MenuItem> items = makePanesMenu(mouseEvent);
-            popMenu.getItems().addAll(items);
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-            MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
-
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+    public void popPanesMenu(Event event) {
+        if (UserConfig.getBoolean("HtmlPanesPopWhenMouseHovering", false)) {
+            showPanesMenu(event);
         }
-    }
-
-    public List<MenuItem> makePanesMenu(MouseEvent mouseEvent) {
-        List<MenuItem> items = new ArrayList<>();
-        try {
-
-            CheckMenuItem domMenu = new CheckMenuItem("DOM");
-            domMenu.setSelected(tabPane.getTabs().contains(domTab));
-            domMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "ShowDomTab", domMenu.isSelected());
-                    if (domMenu.isSelected()) {
-                        if (!tabPane.getTabs().contains(domTab)) {
-                            tabPane.getTabs().add(tabPane.getTabs().size(), domTab);
-                            loadHtmlCodes(htmlInWebview(), false);
-                        }
-                    } else {
-                        if (tabPane.getTabs().contains(domTab)) {
-                            tabPane.getTabs().remove(domTab);
-                        }
-                    }
-                    NodeStyleTools.refreshStyle(tabPane);
-                }
-            });
-            items.add(domMenu);
-
-            CheckMenuItem codesMenu = new CheckMenuItem(message("HtmlCodes"));
-            codesMenu.setSelected(tabPane.getTabs().contains(codesTab));
-            codesMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "ShowCodesTab", codesMenu.isSelected());
-                    if (codesMenu.isSelected()) {
-                        if (!tabPane.getTabs().contains(codesTab)) {
-                            tabPane.getTabs().add(tabPane.getTabs().size(), codesTab);
-                            loadHtmlCodes(htmlInWebview(), false);
-                        }
-                    } else {
-                        if (tabPane.getTabs().contains(codesTab)) {
-                            tabPane.getTabs().remove(codesTab);
-                        }
-                    }
-                    NodeStyleTools.refreshStyle(tabPane);
-                }
-            });
-            items.add(codesMenu);
-
-            CheckMenuItem editorMenu = new CheckMenuItem(message("RichText"));
-            editorMenu.setSelected(tabPane.getTabs().contains(richEditorTab));
-            editorMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "ShowEditorTab", editorMenu.isSelected());
-                    if (editorMenu.isSelected()) {
-                        if (!tabPane.getTabs().contains(richEditorTab)) {
-                            tabPane.getTabs().add(tabPane.getTabs().size(), richEditorTab);
-                            loadRichEditor(htmlInWebview(), false);
-                        }
-                    } else {
-                        if (tabPane.getTabs().contains(richEditorTab)) {
-                            tabPane.getTabs().remove(richEditorTab);
-                        }
-                    }
-                    NodeStyleTools.refreshStyle(tabPane);
-                }
-            });
-            items.add(editorMenu);
-
-            CheckMenuItem mdMenu = new CheckMenuItem("Markdown");
-            mdMenu.setSelected(tabPane.getTabs().contains(markdownTab));
-            mdMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "ShowMarkdownTab", mdMenu.isSelected());
-                    if (mdMenu.isSelected()) {
-                        if (!tabPane.getTabs().contains(markdownTab)) {
-                            tabPane.getTabs().add(tabPane.getTabs().size(), markdownTab);
-                            loadMarkdown(htmlInWebview(), false);
-                        }
-                    } else {
-                        if (tabPane.getTabs().contains(markdownTab)) {
-                            tabPane.getTabs().remove(markdownTab);
-                        }
-                    }
-                    NodeStyleTools.refreshStyle(tabPane);
-                }
-            });
-            items.add(mdMenu);
-
-            CheckMenuItem textsMenu = new CheckMenuItem(message("Texts"));
-            textsMenu.setSelected(tabPane.getTabs().contains(textsTab));
-            textsMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(baseName + "ShowTextsTab", textsMenu.isSelected());
-                    if (textsMenu.isSelected()) {
-                        if (!tabPane.getTabs().contains(textsTab)) {
-                            tabPane.getTabs().add(tabPane.getTabs().size(), textsTab);
-                            loadText(htmlInWebview(), false);
-                        }
-                    } else {
-                        if (tabPane.getTabs().contains(textsTab)) {
-                            tabPane.getTabs().remove(textsTab);
-                        }
-                    }
-                    NodeStyleTools.refreshStyle(thisPane);
-                }
-            });
-            items.add(textsMenu);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
-        }
-        return items;
     }
 
     @FXML
-    public void popHelpMenu(MouseEvent mouseEvent) {
-        try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
+    public void showPanesMenu(Event event) {
+        List<MenuItem> items = new ArrayList<>();
+
+        CheckMenuItem domMenu = new CheckMenuItem("DOM");
+        domMenu.setSelected(tabPane.getTabs().contains(domTab));
+        domMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setBoolean(baseName + "ShowDomTab", domMenu.isSelected());
+                if (domMenu.isSelected()) {
+                    if (!tabPane.getTabs().contains(domTab)) {
+                        tabPane.getTabs().add(tabPane.getTabs().size(), domTab);
+                        loadHtmlCodes(htmlInWebview(), false);
+                    }
+                } else {
+                    if (tabPane.getTabs().contains(domTab)) {
+                        tabPane.getTabs().remove(domTab);
+                    }
+                }
+                NodeStyleTools.refreshStyle(tabPane);
             }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+        });
+        items.add(domMenu);
 
-            MenuItem menuItem = new MenuItem(message("HtmlTutorial") + " - " + message("English"));
-            menuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    myController.openLink(HelpTools.htmlEnLink());
+        CheckMenuItem codesMenu = new CheckMenuItem(message("HtmlCodes"));
+        codesMenu.setSelected(tabPane.getTabs().contains(codesTab));
+        codesMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setBoolean(baseName + "ShowCodesTab", codesMenu.isSelected());
+                if (codesMenu.isSelected()) {
+                    if (!tabPane.getTabs().contains(codesTab)) {
+                        tabPane.getTabs().add(tabPane.getTabs().size(), codesTab);
+                        loadHtmlCodes(htmlInWebview(), false);
+                    }
+                } else {
+                    if (tabPane.getTabs().contains(codesTab)) {
+                        tabPane.getTabs().remove(codesTab);
+                    }
                 }
-            });
-            popMenu.getItems().add(menuItem);
+                NodeStyleTools.refreshStyle(tabPane);
+            }
+        });
+        items.add(codesMenu);
 
-            menuItem = new MenuItem(message("JavaScriptTutorial") + " - " + message("English"));
-            menuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    myController.openLink(HelpTools.javaScriptEnLink());
+        CheckMenuItem editorMenu = new CheckMenuItem(message("RichText"));
+        editorMenu.setSelected(tabPane.getTabs().contains(richEditorTab));
+        editorMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setBoolean(baseName + "ShowEditorTab", editorMenu.isSelected());
+                if (editorMenu.isSelected()) {
+                    if (!tabPane.getTabs().contains(richEditorTab)) {
+                        tabPane.getTabs().add(tabPane.getTabs().size(), richEditorTab);
+                        loadRichEditor(htmlInWebview(), false);
+                    }
+                } else {
+                    if (tabPane.getTabs().contains(richEditorTab)) {
+                        tabPane.getTabs().remove(richEditorTab);
+                    }
                 }
-            });
-            popMenu.getItems().add(menuItem);
+                NodeStyleTools.refreshStyle(tabPane);
+            }
+        });
+        items.add(editorMenu);
 
-            menuItem = new MenuItem(message("HtmlTutorial") + " - " + message("Chinese"));
-            menuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    myController.openLink(HelpTools.htmlZhLink());
+        CheckMenuItem mdMenu = new CheckMenuItem("Markdown");
+        mdMenu.setSelected(tabPane.getTabs().contains(markdownTab));
+        mdMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setBoolean(baseName + "ShowMarkdownTab", mdMenu.isSelected());
+                if (mdMenu.isSelected()) {
+                    if (!tabPane.getTabs().contains(markdownTab)) {
+                        tabPane.getTabs().add(tabPane.getTabs().size(), markdownTab);
+                        loadMarkdown(htmlInWebview(), false);
+                    }
+                } else {
+                    if (tabPane.getTabs().contains(markdownTab)) {
+                        tabPane.getTabs().remove(markdownTab);
+                    }
                 }
-            });
-            popMenu.getItems().add(menuItem);
+                NodeStyleTools.refreshStyle(tabPane);
+            }
+        });
+        items.add(mdMenu);
 
-            menuItem = new MenuItem(message("JavaScriptTutorial") + " - " + message("Chinese"));
-            menuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    myController.openLink(HelpTools.javaScriptZhLink());
+        CheckMenuItem textsMenu = new CheckMenuItem(message("Texts"));
+        textsMenu.setSelected(tabPane.getTabs().contains(textsTab));
+        textsMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setBoolean(baseName + "ShowTextsTab", textsMenu.isSelected());
+                if (textsMenu.isSelected()) {
+                    if (!tabPane.getTabs().contains(textsTab)) {
+                        tabPane.getTabs().add(tabPane.getTabs().size(), textsTab);
+                        loadText(htmlInWebview(), false);
+                    }
+                } else {
+                    if (tabPane.getTabs().contains(textsTab)) {
+                        tabPane.getTabs().remove(textsTab);
+                    }
                 }
-            });
-            popMenu.getItems().add(menuItem);
+                NodeStyleTools.refreshStyle(thisPane);
+            }
+        });
+        items.add(textsMenu);
 
-            popMenu.getItems().add(new SeparatorMenuItem());
+        items.add(new SeparatorMenuItem());
 
-            MenuItem menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
+        CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+        hoverMenu.setSelected(UserConfig.getBoolean("HtmlPanesPopWhenMouseHovering", false));
+        hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setBoolean("HtmlPanesPopWhenMouseHovering", hoverMenu.isSelected());
+            }
+        });
+        items.add(hoverMenu);
 
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+        popEventMenu(event, items);
+
     }
 
     @Override
@@ -1433,15 +1307,6 @@ public class ControlHtmlEditor extends BaseWebViewController {
                 return result.get() == buttonNotSave;
             }
         }
-    }
-
-    @Override
-    public void cleanPane() {
-        try {
-            richEditor.setUserData(null);
-        } catch (Exception e) {
-        }
-        super.cleanPane();
     }
 
     /*

@@ -86,6 +86,9 @@ public class ControlData2DRowEdit extends BaseController {
 
     public void makeInputs() {
         try {
+            if (editController == null || editController.data2D == null) {
+                return;
+            }
             locationButton.setVisible(editController.data2D.includeCoordinate());
 
             inputs = new HashMap<>();

@@ -115,7 +115,7 @@ public class StylePrefix {
             case "scopeClearColorsButton":
                 return new StyleData(id, message("Clear"), "", "iconClear.png");
             case "scopeOutlineFileButton":
-                return new StyleData(id, message("Open"), "", "iconOpen.png");
+                return new StyleData(id, message("Open"), "", "iconSelectFile.png");
             case "scopeOutlineKeepRatioCheck":
                 return new StyleData(id, message("KeepRatio"), "", "iconAspectRatio.png");
             default:
@@ -133,13 +133,11 @@ public class StylePrefix {
             case "settingsClearButton":
                 return new StyleData(id, message("ClearPersonalSettings"), "", "iconClear.png");
             case "settingsOpenButton":
-                return new StyleData(id, message("OpenDataPath"), "", "iconOpen.png");
+                return new StyleData(id, message("OpenDataPath"), "", "iconOpenPath.png");
             case "settingsRecentOKButton":
                 return new StyleData(id, message("OK"), "", "iconOK.png");
             case "settingsJVMButton":
                 return new StyleData(id, message("OK"), "", "iconOK.png");
-            case "settingsRecentNotButton":
-                return new StyleData(id, message("NotRecord"), "", "iconCancel.png");
             case "settingsRecentClearButton":
                 return new StyleData(id, message("Clear"), "", "iconClear.png");
             case "settingsChangeRootButton":

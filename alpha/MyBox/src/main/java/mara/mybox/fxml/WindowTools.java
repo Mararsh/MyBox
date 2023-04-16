@@ -275,6 +275,9 @@ public class WindowTools {
             List<Window> windows = new ArrayList<>();
             windows.addAll(Window.getWindows());
             for (Window window : windows) {
+                if (!window.isShowing()) {
+                    continue;
+                }
                 Object object = window.getUserData();
                 if (object != null && object instanceof BaseController) {
                     try {
@@ -294,6 +297,9 @@ public class WindowTools {
             List<Window> windows = new ArrayList<>();
             windows.addAll(Window.getWindows());
             for (Window window : windows) {
+                if (!window.isShowing()) {
+                    continue;
+                }
                 Object object = window.getUserData();
                 if (object != null && object instanceof BaseController) {
                     try {
@@ -313,6 +319,9 @@ public class WindowTools {
             List<Window> windows = new ArrayList<>();
             windows.addAll(Window.getWindows());
             for (Window window : windows) {
+                if (!window.isShowing()) {
+                    continue;
+                }
                 Object object = window.getUserData();
                 if (object != null && object instanceof BaseController) {
                     try {

@@ -13,7 +13,7 @@ public class LongStringFromatConverter extends StringConverter<Long> {
     @Override
     public Long fromString(String value) {
         try {
-            return Long.valueOf(value.trim().replaceAll(",", ""));
+            return Long.parseLong(value.trim().replaceAll(",", ""));
         } catch (Exception e) {
             return null;
         }

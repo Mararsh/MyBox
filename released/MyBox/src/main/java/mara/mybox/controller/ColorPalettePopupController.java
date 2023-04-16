@@ -11,8 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.ContextMenu;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
@@ -35,11 +34,9 @@ import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.PaletteTools;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -73,6 +70,8 @@ public class ColorPalettePopupController extends BaseChildController {
     protected Label label;
     @FXML
     protected Button paletteButton;
+    @FXML
+    protected CheckBox popCheck;
 
     public ColorPalettePopupController() {
         baseTitle = message("ColorPalette");
@@ -110,9 +109,28 @@ public class ColorPalettePopupController extends BaseChildController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
+            NodeStyleTools.setTooltip(popCheck, message("PopColorSetWhenMouseHovering"));
             NodeStyleTools.setTooltip(cancelButton, message("PopupClose"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
+        }
+    }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            popCheck.setSelected(UserConfig.getBoolean("PopColorSetWhenMouseHovering", true));
+            popCheck.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("PopColorSetWhenMouseHovering", popCheck.isSelected());
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
     }
 
@@ -294,24 +312,9 @@ public class ColorPalettePopupController extends BaseChildController {
             });
             items.add(menu);
 
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                if (popMenu != null && popMenu.isShowing()) {
-                    popMenu.hide();
-                }
-                popMenu = null;
-            });
-            items.add(menu);
+            items.add(new SeparatorMenuItem());
 
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-            popMenu.getItems().addAll(items);
-
-            LocateTools.locateMouse(mouseEvent, popMenu);
+            popEventMenu(mouseEvent, items);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -334,36 +337,7 @@ public class ColorPalettePopupController extends BaseChildController {
 
             items.add(new SeparatorMenuItem());
 
-            CheckMenuItem checkMenu = new CheckMenuItem(message("PopColorSetWhenMouseHovering"));
-            checkMenu.setSelected(UserConfig.getBoolean("PopColorSetWhenMouseHovering", true));
-            checkMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("PopColorSetWhenMouseHovering", checkMenu.isSelected());
-                }
-            });
-            items.add(checkMenu);
-
-            items.add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                if (popMenu != null && popMenu.isShowing()) {
-                    popMenu.hide();
-                }
-                popMenu = null;
-            });
-            items.add(menu);
-
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-            popMenu.getItems().addAll(items);
-
-            LocateTools.locateMouse(mouseEvent, popMenu);
+            popEventMenu(mouseEvent, items);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -399,15 +373,6 @@ public class ColorPalettePopupController extends BaseChildController {
             return;
         }
         PaletteTools.afterPaletteChanged(parentController, palette);
-    }
-
-    @FXML
-    @Override
-    public void closePopup() {
-        if (parentController != null) {
-            parentController.closePopup();
-        }
-        super.closePopup();
     }
 
     @FXML

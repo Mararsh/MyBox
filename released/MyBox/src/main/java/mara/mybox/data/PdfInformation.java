@@ -2,14 +2,20 @@ package mara.mybox.data;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.Optional;
+import javafx.application.Platform;
+import javafx.scene.control.TextInputDialog;
+import javafx.stage.Stage;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.Languages.message;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
+import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
@@ -24,7 +30,7 @@ public class PdfInformation extends FileInformation {
     protected String userPassword, ownerPassword, title, subject, author, creator, producer, keywords;
     protected float version;
     protected int numberOfPages, fromPage, toPage;
-    protected String firstPageSize, firstPageSize2;
+    protected String firstPageSize, firstPageSize2, error;
     protected PDDocument doc;
     protected PDDocumentOutline outline;
     protected AccessPermission access;
@@ -69,7 +75,6 @@ public class PdfInformation extends FileInformation {
             if (doc == null) {
                 return;
             }
-
             PDDocumentInformation docInfo = doc.getDocumentInformation();
             if (docInfo.getCreationDate() != null) {
                 createTime = docInfo.getCreationDate().getTimeInMillis();
@@ -153,6 +158,52 @@ public class PdfInformation extends FileInformation {
             return null;
         }
     }
+
+    public static boolean readPDF(PdfInformation info) {
+        if (info == null) {
+            return false;
+        }
+        try (PDDocument doc = PDDocument.load(info.getFile(), info.getUserPassword(), AppVariables.pdfMemUsage)) {
+            info.readInfo(doc);
+            doc.close();
+            return true;
+        } catch (InvalidPasswordException e) {
+            try {
+                Platform.runLater(() -> {
+                    TextInputDialog dialog = new TextInputDialog();
+                    dialog.setContentText(message("UserPassword"));
+                    Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+                    stage.setAlwaysOnTop(true);
+                    stage.toFront();
+                    Optional<String> result = dialog.showAndWait();
+                    if (result.isPresent()) {
+                        info.setUserPassword(result.get());
+                    }
+                    synchronized (info) {
+                        info.notifyAll();
+                    }
+                });
+                synchronized (info) {
+                    info.wait();
+                }
+                try (PDDocument doc = PDDocument.load(info.getFile(), info.getUserPassword(), AppVariables.pdfMemUsage)) {
+                    info.readInfo(doc);
+                    doc.close();
+                    return true;
+                } catch (Exception ee) {
+                    info.setError(ee.toString());
+                    return false;
+                }
+            } catch (Exception eee) {
+                info.setError(eee.toString());
+                return false;
+            }
+        } catch (Exception eeee) {
+            info.setError(eeee.toString());
+            return false;
+        }
+    }
+
 
     /*
         get/set
@@ -299,6 +350,14 @@ public class PdfInformation extends FileInformation {
 
     public void setToPage(int toPage) {
         this.toPage = toPage;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
     }
 
 }

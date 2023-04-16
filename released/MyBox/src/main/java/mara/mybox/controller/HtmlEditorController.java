@@ -1,6 +1,8 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.input.KeyEvent;
 import mara.mybox.dev.MyBoxLog;
@@ -35,6 +37,23 @@ public class HtmlEditorController extends WebAddressController {
     }
 
     @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            editController.loadNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldv, Boolean newv) {
+                    panesLoad();
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @Override
     public void goAction() {
         editController.loadAddress(addressInput.getText());
     }
@@ -57,6 +76,11 @@ public class HtmlEditorController extends WebAddressController {
     @Override
     public boolean loadContents(String address, String contents) {
         return editController.loadContents(address, contents);
+    }
+
+    public void panesLoad() {
+        sourceFile = editController.sourceFile;
+        openSourceButton.setDisable(sourceFile == null || !sourceFile.exists());
     }
 
     @FXML

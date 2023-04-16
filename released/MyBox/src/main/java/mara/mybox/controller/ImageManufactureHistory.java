@@ -23,7 +23,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
-import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -147,7 +146,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(maxHistoriesInput.getText());
+                        int v = Integer.parseInt(maxHistoriesInput.getText());
                         if (v >= 0) {
                             maxEditHistories = v;
                             UserConfig.setInt("MaxImageHistories", v);
@@ -202,7 +201,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
                 protected boolean handle() {
                     try {
                         currentFile = imageController.sourceFile;
-                        String key = getFileKey(currentFile);
+                        String key = makeHisKey(currentFile);
                         list = TableImageEditHistory.read(key);
                         if (list != null) {
                             for (ImageEditHistory his : list) {
@@ -353,7 +352,6 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
             task = new SingletonTask<Void>(this) {
                 private File currentFile;
                 private String finalname;
-                private BufferedImage thumbnail;
                 private List<ImageEditHistory> list;
 
                 @Override
@@ -364,22 +362,19 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
                         if (task == null || isCancelled()) {
                             return false;
                         }
-                        String filename = getFilename();
+                        String filename = makeHisName();
                         while (new File(filename).exists()) {
-                            filename = getFilename();
+                            filename = makeHisName();
                         }
                         filename = new File(filename).getAbsolutePath();
                         finalname = new File(filename + ".png").getAbsolutePath();
-                        ImageFileWriters.writeImageFile(bufferedImage, "png", finalname);
-                        thumbnail = ScaleTools.scaleImageWidthKeep(bufferedImage, AppVariables.thumbnailWidth);
-                        String thumbname = new File(filename + "_thumbnail.png").getAbsolutePath();
-                        if (!ImageFileWriters.writeImageFile(thumbnail, "png", thumbname)) {
+                        if (!ImageFileWriters.writeImageFile(bufferedImage, "png", finalname)) {
                             return false;
                         }
                         if (task == null || isCancelled()) {
                             return false;
                         }
-                        String key = getFileKey(currentFile);
+                        String key = makeHisKey(currentFile);
                         TableImageEditHistory.add(key, finalname, operation.name(),
                                 objectType, opType, imageController.scopeController.scope);
                         list = TableImageEditHistory.read(key);
@@ -398,8 +393,8 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
                     }
                 }
 
-                private String getFilename() {
-                    String name = getFilePath(currentFile) + File.separator
+                private String makeHisName() {
+                    String name = makeHisPath(currentFile) + File.separator
                             + FileNameTools.prefix(currentFile.getName())
                             + "_" + (new Date().getTime()) + "_" + operation;
                     if (objectType != null && !objectType.trim().isEmpty()) {
@@ -430,7 +425,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
         }
     }
 
-    protected String getFileKey(File file) {
+    protected String makeHisKey(File file) {
         try {
             String key = file.getAbsolutePath();
             if (imageController.framesNumber > 1) {
@@ -443,18 +438,16 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
         }
     }
 
-    protected String getFilePath(File file) {
+    protected String makeHisPath(File file) {
         try {
-            String path = AppPaths.getImageHisPath(file,
-                    imageController.framesNumber > 1 ? imageController.frameIndex : -1);
-            return path;
+            return AppPaths.getImageHisPath(file);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return null;
         }
     }
 
-    protected String getFilePrefix(File file) {
+    protected String makeHisPrefix(File file) {
         try {
             String prefix = FileNameTools.prefix(file.getName());
             if (imageController.framesNumber > 1) {
@@ -484,7 +477,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
 
             @Override
             protected boolean handle() {
-                return TableImageEditHistory.clearImage(getFileKey(imageController.sourceFile));
+                return TableImageEditHistory.clearImage(makeHisKey(imageController.sourceFile));
             }
 
             @Override
@@ -590,7 +583,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
         if (imageController.sourceFile == null) {
             return;
         }
-        File path = new File(getFilePath(imageController.sourceFile));
+        File path = new File(makeHisPath(imageController.sourceFile));
         browseURI(path.toURI());
     }
 

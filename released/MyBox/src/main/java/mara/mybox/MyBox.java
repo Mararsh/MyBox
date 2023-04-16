@@ -8,7 +8,7 @@ import javafx.application.Application;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.ConfigTools;
 import mara.mybox.tools.FileDeleteTools;
-import mara.mybox.tools.SecurityTools;
+import mara.mybox.tools.CertificateTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
@@ -137,10 +137,10 @@ public class MyBox {
             // https://blog.csdn.net/iteye_3493/article/details/82060349
             // https://stackoverflow.com/questions/1004327/getting-rid-of-derby-log/1933310#1933310
             if (AppVariables.MyboxDataPath != null) {
-                System.setProperty("javax.net.ssl.keyStore", SecurityTools.keystore());
-                System.setProperty("javax.net.ssl.keyStorePassword", SecurityTools.keystorePassword());
-                System.setProperty("javax.net.ssl.trustStore", SecurityTools.keystore());
-                System.setProperty("javax.net.ssl.trustStorePassword", SecurityTools.keystorePassword());
+                System.setProperty("javax.net.ssl.keyStore", CertificateTools.keystore());
+                System.setProperty("javax.net.ssl.keyStorePassword", CertificateTools.keystorePassword());
+                System.setProperty("javax.net.ssl.trustStore", CertificateTools.keystore());
+                System.setProperty("javax.net.ssl.trustStorePassword", CertificateTools.keystorePassword());
                 MyBoxLog.console(System.getProperty("javax.net.ssl.keyStore"));
             }
 //            System.setProperty("derby.language.logQueryPlan", "true");

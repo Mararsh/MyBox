@@ -38,7 +38,7 @@ public class SingletonTask<Void> extends BaseTask<Void> {
         if (loading != null) {
             loading.setInfo(error);
         }
-        MyBoxLog.error(error);
+        MyBoxLog.debug(error);
     }
 
     public String getInfo() {

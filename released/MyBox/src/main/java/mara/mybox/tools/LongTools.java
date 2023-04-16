@@ -18,16 +18,15 @@ public class LongTools {
         return value == AppValues.InvalidLong;
     }
 
-    // invalid values are always in the end
     public static int compare(String s1, String s2, boolean desc) {
         double d1, d2;
         try {
-            d1 = Long.valueOf(s1.replaceAll(",", ""));
+            d1 = Long.parseLong(s1.replaceAll(",", ""));
         } catch (Exception e) {
             d1 = Double.NaN;
         }
         try {
-            d2 = Long.valueOf(s2.replaceAll(",", ""));
+            d2 = Long.parseLong(s2.replaceAll(",", ""));
         } catch (Exception e) {
             d2 = Double.NaN;
         }

@@ -132,7 +132,9 @@ public abstract class ImagesBrowserController_Menu extends ImagesBrowserControll
         });
         items.add(menu);
 
-        popMenu(iView, items, event.getScreenX(), event.getScreenY(), true);
+        items.add(new SeparatorMenuItem());
+
+        popMenu(iView, items, event.getScreenX(), event.getScreenY());
 
     }
 
@@ -203,6 +205,8 @@ public abstract class ImagesBrowserController_Menu extends ImagesBrowserControll
             delete(index);
         });
         items.add(menu);
+
+        items.add(new SeparatorMenuItem());
 
         popEventMenu(event, items);
 

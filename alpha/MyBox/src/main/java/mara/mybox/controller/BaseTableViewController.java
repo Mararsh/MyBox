@@ -320,6 +320,8 @@ public abstract class BaseTableViewController<P> extends BaseController {
         if (items == null || items.isEmpty()) {
             return;
         }
+        items.add(new SeparatorMenuItem());
+
         popEventMenu(event, items);
     }
 
@@ -773,6 +775,8 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 addRows(selectedIndix() + 1, 1);
             });
             items.add(menu);
+
+            items.add(new SeparatorMenuItem());
 
             popEventMenu(mouseEvent, items);
         } catch (Exception e) {

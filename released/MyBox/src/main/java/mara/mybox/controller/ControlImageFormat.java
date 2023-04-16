@@ -8,15 +8,14 @@ import java.util.List;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -62,8 +61,6 @@ public class ControlImageFormat extends BaseController {
     protected VBox colorspaceBox, compressBox, binaryBox;
     @FXML
     protected HBox profileBox;
-    @FXML
-    protected Button iccSelectButton;
     @FXML
     protected RadioButton pngRadio, jpgRadio, tifRadio, gifRadio, bmpRadio, pnmRadio, wbmpRadio, icoRadio, pcxRadio,
             alphaKeepRadio, alphaRemoveRadio, alphaPreKeepRadio, alphaPreReomveRadio;
@@ -437,7 +434,7 @@ public class ControlImageFormat extends BaseController {
             return;
         }
         try {
-            int v = Integer.valueOf(qualitySelector.getValue());
+            int v = Integer.parseInt(qualitySelector.getValue());
             if (v > 0 && v <= 100) {
                 attributes.setQuality(v);
                 ValidationTools.setEditorNormal(qualitySelector);
@@ -456,7 +453,7 @@ public class ControlImageFormat extends BaseController {
             return;
         }
         try {
-            int v = Integer.valueOf(icoWidthSelector.getValue());
+            int v = Integer.parseInt(icoWidthSelector.getValue());
             if (v > 0) {
                 attributes.setWidth(v);
                 ValidationTools.setEditorNormal(icoWidthSelector);
@@ -491,8 +488,7 @@ public class ControlImageFormat extends BaseController {
         attributes.setDensity(dpi);
     }
 
-    @FXML
-    public void popIccFile(MouseEvent event) {
+    public void showIccFileMenu(Event event) {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
@@ -506,7 +502,7 @@ public class ControlImageFormat extends BaseController {
             @Override
             public List<VisitHistory> recentPaths() {
                 int pathNumber = AppVariables.fileRecentNumber / 3 + 1;
-                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Icc, pathNumber);
+                return VisitHistoryTools.getRecentPathRead(VisitHistory.FileType.Icc, pathNumber);
             }
 
             @Override
@@ -530,6 +526,23 @@ public class ControlImageFormat extends BaseController {
             }
 
         }.pop();
+    }
+
+    @FXML
+    public void pickIccFile(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
+                || AppVariables.fileRecentNumber <= 0) {
+            selectIccAction();
+        } else {
+            showIccFileMenu(event);
+        }
+    }
+
+    @FXML
+    public void popIccFile(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            showIccFileMenu(event);
+        }
     }
 
     @FXML

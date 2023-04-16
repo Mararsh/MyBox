@@ -95,7 +95,7 @@ public class HtmlDomDeleteController extends BaseChildController {
     protected boolean delete() {
         try {
             count = 0;
-            List<TreeItem<HtmlNode>> sourcesItems = sourceController.selected();
+            List<TreeItem<HtmlNode>> sourcesItems = sourceController.selectedItems();
             List<TreeItem<HtmlNode>> manageItems = new ArrayList<>();
             for (TreeItem<HtmlNode> sourceItem : sourcesItems) {
                 String sourceNumber = sourceController.hierarchyNumber(sourceItem);

@@ -13,11 +13,11 @@ import javafx.scene.control.cell.CheckBoxTreeTableCell;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
-import mara.mybox.data.FileInformation;
+import mara.mybox.data.FileNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.cell.TreeTableEraCell;
 import mara.mybox.fxml.cell.TreeTableFileSizeCell;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -29,16 +29,16 @@ public class FilesTreeController extends BaseTaskController {
     protected boolean listenDoubleClick;
 
     @FXML
-    protected TreeTableView<FileInformation> filesTreeView;
+    protected TreeTableView<FileNode> filesTreeView;
     @FXML
-    protected TreeTableColumn<FileInformation, String> fileColumn, typeColumn;
+    protected TreeTableColumn<FileNode, String> fileColumn, nodeColumn, hierarchyColumn, typeColumn, permissionColumn;
     @FXML
-    protected TreeTableColumn<FileInformation, Long> sizeColumn, modifyTimeColumn, createTimeColumn;
+    protected TreeTableColumn<FileNode, Long> sizeColumn, modifyTimeColumn, accessTimeColumn, createTimeColumn;
     @FXML
-    protected TreeTableColumn<FileInformation, Boolean> selectedColumn;
+    protected TreeTableColumn<FileNode, Boolean> selectedColumn;
 
     public FilesTreeController() {
-        baseTitle = Languages.message("FilesTree");
+        baseTitle = message("FilesTree");
         listenDoubleClick = false;
     }
 
@@ -57,21 +57,33 @@ public class FilesTreeController extends BaseTaskController {
 
     protected void initTreeTableView() {
         try {
+            if (hierarchyColumn != null) {
+                fileColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("fileName"));
+                fileColumn.setPrefWidth(400);
+            }
 
-            fileColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("fileName"));
-            fileColumn.setPrefWidth(400);
+            if (nodeColumn != null) {
+                nodeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("nodename"));
+                nodeColumn.setPrefWidth(400);
+            }
 
-            selectedColumn.setCellValueFactory(
-                    new Callback<TreeTableColumn.CellDataFeatures<FileInformation, Boolean>, ObservableValue<Boolean>>() {
-                @Override
-                public ObservableValue<Boolean> call(TreeTableColumn.CellDataFeatures<FileInformation, Boolean> param) {
-                    if (param.getValue() != null) {
-                        return param.getValue().getValue().getSelectedProperty();
+            if (hierarchyColumn != null) {
+                hierarchyColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("hierarchyNumber"));
+            }
+
+            if (selectedColumn != null) {
+                selectedColumn.setCellValueFactory(
+                        new Callback<TreeTableColumn.CellDataFeatures<FileNode, Boolean>, ObservableValue<Boolean>>() {
+                    @Override
+                    public ObservableValue<Boolean> call(TreeTableColumn.CellDataFeatures<FileNode, Boolean> param) {
+                        if (param.getValue() != null) {
+                            return param.getValue().getValue().getSelected();
+                        }
+                        return null;
                     }
-                    return null;
-                }
-            });
-            selectedColumn.setCellFactory(CheckBoxTreeTableCell.forTreeTableColumn(selectedColumn));
+                });
+                selectedColumn.setCellFactory(CheckBoxTreeTableCell.forTreeTableColumn(selectedColumn));
+            }
 
             typeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("suffix"));
 
@@ -81,8 +93,18 @@ public class FilesTreeController extends BaseTaskController {
             modifyTimeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("modifyTime"));
             modifyTimeColumn.setCellFactory(new TreeTableEraCell());
 
-            createTimeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("createTime"));
-            createTimeColumn.setCellFactory(new TreeTableEraCell());
+            if (accessTimeColumn != null) {
+                accessTimeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("accessTime"));
+                accessTimeColumn.setCellFactory(new TreeTableEraCell());
+            }
+
+            if (createTimeColumn != null) {
+                createTimeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("createTime"));
+                createTimeColumn.setCellFactory(new TreeTableEraCell());
+            }
+            if (permissionColumn != null) {
+                permissionColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("permission"));
+            }
 
             filesTreeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
             if (listenDoubleClick) {
@@ -90,7 +112,7 @@ public class FilesTreeController extends BaseTaskController {
                     @Override
                     public void handle(MouseEvent event) {
                         if (event.getClickCount() > 1) {
-                            TreeItem<FileInformation> item = filesTreeView.getSelectionModel().getSelectedItem();
+                            TreeItem<FileNode> item = filesTreeView.getSelectionModel().getSelectedItem();
                             if (item == null) {
                                 return;
                             }
@@ -104,65 +126,69 @@ public class FilesTreeController extends BaseTaskController {
                 });
             }
         } catch (Exception e) {
-
+            MyBoxLog.error(e);
         }
-
     }
 
-    protected TreeItem<FileInformation> getChild(TreeItem<FileInformation> item, String name) {
+    protected void addSelectedListener(TreeItem<FileNode> item) {
         if (item == null) {
-            return null;
-        }
-        for (TreeItem<FileInformation> child : item.getChildren()) {
-            if (name.equals(child.getValue().getData())) {
-                return child;
-            }
-        }
-        FileInformation childInfo = new FileInformation();
-        childInfo.setData(name);
-        TreeItem<FileInformation> childItem = new TreeItem(childInfo);
-        childItem.setExpanded(true);
-        childInfo.getSelectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean oldItem, Boolean newItem) {
-                if (!isSettingValues) {
-                    treeItemSelected(childItem, newItem);
-                }
-            }
-        });
-        item.getChildren().add(childItem);
-        return childItem;
-    }
-
-    protected void treeItemSelected(TreeItem<FileInformation> item, boolean select) {
-        if (isSettingValues || item == null || item.getChildren() == null) {
             return;
         }
-        isSettingValues = true;
-        selectChildren(item, select);
-        filesTreeView.refresh();
-        isSettingValues = false;
+        FileNode node = item.getValue();
+        if (node == null) {
+            return;
+        }
+        node.getSelected().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                if (isSettingValues || item == null || item.getChildren() == null) {
+                    return;
+                }
+                isSettingValues = true;
+                selectChildren(item, nv);
+                filesTreeView.refresh();
+                isSettingValues = false;
+            }
+        });
     }
 
-    protected void selectChildren(TreeItem<FileInformation> item, boolean select) {
+    protected void selectChildren(TreeItem<FileNode> item, boolean select) {
         if (item == null || item.getChildren() == null) {
             return;
         }
-        for (TreeItem<FileInformation> child : item.getChildren()) {
+        for (TreeItem<FileNode> child : item.getChildren()) {
             child.getValue().setSelected(select);
             selectChildren(child, select);
         }
     }
 
-    protected TreeItem<FileInformation> find(TreeItem<FileInformation> item, String name) {
+    protected TreeItem<FileNode> getChild(TreeItem<FileNode> item, String name) {
+        if (item == null) {
+            return null;
+        }
+        for (TreeItem<FileNode> child : item.getChildren()) {
+            if (name.equals(child.getValue().getData())) {
+                return child;
+            }
+        }
+        FileNode childInfo = new FileNode();
+        childInfo.setData(name);
+        TreeItem<FileNode> childItem = new TreeItem(childInfo);
+        childItem.setExpanded(true);
+        addSelectedListener(childItem);
+        item.getChildren().add(childItem);
+        return childItem;
+    }
+
+    protected TreeItem<FileNode> find(TreeItem<FileNode> item, String name) {
         if (item == null || name == null || item.getValue() == null) {
             return null;
         }
         if (name.equals(item.getValue().getData())) {
             return item;
         }
-        for (TreeItem<FileInformation> child : item.getChildren()) {
-            TreeItem<FileInformation> find = find(child, name);
+        for (TreeItem<FileNode> child : item.getChildren()) {
+            TreeItem<FileNode> find = find(child, name);
             if (find != null) {
                 return find;
             }

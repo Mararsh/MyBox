@@ -461,6 +461,8 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
             });
             items.add(menu);
 
+            items.add(new SeparatorMenuItem());
+
             popEventMenu(mouseEvent, items);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

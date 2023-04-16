@@ -96,7 +96,7 @@ public class MediaListController extends BaseTableViewController<MediaList> {
             deleteButton.setDisable(false);
             tableController.loadMedias(selected);
         }
-        super.checkButtons();
+        checkButtons();
     }
 
     protected void clearSelection() {

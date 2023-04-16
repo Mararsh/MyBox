@@ -70,7 +70,7 @@ public abstract class BaseController_Attributes {
     @FXML
     protected MainMenuController mainMenuController;
     @FXML
-    protected TextField sourceFileInput, sourcePathInput, targetPrefixInput, statusLabel;
+    protected TextField sourceFileInput, sourcePathInput, targetPrefixInput, statusInput;
     @FXML
     protected OperationController operationBarController;
     @FXML
@@ -81,12 +81,15 @@ public abstract class BaseController_Attributes {
     protected Button selectFileButton, okButton, startButton, goButton, previewButton, playButton, stopButton,
             editButton, deleteButton, saveButton, cropButton, saveAsButton, undoButton, redoButton,
             clearButton, createButton, cancelButton, addButton, recoverButton, viewButton, popButton,
-            copyButton, copyToSystemClipboardButton, copyToMyBoxClipboardButton, addRowsButton,
+            copyButton, copyToSystemClipboardButton, copyToMyBoxClipboardButton,
+            addRowsButton, deleteRowsButton, selectButton, selectAllButton, selectNoneButton,
             pasteButton, pasteContentInSystemClipboardButton, loadContentInSystemClipboardButton,
-            myBoxClipboardButton, systemClipboardButton, selectButton, selectAllButton, selectNoneButton,
+            myBoxClipboardButton, systemClipboardButton,
             renameButton, tipsButton, setButton, allButton, menuButton, synchronizeButton, panesMenuButton,
-            firstButton, lastButton, previousButton, nextButton, pageFirstButton, pageLastButton, pagePreviousButton, pageNextButton,
-            infoButton, metaButton, transparentButton, whiteButton, blackButton, withdrawButton;
+            firstButton, lastButton, previousButton, nextButton,
+            pageFirstButton, pageLastButton, pagePreviousButton, pageNextButton,
+            infoButton, metaButton, openSourceButton,
+            transparentButton, whiteButton, blackButton, withdrawButton;
     @FXML
     protected VBox paraBox;
     @FXML
@@ -94,7 +97,7 @@ public abstract class BaseController_Attributes {
     @FXML
     protected ImageView tipsView, rightTipsView, linksView, leftPaneControl, rightPaneControl;
     @FXML
-    protected CheckBox topCheck, saveCloseCheck, rightPaneCheck, leftPaneCheck;
+    protected CheckBox topCheck, rightPaneCheck, leftPaneCheck;
     @FXML
     protected ToggleGroup saveAsGroup, fileTypeGroup;
     @FXML

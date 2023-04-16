@@ -111,6 +111,12 @@ public abstract class BaseSysTableController<P> extends BaseTableViewController<
     }
 
     @FXML
+    @Override
+    public void refreshAction() {
+        loadTableData();
+    }
+
+    @FXML
     protected void importAction() {
         File file = FxFileTools.selectFile(this);
         if (file == null) {

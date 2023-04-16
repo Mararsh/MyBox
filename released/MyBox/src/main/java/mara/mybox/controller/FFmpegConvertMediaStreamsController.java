@@ -8,7 +8,7 @@ import mara.mybox.data.MediaInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -18,7 +18,7 @@ import mara.mybox.value.Languages;
 public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFilesController {
 
     public FFmpegConvertMediaStreamsController() {
-        baseTitle = Languages.message("FFmpegConvertMediaStreams");
+        baseTitle = message("FFmpegConvertMediaStreams");
 
     }
 
@@ -81,10 +81,10 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
                     }
 
                     @Override
-                    protected void taskQuit() {
-                        super.taskQuit();
-                        quitProcess();
+                    protected void finalAction() {
+                        super.finalAction();
                         task = null;
+                        afterTask();
                     }
 
                 };
@@ -105,10 +105,8 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
             String address = info.getAddress();
             countHandling(address);
             tableController.markFileHandling(currentParameters.currentIndex);
-            updateLogs(MessageFormat.format(Languages.message("HandlingObject"), address), true);
-            updateLogs(info.getInfo(), true);
-//            String s = message("Duration") + ": " + DateTools.showDuration(info.getDuration());
-//            s += "  " + info.getResolution() + "  " + info.getVideoEncoding() + "  " + info.getAudioEncoding();
+            showLogs(MessageFormat.format(message("HandlingObject"), address));
+            showLogs(info.getInfo());
 
             String prefix, suffix;
             File file = new File(address);
@@ -132,28 +130,23 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
                 }
             }
             String ext = ffmpegOptionsController.extensionInput.getText().trim();
-            if (ext.isEmpty() || Languages.message("OriginalFormat").equals(ext)) {
+            if (ext.isEmpty() || message("OriginalFormat").equals(ext)) {
                 ext = suffix;
             }
 
             File target = makeTargetFile(prefix, "." + ext, targetPath);
             if (target == null) {
-                result = Languages.message("Skip");
+                result = message("Skip");
             } else {
-                updateLogs(Languages.message("TargetFile") + ": " + target, true);
-                convert(address, target, info.getDuration());
-                targetFileGenerated(target);
-                result = Languages.message("Successful");
+                updateLogs(message("TargetFile") + ": " + target, true);
+                convert(address, target);
+                result = message("Successful");
             }
         } catch (Exception e) {
-            updateLogs(e.toString(), true);
-            result = Languages.message("Failed");
+            showLogs(e.toString());
+            result = message("Failed");
         }
         tableController.markFileHandled(currentParameters.currentIndex, result);
     }
 
-    protected void convert(String address, File targetFile, long duration)
-            throws Exception {
-//        convert(UrlInput.fromUrl(address), targetFile, duration);
-    }
 }

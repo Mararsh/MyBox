@@ -55,16 +55,6 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
                     }
                 });
             }
-            if (confirmCheck != null) {
-                confirmCheck.setSelected(UserConfig.getBoolean(baseName + "ConfirmSave", true));
-                confirmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                        UserConfig.setBoolean(baseName + "ConfirmSave", confirmCheck.isSelected());
-                    }
-                });
-            }
-
             if (autoSaveCheck != null) {
                 autoSaveCheck.setSelected(UserConfig.getBoolean(baseName + "AutoSave", true));
                 autoSaveCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -209,7 +199,7 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
                     @Override
                     public void changed(ObservableValue ov, String oldValue, String newValue) {
                         try {
-                            int v = Integer.valueOf(lineInput.getText());
+                            int v = Integer.parseInt(lineInput.getText());
                             if (v > 0 && v <= sourceInformation.getLinesNumber()) {
                                 locateLine = v - 1;  // 0-based
                                 lineInput.setStyle(null);
@@ -232,7 +222,7 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
                     @Override
                     public void changed(ObservableValue ov, String oldValue, String newValue) {
                         try {
-                            int v = Integer.valueOf(objectNumberInput.getText());
+                            int v = Integer.parseInt(objectNumberInput.getText());
                             if (v > 0 && v <= sourceInformation.getObjectsNumber()) {
                                 locateObject = v - 1; // 0-based
                                 objectNumberInput.setStyle(null);

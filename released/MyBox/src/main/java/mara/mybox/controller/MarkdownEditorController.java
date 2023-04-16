@@ -11,6 +11,7 @@ import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
@@ -19,7 +20,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.input.MouseEvent;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
@@ -401,8 +401,18 @@ public class MarkdownEditorController extends TextEditorController {
     }
 
     @FXML
-    public void popHtmlFunctionsMenu(MouseEvent mouseEvent) {
-        webViewController.popFunctionsMenu(mouseEvent);
+    public void popHtmlFunctionsMenu(Event event) {
+        if (UserConfig.getBoolean("WebviewFunctionsPopWhenMouseHovering", true)) {
+            showHtmlFunctionsMenu(event);
+        }
+    }
+
+    @FXML
+    public void showHtmlFunctionsMenu(Event event) {
+        if (webViewController == null) {
+            return;
+        }
+        webViewController.showFunctionsMenu(event);
     }
 
     /*

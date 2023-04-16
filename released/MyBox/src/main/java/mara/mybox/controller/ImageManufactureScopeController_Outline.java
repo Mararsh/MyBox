@@ -7,11 +7,11 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import mara.mybox.bufferedimage.AlphaTools;
@@ -109,7 +109,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
     }
 
     @FXML
-    public void popOutlineFile(MouseEvent event) {
+    public void showOutlineFileMenu(Event event) {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
@@ -146,6 +146,23 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
             }
 
         }.pop();
+    }
+
+    @FXML
+    public void pickOutlineFile(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
+                || AppVariables.fileRecentNumber <= 0) {
+            selectOutlineFile();
+        } else {
+            showOutlineFileMenu(event);
+        }
+    }
+
+    @FXML
+    public void popOutlineFile(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            showOutlineFileMenu(event);
+        }
     }
 
     public void loadOutlineSource(File file) {

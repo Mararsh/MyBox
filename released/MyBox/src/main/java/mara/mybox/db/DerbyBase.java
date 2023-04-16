@@ -33,6 +33,7 @@ import mara.mybox.db.table.TableMedia;
 import mara.mybox.db.table.TableMediaList;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.db.table.TableNamedValues;
+import mara.mybox.db.table.TablePathConnection;
 import mara.mybox.db.table.TableQueryCondition;
 import mara.mybox.db.table.TableStringValue;
 import mara.mybox.db.table.TableStringValues;
@@ -275,6 +276,11 @@ public class DerbyBase {
             }
         }
         return started;
+    }
+
+    public static boolean isStarted() {
+        return DerbyBase.status == DerbyStatus.Embedded
+                || DerbyBase.status == DerbyStatus.Nerwork;
     }
 
     // Upper case
@@ -535,6 +541,10 @@ public class DerbyBase {
             if (!tables.contains("Data2D_Style".toLowerCase())) {
                 new TableData2DStyle().createTable(conn);
                 loadingController.info("Data2D_Style");
+            }
+            if (!tables.contains("Path_Connection".toLowerCase())) {
+                new TablePathConnection().createTable(conn);
+                loadingController.info("Path_Connection");
             }
             return true;
         } catch (Exception e) {

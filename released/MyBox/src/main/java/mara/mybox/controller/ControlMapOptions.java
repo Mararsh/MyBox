@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -11,7 +12,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -577,7 +577,7 @@ public class ControlMapOptions extends BaseController {
                 return;
             }
             if (standardLayerCheck.isSelected()) {
-                float opacity = Float.valueOf(standardOpacitySelector.getValue());
+                float opacity = Float.parseFloat(standardOpacitySelector.getValue());
                 if (opacity >= 0 && opacity <= 1) {
                     ValidationTools.setEditorNormal(standardOpacitySelector);
                 } else {
@@ -599,7 +599,7 @@ public class ControlMapOptions extends BaseController {
                 return;
             }
             if (satelliteLayerCheck.isSelected()) {
-                float opacity = Float.valueOf(satelliteOpacitySelector.getValue());
+                float opacity = Float.parseFloat(satelliteOpacitySelector.getValue());
                 if (opacity >= 0 && opacity <= 1) {
                     ValidationTools.setEditorNormal(satelliteOpacitySelector);
                 } else {
@@ -621,7 +621,7 @@ public class ControlMapOptions extends BaseController {
                 return;
             }
             if (roadLayerCheck.isSelected()) {
-                float opacity = Float.valueOf(roadOpacitySelector.getValue());
+                float opacity = Float.parseFloat(roadOpacitySelector.getValue());
                 if (opacity >= 0 && opacity <= 1) {
                     ValidationTools.setEditorNormal(roadOpacitySelector);
                 } else {
@@ -643,7 +643,7 @@ public class ControlMapOptions extends BaseController {
                 return;
             }
             if (trafficLayerCheck.isSelected()) {
-                float opacity = Float.valueOf(trafficOpacitySelector.getValue());
+                float opacity = Float.parseFloat(trafficOpacitySelector.getValue());
                 if (opacity >= 0 && opacity <= 1) {
                     ValidationTools.setEditorNormal(trafficOpacitySelector);
                 } else {
@@ -699,8 +699,7 @@ public class ControlMapOptions extends BaseController {
         }
     }
 
-    @FXML
-    public void popMarkerImage(MouseEvent event) {
+    public void showMarkerImageMenu(Event event) {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
@@ -722,6 +721,23 @@ public class ControlMapOptions extends BaseController {
             }
 
         }.pop();
+    }
+
+    @FXML
+    public void pickMarkerImage(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
+                || AppVariables.fileRecentNumber <= 0) {
+            selectMarkerImage();
+        } else {
+            showMarkerImageMenu(event);
+        }
+    }
+
+    @FXML
+    public void popMarkerImage(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            showMarkerImageMenu(event);
+        }
     }
 
     @FXML

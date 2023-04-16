@@ -12,10 +12,10 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.SeparatorMenuItem;
@@ -24,12 +24,9 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.StringTools;
@@ -174,7 +171,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
     }
 
     @FXML
-    public void popMedia(MouseEvent event) {
+    public void showMediaMenu(Event event) {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
@@ -212,12 +209,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
                 if (controller == null || event == null) {
                     return;
                 }
-                ContextMenu popMenu = controller.popMenu;
-                if (popMenu != null && popMenu.isShowing()) {
-                    popMenu.hide();
-                }
-                popMenu = new ContextMenu();
-                popMenu.setAutoHide(true);
+                List<MenuItem> items = new ArrayList<>();
 
                 MenuItem menu = new MenuItem(Languages.message("Select..."));
                 menu.setOnAction(new EventHandler<ActionEvent>() {
@@ -226,14 +218,14 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
                         handleSelect();
                     }
                 });
-                popMenu.getItems().add(menu);
+                items.add(menu);
 
                 List<VisitHistory> his = recentFiles();
                 if (his != null && !his.isEmpty()) {
-                    popMenu.getItems().add(new SeparatorMenuItem());
+                    items.add(new SeparatorMenuItem());
                     menu = new MenuItem(Languages.message("RecentAccessedFiles"));
                     menu.setStyle("-fx-text-fill: #2e598a;");
-                    popMenu.getItems().add(menu);
+                    items.add(menu);
                     for (VisitHistory h : his) {
                         final String fname = h.getResourceValue();
                         menu = new MenuItem(fname);
@@ -243,13 +235,13 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
                                 mediaSelected(fname);
                             }
                         });
-                        popMenu.getItems().add(menu);
+                        items.add(menu);
                     }
                 }
 
                 menu = new MenuItem(Languages.message("Examples"));
                 menu.setStyle("-fx-text-fill: #2e598a;");
-                popMenu.getItems().add(menu);
+                items.add(menu);
                 menu = new MenuItem("http://download.oracle.com/otndocs/products/javafx/JavaRap/prog_index.m3u8");
                 menu.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
@@ -257,7 +249,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
                         mediaSelected("http://download.oracle.com/otndocs/products/javafx/JavaRap/prog_index.m3u8");
                     }
                 });
-                popMenu.getItems().add(menu);
+                items.add(menu);
                 menu = new MenuItem("http://devimages.apple.com/iphone/samples/bipbop/gear1/prog_index.m3u8");
                 menu.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
@@ -265,14 +257,14 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
                         mediaSelected("http://devimages.apple.com/iphone/samples/bipbop/gear1/prog_index.m3u8");
                     }
                 });
-                popMenu.getItems().add(menu);
+                items.add(menu);
 
                 List<String> paths = paths();
                 if (paths != null && !paths.isEmpty()) {
-                    popMenu.getItems().add(new SeparatorMenuItem());
+                    items.add(new SeparatorMenuItem());
                     menu = new MenuItem(Languages.message("RecentAccessedDirectories"));
                     menu.setStyle("-fx-text-fill: #2e598a;");
-                    popMenu.getItems().add(menu);
+                    items.add(menu);
                     for (String path : paths) {
                         menu = new MenuItem(path);
                         menu.setOnAction(new EventHandler<ActionEvent>() {
@@ -281,28 +273,34 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
                                 handlePath(path);
                             }
                         });
-                        popMenu.getItems().add(menu);
+                        items.add(menu);
                     }
                 }
 
-                controller.popMenu = popMenu;
-                popMenu.getItems().add(new SeparatorMenuItem());
-                menu = new MenuItem(Languages.message("PopupClose"));
-                menu.setStyle("-fx-text-fill: #2e598a;");
-                menu.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        controller.popMenu.hide();
-                        controller.popMenu = null;
-                    }
-                });
-                popMenu.getItems().add(menu);
+                items.add(new SeparatorMenuItem());
 
-                LocateTools.locateBelow((Region) event.getSource(), popMenu);
+                controller.popEventMenu(event, items);
 
             }
 
         }.pop();
+    }
+
+    @FXML
+    public void pickMedia(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
+                || AppVariables.fileRecentNumber <= 0) {
+            selectSourceFile();
+        } else {
+            showMediaMenu(event);
+        }
+    }
+
+    @FXML
+    public void popMedia(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            showMediaMenu(event);
+        }
     }
 
     @FXML
@@ -444,8 +442,8 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
             }
 
             @Override
-            protected void taskQuit() {
-                super.taskQuit();
+            protected void finalAction() {
+                super.finalAction();
                 queryTask = null;
             }
         };

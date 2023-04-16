@@ -4,12 +4,12 @@ import java.io.File;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.MouseEvent;
 import mara.mybox.color.ChromaticAdaptation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
@@ -125,8 +125,7 @@ public class ChromaticityBaseController extends BaseWebViewController {
         openLink(HelpTools.aboutColorHtml());
     }
 
-    @FXML
-    public void popExportPath(MouseEvent event) {
+    public void showExportPathMenu(Event event) {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
@@ -138,7 +137,7 @@ public class ChromaticityBaseController extends BaseWebViewController {
 
             @Override
             public List<VisitHistory> recentPaths() {
-                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Text);
+                return VisitHistoryTools.getRecentPathWrite(VisitHistory.FileType.Text);
             }
 
             @Override
@@ -157,6 +156,23 @@ public class ChromaticityBaseController extends BaseWebViewController {
             }
 
         }.pop();
+    }
+
+    @FXML
+    public void pickExportPath(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
+                || AppVariables.fileRecentNumber <= 0) {
+            exportAction();
+        } else {
+            showExportPathMenu(event);
+        }
+    }
+
+    @FXML
+    public void popExportPath(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            showExportPathMenu(event);
+        }
     }
 
     // should rewrite this

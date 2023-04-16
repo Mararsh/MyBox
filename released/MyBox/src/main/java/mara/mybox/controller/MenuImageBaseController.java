@@ -11,7 +11,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Window;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ValidationTools;
@@ -277,7 +276,7 @@ public class MenuImageBaseController extends MenuController {
                         if (isSettingValues) {
                             return;
                         }
-                        int v = Integer.valueOf(newVal);
+                        int v = Integer.parseInt(newVal);
                         if (v > 0) {
                             zoomStepSelector.getEditor().setStyle(null);
                             isSettingValues = true;
@@ -330,7 +329,7 @@ public class MenuImageBaseController extends MenuController {
                         int v = -1;
                         if (!message("OriginalSize").equals(newValue)) {
                             try {
-                                v = Integer.valueOf(newValue);
+                                v = Integer.parseInt(newValue);
                                 ValidationTools.setEditorNormal(loadWidthSelector);
                             } catch (Exception e) {
                                 ValidationTools.setEditorBadStyle(loadWidthSelector);
@@ -364,6 +363,7 @@ public class MenuImageBaseController extends MenuController {
     }
 
     public void updateImage() {
+        sourceFile = imageController.sourceFile;
         boolean noInfo = imageController.imageInformation == null;
         if (infoButton != null) {
             infoButton.setDisable(noInfo);
@@ -374,16 +374,24 @@ public class MenuImageBaseController extends MenuController {
         if (renameButton != null) {
             renameButton.setDisable(noInfo);
         }
+        if (openSourceButton != null) {
+            openSourceButton.setDisable(sourceFile == null || !sourceFile.exists());
+        }
         if (getMyStage() != null) {
             myStage.setTitle(imageController.getTitle());
         }
-        sourceFile = imageController.sourceFile;
     }
 
     @FXML
-    @Override
-    public void popFunctionsMenu(MouseEvent mouseEvent) {
-        imageController.popFunctionsMenu(mouseEvent);
+    public void popFunctionsMenu(Event event) {
+        if (UserConfig.getBoolean("ImageFunctionsPopWhenMouseHovering", true)) {
+            showFunctionsMenu(event);
+        }
+    }
+
+    @FXML
+    public void showFunctionsMenu(Event event) {
+        imageController.showFunctionsMenu(event);
     }
 
     @FXML

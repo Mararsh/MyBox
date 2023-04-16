@@ -7,6 +7,7 @@ import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
@@ -14,7 +15,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import mara.mybox.db.data.VisitHistory;
@@ -197,8 +197,7 @@ public class FilesCompareController extends BaseController {
         }
     }
 
-    @FXML
-    public void popFile1(MouseEvent event) {
+    public void showFile1Menu(Event event) {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
@@ -233,7 +232,23 @@ public class FilesCompareController extends BaseController {
     }
 
     @FXML
-    public void popFile2(MouseEvent event) {
+    public void pickFile1(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
+                || AppVariables.fileRecentNumber <= 0) {
+            selectFile1();
+        } else {
+            showFile1Menu(event);
+        }
+    }
+
+    @FXML
+    public void popFile1(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            showFile1Menu(event);
+        }
+    }
+
+    public void showFile2Menu(Event event) {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
@@ -265,6 +280,23 @@ public class FilesCompareController extends BaseController {
             }
 
         }.pop();
+    }
+
+    @FXML
+    public void pickFile2(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
+                || AppVariables.fileRecentNumber <= 0) {
+            selectFile2();
+        } else {
+            showFile2Menu(event);
+        }
+    }
+
+    @FXML
+    public void popFile2(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            showFile2Menu(event);
+        }
     }
 
     @FXML

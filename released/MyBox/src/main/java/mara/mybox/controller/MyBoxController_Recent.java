@@ -1,13 +1,18 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.ContextMenu;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.input.MouseEvent;
 import mara.mybox.db.data.VisitHistoryTools;
-import mara.mybox.value.Languages;
+import mara.mybox.fxml.style.StyleTools;
+import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -17,23 +22,30 @@ import mara.mybox.value.Languages;
 public abstract class MyBoxController_Recent extends MyBoxController_Media {
 
     @FXML
-    protected void showRecentMenu(MouseEvent event) {
-        hideMenu(event);
+    public void popRecentMenu(Event event) {
+        if (UserConfig.getBoolean("MyBoxHomeMenuPopWhenMouseHovering", true)) {
+            showRecentMenu(event);
+        }
+    }
 
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        popMenu.getItems().addAll(VisitHistoryTools.getRecentMenu(this));
+    @FXML
+    protected void showRecentMenu(Event event) {
+        List<MenuItem> items = new ArrayList<>();
+        items.addAll(VisitHistoryTools.getRecentMenu(this));
 
-        popMenu.getItems().add(new SeparatorMenuItem());
-        MenuItem closeMenu = new MenuItem(Languages.message("PopupClose"));
-        closeMenu.setStyle("-fx-text-fill: #2e598a;");
-        closeMenu.setOnAction((ActionEvent cevent) -> {
-            popMenu.hide();
-            popMenu = null;
+        items.add(new SeparatorMenuItem());
+
+        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+        popItem.setSelected(UserConfig.getBoolean("MyBoxHomeMenuPopWhenMouseHovering", true));
+        popItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setBoolean("MyBoxHomeMenuPopWhenMouseHovering", popItem.isSelected());
+            }
         });
-        popMenu.getItems().add(closeMenu);
+        items.add(popItem);
 
-        showMenu(recentBox, event);
+        popCenterMenu(recentBox, items);
 
     }
 

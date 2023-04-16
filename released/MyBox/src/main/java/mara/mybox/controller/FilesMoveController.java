@@ -7,9 +7,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileDeleteTools;
-import mara.mybox.tools.FileTools;
-import mara.mybox.value.AppVariables;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -46,7 +43,7 @@ public class FilesMoveController extends BaseBatchFileController {
     }
 
     @Override
-    protected boolean handleDirectory(File sourcePath, File targetPath) {
+    protected boolean handleDirectory(File sourcePath, String targetPath) {
         if (super.handleDirectory(sourcePath, targetPath)) {
             if (sourcePath != null && sourcePath.isDirectory()
                     && sourcePath.list().length == 0) {

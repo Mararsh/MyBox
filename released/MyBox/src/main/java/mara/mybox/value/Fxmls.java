@@ -355,6 +355,14 @@ public class Fxmls {
     public static final String DownloadFirstLevelLinksFxml = "/fxml/DownloadFirstLevelLinks.fxml";
     public static final String DownloadFirstLevelLinksSetFxml = "/fxml/DownloadFirstLevelLinksSet.fxml";
 
+    public static final String RemotePathManageFxml = "/fxml/RemotePathManage.fxml";
+    public static final String RemotePathRenameFxml = "/fxml/RemotePathRename.fxml";
+    public static final String RemotePathPutFxml = "/fxml/RemotePathPut.fxml";
+    public static final String RemotePathGetFxml = "/fxml/RemotePathGet.fxml";
+    public static final String RemotePathDeleteFxml = "/fxml/RemotePathDelete.fxml";
+    public static final String RemotePathPermissionFxml = "/fxml/RemotePathPermission.fxml";
+    public static final String RemotePathSynchronizeFromLocalFxml = "/fxml/RemotePathSynchronizeFromLocal.fxml";
+
 
     /*
         help
@@ -390,6 +398,7 @@ public class Fxmls {
     public static final String TableAddRowsFxml = "/fxml/TableAddRows.fxml";
     public static final String DateInputFxml = "/fxml/DateInput.fxml";
     public static final String SettingCustomColorsFxml = "/fxml/SettingCustomColors.fxml";
+    public static final String HtmlStyleInputFxml = "/fxml/HtmlStyleInput.fxml";
 
     public static final String MenuFxml = "/fxml/Menu.fxml";
     public static final String MenuTextEditFxml = "/fxml/MenuTextEdit.fxml";
@@ -406,8 +415,9 @@ public class Fxmls {
     public static final String TextClipboardPopFxml = "/fxml/TextClipboardPop.fxml";
     public static final String FindReplacePopFxml = "/fxml/FindReplacePop.fxml";
     public static final String FindPopFxml = "/fxml/FindPop.fxml";
-    public static final String ColorsPopFxml = "/fxml/ColorsPop.fxml";
+    public static final String ColorsPickingFxml = "/fxml/ColorsPicking.fxml";
 
     public static final String SettingsFxml = "/fxml/Settings.fxml";
+    public static final String ClearExpiredDataFxml = "/fxml/ClearExpiredData.fxml";
 
 }

@@ -72,10 +72,10 @@ public class SettingsController extends BaseController {
     @FXML
     protected ToggleGroup langGroup, pdfMemGroup, controlColorGroup, derbyGroup, splitPanesGroup;
     @FXML
-    protected CheckBox stopAlarmCheck, closeCurrentCheck, recordWindowsSizeLocationCheck,
-            anchorSolidCheck, controlsTextCheck, hidpiIconsCheck,
-            clearCurrentRootCheck, splitPaneSensitiveCheck,
-            mousePassControlPanesCheck, popColorSetCheck;
+    protected CheckBox closeCurrentCheck, recordWindowsSizeLocationCheck, clearExpiredCheck,
+            anchorSolidCheck, controlsTextCheck, shortcutsCanNotOmitCheck, icons40pxCheck,
+            copyCurrentDataPathCheck, clearCurrentRootCheck, splitPaneSensitiveCheck,
+            mousePassControlPanesCheck, popColorSetCheck, stopAlarmCheck;
     @FXML
     protected TextField jvmInput, dataDirInput, batchInput, fileRecentInput, thumbnailWidthInput,
             tiandituWebKeyInput, gaodeWebKeyInput, gaodeServiceKeyInput,
@@ -138,7 +138,6 @@ public class SettingsController extends BaseController {
             initSettingValues();
             isSettingValues = false;
 
-            NodeStyleTools.setTooltip(hidpiIconsCheck, new Tooltip(message("HidpiIconsComments")));
             NodeStyleTools.setTooltip(redRadio, new Tooltip(message("MyBoxColorRedDark")));
             NodeStyleTools.setTooltip(pinkRadio, new Tooltip(message("MyBoxColorPinkDark")));
             NodeStyleTools.setTooltip(orangeRadio, new Tooltip(message("MyBoxColorOrangeDark")));
@@ -156,6 +155,7 @@ public class SettingsController extends BaseController {
 
     protected void initSettingValues() {
         try {
+            clearExpiredCheck.setSelected(UserConfig.getBoolean("ClearExpiredDataBeforeExit", true));
             stopAlarmCheck.setSelected(UserConfig.getBoolean("StopAlarmsWhenExit"));
             closeCurrentCheck.setSelected(AppVariables.closeCurrentWhenOpenTool);
 
@@ -189,11 +189,11 @@ public class SettingsController extends BaseController {
             }
 
             controlsTextCheck.setSelected(AppVariables.controlDisplayText);
-            hidpiIconsCheck.setSelected(AppVariables.hidpiIcons);
-
+            icons40pxCheck.setSelected(AppVariables.icons40px);
             splitPaneSensitiveCheck.setSelected(UserConfig.getBoolean("ControlSplitPanesSensitive", false));
             mousePassControlPanesCheck.setSelected(UserConfig.getBoolean("MousePassControlPanes", true));
             popColorSetCheck.setSelected(UserConfig.getBoolean("PopColorSetWhenMouseHovering", true));
+            shortcutsCanNotOmitCheck.setSelected(AppVariables.ShortcutsCanNotOmitCtrlAlt);
 
             checkLanguage();
             checkPdfMem();
@@ -226,7 +226,7 @@ public class SettingsController extends BaseController {
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     if (newValue != null && !newValue.isEmpty()) {
                         try {
-                            int v = Integer.valueOf(newValue);
+                            int v = Integer.parseInt(newValue);
                             if (v > 0) {
                                 setSceneFontSize(v);
                                 ValidationTools.setEditorNormal(fontSizeBox);
@@ -249,7 +249,7 @@ public class SettingsController extends BaseController {
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     if (newValue != null && !newValue.isEmpty()) {
                         try {
-                            int v = Integer.valueOf(newValue);
+                            int v = Integer.parseInt(newValue);
                             if (v > 0) {
                                 setIconSize(v);
                                 ValidationTools.setEditorNormal(iconSizeBox);
@@ -299,14 +299,14 @@ public class SettingsController extends BaseController {
                 }
             });
 
-            hidpiIconsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            icons40pxCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
                     if (isSettingValues) {
                         return;
                     }
-                    AppVariables.hidpiIcons = hidpiIconsCheck.isSelected();
-                    UserConfig.setBoolean("HidpiIcons", AppVariables.hidpiIcons);
+                    AppVariables.icons40px = icons40pxCheck.isSelected();
+                    UserConfig.setBoolean("Icons40px", AppVariables.icons40px);
                     refreshInterfaceAll();
                 }
             });
@@ -489,6 +489,12 @@ public class SettingsController extends BaseController {
     }
 
     @FXML
+    protected void shortcutsCanNotOmit() {
+        AppVariables.ShortcutsCanNotOmitCtrlAlt = shortcutsCanNotOmitCheck.isSelected();
+        UserConfig.setBoolean("ShortcutsCanNotOmitCtrlAlt", AppVariables.ShortcutsCanNotOmitCtrlAlt);
+    }
+
+    @FXML
     protected void inputColorAction() {
         SettingCustomColorsController.open(this);
     }
@@ -519,7 +525,7 @@ public class SettingsController extends BaseController {
                         return;
                     }
                     try {
-                        int v = Integer.valueOf(jvmInput.getText());
+                        int v = Integer.parseInt(jvmInput.getText());
                         if (v > 50 && v <= totalM - 50) {
                             jvmInput.setStyle(null);
                             if (jvmM == v) {
@@ -576,63 +582,6 @@ public class SettingsController extends BaseController {
         OperatingSystemMXBean osmxb = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
         long defaultJVM = osmxb.getTotalMemorySize() / (4 * 1024 * 1024);
         jvmInput.setText(defaultJVM + "");
-    }
-
-    @FXML
-    protected void selectDataPath(ActionEvent event) {
-        try {
-            DirectoryChooser chooser = new DirectoryChooser();
-            chooser.setInitialDirectory(new File(AppVariables.MyboxDataPath));
-            File directory = chooser.showDialog(getMyStage());
-            if (directory == null) {
-                return;
-            }
-            recordFileWritten(directory);
-            dataDirInput.setText(directory.getPath());
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
-    protected void changeDataPath(ActionEvent event) {
-        try {
-            String newPath = dataDirInput.getText();
-            if (isSettingValues || newPath == null || newPath.trim().isEmpty()
-                    || newPath.trim().equals(AppVariables.MyboxDataPath)) {
-                return;
-            }
-            if (!PopTools.askSure(getTitle(), message("ChangeDataPathConfirm"))) {
-                return;
-            }
-            popInformation(message("CopyingFilesFromTo"));
-            String oldPath = AppVariables.MyboxDataPath;
-            if (FileCopyTools.copyWholeDirectory(new File(oldPath), new File(newPath), null, false)) {
-                File lckFile = new File(newPath + File.separator
-                        + "mybox_derby" + File.separator + "db.lck");
-                if (lckFile.exists()) {
-                    try {
-                        FileDeleteTools.delete(lckFile);
-                    } catch (Exception e) {
-                        MyBoxLog.error(e.toString());
-                    }
-                }
-                AppVariables.MyboxDataPath = newPath;
-                ConfigTools.writeConfigValue("MyBoxDataPath", newPath);
-                dataDirInput.setStyle(null);
-                if (clearCurrentRootCheck.isSelected()) {
-                    ConfigTools.writeConfigValue("MyBoxOldDataPath", oldPath);
-                }
-                MyBox.restart();
-            } else {
-                popFailed();
-                dataDirInput.setStyle(UserConfig.badStyle());
-            }
-
-        } catch (Exception e) {
-            popFailed();
-            dataDirInput.setStyle(UserConfig.badStyle());
-        }
     }
 
     @FXML
@@ -712,7 +661,7 @@ public class SettingsController extends BaseController {
                         return;
                     }
                     try {
-                        long v = Long.valueOf(batchInput.getText());
+                        long v = Long.parseLong(batchInput.getText());
                         if (v > 0) {
                             batchInput.setStyle(null);
                             Database.BatchSize = v;
@@ -727,6 +676,13 @@ public class SettingsController extends BaseController {
             });
             batchInput.setText(Database.BatchSize + "");
 
+            clearExpiredCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                    UserConfig.setBoolean("ClearExpiredDataBeforeExit", clearExpiredCheck.isSelected());
+                }
+            });
+
             stopAlarmCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
@@ -736,6 +692,66 @@ public class SettingsController extends BaseController {
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
+        }
+    }
+
+    @FXML
+    protected void selectDataPath(ActionEvent event) {
+        try {
+            DirectoryChooser chooser = new DirectoryChooser();
+            chooser.setInitialDirectory(new File(AppVariables.MyboxDataPath));
+            File directory = chooser.showDialog(getMyStage());
+            if (directory == null) {
+                return;
+            }
+            recordFileWritten(directory);
+            dataDirInput.setText(directory.getPath());
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    protected void changeDataPath(ActionEvent event) {
+        try {
+            String newPath = dataDirInput.getText();
+            if (isSettingValues || newPath == null || newPath.trim().isEmpty()
+                    || newPath.trim().equals(AppVariables.MyboxDataPath)) {
+                return;
+            }
+            String oldPath = AppVariables.MyboxDataPath;
+            if (copyCurrentDataPathCheck.isSelected()) {
+                if (!PopTools.askSure(getTitle(), message("ChangeDataPathConfirm"))) {
+                    return;
+                }
+                popInformation(message("CopyingFilesFromTo"));
+                if (FileCopyTools.copyWholeDirectory(new File(oldPath), new File(newPath), null, false)) {
+                    File lckFile = new File(newPath + File.separator
+                            + "mybox_derby" + File.separator + "db.lck");
+                    if (lckFile.exists()) {
+                        try {
+                            FileDeleteTools.delete(lckFile);
+                        } catch (Exception e) {
+                            MyBoxLog.error(e.toString());
+                        }
+                    }
+
+                } else {
+                    popFailed();
+                    dataDirInput.setStyle(UserConfig.badStyle());
+                }
+            }
+            AppVariables.MyboxDataPath = newPath;
+            ConfigTools.writeConfigValue("MyBoxDataPath", newPath);
+            dataDirInput.setStyle(null);
+            if (clearCurrentRootCheck.isSelected()) {
+                ConfigTools.writeConfigValue("MyBoxOldDataPath", oldPath);
+            }
+            MyBox.restart();
+
+        } catch (Exception e) {
+            popFailed();
+            dataDirInput.setStyle(UserConfig.badStyle());
         }
     }
 
@@ -752,14 +768,6 @@ public class SettingsController extends BaseController {
             return;
         }
         new TableVisitHistory().clear();
-        popSuccessful();
-    }
-
-    @FXML
-    protected void noFileHistories(ActionEvent event) {
-        fileRecentInput.setText("0");
-        UserConfig.setInt("FileRecentNumber", 0);
-        AppVariables.fileRecentNumber = 0;
         popSuccessful();
     }
 
@@ -877,7 +885,7 @@ public class SettingsController extends BaseController {
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     if (newValue != null && !newValue.isEmpty()) {
                         try {
-                            int v = Integer.valueOf(newValue);
+                            int v = Integer.parseInt(newValue);
                             if (v > 0) {
                                 UserConfig.setInt("StrokeWidth", v);
                                 ValidationTools.setEditorNormal(strokeWidthBox);
@@ -909,7 +917,7 @@ public class SettingsController extends BaseController {
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     if (newValue != null && !newValue.isEmpty()) {
                         try {
-                            int v = Integer.valueOf(newValue);
+                            int v = Integer.parseInt(newValue);
                             if (v > 0) {
                                 UserConfig.setInt("AnchorWidth", v);
                                 ValidationTools.setEditorNormal(anchorWidthBox);
@@ -961,7 +969,7 @@ public class SettingsController extends BaseController {
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     if (newValue != null && !newValue.isEmpty()) {
                         try {
-                            int v = Integer.valueOf(newValue);
+                            int v = Integer.parseInt(newValue);
                             if (v > 0) {
                                 UserConfig.setInt("GridLinesWidth", v);
                                 ValidationTools.setEditorNormal(gridWidthSelector);
@@ -985,7 +993,7 @@ public class SettingsController extends BaseController {
                     int v = -1;
                     try {
                         if (!message("Automatic").equals(newValue)) {
-                            v = Integer.valueOf(newValue);
+                            v = Integer.parseInt(newValue);
                         }
                     } catch (Exception e) {
                     }
@@ -1028,7 +1036,7 @@ public class SettingsController extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(thumbnailWidthInput.getText());
+                        int v = Integer.parseInt(thumbnailWidthInput.getText());
                         if (v > 0) {
                             UserConfig.setInt("ThumbnailWidth", v);
                             AppVariables.thumbnailWidth = v;

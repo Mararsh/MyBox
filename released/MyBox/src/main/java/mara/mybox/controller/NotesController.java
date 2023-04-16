@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Window;
 import mara.mybox.db.data.TreeNode;
 import mara.mybox.db.data.VisitHistory;
@@ -72,11 +71,6 @@ public class NotesController extends TreeManageController {
     public void nodeSaved() {
         super.nodeSaved();
         editorController.updateFileStatus(false);
-    }
-
-    @FXML
-    public void popPanesMenu(MouseEvent mouseEvent) {
-        editorController.popPanesMenu(mouseEvent);
     }
 
     @Override

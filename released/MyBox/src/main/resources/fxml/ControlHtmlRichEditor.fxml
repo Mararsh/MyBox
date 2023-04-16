@@ -11,11 +11,10 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.web.HTMLEditor?>
 
-<VBox fx:id="thisPane" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" 
-      spacing="2.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlHtmlRichEditor">
+<VBox fx:id="thisPane" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlHtmlRichEditor">
     <children>
         <HTMLEditor fx:id="htmlEditor" htmlText="" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
-        <Label fx:id="webViewLabel" maxWidth="1.7976931348623157E308" wrapText="true" />
+        <Label fx:id="bottomLabel" maxWidth="1.7976931348623157E308" wrapText="true" />
     </children>
     <padding>
         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

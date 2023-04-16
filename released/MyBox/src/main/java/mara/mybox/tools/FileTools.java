@@ -9,9 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.FileExtensions;
 import org.apache.commons.io.FileUtils;
@@ -40,16 +38,20 @@ public class FileTools {
     }
 
     public static String showFileSize(long size) {
-        double kb = size * 1.0d / 1024;
-        if (kb < 1024) {
-            return DoubleTools.scale3(kb) + " KB";
+        if (size < 1024) {
+            return size + " B";
         } else {
-            double mb = kb / 1024;
-            if (mb < 1024) {
-                return DoubleTools.scale3(mb) + " MB";
+            double kb = size * 1.0d / 1024;
+            if (kb < 1024) {
+                return DoubleTools.scale3(kb) + " KB";
             } else {
-                double gb = mb / 1024;
-                return DoubleTools.scale3(gb) + " GB";
+                double mb = kb / 1024;
+                if (mb < 1024) {
+                    return DoubleTools.scale3(mb) + " MB";
+                } else {
+                    double gb = mb / 1024;
+                    return DoubleTools.scale3(gb) + " GB";
+                }
             }
         }
     }
@@ -75,11 +77,14 @@ public class FileTools {
             if (noEmpty && sourceFile.length() == 0) {
                 return false;
             }
-            if (!FileDeleteTools.delete(targetFile)) {
-                return false;
+            synchronized (sourceFile) {
+                if (!FileDeleteTools.delete(targetFile)) {
+                    return false;
+                }
+                System.gc();
+                FileUtils.moveFile(sourceFile, targetFile);
             }
-            System.gc();
-            FileUtils.moveFile(sourceFile, targetFile);
+//            targetFile.getParentFile().mkdirs();
 //            Files.move(sourceFile.toPath(), targetFile.toPath(),
 //                    StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
             return true;
@@ -125,24 +130,6 @@ public class FileTools {
         return size;
     }
 
-    public static List<File> allFiles(File file) {
-        if (file == null) {
-            return null;
-        }
-        List<File> files = new ArrayList<>();
-        if (file.isFile()) {
-            files.add(file);
-        } else if (file.isDirectory()) {
-            File[] dirFiles = file.listFiles();
-            if (dirFiles != null) {
-                for (File dirFile : dirFiles) {
-                    files.addAll(allFiles(dirFile));
-                }
-            }
-        }
-        return files;
-    }
-
     public static boolean same(File file1, File file2) {
         return Arrays.equals(MessageDigestTools.SHA1(file1), MessageDigestTools.SHA1(file2));
 
@@ -159,12 +146,21 @@ public class FileTools {
         return file != null && file.exists() && file.isFile() && file.length() > 0;
     }
 
+    public static boolean isEqualOrSubPath(String path1, String path2) {
+        if (path1 == null || path1.isBlank() || path2 == null || path2.isBlank()) {
+            return false;
+        }
+        String name1 = path1.endsWith(File.separator) ? path1 : (path1 + File.separator);
+        String name2 = path1.endsWith(File.separator) ? path2 : (path2 + File.separator);
+        return name1.equals(name2) || name1.startsWith(name2);
+    }
+
     public static File removeBOM(File file) {
         if (!hasData(file)) {
             return file;
         }
         String bom = null;
-        try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
+        try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
             byte[] header = new byte[4];
             int readLen;
             if ((readLen = inputStream.read(header, 0, 4)) > 0) {
@@ -179,8 +175,8 @@ public class FileTools {
             return null;
         }
         File tmpFile = TmpFileTools.getTempFile();
-        try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-                 BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
+        try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+                BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
             int bomSize = TextTools.bomSize(bom);
             inputStream.skip(bomSize);
             int readLen;

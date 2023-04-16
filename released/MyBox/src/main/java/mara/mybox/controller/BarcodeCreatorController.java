@@ -215,7 +215,7 @@ public class BarcodeCreatorController extends ImageViewerController {
             orientationSelecor.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
-                    orientation = Integer.valueOf(orientationSelecor.getValue());
+                    orientation = Integer.parseInt(orientationSelecor.getValue());
                     UserConfig.setInt("BarcodeOrientation", orientation);
                 }
             });
@@ -258,7 +258,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v > 0) {
                             fontSize = v;
                             UserConfig.setInt("BarcodeFontSize", v);
@@ -278,7 +278,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        double v = Double.valueOf(newValue);
+                        double v = Double.parseDouble(newValue);
                         if (v > 0) {
                             narrowWidth = v;
                             UserConfig.setString("BarcodeNarrowWdith", newValue);
@@ -301,7 +301,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                 @Override
                 public void changed(ObservableValue<? extends String> ov, String oldV, String newV) {
                     try {
-                        double v = Double.valueOf(newV);
+                        double v = Double.parseDouble(newV);
                         if (v > 0) {
                             barRatio = v;
                             UserConfig.setString("BarcodeBarRatio", newV);
@@ -321,7 +321,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v > 0) {
                             height1 = v;
                             UserConfig.setInt("BarcodeHeight", v);
@@ -341,7 +341,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        double v = Double.valueOf(newValue);
+                        double v = Double.parseDouble(newValue);
                         if (v >= 0) {
                             quietWidth = v;
                             UserConfig.setString("BarcodeQuietWdith", newValue);
@@ -370,7 +370,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v > 0) {
                             qrWidth = v;
                             UserConfig.setInt("BarcodeWdith2", v);
@@ -390,7 +390,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v > 0) {
                             qrHeight = v;
                             UserConfig.setInt("BarcodeHeight2", v);
@@ -410,7 +410,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v >= 0) {
                             qrMargin = v;
                             UserConfig.setInt("BarcodeMargin", v);
@@ -464,7 +464,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v > 0) {
                             pdf417Width = v;
                             UserConfig.setInt("PDF417Width", v);
@@ -484,7 +484,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v > 0) {
                             pdf417Height = v;
                             UserConfig.setInt("PDF417Height", v);
@@ -504,7 +504,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v >= 0) {
                             pdf417Margin = v;
                             UserConfig.setInt("PDF417Margin", v);
@@ -554,7 +554,7 @@ public class BarcodeCreatorController extends ImageViewerController {
             pdf417ErrorCorrectionSelecor.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> v, String oldV, String newV) {
-                    pdf417ErrorCorrectionLevel = Integer.valueOf(newV.substring(0, 1));
+                    pdf417ErrorCorrectionLevel = Integer.parseInt(newV.substring(0, 1));
                     UserConfig.setString("PDF417ErrorCorrection", newV);
                 }
             });
@@ -572,7 +572,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v > 0) {
                             dmWidth = v;
                             UserConfig.setInt("DataMatrixWidth", v);
@@ -592,7 +592,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v > 0) {
                             dmHeight = v;
                             UserConfig.setInt("DataMatrixHeight", v);

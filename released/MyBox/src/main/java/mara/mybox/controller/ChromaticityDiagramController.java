@@ -13,6 +13,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -26,7 +27,6 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import mara.mybox.bufferedimage.ImageColorSpace;
@@ -640,8 +640,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
         displayChromaticityDiagram();
     }
 
-    @FXML
-    public void popDiagramPath(MouseEvent event) {
+    public void showDiagramPathMenu(Event event) {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
@@ -653,7 +652,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
 
             @Override
             public List<VisitHistory> recentPaths() {
-                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Image);
+                return VisitHistoryTools.getRecentPathWrite(VisitHistory.FileType.Image);
             }
 
             @Override
@@ -672,6 +671,23 @@ public class ChromaticityDiagramController extends ImageViewerController {
             }
 
         }.pop();
+    }
+
+    @FXML
+    public void pickDiagramPath(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
+                || AppVariables.fileRecentNumber <= 0) {
+            saveAction();
+        } else {
+            showDiagramPathMenu(event);
+        }
+    }
+
+    @FXML
+    public void popDiagramPath(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            showDiagramPathMenu(event);
+        }
     }
 
     @FXML

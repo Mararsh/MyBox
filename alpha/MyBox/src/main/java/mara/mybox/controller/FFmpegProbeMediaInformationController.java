@@ -277,6 +277,8 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
                     }
                 }
 
+                items.add(new SeparatorMenuItem());
+
                 controller.popEventMenu(event, items);
 
             }

@@ -1,19 +1,17 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import javafx.stage.DirectoryChooser;
 import jdk.jshell.JShell;
 import mara.mybox.db.data.VisitHistory;
@@ -21,7 +19,6 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.style.StyleTools;
@@ -110,8 +107,7 @@ public class JShellPaths extends BaseController {
         recordFileOpened(file);
     }
 
-    @FXML
-    public void popJarFiles(MouseEvent event) {
+    public void showJarFilesMenu(Event event) {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
@@ -133,6 +129,23 @@ public class JShellPaths extends BaseController {
             }
 
         }.pop();
+    }
+
+    @FXML
+    public void pickJarFiles(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
+                || AppVariables.fileRecentNumber <= 0) {
+            selectJar();
+        } else {
+            showJarFilesMenu(event);
+        }
+    }
+
+    @FXML
+    public void popJarFiles(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            showJarFilesMenu(event);
+        }
     }
 
     @FXML
@@ -160,8 +173,7 @@ public class JShellPaths extends BaseController {
         recordFileOpened(directory);
     }
 
-    @FXML
-    public void popJarPath(MouseEvent event) {
+    public void showJarPathMenu(Event event) {
         if (AppVariables.fileRecentNumber <= 0) {
             return;
         }
@@ -173,7 +185,7 @@ public class JShellPaths extends BaseController {
 
             @Override
             public List<VisitHistory> recentPaths() {
-                return VisitHistoryTools.getRecentPath(VisitHistory.FileType.Jar);
+                return VisitHistoryTools.getRecentPathRead(VisitHistory.FileType.Jar);
             }
 
             @Override
@@ -199,23 +211,36 @@ public class JShellPaths extends BaseController {
     }
 
     @FXML
+    public void pickJarPath(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)
+                || AppVariables.fileRecentNumber <= 0) {
+            selectPath();
+        } else {
+            showJarPathMenu(event);
+        }
+    }
+
+    @FXML
+    public void popJarPath(Event event) {
+        if (UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true)) {
+            showJarPathMenu(event);
+        }
+    }
+
+    @FXML
     protected void showExamplesMenu(Event event) {
         try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+            List<MenuItem> items = new ArrayList<>();
 
-            MenuItem menu;
-
-            menu = new MenuItem(message("MyBoxClassPaths"));
+            MenuItem menu = new MenuItem(message("MyBoxClassPaths"));
             menu.setOnAction((ActionEvent e) -> {
                 pathInput.setText(System.getProperty("java.class.path"));
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
-            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
             hoverMenu.setSelected(UserConfig.getBoolean("JShellPathsPopWhenMouseHovering", false));
             hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -223,20 +248,9 @@ public class JShellPaths extends BaseController {
                     UserConfig.setBoolean("JShellPathsPopWhenMouseHovering", hoverMenu.isSelected());
                 }
             });
-            popMenu.getItems().add(hoverMenu);
+            items.add(hoverMenu);
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
-
-            LocateTools.locateBelow((Region) event.getSource(), popMenu);
+            popEventMenu(event, items);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

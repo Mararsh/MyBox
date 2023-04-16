@@ -49,8 +49,8 @@ import jdk.jshell.JShell;
 import jdk.jshell.SourceCodeAnalysis;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.ControlWebView;
+import mara.mybox.controller.HtmlStyleInputController;
 import mara.mybox.controller.MenuController;
-import mara.mybox.controller.TextInputController;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.HtmlStyles;
@@ -120,7 +120,7 @@ public class PopTools {
             return;
         }
         if (!uri.getScheme().equals("file") || new File(uri.getPath()).isFile()) {
-            ControllerTools.openTarget(null, uri.toString());
+            ControllerTools.openTarget(uri.toString());
         } else {
             alertError(controller, message("DesktopNotSupportBrowse"));
         }
@@ -173,9 +173,11 @@ public class PopTools {
         dialog.setContentText(name);
         dialog.getEditor().setText(initValue);
         dialog.getEditor().setPrefWidth(initValue == null ? minWidth : Math.min(minWidth, initValue.length() * AppVariables.sceneFontSize));
+        dialog.getEditor().selectEnd();
         Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
         stage.setAlwaysOnTop(true);
         stage.toFront();
+        stage.getScene().getRoot().requestFocus();
         Optional<String> result = dialog.showAndWait();
         if (result == null || !result.isPresent()) {
             return null;
@@ -300,19 +302,14 @@ public class PopTools {
             if (event == null || controller == null) {
                 return null;
             }
-            ContextMenu cMenu = controller.getPopMenu();
-            if (cMenu != null && cMenu.isShowing()) {
-                cMenu.hide();
-            }
-            final ContextMenu popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+            List<MenuItem> items = new ArrayList<>();
 
             String baseName = controller.getBaseName();
 
             MenuItem menu = new MenuItem(message("HtmlStyle"));
             menu.setStyle("-fx-text-fill: #2e598a;");
-            popMenu.getItems().add(menu);
-            popMenu.getItems().add(new SeparatorMenuItem());
+            items.add(menu);
+            items.add(new SeparatorMenuItem());
 
             ToggleGroup sgroup = new ToggleGroup();
             String prefix = UserConfig.getBoolean(baseName + "ShareHtmlStyle", true) ? "AllInterface" : baseName;
@@ -327,7 +324,7 @@ public class PopTools {
             });
             rmenu.setSelected(currentStyle == null);
             rmenu.setToggleGroup(sgroup);
-            popMenu.getItems().add(rmenu);
+            items.add(rmenu);
 
             boolean predefinedValue = false;
             for (HtmlStyles.HtmlStyle style : HtmlStyles.HtmlStyle.values()) {
@@ -342,7 +339,7 @@ public class PopTools {
                 boolean isCurrent = currentStyle != null && currentStyle.equals(styleValue);
                 rmenu.setSelected(isCurrent);
                 rmenu.setToggleGroup(sgroup);
-                popMenu.getItems().add(rmenu);
+                items.add(rmenu);
                 if (isCurrent) {
                     predefinedValue = true;
                 }
@@ -354,7 +351,7 @@ public class PopTools {
 
                 @Override
                 public void handle(ActionEvent event) {
-                    TextInputController inputController = TextInputController.open(controller,
+                    HtmlStyleInputController inputController = HtmlStyleInputController.open(controller,
                             message("Style"), UserConfig.getString(prefix + "HtmlStyle", null));
                     getListener = new ChangeListener<Boolean>() {
                         @Override
@@ -373,19 +370,9 @@ public class PopTools {
             });
             rmenu.setSelected(currentStyle != null && !predefinedValue);
             rmenu.setToggleGroup(sgroup);
-            popMenu.getItems().add(rmenu);
+            items.add(rmenu);
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-
-            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
-            hoverMenu.setSelected(UserConfig.getBoolean("HtmlStylesPopWhenMouseHovering", false));
-            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("HtmlStylesPopWhenMouseHovering", hoverMenu.isSelected());
-                }
-            });
-            popMenu.getItems().add(hoverMenu);
+            items.add(new SeparatorMenuItem());
 
             CheckMenuItem checkMenu = new CheckMenuItem(message("ShareAllInterface"));
             checkMenu.setSelected(UserConfig.getBoolean(baseName + "ShareHtmlStyle", true));
@@ -395,44 +382,20 @@ public class PopTools {
                     UserConfig.setBoolean(baseName + "ShareHtmlStyle", checkMenu.isSelected());
                 }
             });
-            popMenu.getItems().add(checkMenu);
+            items.add(checkMenu);
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("CssEn"));
-            menu.setStyle("-fx-text-fill: blue;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            hoverMenu.setSelected(UserConfig.getBoolean("HtmlStylesPopWhenMouseHovering", false));
+            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    controller.openLink(HelpTools.cssEnLink());
+                    UserConfig.setBoolean("HtmlStylesPopWhenMouseHovering", hoverMenu.isSelected());
                 }
             });
-            popMenu.getItems().add(menu);
+            items.add(hoverMenu);
 
-            menu = new MenuItem(message("CssZh"));
-            menu.setStyle("-fx-text-fill: blue;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    controller.openLink(HelpTools.cssZhLink());
-                }
-            });
-            popMenu.getItems().add(menu);
-
-            popMenu.getItems().add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
-            controller.setPopMenu(popMenu);
-            LocateTools.locateCenter((Region) event.getSource(), popMenu);
-            return popMenu;
+            controller.popEventMenu(event, items);
+            return controller.getPopMenu();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
@@ -441,14 +404,13 @@ public class PopTools {
 
     public static ContextMenu popWindowStyles(BaseController parent, String baseStyle, Event event) {
         try {
-            ContextMenu popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+            List<MenuItem> items = new ArrayList<>();
 
             String baseName = parent.getBaseName();
             MenuItem menu = new MenuItem(message("WindowStyle"));
             menu.setStyle("-fx-text-fill: #2e598a;");
-            popMenu.getItems().add(menu);
-            popMenu.getItems().add(new SeparatorMenuItem());
+            items.add(menu);
+            items.add(new SeparatorMenuItem());
 
             Map<String, String> styles = new LinkedHashMap<>();
             styles.put("None", "");
@@ -474,19 +436,9 @@ public class PopTools {
                 });
                 rmenu.setSelected(currentStyle != null && currentStyle.equals(style));
                 rmenu.setToggleGroup(sgroup);
-                popMenu.getItems().add(rmenu);
+                items.add(rmenu);
             }
-            popMenu.getItems().add(new SeparatorMenuItem());
-
-            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
-            hoverMenu.setSelected(UserConfig.getBoolean("WindowStylesPopWhenMouseHovering", false));
-            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("WindowStylesPopWhenMouseHovering", hoverMenu.isSelected());
-                }
-            });
-            popMenu.getItems().add(hoverMenu);
+            items.add(new SeparatorMenuItem());
 
             CheckMenuItem checkMenu = new CheckMenuItem(message("ShareAllInterface"));
             checkMenu.setSelected(UserConfig.getBoolean(baseName + "ShareWindowStyle", true));
@@ -496,25 +448,20 @@ public class PopTools {
                     UserConfig.setBoolean(baseName + "ShareWindowStyle", checkMenu.isSelected());
                 }
             });
-            popMenu.getItems().add(checkMenu);
+            items.add(checkMenu);
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            hoverMenu.setSelected(UserConfig.getBoolean("WindowStylesPopWhenMouseHovering", false));
+            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    popMenu.hide();
+                    UserConfig.setBoolean("WindowStylesPopWhenMouseHovering", hoverMenu.isSelected());
                 }
             });
-            popMenu.getItems().add(menu);
+            items.add(hoverMenu);
 
-            parent.closePopup();
-            parent.setPopMenu(popMenu);
-
-            LocateTools.locateEvent(event, popMenu);
-            return popMenu;
+            parent.popEventMenu(event, items);
+            return parent.getPopMenu();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
@@ -541,18 +488,11 @@ public class PopTools {
     /*
         saved values
      */
-//    public static void popStringValues(BaseController parent, TextInputControl input, Event event, String name) {
-//        popStringValues(parent, input, event, name, false);
-//    }
-//
-//    public static void popStringValues(BaseController parent, TextInputControl input, Event event, String name, boolean alwaysClear) {
-//        popStringValues(parent, input, event, name, false, false);
-//    }
-    public static void popStringValues(BaseController parent, TextInputControl input, Event event,
+    public static void popStringValues(BaseController parent, TextInputControl input, Event pevent,
             String name, boolean alwaysClear, boolean checkPop) {
         try {
             int max = UserConfig.getInt(name + "MaxSaved", 20);
-            MenuController controller = MenuController.open(parent, input, event);
+            MenuController controller = MenuController.open(parent, input, pevent);
 
             List<Node> setButtons = new ArrayList<>();
             Button clearInputButton = new Button(message("ClearInputArea"));
@@ -625,7 +565,7 @@ public class PopTools {
 
             controller.addFlowPane(setButtons);
             controller.addNode(new Separator());
-            controller.addNode(new Label(message("RightClickToDelete")));
+            controller.addNode(new Label(message("PopValuesComments")));
 
             List<String> values = TableStringValues.max(name, max);
             List<Node> buttons = new ArrayList<>();
@@ -649,7 +589,7 @@ public class PopTools {
                         if (event.getButton() == MouseButton.SECONDARY) {
                             TableStringValues.delete(name, value);
                             controller.close();
-                            popStringValues(parent, input, event, name, alwaysClear, checkPop);
+                            popStringValues(parent, input, pevent, name, alwaysClear, checkPop);
                         }
                     }
                 });
@@ -677,6 +617,11 @@ public class PopTools {
             values.add(DateTools.datetimeToString(d, TimeFormats.Year));
             values.add(DateTools.datetimeToString(d, TimeFormats.TimeMs));
             values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeZone));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeC));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMsC));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DateC));
+            values.add(DateTools.datetimeToString(d, TimeFormats.MonthC));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeZoneC));
             values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeE));
             values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMsE));
             values.add(DateTools.datetimeToString(d, TimeFormats.DateE));
@@ -700,6 +645,8 @@ public class PopTools {
             values.add(DateTools.datetimeToString(d, TimeFormats.Date));
             values.add(DateTools.datetimeToString(d, TimeFormats.Month));
             values.add(DateTools.datetimeToString(d, TimeFormats.Year));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DateC));
+            values.add(DateTools.datetimeToString(d, TimeFormats.MonthC));
             values.add(DateTools.datetimeToString(d, TimeFormats.DateE));
             values.add(DateTools.datetimeToString(d, TimeFormats.MonthE));
             return popDateMenu(parent, inPopMenu, input, mouseEvent, values);
@@ -713,73 +660,41 @@ public class PopTools {
         try {
             List<String> values = new ArrayList<>();
             Date d = new Date();
-            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeA + " G", Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMsA + " G", Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(d, TimeFormats.DateA + " G", Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(d, TimeFormats.MonthA + " G", Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(d, TimeFormats.YearA + " G", Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(d, "G" + TimeFormats.DatetimeA, Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(d, "G" + TimeFormats.DatetimeMsA, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.Datetime + " G", Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMs + " G", Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.Date + " G", Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.Month + " G", Locale.ENGLISH, null));
             values.add(DateTools.datetimeToString(d, "G" + TimeFormats.DateA, Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(d, "G" + TimeFormats.MonthA, Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(d, "G" + TimeFormats.YearA, Locale.ENGLISH, null));
 
             Date bc = DateTools.encodeDate("770-3-9 12:56:33.498 BC");
             values.add(DateTools.datetimeToString(bc, TimeFormats.DatetimeA + " G", Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(bc, TimeFormats.DatetimeMsA + " G", Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(bc, TimeFormats.DateA + " G", Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(bc, TimeFormats.MonthA + " G", Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(bc, TimeFormats.YearA + " G", Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(bc, "G" + TimeFormats.DatetimeA, Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(bc, "G" + TimeFormats.DatetimeMsA, Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(bc, "G" + TimeFormats.DateA, Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(bc, TimeFormats.Date + " G", Locale.ENGLISH, null));
             values.add(DateTools.datetimeToString(bc, "G" + TimeFormats.MonthA, Locale.ENGLISH, null));
             values.add(DateTools.datetimeToString(bc, "G" + TimeFormats.YearA, Locale.ENGLISH, null));
 
             if (Languages.isChinese()) {
-                values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeA + " G", Locale.CHINESE, null));
-                values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMsA + " G", Locale.CHINESE, null));
-                values.add(DateTools.datetimeToString(d, TimeFormats.DateA + " G", Locale.CHINESE, null));
-                values.add(DateTools.datetimeToString(d, TimeFormats.MonthA + " G", Locale.CHINESE, null));
-                values.add(DateTools.datetimeToString(d, TimeFormats.YearA + " G", Locale.CHINESE, null));
-                values.add(DateTools.datetimeToString(d, "G" + TimeFormats.DatetimeA, Locale.CHINESE, null));
-                values.add(DateTools.datetimeToString(d, "G" + TimeFormats.DatetimeMsA, Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(d, TimeFormats.Datetime + " G", Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMs + " G", Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(d, TimeFormats.Date + " G", Locale.CHINESE, null));
+                values.add(DateTools.datetimeToString(d, TimeFormats.Month + " G", Locale.CHINESE, null));
                 values.add(DateTools.datetimeToString(d, "G" + TimeFormats.DateA, Locale.CHINESE, null));
-                values.add(DateTools.datetimeToString(d, "G" + TimeFormats.MonthA, Locale.CHINESE, null));
-                values.add(DateTools.datetimeToString(d, "G" + TimeFormats.YearA, Locale.CHINESE, null));
 
                 values.add(DateTools.datetimeToString(bc, TimeFormats.DatetimeA + " G", Locale.CHINESE, null));
-                values.add(DateTools.datetimeToString(bc, TimeFormats.DatetimeMsA + " G", Locale.CHINESE, null));
                 values.add(DateTools.datetimeToString(bc, TimeFormats.DateA + " G", Locale.CHINESE, null));
-                values.add(DateTools.datetimeToString(bc, TimeFormats.MonthA + " G", Locale.CHINESE, null));
-                values.add(DateTools.datetimeToString(bc, TimeFormats.YearA + " G", Locale.CHINESE, null));
-                values.add(DateTools.datetimeToString(bc, "G" + TimeFormats.DatetimeA, Locale.CHINESE, null));
-                values.add(DateTools.datetimeToString(bc, "G" + TimeFormats.DatetimeMsA, Locale.CHINESE, null));
-                values.add(DateTools.datetimeToString(bc, "G" + TimeFormats.DateA, Locale.CHINESE, null));
                 values.add(DateTools.datetimeToString(bc, "G" + TimeFormats.MonthA, Locale.CHINESE, null));
                 values.add(DateTools.datetimeToString(bc, "G" + TimeFormats.YearA, Locale.CHINESE, null));
             }
 
-            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeB + " G", Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMsC + " G", Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, TimeFormats.DateC + " G", Locale.ENGLISH, null));
+            values.add(DateTools.datetimeToString(d, "G" + TimeFormats.MonthC, Locale.ENGLISH, null));
+
             values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMsB + " G", Locale.ENGLISH, null));
             values.add(DateTools.datetimeToString(d, TimeFormats.DateB + " G", Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(d, TimeFormats.MonthB + " G", Locale.ENGLISH, null));
             values.add(DateTools.datetimeToString(d, "G" + TimeFormats.DatetimeB, Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(d, "G" + TimeFormats.DatetimeMsB, Locale.ENGLISH, null));
-            values.add(DateTools.datetimeToString(d, "G" + TimeFormats.DateB, Locale.ENGLISH, null));
             values.add(DateTools.datetimeToString(d, "G" + TimeFormats.MonthB, Locale.ENGLISH, null));
 
-            values.add(DateTools.datetimeToString(d, TimeFormats.Datetime));
-            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMs));
-            values.add(DateTools.datetimeToString(d, TimeFormats.Date));
-            values.add(DateTools.datetimeToString(d, TimeFormats.Month));
-            values.add(DateTools.datetimeToString(d, TimeFormats.Year));
-            values.add(DateTools.datetimeToString(d, TimeFormats.TimeMs));
             values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeZone));
-            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeE));
-            values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeMsE));
-            values.add(DateTools.datetimeToString(d, TimeFormats.DateE));
-            values.add(DateTools.datetimeToString(d, TimeFormats.MonthE));
             values.add(DateTools.datetimeToString(d, TimeFormats.DatetimeZoneE));
             values.addAll(Arrays.asList(
                     "2020-07-15T36:55:09", "2020-07-10T10:10:10.532 +0800"
@@ -823,20 +738,18 @@ public class PopTools {
             if (values == null || values.isEmpty()) {
                 return inPopMenu;
             }
-            final ContextMenu popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+            List<MenuItem> items = new ArrayList<>();
 
             MenuItem menu;
             for (String value : values) {
                 menu = new MenuItem(value);
                 menu.setOnAction((ActionEvent event) -> {
                     input.setText(value);
-                    popMenu.requestFocus();
                     input.requestFocus();
                 });
-                popMenu.getItems().add(menu);
+                items.add(menu);
             }
-            popMenu.getItems().add(new SeparatorMenuItem());
+            items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("DateFormat"));
             menu.setStyle("-fx-text-fill: blue;");
@@ -846,20 +759,12 @@ public class PopTools {
                     parent.openLink(HelpTools.simpleDateFormatLink());
                 }
             });
-            popMenu.getItems().add(menu);
-            popMenu.getItems().add(new SeparatorMenuItem());
+            items.add(menu);
 
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
-            LocateTools.locateMouse(mouseEvent, popMenu);
-            return popMenu;
+            items.add(new SeparatorMenuItem());
+
+            parent.popEventMenu(mouseEvent, items);
+            return parent.getPopMenu();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
@@ -1137,9 +1042,7 @@ public class PopTools {
             if (ePopMenu != null && ePopMenu.isShowing()) {
                 ePopMenu.hide();
             }
-            ContextMenu popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-            popMenu.setAutoFix(true);
+            List<MenuItem> items = new ArrayList<>();
 
             MenuItem menu;
 
@@ -1149,22 +1052,11 @@ public class PopTools {
                 menu.setOnAction((ActionEvent event) -> {
                     scriptInput.replaceText(scriptInput.getSelection(), c);
                 });
-                popMenu.getItems().add(menu);
+                items.add(menu);
             }
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
-
-            parent.setPopMenu(popMenu);
-            LocateTools.locateMouse(scriptInput, popMenu);
+            items.add(new SeparatorMenuItem());
+            parent.popNodeMenu(scriptInput, items);
         } catch (Exception e) {
         }
     }

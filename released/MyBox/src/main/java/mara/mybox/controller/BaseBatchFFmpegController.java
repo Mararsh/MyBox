@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.Languages;
 
 /**
@@ -21,6 +22,17 @@ public abstract class BaseBatchFFmpegController extends BaseBatchFileController 
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.Media);
+    }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            ffmpegOptionsController.setParameters(this);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
 }

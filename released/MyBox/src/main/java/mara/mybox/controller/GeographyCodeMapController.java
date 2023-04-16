@@ -189,7 +189,7 @@ public class GeographyCodeMapController extends BaseMapFramesController {
                 ok = true;
             } else {
                 try {
-                    int v = Integer.valueOf(s);
+                    int v = Integer.parseInt(s);
                     if (v > 0) {
                         chartMaxData = v;
 

@@ -48,7 +48,7 @@ public class SystemConfig {
         try {
             int v;
             if (AppVariables.systemConfigValues.containsKey(key)) {
-                v = Integer.valueOf(AppVariables.systemConfigValues.get(key));
+                v = Integer.parseInt(AppVariables.systemConfigValues.get(key));
             } else {
                 v = TableSystemConf.readInt(key, defaultValue);
                 AppVariables.systemConfigValues.put(key, v + "");

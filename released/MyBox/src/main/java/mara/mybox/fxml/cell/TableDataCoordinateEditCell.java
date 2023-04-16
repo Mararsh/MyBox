@@ -19,8 +19,8 @@ public class TableDataCoordinateEditCell extends TableDataEditCell {
     }
 
     @Override
-    public void startEdit() {
-        Data2DCoordinatePickerController.open(dataControl, rowIndex());
+    public void editCell() {
+        Data2DCoordinatePickerController.open(dataControl, editingRow);
     }
 
     public static Callback<TableColumn, TableCell> create(ControlData2DLoad dataControl, Data2DColumn dataColumn) {

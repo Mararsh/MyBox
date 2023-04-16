@@ -53,7 +53,7 @@ License:    Apache License Version 2.0
                                                             <graphic>
                                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
-                                                                        <Image url="@../buttons/Red/iconOpen.png" />
+                                                                        <Image url="@../buttons/Red/iconSelectFile.png" />
                                                                     </image>
                                                                 </ImageView>
                                                             </graphic>
@@ -89,7 +89,6 @@ License:    Apache License Version 2.0
                                             </image>
                                         </ImageView>
                                         <Label fx:id="editLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                        <CheckBox fx:id="saveConfirmCheck" mnemonicParsing="false" selected="true" text="%ConfirmWhenSave" />
                                         <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#pickSaveAs" onMouseEntered="#popSaveAs">
                                             <graphic>
                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -555,7 +554,7 @@ License:    Apache License Version 2.0
                                                                                 </ImageView>
                                                                             </graphic>
                                                                         </Button>
-                                                                        <Button fx:id="exportButton" mnemonicParsing="false" onAction="#exportXmlAction" onMouseEntered="#popXmlPath">
+                                                                        <Button fx:id="exportButton" mnemonicParsing="false" onAction="#pickXmlPath" onMouseEntered="#popXmlPath">
                                                                             <graphic>
                                                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                                     <image>

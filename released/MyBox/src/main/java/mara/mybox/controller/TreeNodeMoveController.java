@@ -12,8 +12,9 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-4-30
  * @License Apache License Version 2.0
  */
-public class TreeNodeMoveController extends TreeNodesController {
+public class TreeNodeMoveController extends ControlTreeInfoSelect {
 
+    protected ControlTreeInfoManage manager;
     protected TreeNode sourceNode;
 
     @FXML
@@ -23,16 +24,16 @@ public class TreeNodeMoveController extends TreeNodesController {
         baseTitle = message("MoveNode");
     }
 
-    public void setCaller(TreeNodesController nodesController, TreeNode sourceNode, String name) {
+    public void setCaller(ControlTreeInfoManage nodesController, TreeNode sourceNode, String name) {
+        manager = nodesController;
         this.sourceNode = sourceNode;
         sourceLabel.setText(message("NodeMoved") + ":\n" + name);
-        ignoreNode = sourceNode;
         setCaller(nodesController);
     }
 
     @Override
-    public TreeNode getIgnoreNode() {
-        return sourceNode;
+    public boolean isSourceNode(TreeNode node) {
+        return equal(node, sourceNode);
     }
 
     @FXML
@@ -45,13 +46,17 @@ public class TreeNodeMoveController extends TreeNodesController {
             if (task != null && !task.isQuit()) {
                 return;
             }
-            TreeItem<TreeNode> targetItem = treeView.getSelectionModel().getSelectedItem();
+            TreeItem<TreeNode> targetItem = selected();
             if (targetItem == null) {
                 alertError(message("SelectNodeMoveInto"));
                 return;
             }
             TreeNode targetNode = targetItem.getValue();
             if (targetNode == null) {
+                return;
+            }
+            if (equalOrDescendant(targetItem, find(sourceNode))) {
+                alertError(message("TreeTargetComments"));
                 return;
             }
             task = new SingletonTask<Void>(this) {
@@ -67,7 +72,7 @@ public class TreeNodeMoveController extends TreeNodesController {
                 protected void whenSucceeded() {
                     if (caller != null && caller.getMyStage() != null && caller.getMyStage().isShowing()) {
                         caller.loadTree(targetNode);
-                        caller.nodeMoved(targetNode, sourceNode);
+                        manager.nodeMoved(targetNode, sourceNode);
                         caller.popSuccessful();
                     }
                     closeStage();

@@ -134,7 +134,7 @@ public class HtmlDomCopyController extends BaseChildController {
                 return false;
             }
 
-            List<TreeItem<HtmlNode>> selected = sourceController.selected();
+            List<TreeItem<HtmlNode>> selected = sourceController.selectedItems();
             for (TreeItem<HtmlNode> item : selected) {
                 Element sourceElement = item.getValue().getElement();
                 String html;

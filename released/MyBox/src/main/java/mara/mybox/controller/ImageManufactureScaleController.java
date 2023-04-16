@@ -224,7 +224,7 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
             return;
         }
         try {
-            double v = Double.valueOf(widthInput.getText());
+            double v = Double.parseDouble(widthInput.getText());
             if (v > 0) {
                 width = v;
                 widthInput.setStyle(null);
@@ -242,7 +242,7 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
             return;
         }
         try {
-            double v = Double.valueOf(heightInput.getText());
+            double v = Double.parseDouble(heightInput.getText());
             if (v > 0) {
                 height = v;
                 heightInput.setStyle(null);
@@ -290,7 +290,7 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
 
     protected void checkScale() {
         try {
-            float f = Float.valueOf(scaleSelector.getValue());
+            float f = Float.parseFloat(scaleSelector.getValue());
             if (f >= 0) {
                 scale = f;
                 width = Math.round(imageView.getImage().getWidth() * scale);

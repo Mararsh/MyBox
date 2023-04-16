@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -21,7 +20,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-9-5
  * @License Apache License Version 2.0
  */
-public class ControlJavaScriptRefer extends TreeNodesController {
+public class ControlJavaScriptRefer extends BaseTreeInfoController {
 
     @FXML
     protected TextArea scriptInput;
@@ -74,7 +73,6 @@ public class ControlJavaScriptRefer extends TreeNodesController {
         editNode(item);
     }
 
-    @Override
     protected void editNode(TreeItem<TreeNode> item) {
         if (item == null) {
             return;
@@ -110,20 +108,17 @@ public class ControlJavaScriptRefer extends TreeNodesController {
     }
 
     @FXML
-    protected void popScriptExamples(MouseEvent mouseEvent) {
+    protected void popScriptExamples(Event event) {
         if (UserConfig.getBoolean(interfaceName + "ExamplesPopWhenMouseHovering", false)) {
-            scriptExamples(mouseEvent);
+            showScriptExamples(event);
         }
     }
 
     @FXML
-    protected void showScriptExamples(ActionEvent event) {
-        scriptExamples(event);
-    }
-
-    protected void scriptExamples(Event event) {
+    protected void showScriptExamples(Event event) {
         try {
-            MenuController controller = PopTools.popJavaScriptExamples(this, event, scriptInput, interfaceName + "Examples");
+            MenuController controller
+                    = PopTools.popJavaScriptExamples(this, event, scriptInput, interfaceName + "Examples");
             moreExampleButtons(controller);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -135,14 +130,14 @@ public class ControlJavaScriptRefer extends TreeNodesController {
     }
 
     @FXML
-    protected void popScriptHistories(MouseEvent event) {
+    protected void popScriptHistories(Event event) {
         if (UserConfig.getBoolean(interfaceName + "HistoriesPopWhenMouseHovering", false)) {
-            PopTools.popStringValues(this, scriptInput, event, interfaceName + "Histories", false, true);
+            showScriptHistories(event);
         }
     }
 
     @FXML
-    protected void showScriptHistories(ActionEvent event) {
+    protected void showScriptHistories(Event event) {
         PopTools.popStringValues(this, scriptInput, event, interfaceName + "Histories", false, true);
     }
 

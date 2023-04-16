@@ -761,6 +761,8 @@ public class PopTools {
             });
             items.add(menu);
 
+            items.add(new SeparatorMenuItem());
+
             parent.popEventMenu(mouseEvent, items);
             return parent.getPopMenu();
         } catch (Exception e) {
@@ -1053,6 +1055,7 @@ public class PopTools {
                 items.add(menu);
             }
 
+            items.add(new SeparatorMenuItem());
             parent.popNodeMenu(scriptInput, items);
         } catch (Exception e) {
         }

@@ -175,13 +175,14 @@ public class ControlImagesBlend extends BaseController {
                     files = new ArrayList<>();
                     boolean reversed = !isTop();
                     boolean ignoreTrans = ignoreTransparent();
+                    float copacity = opacity >= 1f ? 0.5f : 1f;
                     BufferedImage blended = PixelsBlend.blend(foreBI, backBI, x, y,
-                            PixelsBlend.blender(ImagesBlendMode.NORMAL, 1f, reversed, ignoreTrans));
+                            PixelsBlend.blender(ImagesBlendMode.NORMAL, copacity, reversed, ignoreTrans));
                     if (task == null || task.isCancelled()) {
                         return true;
                     }
                     File tmpFile = new File(AppVariables.MyBoxTempPath + File.separator
-                            + message("NormalMode") + "-" + message("Opacity") + "-1.0f.png");
+                            + message("NormalMode") + "-" + message("Opacity") + "-" + copacity + "f.png");
                     if (ImageFileWriters.writeImageFile(blended, tmpFile)) {
                         files.add(tmpFile);
                         task.setInfo(tmpFile.getAbsolutePath());

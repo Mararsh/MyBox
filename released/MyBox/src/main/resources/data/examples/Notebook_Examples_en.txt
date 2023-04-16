@@ -1,29 +1,16 @@
 ##MyBox#
-MyBoxTreeRoot;;;
-Notebook
-
-##MyBox#
-Notebook
 Notebook Cover
 Notes are information pieces in html format.<br>
 Notebook is collection of notes and notebooks.<br>
 Notebooks are organized as a tree.
 
 ##MyBox#
-Notebook
-Notebook
-
-##MyBox#
-Notebook > Notebook
-Note Examples
+Examples
+Web Address
 Tags:Need supplementary;;;0xfff2dfff
 
 ##MyBox#
-Notebook > Notebook > Note Examples
-Web Address
-
-##MyBox#
-Notebook > Notebook > Note Examples > Web Address
+Examples > Web Address
 Search
 Tags:To be determined ;;;0xedd1d8ff;;;Like;;;0x0d3928ff;;;Important;;;0x003472ff
 <a target=_blank href="https://www.wikipedia.org/">wikipedia</a><br>
@@ -36,7 +23,7 @@ Tags:To be determined ;;;0xedd1d8ff;;;Like;;;0x0d3928ff;;;Important;;;0x003472ff
 <a target=_blank href="https://www.baidu.com/">baidu</a><br>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Web Address
+Examples > Web Address
 Life in Chinese
 Tags:To be determined ;;;0xedd1d8ff;;;Urgent;;;0xc32136ff
 <a target=_blank href="http://gjzwfw.www.gov.cn/index.html">国家政务服务平台</a><br>
@@ -46,7 +33,7 @@ Tags:To be determined ;;;0xedd1d8ff;;;Urgent;;;0xc32136ff
 <a target=_blank href="http://www.bankcomm.com">Bank of Communications</a><br>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Web Address
+Examples > Web Address
 Articles/Data in English
 Tags:To be determined ;;;0xedd1d8ff;;;Important;;;0x003472ff
 <a target=_blank href="https://www.cn-ki.net/">iData</a><br>
@@ -65,7 +52,7 @@ Tags:To be determined ;;;0xedd1d8ff;;;Important;;;0x003472ff
 <a target=_blank href="https://www.ieee.org/">IEEE</a><br>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Web Address
+Examples > Web Address
 Articles/Data in Chinese
 Tags:To be determined ;;;0xedd1d8ff;;;Important;;;0x003472ff
 <a target=_blank href="http://www.stats.gov.cn">国家数据</a><br>
@@ -90,7 +77,7 @@ Tags:To be determined ;;;0xedd1d8ff;;;Important;;;0x003472ff
 <a target=_blank href="http://www.biftmuseum.com">北京服装学院民族服饰博物馆</a><br>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Web Address
+Examples > Web Address
 Study in English
 Tags:Need supplementary;;;0xfff2dfff
 <a target=_blank href="https://www.bilibili.com/video/BV1zx411g7gq">MIT 18.06 Linear Algebra</a><br>
@@ -99,7 +86,7 @@ Tags:Need supplementary;;;0xfff2dfff
 <a target=_blank href="https://open.163.com/newview/movie/courseintro?newurl=M8FH262HJ">Learning From Data</a><br>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Web Address
+Examples > Web Address
 Study in Chinese
 Tags:Need supplementary;;;0xfff2dfff;;;Important;;;0x003472ff
 <a target=_blank href="https://github.com/QSCTech/zju-icicles">浙江大学课程</a><br>
@@ -115,7 +102,7 @@ Tags:Need supplementary;;;0xfff2dfff;;;Important;;;0x003472ff
 <a target=_blank href="https://www.bilibili.com/video/BV1Dt411p7ce">高中语文-文言文全套精讲</a><br>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Web Address
+Examples > Web Address
 Novels in Chinese
 Tags:Need supplementary;;;0xfff2dfff;;;Like;;;0x0d3928ff
 <a target=_blank href="https://www.kunnu.com">鲲弩小说</a><br>
@@ -129,12 +116,13 @@ Tags:Need supplementary;;;0xfff2dfff;;;Like;;;0x0d3928ff
 <a target=_blank href="https://www.xxsy.net">潇湘书院</a><br>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Web Address
+Examples > Web Address
 Entertainment in Chinese
 Tags:Need supplementary;;;0xfff2dfff;;;Like;;;0x0d3928ff
 <a target=_blank href="https://tv.cctv.com/2022/08/27/VIDARmuWi2Ebs0b0NSsA1Ao7220827.shtml">诗画中国</a><br>
 <a target=_blank href="http://www.radio.cn/pc-portal/sanji/zhibo_2.html?channelname=0&name=1395534&title=radio">小喇叭</a><br>
-<a target=_blank href="http://www.radio.cn/pc-portal/sanji/zhibo_2.html?channelname=0&name=1395682&title=radio">品味书香</a><br>
+<a target=_blank href="http://www.radio.cn/pc-portal/sanji/zhibo_2.html?channelname=0&name=1395673&title=radio">中国相声榜</a><br>
+<a target=_blank href="http://www.radio.cn/pc-portal/sanji/zhibo_2.html?channelname=0&name=1437094&title=radio">老外看点</a><br>
 <a target=_blank href="https://www.qingting.fm">蜻蜓FM</a><br>
 <a target=_blank href="https://www.bilibili.com">哔哩哔哩</a><br>
 <a target=_blank href="https://www.youku.com">优酷</a><br>
@@ -148,12 +136,12 @@ Tags:Need supplementary;;;0xfff2dfff;;;Like;;;0x0d3928ff
 <a target=_blank href="https://www.bilibili.com/video/BV11x411j7As">梁祝-范瑞娟 傅全香</a><br>
 
 ##MyBox#
-Notebook > Notebook > Note Examples
+Examples
 My Data
 Tags:Need supplementary;;;0xfff2dfff;;;Important;;;0x003472ff
 
 ##MyBox#
-Notebook > Notebook > Note Examples > My Data
+Examples > My Data
 My eyes
 <p>Radian: 84</p>
 <table>
@@ -164,7 +152,7 @@ My eyes
 </table>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > My Data
+Examples > My Data
 My weight
 <table>
     <tr><th> Time </th><th> Weight(kg) </th></tr>
@@ -174,7 +162,7 @@ My weight
 </table>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > My Data
+Examples > My Data
 My height
 <table>
     <tr><th> Time </th><th> Height(cm) </th></tr>
@@ -184,7 +172,7 @@ My height
 </table>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > My Data
+Examples > My Data
 My menstruation
 <table>
                 <tbody><tr><td>Year/Month</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td></tr>
@@ -195,7 +183,7 @@ My menstruation
 </table>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > My Data
+Examples > My Data
 My money
 <table>
     <tr><th> Time </th><th> Total </th><th> Bank A </th><th> Bank B </th><th> Bank C </th></tr>
@@ -205,11 +193,11 @@ My money
 </table>
 
 ##MyBox#
-Notebook > Notebook > Note Examples
+Examples
 Common knowledge
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Common knowledge
+Examples > Common knowledge
 Size of coat
 <table>
                 <tr><td>Size</td><td>Coat Length</td><td>Shoulder</td><td>Sleeve</td><td>Chest</td><td>Waist</td></tr>
@@ -225,12 +213,12 @@ Size of coat
             </table>
 
 ##MyBox#
-Notebook > Notebook > Note Examples
+Examples
 Contacts
 Tags:Need supplementary;;;0xfff2dfff
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Contacts
+Examples > Contacts
 Relative
 Tags:Important;;;0x003472ff
 <table>
@@ -241,7 +229,7 @@ Tags:Important;;;0x003472ff
 </tbody></table>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Contacts
+Examples > Contacts
 Work
 <table>
     <tr><th> Relationship </th><th> Name </th><th> Phone </th><th> Email </th><th> Address </th><th> Comments </th></tr>
@@ -251,12 +239,12 @@ Work
 </table>
 
 ##MyBox#
-Notebook > Notebook > Note Examples
+Examples
 Coding
 Tags:Need supplementary;;;0xfff2dfff
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Coding
+Examples > Coding
 Coding Address
 Tags:To be determined ;;;0xedd1d8ff
 <a target=_blank href="https://sourceforge.net">sourceforge</a><br>
@@ -273,7 +261,7 @@ Tags:To be determined ;;;0xedd1d8ff
 <a target=_blank href="https://mvnrepository.com/">mvnrepository</a><br>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Coding
+Examples > Coding
 sftp to sourceforge (to upload large files)
 <PRE><CODE>
 C:\Users\mara>sftp mararsh@frs.sourceforge.net
@@ -289,7 +277,7 @@ Access the files:  https://sourceforge.net/projects/mara-mybox/files/
 
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Coding
+Examples > Coding
 sftp to sourceforge (to upload website files)
 <PRE><CODE>
 C:\Users\mara>sftp mararsh@frs.sourceforge.net
@@ -304,11 +292,11 @@ Access the website:  https://mara-mybox.sourceforge.io/index.html
 
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Coding
+Examples > Coding
 javafx
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Coding > javafx
+Examples > Coding > javafx
 Items in one sentence about javafx
 Tags:Need supplementary;;;0xfff2dfff;;;Like;;;0x0d3928ff
 <ol>
@@ -336,11 +324,11 @@ Tags:Need supplementary;;;0xfff2dfff;;;Like;;;0x0d3928ff
 </ol>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Coding > javafx
+Examples > Coding > javafx
 Examples
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Coding > javafx > Examples
+Examples > Coding > javafx > Examples
 ChangeListener<String>
 <PRE><CODE>
 input.textProperty().addListener(new ChangeListener<String>() {
@@ -352,7 +340,7 @@ input.textProperty().addListener(new ChangeListener<String>() {
 </CODE></PRE>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Coding > javafx > Examples
+Examples > Coding > javafx > Examples
 setOnMouseClicked
 <PRE><CODE>
 control.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -364,7 +352,7 @@ control.setOnMouseClicked(new EventHandler<MouseEvent>() {
 </CODE></PRE>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Coding > javafx > Examples
+Examples > Coding > javafx > Examples
 disableProperty().bind
 <PRE><CODE>
 startButton.disableProperty().bind(
@@ -375,11 +363,11 @@ startButton.disableProperty().bind(
 </CODE></PRE>
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Coding
+Examples > Coding
 java
 
 ##MyBox#
-Notebook > Notebook > Note Examples > Coding > java
+Examples > Coding > java
 Items in one sentence about java
 Tags:Need supplementary;;;0xfff2dfff;;;Like;;;0x0d3928ff
 <ol>
@@ -418,29 +406,3 @@ If the operation will change source node, the target node should not be the sour
         <a target=_blank href="https://bugs.openjdk.org/browse/JDK-8266075">JDK-8266075</a>
      </li>
 </ol>
-
-##MyBox#
-Notebook > Notebook > Note Examples > Coding
-Colors of MyBox icons
-<table><tbody>
-<tr style="font-weight:bold; "><th>Color</th><th>Color - RGBA</th><th>Color - RGB</th><th>Name</th><th>Value</th><th>sRGB</th><th>HSB</th></tr>
-    <TR  style="font-weight:bold; "><TH>Name</TH><TH>Color</TH><TH>Color - RGBA</TH><TH>Color - RGB</TH><TH>Value</TH><TH>sRGB</TH><TH>HSB</TH></TR>
-    <TR><TD>Dark red</TD><TD align="center"><DIV style="width: 50px;  background-color:#C32136; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0XC32136FF </TD><TD>#C32136 </TD><TD>-3989194</TD><TD>195 33 54 100%</TD><TD>352 83% 76%</TD></TR>
-    <TR><TD>Light red</TD><TD align="center"><DIV style="width: 50px;  background-color:#FBD5CF; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0XFBD5CFFF </TD><TD>#FBD5CF </TD><TD>-272945</TD><TD>251 213 207 100%</TD><TD>8 18% 98%</TD></TR>
-    <TR><TD>Dark blue</TD><TD align="center"><DIV style="width: 50px;  background-color:#003472; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0X003472FF </TD><TD>#003472 </TD><TD>-16763790</TD><TD>0 52 114 100%</TD><TD>213 100% 45%</TD></TR>
-    <TR><TD>Blue</TD><TD align="center"><DIV style="width: 50px;  background-color:#E3F9FD; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0XE3F9FDFF </TD><TD>#E3F9FD </TD><TD>-1836547</TD><TD>227 249 253 100%</TD><TD>189 10% 99%</TD></TR>
-    <TR><TD>Dark grey blue</TD><TD align="center"><DIV style="width: 50px;  background-color:#4C8DAE; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0X4C8DAEFF </TD><TD>#4C8DAE </TD><TD>-11760210</TD><TD>76 141 174 100%</TD><TD>200 56% 68%</TD></TR>
-    <TR><TD>Grey blue</TD><TD align="center"><DIV style="width: 50px;  background-color:#D6ECF0; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0XD6ECF0FF </TD><TD>#D6ECF0 </TD><TD>-2691856</TD><TD>214 236 240 100%</TD><TD>189 11% 94%</TD></TR>
-    <TR><TD>Dark pink</TD><TD align="center"><DIV style="width: 50px;  background-color:#FF0097; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0XFF0097FF </TD><TD>#FF0097 </TD><TD>-65385</TD><TD>255 0 151 100%</TD><TD>324 100% 100%</TD></TR>
-    <TR><TD>Light pink</TD><TD align="center"><DIV style="width: 50px;  background-color:#EDD1D8; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0XEDD1D8FF </TD><TD>#EDD1D8 </TD><TD>-1191464</TD><TD>237 209 216 100%</TD><TD>345 12% 93%</TD></TR>
-    <TR><TD>Black</TD><TD align="center"><DIV style="width: 50px;  background-color:#622A1D; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0X622A1DFF </TD><TD>#622A1D </TD><TD>-10343907</TD><TD>98 42 29 100%</TD><TD>11 70% 38%</TD></TR>
-    <TR><TD>Golden</TD><TD align="center"><DIV style="width: 50px;  background-color:#EACD76; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0XEACD76FF </TD><TD>#EACD76 </TD><TD>-1389194</TD><TD>234 205 118 100%</TD><TD>45 50% 92%</TD></TR>
-    <TR><TD>Dark green</TD><TD align="center"><DIV style="width: 50px;  background-color:#0D3928; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0X0D3928FF </TD><TD>#0D3928 </TD><TD>-15910616</TD><TD>13 57 40 100%</TD><TD>157 77% 22%</TD></TR>
-    <TR><TD>Light green</TD><TD align="center"><DIV style="width: 50px;  background-color:#E0F0E9; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0XE0F0E9FF </TD><TD>#E0F0E9 </TD><TD>-2035479</TD><TD>224 240 233 100%</TD><TD>154 7% 94%</TD></TR>
-    <TR><TD>Customized dark color</TD><TD align="center"><DIV style="width: 50px;  background-color:#8B008B; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0X8B008BFF </TD><TD>#8B008B </TD><TD>-7667573</TD><TD>139 0 139 100%</TD><TD>300 100% 55%</TD></TR>
-    <TR><TD>Customized light color</TD><TD align="center"><DIV style="width: 50px;  background-color:#F8F8FF; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0XF8F8FFFF </TD><TD>#F8F8FF </TD><TD>-460545</TD><TD>248 248 255 100%</TD><TD>240 3% 100%</TD></TR>
-    <TR><TD>Black</TD><TD align="center"><DIV style="width: 50px;  background-color:#000000; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0X000000FF </TD><TD>#000000 </TD><TD>-16777216</TD><TD>0 0 0 100%</TD><TD>0 0% 0%</TD></TR>
-    <TR><TD>White</TD><TD align="center"><DIV style="width: 50px;  background-color:#FFFFFF; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0XFFFFFFFF </TD><TD>#FFFFFF </TD><TD>-1</TD><TD>255 255 255 100%</TD><TD>0 0% 100%</TD></TR>
-    <TR><TD>Transparent</TD><TD align="center"><DIV style="width: 50px;  background-color:#000000; ">&nbsp;&nbsp;&nbsp;</DIV></TD><TD>0X00000000 </TD><TD>#000000 </TD><TD>0</TD><TD>0 0 0 0%</TD><TD>0 0% 0%</TD></TR>
-    <TR  style="font-weight:bold; "><TH>Name</TH><TH>Color</TH><TH>Color - RGBA</TH><TH>Color - RGB</TH><TH>Value</TH><TH>sRGB</TH><TH>HSB</TH></TR>
-</tbody></table>

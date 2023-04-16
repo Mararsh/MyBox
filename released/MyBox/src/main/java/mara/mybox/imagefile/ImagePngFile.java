@@ -163,13 +163,13 @@ public class ImagePngFile {
             if (javax_imageio_png.containsKey("IHDR")) {
                 Map<String, Object> IHDR = javax_imageio_png.get("IHDR").get(0);
                 if (IHDR.containsKey("width")) {
-                    pngInfo.setWidth(Integer.valueOf((String) IHDR.get("width")));
+                    pngInfo.setWidth(Integer.parseInt((String) IHDR.get("width")));
                 }
                 if (IHDR.containsKey("height")) {
-                    pngInfo.setHeight(Integer.valueOf((String) IHDR.get("height")));
+                    pngInfo.setHeight(Integer.parseInt((String) IHDR.get("height")));
                 }
                 if (IHDR.containsKey("bitDepth")) {
-                    pngInfo.setBitDepth(Integer.valueOf((String) IHDR.get("bitDepth")));
+                    pngInfo.setBitDepth(Integer.parseInt((String) IHDR.get("bitDepth")));
                 }
                 if (IHDR.containsKey("colorType")) {
                     pngInfo.setColorType((String) IHDR.get("colorType"));
@@ -189,10 +189,10 @@ public class ImagePngFile {
                 pngInfo.setPngPaletteSize(PaletteEntryList.size());
 //                List<ImageColor> Palette = new ArrayList<>();
 //                for (Map<String, Object> PaletteEntry : PaletteEntryList) {
-//                    int index = Integer.valueOf(PaletteEntry.get("index"));
-//                    int red = Integer.valueOf(PaletteEntry.get("red"));
-//                    int green = Integer.valueOf(PaletteEntry.get("green"));
-//                    int blue = Integer.valueOf(PaletteEntry.get("blue"));
+//                    int index = Integer.parseInt(PaletteEntry.get("index"));
+//                    int red = Integer.parseInt(PaletteEntry.get("red"));
+//                    int green = Integer.parseInt(PaletteEntry.get("green"));
+//                    int blue = Integer.parseInt(PaletteEntry.get("blue"));
 //                    int alpha = 255;
 //                    Palette.add(new ImageColor(index, red, green, blue, alpha));
 //                }
@@ -200,38 +200,38 @@ public class ImagePngFile {
             }
             if (javax_imageio_png.containsKey("bKGD_Grayscale")) {
                 Map<String, Object> bKGD_Grayscale = javax_imageio_png.get("bKGD_Grayscale").get(0);
-                pngInfo.setbKGD_Grayscale(Integer.valueOf((String) bKGD_Grayscale.get("gray")));
+                pngInfo.setbKGD_Grayscale(Integer.parseInt((String) bKGD_Grayscale.get("gray")));
             }
             if (javax_imageio_png.containsKey("bKGD_RGB")) {
                 Map<String, Object> bKGD_RGB = javax_imageio_png.get("bKGD_RGB").get(0);
-                int red = Integer.valueOf((String) bKGD_RGB.get("red"));
-                int green = Integer.valueOf((String) bKGD_RGB.get("green"));
-                int blue = Integer.valueOf((String) bKGD_RGB.get("blue"));
+                int red = Integer.parseInt((String) bKGD_RGB.get("red"));
+                int green = Integer.parseInt((String) bKGD_RGB.get("green"));
+                int blue = Integer.parseInt((String) bKGD_RGB.get("blue"));
                 int alpha = 255;
                 pngInfo.setbKGD_RGB(new ImageColor(red, green, blue, alpha));
             }
             if (javax_imageio_png.containsKey("bKGD_Palette")) {
                 Map<String, Object> bKGD_Palette = javax_imageio_png.get("bKGD_Palette").get(0);
-                pngInfo.setbKGD_Palette(Integer.valueOf((String) bKGD_Palette.get("index")));
+                pngInfo.setbKGD_Palette(Integer.parseInt((String) bKGD_Palette.get("index")));
             }
             if (javax_imageio_png.containsKey("cHRM")) {
                 Map<String, Object> cHRM = javax_imageio_png.get("cHRM").get(0);
-                double x = 0.00001d * Integer.valueOf((String) cHRM.get("whitePointX"));
-                double y = 0.00001d * Integer.valueOf((String) cHRM.get("whitePointY"));
+                double x = 0.00001d * Integer.parseInt((String) cHRM.get("whitePointX"));
+                double y = 0.00001d * Integer.parseInt((String) cHRM.get("whitePointY"));
                 pngInfo.setWhite(new CIEData(x, y));
-                x = 0.00001d * Integer.valueOf((String) cHRM.get("redX"));
-                y = 0.00001d * Integer.valueOf((String) cHRM.get("redY"));
+                x = 0.00001d * Integer.parseInt((String) cHRM.get("redX"));
+                y = 0.00001d * Integer.parseInt((String) cHRM.get("redY"));
                 pngInfo.setRed(new CIEData(x, y));
-                x = 0.00001d * Integer.valueOf((String) cHRM.get("greenX"));
-                y = 0.00001d * Integer.valueOf((String) cHRM.get("greenY"));
+                x = 0.00001d * Integer.parseInt((String) cHRM.get("greenX"));
+                y = 0.00001d * Integer.parseInt((String) cHRM.get("greenY"));
                 pngInfo.setGreen(new CIEData(x, y));
-                x = 0.00001d * Integer.valueOf((String) cHRM.get("blueX"));
-                y = 0.00001d * Integer.valueOf((String) cHRM.get("blueY"));
+                x = 0.00001d * Integer.parseInt((String) cHRM.get("blueX"));
+                y = 0.00001d * Integer.parseInt((String) cHRM.get("blueY"));
                 pngInfo.setBlue(new CIEData(x, y));
             }
             if (javax_imageio_png.containsKey("gAMA")) {
                 Map<String, Object> gAMA = javax_imageio_png.get("gAMA").get(0);
-                float g = 0.00001f * Integer.valueOf((String) gAMA.get("value"));
+                float g = 0.00001f * Integer.parseInt((String) gAMA.get("value"));
                 pngInfo.setGamma(g);
             }
             if (javax_imageio_png.containsKey("iCCP")) {
@@ -246,7 +246,7 @@ public class ImagePngFile {
                     pngInfo.setUnitSpecifier((String) pHYs.get("unitSpecifier"));
                     boolean isMeter = "meter".equals(pHYs.get("unitSpecifier"));
                     if (pHYs.containsKey("pixelsPerUnitXAxis")) {
-                        int v = Integer.valueOf((String) pHYs.get("pixelsPerUnitXAxis"));
+                        int v = Integer.parseInt((String) pHYs.get("pixelsPerUnitXAxis"));
                         pngInfo.setPixelsPerUnitXAxis(v);
                         if (isMeter) {
                             pngInfo.setXDpi(ImageConvertTools.dpm2dpi(v));  // resolution value should be dpi
@@ -256,7 +256,7 @@ public class ImagePngFile {
 //                        MyBoxLog.debug("pixelsPerUnitXAxis:" + pngInfo.gethResolution());
                     }
                     if (pHYs.containsKey("pixelsPerUnitYAxis")) {
-                        int v = Integer.valueOf((String) pHYs.get("pixelsPerUnitYAxis"));
+                        int v = Integer.parseInt((String) pHYs.get("pixelsPerUnitYAxis"));
                         pngInfo.setPixelsPerUnitYAxis(v);
                         if (isMeter) {
                             pngInfo.setYDpi(ImageConvertTools.dpm2dpi(v));   // resolution value should be dpi
@@ -269,41 +269,41 @@ public class ImagePngFile {
             }
             if (javax_imageio_png.containsKey("sBIT_Grayscale")) {
                 Map<String, Object> sBIT_Grayscale = javax_imageio_png.get("sBIT_Grayscale").get(0);
-                pngInfo.setsBIT_Grayscale(Integer.valueOf((String) sBIT_Grayscale.get("gray")));
+                pngInfo.setsBIT_Grayscale(Integer.parseInt((String) sBIT_Grayscale.get("gray")));
             }
             if (javax_imageio_png.containsKey("sBIT_GrayAlpha")) {
                 Map<String, Object> sBIT_GrayAlpha = javax_imageio_png.get("sBIT_GrayAlpha").get(0);
-                pngInfo.setsBIT_GrayAlpha_gray(Integer.valueOf((String) sBIT_GrayAlpha.get("gray")));
-                pngInfo.setsBIT_GrayAlpha_alpha(Integer.valueOf((String) sBIT_GrayAlpha.get("alpha")));
+                pngInfo.setsBIT_GrayAlpha_gray(Integer.parseInt((String) sBIT_GrayAlpha.get("gray")));
+                pngInfo.setsBIT_GrayAlpha_alpha(Integer.parseInt((String) sBIT_GrayAlpha.get("alpha")));
             }
             if (javax_imageio_png.containsKey("sBIT_RGB")) {
                 Map<String, Object> sBIT_RGB = javax_imageio_png.get("sBIT_RGB").get(0);
-                pngInfo.setsBIT_RGB_red(Integer.valueOf((String) sBIT_RGB.get("red")));
-                pngInfo.setsBIT_RGB_green(Integer.valueOf((String) sBIT_RGB.get("green")));
-                pngInfo.setsBIT_RGB_blue(Integer.valueOf((String) sBIT_RGB.get("blue")));
+                pngInfo.setsBIT_RGB_red(Integer.parseInt((String) sBIT_RGB.get("red")));
+                pngInfo.setsBIT_RGB_green(Integer.parseInt((String) sBIT_RGB.get("green")));
+                pngInfo.setsBIT_RGB_blue(Integer.parseInt((String) sBIT_RGB.get("blue")));
             }
             if (javax_imageio_png.containsKey("sBIT_RGBAlpha")) {
                 Map<String, Object> sBIT_RGBAlpha = javax_imageio_png.get("sBIT_RGBAlpha").get(0);
-                pngInfo.setsBIT_RGBAlpha_red(Integer.valueOf((String) sBIT_RGBAlpha.get("red")));
-                pngInfo.setsBIT_RGBAlpha_green(Integer.valueOf((String) sBIT_RGBAlpha.get("green")));
-                pngInfo.setsBIT_RGBAlpha_blue(Integer.valueOf((String) sBIT_RGBAlpha.get("blue")));
-                pngInfo.setsBIT_RGBAlpha_alpha(Integer.valueOf((String) sBIT_RGBAlpha.get("alpha")));
+                pngInfo.setsBIT_RGBAlpha_red(Integer.parseInt((String) sBIT_RGBAlpha.get("red")));
+                pngInfo.setsBIT_RGBAlpha_green(Integer.parseInt((String) sBIT_RGBAlpha.get("green")));
+                pngInfo.setsBIT_RGBAlpha_blue(Integer.parseInt((String) sBIT_RGBAlpha.get("blue")));
+                pngInfo.setsBIT_RGBAlpha_alpha(Integer.parseInt((String) sBIT_RGBAlpha.get("alpha")));
             }
             if (javax_imageio_png.containsKey("sBIT_Palette")) {
                 Map<String, Object> sBIT_Palette = javax_imageio_png.get("sBIT_Palette").get(0);
-                pngInfo.setsBIT_Palette_red(Integer.valueOf((String) sBIT_Palette.get("red")));
-                pngInfo.setsBIT_Palette_green(Integer.valueOf((String) sBIT_Palette.get("green")));
-                pngInfo.setsBIT_Palette_blue(Integer.valueOf((String) sBIT_Palette.get("blue")));
+                pngInfo.setsBIT_Palette_red(Integer.parseInt((String) sBIT_Palette.get("red")));
+                pngInfo.setsBIT_Palette_green(Integer.parseInt((String) sBIT_Palette.get("green")));
+                pngInfo.setsBIT_Palette_blue(Integer.parseInt((String) sBIT_Palette.get("blue")));
             }
             if (javax_imageio_png.containsKey("sPLTEntry")) {
                 List<Map<String, Object>> sPLTEntryList = javax_imageio_png.get("sPLTEntry");
                 pngInfo.setSuggestedPaletteSize(sPLTEntryList.size());
 //                List<ImageColor> Palette = new ArrayList<>();
 //                for (Map<String, Object> PaletteEntry : sPLTEntryList) {
-//                    int index = Integer.valueOf(PaletteEntry.get("index"));
-//                    int red = Integer.valueOf(PaletteEntry.get("red"));
-//                    int green = Integer.valueOf(PaletteEntry.get("green"));
-//                    int blue = Integer.valueOf(PaletteEntry.get("blue"));
+//                    int index = Integer.parseInt(PaletteEntry.get("index"));
+//                    int red = Integer.parseInt(PaletteEntry.get("red"));
+//                    int green = Integer.parseInt(PaletteEntry.get("green"));
+//                    int blue = Integer.parseInt(PaletteEntry.get("blue"));
 //                    int alpha = 255;
 //                    Palette.add(new ImageColor(index, red, green, blue, alpha));
 //                }
@@ -322,20 +322,20 @@ public class ImagePngFile {
             }
             if (javax_imageio_png.containsKey("tRNS_Grayscale")) {
                 Map<String, Object> tRNS_Grayscale = javax_imageio_png.get("tRNS_Grayscale").get(0);
-                pngInfo.settRNS_Grayscale(Integer.valueOf((String) tRNS_Grayscale.get("gray")));
+                pngInfo.settRNS_Grayscale(Integer.parseInt((String) tRNS_Grayscale.get("gray")));
             }
             if (javax_imageio_png.containsKey("tRNS_RGB")) {
                 Map<String, Object> tRNS_RGB = javax_imageio_png.get("tRNS_RGB").get(0);
-                int red = Integer.valueOf((String) tRNS_RGB.get("red"));
-                int green = Integer.valueOf((String) tRNS_RGB.get("green"));
-                int blue = Integer.valueOf((String) tRNS_RGB.get("blue"));
+                int red = Integer.parseInt((String) tRNS_RGB.get("red"));
+                int green = Integer.parseInt((String) tRNS_RGB.get("green"));
+                int blue = Integer.parseInt((String) tRNS_RGB.get("blue"));
                 int alpha = 255;
                 pngInfo.settRNS_RGB(new ImageColor(red, green, blue, alpha));
             }
             if (javax_imageio_png.containsKey("tRNS_Palette")) {
                 Map<String, Object> tRNS_Palette = javax_imageio_png.get("tRNS_Palette").get(0);
-                pngInfo.settRNS_Palette_index(Integer.valueOf((String) tRNS_Palette.get("index")));
-                pngInfo.settRNS_Palette_alpha(Integer.valueOf((String) tRNS_Palette.get("alpha")));
+                pngInfo.settRNS_Palette_index(Integer.parseInt((String) tRNS_Palette.get("index")));
+                pngInfo.settRNS_Palette_alpha(Integer.parseInt((String) tRNS_Palette.get("alpha")));
             }
 
         } catch (Exception e) {

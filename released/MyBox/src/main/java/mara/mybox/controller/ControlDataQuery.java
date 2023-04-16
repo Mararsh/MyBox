@@ -8,7 +8,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
@@ -17,7 +16,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.web.WebView;
@@ -26,7 +24,6 @@ import mara.mybox.db.data.QueryCondition;
 import mara.mybox.db.data.QueryCondition.DataOperation;
 import mara.mybox.db.table.TableQueryCondition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Languages;
@@ -303,115 +300,102 @@ public class ControlDataQuery extends BaseController {
     @FXML
     public void popWhereOperator(MouseEvent mouseEvent) {
         try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+            List<MenuItem> items = new ArrayList<>();
 
-            MenuItem menu;
-
-            menu = new MenuItem("( )");
+            MenuItem menu = new MenuItem("( )");
             menu.setOnAction((ActionEvent event) -> {
                 String s = whereInput.getText();
                 whereInput.insertText(whereInput.getAnchor(), "( )");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("AND");
             menu.setOnAction((ActionEvent event) -> {
                 whereInput.insertText(whereInput.getAnchor(), " AND ");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("OR");
             menu.setOnAction((ActionEvent event) -> {
                 whereInput.insertText(whereInput.getAnchor(), " OR ");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("=");
             menu.setOnAction((ActionEvent event) -> {
                 whereInput.insertText(whereInput.getAnchor(), "=");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("<");
             menu.setOnAction((ActionEvent event) -> {
                 whereInput.insertText(whereInput.getAnchor(), "<");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("<=");
             menu.setOnAction((ActionEvent event) -> {
                 whereInput.insertText(whereInput.getAnchor(), "<=");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(">");
             menu.setOnAction((ActionEvent event) -> {
                 whereInput.insertText(whereInput.getAnchor(), ">");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(">=");
             menu.setOnAction((ActionEvent event) -> {
                 whereInput.insertText(whereInput.getAnchor(), ">=");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("<>");
             menu.setOnAction((ActionEvent event) -> {
                 whereInput.insertText(whereInput.getAnchor(), "<>");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("IS NULL");
             menu.setOnAction((ActionEvent event) -> {
                 whereInput.insertText(whereInput.getAnchor(), " IS NULL ");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("IS NOT NULL");
             menu.setOnAction((ActionEvent event) -> {
                 whereInput.insertText(whereInput.getAnchor(), " IS NOT NULL ");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("NOT");
             menu.setOnAction((ActionEvent event) -> {
                 whereInput.insertText(whereInput.getAnchor(), " NOT ");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("IN");
             menu.setOnAction((ActionEvent event) -> {
                 whereInput.insertText(whereInput.getAnchor(), " IN ( , ) ");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("LIKE");
             menu.setOnAction((ActionEvent event) -> {
                 whereInput.insertText(whereInput.getAnchor(), " LIKE '%' ");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("BETWEEN");
             menu.setOnAction((ActionEvent event) -> {
                 whereInput.insertText(whereInput.getAnchor(), " BETWEEN   AND   ");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(Languages.message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event) -> {
-                popMenu.hide();
-                popMenu = null;
-            });
-            popMenu.getItems().add(menu);
+            items.add(new SeparatorMenuItem());
 
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            popEventMenu(mouseEvent, items);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -421,48 +405,35 @@ public class ControlDataQuery extends BaseController {
     @FXML
     public void popWhereValue(MouseEvent mouseEvent) {
         try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+            List<MenuItem> items = new ArrayList<>();
 
-            MenuItem menu;
-
-            menu = new MenuItem("'2020-07-27 14:33:56'");
+            MenuItem menu = new MenuItem("'2020-07-27 14:33:56'");
             menu.setOnAction((ActionEvent event) -> {
                 whereInput.insertText(whereInput.getAnchor(), "'2020-07-27 14:33:56' ");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("''");
             menu.setOnAction((ActionEvent event) -> {
                 whereInput.insertText(whereInput.getAnchor(), "'' ");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("TRUE");
             menu.setOnAction((ActionEvent event) -> {
                 whereInput.insertText(whereInput.getAnchor(), "TRUE ");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("FALSE");
             menu.setOnAction((ActionEvent event) -> {
                 whereInput.insertText(whereInput.getAnchor(), "FALSE ");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(Languages.message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event) -> {
-                popMenu.hide();
-                popMenu = null;
-            });
-            popMenu.getItems().add(menu);
+            items.add(new SeparatorMenuItem());
 
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            popEventMenu(mouseEvent, items);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

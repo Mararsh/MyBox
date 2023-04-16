@@ -201,7 +201,7 @@ public class PdfTools {
             }
             PDPage page = new PDPage(pageSize);
             document.addPage(page);
-            try ( PDPageContentStream content = new PDPageContentStream(document, page)) {
+            try (PDPageContentStream content = new PDPageContentStream(document, page)) {
                 float w, h;
                 if (isImageSize) {
                     w = imageObject.getWidth();
@@ -261,7 +261,7 @@ public class PdfTools {
                 return false;
             }
             int count = 0, total = images.size();
-            try ( PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
+            try (PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
                 PDDocumentInformation info = new PDDocumentInformation();
                 info.setCreationDate(Calendar.getInstance());
                 info.setModificationDate(Calendar.getInstance());
@@ -319,7 +319,7 @@ public class PdfTools {
                 return false;
             }
             int count = 0, total = files.size();
-            try ( PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
+            try (PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
                 PDDocumentInformation info = new PDDocumentInformation();
                 info.setCreationDate(Calendar.getInstance());
                 info.setModificationDate(Calendar.getInstance());
@@ -433,7 +433,7 @@ public class PdfTools {
                 return false;
             }
             File tmpFile = TmpFileTools.getTempFile();
-            try ( PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
+            try (PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
                 int x1, y1, x2, y2;
                 BufferedImage wholeSource = null;
                 if (imageInformation.getImage() != null && !imageInformation.isIsScaled()) {
@@ -475,24 +475,10 @@ public class PdfTools {
     }
 
     // page is 0-based
-    public static BufferedImage page2image(File file, int page) {
-        try {
-            try ( PDDocument doc = PDDocument.load(file, null, AppVariables.pdfMemUsage)) {
-                PDFRenderer renderer = new PDFRenderer(doc);
-                BufferedImage image = renderer.renderImage(page, 1, ImageType.ARGB);
-                doc.close();
-                return image;
-            }
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    // page is 0-based
     public static BufferedImage page2image(File file, String password, int page,
             float scale, ImageType imageType) {
         try {
-            try ( PDDocument doc = PDDocument.load(file, password, AppVariables.pdfMemUsage)) {
+            try (PDDocument doc = PDDocument.load(file, password, AppVariables.pdfMemUsage)) {
                 PDFRenderer renderer = new PDFRenderer(doc);
                 BufferedImage image = renderer.renderImage(page, scale, imageType);
                 doc.close();
@@ -506,7 +492,7 @@ public class PdfTools {
     // page is 0-based
     public static BufferedImage page2image(File file, String password, int page, int dpi, ImageType imageType) {
         try {
-            try ( PDDocument doc = PDDocument.load(file, password, AppVariables.pdfMemUsage)) {
+            try (PDDocument doc = PDDocument.load(file, password, AppVariables.pdfMemUsage)) {
                 PDFRenderer renderer = new PDFRenderer(doc);
                 BufferedImage image = renderer.renderImageWithDPI(page, dpi, imageType);
                 doc.close();

@@ -12,6 +12,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ExpressionCalculator;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -28,10 +29,6 @@ public class ControlData2DRowExpression extends ControlJavaScriptRefer {
 
     @FXML
     protected CheckBox onlyStatisticCheck;
-
-    public ControlData2DRowExpression() {
-        TipsLabelKey = "RowExpressionTips";
-    }
 
     @Override
     public void initControls() {
@@ -136,6 +133,11 @@ public class ControlData2DRowExpression extends ControlJavaScriptRefer {
             error = calculator.getError();
             return false;
         }
+    }
+
+    @FXML
+    public void aboutRowExpression() {
+        openLink(HelpTools.aboutRowExpression());
     }
 
 }

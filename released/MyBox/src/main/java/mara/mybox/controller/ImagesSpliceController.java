@@ -3,12 +3,12 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -81,7 +81,12 @@ public class ImagesSpliceController extends ImageViewerController {
 
             tableData.addListener((ListChangeListener.Change<? extends ImageInformation> change) -> {
                 if (!tableController.hasSampled()) {
-                    okAction();
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            okAction();
+                        }
+                    });
                 }
             });
 
@@ -90,6 +95,8 @@ public class ImagesSpliceController extends ImageViewerController {
             initTargetSection();
 
             saveButton.disableProperty().bind(Bindings.isEmpty(tableData));
+            leftPaneCheck.setSelected(true);
+            rightPaneCheck.setSelected(true);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -102,7 +109,7 @@ public class ImagesSpliceController extends ImageViewerController {
                 @Override
                 public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
                     try {
-                        int columnsValue = Integer.valueOf(newValue);
+                        int columnsValue = Integer.parseInt(newValue);
                         if (columnsValue > 0) {
                             imageCombine.setColumnsValue(columnsValue);
                             UserConfig.setString(baseName + "Columns", columnsValue + "");
@@ -126,7 +133,7 @@ public class ImagesSpliceController extends ImageViewerController {
                 public void changed(ObservableValue<? extends String> ov,
                         String oldValue, String newValue) {
                     try {
-                        int intervalValue = Integer.valueOf(newValue);
+                        int intervalValue = Integer.parseInt(newValue);
                         if (intervalValue >= 0) {
                             imageCombine.setIntervalValue(intervalValue);
                             UserConfig.setString(baseName + "Interval", intervalValue + "");
@@ -148,7 +155,7 @@ public class ImagesSpliceController extends ImageViewerController {
                 public void changed(ObservableValue<? extends String> ov,
                         String oldValue, String newValue) {
                     try {
-                        int MarginsValue = Integer.valueOf(newValue);
+                        int MarginsValue = Integer.parseInt(newValue);
                         if (MarginsValue >= 0) {
                             imageCombine.setMarginsValue(MarginsValue);
                             UserConfig.setString(baseName + "Margin", MarginsValue + "");
@@ -326,7 +333,7 @@ public class ImagesSpliceController extends ImageViewerController {
 
     private void checkEachWidthValue() {
         try {
-            int eachWidthValue = Integer.valueOf(eachWidthInput.getText());
+            int eachWidthValue = Integer.parseInt(eachWidthInput.getText());
             if (eachWidthValue > 0) {
                 imageCombine.setEachWidthValue(eachWidthValue);
                 eachWidthInput.setStyle(null);
@@ -343,7 +350,7 @@ public class ImagesSpliceController extends ImageViewerController {
 
     private void checkEachHeightValue() {
         try {
-            int eachHeightValue = Integer.valueOf(eachHeightInput.getText());
+            int eachHeightValue = Integer.parseInt(eachHeightInput.getText());
             if (eachHeightValue > 0) {
                 imageCombine.setEachHeightValue(eachHeightValue);
                 eachHeightInput.setStyle(null);
@@ -360,7 +367,7 @@ public class ImagesSpliceController extends ImageViewerController {
 
     private void checkTotalWidthValue() {
         try {
-            int totalWidthValue = Integer.valueOf(totalWidthInput.getText());
+            int totalWidthValue = Integer.parseInt(totalWidthInput.getText());
             if (totalWidthValue > 0) {
                 imageCombine.setTotalWidthValue(totalWidthValue);
                 totalWidthInput.setStyle(null);
@@ -377,7 +384,7 @@ public class ImagesSpliceController extends ImageViewerController {
 
     private void checkTotalHeightValue() {
         try {
-            int totalHeightValue = Integer.valueOf(totalHeightInput.getText());
+            int totalHeightValue = Integer.parseInt(totalHeightInput.getText());
             if (totalHeightValue > 0) {
                 imageCombine.setTotalHeightValue(totalHeightValue);
                 totalHeightInput.setStyle(null);
@@ -416,37 +423,35 @@ public class ImagesSpliceController extends ImageViewerController {
             imageLabel.setText("");
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                @Override
-                protected boolean handle() {
-                    if (imageCombine.getArrayType() == ArrayType.SingleColumn) {
-                        image = CombineTools.combineSingleColumn(imageCombine, tableData, false, true);
-                    } else if (imageCombine.getArrayType() == ArrayType.SingleRow) {
-                        image = CombineTools.combineSingleRow(imageCombine, tableData, false, true);
-                    } else if (imageCombine.getArrayType() == ArrayType.ColumnsNumber) {
-                        image = combineImagesColumns(tableData);
-                    } else {
-                        image = null;
-                    }
-                    return image != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    imageView.setImage(image);
-                    setZoomStep(image);
-                    fitSize();
-                    imageLabel.setText(Languages.message("CombinedSize") + ": "
-                            + (int) image.getWidth() + "x" + (int) image.getHeight());
-                }
-
-            };
-            start(task);
+        if (task != null && !task.isQuit()) {
+            return;
         }
+        task = new SingletonTask<Void>(this) {
+            @Override
+            protected boolean handle() {
+                if (imageCombine.getArrayType() == ArrayType.SingleColumn) {
+                    image = CombineTools.combineSingleColumn(imageCombine, tableData, false, true);
+                } else if (imageCombine.getArrayType() == ArrayType.SingleRow) {
+                    image = CombineTools.combineSingleRow(imageCombine, tableData, false, true);
+                } else if (imageCombine.getArrayType() == ArrayType.ColumnsNumber) {
+                    image = combineImagesColumns(tableData);
+                } else {
+                    image = null;
+                }
+                return image != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                imageView.setImage(image);
+                setZoomStep(image);
+                fitSize();
+                imageLabel.setText(Languages.message("CombinedSize") + ": "
+                        + (int) image.getWidth() + "x" + (int) image.getHeight());
+            }
+
+        };
+        start(task);
     }
 
     private Image combineImagesColumns(List<ImageInformation> imageInfos) {
@@ -468,7 +473,7 @@ public class ImagesSpliceController extends ImageViewerController {
                 Image rowImage = CombineTools.combineSingleRow(imageCombine, rowImages, true, false);
                 rows.add(new ImageInformation(rowImage));
             }
-            Image newImage = CombineTools.combineSingleColumn(imageCombine, rows, true, true);
+            Image newImage = CombineTools.combineSingleColumn(imageCombine, rows, false, true);
             return newImage;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -476,9 +481,43 @@ public class ImagesSpliceController extends ImageViewerController {
         }
     }
 
-    @FXML
-    protected void newWindow(ActionEvent event) {
-        ImageViewerController.openImage(image);
+    public void load(List<ImageInformation> imageInfos) {
+        if (imageInfos == null || imageInfos.isEmpty()) {
+            return;
+        }
+        if (task != null && !task.isQuit()) {
+            return;
+        }
+        task = new SingletonTask<Void>(this) {
+
+            List<ImageInformation> data;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    data = new ArrayList<>();
+                    for (ImageInformation imageInfo : imageInfos) {
+                        Image iimage = imageInfo.loadImage();
+                        if (iimage == null) {
+                            continue;
+                        }
+                        data.add(new ImageInformation(iimage));
+                    }
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                tableController.tableData.setAll(data);
+            }
+
+        };
+        start(task);
+
     }
 
     @FXML
@@ -490,10 +529,10 @@ public class ImagesSpliceController extends ImageViewerController {
     /*
         static methods
      */
-    public static ImagesSpliceController open(List<ImageInformation> images) {
+    public static ImagesSpliceController open(List<ImageInformation> imageInfos) {
         try {
             ImagesSpliceController controller = (ImagesSpliceController) WindowTools.openStage(Fxmls.ImagesSpliceFxml);
-            controller.tableController.tableData.setAll(images);
+            controller.load(imageInfos);
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

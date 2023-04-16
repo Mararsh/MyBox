@@ -10,7 +10,7 @@ import static mara.mybox.value.Languages.message;
 public class HtmlStyles {
 
     public enum HtmlStyle {
-        TableStyle, Default, Console, Blackboard, Ago, Book, Grey
+        Table, Default, Console, Blackboard, Ago, Book, Grey
     }
 
     public static final String TableStyle
@@ -77,7 +77,7 @@ public class HtmlStyles {
 
     public static String styleValue(HtmlStyles.HtmlStyle style) {
         switch (style) {
-            case TableStyle:
+            case Table:
                 return HtmlStyles.TableStyle;
             case Default:
                 return HtmlStyles.DefaultStyle;

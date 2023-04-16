@@ -29,15 +29,14 @@ public class TableDataCell extends TableAutoCommitCell<List<String>, String> {
         return getItem();
     }
 
-    protected boolean setCellValue(String inValue) {
+    @Override
+    public boolean setCellValue(String inValue) {
         try {
             String value = inValue;
             if (value != null && supportMultipleLine) {
                 value = value.replaceAll("\\\\n", "\n");
             }
-            boolean changed = changed(value);
-            commit(value, valid(value), changed);
-            return changed;
+            return super.setCellValue(value);
         } catch (Exception e) {
             MyBoxLog.debug(e);
             return false;

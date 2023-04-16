@@ -103,7 +103,7 @@ public class PdfMergeController extends BaseBatchPdfController {
     }
 
     @Override
-    public void donePost() {
+    public void afterTask() {
         try {
             if (targetDoc != null) {
                 targetDoc.save(targetFile);
@@ -127,7 +127,7 @@ public class PdfMergeController extends BaseBatchPdfController {
             MyBoxLog.error(e.toString());
         }
         targetDoc = null;
-        super.donePost();
+        super.afterTask();
     }
 
 }

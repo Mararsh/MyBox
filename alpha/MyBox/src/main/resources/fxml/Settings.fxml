@@ -68,6 +68,7 @@ License:    Apache License Version 2.0
                                                         </Label>
                                                         <ComboBox fx:id="iconSizeBox" editable="true" prefWidth="100.0" />
                                                         <Label text="px" />
+                                          <CheckBox fx:id="icons40pxCheck" mnemonicParsing="false" text="%Icons40px" />
                                                     </children>
                                                 </HBox>
                                                 <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="70.0" spacing="10.0" VBox.vgrow="NEVER">

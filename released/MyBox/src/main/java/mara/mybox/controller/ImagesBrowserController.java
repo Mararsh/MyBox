@@ -77,7 +77,7 @@ public class ImagesBrowserController extends ImagesBrowserController_Pane {
                         } else {
                             tableData.clear();
                             displayMode = DisplayMode.ImagesGrid;
-                            colsNum = Integer.valueOf(newValue);
+                            colsNum = Integer.parseInt(newValue);
                             if (colsNum >= 0) {
                                 ValidationTools.setEditorNormal(colsnumBox);
                             } else {
@@ -104,7 +104,7 @@ public class ImagesBrowserController extends ImagesBrowserController_Pane {
                         if (isSettingValues || newValue == null) {
                             return;
                         }
-                        filesNumber = Integer.valueOf(newValue);
+                        filesNumber = Integer.parseInt(newValue);
                         if (filesNumber > 0) {
                             ValidationTools.setEditorNormal(filesBox);
                             makeImagesNevigator(true);
@@ -127,7 +127,7 @@ public class ImagesBrowserController extends ImagesBrowserController_Pane {
                         if (isSettingValues) {
                             return;
                         }
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v > 0) {
                             ValidationTools.setEditorNormal(thumbWidthSelector);
                             UserConfig.setInt(baseName + "ThumbnailWidth", v);
@@ -150,11 +150,9 @@ public class ImagesBrowserController extends ImagesBrowserController_Pane {
                 }
             });
 
-            fileBox.disableProperty().bind(Bindings.isEmpty(imageFileList));
             viewPane.disableProperty().bind(Bindings.isEmpty(imageFileList));
             browsePane.disableProperty().bind(Bindings.isEmpty(imageFileList));
             mainBox.disableProperty().bind(Bindings.isEmpty(imageFileList));
-            leftPaneControl.visibleProperty().bind(Bindings.isEmpty(imageFileList).not());
             rightPane.disableProperty().bind(Bindings.isEmpty(imageFileList));
 
         } catch (Exception e) {

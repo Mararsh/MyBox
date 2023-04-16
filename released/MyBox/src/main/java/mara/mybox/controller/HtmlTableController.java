@@ -139,9 +139,7 @@ public class HtmlTableController extends BaseWebViewController {
         if (file == null) {
             return;
         }
-        recordFileWritten(file);
         save(file, html, false);
-
     }
 
     @FXML
@@ -164,16 +162,16 @@ public class HtmlTableController extends BaseWebViewController {
                 @Override
                 protected boolean handle() {
                     ok = TextFileTools.writeFile(file, txt) != null;
+                    recordFileWritten(file);
                     return true;
                 }
 
                 @Override
                 protected void whenSucceeded() {
                     if (isEdit) {
-                        recordFileWritten(file);
                         HtmlEditorController.openFile(file);
                     } else {
-                        popSuccessful();
+                        WebBrowserController.openFile(file);
                     }
                 }
 

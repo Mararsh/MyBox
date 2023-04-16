@@ -8,20 +8,17 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import javafx.scene.web.WebView;
 import mara.mybox.data.GeoCoordinateSystem;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.GeographyCode;
 import static mara.mybox.db.data.GeographyCodeTools.toGCJ02ByWebService;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.LocationTools;
 import static mara.mybox.tools.LocationTools.latitudeToDmsString;
@@ -436,132 +433,119 @@ public class ConvertCoordinateController extends BaseMapController {
     @FXML
     public void popDMSExamples(MouseEvent mouseEvent) {
         try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+            List<MenuItem> items = new ArrayList<>();
 
-            MenuItem menu;
-
-            menu = new MenuItem("48°51'12.28\"");
+            MenuItem menu = new MenuItem("48°51'12.28\"");
             menu.setOnAction((ActionEvent event) -> {
                 dmsInput.setText("48°51'12.28\"");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("48°51'12.28\"N");
             menu.setOnAction((ActionEvent event) -> {
                 dmsInput.setText("48°51'12.28\"N");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("2°20'55.68\"E");
             menu.setOnAction((ActionEvent event) -> {
                 dmsInput.setText("2°20'55.68\"E");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("S 34°36'13.4028\"");
             menu.setOnAction((ActionEvent event) -> {
                 dmsInput.setText("S 34°36'13.4028\"");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("W 58°22'53.7348\"");
             menu.setOnAction((ActionEvent event) -> {
                 dmsInput.setText("W 58°22'53.7348\"");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("-77°3'43.9308\"");
             menu.setOnAction((ActionEvent event) -> {
                 dmsInput.setText("-77°3'43.9308\"");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("longitude 12°2'52.1376\"");
             menu.setOnAction((ActionEvent event) -> {
                 dmsInput.setText("longitude 12°2'52.1376\"");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("latitude -77°3'43.9308\"");
             menu.setOnAction((ActionEvent event) -> {
                 dmsInput.setText("latitude -77°3'43.9308\"");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("118度48分54.152秒");
             menu.setOnAction((ActionEvent event) -> {
                 dmsInput.setText("118度48分54.152秒");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("-32度04分10.461秒");
             menu.setOnAction((ActionEvent event) -> {
                 dmsInput.setText("-32度04分10.461秒");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("东经118度48分54.152秒");
             menu.setOnAction((ActionEvent event) -> {
                 dmsInput.setText("东经118度48分54.152秒");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("西经118度48分54.152秒");
             menu.setOnAction((ActionEvent event) -> {
                 dmsInput.setText("西经118度48分54.152秒");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("北纬32度04分10.461秒");
             menu.setOnAction((ActionEvent event) -> {
                 dmsInput.setText("北纬32度04分10.461秒");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("南纬32度04分10.461秒");
             menu.setOnAction((ActionEvent event) -> {
                 dmsInput.setText("南纬32度04分10.461秒");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("西118度48分54.152秒");
             menu.setOnAction((ActionEvent event) -> {
                 dmsInput.setText("西118度48分54.152秒");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("南32度04分10.461秒");
             menu.setOnAction((ActionEvent event) -> {
                 dmsInput.setText("南32度04分10.461秒");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("经度118度48分54.152秒");
             menu.setOnAction((ActionEvent event) -> {
                 dmsInput.setText("经度118度48分54.152秒");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem("纬度-32度04分10.461秒");
             menu.setOnAction((ActionEvent event) -> {
                 dmsInput.setText("纬度-32度04分10.461秒");
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(Languages.message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event) -> {
-                popMenu.hide();
-                popMenu = null;
-            });
-            popMenu.getItems().add(menu);
+            items.add(new SeparatorMenuItem());
 
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            popEventMenu(mouseEvent, items);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

@@ -314,7 +314,7 @@ public class TextTools {
                 unit = 1024 * 1024 * 1024L;
                 strV = strV.substring(0, strV.length() - 1);
             }
-            double v = Double.valueOf(strV.trim());
+            double v = Double.parseDouble(strV.trim());
             if (v >= 0) {
                 return Math.round(v * unit);
             } else {

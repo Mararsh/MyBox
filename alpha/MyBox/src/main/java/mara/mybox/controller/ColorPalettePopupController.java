@@ -312,6 +312,8 @@ public class ColorPalettePopupController extends BaseChildController {
             });
             items.add(menu);
 
+            items.add(new SeparatorMenuItem());
+
             popEventMenu(mouseEvent, items);
 
         } catch (Exception e) {
@@ -332,6 +334,8 @@ public class ColorPalettePopupController extends BaseChildController {
 
             items.add(new SeparatorMenuItem());
             items.addAll(PaletteTools.paletteExamplesMenu(parentController == null ? myController : parentController));
+
+            items.add(new SeparatorMenuItem());
 
             popEventMenu(mouseEvent, items);
 

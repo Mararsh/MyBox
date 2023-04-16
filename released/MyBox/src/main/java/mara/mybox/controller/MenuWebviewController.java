@@ -92,25 +92,14 @@ public class MenuWebviewController extends MenuController {
 
             checkWebviewPane();
 
-            if (webViewController instanceof ControlHtmlRichEditor) {
-                setTitleid(((ControlHtmlRichEditor) webViewController).htmlEditor.getId());
-            } else {
-                setTitleid(webView.getId());
-            }
-
-            if (webViewController instanceof ControlHtmlRichEditor) {
-                editableCheck.setVisible(false);
-            } else {
-                editableCheck.setVisible(true);
-                editableCheck.setSelected(UserConfig.getBoolean("WebViewEditable", false));
-                editableCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldv, Boolean newv) {
-                        webViewController.setEditable(editableCheck.isSelected());
-                    }
-                });
-            }
-
+            setTitleid(webView.getId());
+            editableCheck.setSelected(UserConfig.getBoolean("WebViewEditable", false));
+            editableCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldv, Boolean newv) {
+                    webViewController.setEditable(editableCheck.isSelected());
+                }
+            });
             super.setParameters(webViewController, webView, x, y);
 
         } catch (Exception e) {
@@ -245,9 +234,18 @@ public class MenuWebviewController extends MenuController {
     }
 
     @FXML
-    @Override
-    public void popFunctionsMenu(MouseEvent mouseEvent) {
-        webViewController.popFunctionsMenu(mouseEvent);
+    public void popFunctionsMenu(Event event) {
+        if (UserConfig.getBoolean("WebviewFunctionsPopWhenMouseHovering", true)) {
+            showFunctionsMenu(event);
+        }
+    }
+
+    @FXML
+    public void showFunctionsMenu(Event event) {
+        if (webViewController == null) {
+            return;
+        }
+        webViewController.showFunctionsMenu(event);
     }
 
     @FXML

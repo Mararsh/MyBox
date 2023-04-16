@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -12,14 +13,12 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.TreeTableView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.TreeNode;
@@ -29,9 +28,7 @@ import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.style.HtmlStyles;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.JsonTools;
@@ -52,7 +49,7 @@ public class TreeNodeExportController extends BaseTaskController {
     protected TreeManageController treeController;
     protected TableTreeNode tableTreeNode;
     protected TableTreeNodeTag tableTreeNodeTag;
-    protected TreeView<TreeNode> treeView;
+    protected TreeTableView<TreeNode> infoTree;
     protected TreeItem<TreeNode> selectedNode;
     protected File textsFile, xmlFile, jsonFile, htmlFile, framesetFile, framesetNavFile;
     protected FileWriter textsWriter, htmlWriter, xmlWriter, jsonWriter, framesetNavWriter;
@@ -62,7 +59,7 @@ public class TreeNodeExportController extends BaseTaskController {
     protected boolean firstRow;
 
     @FXML
-    protected TreeNodesController nodesController;
+    protected ControlTreeInfoSelect nodesController;
     @FXML
     protected CheckBox timeCheck, tagsCheck, iconCheck,
             textsCheck, htmlCheck, xmlCheck, jsonCheck, framesetCheck;
@@ -79,7 +76,7 @@ public class TreeNodeExportController extends BaseTaskController {
     public void initControls() {
         try {
             super.initControls();
-            treeView = nodesController.treeView;
+            infoTree = nodesController.infoTree;
 
             timeCheck.setSelected(UserConfig.getBoolean(baseName + "Time", false));
             timeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -165,7 +162,7 @@ public class TreeNodeExportController extends BaseTaskController {
 
             startButton.disableProperty().unbind();
             startButton.disableProperty().bind(targetPathController.valid.not()
-                    .or(treeView.getSelectionModel().selectedItemProperty().isNull())
+                    .or(infoTree.getSelectionModel().selectedItemProperty().isNull())
             );
 
         } catch (Exception e) {
@@ -196,9 +193,9 @@ public class TreeNodeExportController extends BaseTaskController {
         }
         nodesController.setCaller(treeController.nodesController);
         if (item == null) {
-            treeView.getSelectionModel().select(treeView.getRoot());
+            infoTree.getSelectionModel().select(infoTree.getRoot());
         } else {
-            treeView.getSelectionModel().select(item);
+            infoTree.getSelectionModel().select(item);
         }
     }
 
@@ -220,15 +217,8 @@ public class TreeNodeExportController extends BaseTaskController {
                 return false;
             }
         }
-        selectedNode = treeView.getSelectionModel().getSelectedItem();
-        if (selectedNode == null) {
-            selectedNode = treeView.getRoot();
-            if (selectedNode == null) {
-                popError(message("SelectToHandle"));
-                return false;
-            }
-        }
-        if (selectedNode.getValue() == null) {
+        selectedNode = nodesController.selected();
+        if (selectedNode == null || selectedNode.getValue() == null) {
             popError(message("SelectToHandle"));
             return false;
         }
@@ -238,12 +228,7 @@ public class TreeNodeExportController extends BaseTaskController {
     @FXML
     public void popDefaultStyle(MouseEvent mouseEvent) {
         try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
-
+            List<MenuItem> items = new ArrayList<>();
             MenuItem menu;
             for (HtmlStyles.HtmlStyle style : HtmlStyles.HtmlStyle.values()) {
                 menu = new MenuItem(message(style.name()));
@@ -254,21 +239,12 @@ public class TreeNodeExportController extends BaseTaskController {
                         UserConfig.setString(baseName + "Style", styleInput.getText());
                     }
                 });
-                popMenu.getItems().add(menu);
+                items.add(menu);
             }
 
-            popMenu.getItems().add(new SeparatorMenuItem());
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
+            items.add(new SeparatorMenuItem());
 
-            LocateTools.locateCenter((Region) mouseEvent.getSource(), popMenu);
+            popEventMenu(mouseEvent, items);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -290,7 +266,7 @@ public class TreeNodeExportController extends BaseTaskController {
         }
         count = level = 0;
         firstRow = true;
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             exportNode(conn, selectedNode.getValue(), nodesController.chainName(selectedNode.getParent()));
         } catch (Exception e) {
             updateLogs(e.toString());
@@ -336,12 +312,12 @@ public class TreeNodeExportController extends BaseTaskController {
                     path.mkdirs();
                     framesetNavFile = new File(path.getAbsolutePath() + File.separator + "nav.html");
                     File coverFile = new File(path.getAbsolutePath() + File.separator + "cover.html");
-                    try ( FileWriter coverWriter = new FileWriter(coverFile, charset)) {
+                    try (FileWriter coverWriter = new FileWriter(coverFile, charset)) {
                         writeHtmlHead(coverWriter, nodeName);
                         coverWriter.write("<BODY>\n<BR><BR><BR><BR><H1>" + message("Notes") + "</H1>\n</BODY></HTML>");
                         coverWriter.flush();
                     }
-                    try ( FileWriter framesetWriter = new FileWriter(framesetFile, charset)) {
+                    try (FileWriter framesetWriter = new FileWriter(framesetFile, charset)) {
                         writeHtmlHead(framesetWriter, nodeName);
                         s = new StringBuilder();
                         s.append("<FRAMESET border=2 cols=240,240,*>\n")
@@ -773,7 +749,7 @@ public class TreeNodeExportController extends BaseTaskController {
     @Override
     public void afterSuccess() {
         try {
-            openTarget(null);
+            openTarget();
             if (framesetFile != null && framesetFile.exists()) {
                 WebBrowserController.openFile(framesetFile);
                 return;
@@ -801,7 +777,7 @@ public class TreeNodeExportController extends BaseTaskController {
     }
 
     @Override
-    public void openTarget(ActionEvent event) {
+    public void openTarget() {
         browseURI(targetPath.toURI());
     }
 

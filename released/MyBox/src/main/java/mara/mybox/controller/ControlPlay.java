@@ -122,7 +122,7 @@ public class ControlPlay extends BaseController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(newValue);
+                        int v = Integer.parseInt(newValue);
                         if (v <= 0) {
                             timeSelector.getEditor().setStyle(UserConfig.badStyle());
                         } else {
@@ -503,8 +503,13 @@ public class ControlPlay extends BaseController {
         toFrame = -1;
         isSettingValues = true;
         frameSelector.getItems().clear();
-        totalLabel.setText("");
         isSettingValues = false;
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                totalLabel.setText("");
+            }
+        });
     }
 
     @FXML

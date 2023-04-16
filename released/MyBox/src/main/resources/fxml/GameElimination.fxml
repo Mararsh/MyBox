@@ -119,7 +119,7 @@ License:    Apache License Version 2.0
                                                     <graphic>
                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                             <image>
-                                                                <Image url="@../buttons/Red/iconOpen.png" />
+                                                                <Image url="@../buttons/Red/iconSelectFile.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>
@@ -151,7 +151,7 @@ License:    Apache License Version 2.0
                                                 <ListView fx:id="imagesListview" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                                     <children>
-                                          <fx:include fx:id="imageInfo" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlWebView.fxml" VBox.vgrow="ALWAYS" />
+                                                        <fx:include fx:id="imageInfo" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlWebView.fxml" VBox.vgrow="ALWAYS" />
                                                     </children>
                                                 </VBox>
                                             </items>
@@ -181,7 +181,7 @@ License:    Apache License Version 2.0
                         </Tab>
                         <Tab fx:id="rulersTab" text="%Rules">
                             <content>
-                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                     <children>
                                         <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="20.0" maxWidth="1.7976931348623157E308" spacing="5.0">
                                             <children>
@@ -196,11 +196,11 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="allButton" mnemonicParsing="false" onAction="#allCountedImagesAction">
+                                                <Button fx:id="selectAllButton" mnemonicParsing="false" onAction="#allCountedImagesAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                             <image>
-                                                                <Image url="@../buttons/Red/iconCheckAll.png" />
+                                                                <Image url="@../buttons/Red/iconSelectAll.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>
@@ -216,7 +216,7 @@ License:    Apache License Version 2.0
                                                 <Insets top="20.0" />
                                             </VBox.margin>
                                         </Label>
-                                        <TableView fx:id="rulersTable" editable="true">
+                                        <TableView fx:id="rulersTable" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                             <columns>
                                                 <TableColumn fx:id="numberColumn" editable="false" prefWidth="200.0" text="%AdjacentChessesNumber" />
                                                 <TableColumn fx:id="scoreColumn" prefWidth="200.0" text="%Score" />
@@ -266,11 +266,11 @@ License:    Apache License Version 2.0
                                                 <HBox fx:id="selectSoundBox" alignment="CENTER_LEFT" spacing="5.0">
                                                     <children>
                                                         <Label fx:id="soundFileLabel" />
-                                                        <Button fx:id="selectFileSoundButton" mnemonicParsing="false" onAction="#selectSoundFile" onMouseEntered="#popSoundFile">
+                                                        <Button fx:id="selectFileSoundButton" mnemonicParsing="false" onAction="#pickSoundFile" onMouseEntered="#popSoundFile">
                                                             <graphic>
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                     <image>
-                                                                        <Image url="@../buttons/Red/iconOpen.png" />
+                                                                        <Image url="@../buttons/Red/iconSelectFile.png" />
                                                                     </image>
                                                                 </ImageView>
                                                             </graphic>

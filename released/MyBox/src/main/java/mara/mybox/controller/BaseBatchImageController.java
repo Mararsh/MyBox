@@ -19,7 +19,6 @@ public abstract class BaseBatchImageController extends BaseBatchFileController {
 
     public BaseBatchImageController() {
         targetSubdirKey = "ImageCreatSubdir";
-        previewKey = "ImagePreview";
         browseTargets = true;
     }
 

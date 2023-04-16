@@ -61,8 +61,8 @@ public class Data2DCoordinatePickerController extends CoordinatePickerController
 
             try {
                 List<String> row = dataControl.getTableData().get(rowIndex);
-                double lo = Double.valueOf(row.get(loIndex + 1));
-                double la = Double.valueOf(row.get(laIndex + 1));
+                double lo = Double.parseDouble(row.get(loIndex + 1));
+                double la = Double.parseDouble(row.get(laIndex + 1));
                 loadCoordinate(lo, la);
             } catch (Exception ex) {
 //                MyBoxLog.console(ex);
@@ -107,8 +107,8 @@ public class Data2DCoordinatePickerController extends CoordinatePickerController
             latitudeSelector.getSelectionModel().select(0);
 
             try {
-                double lo = Double.valueOf(loInput.getText());
-                double la = Double.valueOf(laInput.getText());
+                double lo = Double.parseDouble(loInput.getText());
+                double la = Double.parseDouble(laInput.getText());
                 loadCoordinate(lo, la);
             } catch (Exception ex) {
 //                MyBoxLog.console(ex);

@@ -394,7 +394,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             double sum = 0, count;
             for (List<String> data : resultsData) {
                 try {
-                    sum += Double.valueOf(data.get(2));
+                    sum += Double.parseDouble(data.get(2));
                 } catch (Exception e) {
                 }
             }
@@ -403,7 +403,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
                     String category = data.get(pieParametersRadio.isSelected() ? 1 : 0);
                     List<String> pieRow = new ArrayList<>();
                     pieRow.add(category);
-                    count = Double.valueOf(data.get(2));
+                    count = Double.parseDouble(data.get(2));
                     pieRow.add((long) count + "");
                     pieRow.add(DoubleTools.percentage(count, sum, scale));
                     pieData.add(pieRow);
@@ -493,7 +493,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
                 ok = true;
             } else {
                 try {
-                    int v = Integer.valueOf(s);
+                    int v = Integer.parseInt(s);
                     if (v > 0) {
                         pieMaxData = v;
                         ok = true;

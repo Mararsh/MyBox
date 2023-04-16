@@ -3,13 +3,8 @@ package mara.mybox.controller;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.Optional;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.layout.Region;
-import javafx.stage.Stage;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.dev.MyBoxLog;
@@ -40,6 +35,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
     }
 
     @FXML
+    @Override
     public void refreshAction() {
         try {
             if (!isSettingValues && sourceFile != null) {
@@ -112,30 +108,6 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
     }
 
     private void saveExisted() {
-        if (confirmCheck.isVisible() && confirmCheck.isSelected() && (autoSaveTimer == null)) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle(getMyStage().getTitle());
-            alert.setContentText(message("SureOverrideFile"));
-            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            ButtonType buttonSave = new ButtonType(message("Save"));
-            ButtonType buttonSaveAs = new ButtonType(message("SaveAs"));
-            ButtonType buttonCancel = new ButtonType(message("Cancel"));
-            alert.getButtonTypes().setAll(buttonSave, buttonSaveAs, buttonCancel);
-            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-            stage.setAlwaysOnTop(true);
-            stage.toFront();
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result == null || !result.isPresent()) {
-                return;
-            }
-            if (result.get() == buttonCancel) {
-                return;
-            } else if (result.get() == buttonSaveAs) {
-                saveAsAction();
-                return;
-            }
-        }
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
@@ -335,12 +307,12 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
     protected void locateLinesRange() {
         long from, to;  // 0-based, exlcuded end
         try {
-            from = Long.valueOf(lineFromInput.getText()) - 1;
+            from = Long.parseLong(lineFromInput.getText()) - 1;
             if (from < 0 || from >= sourceInformation.getLinesNumber()) {
                 popError(message("InvalidParameters") + ": " + message("From"));
                 return;
             }
-            to = Long.valueOf(lineToInput.getText());
+            to = Long.parseLong(lineToInput.getText());
             if (to < 0 || to > sourceInformation.getLinesNumber() || from > to) {
                 popError(message("InvalidParameters") + ": " + message("To"));
                 return;
@@ -390,12 +362,12 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
     protected void locateObjectsRange() {
         long from, to;  // 0-based, exlcuded end
         try {
-            from = Long.valueOf(objectFromInput.getText()) - 1;
+            from = Long.parseLong(objectFromInput.getText()) - 1;
             if (from < 0 || from >= sourceInformation.getObjectsNumber()) {
                 popError(message("InvalidParameters") + ": " + message("From"));
                 return;
             }
-            to = Long.valueOf(objectToInput.getText());
+            to = Long.parseLong(objectToInput.getText());
             if (to < 0 || to > sourceInformation.getObjectsNumber() || from > to) {
                 popError(message("InvalidParameters") + ": " + message("To"));
                 return;

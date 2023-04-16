@@ -218,6 +218,9 @@ public class HtmlWriteTools {
 
     public static String setCharset(String html, Charset charset) {
         try {
+            if (html == null) {
+                return "InvalidData";
+            }
             Document doc = Jsoup.parse(html);
             if (doc == null) {
                 return "InvalidData";

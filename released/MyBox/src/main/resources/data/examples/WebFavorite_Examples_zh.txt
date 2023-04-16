@@ -291,8 +291,12 @@ https://tv.cctv.com/2022/08/27/VIDARmuWi2Ebs0b0NSsA1Ao7220827.shtml
 http://www.radio.cn/pc-portal/sanji/zhibo_2.html?channelname=0&name=1395534&title=radio
 
 示例 > 娱乐 > 中文
-品味书香
-http://www.radio.cn/pc-portal/sanji/zhibo_2.html?channelname=0&name=1395682&title=radio
+中国相声榜
+http://www.radio.cn/pc-portal/sanji/zhibo_2.html?channelname=0&name=1395673&title=radio
+
+示例 > 娱乐 > 中文
+老外看点
+http://www.radio.cn/pc-portal/sanji/zhibo_2.html?channelname=0&name=1437094&title=radio
 
 示例 > 娱乐 > 中文
 蜻蜓FM

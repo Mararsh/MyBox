@@ -7,7 +7,6 @@ import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -151,7 +150,7 @@ public class FilesRenameController extends BaseBatchFileController {
                 } else {
                     sortFileInformations(tableData);
                     try {
-                        digit = Integer.valueOf(digitInput.getText());
+                        digit = Integer.parseInt(digitInput.getText());
                     } catch (Exception e) {
                         if (tableController.totalFilesNumber <= 0) {
                             tableController.countSize();
@@ -160,7 +159,7 @@ public class FilesRenameController extends BaseBatchFileController {
                     }
                 }
                 try {
-                    startNumber = Integer.valueOf(acumFromInput.getText());
+                    startNumber = Integer.parseInt(acumFromInput.getText());
                 } catch (Exception e) {
                     startNumber = 0;
                 }
@@ -248,7 +247,7 @@ public class FilesRenameController extends BaseBatchFileController {
                 return null;
             }
             File newFile = new File(newName);
-            if (file.equals(newFile)) {
+            if (file.getAbsolutePath().equals(newFile.getAbsolutePath())) {
                 return null;
             }
             if (newFile.isFile() && newFile.exists()) {
@@ -265,7 +264,7 @@ public class FilesRenameController extends BaseBatchFileController {
                 return null;
             }
         } catch (Exception e) {
-            updateLogs(e.toString(), true);
+            showLogs(e.toString());
             return null;
         }
     }
@@ -325,13 +324,13 @@ public class FilesRenameController extends BaseBatchFileController {
             }
             return filePath + newName;
         } catch (Exception e) {
-            updateLogs(e.toString(), true);
+            showLogs(e.toString());
             return null;
         }
     }
 
     @Override
-    protected boolean handleDirectory(File sourcePath, File targetPath) {
+    protected boolean handleDirectory(File sourcePath, String targetPath) {
         if (sourcePath == null || !sourcePath.exists() || !sourcePath.isDirectory()) {
             return false;
         }
@@ -378,11 +377,11 @@ public class FilesRenameController extends BaseBatchFileController {
 
     @Override
     public void viewTarget(File file) {
-        openTarget(null);
+        openTarget();
     }
 
     @Override
-    public void openTarget(ActionEvent event) {
+    public void openTarget() {
         try {
             if (tableData == null || tableData.isEmpty()) {
                 return;

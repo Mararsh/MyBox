@@ -62,7 +62,7 @@ public class TextInSystemClipboardController extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.valueOf(intervalSelector.getValue());
+                        int v = Integer.parseInt(intervalSelector.getValue());
                         if (v > 0) {
                             intervalSelector.getEditor().setStyle(null);
                             TextClipboardTools.startTextClipboardMonitor(v);

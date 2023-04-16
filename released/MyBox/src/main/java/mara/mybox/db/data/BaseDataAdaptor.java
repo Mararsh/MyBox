@@ -24,6 +24,7 @@ import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableImageScope;
 import mara.mybox.db.table.TableMyBoxLog;
 import mara.mybox.db.table.TableNamedValues;
+import mara.mybox.db.table.TablePathConnection;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableTag;
 import mara.mybox.db.table.TableTextClipboard;
@@ -121,6 +122,9 @@ public class BaseDataAdaptor {
         } else if (data instanceof AlarmClock) {
             return new TableAlarmClock();
 
+        } else if (data instanceof PathConnection) {
+            return new TablePathConnection();
+
         }
         return null;
     }
@@ -204,6 +208,9 @@ public class BaseDataAdaptor {
         } else if (data instanceof AlarmClock) {
             return AlarmClock.valid((AlarmClock) data);
 
+        } else if (data instanceof PathConnection) {
+            return PathConnection.valid((PathConnection) data);
+
         } else {
             return true;
         }
@@ -286,6 +293,9 @@ public class BaseDataAdaptor {
         } else if (data instanceof AlarmClock) {
             return AlarmClock.getValue((AlarmClock) data, name);
 
+        } else if (data instanceof PathConnection) {
+            return PathConnection.getValue((PathConnection) data, name);
+
         } else {
             return data.getColumnValue(name);
         }
@@ -301,6 +311,9 @@ public class BaseDataAdaptor {
 
         } else if (data instanceof MyBoxLog) {
             return MyBoxLog.setValue((MyBoxLog) data, name, value);
+
+        } else if (data instanceof VisitHistory) {
+            return VisitHistory.setValue((VisitHistory) data, name, value);
 
         } else if (data instanceof ImageEditHistory) {
             return ImageEditHistory.setValue((ImageEditHistory) data, name, value);
@@ -361,6 +374,9 @@ public class BaseDataAdaptor {
 
         } else if (data instanceof AlarmClock) {
             return AlarmClock.setValue((AlarmClock) data, name, value);
+
+        } else if (data instanceof PathConnection) {
+            return PathConnection.setValue((PathConnection) data, name, value);
 
         } else {
             return data.setColumnValue(name, value);

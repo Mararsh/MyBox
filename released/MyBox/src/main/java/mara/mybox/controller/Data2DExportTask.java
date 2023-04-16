@@ -26,6 +26,8 @@ public class Data2DExportTask extends BaseTaskController {
     @Override
     public void beforeTask() {
         try {
+            super.beforeTask();
+
             exportController.dataBox.setDisable(true);
             exportController.filterVBox.setDisable(true);
             exportController.formatVBox.setDisable(true);
@@ -49,6 +51,7 @@ public class Data2DExportTask extends BaseTaskController {
     @Override
     public void afterTask() {
         try {
+            super.afterTask();
             exportController.dataBox.setDisable(false);
             exportController.filterVBox.setDisable(false);
             exportController.formatVBox.setDisable(false);

@@ -23,22 +23,16 @@ License:    Apache License Version 2.0
     <children>
         <HBox alignment="CENTER_RIGHT" spacing="2.0">
             <children>
-                <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../buttons/Red/iconTips.png" />
-                    </image>
-                </ImageView>
-                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                <CheckBox fx:id="rightPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
+                <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showHtmlHelps"  onMouseEntered="#popHtmlHelps">
                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/Red/iconDoubleRight.png" />
+                                <Image url="@../buttons/iconClaw.png" />
                             </image>
                         </ImageView>
                     </graphic>
-                </CheckBox>
-                <Button fx:id="panesMenuButton" mnemonicParsing="false" onMouseEntered="#popPanesMenu">
+                </Button>
+                <Button fx:id="panesMenuButton" mnemonicParsing="false" onAction="#showPanesMenu" onMouseEntered="#popPanesMenu">
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -47,7 +41,13 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="clearDataButton" mnemonicParsing="false" onAction="#clearCodes">
+                <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../buttons/Red/iconTips.png" />
+                    </image>
+                </ImageView>
+                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -93,7 +93,7 @@ License:    Apache License Version 2.0
                             <children>
                                 <HBox alignment="CENTER_LEFT" spacing="2.0">
                                     <children>
-                                        <Button fx:id="styleViewButton" mnemonicParsing="false"  onAction="#showHtmlStyle"     onMouseEntered="#popHtmlStyle">
+                                        <Button fx:id="styleViewButton" mnemonicParsing="false" onAction="#showHtmlStyle" onMouseEntered="#popHtmlStyle">
                                             <graphic>
                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -103,7 +103,7 @@ License:    Apache License Version 2.0
                                             </graphic>
                                         </Button>
                                         <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                        <Button fx:id="functionsButton" mnemonicParsing="false" onMouseEntered="#popFunctionsMenu">
+                                        <Button fx:id="functionsButton" mnemonicParsing="false" onAction="#showFunctionsMenu" onMouseEntered="#popFunctionsMenu">
                                             <graphic>
                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
@@ -182,20 +182,6 @@ License:    Apache License Version 2.0
                     <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="2.0">
                             <children>
-                                <HBox alignment="CENTER_LEFT" spacing="2.0">
-                                    <children>
-                                        <Button fx:id="styleRichButton" mnemonicParsing="false"  onAction="#showRichEditorStyle"     onMouseEntered="#popRichEditorStyle">
-                                            <graphic>
-                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@../buttons/Red/iconStyle.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
-                                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                    </children>
-                                </HBox>
                                 <fx:include fx:id="richEditor" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlHtmlRichEditor.fxml" VBox.vgrow="ALWAYS" />
                             </children>
                             <padding>

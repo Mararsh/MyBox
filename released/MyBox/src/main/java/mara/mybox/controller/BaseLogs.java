@@ -36,7 +36,7 @@ public class BaseLogs extends BaseController {
         try {
             super.initControls();
 
-            logsMaxChars = UserConfig.getInt("TaskMaxLinesNumber", 5000);
+            logsMaxChars = UserConfig.getInt("TaskMaxLinesNumber", 50000);
             if (logsMaxChars <= 0) {
                 logsMaxChars = 5000;
             }
@@ -71,16 +71,20 @@ public class BaseLogs extends BaseController {
     }
 
     public void initLogs() {
-        if (logsTextArea == null) {
-            return;
+        if (logsTextArea != null) {
+            if (!logsTextArea.getText().isBlank()) {
+                updateLogs("\n", false, true);
+                return;
+            }
         }
-        Platform.runLater(() -> {
-            logsTextArea.setText("");
-            newLogs = new StringBuffer();
-            logsNewlines = 0;
-            logsTotalLines = 0;
-            lastLogTime = new Date().getTime();
-        });
+        newLogs = new StringBuffer();
+        logsNewlines = 0;
+        logsTotalLines = 0;
+        lastLogTime = new Date().getTime();
+    }
+
+    public void showLogs(String line) {
+        updateLogs(line, true, true);
     }
 
     public void updateLogs(String line) {
@@ -93,37 +97,38 @@ public class BaseLogs extends BaseController {
 
     public void updateLogs(String line, boolean showTime, boolean immediate) {
         try {
-            if (logsTextArea == null || line == null || line.isBlank()) {
+            if (logsTextArea == null || line == null) {
                 return;
             }
-            synchronized (logsTextArea) {
-                if (newLogs == null) {
-                    newLogs = new StringBuffer();
-                }
-                if (showTime) {
-                    newLogs.append(DateTools.datetimeToString(new Date())).append("  ");
-                }
-                newLogs.append(line).append("\n");
-                logsNewlines++;
-                Platform.runLater(() -> {
-                    try {
+            Platform.runLater(() -> {
+                try {
+                    synchronized (logsTextArea) {
+                        if (newLogs == null) {
+                            newLogs = new StringBuffer();
+                        }
+                        if (showTime) {
+                            newLogs.append(DateTools.datetimeToString(new Date())).append("  ");
+                        }
+                        newLogs.append(line).append("\n");
+                        logsNewlines++;
                         long ctime = new Date().getTime();
                         if (immediate || logsNewlines > 50 || ctime - lastLogTime > 3000) {
                             logsTextArea.appendText(newLogs.toString());
+                            newLogs = new StringBuffer();
                             logsTotalLines += logsNewlines;
                             logsNewlines = 0;
                             lastLogTime = ctime;
-                            newLogs = new StringBuffer();
                             int extra = logsTextArea.getText().length() - logsMaxChars;
                             if (extra > 0) {
                                 logsTextArea.deleteText(0, extra);
                             }
                         }
-                    } catch (Exception e) {
-                        MyBoxLog.debug(e.toString());
                     }
-                });
-            }
+                } catch (Exception e) {
+                    MyBoxLog.debug(e.toString());
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -135,8 +140,10 @@ public class BaseLogs extends BaseController {
             return;
         }
         Platform.runLater(() -> {
-            logsTextArea.setText("");
-            logsTotalLines = 0;
+            synchronized (logsTextArea) {
+                logsTextArea.setText("");
+                logsTotalLines = 0;
+            }
         });
     }
 

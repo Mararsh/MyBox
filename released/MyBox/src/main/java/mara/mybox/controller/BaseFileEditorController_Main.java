@@ -49,6 +49,9 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
             backupPane.setDisable(nullFile);
             backupPane.setExpanded(!nullFile && UserConfig.getBoolean(baseName + "BackupPane", false));
         }
+        if (openSourceButton != null) {
+            openSourceButton.setDisable(nullFile);
+        }
         isSettingValues = false;
     }
 

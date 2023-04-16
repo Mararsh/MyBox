@@ -364,6 +364,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
 //                importChinaTowns();
 //            });
 //            items.add(menu);
+            items.add(new SeparatorMenuItem());
             popEventMenu(mouseEvent, items);
 
         } catch (Exception e) {
@@ -436,6 +437,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             });
             items.add(menu);
 
+            items.add(new SeparatorMenuItem());
             popEventMenu(mouseEvent, items);
 
         } catch (Exception e) {

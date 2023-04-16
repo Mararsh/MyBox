@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
@@ -174,10 +175,12 @@ public class DataExportController extends BaseTaskController {
         if (!checkOptions()) {
             return;
         }
+        targetFilesCount = 0;
+        targetFiles = new LinkedHashMap<>();
         top = queryController.savedCondition.getTop();
         Platform.runLater(() -> {
             if (startButton.getUserData() == null) {
-                start();
+                runTask();
                 StyleTools.setNameIcon(startButton, Languages.message("Stop"), "iconStop.png");
                 startButton.applyCss();
                 startButton.setUserData("stop");
@@ -194,7 +197,8 @@ public class DataExportController extends BaseTaskController {
         });
     }
 
-    public void start() {
+    @Override
+    public void runTask() {
         synchronized (this) {
             if (task != null && !task.isQuit()) {
                 return;
@@ -202,7 +206,7 @@ public class DataExportController extends BaseTaskController {
             cancelled = false;
             tabPane.getSelectionModel().select(logsTab);
             startTime = new Date().getTime();
-            clearLogs();
+            beforeTask();
             task = new SingletonTask<Void>(this) {
 
                 private final boolean skip = targetPathController.isSkip();
@@ -265,13 +269,13 @@ public class DataExportController extends BaseTaskController {
 
                 private boolean writeFiles(String filePrefix) {
                     updateLogs(currentSQL);
-                    try ( Connection conn = DerbyBase.getConnection()) {
+                    try (Connection conn = DerbyBase.getConnection()) {
                         conn.setReadOnly(true);
                         int count = 0;
                         if (!convertController.setParameters(filePrefix, skip)) {
                             return false;
                         }
-                        try ( ResultSet results = conn.createStatement().executeQuery(currentSQL)) {
+                        try (ResultSet results = conn.createStatement().executeQuery(currentSQL)) {
                             while (results.next()) {
                                 if (cancelled) {
                                     updateLogs(Languages.message("Cancelled") + " " + filePrefix);
@@ -330,9 +334,11 @@ public class DataExportController extends BaseTaskController {
 
                 @Override
                 protected void finalAction() {
+                    super.finalAction();
                     StyleTools.setNameIcon(startButton, Languages.message("Start"), "iconStart.png");
                     startButton.applyCss();
                     startButton.setUserData(null);
+                    afterTask();
                 }
             };
             start(task, false);

@@ -279,7 +279,7 @@ public abstract class BaseImportCsvController<D> extends BaseBatchFileController
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
-            updateLogs(e.toString(), true);
+            showLogs(e.toString());
         }
         updateLogs(Languages.message("Imported") + ":" + importCount + "  " + file + "\n"
                 + Languages.message("Insert") + ":" + insertCount + " "
@@ -296,8 +296,8 @@ public abstract class BaseImportCsvController<D> extends BaseBatchFileController
     }
 
     @Override
-    public void donePost() {
-        super.donePost();
+    public void afterTask() {
+        super.afterTask();
         if (parent != null && parent.getMyStage().isShowing()) {
             if (closeWhenCompleteCheck != null && closeWhenCompleteCheck.isSelected()) {
                 closeStage();

@@ -20,8 +20,8 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import mara.mybox.data.FileInformation;
 import mara.mybox.data.FileInformation.FileType;
+import mara.mybox.data.FileNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
@@ -46,7 +46,7 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
 
     protected String compressor, archiver, archiverChoice, compressorChoice, error;
     protected SevenZMethod sevenCompress;
-    protected List<FileInformation> entries;
+    protected List<FileNode> entries;
     protected List<String> selected;
     protected long totalFiles, totalSize;
     protected FileUnarchive fileUnarchive;
@@ -307,6 +307,7 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
                         decompressedFile, DateTools.datetimeMsDuration(new Date(), startTime), true, true
                 ));
                 targetFileGenerated(decompressedFile);
+                recordFileWritten(decompressedFile);
                 if (archiver != null) {
                     unarchiveFile = decompressedFile;
                     readEntries();
@@ -318,6 +319,7 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
             }
         };
         start(task, info);
+
     }
 
     public void readEntries() {
@@ -338,7 +340,7 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
         updateLogs(message("Reading") + ": " + unarchiveFile.getAbsolutePath());
         task = new SingletonTask<Void>(this) {
 
-            private TreeItem<FileInformation> root;
+            private TreeItem<FileNode> root;
 
             @Override
             protected boolean handle() {
@@ -350,7 +352,7 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
                     }
                     if (archive.containsKey("entries")) {
                         archiver = (String) archive.get("archiver");
-                        entries = (List<FileInformation>) archive.get("entries");
+                        entries = (List<FileNode>) archive.get("entries");
                         root = makeFilesTree();
                     }
                     if (archive.containsKey("error")) {
@@ -397,7 +399,7 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
         start(task);
     }
 
-    protected TreeItem<FileInformation> makeFilesTree() {
+    protected TreeItem<FileNode> makeFilesTree() {
         try {
             totalFiles = 0;
             totalSize = 0;
@@ -405,25 +407,17 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
                 return null;
             }
             isSettingValues = true;
-            FileInformation rootInfo = new FileInformation();
+            FileNode rootInfo = new FileNode();
             rootInfo.setData("");
-            TreeItem<FileInformation> rootItem = new TreeItem(rootInfo);
+            TreeItem<FileNode> rootItem = new TreeItem(rootInfo);
             rootItem.setExpanded(true);
-            rootInfo.getSelectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldItem, Boolean newItem) {
-                    if (!isSettingValues) {
-                        treeItemSelected(rootItem, newItem);
-                    }
-                }
-            });
+            addSelectedListener(rootItem);
 
-            TreeItem<FileInformation> parent;
-
-            for (FileInformation entry : entries) {
+            TreeItem<FileNode> parent;
+            for (FileNode entry : entries) {
                 String[] nodes = entry.getData().split("/");
                 parent = rootItem;
-                TreeItem<FileInformation> nodeItem = null;
+                TreeItem<FileNode> nodeItem = null;
                 for (String node : nodes) {
                     String parentName = parent.getValue().getData();
                     String name = parentName.isEmpty() ? node : parentName + "/" + node;
@@ -433,7 +427,7 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
                 if (nodeItem == null) {
                     continue;
                 }
-                FileInformation nodeInfo = nodeItem.getValue();
+                FileNode nodeInfo = nodeItem.getValue();
                 nodeInfo.setFileType(entry.getFileType());
                 if (entry.getFileType() == FileType.File) {
                     totalFiles++;
@@ -457,20 +451,20 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
         }
     }
 
-    public void checkSelection(TreeItem<FileInformation> item) {
+    public void checkSelection(TreeItem<FileNode> item) {
         try {
             if (item == null || item.getValue() == null) {
                 return;
             }
-            FileInformation info = item.getValue();
+            FileNode info = item.getValue();
             if (info.isSelected() && info.getFileType() == FileType.File) {
                 selected.add(info.getData());
             }
-            List<TreeItem<FileInformation>> children = item.getChildren();
+            List<TreeItem<FileNode>> children = item.getChildren();
             if (children == null || children.isEmpty()) {
                 return;
             }
-            for (TreeItem<FileInformation> child : children) {
+            for (TreeItem<FileNode> child : children) {
                 checkSelection(child);
             }
         } catch (Exception e) {
@@ -531,16 +525,17 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
         selectionVBox.setDisable(false);
         targetVBox.setDisable(false);
         if (fileUnarchive.getArchiveSuccess() > 0) {
-            openPath();
+            openTarget();
         }
         if (fileUnarchive.getArchiveFail() > 0) {
             if (fileUnarchive.isCharsetIncorrect()) {
                 alertError(message("CharsetIncorrect"));
             }
         }
-        updateLogs(MessageFormat.format(message("FileUnarchived"),
+        showLogs(MessageFormat.format(message("FileUnarchived"),
                 message("Selected") + ":" + selected.size(),
                 fileUnarchive.getArchiveSuccess(), fileUnarchive.getArchiveFail()));
+        super.afterTask();
     }
 
     /*

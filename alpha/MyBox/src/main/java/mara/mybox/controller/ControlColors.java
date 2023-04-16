@@ -485,6 +485,8 @@ public class ControlColors extends BaseSysTableController<ColorData> {
         });
         items.add(menu);
 
+        items.add(new SeparatorMenuItem());
+
         return items;
     }
 

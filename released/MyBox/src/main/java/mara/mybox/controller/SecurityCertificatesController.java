@@ -22,7 +22,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableTimeCell;
 import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.tools.SecurityTools;
+import mara.mybox.tools.CertificateTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 
@@ -58,7 +58,7 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
         try {
             super.initControls();
 
-            passwordInput.setText(SecurityTools.keystorePassword());
+            passwordInput.setText(CertificateTools.keystorePassword());
             htmlButton.setDisable(true);
             addButton.setDisable(true);
             recoverButton.setDisable(true);
@@ -98,7 +98,7 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
             certArea.setText(selected.getCertificates());
             deleteButton.setDisable(false);
         }
-        super.checkButtons();
+        checkButtons();
     }
 
     @Override
@@ -122,7 +122,7 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
     public RecentVisitMenu makeSourceFileRecentVisitMenu(Event event) {
         RecentVisitMenu menu = super.makeSourceFileRecentVisitMenu(event);
         List<String> examples = new ArrayList<>();
-        examples.add(SecurityTools.keystore());
+        examples.add(CertificateTools.keystore());
         return menu.setExamples(examples);
     }
 
@@ -137,7 +137,7 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
         if (sourceFile == null) {
             return;
         }
-        recoverButton.setVisible(sourceFile.getAbsolutePath().equals(SecurityTools.myboxCacerts().getAbsolutePath()));
+        recoverButton.setVisible(sourceFile.getAbsolutePath().equals(CertificateTools.myboxCacerts().getAbsolutePath()));
         try {
             synchronized (this) {
                 if (task != null && !task.isQuit()) {
@@ -354,7 +354,7 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
                         for (CertificateEntry cert : selected) {
                             aliases.add(cert.getAlias());
                         }
-                        error = SecurityTools.uninstallCertificate(
+                        error = CertificateTools.uninstallCertificate(
                                 sourceFile.getAbsolutePath(), passwordInput.getText(),
                                 aliases);
                     } catch (Exception e) {
@@ -381,7 +381,7 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
     @FXML
     public void recover() {
         if (sourceFile == null
-                || !sourceFile.getAbsolutePath().equals(SecurityTools.myboxCacerts().getAbsolutePath())) {
+                || !sourceFile.getAbsolutePath().equals(CertificateTools.myboxCacerts().getAbsolutePath())) {
             return;
         }
         synchronized (this) {
@@ -392,7 +392,7 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
 
                 @Override
                 protected boolean handle() {
-                    SecurityTools.resetKeystore();
+                    CertificateTools.resetKeystore();
                     return true;
                 }
 

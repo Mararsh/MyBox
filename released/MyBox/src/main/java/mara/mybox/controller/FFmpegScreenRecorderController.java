@@ -13,21 +13,17 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.SoundTools;
-import mara.mybox.fxml.WindowTools;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
-import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppPaths;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -45,9 +41,9 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
     @FXML
     protected FFmpegScreenRecorderOptionsController optionsController;
     @FXML
-    protected CheckBox openCheck;
-    @FXML
     protected TextField commandInput;
+    @FXML
+    protected CheckBox miaoRecordCheck;
 
     public FFmpegScreenRecorderController() {
         baseTitle = message("FFmpegScreenRecorder");
@@ -74,6 +70,16 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
         try {
             super.initControls();
 
+            optionsController.setParameters(this);
+
+            miaoRecordCheck.setSelected(UserConfig.getBoolean("FFmpegScreenRecorderMiao", true));
+            miaoRecordCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    UserConfig.setBoolean("FFmpegScreenRecorderMiao", nv);
+                }
+            });
+
             os = SystemTools.os();
 
             openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -90,18 +96,6 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
                     });
             checkExt();
 
-            startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(
-                    targetFileController.valid.not()
-                            .or(optionsController.executableInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-                            .or(optionsController.titleInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-                            .or(optionsController.xInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-                            .or(optionsController.yInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-                            .or(optionsController.widthInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-                            .or(optionsController.heightInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-                            .or(stopping)
-            );
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -116,99 +110,84 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
         if (v == null || v.isBlank()) {
             targetFileController.input(AppPaths.getGeneratedPath() + File.separator + DateTools.nowFileString() + "." + ext);
         } else if (!v.endsWith("." + ext)) {
-            targetFileController.input(FileNameTools.prefix(v) + "." + ext);
+            targetFileController.input(FileNameTools.replaceSuffix(v, ext));
         }
     }
 
     @Override
     public boolean checkOptions() {
-        if (!optionsController.audioCheck.isSelected() && !optionsController.videoCheck.isSelected()) {
-            popError(message("NothingHandled"));
+        try {
+            if (!optionsController.audioCheck.isSelected() && !optionsController.videoCheck.isSelected()) {
+                popError(message("NothingHandled"));
+                return false;
+            }
+            return pickTarget();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
             return false;
         }
-        targetFile = targetFileController.file;
-        if (targetFile == null) {
-            popError(message("InvalidParameters"));
-            return false;
-        }
-        targetFile.getParentFile().mkdirs();
-        return true;
     }
 
-    @FXML
+    public boolean pickTarget() {
+        try {
+            targetFile = targetFileController.file();
+            if (targetFile == null) {
+                popError(message("InvalidParameter") + ": " + message("TargetFile"));
+                return false;
+            }
+            targetPath = targetFile.getParentFile();
+            targetPath.mkdirs();
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return false;
+        }
+    }
+
     @Override
-    public void startAction() {
-        if (!checkOptions()) {
-            return;
+    public void startTask() {
+        long delay = optionsController.delayController.value;
+        if (delay > 0) {
+            showLogs(message("Delay") + ": " + delay + " " + message("Seconds"));
+            timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    superStartTask();
+                }
+            }, delay * 1000);
+        } else {
+            superStartTask();
         }
-        if (startButton.getUserData() != null) {
-            StyleTools.setNameIcon(startButton, message("Start"), "iconStart.png");
-            startButton.applyCss();
-            startButton.setUserData(null);
-            cancelAction();
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            clearLogs();
-            StyleTools.setNameIcon(startButton, message("Stop"), "iconStop.png");
-            startButton.applyCss();
-            startButton.setUserData("started");
-            tabPane.getSelectionModel().select(logsTab);
-            if (optionsController.delayController.value > 0) {
-                updateLogs(message("Delay") + ": " + optionsController.delayController.value + " " + message("Seconds"));
-                timer = new Timer();
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        startTask();
-                    }
-                }, optionsController.delayController.value * 1000);
-            } else {
-                startTask();
-            }
-        }
+    }
+
+    public void superStartTask() {
+        super.startTask();
     }
 
     @Override
     public boolean doTask() {
-        if (optionsController.miaoCheck.isSelected()) {
-            SoundTools.BenWu();
-        }
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
-        updateLogs(message("Started"));
-        List<String> parameters = optionsController.makeParameters(this);
-        if (parameters == null) {
-            return false;
-        }
-        return startRecorder(parameters);
-    }
-
-    protected boolean startRecorder(List<String> parameters) {
         try {
-            if (parameters == null) {
-                return false;
-            }
-            ProcessBuilder pb = new ProcessBuilder(parameters)
-                    .redirectErrorStream(true);
-            FileDeleteTools.delete(targetFile);
-            process = pb.start();
-            updateLogs("PID:" + process.pid());
-            if (optionsController.durationController.value > 0) {
-                updateLogs(message("Duration") + ": "
-                        + optionsController.durationController.value + " " + message("Seconds"));
+            if (miaoRecordCheck.isSelected()) {
+                SoundTools.BenWu();
             }
             if (timer != null) {
                 timer.cancel();
                 timer = null;
             }
+            List<String> parameters = optionsController.makeParameters(null);
+            process = optionsController.startProcess(this, parameters, targetFile);
+            if (process == null) {
+                cancelTask();
+                return false;
+            }
+            showLogs(message("Started"));
+            if (optionsController.durationController.value > 0) {
+                showLogs(message("Duration") + ": "
+                        + optionsController.durationController.value + " " + message("Seconds"));
+            }
             boolean started = false, recording;
-            try ( BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
+            try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                 String line;
                 long start = new Date().getTime();
                 while ((line = inReader.readLine()) != null) {
@@ -240,16 +219,31 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
                 process = null;
             }
             stopping.set(false);
-            if (optionsController.miaoCheck.isSelected()) {
+            if (miaoRecordCheck.isSelected()) {
                 SoundTools.miao7();
             }
+            showLogs(message("Exit"));
             if (started) {
-                openTarget(null);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (targetFile != null && targetFile.exists()) {
+                            recordFileWritten(targetFile);
+                            if (openCheck.isSelected()) {
+                                ControllerTools.openTarget(targetFile.getAbsolutePath());
+                            } else {
+                                browseURI(targetFile.getParentFile().toURI());
+                            }
+                        } else {
+                            popInformation(message("NoFileGenerated"));
+                        }
+                    }
+                });
             } else {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        updateLogs(message("FFmpegScreenRecorderAbnormal"));
+                        showLogs(message("FFmpegScreenRecorderAbnormal"));
                         alertError(message("FFmpegScreenRecorderAbnormal"));
                     }
                 });
@@ -258,6 +252,15 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
             MyBoxLog.error(e.toString());
         }
         return true;
+    }
+
+    @Override
+    public void cancelTask() {
+        if (task != null) {
+            task.cancel();
+            task = null;
+        }
+        cancelAction();
     }
 
     @Override
@@ -271,7 +274,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
         }
         stopping.set(true);
         if (process != null) {
-            try ( BufferedWriter writer = new BufferedWriter(
+            try (BufferedWriter writer = new BufferedWriter(
                     new OutputStreamWriter(process.getOutputStream(), Charset.forName("UTF-8")));) {
                 writer.append('q');
             } catch (Exception e) {
@@ -280,36 +283,10 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
         }
     }
 
-    @FXML
-    @Override
-    public void openTarget(ActionEvent event) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                if (targetFile != null && targetFile.exists()) {
-                    recordFileOpened(targetFile);
-                    if (openCheck.isSelected()) {
-                        MediaPlayerController controller
-                                = (MediaPlayerController) WindowTools.openStage(Fxmls.MediaPlayerFxml);
-                        controller.load(targetFile);
-                    } else {
-                        browseURI(targetFile.getParentFile().toURI());
-                    }
-                } else {
-                    popInformation(message("NoFileGenerated"));
-                }
-            }
-        });
-    }
-
     @Override
     public void cleanPane() {
         try {
-            if (timer != null) {
-                timer.cancel();
-                timer = null;
-            }
-            cancelAction();
+            cancelTask();
         } catch (Exception e) {
         }
         super.cleanPane();

@@ -4,18 +4,17 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
+import mara.mybox.controller.BaseTaskController;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataTable;
 import mara.mybox.data2d.TmpTable;
+import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.Data2DDefinition.Type;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
 import static mara.mybox.fxml.WindowTools.recordError;
 import static mara.mybox.fxml.WindowTools.recordInfo;
 import static mara.mybox.value.Languages.message;
@@ -297,97 +296,177 @@ public class TableData2DDefinition extends BaseTable<Data2DDefinition> {
         }
     }
 
-    public int clearInvalid(SingletonTask task, Connection conn, boolean clearTmpTables) {
-        int count = 0;
+    public int clearInvalid(BaseTaskController taskController, Connection conn, boolean clearTmpTables) {
+        int invalidCount = 0;
         try {
-            recordInfo(task, message("Check") + ": " + tableName);
-            conn.setAutoCommit(true);
-//            recordInfo(task, Delete_InvalidExcelSheet);
-            update(conn, Delete_InvalidExcelSheet);
-            String sql = "SELECT * FROM Data2D_Definition WHERE data_type < 4";
-//            recordInfo(task, sql);
-            List<Data2DDefinition> invalid = new ArrayList<>();
-            try (ResultSet results = conn.prepareStatement(sql).executeQuery()) {
-                while (results.next()) {
-                    if (task != null && task.isCancelled()) {
-                        return -1;
-                    }
-                    Data2DDefinition data = readData(results);
-                    try {
-                        File file = data.getFile();
-                        if (file == null || !file.exists() || !file.isFile()) {
-                            invalid.add(data);
-                            if (file != null) {
-                                recordInfo(task, message("NotFound") + ": " + file.getAbsolutePath());
-                            }
-                        }
-                    } catch (Exception e) {
-                        invalid.add(data);
-                        recordError(task, e.toString() + "\n" + tableName);
-                    }
-                }
-            }
-            count = invalid.size();
-            deleteData(conn, invalid);
-            conn.commit();
+            recordInfo(taskController, message("Check") + ": " + tableName);
 
-            if (task != null && task.isCancelled()) {
-                return -1;
+            invalidCount = clearInvalidExcelSheet(taskController, conn);
+
+            if (taskController != null && taskController.getTask() != null
+                    && taskController.getTask().isCancelled()) {
+                return invalidCount;
             }
-            conn.setAutoCommit(true);
-            invalid.clear();
-            sql = "SELECT * FROM Data2D_Definition WHERE data_type ="
-                    + Data2D.type(Data2DDefinition.Type.DatabaseTable);
-//            recordInfo(task, sql);
-            try (ResultSet results = conn.prepareStatement(sql).executeQuery()) {
-                while (results.next()) {
-                    if (task != null && task.isCancelled()) {
-                        return -1;
-                    }
-                    Data2DDefinition data = readData(results);
-                    if (DerbyBase.exist(conn, data.getSheet()) == 0) {
-                        invalid.add(data);
-                        recordInfo(task, message("NotFound") + ": " + data.getSheet());
-                    }
-                }
+
+            invalidCount += clearInvalidTable(taskController, conn);
+
+            if (taskController != null && taskController.getTask() != null
+                    && taskController.getTask().isCancelled()) {
+                return invalidCount;
             }
-            count += invalid.size();
-            deleteData(conn, invalid);
-            conn.commit();
 
             if (clearTmpTables) {
-                conn.setAutoCommit(true);
-                invalid.clear();
-                sql = "SELECT * FROM Data2D_Definition WHERE data_type="
-                        + Data2D.type(Data2DDefinition.Type.DatabaseTable)
-                        + " AND ( sheet like '" + TmpTable.TmpTablePrefix + "%'"
-                        + " OR sheet like '" + TmpTable.TmpTablePrefix.toLowerCase() + "%' )";
-//                recordInfo(task, sql);
-                try (ResultSet results = conn.prepareStatement(sql).executeQuery()) {
-                    while (results.next()) {
-                        if (task != null && task.isCancelled()) {
-                            return -1;
-                        }
-                        Data2DDefinition data = readData(results);
-                        invalid.add(data);
-                        recordInfo(task, message("Delete") + ": " + data.getSheet());
-                    }
-                } catch (Exception e) {
-                    recordError(task, e.toString() + "\n" + tableName);
-                }
-                count += invalid.size();
-                for (Data2DDefinition d : invalid) {
-                    if (task != null && task.isCancelled()) {
-                        return -1;
-                    }
-                    deleteUserTable(conn, d.getSheet());
-                }
-                conn.commit();
+                invalidCount += clearTmpTables(taskController, conn);
             }
         } catch (Exception e) {
-            recordError(task, e.toString() + "\n" + tableName);
+            recordError(taskController, e.toString() + "\n" + tableName);
         }
-        return count;
+        return invalidCount;
+    }
+
+    public int clearInvalidExcelSheet(BaseTaskController taskController, Connection conn) {
+        int rowCount = 0, invalidCount = 0;
+        try {
+            recordInfo(taskController, Delete_InvalidExcelSheet);
+            update(conn, Delete_InvalidExcelSheet);
+            String sql = "SELECT * FROM Data2D_Definition WHERE data_type < 4";
+            recordInfo(taskController, sql);
+            try (PreparedStatement query = conn.prepareStatement(sql);
+                    PreparedStatement delete = conn.prepareStatement(deleteStatement())) {
+                conn.setAutoCommit(true);
+                try (ResultSet results = query.executeQuery()) {
+                    conn.setAutoCommit(false);
+                    while (results.next()) {
+                        rowCount++;
+                        if (taskController != null && taskController.getTask() != null
+                                && taskController.getTask().isCancelled()) {
+                            return invalidCount;
+                        }
+                        Data2DDefinition data = readData(results);
+                        File file = data.getFile();
+                        if (file == null || !file.exists() || !file.isFile()) {
+                            if (setDeleteStatement(conn, delete, data)) {
+                                delete.addBatch();
+                                if (invalidCount > 0 && (invalidCount % Database.BatchSize == 0)) {
+                                    int[] res = delete.executeBatch();
+                                    for (int r : res) {
+                                        if (r > 0) {
+                                            invalidCount += r;
+                                        }
+                                    }
+                                    conn.commit();
+                                    delete.clearBatch();
+                                }
+                            }
+                            if (file != null) {
+                                recordInfo(taskController, message("NotFound") + ": " + file.getAbsolutePath());
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    recordError(taskController, e.toString() + "\n" + tableName);
+                }
+                int[] res = delete.executeBatch();
+                for (int r : res) {
+                    if (r > 0) {
+                        invalidCount += r;
+                    }
+                }
+                conn.commit();
+            } catch (Exception e) {
+                recordError(taskController, e.toString() + "\n" + tableName);
+            }
+            recordInfo(taskController, message("Checked") + ": " + rowCount + " "
+                    + message("Expired") + ": " + invalidCount);
+
+        } catch (Exception e) {
+            recordError(taskController, e.toString() + "\n" + tableName);
+        }
+        return invalidCount;
+    }
+
+    public int clearInvalidTable(BaseTaskController taskController, Connection conn) {
+        int rowCount = 0, invalidCount = 0;
+        try {
+            String sql = "SELECT * FROM Data2D_Definition WHERE data_type ="
+                    + Data2D.type(Data2DDefinition.Type.DatabaseTable);
+            recordInfo(taskController, sql);
+            conn.setAutoCommit(true);
+            try (ResultSet results = conn.prepareStatement(sql).executeQuery();
+                    PreparedStatement delete = conn.prepareStatement(deleteStatement())) {
+                while (results.next()) {
+                    rowCount++;
+                    if (taskController != null && taskController.getTask() != null
+                            && taskController.getTask().isCancelled()) {
+                        return invalidCount;
+                    }
+                    Data2DDefinition data = readData(results);
+                    String tname = data.getSheet();
+                    if (DerbyBase.exist(conn, tname) == 0) {
+                        if (setDeleteStatement(conn, delete, data)) {
+                            delete.addBatch();
+                            if (invalidCount > 0 && (invalidCount % Database.BatchSize == 0)) {
+                                int[] res = delete.executeBatch();
+                                for (int r : res) {
+                                    if (r > 0) {
+                                        invalidCount += r;
+                                    }
+                                }
+                                conn.commit();
+                                delete.clearBatch();
+                            }
+                        }
+                        recordInfo(taskController, message("NotFound") + ": " + tname);
+                    }
+                }
+                int[] res = delete.executeBatch();
+                for (int r : res) {
+                    if (r > 0) {
+                        invalidCount += r;
+                    }
+                }
+            } catch (Exception e) {
+                recordError(taskController, e.toString() + "\n" + tableName);
+            }
+            recordInfo(taskController, message("Checked") + ": " + rowCount + " "
+                    + message("Expired") + ": " + invalidCount);
+        } catch (Exception e) {
+            recordError(taskController, e.toString() + "\n" + tableName);
+        }
+        return invalidCount;
+    }
+
+    public int clearTmpTables(BaseTaskController taskController, Connection conn) {
+        int rowCount = 0, invalidCount = 0;
+        try {
+            conn.setAutoCommit(true);
+            String sql = "SELECT * FROM Data2D_Definition WHERE data_type="
+                    + Data2D.type(Data2DDefinition.Type.DatabaseTable)
+                    + " AND ( sheet like '" + TmpTable.TmpTablePrefix + "%'"
+                    + " OR sheet like '" + TmpTable.TmpTablePrefix.toLowerCase() + "%' )";
+            recordInfo(taskController, sql);
+            try (ResultSet results = conn.prepareStatement(sql).executeQuery()) {
+                while (results.next()) {
+                    rowCount++;
+                    if (taskController != null && taskController.getTask() != null
+                            && taskController.getTask().isCancelled()) {
+                        return invalidCount;
+                    }
+                    Data2DDefinition data = readData(results);
+                    String tname = data.getSheet();
+                    deleteUserTable(conn, tname);
+                    recordInfo(taskController, message("Delete") + ": " + tname);
+                }
+            } catch (Exception e) {
+                recordError(taskController, e.toString() + "\n" + tableName);
+            }
+            conn.commit();
+            recordInfo(taskController, message("Checked") + ": " + rowCount + " "
+                    + message("Expired") + ": " + invalidCount);
+        } catch (Exception e) {
+            recordError(taskController, e.toString() + "\n" + tableName);
+        }
+        return invalidCount;
     }
 
 }

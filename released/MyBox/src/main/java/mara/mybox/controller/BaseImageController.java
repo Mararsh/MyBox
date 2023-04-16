@@ -19,9 +19,6 @@ public abstract class BaseImageController extends BaseImageController_Actions {
         try {
             super.initControls();
 
-            if (sampledView != null) {
-                sampledView.setVisible(false);
-            }
             initImageView();
             initViewControls();
             initMaskPane();

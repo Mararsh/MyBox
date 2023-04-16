@@ -65,7 +65,6 @@ public class TreeTableSelectionCell<S, T> extends CheckBoxTreeTableCell<S, T> {
         if (empty || item == null) {
             setText(null);
             setGraphic(null);
-            return;
         }
     }
 

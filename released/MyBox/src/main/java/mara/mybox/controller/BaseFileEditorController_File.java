@@ -184,9 +184,6 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
                 return;
             }
             autoSaveDurationController.permitInvalid(!autoSaveCheck.isSelected());
-            if (confirmCheck != null) {
-                confirmCheck.setVisible(!autoSaveCheck.isSelected());
-            }
             if (autoSaveTimer != null) {
                 autoSaveTimer.cancel();
                 autoSaveTimer = null;
@@ -296,7 +293,7 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
             if (isSettingValues || !checkBeforeNextAction()) {
                 return;
             }
-            int v = Integer.valueOf(pageSizeSelector.getValue().replaceAll(",", ""));
+            int v = Integer.parseInt(pageSizeSelector.getValue().replaceAll(",", ""));
             int available = (int) (SystemTools.freeBytes() / 4);
             if (v > available) {
                 popError(message("MayOutOfMemory"));

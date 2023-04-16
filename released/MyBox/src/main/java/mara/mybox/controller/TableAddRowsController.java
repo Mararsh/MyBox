@@ -109,7 +109,8 @@ public class TableAddRowsController extends BaseChildController {
             }
             rowSelector.getItems().setAll(rows);
             int tableSelect = tableViewController.selectedIndix();
-            rowSelector.getSelectionModel().select(tableSelect >= 0 ? tableSelect : (thisSelect >= 0 ? thisSelect : 0));
+            rowSelector.getSelectionModel().select(
+                    tableSelect >= 0 ? tableSelect : (thisSelect >= 0 ? thisSelect : 0));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -129,8 +130,8 @@ public class TableAddRowsController extends BaseChildController {
         numberInput.setText((number - 1) + "");
     }
 
-    public void addRow(int index, int number) {
-        tableViewController.addRows(index, number);
+    public int addRow(int index, int number) {
+        return tableViewController.addRows(index, number);
     }
 
     @FXML
@@ -149,11 +150,12 @@ public class TableAddRowsController extends BaseChildController {
             } else if (belowRadio.isSelected()) {
                 index++;
             }
-            addRow(index, number);
-            popSuccessful();
+            if (addRow(index, number) > 0) {
+                close();
+                tableViewController.popSuccessful();
+            }
 
-            setSelector();
-
+//            setSelector();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

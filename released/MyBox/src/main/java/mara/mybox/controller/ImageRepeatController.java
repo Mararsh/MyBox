@@ -102,6 +102,13 @@ public class ImageRepeatController extends ImageViewerController {
                 }
             });
 
+            sourceController.rectDrawnNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    originalSize();
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -127,11 +134,22 @@ public class ImageRepeatController extends ImageViewerController {
         originalSize();
         checkRepeatType();
         imageLabel.setText("");
+        if (sourceController.sourceFile != null) {
+            myStage.setTitle(baseTitle + " - " + sourceController.sourceFile);
+        } else {
+            myStage.setTitle(baseTitle);
+        }
     }
 
     public Image sourceImage() {
         sourceController.bgColor = colorSetController.color();
         return sourceController.scopeImage();
+    }
+
+    @FXML
+    @Override
+    public void openSourcePath() {
+        sourceController.openSourcePath();
     }
 
     @FXML
@@ -153,7 +171,7 @@ public class ImageRepeatController extends ImageViewerController {
             return;
         }
         try {
-            int v = Integer.valueOf(widthInput.getText());
+            int v = Integer.parseInt(widthInput.getText());
             if (v > 0) {
                 scaleWidth = v;
                 widthInput.setStyle(null);
@@ -169,7 +187,7 @@ public class ImageRepeatController extends ImageViewerController {
             return;
         }
         try {
-            int v = Integer.valueOf(heightInput.getText());
+            int v = Integer.parseInt(heightInput.getText());
             if (v > 0) {
                 scaleHeight = v;
                 heightInput.setStyle(null);
@@ -186,7 +204,7 @@ public class ImageRepeatController extends ImageViewerController {
         }
         if (repeatRadio.isSelected()) {
             try {
-                int v = Integer.valueOf(horizontalInput.getText());
+                int v = Integer.parseInt(horizontalInput.getText());
                 if (v > 0) {
                     repeatH = v;
                     horizontalInput.setStyle(null);
@@ -202,7 +220,7 @@ public class ImageRepeatController extends ImageViewerController {
                 return;
             }
             try {
-                int v = Integer.valueOf(veriticalInput.getText());
+                int v = Integer.parseInt(veriticalInput.getText());
                 if (v > 0) {
                     repeatV = v;
                     veriticalInput.setStyle(null);
@@ -219,7 +237,7 @@ public class ImageRepeatController extends ImageViewerController {
             }
         } else {
             try {
-                int v = Integer.valueOf(horizontalInput.getText());
+                int v = Integer.parseInt(horizontalInput.getText());
                 if (v > 0) {
                     canvasWidth = v;
                     horizontalInput.setStyle(null);
@@ -235,7 +253,7 @@ public class ImageRepeatController extends ImageViewerController {
                 return;
             }
             try {
-                int v = Integer.valueOf(veriticalInput.getText());
+                int v = Integer.parseInt(veriticalInput.getText());
                 if (v > 0) {
                     canvasHeight = v;
                     veriticalInput.setStyle(null);
@@ -253,7 +271,7 @@ public class ImageRepeatController extends ImageViewerController {
         }
 
         try {
-            int v = Integer.valueOf(intervalSelector.getValue());
+            int v = Integer.parseInt(intervalSelector.getValue());
             interval = v;
             UserConfig.setString(baseName + "Interval", v + "");
             ValidationTools.setEditorNormal(intervalSelector);
@@ -265,7 +283,7 @@ public class ImageRepeatController extends ImageViewerController {
         }
 
         try {
-            int v = Integer.valueOf(marginSelector.getValue());
+            int v = Integer.parseInt(marginSelector.getValue());
             if (v >= 0) {
                 margin = v;
                 UserConfig.setString(baseName + "Margins", v + "");

@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -76,11 +77,15 @@ public class DataMigration {
         try (Connection conn = DerbyBase.getConnection()) {
             int lastVersion = DevTools.lastVersion(conn);
             int currentVersion = DevTools.myboxVersion(AppValues.AppVersion);
+            if (SystemConfig.getBoolean("IsAlpha", false) && !AppValues.Alpha) {
+                reloadInternalResources();
+            }
+            SystemConfig.setBoolean("IsAlpha", AppValues.Alpha);
             if (lastVersion == currentVersion) {
                 return true;
             }
             MyBoxLog.info("Last version: " + lastVersion + " " + "Current version: " + currentVersion);
-            reloadInternalDoc();
+            reloadInternalResources();
             if (lastVersion > 0) {
 
                 if (lastVersion < 6002001) {
@@ -161,6 +166,7 @@ public class DataMigration {
                 if (lastVersion < 6007001) {
                     updateIn671(conn);
                 }
+
             }
             TableStringValues.add(conn, "InstalledVersions", AppValues.AppVersion);
             conn.setAutoCommit(true);
@@ -1528,17 +1534,68 @@ public class DataMigration {
     /*
         common
      */
-    private static void reloadInternalDoc() {
+    private static void reloadInternalResources() {
         new Thread() {
             @Override
             public void run() {
                 try {
-                    MyBoxLog.info("Reloading internal doc...");
-                    FxFileTools.getInternalFile("/doc/zh/README.md", "doc", "README-zh.md", true);
-                    FxFileTools.getInternalFile("/doc/zh/MyBox-Overview-zh.pdf", "doc", "MyBox-Overview-zh.pdf", true);
-                    FxFileTools.getInternalFile("/doc/en/README.md", "doc", "README-en.md", true);
-                    FxFileTools.getInternalFile("/doc/en/MyBox-Overview-en.pdf", "doc", "MyBox-Overview-en.pdf", true);
-                    MyBoxLog.info("Internal doc loaded.");
+                    MyBoxLog.info("Refresh internal resources...");
+                    File dir = new File(AppVariables.MyboxDataPath + File.separator + "doc");
+                    File[] list = dir.listFiles();
+                    if (list != null) {
+                        for (File file : list) {
+                            if (file.isDirectory()) {
+                                continue;
+                            }
+                            String name = file.getName();
+                            if (name.contains("MyBox")
+                                    || name.contains("readme") || name.contains("README")) {
+                                file.delete();
+                            }
+                        }
+                    }
+
+                    dir = new File(AppVariables.MyboxDataPath + File.separator + "image");
+                    list = dir.listFiles();
+                    if (list != null) {
+                        for (File file : list) {
+                            if (file.isDirectory()) {
+                                continue;
+                            }
+                            String name = file.getName();
+                            if (name.startsWith("icon") && name.endsWith(".png")) {
+                                file.delete();
+                            }
+                        }
+                    }
+
+                    dir = new File(AppVariables.MyboxDataPath + File.separator + "buttons");
+                    list = dir.listFiles();
+                    if (list != null) {
+                        for (File file : list) {
+                            if (file.isDirectory()) {
+                                continue;
+                            }
+                            String name = file.getName();
+                            if (name.startsWith("icon") && name.endsWith(".png")) {
+                                file.delete();
+                            }
+                        }
+                    }
+
+                    String path = AppVariables.MyboxDataPath + File.separator + "data" + File.separator;
+                    List<String> names = new ArrayList<>();
+                    names.addAll(Arrays.asList("Notebook_Examples_en.txt", "Notebook_Examples_zh.txt",
+                            "WebFavorite_Examples_en.txt", "WebFavorite_Examples_zh.txt"));
+                    for (String name : names) {
+                        try {
+                            new File(path + name).delete();
+                        } catch (Exception e) {
+                        }
+                    }
+
+                    MyBoxLog.info("Internal resources refreshed.");
+
                 } catch (Exception e) {
                     MyBoxLog.console(e.toString());
                 }

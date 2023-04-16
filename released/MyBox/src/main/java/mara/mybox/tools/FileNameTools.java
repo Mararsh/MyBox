@@ -59,6 +59,7 @@ public class FileNameTools {
         }
     }
 
+    // not include path, only filename's prefix
     public static String prefix(String filename) {
         if (filename == null) {
             return null;

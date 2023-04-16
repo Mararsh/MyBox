@@ -6,6 +6,38 @@
  </head>
  <body contenteditable="false" style="width: 900px; margin:0 auto;">
   <h1>Development Logs</h1>
+  <p>2023-4-12 v6.7.2</p>
+  <ul>
+   <li>Added: 
+    <ul>
+     <li>Manage Remote Path(SFTP).</li>
+     <li>Synchronize Remote Directory from Local.</li>
+     <li>Clear Expired Data.</li>
+    </ul></li>
+   <li>Improved: 
+    <ul>
+     <li>Option to disable omission of Ctrl/Alt in shortcuts.(To avoid misoperations)</li>
+     <li>Always disable omission of Ctrl/Alt in shortcuts of following buttons: Save, Delete, Clear. (To avoid accidents)</li>
+     <li>Values can be validated when edit data.</li>
+     <li>List all available video devices and audio devices when run Screen Recorder.</li>
+    </ul></li>
+   <li>Removed: 
+    <ul>
+     <li>No option “high dpi icons” any more.</li>
+     <li>Not support resume for “Directory Synchronize”.</li>
+    </ul></li>
+   <li>Solved problems: 
+    <ul>
+     <li>When edit data, values in other rows may be tampered. (Serious bug since 2019)</li>
+     <li>When edit data, should not apply modification to all new rows.</li>
+     <li>When edit/add data rows, values should not be validated automatically.</li>
+     <li>Logic about “node A is sub-node of node B” has bug.</li>
+     <li>Function “ffmepg convert medias” does not work.</li>
+     <li>Interface behavious of Html Editor are unexpected.</li>
+     <li>Option “pop menu when hovering button” does not work in some interfaces.</li>
+    </ul></li>
+  </ul>
+  <p><a target=_blank target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.2">Closed requirements/bugs in this version</a></p>
   <p>2023-3-13 v6.7.1</p>
   <ul>
    <li>Added: 

@@ -17,7 +17,7 @@ import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.cell.TableFileSizeCell;
 import mara.mybox.fxml.cell.TableTimeCell;
 import mara.mybox.tools.DateTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -39,7 +39,7 @@ public class FilesFindController extends BaseBatchFileController {
     protected TableColumn<FileInformation, Long> sizeColumn, modifyTimeColumn, createTimeColumn;
 
     public FilesFindController() {
-        baseTitle = Languages.message("FilesFind");
+        baseTitle = message("FilesFind");
     }
 
     @Override
@@ -52,7 +52,7 @@ public class FilesFindController extends BaseBatchFileController {
             openTargetButton.setVisible(false);
             openCheck.setVisible(false);
 
-            done = Languages.message("Done");
+            done = message("Done");
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -110,7 +110,7 @@ public class FilesFindController extends BaseBatchFileController {
     @Override
     public void disableControls(boolean disable) {
         tableController.thisPane.setDisable(disable);
-        batchTabPane.getSelectionModel().select(targetTab);
+        tabPane.getSelectionModel().select(targetTab);
     }
 
     @Override
@@ -120,7 +120,7 @@ public class FilesFindController extends BaseBatchFileController {
         }
         totalFilesHandled++;
         if (totalFilesHandled % 100 == 0) {
-            updateStatusLabel(Languages.message("Checked") + ": " + totalFilesHandled);
+            updateStatusLabel(message("Checked") + ": " + totalFilesHandled);
         }
     }
 
@@ -174,21 +174,21 @@ public class FilesFindController extends BaseBatchFileController {
     public void showCost() {
         String s;
         if (paused) {
-            s = Languages.message("Paused");
+            s = message("Paused");
         } else {
-            s = Languages.message(currentParameters.status);
+            s = message(currentParameters.status);
         }
         s += ".  "
-                + Languages.message("TotalCheckedFiles") + ": " + totalFilesHandled + "   "
-                + Languages.message("TotalMatched") + ": " + totalMatched + ".   "
-                + Languages.message("Cost") + ": " + DateTools.datetimeMsDuration(new Date(), processStartTime) + ". "
-                + Languages.message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + ", "
-                + Languages.message("EndTime") + ": " + DateTools.datetimeToString(new Date());
-        statusLabel.setText(s);
+                + message("TotalCheckedFiles") + ": " + totalFilesHandled + "   "
+                + message("TotalMatched") + ": " + totalMatched + ".   "
+                + message("Cost") + ": " + DateTools.datetimeMsDuration(new Date(), processStartTime) + ". "
+                + message("StartTime") + ": " + DateTools.datetimeToString(processStartTime) + ", "
+                + message("EndTime") + ": " + DateTools.datetimeToString(new Date());
+        statusInput.setText(s);
     }
 
     @Override
-    public void donePost() {
+    public void afterTask() {
         showCost();
         if (miaoCheck.isSelected()) {
             SoundTools.miao3();
@@ -197,7 +197,7 @@ public class FilesFindController extends BaseBatchFileController {
 
     @FXML
     @Override
-    public void openTarget(ActionEvent event) {
+    public void openTarget() {
 
     }
 

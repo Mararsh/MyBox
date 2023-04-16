@@ -14,6 +14,7 @@ import java.util.concurrent.ScheduledFuture;
 import javafx.beans.property.SimpleBooleanProperty;
 import mara.mybox.controller.AlarmClockController;
 import mara.mybox.db.Database;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ImageClipboardMonitor;
 import mara.mybox.fxml.TextClipboardMonitor;
@@ -44,9 +45,9 @@ public class AppVariables {
     public static AlarmClockController alarmClockController;
     public static MemoryUsageSetting pdfMemUsage;
     public static int sceneFontSize, fileRecentNumber, iconSize, thumbnailWidth;
-    public static boolean isChinese, closeCurrentWhenOpenTool, recordWindowsSizeLocation, controlDisplayText,
-            hidpiIcons, ignoreDbUnavailable, popErrorLogs, saveDebugLogs, detailedDebugLogs,
-            isTesting, handlingExit;
+    public static boolean isChinese, isTesting, handlingExit, ShortcutsCanNotOmitCtrlAlt, icons40px,
+            closeCurrentWhenOpenTool, recordWindowsSizeLocation, controlDisplayText,
+            ignoreDbUnavailable, popErrorLogs, saveDebugLogs, detailedDebugLogs;
     public static TextClipboardMonitor textClipboardMonitor;
     public static ImageClipboardMonitor imageClipboardMonitor;
     public static Timer exitTimer;
@@ -63,12 +64,13 @@ public class AppVariables {
             closeCurrentWhenOpenTool = UserConfig.getBoolean("CloseCurrentWhenOpenTool", false);
             recordWindowsSizeLocation = UserConfig.getBoolean("RecordWindowsSizeLocation", true);
             sceneFontSize = UserConfig.getInt("SceneFontSize", 15);
-            fileRecentNumber = UserConfig.getInt("FileRecentNumber", 16);
+            fileRecentNumber = UserConfig.getInt("FileRecentNumber", VisitHistory.Default_Max_Histories);
             iconSize = UserConfig.getInt("IconSize", 20);
             thumbnailWidth = UserConfig.getInt("ThumbnailWidth", 100);
             ControlColor = StyleTools.getConfigStyleColor();
             controlDisplayText = UserConfig.getBoolean("ControlDisplayText", false);
-            hidpiIcons = UserConfig.getBoolean("HidpiIcons", Toolkit.getDefaultToolkit().getScreenResolution() > 120);
+            icons40px = UserConfig.getBoolean("Icons40px", Toolkit.getDefaultToolkit().getScreenResolution() <= 120);
+            ShortcutsCanNotOmitCtrlAlt = UserConfig.getBoolean("ShortcutsCanNotOmitCtrlAlt", false);
             saveDebugLogs = UserConfig.getBoolean("SaveDebugLogs", false);
             detailedDebugLogs = UserConfig.getBoolean("DetailedDebugLogs", false);
             ignoreDbUnavailable = false;

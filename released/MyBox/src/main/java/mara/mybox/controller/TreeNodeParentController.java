@@ -12,8 +12,9 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-3-14
  * @License Apache License Version 2.0
  */
-public class TreeNodeParentController extends TreeNodesController {
+public class TreeNodeParentController extends ControlTreeInfoSelect {
 
+    protected TreeManageController manageController;
     protected TreeNodeEditor nodeController;
 
     public TreeNodeParentController() {
@@ -33,7 +34,7 @@ public class TreeNodeParentController extends TreeNodesController {
             close();
             return;
         }
-        TreeItem<TreeNode> targetItem = treeView.getSelectionModel().getSelectedItem();
+        TreeItem<TreeNode> targetItem = selected();
         if (targetItem == null) {
             alertError(message("SelectNodeAsParent"));
             return;

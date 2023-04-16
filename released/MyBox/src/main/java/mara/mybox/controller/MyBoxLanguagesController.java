@@ -19,7 +19,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
@@ -138,12 +137,8 @@ public class MyBoxLanguagesController extends BaseController {
         }
 
         @Override
-        public void startEdit() {
-            int row = rowIndex();
-            if (row < 0) {
-                return;
-            }
-            LanguageItem item = tableData.get(row);
+        public void editCell() {
+            LanguageItem item = tableData.get(editingRow);
             String en = item.getEnglish();
             String value = item.getValue();
             if (value != null && value.contains("\n") || en != null && en.contains("\n")) {
@@ -155,13 +150,13 @@ public class MyBoxLanguagesController extends BaseController {
                         String value = inputController.getInput();
                         inputController.getNotify().removeListener(getListener);
                         getListener = null;
-                        setCellValue(row, value);
+                        setCellValue(editingRow, value);
                         inputController.closeStage();
                     }
                 };
                 inputController.getNotify().addListener(getListener);
             } else {
-                super.startEdit();
+                super.editCell();
             }
         }
 
@@ -486,22 +481,8 @@ public class MyBoxLanguagesController extends BaseController {
         items.add(menu);
 
         items.add(new SeparatorMenuItem());
-        menu = new MenuItem(Languages.message("PopupClose"));
-        menu.setStyle("-fx-text-fill: #2e598a;");
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = null;
-        });
-        items.add(menu);
-        if (popMenu != null && popMenu.isShowing()) {
-            popMenu.hide();
-        }
-        popMenu = new ContextMenu();
-        popMenu.setAutoHide(true);
-        popMenu.getItems().addAll(items);
-        popMenu.show(tableView, event.getScreenX(), event.getScreenY());
+
+        popEventMenu(event, items);
     }
 
     @FXML

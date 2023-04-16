@@ -148,7 +148,15 @@ public abstract class BaseData2DFileController extends BaseData2DController {
     }
 
     protected void checkStatus() {
-        leftPane.setDisable(dataController.data2D == null || dataController.data2D.isTmpData());
+        if (dataController.data2D != null) {
+            sourceFile = dataController.data2D.getFile();
+        } else {
+            sourceFile = null;
+        }
+        if (openSourceButton != null) {
+            openSourceButton.setDisable(sourceFile == null || !sourceFile.exists());
+        }
+        leftPane.setDisable(sourceFile == null);
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
@@ -162,6 +170,9 @@ public abstract class BaseData2DFileController extends BaseData2DController {
     @FXML
     @Override
     public void saveAsAction() {
+        if (!dataController.tableController.verifyData()) {
+            return;
+        }
         Data2D targetData = saveAsTarget();
         if (targetData == null) {
             return;

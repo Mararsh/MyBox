@@ -6,7 +6,6 @@ import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.ScaleTools;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -63,8 +62,18 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
 
                 @Override
                 protected boolean handle() {
+                    if (framesNumber <= 0) {
+                        framesNumber = 1;
+                    }
+                    int frame = index;
+                    if (frame < 0) {
+                        frame = framesNumber - 1;
+                    }
+                    if (frame >= framesNumber) {
+                        frame = 0;
+                    }
                     loadedInfo = new ImageInformation(file);
-                    loadedInfo.setIndex(index);
+                    loadedInfo.setIndex(frame);
                     loadedInfo.setRequiredWidth(width);
                     loadedInfo.setTask(loadTask);
                     loadedInfo = ImageFileReaders.makeInfo(loadedInfo, onlyInformation);
@@ -214,17 +223,21 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         if (metaButton != null) {
             metaButton.setDisable(imageInformation == null);
         }
+        File file = imageFile();
         if (deleteButton != null) {
-            deleteButton.setDisable(imageFile() == null);
+            deleteButton.setDisable(file == null);
         }
         if (renameButton != null) {
-            renameButton.setDisable(imageFile() == null);
+            renameButton.setDisable(file == null);
         }
         if (previousButton != null) {
-            previousButton.setDisable(imageFile() == null);
+            previousButton.setDisable(file == null);
         }
         if (nextButton != null) {
-            nextButton.setDisable(imageFile() == null);
+            nextButton.setDisable(file == null);
+        }
+        if (openSourceButton != null) {
+            openSourceButton.setDisable(file == null || !file.exists());
         }
     }
 
@@ -255,15 +268,6 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             imageView.setImage(image);
             if (image == null) {
                 return true;
-            }
-
-            if (sampledView != null) {
-                if (imageInformation != null && imageInformation.isIsSampled()) {
-                    NodeStyleTools.setTooltip(sampledView, imageInformation.sampleInformation(image));
-                    sampledView.setVisible(true);
-                } else {
-                    sampledView.setVisible(false);
-                }
             }
 
             if (isPop) {

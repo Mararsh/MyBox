@@ -383,7 +383,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
         }
         boolean valid = true;
         try {
-            int distance = Integer.valueOf(scopeDistanceSelector.getValue());
+            int distance = Integer.parseInt(scopeDistanceSelector.getValue());
             switch (scope.getColorScopeType()) {
                 case Hue:
                     if (distance >= 0 && distance <= 360) {

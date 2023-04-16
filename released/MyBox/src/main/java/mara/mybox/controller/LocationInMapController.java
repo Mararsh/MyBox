@@ -172,8 +172,8 @@ public class LocationInMapController extends GeographyCodeMapController {
                     if (!addressRadio.isSelected()) {
                         try {
                             String[] values = value.split(",");
-                            double longitude = DoubleTools.scale6(Double.valueOf(values[0].trim()));
-                            double latitude = DoubleTools.scale6(Double.valueOf(values[1].trim()));
+                            double longitude = DoubleTools.scale6(Double.parseDouble(values[0].trim()));
+                            double latitude = DoubleTools.scale6(Double.parseDouble(values[1].trim()));
                             code = GeographyCodeTools.geoCode(mapOptions.getCoordinateSystem(),
                                     longitude, latitude, true);
                         } catch (Exception e) {

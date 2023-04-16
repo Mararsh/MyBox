@@ -7,6 +7,7 @@ import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.paint.Color;
 import javafx.stage.Window;
 import mara.mybox.bufferedimage.ColorConvertTools;
@@ -42,6 +43,7 @@ public class PaletteTools {
         try {
             List<MenuItem> items = new ArrayList<>();
             items.addAll(paletteExamplesMenu(parent));
+            items.add(new SeparatorMenuItem());
             parent.popEventMenu(event, items);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

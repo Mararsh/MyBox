@@ -39,7 +39,7 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public class StyleTools {
-
+    
     public static String ButtonsSourcePath = "buttons/";
 
     /*
@@ -53,23 +53,23 @@ public class StyleTools {
         StyleData style;
         if (id.startsWith("color")) {
             style = StylePrefix.color(node, id);
-
+            
         } else if (id.startsWith("his")) {
             style = StylePrefix.his(node, id);
-
+            
         } else if (id.startsWith("settings")) {
             style = StylePrefix.settings(node, id);
-
+            
         } else if (id.startsWith("scope")) {
             style = StylePrefix.scope(node, id);
-
+            
         } else {
             style = getStyleData(node, id);
-
+            
         }
         return style;
     }
-
+    
     public static StyleData getStyleData(Node node, String id) {
         if (node == null || id == null) {
             return null;
@@ -77,33 +77,33 @@ public class StyleTools {
         StyleData style = null;
         if (node instanceof ImageView) {
             style = StyleImageView.imageViewStyle(id);
-
+            
         } else if (node instanceof RadioButton) {
             style = StyleRadioButton.radioButtonStyle(id);
-
+            
         } else if (node instanceof CheckBox) {
             style = StyleCheckBox.checkBoxStyle(id);
-
+            
         } else if (node instanceof ToggleButton) {
             style = StyleToggleButton.toggleButtonStyle(id);
-
+            
         } else if (node instanceof Button) {
             style = StyleButton.buttonStyle(id);
         }
         return style;
     }
-
+    
     public static void setStyle(Node node) {
         if (node == null) {
             return;
         }
         setStyle(node, node.getId());
     }
-
+    
     public static void setStyle(Node node, String id) {
         setStyle(node, id, false);
     }
-
+    
     public static void setStyle(Node node, String id, boolean mustStyle) {
         if (node == null) {
             return;
@@ -116,7 +116,7 @@ public class StyleTools {
         //        }
         setTextStyle(node, style, AppVariables.ControlColor);
     }
-
+    
     public static void setTextStyle(Node node, StyleData StyleData, StyleColor colorStyle) {
         try {
             if (node == null || StyleData == null || !(node instanceof ButtonBase)) {
@@ -147,13 +147,13 @@ public class StyleTools {
     public static StyleColor getConfigStyleColor() {
         return getColorStyle(UserConfig.getString("ControlColor", "red"));
     }
-
+    
     public static void setConfigStyleColor(BaseController controller, String value) {
         AppVariables.ControlColor = getColorStyle(value);
         UserConfig.setString("ControlColor", AppVariables.ControlColor.name());
         if (AppVariables.ControlColor == StyleColor.Customize) {
             SingletonTask task = new SingletonTask<Void>(controller) {
-
+                
                 @Override
                 protected boolean handle() {
                     try {
@@ -179,12 +179,12 @@ public class StyleTools {
                     }
                     return true;
                 }
-
+                
                 @Override
                 protected void whenSucceeded() {
                     WindowTools.refreshInterfaceAll();
                 }
-
+                
             };
             controller.start(task);
         } else {
@@ -198,7 +198,7 @@ public class StyleTools {
     public static String getIconPath() {
         return getIconPath(AppVariables.ControlColor);
     }
-
+    
     public static String getIconPath(StyleColor colorStyle) {
         try {
             if (colorStyle == null) {
@@ -213,7 +213,7 @@ public class StyleTools {
             return null;
         }
     }
-
+    
     public static ImageView getIconImageView(StyleData style) {
         try {
             if (style == null || style.getIconName() == null || style.getIconName().isEmpty()) {
@@ -225,14 +225,20 @@ public class StyleTools {
             return null;
         }
     }
-
+    
     public static ImageView getIconImageView(String iconName) {
         if (iconName == null || iconName.isBlank()) {
             return null;
         }
         try {
             String stylePath = getIconPath();
-            ImageView view = getIconImageView(stylePath, iconName);
+            ImageView view = null;
+            if (AppVariables.icons40px && iconName.endsWith(".png") && !iconName.endsWith("_40.png")) {
+                view = getIconImageView(stylePath, iconName.substring(0, iconName.length() - 4) + "_40.png");
+            }
+            if (view == null) {
+                view = getIconImageView(stylePath, iconName);
+            }
             if (view != null) {
                 view.setFitWidth(AppVariables.iconSize);
                 view.setFitHeight(AppVariables.iconSize);
@@ -242,7 +248,7 @@ public class StyleTools {
             return null;
         }
     }
-
+    
     public static ImageView getIconImageView(String stylePath, String iconName) {
         try {
             return new ImageView(ButtonsSourcePath + iconName);
@@ -258,12 +264,12 @@ public class StyleTools {
             }
         }
     }
-
+    
     public static Image getIconImage(String iconName) {
         ImageView view = getIconImageView(iconName);
         return view == null ? null : view.getImage();
     }
-
+    
     public static Image getSourceImage(String iconName) {
         try {
             if (iconName == null) {
@@ -276,7 +282,7 @@ public class StyleTools {
             return null;
         }
     }
-
+    
     public static BufferedImage getSourceBufferedImage(String iconName) {
         try {
             Image image = getSourceImage(iconName);
@@ -289,7 +295,7 @@ public class StyleTools {
             return null;
         }
     }
-
+    
     public static void setIcon(Node node, ImageView imageView) {
         try {
             if (node == null || imageView == null) {
@@ -324,7 +330,7 @@ public class StyleTools {
             MyBoxLog.error(e, node.getId());
         }
     }
-
+    
     public static StyleColor getColorStyle(String color) {
         if (color == null) {
             return StyleColor.Red;
@@ -336,12 +342,12 @@ public class StyleTools {
         }
         return StyleColor.Red;
     }
-
+    
     public static void setStyleColor(Node node) {
         StyleData StyleData = getStyleData(node);
         setIcon(node, StyleTools.getIconImageView(StyleData));
     }
-
+    
     public static BufferedImage makeIcon(StyleColor style, String iconName) {
         try {
             if (iconName == null) {
@@ -356,7 +362,7 @@ public class StyleTools {
             return null;
         }
     }
-
+    
     public static BufferedImage makeIcon(String iconName, Color darkColor, Color lightColor) {
         try {
             BufferedImage srcImage = StyleTools.getSourceBufferedImage(iconName);
@@ -366,7 +372,7 @@ public class StyleTools {
             return null;
         }
     }
-
+    
     public static BufferedImage makeIcon(BufferedImage srcImage, Color darkColor, Color lightColor) {
         try {
             if (srcImage == null || darkColor == null || lightColor == null) {
@@ -382,7 +388,7 @@ public class StyleTools {
             return null;
         }
     }
-
+    
     public static Image makeImage(String iconName,
             javafx.scene.paint.Color darkColor, javafx.scene.paint.Color lightColor) {
         try {
@@ -405,14 +411,14 @@ public class StyleTools {
         StyleData style = getStyleData(node);
         setTips(node, style);
     }
-
+    
     public static void setTips(Node node, String tips) {
         if (tips == null || tips.isEmpty()) {
             return;
         }
         NodeStyleTools.setTooltip(node, new Tooltip(tips));
     }
-
+    
     public static void setTips(Node node, StyleData style) {
         if (node == null || style == null) {
             return;
@@ -422,7 +428,7 @@ public class StyleTools {
         }
         setTips(node, getTips(node, style));
     }
-
+    
     public static String getTips(Node node, StyleData style) {
         if (style == null) {
             return null;
@@ -449,7 +455,7 @@ public class StyleTools {
         }
         return tips;
     }
-
+    
     public static void setNameIcon(Node node, String name, String iconName) {
         setIconName(node, iconName);
         StyleData style = getStyleData(node);
@@ -458,18 +464,18 @@ public class StyleTools {
         }
         setTips(node, style);
     }
-
+    
     public static void setName(Node node, String name) {
         StyleData style = getStyleData(node);
         style.setName(name);
         setTips(node, style);
     }
-
+    
     public static void setIconTooltips(Node node, String iconName, String tips) {
         setIconName(node, iconName);
         setTips(node, tips);
     }
-
+    
     public static void setIconName(Node node, String iconName) {
         setIcon(node, StyleTools.getIconImageView(iconName));
     }
@@ -500,9 +506,9 @@ public class StyleTools {
                 return ContentDisplay.GRAPHIC_ONLY;
         }
     }
-
+    
     public static ContentDisplay getConfigControlContent() {
         return getControlContent(UserConfig.getString("ControlContent", "image"));
     }
-
+    
 }

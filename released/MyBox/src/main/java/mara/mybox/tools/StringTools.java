@@ -22,6 +22,8 @@ import static mara.mybox.value.Languages.message;
  */
 public class StringTools {
 
+    public static final int MenuMaxLen = 80;
+
     public static String start(String string, int maxLen) {
         if (string == null) {
             return string;
@@ -50,14 +52,14 @@ public class StringTools {
         if (name == null) {
             return null;
         }
-        return end(name.replaceAll("_|\r\n|\r|\n", " ").trim(), 80);
+        return end(name.replaceAll("_|\r\n|\r|\n", " ").trim(), MenuMaxLen);
     }
 
     public static String menuPrefix(String name) {
         if (name == null) {
             return null;
         }
-        return start(name.replaceAll("_|\r\n|\r|\n", " ").trim(), 80);
+        return start(name.replaceAll("_|\r\n|\r|\n", " ").trim(), MenuMaxLen);
     }
 
     public static String replaceLineBreak(String string) {

@@ -18,16 +18,17 @@ public class AppPaths {
         return new File(getGeneratedPath());
     }
 
-    public static boolean reservedPath(String filename) {
+    public static boolean sysPath(String filename) {
         if (filename == null || filename.isBlank()) {
             return false;
         }
-        return filename.startsWith(getImageClipboardPath())
-                || filename.startsWith(getDataClipboardPath())
-                || filename.startsWith(getImageHisPath())
-                || filename.startsWith(getImageScopePath())
-                || filename.startsWith(getLanguagesPath())
-                || filename.startsWith(getBackupsPath());
+        return filename.startsWith(AppVariables.MyBoxTempPath.getAbsolutePath() + File.separator)
+                || filename.startsWith(getImageClipboardPath() + File.separator)
+                || filename.startsWith(getDataClipboardPath() + File.separator)
+                || filename.startsWith(getImageHisPath() + File.separator)
+                || filename.startsWith(getImageScopePath() + File.separator)
+                || filename.startsWith(getLanguagesPath() + File.separator)
+                || filename.startsWith(getBackupsPath() + File.separator);
     }
 
     public static String getPath(String name) {
@@ -60,7 +61,7 @@ public class AppPaths {
         return getPath("imageHistories");
     }
 
-    public static String getImageHisPath(File file, int frame) {
+    public static String getImageHisPath(File file) {
         if (file == null) {
             return null;
         }
@@ -70,9 +71,6 @@ public class AppPaths {
             if (pathname == null) {
                 String fname = file.getName();
                 String subPath = FileNameTools.prefix(fname);
-                if (frame >= 0) {
-                    subPath += "-frame" + frame;
-                }
                 subPath += FileNameTools.suffix(fname);
                 pathname = getImageHisPath() + File.separator + subPath
                         + (new Date()).getTime() + File.separator;

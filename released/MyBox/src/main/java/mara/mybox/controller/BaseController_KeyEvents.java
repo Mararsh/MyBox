@@ -387,6 +387,11 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
                 deleteAction();
             }
             return true;
+        } else if (deleteRowsButton != null) {
+            if (!deleteRowsButton.isDisabled() && deleteRowsButton.isVisible()) {
+                deleteRowsAction();
+            }
+            return true;
         }
         return false;
     }
@@ -536,7 +541,6 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean controlAlt1() {
-        MyBoxLog.debug("here");
         return false;
     }
 
@@ -621,10 +625,13 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
                 return keyESC();
 
         }
-        if (!isPopup() && !targetIsTextInput()) {
-            return controlAltFilter(event);
+        if (AppVariables.ShortcutsCanNotOmitCtrlAlt || isPopup() || targetIsTextInput()) {
+            return false;
         }
-        return false;
+        if (code == KeyCode.S || code == KeyCode.D || code == KeyCode.G) {  // to avoid accidents
+            return false;
+        }
+        return controlAltFilter(event);
     }
 
     public boolean keyEnter() {

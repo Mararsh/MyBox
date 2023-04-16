@@ -26,7 +26,7 @@ import org.apache.poi.sl.usermodel.SlideShowFactory;
  */
 public class ImageFileInformation extends FileInformation {
 
-    protected String imageFormat;
+    protected String imageFormat, password;
     protected ImageInformation imageInformation;
     protected List<ImageInformation> imagesInformation;
     protected int numberOfImages;
@@ -45,13 +45,17 @@ public class ImageFileInformation extends FileInformation {
         static methods
      */
     public static ImageFileInformation create(File file) {
+        return create(file, null);
+    }
+
+    public static ImageFileInformation create(File file, String password) {
         try {
             if (file == null || !file.exists()) {
                 return null;
             }
             String suffix = FileNameTools.suffix(file.getName());
             if (suffix != null && suffix.equalsIgnoreCase("pdf")) {
-                return readPDF(file);
+                return readPDF(file, password);
             } else if (suffix != null && (suffix.equalsIgnoreCase("ppt") || suffix.equalsIgnoreCase("pptx"))) {
                 return readPPT(file);
             } else if (suffix != null && (suffix.equalsIgnoreCase("ico") || suffix.equalsIgnoreCase("icon"))) {
@@ -108,21 +112,24 @@ public class ImageFileInformation extends FileInformation {
         return fileInfo;
     }
 
-    public static ImageFileInformation readPDF(File file) {
+    public static ImageFileInformation readPDF(File file, String password) {
         ImageFileInformation fileInfo = new ImageFileInformation(file);
         String format = "png";
         fileInfo.setImageFormat(format);
-        try ( PDDocument doc = PDDocument.load(file, AppVariables.pdfMemUsage)) {
+        fileInfo.setPassword(password);
+        try (PDDocument doc = PDDocument.load(file, password, AppVariables.pdfMemUsage)) {
             int num = doc.getNumberOfPages();
             fileInfo.setNumberOfImages(num);
             List<ImageInformation> imagesInfo = new ArrayList<>();
             ImageInformation imageInfo;
+
             for (int i = 0; i < num; ++i) {
                 PDPage page = doc.getPage(i);
                 PDRectangle rect = page.getBleedBox();
                 imageInfo = ImageInformation.create(format, file);
                 imageInfo.setImageFileInformation(fileInfo);
                 imageInfo.setImageFormat(format);
+                imageInfo.setPassword(password);
                 imageInfo.setFile(file);
                 imageInfo.setCreateTime(fileInfo.getCreateTime());
                 imageInfo.setModifyTime(fileInfo.getModifyTime());
@@ -150,7 +157,7 @@ public class ImageFileInformation extends FileInformation {
         ImageFileInformation fileInfo = new ImageFileInformation(file);
         String format = "png";
         fileInfo.setImageFormat(format);
-        try ( SlideShow ppt = SlideShowFactory.create(file)) {
+        try (SlideShow ppt = SlideShowFactory.create(file)) {
             List<Slide> slides = ppt.getSlides();
             int num = slides.size();
             slides = null;
@@ -218,6 +225,14 @@ public class ImageFileInformation extends FileInformation {
 
     public void setNumberOfImages(int numberOfImages) {
         this.numberOfImages = numberOfImages;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
 }

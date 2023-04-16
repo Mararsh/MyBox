@@ -68,6 +68,7 @@ License:    Apache License Version 2.0
                                                         </Label>
                                                         <ComboBox fx:id="iconSizeBox" editable="true" prefWidth="100.0" />
                                                         <Label text="px" />
+                                          <CheckBox fx:id="icons40pxCheck" mnemonicParsing="false" text="%Icons40px" />
                                                     </children>
                                                 </HBox>
                                                 <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="70.0" spacing="10.0" VBox.vgrow="NEVER">
@@ -75,7 +76,7 @@ License:    Apache License Version 2.0
                                                         <Label text="%ControlsColor" />
                                                         <RadioButton fx:id="redRadio" mnemonicParsing="false">
                                                             <graphic>
-                                                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#9D2933" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+                                                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#C32136" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
                                                             </graphic>
                                                             <toggleGroup>
                                                                 <ToggleGroup fx:id="controlColorGroup" />
@@ -83,7 +84,7 @@ License:    Apache License Version 2.0
                                                         </RadioButton>
                                                         <RadioButton fx:id="pinkRadio" layoutX="602.0" layoutY="15.0" mnemonicParsing="false" toggleGroup="$controlColorGroup">
                                                             <graphic>
-                                                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#FF2D51" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
+                                                                <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#9E004F" height="20.0" stroke="BLACK" strokeType="INSIDE" width="20.0" />
                                                             </graphic>
                                                         </RadioButton>
                                                         <RadioButton fx:id="lightBlueRadio" layoutX="904.0" layoutY="15.0" mnemonicParsing="false" toggleGroup="$controlColorGroup">
@@ -122,43 +123,27 @@ License:    Apache License Version 2.0
                                                         </Button>
                                                     </children>
                                                 </HBox>
-                                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="192.0" spacing="10.0">
-                                                    <children>
-                                                        <CheckBox fx:id="hidpiIconsCheck" mnemonicParsing="false" text="%HidpiIcons">
-                                                            <HBox.margin>
-                                                                <Insets />
-                                                            </HBox.margin>
-                                                        </CheckBox> 
-                                                        <CheckBox fx:id="controlsTextCheck" mnemonicParsing="false" text="%DisplayControlText">
-                                                            <HBox.margin>
-                                                                <Insets />
-                                                            </HBox.margin>
-                                                        </CheckBox>
-                                                    </children>
-                                                </HBox>
-                                                <HBox alignment="CENTER_LEFT" spacing="10.0" VBox.vgrow="NEVER">
-                                                    <children>
-                                                        <CheckBox fx:id="recordWindowsSizeLocationCheck" mnemonicParsing="false" selected="true" text="%RecordWindowsSizeLocation" />
-                                                        <CheckBox fx:id="closeCurrentCheck" mnemonicParsing="false" text="%CloseCurrentWhenOpenTool" />
-                                                    </children>
-                                                </HBox>
+                                                <CheckBox fx:id="shortcutsCanNotOmitCheck" layoutX="20.0" layoutY="171.0" mnemonicParsing="false" onAction="#shortcutsCanNotOmit" selected="true" text="%ShortcutsCanNotOmitCtrlAlt" />
+                                                <CheckBox fx:id="recordWindowsSizeLocationCheck" mnemonicParsing="false" selected="true" text="%RecordWindowsSizeLocation" />
                                                 <CheckBox fx:id="popColorSetCheck" mnemonicParsing="false" onAction="#popColorSet" selected="true" text="%PopColorSetWhenMouseHovering" />
                                                 <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="159.0" spacing="10.0">
                                                     <children>
-                                                        <CheckBox fx:id="mousePassControlPanesCheck" layoutX="533.0" layoutY="10.0" mnemonicParsing="false" onAction="#mousePassControlPanes" selected="true" text="%ShowHidePanesWhenMouseHovering" />
+                                                        <CheckBox fx:id="mousePassControlPanesCheck" layoutX="533.0" layoutY="10.0" minHeight="-Infinity" mnemonicParsing="false" onAction="#mousePassControlPanes" selected="true" text="%ShowHidePanesWhenMouseHovering" wrapText="true" />
                                                         <CheckBox fx:id="splitPaneSensitiveCheck" mnemonicParsing="false" onAction="#splitPaneSensitive" text="%Sensitive" />
                                                     </children>
                                                 </HBox>
-                                    <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="66.0" spacing="10.0">
-                                       <children>
-                                          <Label text="%SelectorScrollSize">
-                                             <HBox.margin>
-                                                <Insets />
-                                             </HBox.margin>
-                                          </Label>
-                                          <ComboBox fx:id="scrollSizeSelector" editable="true" prefWidth="100.0" />
-                                       </children>
-                                    </HBox>
+                                                <CheckBox fx:id="closeCurrentCheck" mnemonicParsing="false" text="%CloseCurrentWhenOpenTool" />
+                                                <CheckBox fx:id="controlsTextCheck" mnemonicParsing="false" text="%DisplayControlText" />
+                                                <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="66.0" spacing="10.0">
+                                                    <children>
+                                                        <Label text="%SelectorScrollSize">
+                                                            <HBox.margin>
+                                                                <Insets />
+                                                            </HBox.margin>
+                                                        </Label>
+                                                        <ComboBox fx:id="scrollSizeSelector" editable="true" prefWidth="100.0" />
+                                                    </children>
+                                                </HBox>
                                                 <VBox minHeight="-Infinity" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                     <children>
                                                         <Label text="%Message" />
@@ -287,7 +272,7 @@ License:    Apache License Version 2.0
                             <content>
                                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                                     <content>
-                                        <VBox fx:id="dataBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="20.0">
+                                        <VBox fx:id="dataBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="10.0">
                                             <padding>
                                                 <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
                                             </padding>
@@ -302,7 +287,7 @@ License:    Apache License Version 2.0
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
-                                                                                <Image url="@../buttons/Red/iconOpen.png" />
+                                                                                <Image url="@../buttons/Red/iconSelectFile.png" />
                                                                             </image>
                                                                         </ImageView>
                                                                     </graphic>
@@ -310,6 +295,7 @@ License:    Apache License Version 2.0
                                                             </children>
                                                         </HBox>
                                                         <Label fx:id="currentDataPathLabel" text="%CurrentValue" />
+                                          <CheckBox fx:id="copyCurrentDataPathCheck" layoutX="15.0" layoutY="88.0" mnemonicParsing="false" text="%CopyCurrentDataPathToNewPath" />
                                                         <CheckBox fx:id="clearCurrentRootCheck" mnemonicParsing="false" text="label" />
                                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                                             <children>
@@ -366,15 +352,6 @@ License:    Apache License Version 2.0
                                                                 </ImageView>
                                                             </graphic>
                                                         </Button>
-                                                        <Button fx:id="settingsRecentNotButton" mnemonicParsing="false" onAction="#noFileHistories">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/Red/iconCancel.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
                                                         <Button fx:id="settingsRecentClearButton" mnemonicParsing="false" onAction="#clearFileHistories">
                                                             <graphic>
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -386,7 +363,21 @@ License:    Apache License Version 2.0
                                                         </Button>
                                                     </children>
                                                 </HBox>
-                                                <CheckBox fx:id="stopAlarmCheck" mnemonicParsing="false" selected="true" text="%StopAlarmsExit" />
+                                                <HBox fx:id="fileHisBox1" alignment="CENTER_LEFT" layoutX="20.0" layoutY="256.0" spacing="10.0">
+                                                    <children>
+                                                        <CheckBox fx:id="clearExpiredCheck" mnemonicParsing="false" selected="true" text="%ClearExpiredDataBeforeExit" />
+                                                        <Button fx:id="clearExpiredButton" mnemonicParsing="false" onAction="#clearExpiredData">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconClear.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                    </children>
+                                                </HBox>
+                                                <CheckBox fx:id="stopAlarmCheck" mnemonicParsing="false" selected="true" text="%StopAlarmsExit" visible="false" />
                                             </children>
                                         </VBox>
                                     </content>
@@ -577,7 +568,7 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/Red/iconOpen.png" />
+                                <Image url="@../buttons/Red/iconOpenPath.png" />
                             </image>
                         </ImageView>
                     </graphic>

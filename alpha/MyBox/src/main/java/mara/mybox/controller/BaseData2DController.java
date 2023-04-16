@@ -241,6 +241,7 @@ public abstract class BaseData2DController extends BaseController {
         try {
             List<MenuItem> items = new ArrayList<>();
             items.addAll(Data2DExampleTools.examplesMenu(dataController));
+
             items.add(new SeparatorMenuItem());
 
             CheckMenuItem pMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));

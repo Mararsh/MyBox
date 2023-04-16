@@ -217,7 +217,7 @@ public class ImageSplitController extends BaseImagesListController {
             rowsInput.setStyle(null);
         } else {
             try {
-                rowsNumber = Integer.valueOf(rowsInput.getText());
+                rowsNumber = Integer.parseInt(rowsInput.getText());
                 rowsInput.setStyle(null);
                 if (rowsNumber > 0) {
                     rowsInput.setStyle(null);
@@ -234,7 +234,7 @@ public class ImageSplitController extends BaseImagesListController {
             colsInput.setStyle(null);
         } else {
             try {
-                colsNumber = Integer.valueOf(colsInput.getText());
+                colsNumber = Integer.parseInt(colsInput.getText());
                 colsInput.setStyle(null);
                 if (colsNumber > 0) {
                     colsInput.setStyle(null);
@@ -252,7 +252,7 @@ public class ImageSplitController extends BaseImagesListController {
             return;
         }
         try {
-            int v = Integer.valueOf(widthInput.getText());
+            int v = Integer.parseInt(widthInput.getText());
             if (v > 0 && v < getOperationWidth()) {
                 widthInput.setStyle(null);
                 width = v;
@@ -263,7 +263,7 @@ public class ImageSplitController extends BaseImagesListController {
             widthInput.setStyle(UserConfig.badStyle());
         }
         try {
-            int v = Integer.valueOf(heightInput.getText());
+            int v = Integer.parseInt(heightInput.getText());
             if (v > 0 && v < getOperationHeight()) {
                 heightInput.setStyle(null);
                 height = v;
@@ -293,7 +293,7 @@ public class ImageSplitController extends BaseImagesListController {
             String[] rowStrings = customizedRowsInput.getText().split(",");
             for (String row : rowStrings) {
                 try {
-                    int value = Integer.valueOf(row.trim());
+                    int value = Integer.parseInt(row.trim());
                     if (value < 0 || value > getOperationHeight() - 1) {
                         customizedRowsInput.setStyle(UserConfig.badStyle());
                         isValidRows = false;
@@ -314,7 +314,7 @@ public class ImageSplitController extends BaseImagesListController {
             String[] colStrings = customizedColsInput.getText().split(",");
             for (String col : colStrings) {
                 try {
-                    int value = Integer.valueOf(col.trim());
+                    int value = Integer.parseInt(col.trim());
                     if (value <= 0 || value >= getOperationWidth() - 1) {
                         customizedColsInput.setStyle(UserConfig.badStyle());
                         isValidcols = false;
@@ -395,18 +395,20 @@ public class ImageSplitController extends BaseImagesListController {
         }
         cols = new ArrayList<>();
         cols.add(0);
+        int w = (int) getOperationWidth();
         for (int i = 1; i < colsNumber; ++i) {
-            int v = i * getOperationWidth() / colsNumber;
+            int v = i * w / colsNumber;
             cols.add(v);
         }
-        cols.add(getOperationWidth() - 1);
+        cols.add(w);
         rows = new ArrayList<>();
         rows.add(0);
+        int h = (int) getOperationHeight();
         for (int i = 1; i < rowsNumber; ++i) {
-            int v = i * getOperationHeight() / rowsNumber;
+            int v = i * h / rowsNumber;
             rows.add(v);
         }
-        rows.add(getOperationHeight() - 1);
+        rows.add(h);
         indicateSplit();
     }
 
@@ -520,7 +522,8 @@ public class ImageSplitController extends BaseImagesListController {
             List<Node> nodes = new ArrayList<>();
             nodes.addAll(maskPane.getChildren());
             for (Node node : nodes) {
-                if (node.getId() != null && node.getId().startsWith("SplitLines")) {
+                if (node != null && node.getId() != null
+                        && node.getId().startsWith("SplitLines")) {
                     maskPane.getChildren().remove(node);
                     node = null;
                 }
@@ -538,8 +541,8 @@ public class ImageSplitController extends BaseImagesListController {
             double strokeWidth = UserConfig.getInt("StrokeWidth", 2);
             double w = imageView.getBoundsInParent().getWidth();
             double h = imageView.getBoundsInParent().getHeight();
-            double ratiox = w / imageView.getImage().getWidth();
-            double ratioy = h / imageView.getImage().getHeight();
+            double ratiox = w / getImageWidth();
+            double ratioy = h / getImageHeight();
             for (int i = 0; i < rows.size(); ++i) {
                 double row = rows.get(i) * ratioy * heightRatio();
                 if (row <= 0 || row >= h - 1) {
@@ -577,15 +580,15 @@ public class ImageSplitController extends BaseImagesListController {
                 IntTools.sortList(cols);
                 for (int i = 0; i < rows.size() - 1; ++i) {
                     double row = rows.get(i) * ratioy * heightRatio();
-                    int hv = rows.get(i + 1) - rows.get(i) + 1;
+                    int hv = rows.get(i + 1) - rows.get(i);
                     for (int j = 0; j < cols.size() - 1; ++j) {
                         double col = cols.get(j) * ratiox * widthRatio();
-                        int wv = cols.get(j + 1) - cols.get(j) + 1;
+                        int wv = cols.get(j + 1) - cols.get(j);
                         Text text = new Text(wv + "x" + hv);
                         text.setStyle(style);
                         text.setFill(strokeColor);
-                        text.setLayoutX(imageView.getLayoutX() + col + 50);
-                        text.setLayoutY(imageView.getLayoutY() + row + 50);
+                        text.setLayoutX(imageView.getLayoutX() + col + 2);
+                        text.setLayoutY(imageView.getLayoutY() + row + 20);
                         text.setId("SplitLinesText" + i + "x" + j);
                         maskPane.getChildren().add(text);
                     }
@@ -613,6 +616,9 @@ public class ImageSplitController extends BaseImagesListController {
     }
 
     public synchronized void makeList() {
+        if (imageInfos == null) {
+            return;
+        }
         imageInfos.clear();
         if (!splitValid.get()) {
             return;

@@ -20,13 +20,12 @@ public class FileInformation {
     protected long tableIndex, fileSize = -1, createTime, modifyTime, filesNumber = 0;
     protected String data, handled;
     protected FileType fileType;
-    protected final BooleanProperty selectedProperty = new SimpleBooleanProperty(false);
-    protected boolean selected;
+    protected final BooleanProperty selected = new SimpleBooleanProperty(false);
     protected long sizeWithSubdir = -1, sizeWithoutSubdir = -1, filesWithSubdir = -1, filesWithoutSubdir = -1;
     protected long duration;  // milliseconds
 
     public enum FileType {
-        File, Directory, Root, Digest, NotExist
+        File, Directory, Link, Socket, Block, Character, FIFO, Root, Digest, NotExist
     }
 
     public enum FileSelectorType {
@@ -48,7 +47,7 @@ public class FileInformation {
         fileType = FileType.NotExist;
         handled = null;
         data = null;
-        selectedProperty.set(false);
+        selected.set(false);
         sizeWithSubdir = sizeWithoutSubdir = filesWithSubdir = filesWithoutSubdir = -1;
         duration = 3000;
     }
@@ -128,6 +127,31 @@ public class FileInformation {
         }
     }
 
+    public String getHierarchyNumber() {
+        return hierarchyNumber(file);
+    }
+
+    public static String hierarchyNumber(File f) {
+        if (f == null) {
+            return "";
+        }
+        File parent = f.getParentFile();
+        if (parent == null) {
+            return "";
+        }
+        String p = hierarchyNumber(parent);
+        String[] children = parent.list();
+        p = p == null || p.isBlank() ? "" : p + ".";
+        String name = f.getName();
+        for (int i = 0; i < children.length; i++) {
+            String c = children[i];
+            if (name.equals(c)) {
+                return p + (i + 1);
+            }
+        }
+        return null;
+    }
+
     /*
         custmized get/set
      */
@@ -151,6 +175,10 @@ public class FileInformation {
         } else {
             return data;
         }
+    }
+
+    public boolean isSelected() {
+        return selected.get();
     }
 
     /*
@@ -216,16 +244,12 @@ public class FileInformation {
         this.filesNumber = filesNumber;
     }
 
-    public BooleanProperty getSelectedProperty() {
-        return selectedProperty;
+    public BooleanProperty getSelected() {
+        return selected;
     }
 
-    public boolean isSelected() {
-        return selectedProperty.get();
-    }
-
-    public void setSelected(boolean selected) {
-        selectedProperty.set(selected);
+    public void setSelected(boolean select) {
+        selected.set(select);
     }
 
     public long getTableIndex() {

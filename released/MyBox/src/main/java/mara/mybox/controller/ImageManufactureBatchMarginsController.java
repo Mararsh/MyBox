@@ -158,7 +158,7 @@ public class ImageManufactureBatchMarginsController extends BaseImageManufacture
 
     private void checkMarginWidth() {
         try {
-            int v = Integer.valueOf(marginWidthBox.getValue());
+            int v = Integer.parseInt(marginWidthBox.getValue());
             if (v > 0) {
                 width = v;
                 UserConfig.setInt(baseName + "Width", width);
@@ -173,7 +173,7 @@ public class ImageManufactureBatchMarginsController extends BaseImageManufacture
 
     protected void checkColor() {
         try {
-            int v = Integer.valueOf(distanceInput.getText());
+            int v = Integer.parseInt(distanceInput.getText());
             if (v >= 0 && v <= 255) {
                 distance = v;
                 UserConfig.setInt(baseName + "Distance", distance);

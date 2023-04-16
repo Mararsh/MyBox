@@ -32,12 +32,14 @@ public class TableTextAreaEditCell<S> extends TableAutoCommitCell<S, String> {
         return getItem();
     }
 
-    protected boolean setCellValue(String inValue) {
+    @Override
+    public boolean setCellValue(String inValue) {
         try {
-            String value = inValue == null ? null : inValue.replaceAll("\\\\n", "\n");
-            boolean changed = changed(value);
-            commit(value, valid(value), changed);
-            return changed;
+            String value = inValue;
+            if (value != null) {
+                value = value.replaceAll("\\\\n", "\n");
+            }
+            return super.setCellValue(value);
         } catch (Exception e) {
             MyBoxLog.debug(e);
             return false;
@@ -45,11 +47,7 @@ public class TableTextAreaEditCell<S> extends TableAutoCommitCell<S, String> {
     }
 
     @Override
-    public void startEdit() {
-        int row = rowIndex();
-        if (row < 0) {
-            return;
-        }
+    public void editCell() {
         BaseInputController inputController = TextInputController.open(parent, name(), getCellValue());
         inputController.setCommentsLabel(comments);
         getListener = new ChangeListener<Boolean>() {
@@ -61,16 +59,6 @@ public class TableTextAreaEditCell<S> extends TableAutoCommitCell<S, String> {
             }
         };
         inputController.getNotify().addListener(getListener);
-    }
-
-    @Override
-    public void commitEdit(String inValue) {
-        try {
-            clearEditor();
-            setCellValue(inValue);
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
     }
 
     public static <S> Callback<TableColumn<S, String>, TableCell<S, String>>

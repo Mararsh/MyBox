@@ -34,12 +34,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
@@ -52,7 +50,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -60,13 +57,11 @@ import mara.mybox.data.Link;
 import mara.mybox.data.Link.FilenameType;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.LocateTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
@@ -650,56 +645,42 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
     @FXML
     public void popSetMenu(MouseEvent mouseEvent) {
         try {
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+            List<MenuItem> items = new ArrayList<>();
 
-            MenuItem menu;
-
-            menu = new MenuItem(message("SetSubdirectoryName"));
+            MenuItem menu = new MenuItem(message("SetSubdirectoryName"));
             menu.setOnAction((ActionEvent event) -> {
                 setPath();
             });
-            popMenu.getItems().add(menu);
-            popMenu.getItems().add(new SeparatorMenuItem());
+            items.add(menu);
+            items.add(new SeparatorMenuItem());
 
             menu = new MenuItem(message("AddOrderBeforeFilename"));
             menu.setOnAction((ActionEvent event) -> {
                 addOrderBeforeFilename();
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("SetLinkNameAsFilename"));
             menu.setOnAction((ActionEvent event) -> {
                 setLinkNameAsFilename();
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("SetLinkTitleAsFilename"));
             menu.setOnAction((ActionEvent event) -> {
                 setLinkTitleAsFilename();
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             menu = new MenuItem(message("SetLinkAddressAsFilename"));
             menu.setOnAction((ActionEvent event) -> {
                 setLinkAddressAsFilename();
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
-            menu = new MenuItem(message("PopupClose"), StyleTools.getIconImageView("iconCancel.png"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    popMenu.hide();
-                }
-            });
-            popMenu.getItems().add(menu);
+            items.add(new SeparatorMenuItem());
 
-            LocateTools.locateBelow((Region) mouseEvent.getSource(), popMenu);
+            popEventMenu(mouseEvent, items);
 
         } catch (Exception e) {
             MyBoxLog.console(e.toString());
@@ -837,8 +818,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
                 popError(message("InvalidParameters") + ": " + message("Address"));
                 return;
             }
-            HtmlEditorController controller = (HtmlEditorController) openStage(Fxmls.HtmlEditorFxml);
-            controller.loadAddress(addr);
+            WebBrowserController.openAddress(addr, true);
         } catch (Exception e) {
         }
     }

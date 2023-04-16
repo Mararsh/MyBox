@@ -26,7 +26,8 @@ public class TableDataDisplayCell extends TableDataCell {
     }
 
     @Override
-    public void commit(String value, boolean valid, boolean changed) {
+    public boolean commit(String value) {
+        return true;
     }
 
     public static Callback<TableColumn, TableCell> create(ControlData2DLoad dataControl, Data2DColumn dataColumn) {

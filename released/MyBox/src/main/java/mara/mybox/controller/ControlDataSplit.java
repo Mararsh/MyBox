@@ -56,7 +56,7 @@ public class ControlDataSplit extends BaseController {
     public boolean checkInputs() {
         try {
             try {
-                from = Double.valueOf(fromInput.getText().trim());
+                from = Double.parseDouble(fromInput.getText().trim());
                 fromInput.setStyle(null);
             } catch (Exception e) {
                 fromInput.setStyle(UserConfig.badStyle());
@@ -65,7 +65,7 @@ public class ControlDataSplit extends BaseController {
             }
 
             try {
-                double t = Double.valueOf(toInput.getText().trim());
+                double t = Double.parseDouble(toInput.getText().trim());
                 if (t < from) {
                     toInput.setStyle(UserConfig.badStyle());
                     popError(message("InvalidParamter") + ": " + name + " - " + message("To"));
@@ -84,7 +84,7 @@ public class ControlDataSplit extends BaseController {
             if (byInterval) {
                 numberInput.setStyle(null);
                 try {
-                    interval = Double.valueOf(intervalInput.getText().trim());
+                    interval = Double.parseDouble(intervalInput.getText().trim());
                     intervalInput.setStyle(null);
                 } catch (Exception e) {
                     intervalInput.setStyle(UserConfig.badStyle());
@@ -94,7 +94,7 @@ public class ControlDataSplit extends BaseController {
             } else {
                 intervalInput.setStyle(null);
                 try {
-                    int n = Integer.valueOf(numberInput.getText().trim());
+                    int n = Integer.parseInt(numberInput.getText().trim());
                     if (n <= 0) {
                         numberInput.setStyle(UserConfig.badStyle());
                         popError(message("InvalidParamter") + ": " + name + " - " + message("NumberOfSplit"));

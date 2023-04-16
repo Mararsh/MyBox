@@ -42,7 +42,7 @@ License:    Apache License Version 2.0
                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                             </padding>
                                             <children>
-                                                <fx:include fx:id="nodes" source="TreeNodes.fxml" />
+                                                <fx:include fx:id="nodes" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlTreeInfoSelect.fxml" VBox.vgrow="ALWAYS" />
                                             </children>
                                         </VBox>
                                         <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
@@ -54,9 +54,9 @@ License:    Apache License Version 2.0
                                                     <children>
                                                         <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
                                                             <children>
-                                                <Label text="%Export" />
+                                                                <Label text="%Export" />
                                                                 <CheckBox fx:id="timeCheck" mnemonicParsing="false" text="%Time" />
-                                                <CheckBox fx:id="tagsCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Tags" />
+                                                                <CheckBox fx:id="tagsCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Tags" />
                                                                 <CheckBox fx:id="iconCheck" mnemonicParsing="false" text="%Icon" />
                                                             </children>
                                                         </FlowPane>
@@ -79,8 +79,16 @@ License:    Apache License Version 2.0
                                                         </FlowPane>
                                                         <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                             <children>
-                                                                <Label text="%HtmlStyle" />
-                                                                <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                                <Label maxWidth="1.7976931348623157E308" text="%HtmlStyle" HBox.hgrow="ALWAYS" />
+                                                <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showHtmlHelps" onMouseEntered="#popHtmlHelps">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/iconClaw.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
                                                                 <Button fx:id="styleButton" mnemonicParsing="false" onMouseEntered="#popDefaultStyle">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -163,7 +171,7 @@ License:    Apache License Version 2.0
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/Red/iconOpen.png" />
+                                <Image url="@../buttons/Red/iconOpenPath.png" />
                             </image>
                         </ImageView>
                     </graphic>

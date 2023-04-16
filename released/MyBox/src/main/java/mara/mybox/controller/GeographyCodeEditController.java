@@ -155,7 +155,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                 longitude = -200;
                 return;
             }
-            double v = Double.valueOf(s);
+            double v = Double.parseDouble(s);
             if (v >= -180 && v <= 180) {
                 longitude = v;
                 longitudeInput.setStyle(null);
@@ -175,7 +175,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                 latitude = -200;
                 return;
             }
-            double v = Double.valueOf(s);
+            double v = Double.parseDouble(s);
             if (v >= -90 && v <= 90) {
                 latitude = v;
                 latitudeInput.setStyle(null);
@@ -195,7 +195,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                 altitude = AppValues.InvalidDouble;
                 return;
             }
-            altitude = Double.valueOf(s);
+            altitude = Double.parseDouble(s);
             altitudeInput.setStyle(null);
         } catch (Exception e) {
             altitudeInput.setStyle(UserConfig.badStyle());
@@ -210,7 +210,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                 precision = AppValues.InvalidDouble;
                 return;
             }
-            precision = Double.valueOf(s);
+            precision = Double.parseDouble(s);
             precisionInput.setStyle(null);
         } catch (Exception e) {
             precisionInput.setStyle(UserConfig.badStyle());
@@ -219,7 +219,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
 
     protected void checkArea() {
         try {
-            long v = Long.valueOf(areaInput.getText().trim());
+            long v = Long.parseLong(areaInput.getText().trim());
             if (v > 0) {
                 area = v;
                 areaInput.setStyle(null);
@@ -233,7 +233,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
 
     protected void checkPopulation() {
         try {
-            long v = Long.valueOf(populationInput.getText().trim());
+            long v = Long.parseLong(populationInput.getText().trim());
             if (v > 0) {
                 population = v;
                 populationInput.setStyle(null);
@@ -478,7 +478,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
             if (gcidInput.getText() == null || gcidInput.getText().isBlank()) {
                 newCode.setGcid(-1);
             } else {
-                newCode.setGcid(Long.valueOf(gcidInput.getText()));
+                newCode.setGcid(Long.parseLong(gcidInput.getText()));
             }
             if (predefinedCheck.isSelected()) {
                 newCode.setSource(GeographyCode.AddressSource.PredefinedData);

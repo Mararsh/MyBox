@@ -9,6 +9,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
@@ -17,6 +18,7 @@ import javafx.scene.control.Separator;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Region;
 import javafx.stage.Window;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -446,8 +448,7 @@ public class MenuHtmlCodesController extends MenuTextEditController {
     @FXML
     @Override
     public void editAction() {
-        HtmlEditorController controller = (HtmlEditorController) openStage(Fxmls.HtmlEditorFxml);
-        controller.loadContents(textInput.getText());
+        HtmlEditorController.openHtml(textInput.getText());
     }
 
     @FXML
@@ -486,6 +487,19 @@ public class MenuHtmlCodesController extends MenuTextEditController {
                     parent.getMyWindow(), Fxmls.MenuHtmlCodesFxml, false);
             controller.setParameters(parent, node, x, y);
             return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static MenuHtmlCodesController open(BaseController parent, Region node) {
+        try {
+            if (parent == null || node == null) {
+                return null;
+            }
+            Point2D localToScreen = node.localToScreen(node.getWidth() - 80, 80);
+            return MenuHtmlCodesController.open(parent, node, localToScreen.getX(), localToScreen.getY());
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;

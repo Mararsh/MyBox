@@ -7,14 +7,15 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.stage.FileChooser;
+import mara.mybox.controller.BaseController;
 import mara.mybox.controller.BaseController_Files;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -26,15 +27,15 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class RecentVisitMenu {
 
-    protected final BaseController_Files controller;
-    protected final Event event;
+    protected BaseController controller;
+    protected Event event;
     protected List<String> examples;
     protected int SourceFileType, SourcePathType, AddFileType, AddPathType, TargetFileType, TargetPathType;
     protected List<FileChooser.ExtensionFilter> sourceExtensionFilter;
     protected String baseName, defaultPath;
 
     public RecentVisitMenu(BaseController_Files controller, Event event) {
-        this.controller = controller;
+        this.controller = (BaseController) controller;
         this.event = event;
         this.baseName = controller.getBaseName();
         SourceFileType = controller.getSourceFileType();
@@ -65,18 +66,13 @@ public abstract class RecentVisitMenu {
             if (controller == null || event == null) {
                 return;
             }
-            ContextMenu popMenu = controller.getPopMenu();
-            if (popMenu != null && popMenu.isShowing()) {
-                popMenu.hide();
-            }
-            popMenu = new ContextMenu();
-            popMenu.setAutoHide(true);
+            List<MenuItem> items = new ArrayList<>();
 
             MenuItem menu = new MenuItem(message("Select..."));
             menu.setOnAction((ActionEvent event1) -> {
                 handleSelect();
             });
-            popMenu.getItems().add(menu);
+            items.add(menu);
 
             List<VisitHistory> opened = recentFiles();
             if (opened != null && !opened.isEmpty()) {
@@ -88,51 +84,76 @@ public abstract class RecentVisitMenu {
                     }
                 }
                 if (!files.isEmpty()) {
-                    popMenu.getItems().add(new SeparatorMenuItem());
-                    menu = new MenuItem(message("RecentAccessedFiles"));
+                    items.add(new SeparatorMenuItem());
+                    menu = new MenuItem(message("RecentOpenedFiles"));
                     menu.setStyle("-fx-text-fill: #2e598a;");
-                    popMenu.getItems().add(menu);
+                    items.add(menu);
                     for (String fname : files) {
                         menu = new MenuItem(StringTools.menuSuffix(fname));
                         menu.setOnAction((ActionEvent event1) -> {
                             handleFile(fname);
                         });
-                        popMenu.getItems().add(menu);
+                        items.add(menu);
                     }
                 }
+
+                List<VisitHistory> written = recentWrittenFiles();
+                if (written != null && !written.isEmpty()) {
+                    files = new ArrayList<>();
+                    for (VisitHistory h : written) {
+                        String fname = h.getResourceValue();
+                        if (!files.contains(fname)) {
+                            files.add(fname);
+                        }
+                    }
+                    if (!files.isEmpty()) {
+                        items.add(new SeparatorMenuItem());
+                        menu = new MenuItem(message("RecentWrittenFiles"));
+                        menu.setStyle("-fx-text-fill: #2e598a;");
+                        items.add(menu);
+                        for (String fname : files) {
+                            menu = new MenuItem(StringTools.menuSuffix(fname));
+                            menu.setOnAction((ActionEvent event1) -> {
+                                handleFile(fname);
+                            });
+                            items.add(menu);
+                        }
+                    }
+                }
+
             }
 
             if (examples != null && !examples.isEmpty()) {
-                popMenu.getItems().add(new SeparatorMenuItem());
+                items.add(new SeparatorMenuItem());
                 menu = new MenuItem(message("Examples"));
                 menu.setStyle("-fx-text-fill: #2e598a;");
-                popMenu.getItems().add(menu);
+                items.add(menu);
                 for (String example : examples) {
                     menu = new MenuItem(StringTools.menuSuffix(example));
                     menu.setOnAction((ActionEvent event1) -> {
                         handleFile(example);
                     });
-                    popMenu.getItems().add(menu);
+                    items.add(menu);
                 }
             }
             List<String> paths = paths();
             if (paths != null && !paths.isEmpty()) {
-                popMenu.getItems().add(new SeparatorMenuItem());
+                items.add(new SeparatorMenuItem());
                 menu = new MenuItem(message("RecentAccessedDirectories"));
                 menu.setStyle("-fx-text-fill: #2e598a;");
-                popMenu.getItems().add(menu);
+                items.add(menu);
                 for (String path : paths) {
                     menu = new MenuItem(StringTools.menuSuffix(path));
                     menu.setOnAction((ActionEvent event1) -> {
                         handlePath(path);
                     });
-                    popMenu.getItems().add(menu);
+                    items.add(menu);
                 }
             }
 
-            popMenu.getItems().add(new SeparatorMenuItem());
+            items.add(new SeparatorMenuItem());
 
-            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"));
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
             hoverMenu.setSelected(UserConfig.getBoolean("RecentVisitMenuPopWhenMouseHovering", true));
             hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -140,18 +161,9 @@ public abstract class RecentVisitMenu {
                     UserConfig.setBoolean("RecentVisitMenuPopWhenMouseHovering", hoverMenu.isSelected());
                 }
             });
-            popMenu.getItems().add(hoverMenu);
+            items.add(hoverMenu);
 
-            menu = new MenuItem(message("PopupClose"));
-            menu.setStyle("-fx-text-fill: #2e598a;");
-            menu.setOnAction((ActionEvent event1) -> {
-                controller.getPopMenu().hide();
-                controller.setPopMenu(null);
-            });
-            popMenu.getItems().add(menu);
-
-            controller.setPopMenu(popMenu);
-            LocateTools.locateEvent(event, popMenu);
+            controller.popEventMenu(event, items);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -180,7 +192,9 @@ public abstract class RecentVisitMenu {
         if (his != null) {
             for (VisitHistory h : his) {
                 String pathname = h.getResourceValue();
-                paths.add(pathname);
+                if (!paths.contains(pathname)) {
+                    paths.add(pathname);
+                }
             }
         }
         if (defaultPath != null && !paths.contains(defaultPath)) {
@@ -197,41 +211,59 @@ public abstract class RecentVisitMenu {
     }
 
     public List<VisitHistory> recentOpenedFiles() {
-        int fileNumber = AppVariables.fileRecentNumber * 3 / 4;
+        int fileNumber = AppVariables.fileRecentNumber / 2;
+        if (fileNumber == 0) {
+            fileNumber = 1;
+        }
         return VisitHistoryTools.getRecentFileRead(SourceFileType, fileNumber);
     }
 
     public List<VisitHistory> recentWrittenFiles() {
-        int fileNumber = AppVariables.fileRecentNumber / 4 + 1;
+        int fileNumber = AppVariables.fileRecentNumber / 4;
+        if (fileNumber == 0) {
+            fileNumber = 1;
+        }
         return VisitHistoryTools.getRecentFileWrite(SourceFileType, fileNumber);
     }
 
     public List<VisitHistory> recentTargetFiles() {
         int fileNumber = AppVariables.fileRecentNumber * 3 / 4;
+        if (fileNumber == 0) {
+            fileNumber = 1;
+        }
         return VisitHistoryTools.getRecentFileWrite(TargetFileType, fileNumber);
     }
 
     public List<VisitHistory> recentAddFiles() {
-        int fileNumber = AppVariables.fileRecentNumber * 3 / 4;
-        return VisitHistoryTools.getRecentFileWrite(AddFileType, fileNumber);
+        int fileNumber = AppVariables.fileRecentNumber / 2;
+        if (fileNumber == 0) {
+            fileNumber = 1;
+        }
+        return VisitHistoryTools.getRecentFileRead(AddFileType, fileNumber);
     }
 
     public List<VisitHistory> recentSourcePathsBesidesFiles() {
-        int pathNumber = AppVariables.fileRecentNumber / 4 + 1;
-        return VisitHistoryTools.getRecentPath(SourcePathType, pathNumber);
+        int pathNumber = AppVariables.fileRecentNumber / 4;
+        if (pathNumber == 0) {
+            pathNumber = 1;
+        }
+        return VisitHistoryTools.getRecentPathRead(SourcePathType, pathNumber);
     }
 
     public List<VisitHistory> recentTargetPathsBesidesFiles() {
-        int pathNumber = AppVariables.fileRecentNumber / 4 + 1;
-        return VisitHistoryTools.getRecentPath(TargetPathType, pathNumber);
+        int pathNumber = AppVariables.fileRecentNumber / 4;
+        if (pathNumber == 0) {
+            pathNumber = 1;
+        }
+        return VisitHistoryTools.getRecentPathWrite(TargetPathType, pathNumber);
     }
 
     public List<VisitHistory> recentSourcePaths() {
-        return VisitHistoryTools.getRecentPath(SourcePathType);
+        return VisitHistoryTools.getRecentPathRead(SourcePathType);
     }
 
     public List<VisitHistory> recentTargetPaths() {
-        return VisitHistoryTools.getRecentPath(TargetPathType);
+        return VisitHistoryTools.getRecentPathWrite(TargetPathType);
     }
 
     public void handleSourcePath(String fname) {

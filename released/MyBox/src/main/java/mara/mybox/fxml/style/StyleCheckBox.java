@@ -13,6 +13,27 @@ public class StyleCheckBox {
         if (id == null || id.isEmpty()) {
             return null;
         }
+        if (id.startsWith("leftPane")) {
+            return new StyleData(id, "", message("LeftPane"), "", "iconDoubleLeft.png");
+        }
+        if (id.startsWith("rightPane")) {
+            return new StyleData(id, "", message("RightPane"), "", "iconDoubleRight.png");
+        }
+        if (id.startsWith("contextMenu")) {
+            return new StyleData(id, "", message("ContextMenu"), "", "iconMenu.png");
+        }
+        if (id.startsWith("openPath")) {
+            return new StyleData(id, "", message("OpenDirectory"), "", "iconOpenPath.png");
+        }
+        if (id.startsWith("wrap")) {
+            return new StyleData(id, "", message("Wrap"), "", "iconWrap.png");
+        }
+        if (id.startsWith("editable")) {
+            return new StyleData(id, "", message("Editable"), "", "iconEdit.png");
+        }
+        if (id.startsWith("scope")) {
+            return new StyleData(id, "", message("Scope"), "", "iconTarget.png");
+        }
         if (id.startsWith("csv")) {
             return new StyleData(id, "", "CSV", "", "iconCSV.png");
         }
@@ -55,43 +76,18 @@ public class StyleCheckBox {
         if (id.startsWith("refreshChange")) {
             return new StyleData(id, "", message("RefreshWhenChange"), "", "iconRefresh.png");
         }
-        if (id.startsWith("wrap")) {
-            return new StyleData(id, "", message("Wrap"), "", "iconWrap.png");
-        }
-        if (id.startsWith("leftPane")) {
-            return new StyleData(id, "", message("LeftPane"), "", "iconDoubleLeft.png");
-        }
-        if (id.startsWith("rightPane")) {
-            return new StyleData(id, "", message("RightPane"), "", "iconDoubleRight.png");
-        }
-        if (id.startsWith("contextMenu")) {
-            return new StyleData(id, "", message("ContextMenu"), "", "iconMenu.png");
-        }
-        if (id.startsWith("editable")) {
-            return new StyleData(id, "", message("Editable"), "", "iconEdit.png");
-        }
-        if (id.startsWith("scope")) {
-            return new StyleData(id, "", message("Scope"), "", "iconTarget.png");
-        }
         if (id.startsWith("nodesList")) {
             return new StyleData(id, "", message("List"), "", "iconList.png");
         }
-        if (id.startsWith("openPath")) {
-            return new StyleData(id, "", message("OpenDirectory"), "", "iconOpenPath.png");
+        if (id.startsWith("verify")) {
+            return new StyleData(id, message("Validate"), "", "iconVerify.png");
+        }
+        if (id.startsWith("miao")) {
+            return new StyleData(id, message("Meow"), message("MiaoPrompt"), "", "iconCat.png");
         }
         switch (id) {
-            case "tableSubdirCheck":
-                return new StyleData("tableSubdirCheck", "", message("HandleSubDirectories"), "", "iconFolder.png");
-            case "tableExpandDirCheck":
-                return new StyleData("tableExpandDirCheck", "", message("ExpandDirectories"), "", "iconUnfold.png");
-            case "tableCreateDirCheck":
-                return new StyleData("tableCreateDirCheck", "", message("CreateDirectories"), "", "iconFolderLink.png");
-            case "countDirCheck":
-                return new StyleData("countDirCheck", "", message("CountFilesUnderFolders"), "", "iconFolderBrowse.png");
             case "tableThumbCheck":
                 return new StyleData("tableThumbCheck", "", message("Thumbnail"), "", "iconThumbsList.png");
-            case "miaoCheck":
-                return new StyleData("miaoCheck", message("Meow"), message("MiaoPrompt"), "", "iconCat.png");
             case "pdfMemBox":
                 return new StyleData("pdfMemBox", "", message("PdfMemComments"), "", "");
             case "openCheck":
@@ -113,11 +109,11 @@ public class StyleCheckBox {
             case "transparentCheck":
                 return new StyleData(id, "", message("CountTransparent"), "", "iconOpacity.png");
             case "displaySizeCheck":
-                return new StyleData("displaySizeCheck", "", message("DisplaySize"), "", "iconIdea.png");
+                return new StyleData("displaySizeCheck", "", message("DisplaySize"), "", "iconNumber.png");
             case "topCheck":
                 return new StyleData("topCheck", "", message("AlwayOnTop"), "", "iconTop.png");
             case "saveCloseCheck":
-                return new StyleData("saveCloseCheck", "", message("CloseAfterHandled"), "", "iconFlower.png");
+                return new StyleData(id, "", message("CloseAfterHandled"), "", "iconClose.png");
             case "deskewCheck":
                 return new StyleData("deskewCheck", "", message("Deskew"), "", "iconShear.png");
             case "invertCheck":

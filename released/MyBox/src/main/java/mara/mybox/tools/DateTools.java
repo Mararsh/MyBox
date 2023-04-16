@@ -38,40 +38,55 @@ public class DateTools {
             if (strDate == null || strDate.isBlank()) {
                 return null;
             }
-            String s = strDate.trim().replace("T", " ");
-            String ss = s, format;
-            if (ss.startsWith("-")) {
-                ss = s.substring(1);
+            String fullString = strDate.trim().replace("T", " ");
+            String parsed = fullString, format;
+            if (parsed.startsWith("-")) {
+                parsed = fullString.substring(1);
             }
-            if (ss.contains("/")) {
-                if (ss.contains(":")) {
-                    if (ss.contains(".")) {
-                        format = TimeFormats.DatetimeMsB;
+            int len = parsed.length();
+            if (len <= 4) {
+                format = TimeFormats.YearA;
+            } else if (parsed.contains("/")) {
+                if (parsed.charAt(4) == '/') {
+                    if (parsed.contains(":")) {
+                        if (parsed.contains(".")) {
+                            format = TimeFormats.DatetimeMsC;
+                        } else {
+                            format = TimeFormats.DatetimeC;
+                        }
+                    } else if (parsed.indexOf("/") == parsed.lastIndexOf("/")) {
+                        format = TimeFormats.MonthC;
                     } else {
-                        format = TimeFormats.DatetimeB;
+                        format = TimeFormats.DateC;
                     }
-                } else if (ss.indexOf("/") == ss.lastIndexOf("/")) {
-                    format = TimeFormats.MonthB;
                 } else {
-                    format = TimeFormats.DateB;
+                    if (parsed.contains(":")) {
+                        if (parsed.contains(".")) {
+                            format = TimeFormats.DatetimeMsB;
+                        } else {
+                            format = TimeFormats.DatetimeB;
+                        }
+                    } else if (parsed.indexOf("/") == parsed.lastIndexOf("/")) {
+                        format = TimeFormats.MonthB;
+                    } else {
+                        format = TimeFormats.DateB;
+                    }
                 }
-            } else if (ss.contains("-")) {
-                if (ss.contains(":")) {
-                    if (ss.contains(".")) {
+
+            } else if (parsed.contains("-")) {
+                if (parsed.contains(":")) {
+                    if (parsed.contains(".")) {
                         format = TimeFormats.DatetimeMsA;
                     } else {
                         format = TimeFormats.DatetimeA;
                     }
-                    if (ss.contains("+")) {
-                        format += " Z";
-                    }
-                } else if (ss.indexOf("-") == ss.lastIndexOf("-")) {
+                } else if (parsed.indexOf("-") == parsed.lastIndexOf("-")) {
                     format = TimeFormats.MonthA;
                 } else {
                     format = TimeFormats.DateA;
                 }
-            } else if (ss.contains(":")) {
-                if (ss.contains(".")) {
+            } else if (parsed.contains(":")) {
+                if (parsed.contains(".")) {
                     format = TimeFormats.TimeMs;
                 } else {
                     format = TimeFormats.Time;
@@ -79,7 +94,7 @@ public class DateTools {
             } else {
                 format = TimeFormats.YearA;
             }
-            if (ss.contains("+")) {
+            if (parsed.contains("+")) {
                 format += " Z";
             }
             return format;

@@ -20,6 +20,7 @@ import mara.mybox.data.ValueRange.SplitType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.cell.TableBooleanCell;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -188,6 +189,7 @@ public class ControlData2DSplit extends BaseTableViewController<ValueRange> {
             if (column == null || !column.isTimeType()) {
                 inputsBox.getChildren().add(scaleBox);
             }
+            refreshStyle(listBox);
             return !tableData.isEmpty();
         }
         return false;
@@ -198,7 +200,7 @@ public class ControlData2DSplit extends BaseTableViewController<ValueRange> {
             return true;
         }
         try {
-            double v = Double.valueOf(sizeInput.getText());
+            double v = Double.parseDouble(sizeInput.getText());
             if (v > 0) {
                 size = v;
                 UserConfig.setString(baseName + "Size", size + "");
@@ -230,7 +232,7 @@ public class ControlData2DSplit extends BaseTableViewController<ValueRange> {
 
     protected boolean checkNumber() {
         try {
-            int v = Integer.valueOf(numberInput.getText());
+            int v = Integer.parseInt(numberInput.getText());
             if (v > 0) {
                 numberInput.setStyle(null);
                 number = v;
@@ -287,6 +289,7 @@ public class ControlData2DSplit extends BaseTableViewController<ValueRange> {
         }
         int index = selectedIndix();
         if (index < 0) {
+            popError(message("SelectToHandle"));
             return;
         }
         ValueRange selected = tableData.get(index);

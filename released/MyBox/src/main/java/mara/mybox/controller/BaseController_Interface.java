@@ -112,7 +112,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 targetFileController.notify.addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                        targetPath = targetFileController.file();
+                        targetFile = targetFileController.file();
                     }
                 });
                 targetFileController.baseName(interfaceName).savedName(interfaceName + "TargetFile").type(TargetFileType).init();
@@ -208,17 +208,6 @@ public abstract class BaseController_Interface extends BaseController_Files {
 
             }
 
-            if (saveCloseCheck != null) {
-                saveCloseCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Boolean> ov,
-                            Boolean oldVal, Boolean newVal) {
-                        UserConfig.setBoolean(interfaceName + "SaveClose", saveCloseCheck.isSelected());
-                    }
-                });
-                saveCloseCheck.setSelected(UserConfig.getBoolean(interfaceName + "SaveClose", false));
-            }
-
             dpi = UserConfig.getInt(interfaceName + "DPI", 96);
             if (dpiSelector != null) {
                 List<String> dpiValues = new ArrayList();
@@ -239,6 +228,10 @@ public abstract class BaseController_Interface extends BaseController_Files {
                         (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
                             checkDPI();
                         });
+            }
+
+            if (openSourceButton != null) {
+                openSourceButton.setDisable(true);
             }
 
             initLeftPaneControl();

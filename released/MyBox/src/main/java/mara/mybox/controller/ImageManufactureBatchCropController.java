@@ -161,7 +161,7 @@ public class ImageManufactureBatchCropController extends BaseImageManufactureBat
 
     private void checkCenterWidth() {
         try {
-            centerWidth = Integer.valueOf(centerWidthInput.getText());
+            centerWidth = Integer.parseInt(centerWidthInput.getText());
             if (centerWidth > 0) {
                 centerWidthInput.setStyle(null);
             } else {
@@ -174,7 +174,7 @@ public class ImageManufactureBatchCropController extends BaseImageManufactureBat
 
     private void checkCenterHeight() {
         try {
-            centerHeight = Integer.valueOf(centerHeightInput.getText());
+            centerHeight = Integer.parseInt(centerHeightInput.getText());
             if (centerHeight > 0) {
                 centerHeightInput.setStyle(null);
             } else {
@@ -187,7 +187,7 @@ public class ImageManufactureBatchCropController extends BaseImageManufactureBat
 
     private void checkLeftX() {
         try {
-            leftX = Integer.valueOf(leftXInput.getText());
+            leftX = Integer.parseInt(leftXInput.getText());
             if (leftX > 0) {
                 leftXInput.setStyle(null);
             } else {
@@ -200,7 +200,7 @@ public class ImageManufactureBatchCropController extends BaseImageManufactureBat
 
     private void checkLeftY() {
         try {
-            leftY = Integer.valueOf(leftYInput.getText());
+            leftY = Integer.parseInt(leftYInput.getText());
             if (leftX > 0) {
                 leftXInput.setStyle(null);
             } else {
@@ -213,7 +213,7 @@ public class ImageManufactureBatchCropController extends BaseImageManufactureBat
 
     private void checkRightX() {
         try {
-            rightX = Integer.valueOf(rightXInput.getText());
+            rightX = Integer.parseInt(rightXInput.getText());
             if (rightX > 0 && rightX > leftX) {
                 rightXInput.setStyle(null);
             } else {
@@ -226,7 +226,7 @@ public class ImageManufactureBatchCropController extends BaseImageManufactureBat
 
     private void checkRightY() {
         try {
-            rightY = Integer.valueOf(rightYInput.getText());
+            rightY = Integer.parseInt(rightYInput.getText());
             if (rightY > 0 && rightY > leftY) {
                 rightYInput.setStyle(null);
             } else {

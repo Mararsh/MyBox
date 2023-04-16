@@ -980,6 +980,8 @@ public class ControlWebView extends BaseController {
         });
         copyMenu.getItems().add(menu);
 
+        items.add(new SeparatorMenuItem());
+
         closePopup();
         popNodeMenu(webView, items);
         if (parentController != null) {
