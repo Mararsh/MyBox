@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -50,7 +51,7 @@ public class DownloadTask<Void> extends BaseTask<Void> {
         startTime = new Date();
         currentSize = 0;
         try {
-            url = new URL(address);
+            url = new URI(address).toURL();
             return true;
         } catch (Exception e) {
             error = e.toString();

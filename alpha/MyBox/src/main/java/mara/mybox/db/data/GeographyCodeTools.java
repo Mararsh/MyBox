@@ -5,6 +5,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -70,7 +71,7 @@ public class GeographyCodeTools {
                                 + address
                                 + "\"}", "UTF-8") + "&tk="
                         + UserConfig.getString("TianDiTuWebKey", AppValues.TianDiTuWebKey);
-                URL url = new URL(urlString);
+                URL url = new URI(urlString).toURL();
                 File jsonFile = TmpFileTools.getTempFile(".json");
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
@@ -174,7 +175,7 @@ public class GeographyCodeTools {
     //"road_distance":65,"poi_distance":10,"address_distance":10}},"msg":"ok","status":"0"}
     public static GeographyCode tiandituCode(String urlString, GeographyCode geographyCode) {
         try {
-            URL url = new URL(urlString);
+            URL url = new URI(urlString).toURL();
             File jsonFile = TmpFileTools.getTempFile(".json");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
@@ -384,7 +385,7 @@ public class GeographyCodeTools {
     //"adcode":"370902","town":[],"number":[],"location":"117.157242,36.164988","levelCode":"兴趣点"}]}
     public static GeographyCode gaodeCode(String urlString, GeographyCode geographyCode) {
         try {
-            URL url = new URL(urlString);
+            URL url = new URI(urlString).toURL();
             File xmlFile = HtmlReadTools.download(url.toString());
 //            MyBoxLog.debug(FileTools.readTexts(xmlFile));
             Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xmlFile);
@@ -539,8 +540,8 @@ public class GeographyCodeTools {
         if (code == null) {
             return null;
         }
-        try ( Connection conn = DerbyBase.getConnection();
-                 PreparedStatement geoInsert = conn.prepareStatement(TableGeographyCode.Insert)) {
+        try (Connection conn = DerbyBase.getConnection();
+                PreparedStatement geoInsert = conn.prepareStatement(TableGeographyCode.Insert)) {
             return encode(conn, geoInsert, code, true);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -1976,7 +1977,7 @@ public class GeographyCodeTools {
                     + locationsString
                     + "&coordsys=" + sourceCS.gaodeConvertService()
                     + "&output=xml&key=" + UserConfig.getString("GaoDeMapServiceKey", AppValues.GaoDeMapServiceKey);
-            URL url = new URL(urlString);
+            URL url = new URI(urlString).toURL();
             File xmlFile = HtmlReadTools.download(url.toString());
             Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xmlFile);
             NodeList nodes = doc.getElementsByTagName("info");

@@ -1,10 +1,11 @@
 package mara.mybox.data;
 
-import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.UrlTools;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 
 /**
  * @Author Mara
@@ -15,7 +16,7 @@ public class HtmlElement {
 
     protected Element element;
     protected Charset charset;
-    protected String tag, href, name, linkAddress, finalAddress;
+    protected String tag, href, name, address, decodedHref, decodedAddress;
 
     public HtmlElement(Element element, Charset charset) {
         this.element = element;
@@ -26,10 +27,11 @@ public class HtmlElement {
     public final void parse() {
         try {
             href = null;
+            decodedHref = null;
             tag = null;
             name = null;
-            linkAddress = null;
-            finalAddress = null;
+            address = null;
+            decodedAddress = null;
             if (element == null) {
                 return;
             }
@@ -40,22 +42,52 @@ public class HtmlElement {
             if (tag.equalsIgnoreCase("a")) {
                 href = element.getAttribute("href");
                 name = element.getTextContent();
+                if (href == null) {
+                    NamedNodeMap m = element.getAttributes();
+                    for (int k = 0; k < m.getLength(); k++) {
+                        if ("href".equalsIgnoreCase(m.item(k).getNodeName())) {
+                            href = m.item(k).getNodeValue();
+                        } else if ("title".equalsIgnoreCase(m.item(k).getNodeName())) {
+                            name = m.item(k).getNodeValue();
+                        }
+                    }
+                }
+
             } else if (tag.equalsIgnoreCase("img")) {
                 href = element.getAttribute("src");
                 name = element.getAttribute("alt");
+                if (href == null) {
+                    NamedNodeMap m = element.getAttributes();
+                    for (int k = 0; k < m.getLength(); k++) {
+                        if ("src".equalsIgnoreCase(m.item(k).getNodeName())) {
+                            href = m.item(k).getNodeValue();
+                        } else if ("alt".equalsIgnoreCase(m.item(k).getNodeName())) {
+                            name = m.item(k).getNodeValue();
+                        }
+                    }
+                }
             }
             if (href == null) {
                 return;
             }
+            decodedHref = URLDecoder.decode(href, charset);
             try {
-                linkAddress = new URL(new URL(element.getBaseURI()), href).toString();
+                address = UrlTools.fullAddress(element.getBaseURI(), href);
             } catch (Exception e) {
-                linkAddress = href;
+                address = href;
             }
-            finalAddress = URLDecoder.decode(linkAddress, charset);
+            decodedAddress = URLDecoder.decode(address, charset);
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
+    }
+
+    public boolean isLink() {
+        return decodedHref != null && "a".equalsIgnoreCase(tag);
+    }
+
+    public boolean isImage() {
+        return decodedHref != null && "img".equalsIgnoreCase(tag);
     }
 
     /*
@@ -101,20 +133,28 @@ public class HtmlElement {
         this.name = name;
     }
 
-    public String getLinkAddress() {
-        return linkAddress;
+    public String getAddress() {
+        return address;
     }
 
-    public void setLinkAddress(String linkAddress) {
-        this.linkAddress = linkAddress;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
-    public String getFinalAddress() {
-        return finalAddress;
+    public String getDecodedAddress() {
+        return decodedAddress;
     }
 
-    public void setFinalAddress(String finalAddress) {
-        this.finalAddress = finalAddress;
+    public void setDecodedAddress(String decodedAddress) {
+        this.decodedAddress = decodedAddress;
+    }
+
+    public String getDecodedHref() {
+        return decodedHref;
+    }
+
+    public void setDecodedHref(String decodedHref) {
+        this.decodedHref = decodedHref;
     }
 
 }

@@ -95,12 +95,24 @@ public class UrlTools {
 
     public static String fullAddress(String baseAddress, String address) {
         try {
-            URL baseURL = new URL(baseAddress);
-            URL url = new URL(baseURL, address);
+            URL url = fullUrl(new URI(baseAddress).toURL(), address);
             return url.toString();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e.toString());
             return address;
+        }
+    }
+
+    public static URL fullUrl(URL baseURL, String address) {
+        try {
+            return new URL(baseURL, address);
+        } catch (Exception e) {
+            try {
+                return new URI(address).toURL();
+            } catch (Exception ex) {
+                MyBoxLog.debug(ex);
+                return null;
+            }
         }
     }
 
@@ -154,7 +166,7 @@ public class UrlTools {
 
     public static String fullPath(String address) {
         try {
-            String path = fullPath(new URL(address));
+            String path = fullPath(new URI(address).toURL());
             return path == null ? address : path;
         } catch (Exception e) {
             return address;

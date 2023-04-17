@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URI;
-import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -69,7 +68,6 @@ import mara.mybox.value.UserConfig;
 import netscape.javascript.JSObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
@@ -279,13 +277,10 @@ public class ControlWebView extends BaseController {
             String tag = null, href = null;
             if (ev.getTarget() != null) {
                 element = (Element) ev.getTarget();
-                tag = element.getTagName();
+                HtmlElement htmlElement = new HtmlElement(element, charset);
+                tag = htmlElement.getTag();
                 if (tag != null) {
-                    if (tag.equalsIgnoreCase("a")) {
-                        href = element.getAttribute("href");
-                    } else if (tag.equalsIgnoreCase("img")) {
-                        href = element.getAttribute("src");
-                    }
+                    href = htmlElement.getHref();
                 }
             } else {
                 element = null;
@@ -328,7 +323,7 @@ public class ControlWebView extends BaseController {
                         String clickAction = UserConfig.getString("WebViewWhenClickImageOrLink", "PopMenu");
                         if (linkInNewTab) {
                             ev.preventDefault();
-                            WebBrowserController.openAddress(htmlElement.getFinalAddress(), true);
+                            WebBrowserController.openAddress(htmlElement.getDecodedAddress(), true);
                         } else if (!"AsPage".equals(clickAction)) {
                             ev.preventDefault();
                             if (clickAction == null || "PopMenu".equals(clickAction)) {
@@ -336,9 +331,9 @@ public class ControlWebView extends BaseController {
                                     popLinkMenu(htmlElement);
                                 });
                             } else if ("Load".equals(clickAction)) {
-                                loadAddress(htmlElement.getFinalAddress());
+                                loadAddress(htmlElement.getDecodedAddress());
                             } else {
-                                WebBrowserController.openAddress(htmlElement.getFinalAddress(), "OpenSwitch".equals(clickAction));
+                                WebBrowserController.openAddress(htmlElement.getDecodedAddress(), "OpenSwitch".equals(clickAction));
                             }
                         }
                     }
@@ -826,8 +821,8 @@ public class ControlWebView extends BaseController {
         if (href == null) {
             return;
         }
-        String linkAddress = htmlElement.getLinkAddress();
-        String finalAddress = htmlElement.getFinalAddress();
+        String linkAddress = htmlElement.getAddress();
+        String finalAddress = htmlElement.getDecodedAddress();
         String tag = htmlElement.getTag();
         String name = htmlElement.getName();
         List<MenuItem> items = new ArrayList<>();
@@ -1538,7 +1533,7 @@ public class ControlWebView extends BaseController {
                         return true;
                     }
                     List<String> names = new ArrayList<>();
-                    names.addAll(Arrays.asList(message("Index"), message("Link"), message("Name"), message("Title"),
+                    names.addAll(Arrays.asList(message("Index"), message("Link"), message("Name"),
                             message("Address"), message("FullAddress")
                     ));
                     table = new StringTable(names);
@@ -1549,35 +1544,22 @@ public class ControlWebView extends BaseController {
                             continue;
                         }
                         Element nodeElement = (Element) node;
-                        NamedNodeMap m = nodeElement.getAttributes();
-                        String href = null, title = null;
-                        for (int k = 0; k < m.getLength(); k++) {
-                            if ("href".equalsIgnoreCase(m.item(k).getNodeName())) {
-                                href = m.item(k).getNodeValue();
-                            } else if ("title".equalsIgnoreCase(m.item(k).getNodeName())) {
-                                title = m.item(k).getNodeValue();
-                            }
-                        }
-//                            String href = nodeElement.getAttribute("href"); // do not konw why this does not work
-//                            String title = nodeElement.getAttribute("title");
-                        if (href == null || href.isBlank()) {
+                        HtmlElement htmlElement = new HtmlElement(nodeElement, charset);
+                        if (!htmlElement.isLink()) {
                             continue;
                         }
-                        String linkAddress = href;
-                        try {
-                            URL url = new URL(new URL(nodeElement.getBaseURI()), href);
-                            linkAddress = url.toString();
-                        } catch (Exception e) {
+                        String name = htmlElement.getName();
+                        if (name == null) {
+                            name = "";
                         }
-                        String name = nodeElement.getTextContent();
+                        String linkAddress = htmlElement.getDecodedAddress();
                         List<String> row = new ArrayList<>();
                         row.addAll(Arrays.asList(
                                 index + "",
-                                "<a href=\"" + linkAddress + "\">" + (name == null ? title : name) + "</a>",
-                                name == null ? "" : name,
-                                title == null ? "" : title,
-                                URLDecoder.decode(href, charset),
-                                URLDecoder.decode(linkAddress, charset)
+                                "<a href=\"" + linkAddress + "\">" + name + "</a>",
+                                name,
+                                htmlElement.getDecodedHref(),
+                                linkAddress
                         ));
                         table.add(row);
                         index++;
@@ -1621,7 +1603,7 @@ public class ControlWebView extends BaseController {
                         return true;
                     }
                     List<String> names = new ArrayList<>();
-                    names.addAll(Arrays.asList(message("Index"), message("Link"), message("Name"), message("Title"),
+                    names.addAll(Arrays.asList(message("Index"), message("Link"), message("Name"), message("Image"),
                             message("Address"), message("FullAddress")
                     ));
                     table = new StringTable(names);
@@ -1632,35 +1614,25 @@ public class ControlWebView extends BaseController {
                             continue;
                         }
                         Element nodeElement = (Element) node;
-                        NamedNodeMap m = nodeElement.getAttributes();
-                        String href = null, name = null;
-                        for (int k = 0; k < m.getLength(); k++) {
-                            if ("src".equalsIgnoreCase(m.item(k).getNodeName())) {
-                                href = m.item(k).getNodeValue();
-                            } else if ("alt".equalsIgnoreCase(m.item(k).getNodeName())) {
-                                name = m.item(k).getNodeValue();
-                            }
-                        }
-//                        String href = nodeElement.getAttribute("src"); // do not konw why this does not work
-//                        String name = nodeElement.getAttribute("alt");
-                        if (href == null || href.isBlank()) {
+                        HtmlElement htmlElement = new HtmlElement(nodeElement, charset);
+                        if (!htmlElement.isImage()) {
                             continue;
                         }
-                        String linkAddress = href;
-                        try {
-                            URL url = new URL(new URL(nodeElement.getBaseURI()), href);
-                            linkAddress = url.toString();
-                        } catch (Exception e) {
+                        String name = htmlElement.getName();
+                        if (name == null) {
+                            name = "";
                         }
+                        String linkAddress = htmlElement.getDecodedAddress();
                         List<String> row = new ArrayList<>();
                         row.addAll(Arrays.asList(
                                 index + "",
-                                "<a href=\"" + linkAddress + "\">" + (name == null ? message("Link") : name) + "</a>",
-                                "<img src=\"" + linkAddress + "\" " + (name == null ? "" : "alt=\"" + name + "\"") + " width=100/>",
-                                name == null ? "" : name,
-                                URLDecoder.decode(href, charset),
-                                URLDecoder.decode(linkAddress, charset)
+                                "<a href=\"" + linkAddress + "\">" + (name.isBlank() ? message("Link") : name) + "</a>",
+                                name,
+                                "<img src=\"" + linkAddress + "\" " + (name.isBlank() ? "" : "alt=\"" + name + "\"") + " width=100/>",
+                                htmlElement.getDecodedHref(),
+                                linkAddress
                         ));
+
                         table.add(row);
                         index++;
                     }

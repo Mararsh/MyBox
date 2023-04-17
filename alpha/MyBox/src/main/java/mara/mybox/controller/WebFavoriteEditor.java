@@ -2,7 +2,7 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.net.URL;
+import java.net.URI;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
@@ -79,8 +79,8 @@ public class WebFavoriteEditor extends TreeNodeEditor {
         synchronized (this) {
             String address;
             try {
-                URL url = new URL(valueInput.getText());
-                address = url.toString();
+                URI uri = new URI(valueInput.getText());
+                address = uri.toString();
             } catch (Exception e) {
                 popError(message("InvalidData"));
                 return;

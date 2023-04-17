@@ -4,14 +4,14 @@
 
     <groupId>mara</groupId>
     <artifactId>MyBox</artifactId>
-    <version>6.7.2</version>
+    <version>6.7.3</version>
     <packaging>jar</packaging>
     <name>MyBox</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <mainClass>mara.mybox.MyBox</mainClass>
-        <maven.compiler.source>19</maven.compiler.source>
-        <maven.compiler.target>19</maven.compiler.target>
+        <maven.compiler.source>20</maven.compiler.source>
+        <maven.compiler.target>20</maven.compiler.target>
     </properties>
 
     <organization>
@@ -22,43 +22,43 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
-            <version>19.0.2.1</version>
+            <version>20</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>19.0.2.1</version>
+            <version>20</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>19.0.2.1</version>
+            <version>20</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-web</artifactId>
-            <version>19.0.2.1</version>
+            <version>20</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-media</artifactId>
-            <version>19.0.2.1</version>
+            <version>20</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
-            <version>19.0.2.1</version>
+            <version>20</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-swing</artifactId>
-            <version>19.0.2.1</version>
+            <version>20</version>
             <classifier>${platform}</classifier>
         </dependency>
         <dependency>
@@ -316,7 +316,7 @@
             <id>win</id>
             <properties>
                 <platform>win</platform>
-                <javaVersion>19</javaVersion>
+                <javaVersion>20</javaVersion>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -326,7 +326,7 @@
             <id>linux</id>
             <properties>
                 <platform>linux</platform>
-                <javaVersion>19</javaVersion>
+                <javaVersion>20</javaVersion>
             </properties>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -336,7 +336,7 @@
             <id>mac</id>
             <properties>
                 <platform>mac</platform>
-                <javaVersion>19</javaVersion>
+                <javaVersion>20</javaVersion>
             </properties>
             <activation>
                 <activeByDefault>false</activeByDefault>

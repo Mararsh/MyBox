@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.security.cert.Certificate;
@@ -169,7 +170,7 @@ public class NetworkQueryAddressController extends HtmlTableController {
                             }
                         }
 
-                        URL url = new URL(UrlTools.checkURL(address, Charset.defaultCharset()));
+                        URL url = new URI(UrlTools.checkURL(address, Charset.defaultCharset())).toURL();
                         certString = readCert(url);
                         headerTable = HtmlReadTools.requestHeadTable(url);
                     } catch (Exception e) {

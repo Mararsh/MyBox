@@ -2,6 +2,7 @@ package mara.mybox.tools;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.net.URI;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,7 +26,7 @@ public class IconTools {
             }
             URL url;
             try {
-                url = new URL(address);
+                url = new URI(address).toURL();
             } catch (Exception e) {
                 return null;
             }
@@ -85,7 +86,7 @@ public class IconTools {
             }
             URL url;
             try {
-                url = new URL(address);
+                url = new URI(address).toURL();
             } catch (Exception e) {
                 return null;
             }
@@ -157,7 +158,7 @@ public class IconTools {
                         return iconUrl;
                     }
                     if (iconUrl.charAt(0) == '/') {
-                        URL url = new URL(address);
+                        URL url = new URI(address).toURL();
                         iconUrl = url.getProtocol() + "://" + url.getHost() + iconUrl;
                     } else {
                         iconUrl = address + "/" + iconUrl;

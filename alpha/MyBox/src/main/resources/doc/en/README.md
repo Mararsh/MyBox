@@ -10,36 +10,28 @@ The latest versions and all archived versions can be downloaded in following add
 
 | address | dowloads | readme | 
 | --- | --- | --- | 
-| github | [https://github.com/Mararsh/MyBox/releases](https://github.com/Mararsh/MyBox/releases)  | [English](https://mararsh.github.io/MyBox/readme-en.html)   [Chinese](https://mararsh.github.io/MyBox/readme-zh.html) |
-| sourceforge | [https://sourceforge.net/projects/mara-mybox/files/](https://sourceforge.net/projects/mara-mybox/files/)  | [English](https://mara-mybox.sourceforge.io/readme-en.html)  [Chinese](https://mara-mybox.sourceforge.io/readme-zh.html) |
+| github | [https://github.com/Mararsh/MyBox/releases](https://github.com/Mararsh/MyBox/releases)  | [English](https://mararsh.github.io/MyBox/readme-en.html)     [Chinese](https://mararsh.github.io/MyBox/readme-zh.html) |
+| sourceforge | [https://sourceforge.net/projects/mara-mybox/files/](https://sourceforge.net/projects/mara-mybox/files/)  | [English](https://mara-mybox.sourceforge.io/readme-en.html)    [Chinese](https://mara-mybox.sourceforge.io/readme-zh.html) |
 | cloud | [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)   |  |
 
 
 ## What's New                       
-2023-4-16 v6.7.2                
+2023-5-16 v6.7.3                
                 
 * Added:                                   
-     - Manage remote path(SFTP).                                                             
-     - Synchronize remote directory from local.                    
-     - Clear expired data.                                                                                                                                                                                                     
+     -                                                              
+     -                                                              
+     -                                                                                                                                                                                                  
 * Improved:                                   
-     - Option to disable omission of Ctrl/Alt in shortcuts.(To avoid misoperations)                                                             
-     - Always disable omission of Ctrl/Alt in shortcuts of following buttons: Save, Delete, Clear. (To avoid accidents)                                                                          
-     - Values can be validated when edit data.                                                                                                                                         
-     - Display and manage tree information in tree table view.                            
+     -                                                              
+     -                                                              
+     -                                                                                                                                                                                                  
 * Solved problems:                                      
-     - When edit data, values in other rows may be tampered. (Serious bug since 2019)                                                             
-     - When edit data, should not apply modification to all new rows.                                                             
-     - When edit/add data rows, values should not be validated automatically.                                                             
-     - Logic about "node A is sub-node of node B" has bug.                                                             
-     - Fail to mode nodes in tree information.                                                             
-     - Function "ffmepg convert medias" does not work.                                                             
-     - Interface behavious of Html Editor are unexpected.                                                             
-     - Calculation of "Splice Images" and "Split Image" are inaccurate.                                                             
-     - Option "pop menu when hovering button" does not work in some interfaces.                                                                                    
-     - Fail to play PDF which has password.                                                             
+     -                                                              
+     -                                                              
+     -                                                                                                                                                                                                  
  
-[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.2)                           
+[Closed requirements/bugs in this version](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.3)                           
 
 ## Notice         
 Without enough testings, MyBox has low reliability and bad stability. When use MyBox, following may happen:        
@@ -53,9 +45,9 @@ Without enough testings, MyBox has low reliability and bad stability. When use M
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory. 
 
 ## Source Codes          
-| Source Codes | Developement Guide | Packing Steps |           
+| Download | Size | Developement Guide | Packing Steps |           
 | --- | --- | --- | 
-| [MyBox-src.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-src.zip)   65M-  | [pdf](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-en.pdf) | [html](https://mara-mybox.sourceforge.io/pack_steps_en.html) |
+| [MyBox-src.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-src.zip)  |  65M- | [pdf](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-en.pdf) | [html](https://mara-mybox.sourceforge.io/pack_steps_en.html) |
            
 ## Self-contain packages
 Self-contain packages include all files and need not java env nor installation.      
@@ -160,7 +152,7 @@ Function "Settings" can be used to change configuration values.
 | Palette - Art paints                            | 6.7.1   | 2023-3-13 | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_art_paints_en.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_art_paints_all_en.html)                                                                                                                                  | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_art_paints.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_art_paints_all.html)                                                                                                                                                                                                                                   |
 | Palette - MyBox Colors                          | 6.7.2   | 2023-4-16 | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_mybox_en.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_mybox_all_en.html)                                                                                                                              | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_mybox.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_mybox_all.html)                                                                                                                                                                                                                                   |
 | Palette - Gray scale                            | 6.7.1   | 2023-3-13 | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_gray_en.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_gray_all_en.html)                                                                                                                                  | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_gray.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_gray_all.html)                                                                                                                                                                                                                                   |
-| Stories of Images                               | 6.7.2   | 2023-4-16 | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-StoriesOfImages-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.odt)                     | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-StoriesOfImages-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.odt)                     |   
+| Stories of Images                               | 6.7.2   | 2023-4-16 | [html](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.odt)                     | [html](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.odt)                     |   
 
 
 # Implementation        

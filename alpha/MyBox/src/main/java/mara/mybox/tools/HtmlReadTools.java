@@ -5,6 +5,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ public class HtmlReadTools {
             }
             URL url;
             try {
-                url = new URL(urlAddress);
+                url = new URI(urlAddress).toURL();
             } catch (Exception e) {
                 return null;
             }
@@ -135,7 +136,7 @@ public class HtmlReadTools {
             }
             URL url;
             try {
-                url = new URL(urlAddress);
+                url = new URI(urlAddress).toURL();
             } catch (Exception e) {
                 return null;
             }
@@ -494,7 +495,7 @@ public class HtmlReadTools {
         for (org.jsoup.nodes.Element element : elements) {
             String linkAddress = element.attr("href");
             try {
-                URL url = new URL(baseURL, linkAddress);
+                URL url = UrlTools.fullUrl(baseURL, linkAddress);
                 Link link = Link.create().setUrl(url).setAddress(url.toString()).setAddressOriginal(linkAddress)
                         .setName(element.text()).setTitle(element.attr("title")).setIndex(links.size());
                 links.add(link);

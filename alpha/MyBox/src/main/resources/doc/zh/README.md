@@ -16,30 +16,23 @@
 
 
 ## 新内容
-2023-4-16 版本6.7.2                
+2023-5-16 版本6.7.3                
                                 
 * 新增：                  
-     - 管理远程目录（sftp）。                                                             
-     - 从本地同步到远程目录。                                                             
-     - 清除过期数据。                                                                                                                                                                                                           
+     -                                                              
+     -                                                              
+     -                                                                                                                                                                                                  
 * 改进：                                
-     - 选项：禁止省略快捷键的Ctrl/Alt。（以免误操作）                                                             
-     - 对以下按钮总是禁止省略快捷键的Ctrl/Alt：保存、删除、清除。（以免事故）                                                             
-     - 编辑数据时可检验值的合法性。                                                             
-     - 树形信息以树形表格来显示和管理。                                       
+     -                                                          
+     -                                                          
+     -                                                             
+     -                                       
 * 解决问题：                                     
-     - 编辑数据时可能篡改其它行的值。（自2019年一直存在的严重错误）                                                             
-     - 编辑数据时不应把修改应用到所有新数据行。                                                             
-     - 添加/修改数据行时不应自动检验值的合法性。                                                             
-     - “树中节点A是节点B的子节点”的判定逻辑不够严密。                                                             
-     - 树形信息移动节点失败。                                                             
-     - 功能“ffmpeg转换媒体”失效。                                                                                                                                                                        
-     - 网页编辑器的界面行为非预期。                                                                                                                                                                        
-     - “拼接图片”和“分割图片”的计算不准确。                                                                                                                                                                        
-     - 选项“悬停按钮时弹出菜单”在一些界面没有生效。                                                                                                                                                                        
-     - 无法播放带密码的PDF。                                                                                                                                                                        
+     -                                                             
+     -                                                         
+     -                                                             
  
-[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.2)             
+[此版本关闭的需求/问题列表](http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.3)             
              
 ## 注意       
 MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出现以下情况：      
@@ -53,9 +46,9 @@ MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出�
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases)目录下。      
 
 ## 源码
-| 源码 | 开发指南 | 打包步骤 |           
+| 下载 | 大小 | 开发指南 | 打包步骤 |           
 | --- | --- | --- | 
-| [MyBox-src.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-src.zip)   65M-  | [pdf](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-zh.pdf) | [html](https://mara-mybox.sourceforge.io/pack_steps.html) |
+| [MyBox-src.zip](https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-src.zip)   |  65M-  | [pdf](https://mara-mybox.sourceforge.io/guide/MyBox-DevGuide-zh.pdf) | [html](https://mara-mybox.sourceforge.io/pack_steps.html) |
            
 ## 自包含程序包
 自包含的程序包无需java环境、无需安装、解包可用。     
@@ -159,7 +152,7 @@ MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出�
 | 调色盘-美术颜料               | 6.7.1   | 2023-3-13 | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_art_paints_en.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_art_paints_all_en.html)                                                                                                                                  | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_art_paints.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_art_paints_all.html)                                                                                                                                                                                                                                   |
 | 调色盘-MyBox的颜色            | 6.7.2   | 2023-4-16 | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_mybox_en.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_mybox_all_en.html)                                                                                                                              | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_mybox.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_mybox_all.html)                                                                                                                                                                                                                                   |
 | 调色盘-灰阶                   | 6.7.1   | 2023-3-13 | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_gray_en.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_gray_all_en.html)                                                                                                                                  | [rgba](https://mara-mybox.sourceforge.io/mybox_palette_gray.html)  [all](https://mara-mybox.sourceforge.io/mybox_palette_gray_all.html)                                                                                                                                                                                                                                   |
-| 图片的故事                    | 6.7.2   | 2023-4-16 | [html](https://mara-mybox.sourceforge.io/guide/en/MyBox-StoriesOfImages-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.odt)                     | [html](https://mara-mybox.sourceforge.io/guide/zh/MyBox-StoriesOfImages-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.odt)                     |   
+| 图片的故事                    | 6.7.2   | 2023-4-16 | [html](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-en.odt)                     | [html](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.html) [PDF](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.pdf) [odt](https://mara-mybox.sourceforge.io/guide/MyBox-StoriesOfImages-zh.odt)                     |   
 
 # 实现基础       
 MyBox基于以下开放资源：       

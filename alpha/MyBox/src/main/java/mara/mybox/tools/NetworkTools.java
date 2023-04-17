@@ -4,6 +4,7 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Arrays;
@@ -28,7 +29,7 @@ public class NetworkTools {
             p = port;
         } catch (Exception e) {
             try {
-                try ( ServerSocket serverSocket = new ServerSocket(0)) {
+                try (ServerSocket serverSocket = new ServerSocket(0)) {
                     p = serverSocket.getLocalPort();
                 }
             } catch (Exception ex) {
@@ -89,7 +90,7 @@ public class NetworkTools {
             if (urlString == null) {
                 return null;
             }
-            URL url = new URL(urlString);
+            URL url = new URI(urlString).toURL();
             values.put(Languages.message("Address"), url.toString());
             values.put(Languages.message("ExternalForm"), url.toExternalForm());
             values.put(Languages.message("Decode"), UrlTools.decodeURL(url.toString(), Charset.defaultCharset()));

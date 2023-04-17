@@ -13,6 +13,7 @@ import com.vladsch.flexmark.util.data.DataHolder;
 import com.vladsch.flexmark.util.data.MutableDataHolder;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 import java.io.File;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -512,7 +513,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
                 @Override
                 protected boolean handle() {
                     try {
-                        URL url = new URL(address);
+                        URL url = new URI(address).toURL();
                         File urlFile = HtmlReadTools.download(address);
                         String html = TextFileTools.readTexts(urlFile);
                         if (html == null) {
@@ -1036,7 +1037,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
                         linkTask.setDaemon(false);
                         downloadThreads.add(linkTask);
                         linkTask.start();
-                        updateLogs(message("Started") + ": " + message("DownloadThread") + linkTask.getId() + "    "
+                        updateLogs(message("Started") + ": " + message("DownloadThread") + linkTask.threadId() + "    "
                                 + message("Count") + ": " + downloadThreads.size());
                     }
                 } catch (Exception e) {
@@ -1231,7 +1232,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
                 synchronized (downloadThreads) {
                     if (self != null) {
                         downloadThreads.remove(self);
-                        updateLogs(message("Stopped") + ": " + message("DownloadThread") + self.getId() + "    "
+                        updateLogs(message("Stopped") + ": " + message("DownloadThread") + self.threadId() + "    "
                                 + message("Count") + ": " + downloadThreads.size());
                     }
                     if (!downloadThreads.isEmpty()) {
@@ -1253,7 +1254,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
                                 pThread.setDaemon(false);
                                 pathThreads.add(pThread);
                                 pThread.start();
-                                updateLogs(message("Started") + ": " + message("PathThread") + pThread.getId() + "    "
+                                updateLogs(message("Started") + ": " + message("PathThread") + pThread.threadId() + "    "
                                         + message("Count") + ": " + pathThreads.size());
                             }
                         }
@@ -1482,7 +1483,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
             synchronized (pathThreads) {
                 if (self != null) {
                     pathThreads.remove(self);
-                    updateLogs(message("Stopped") + ": " + message("PathThread") + self.getId() + "    "
+                    updateLogs(message("Stopped") + ": " + message("PathThread") + self.threadId() + "    "
                             + message("Count") + ": " + pathThreads.size());
                 }
                 if (pathThreads.isEmpty()) {
