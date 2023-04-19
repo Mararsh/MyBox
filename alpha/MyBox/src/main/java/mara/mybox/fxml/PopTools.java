@@ -488,11 +488,11 @@ public class PopTools {
     /*
         saved values
      */
-    public static void popStringValues(BaseController parent, TextInputControl input, Event pevent,
+    public static void popStringValues(BaseController parent, TextInputControl input, Event event,
             String name, boolean alwaysClear, boolean checkPop) {
         try {
             int max = UserConfig.getInt(name + "MaxSaved", 20);
-            MenuController controller = MenuController.open(parent, input, pevent);
+            MenuController controller = MenuController.open(parent, input, event);
 
             List<Node> setButtons = new ArrayList<>();
             Button clearInputButton = new Button(message("ClearInputArea"));
@@ -507,10 +507,10 @@ public class PopTools {
             Button clearValuesButton = new Button(message("ClearValues"));
             clearValuesButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
-                public void handle(ActionEvent event) {
+                public void handle(ActionEvent aevent) {
                     TableStringValues.clear(name);
                     controller.close();
-                    popStringValues(parent, input, event, name, alwaysClear, checkPop);
+                    popStringValues(parent, input, aevent, name, alwaysClear, checkPop);
                 }
             });
             setButtons.add(clearValuesButton);
@@ -518,7 +518,7 @@ public class PopTools {
             Button maxButton = new Button(message("MaxSaved"));
             maxButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
-                public void handle(ActionEvent event) {
+                public void handle(ActionEvent aevent) {
                     String value = PopTools.askValue(parent.getTitle(), null, message("MaxSaved"), max + "");
                     if (value == null) {
                         return;
@@ -556,7 +556,7 @@ public class PopTools {
                 popCheck.setSelected(UserConfig.getBoolean(name + "PopWhenMouseHovering", false));
                 popCheck.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
-                    public void handle(ActionEvent event) {
+                    public void handle(ActionEvent aevent) {
                         UserConfig.setBoolean(name + "PopWhenMouseHovering", popCheck.isSelected());
                     }
                 });
@@ -573,7 +573,7 @@ public class PopTools {
                 Button button = new Button(StringTools.start(value, 200));
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
-                    public void handle(ActionEvent event) {
+                    public void handle(ActionEvent aevent) {
                         if (UserConfig.getBoolean(name + "ValuesClearAndSet", true)) {
                             input.setText(value);
                         } else {
@@ -585,11 +585,11 @@ public class PopTools {
                 });
                 button.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
-                    public void handle(MouseEvent event) {
-                        if (event.getButton() == MouseButton.SECONDARY) {
+                    public void handle(MouseEvent aevent) {
+                        if (aevent.getButton() == MouseButton.SECONDARY) {
                             TableStringValues.delete(name, value);
                             controller.close();
-                            popStringValues(parent, input, pevent, name, alwaysClear, checkPop);
+                            popStringValues(parent, input, event, name, alwaysClear, checkPop);
                         }
                     }
                 });
@@ -600,6 +600,10 @@ public class PopTools {
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
+    }
+
+    public static void popStringValues(BaseController parent, TextInputControl input, Event event, String name) {
+        popStringValues(parent, input, event, name, false, true);
     }
 
     /*

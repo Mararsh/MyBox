@@ -11,7 +11,6 @@ import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
@@ -79,9 +78,7 @@ public class CertificateTools {
 
     public static boolean isHostCertificateInstalled(String host) {
         try {
-            SSLContext context = SSLContext.getDefault();
-            context.init(null, null, null);
-            SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket(host, 443);
+            SSLSocket socket = NetworkTools.sslSocket(host, 443);
             socket.setSoTimeout(UserConfig.getInt("WebConnectTimeout", 10000));
             try {
                 socket.startHandshake();
@@ -293,9 +290,7 @@ public class CertificateTools {
 
     public static Certificate getCertificateByHost(String host) {
         try {
-            SSLContext context = SSLContext.getDefault();
-            context.init(null, null, null);
-            SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket(host, 443);
+            SSLSocket socket = NetworkTools.sslSocket(host, 443);
             socket.setSoTimeout(UserConfig.getInt("WebConnectTimeout", 10000));
             try {
                 socket.startHandshake();
@@ -310,9 +305,7 @@ public class CertificateTools {
 
     public static Certificate[] getCertificatesByHost(String host) {
         try {
-            SSLContext context = SSLContext.getDefault();
-            context.init(null, null, null);
-            SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket(host, 443);
+            SSLSocket socket = NetworkTools.sslSocket(host, 443);
             socket.setSoTimeout(UserConfig.getInt("WebConnectTimeout", 10000));
             try {
                 socket.startHandshake();

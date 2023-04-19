@@ -1,26 +1,26 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.net.InetAddress;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.security.cert.Certificate;
+import java.util.Arrays;
 import java.util.Base64;
-import java.util.LinkedHashMap;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
+import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
@@ -28,9 +28,7 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
-import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.HtmlReadTools;
-import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.NetworkTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.UrlTools;
@@ -43,9 +41,9 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-3-25
  * @License Apache License Version 2.0
  */
-public class NetworkQueryAddressController extends HtmlTableController {
+public class NetworkQueryAddressController extends BaseController {
 
-    protected String host, key;
+    protected String host, key, ip;
     protected Certificate[] chain;
 
     @FXML
@@ -55,13 +53,11 @@ public class NetworkQueryAddressController extends HtmlTableController {
     @FXML
     protected RadioButton hostRadio, urlRadio, ipRadio;
     @FXML
-    protected CheckBox ipaddressCheck, iptaobaoCheck, localCheck;
-    @FXML
     protected TextArea certArea;
     @FXML
     protected Tab certTab;
     @FXML
-    protected ControlWebView headerController;
+    protected ControlWebView infoController, ipaddressController, headerController;
 
     public NetworkQueryAddressController() {
         baseTitle = message("QueryNetworkAddress");
@@ -82,6 +78,10 @@ public class NetworkQueryAddressController extends HtmlTableController {
                 }
             });
 
+            infoController.setParent(this);
+            ipaddressController.setParent(this);
+            headerController.setParent(this);
+
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -89,7 +89,7 @@ public class NetworkQueryAddressController extends HtmlTableController {
 
     @FXML
     protected void showAddressHistories(Event event) {
-        PopTools.popStringValues(this, addressInput, event, key, false, true);
+        PopTools.popStringValues(this, addressInput, event, key);
     }
 
     @FXML
@@ -138,85 +138,102 @@ public class NetworkQueryAddressController extends HtmlTableController {
             if (task != null) {
                 task.cancel();
             }
-            loadContents(null);
+            infoController.loadContents(null);
+            ipaddressController.loadContents(null);
+            headerController.loadContents(null);
             certArea.clear();
             host = null;
+            ip = null;
             chain = null;
             TableStringValues.add(key, address);
-            headerController.loadContents(null);
             task = new SingletonTask<Void>(this) {
 
-                private String certString, headerTable;
+                private String info, certString, headerTable;
 
                 @Override
                 protected boolean handle() {
                     try {
                         certString = null;
-                        LinkedHashMap<String, String> values = null;
-                        if (hostRadio.isSelected()) {
-                            values = NetworkTools.queryHost(address,
-                                    localCheck.isSelected(), iptaobaoCheck.isSelected(), ipaddressCheck.isSelected());
-                        } else if (urlRadio.isSelected()) {
-                            values = NetworkTools.queryURL(address,
-                                    localCheck.isSelected(), iptaobaoCheck.isSelected(), ipaddressCheck.isSelected());
-                        } else if (ipRadio.isSelected()) {
-                            values = NetworkTools.queryIP(address,
-                                    localCheck.isSelected(), iptaobaoCheck.isSelected(), ipaddressCheck.isSelected());
-                        }
-                        initTable(address);
-                        if (values != null) {
-                            for (String name : values.keySet()) {
-                                addData(name, values.get(name));
-                            }
-                        }
-
                         URL url = new URI(UrlTools.checkURL(address, Charset.defaultCharset())).toURL();
-                        certString = readCert(url);
-                        headerTable = HtmlReadTools.requestHeadTable(url);
-                    } catch (Exception e) {
-                        MyBoxLog.debug(e);
-                    }
-                    return true;
-                }
-
-                protected String readCert(URL url) {
-                    try {
+                        String urlAddress = url.toString();
+                        MyBoxLog.console(urlAddress);
+                        task.setInfo(message("Query") + ": " + urlAddress);
                         host = url.getHost();
+                        StringTable table = new StringTable(null, urlAddress);
+                        table.add(Arrays.asList(message("Address"), url.toString()));
+                        table.add(Arrays.asList(message("ExternalForm"), url.toExternalForm()));
+                        table.add(Arrays.asList(message("Decode"), UrlTools.decodeURL(url.toString(), Charset.defaultCharset())));
+                        table.add(Arrays.asList(message("Protocal"), url.getProtocol()));
+                        table.add(Arrays.asList(message("Host"), url.getHost()));
+                        table.add(Arrays.asList(message("Path"), url.getPath()));
+                        table.add(Arrays.asList(message("File"), url.getFile()));
+                        table.add(Arrays.asList(message("Query"), url.getQuery()));
+                        table.add(Arrays.asList(message("Authority"), url.getAuthority()));
+                        table.add(Arrays.asList(message("Reference"), url.getRef()));
+                        table.add(Arrays.asList(message("Port"), (url.getPort() < 0 ? url.getDefaultPort() : url.getPort()) + ""));
 
-                        SSLContext context = SSLContext.getDefault();
-                        context.init(null, null, null);
-                        SSLSocket socket = (SSLSocket) context.getSocketFactory()
-                                .createSocket(host, 443);
-                        socket.setSoTimeout(UserConfig.getInt("WebConnectTimeout", 10000));
-                        try {
-                            socket.startHandshake();
-                            socket.close();
-                        } catch (Exception e) {
-                        }
-                        chain = socket.getSession().getPeerCertificates();
-                        if (chain == null) {
-                            return "Could not obtain server certificate chain";
-                        }
-                        StringBuilder s = new StringBuilder();
-                        for (Certificate cert : chain) {
-                            s.append(cert).append("\n\n----------------------------------\n\n");
-                        }
-                        return s.toString();
+                        InetAddress inetAddress = InetAddress.getByName(host);
+                        ip = inetAddress.getHostAddress();
+                        table.add(Arrays.asList("IP by local lookup", ip));
+                        table.add(Arrays.asList("Host", inetAddress.getHostName()));
+                        table.add(Arrays.asList("Canonical Host", inetAddress.getCanonicalHostName()));
+                        table.add(Arrays.asList("isAnyLocalAddress", inetAddress.isAnyLocalAddress() + ""));
+                        table.add(Arrays.asList("isLinkLocalAddress", inetAddress.isLinkLocalAddress() + ""));
+                        table.add(Arrays.asList("isLoopbackAddress", inetAddress.isLoopbackAddress() + ""));
+                        table.add(Arrays.asList("isMulticastAddress", inetAddress.isMulticastAddress() + ""));
+                        table.add(Arrays.asList("isSiteLocalAddress", inetAddress.isSiteLocalAddress() + ""));
+
+                        info = table.html();
+
+                        task.setInfo(message("Query") + ": " + message("Certificate"));
+                        certString = readCert(url);
+
+                        task.setInfo(message("Query") + ": " + message("Header"));
+                        headerTable = HtmlReadTools.requestHeadTable(url);
+                        return true;
                     } catch (Exception e) {
-                        return e.toString();
+                        error = e.toString();
+                        return false;
                     }
                 }
 
                 @Override
                 protected void whenSucceeded() {
-                    displayHtml();
+                    infoController.loadContents(info);
+                    headerController.loadContents(headerTable);
+                    ipaddressController.loadAddress("https://www.ipaddress.com/site/" + ip);
                     certArea.setText(certString);
-                    if (headerTable != null) {
-                        headerController.loadContents(HtmlWriteTools.html(null, HtmlStyles.styleValue("Default"), headerTable));
-                    }
                 }
             };
             start(task);
+        }
+    }
+
+    protected String readCert(URL url) {
+        try {
+            host = url.getHost();
+
+            task.setInfo(message("Query") + ": " + host);
+
+            SSLSocket socket = NetworkTools.sslSocket(host, 443);
+            socket.setSoTimeout(UserConfig.getInt("WebConnectTimeout", 10000));
+            try {
+                socket.startHandshake();
+                socket.close();
+            } catch (Exception e) {
+            }
+            chain = socket.getSession().getPeerCertificates();
+            if (chain == null) {
+                return "Could not obtain server certificate chain";
+            }
+            StringBuilder s = new StringBuilder();
+            for (Certificate cert : chain) {
+                s.append(cert).append("\n\n----------------------------------\n\n");
+            }
+            return s.toString();
+        } catch (Exception e) {
+            task.setError(e.toString());
+            return e.toString();
         }
     }
 

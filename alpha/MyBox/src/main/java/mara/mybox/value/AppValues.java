@@ -16,6 +16,7 @@ public class AppValues {
 
     public static final String MyBoxSeparator = "##MyBox#";
     public static final String MyBoxStyle = "/styles/MyBox.css";
+    public static final String HttpsProtocal = "TLSv1.2";
 
     public static final String FileNameSpecialChars
             = "[:<>/&%]|\\*|\\?|\\\\|\n|\"|\\s+|\\||&nbsp;|&lt;|&gt;|&amp;|&quot;";

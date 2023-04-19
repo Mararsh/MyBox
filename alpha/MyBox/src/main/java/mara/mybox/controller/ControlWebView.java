@@ -1491,11 +1491,30 @@ public class ControlWebView extends BaseController {
         }
     }
 
+    @FXML
+    public void popFunctionsMenu(Event event) {
+        if (UserConfig.getBoolean("WebviewFunctionsPopWhenMouseHovering", true)) {
+            showFunctionsMenu(event);
+        }
+    }
+
     public void setEditable(boolean e) {
         UserConfig.setBoolean("WebViewEditable", e);
         executeScript("document.body.contentEditable=" + e);
         if (e) {
             alertInformation(message("HtmlEditableComments"));
+        }
+    }
+
+    @FXML
+    public void showHtmlStyle(Event event) {
+        PopTools.popHtmlStyle(event, this);
+    }
+
+    @FXML
+    public void popHtmlStyle(Event event) {
+        if (UserConfig.getBoolean("HtmlStylesPopWhenMouseHovering", false)) {
+            showHtmlStyle(event);
         }
     }
 

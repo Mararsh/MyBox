@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import javafx.concurrent.Task;
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.HtmlTableController;
 import mara.mybox.data.DownloadTask;
@@ -24,7 +23,7 @@ import mara.mybox.data.Link;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppValues;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -61,9 +60,6 @@ public class HtmlReadTools {
                 FileCopyTools.copyFile(new File(url.getFile()), tmpFile);
             } else if ("https".equalsIgnoreCase(protocal)) {
                 HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-//                SSLContext sc = SSLContext.getInstance(AppValues.HttpsProtocal);
-//                sc.init(null, null, null);
-//                connection.setSSLSocketFactory(sc.getSocketFactory());
                 connection.setConnectTimeout(UserConfig.getInt("WebConnectTimeout", 10000));
                 connection.setReadTimeout(UserConfig.getInt("WebReadTimeout", 10000));
 //                connection.setRequestProperty("User-Agent", httpUserAgent);
@@ -247,7 +243,7 @@ public class HtmlReadTools {
             @Override
             protected void whenSucceeded() {
                 if (head == null) {
-                    controller.popError(Languages.message("InvalidData"));
+                    controller.popError(message("InvalidData"));
                     return;
                 }
                 String table = requestHeadTable(url, head);
@@ -267,29 +263,12 @@ public class HtmlReadTools {
         controller.start(infoTask);
     }
 
-    public static HttpURLConnection getConnection(URL url) {
-        try {
-            if ("https".equals(url.getProtocol())) {
-                HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-                SSLContext sc = SSLContext.getDefault();
-                sc.init(null, null, null);
-                conn.setSSLSocketFactory(sc.getSocketFactory());
-                return conn;
-            } else {
-                return (HttpURLConnection) url.openConnection();
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-            return null;
-        }
-    }
-
     public static Map<String, String> requestHead(URL url) {
         try {
             if (!url.getProtocol().startsWith("http")) {
                 return null;
             }
-            HttpURLConnection connection = getConnection(url);
+            HttpURLConnection connection = NetworkTools.httpConnection(url);
             Map<String, String> head = HtmlReadTools.requestHead(connection);
             connection.disconnect();
             return head;
@@ -301,6 +280,9 @@ public class HtmlReadTools {
 
     public static Map<String, String> requestHead(HttpURLConnection connection) {
         try {
+            if (connection == null) {
+                return null;
+            }
             Map<String, String> head = new HashMap();
             connection.setRequestMethod("HEAD");
             head.put("ResponseCode", connection.getResponseCode() + "");
@@ -330,14 +312,14 @@ public class HtmlReadTools {
 
     public static String requestHeadTable(URL url, Map<String, String> head) {
         try {
-            if (head == null) {
+            if (url == null || head == null) {
                 return null;
             }
             StringBuilder s = new StringBuilder();
             s.append("<h1  class=\"center\">").append(url.toString()).append("</h1>\n");
             s.append("<hr>\n");
             List<String> names = new ArrayList<>();
-            names.addAll(Arrays.asList(Languages.message("Name"), Languages.message("Value")));
+            names.addAll(Arrays.asList(message("Name"), message("Value")));
             StringTable table = new StringTable(names);
             for (String name : head.keySet()) {
                 if (name.startsWith("HeaderField_") || name.startsWith("RequestProperty_")) {
