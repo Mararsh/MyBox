@@ -1,6 +1,7 @@
 package mara.mybox.data2d;
 
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -187,6 +188,16 @@ public class Data2DMenuTools {
                 tableController.pasteContentInMyboxClipboard();
             });
             menu.setDisable(invalidData);
+            modifyMenu.getItems().add(menu);
+
+            menu = new MenuItem(message("FirstLineDefineNames"), StyleTools.getIconImageView("iconHeader.png"));
+            menu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    tableController.headerAction();
+                }
+            });
+            menu.setDisable(empty || (!data2D.isTmpData() && !data2D.isDataFile() && !data2D.isClipboard()));
             modifyMenu.getItems().add(menu);
 
             return modifyMenu;

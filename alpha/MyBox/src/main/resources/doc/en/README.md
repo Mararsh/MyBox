@@ -3,18 +3,6 @@
 # MyBox: Set of Easy Tools
 This is desktop application based on JavaFx to provide simple and easy functions. It's free and open sources.
 
-## Latest Versions       
-Contents of this document may be expired, but its links refer to the latest versions.     
-
-The latest versions and all archived versions can be downloaded in following addresses:             
-
-| address | dowloads | readme | 
-| --- | --- | --- | 
-| github | [https://github.com/Mararsh/MyBox/releases](https://github.com/Mararsh/MyBox/releases)  | [English](https://mararsh.github.io/MyBox/readme-en.html)     [Chinese](https://mararsh.github.io/MyBox/readme-zh.html) |
-| sourceforge | [https://sourceforge.net/projects/mara-mybox/files/](https://sourceforge.net/projects/mara-mybox/files/)  | [English](https://mara-mybox.sourceforge.io/readme-en.html)    [Chinese](https://mara-mybox.sourceforge.io/readme-zh.html) |
-| cloud | [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)   |  |
-
-
 ## What's New                       
 2023-5-16 v6.7.3                
                 
@@ -39,7 +27,7 @@ Without enough testings, MyBox has low reliability and bad stability. When use M
 * Files/Data are damaged.       
 * Output wrong results.      
 * Functions fail.      
-* Unexpected behaviours.      
+* Other unexpected behaviours.      
 
 # Download and Execution
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory. 
@@ -75,6 +63,17 @@ Run following command to launch this program with Jar package:
 
 A file path can follow the command as argument to be opened directly by MyBox. Example, following command will open the image:        
 <PRE><CODE>     java   -jar   MyBox.jar   /tmp/a1.jpg</CODE></PRE>        
+
+## Versions       
+Contents of this document may be expired, but its links refer to the latest versions.     
+
+The latest versions and all archived versions can be downloaded in following addresses:             
+
+| address | dowloads | readme | 
+| --- | --- | --- | 
+| github | [https://github.com/Mararsh/MyBox/releases](https://github.com/Mararsh/MyBox/releases)  | [English](https://mararsh.github.io/MyBox/readme-en.html)     [Chinese](https://mararsh.github.io/MyBox/readme-zh.html) |
+| sourceforge | [https://sourceforge.net/projects/mara-mybox/files/](https://sourceforge.net/projects/mara-mybox/files/)  | [English](https://mara-mybox.sourceforge.io/readme-en.html)    [Chinese](https://mara-mybox.sourceforge.io/readme-zh.html) |
+| cloud | [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)   |  |
 
 ## Migration
 1. Each version has itself's configuration file. New version can copy parameters from existed versions.             

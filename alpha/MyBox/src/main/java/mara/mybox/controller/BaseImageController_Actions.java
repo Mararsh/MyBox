@@ -83,28 +83,35 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     }
 
     public Image scopeImage() {
-        Image inImage = imageView.getImage();
+        try {
+            Image inImage = imageView.getImage();
+            if (inImage == null) {
+                return null;
+            }
+            if (maskRectangleLine != null && maskRectangleLine.isVisible()) {
+                if (maskRectangleData.getSmallX() == 0
+                        && maskRectangleData.getSmallY() == 0
+                        && maskRectangleData.getBigX() == (int) inImage.getWidth() - 1
+                        && maskRectangleData.getBigY() == (int) inImage.getHeight() - 1) {
+                    return inImage;
+                }
+                return CropTools.cropOutsideFx(inImage, maskRectangleData, bgColor);
 
-        if (maskRectangleLine != null && maskRectangleLine.isVisible()) {
-            if (maskRectangleData.getSmallX() == 0
-                    && maskRectangleData.getSmallY() == 0
-                    && maskRectangleData.getBigX() == (int) inImage.getWidth() - 1
-                    && maskRectangleData.getBigY() == (int) inImage.getHeight() - 1) {
+            } else if (maskCircleLine != null && maskCircleLine.isVisible()) {
+                return CropTools.cropOutsideFx(inImage, maskCircleData, bgColor);
+
+            } else if (maskEllipseLine != null && maskEllipseLine.isVisible()) {
+                return CropTools.cropOutsideFx(inImage, maskEllipseData, bgColor);
+
+            } else if (maskPolygonLine != null && maskPolygonLine.isVisible()) {
+                return CropTools.cropOutsideFx(inImage, maskPolygonData, bgColor);
+
+            } else {
                 return inImage;
             }
-            return CropTools.cropOutsideFx(inImage, maskRectangleData, bgColor);
-
-        } else if (maskCircleLine != null && maskCircleLine.isVisible()) {
-            return CropTools.cropOutsideFx(inImage, maskCircleData, bgColor);
-
-        } else if (maskEllipseLine != null && maskEllipseLine.isVisible()) {
-            return CropTools.cropOutsideFx(inImage, maskEllipseData, bgColor);
-
-        } else if (maskPolygonLine != null && maskPolygonLine.isVisible()) {
-            return CropTools.cropOutsideFx(inImage, maskPolygonData, bgColor);
-
-        } else {
-            return inImage;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return image;
         }
     }
 
@@ -168,7 +175,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     @FXML
     public void statisticAction() {
         ImageAnalyseController controller = (ImageAnalyseController) openStage(Fxmls.ImageAnalyseFxml);
-        checkImage(controller);
+        checkImage(controller.sourceController);
     }
 
     @FXML

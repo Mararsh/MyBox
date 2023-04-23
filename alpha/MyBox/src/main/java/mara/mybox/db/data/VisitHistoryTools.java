@@ -314,7 +314,7 @@ public class VisitHistoryTools {
         if (number <= 0) {
             return null;
         }
-        List<VisitHistory> records = VisitHistories.read(ResourceType.Path, fileType, OperationType.Read, number);
+        List<VisitHistory> records = VisitHistories.read(ResourceType.Path, fileType, OperationType.Write, number);
         return records;
     }
 

@@ -33,7 +33,7 @@ public class UrlTools {
                 if (file.exists()) {
                     address = file.toURI().toString();
                 } else {
-                    address = "http://" + value;
+                    address = "https://" + value;
                 }
             }
             address = decodeURL(address, charset);

@@ -63,7 +63,7 @@ public class ImageViewerController extends BaseImageController {
     @FXML
     protected VBox panesBox, contentBox, fileBox, saveAsBox;
     @FXML
-    protected FlowPane saveFramesPane;
+    protected FlowPane saveFramesPane, opPane;
     @FXML
     protected ToggleGroup sortGroup, framesSaveGroup;
     @FXML
@@ -277,6 +277,10 @@ public class ImageViewerController extends BaseImageController {
                     UserConfig.setBoolean(baseName + "EditPane", editPane.isExpanded());
                 });
                 editPane.setExpanded(UserConfig.getBoolean(baseName + "EditPane", false));
+            }
+
+            if (opPane != null) {
+                opPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
             }
 
         } catch (Exception e) {

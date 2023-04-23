@@ -1028,7 +1028,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
     }
 
     @FXML
-    protected void showSettingsMenu(Event event) {
+    protected void showOptionsMenu(Event event) {
         List<MenuItem> items = new ArrayList<>();
 
         CheckMenuItem handleSubdirMenu = new CheckMenuItem(message("HandleSubDirectories"));
@@ -1092,9 +1092,9 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
     }
 
     @FXML
-    protected void popSettingsMenu(Event event) {
+    protected void popOptionsMenu(Event event) {
         if (UserConfig.getBoolean("FilesTablePopWhenMouseHovering", true)) {
-            showSettingsMenu(event);
+            showOptionsMenu(event);
         }
     }
 

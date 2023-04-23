@@ -3,17 +3,6 @@
 # MyBox：简易工具集
 这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。       
 
-## 最新版本       
-本文档的内容可能已过期，但是其中的链接均指向最新版本。     
-
-以下网址可以下载到最新版本和已归档的所有版本：    
-
-| 地址 | 下载 | 自述 | 
-| --- | --- | --- | 
-| github | [https://github.com/Mararsh/MyBox/releases](https://github.com/Mararsh/MyBox/releases)  | [英文](https://mararsh.github.io/MyBox/readme-en.html)   [中文](https://mararsh.github.io/MyBox/readme-zh.html) |
-| sourceforge | [https://sourceforge.net/projects/mara-mybox/files/](https://sourceforge.net/projects/mara-mybox/files/)  | [英文](https://mara-mybox.sourceforge.io/readme-en.html)  [中文](https://mara-mybox.sourceforge.io/readme-zh.html) |
-| 云盘 | [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)   |  |
-
 
 ## 新内容
 2023-5-16 版本6.7.3                
@@ -40,7 +29,7 @@ MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出�
 * 毁坏文件/数据。       
 * 输出错误的结果。       
 * 功能失效。       
-* 非预期的行为。    
+* 其它非预期的行为。    
 
 # 下载与运行
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases)目录下。      
@@ -77,8 +66,20 @@ MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出�
 <PRE><CODE>     java   -jar   MyBox.jar   /tmp/a1.jpg</CODE></PRE>       
 
      
+## 版本       
+本文档的内容可能已过期，但是其中的链接均指向最新版本。     
 
-## 版本迁移
+以下网址可以下载到最新版本和已归档的所有版本：    
+
+| 地址 | 下载 | 自述 | 
+| --- | --- | --- | 
+| github | [https://github.com/Mararsh/MyBox/releases](https://github.com/Mararsh/MyBox/releases)  | [英文](https://mararsh.github.io/MyBox/readme-en.html)   [中文](https://mararsh.github.io/MyBox/readme-zh.html) |
+| sourceforge | [https://sourceforge.net/projects/mara-mybox/files/](https://sourceforge.net/projects/mara-mybox/files/)  | [英文](https://mara-mybox.sourceforge.io/readme-en.html)  [中文](https://mara-mybox.sourceforge.io/readme-zh.html) |
+| 云盘 | [https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F](https://pan.baidu.com/s/1fWMRzym_jh075OCX0D8y8A#list/path=%2F)   |  |
+
+
+
+## 迁移
 1. 每个版本有自己的配置文件，新版本可以复制已安装版本的参数。       
 2. 每个版本处理的所有数据都在它指向的“数据目录”下。多个版本可以指向同一数据目录。
 3. MyBox向后兼容：新版本可以处理旧版本的数据目录。而不保证向前兼容：旧版本处理新版本的数据目录时可能出错。

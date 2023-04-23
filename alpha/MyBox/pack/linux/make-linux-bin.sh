@@ -1,6 +1,6 @@
 # Unzip source package. Edit this script to change JAVA_HOME as your env.
 # In terminal window, enter path "MyBox/pack/linux", and run this script.
-export JAVA_HOME="/usr/java/jdk-19.0.2"
+export JAVA_HOME="/usr/java/jdk-20"
 
 rm -rf app/*
 rm -rf jar/*

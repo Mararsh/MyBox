@@ -173,6 +173,18 @@ public class HelpTools {
         }
     }
 
+    public static File aboutData2D() {
+        try {
+            String lang = Languages.getLangName();
+            File file = FxFileTools.getInternalFile("/doc/" + lang + "/MyBox-about-data2d-" + lang + ".html",
+                    "doc", "MyBox-about-data2d-" + lang + ".html");
+            return file;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
     public static File aboutGroupingRows() {
         try {
             String lang = Languages.getLangName();

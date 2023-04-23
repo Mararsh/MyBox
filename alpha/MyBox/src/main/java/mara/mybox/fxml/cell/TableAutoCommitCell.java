@@ -14,6 +14,7 @@ import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
@@ -29,6 +30,7 @@ import mara.mybox.fxml.converter.FloatStringFromatConverter;
 import mara.mybox.fxml.converter.IntegerStringFromatConverter;
 import mara.mybox.fxml.converter.LongStringFromatConverter;
 import mara.mybox.fxml.converter.ShortStringFromatConverter;
+import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.TimeFormats;
 import mara.mybox.value.UserConfig;
@@ -52,6 +54,7 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
     protected int editingRow = -1;
     protected ChangeListener<Boolean> focusListener;
     protected ChangeListener<String> editListener;
+    protected EventHandler<KeyEvent> keyReleasedHandler;
 
     public TableAutoCommitCell() {
         this(null);
@@ -73,7 +76,11 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
 
     public TextField editor() {
         Node g = getGraphic();
-        return (g != null && g instanceof TextField) ? (TextField) g : null;
+        if (g != null && g instanceof TextField) {
+            return (TextField) g;
+        } else {
+            return null;
+        }
     }
 
     public int size() {
@@ -150,16 +157,18 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
         try {
             super.startEdit();
 
-            if (focusListener == null) {
-                initListeners();
-            }
+            clearEditor();
             TextField editor = editor();
             if (editor == null) {
                 return;
             }
+            if (focusListener == null) {
+                initListeners();
+            }
             editingText = editor.getText();
             editor.focusedProperty().addListener(focusListener);
             editor.textProperty().addListener(editListener);
+            editor.setOnKeyReleased(keyReleasedHandler);
             editor.setStyle(null);
         } catch (Exception e) {
             MyBoxLog.console(e);
@@ -171,8 +180,11 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 try {
-                    if (!newValue && isEditingRow()) {
-                        commitEdit(getConverter().fromString(editingText));
+                    if (!newValue) {
+                        if (AppVariables.commitModificationWhenDataCellLoseFocus && isEditingRow()) {
+                            commitEdit(getConverter().fromString(editingText));
+                        }
+                        editingRow = -1;
                     }
                 } catch (Exception e) {
                 }
@@ -201,6 +213,36 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
             }
         };
 
+        keyReleasedHandler = new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                switch (event.getCode()) {
+                    case ESCAPE:
+                        cancelCell();
+                        event.consume();
+                        break;
+                    case TAB:
+                        if (event.isShiftDown()) {
+                            getTableView().getSelectionModel().selectPrevious();
+                        } else {
+                            getTableView().getSelectionModel().selectNext();
+                        }
+                        event.consume();
+                        break;
+                    case UP:
+                        getTableView().getSelectionModel().selectAboveCell();
+                        event.consume();
+                        break;
+                    case DOWN:
+                        getTableView().getSelectionModel().selectBelowCell();
+                        event.consume();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        };
+
     }
 
     public void clearEditor() {
@@ -209,8 +251,13 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
             if (editor == null) {
                 return;
             }
-            editor.focusedProperty().removeListener(focusListener);
-            editor.textProperty().removeListener(editListener);
+            if (focusListener != null) {
+                editor.focusedProperty().removeListener(focusListener);
+            }
+            if (editListener != null) {
+                editor.textProperty().removeListener(editListener);
+            }
+            editor.setOnKeyReleased(null);
             editor.setStyle(null);
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -224,10 +271,10 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
             boolean valid = valid(value);
             boolean changed = changed(value);
             if (!isEditingRow() || !valid || !changed) {
-                cancelEdit();
-                return;
+                cancelCell();
+            } else {
+                setCellValue(value);
             }
-            setCellValue(value);
             editingRow = -1;
         } catch (Exception e) {
             MyBoxLog.debug(e);
@@ -254,7 +301,7 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
             if (table != null && isEditingRow()) {
                 TableColumn<S, T> column = getTableColumn();
                 if (column == null) {
-                    cancelEdit();
+                    cancelCell();
                 } else {
                     TablePosition<S, T> pos = new TablePosition<>(table, editingRow, column);
                     CellEditEvent<S, T> ev = new CellEditEvent<>(table, pos, TableColumn.editCommitEvent(), value);
@@ -262,7 +309,7 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
                     updateItem(value, false);
                 }
             } else {
-                cancelEdit();
+                cancelCell();
             }
             if (table != null) {
                 table.edit(-1, null);
@@ -274,10 +321,9 @@ public class TableAutoCommitCell<S, T> extends TextFieldTableCell<S, T> {
         }
     }
 
-    @Override
-    public void cancelEdit() {
-        super.cancelEdit();
+    public void cancelCell() {
         editingRow = -1;
+        cancelEdit();
         updateItem(getItem(), false);
     }
 

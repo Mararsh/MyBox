@@ -9,16 +9,11 @@ import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
 import javax.net.ssl.SSLSocket;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
@@ -43,15 +38,11 @@ import mara.mybox.value.UserConfig;
  */
 public class NetworkQueryAddressController extends BaseController {
 
-    protected String host, key, ip;
+    protected String host, ip;
     protected Certificate[] chain;
 
     @FXML
     protected TextField addressInput;
-    @FXML
-    protected ToggleGroup typeGroup;
-    @FXML
-    protected RadioButton hostRadio, urlRadio, ipRadio;
     @FXML
     protected TextArea certArea;
     @FXML
@@ -64,20 +55,16 @@ public class NetworkQueryAddressController extends BaseController {
     }
 
     @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Cert);
+    }
+
+    @Override
     public void initControls() {
         try {
             super.initControls();
 
-            key = "NetworkQueryURLHistories";
             addressInput.setText("https://sourceforge.net");
-
-            typeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
-                    checkType();
-                }
-            });
-
             infoController.setParent(this);
             ipaddressController.setParent(this);
             headerController.setParent(this);
@@ -89,47 +76,28 @@ public class NetworkQueryAddressController extends BaseController {
 
     @FXML
     protected void showAddressHistories(Event event) {
-        PopTools.popStringValues(this, addressInput, event, key);
+        PopTools.popStringValues(this, addressInput, event, "NetworkQueryURLHistories");
     }
 
     @FXML
     protected void popAddressHistories(Event event) {
-        if (UserConfig.getBoolean(key + "PopWhenMouseHovering", false)) {
+        if (UserConfig.getBoolean("NetworkQueryURLHistoriesPopWhenMouseHovering", false)) {
             showAddressHistories(event);
         }
     }
 
-    protected void checkType() {
-        if (isSettingValues) {
-            return;
-        }
-        if (urlRadio.isSelected()) {
-            addressInput.setText("https://sourceforge.net");
-            key = "NetworkQueryURLHistories";
-        } else if (hostRadio.isSelected()) {
-            addressInput.setText("github.com");
-            key = "NetworkQueryHostHistories";
-        } else if (ipRadio.isSelected()) {
-            addressInput.setText("210.75.225.254");
-            key = "NetworkQueryIPHistories";
-        }
-    }
-
     public void queryUrl(String address) {
-        isSettingValues = true;
-        urlRadio.setSelected(true);
-        key = "NetworkQueryURLHistories";
         addressInput.setText(address);
-        isSettingValues = false;
-        query(address);
+        handle(address);
     }
 
     @FXML
-    public void queryAction() {
-        query(addressInput.getText());
+    @Override
+    public void goAction() {
+        handle(addressInput.getText());
     }
 
-    public void query(String address) {
+    public void handle(String address) {
         if (address == null || address.isBlank()) {
             popError(message("InvalidData"));
             return;
@@ -145,7 +113,7 @@ public class NetworkQueryAddressController extends BaseController {
             host = null;
             ip = null;
             chain = null;
-            TableStringValues.add(key, address);
+            TableStringValues.add("NetworkQueryURLHistories", address);
             task = new SingletonTask<Void>(this) {
 
                 private String info, certString, headerTable;
@@ -243,7 +211,7 @@ public class NetworkQueryAddressController extends BaseController {
         String string = TextClipboardTools.getSystemClipboardString();
         if (string != null && !string.isBlank()) {
             addressInput.setText(string);
-            queryAction();
+            goAction();
         }
     }
 
@@ -253,7 +221,7 @@ public class NetworkQueryAddressController extends BaseController {
             popError(message("NoData"));
             return;
         }
-        File file = chooseSaveFile(VisitHistory.FileType.Cert, host + ".crt");
+        File file = chooseSaveFile(host + ".crt");
         if (file == null) {
             return;
         }
@@ -282,7 +250,7 @@ public class NetworkQueryAddressController extends BaseController {
                             s.append("-----END CERTIFICATE-----\n");
                         }
                         TextFileTools.writeFile(file, s.toString());
-                        recordFileWritten(file, VisitHistory.FileType.Cert);
+                        recordFileWritten(file);
                     } catch (Exception e) {
                         error = e.toString();
                         return false;

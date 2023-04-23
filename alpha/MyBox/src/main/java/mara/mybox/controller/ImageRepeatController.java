@@ -45,7 +45,7 @@ public class ImageRepeatController extends ImageViewerController {
     @FXML
     protected ColorSet colorSetController;
     @FXML
-    protected VBox mainBox;
+    protected VBox mainBox, optionsBox;
     @FXML
     protected Label repeatLabel;
 
@@ -60,7 +60,8 @@ public class ImageRepeatController extends ImageViewerController {
             super.initControls();
 
             mainBox.disableProperty().bind(imageView.imageProperty().isNull());
-            rightPane.disableProperty().bind(sourceController.imageView.imageProperty().isNull());
+            optionsBox.disableProperty().bind(sourceController.imageView.imageProperty().isNull());
+            saveAsBox.disableProperty().bind(imageView.imageProperty().isNull());
 
             repeatGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override

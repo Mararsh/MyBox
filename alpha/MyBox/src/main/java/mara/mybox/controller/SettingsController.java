@@ -74,7 +74,7 @@ public class SettingsController extends BaseController {
     @FXML
     protected CheckBox closeCurrentCheck, recordWindowsSizeLocationCheck, clearExpiredCheck,
             anchorSolidCheck, controlsTextCheck, shortcutsCanNotOmitCheck, icons40pxCheck,
-            copyCurrentDataPathCheck, clearCurrentRootCheck, splitPaneSensitiveCheck,
+            commitLoseFocusCheck, copyCurrentDataPathCheck, clearCurrentRootCheck, splitPaneSensitiveCheck,
             mousePassControlPanesCheck, popColorSetCheck, stopAlarmCheck;
     @FXML
     protected TextField jvmInput, dataDirInput, batchInput, fileRecentInput, thumbnailWidthInput,
@@ -194,6 +194,7 @@ public class SettingsController extends BaseController {
             mousePassControlPanesCheck.setSelected(UserConfig.getBoolean("MousePassControlPanes", true));
             popColorSetCheck.setSelected(UserConfig.getBoolean("PopColorSetWhenMouseHovering", true));
             shortcutsCanNotOmitCheck.setSelected(AppVariables.ShortcutsCanNotOmitCtrlAlt);
+            commitLoseFocusCheck.setSelected(AppVariables.commitModificationWhenDataCellLoseFocus);
 
             checkLanguage();
             checkPdfMem();
@@ -296,6 +297,17 @@ public class SettingsController extends BaseController {
                     AppVariables.controlDisplayText = controlsTextCheck.isSelected();
                     UserConfig.setBoolean("ControlDisplayText", AppVariables.controlDisplayText);
                     refreshInterfaceAll();
+                }
+            });
+
+            commitLoseFocusCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    AppVariables.commitModificationWhenDataCellLoseFocus = commitLoseFocusCheck.isSelected();
+                    UserConfig.setBoolean("CommitModificationWhenDataCellLoseFocus", AppVariables.commitModificationWhenDataCellLoseFocus);
                 }
             });
 
