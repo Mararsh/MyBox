@@ -215,28 +215,28 @@ public class ImageQuantizationFactory {
             RegionQuantization palette = new RegionQuantization();
             palette.setRegionSize(regionSize)
                     .setWeight1(weight1).setWeight2(weight2).setWeight3(weight3)
-                    .setImage(image).setScope(scope).
-                    setOperationType(PixelsOperation.OperationType.Quantization).
-                    setIsDithering(dithering);
+                    .setImage(image).setScope(scope)
+                    .setOperationType(PixelsOperation.OperationType.Quantization)
+                    .setIsDithering(dithering);
             palette.build();
             return palette;
         }
 
         @Override
         public RegionQuantization build() {
-            this.recordCount = false;   // never count in this regionQuantization
             try {
                 large = image.getWidth() * image.getHeight() > regionSize;
                 if (large) {
                     rgbPalette = RGBUniformQuantization.create();
                     rgbPalette.setQuantizationSize(regionSize)
                             .setWeight1(weight1).setWeight2(weight2).setWeight3(weight3)
-                            .setRecordCount(false).build();
+                            .setRecordCount(recordCount)
+                            .setIsDithering(isDithering);
+                    rgbPalette.build();
                 }
             } catch (Exception e) {
                 MyBoxLog.debug(e.toString());
             }
-
             return this;
         }
 
@@ -279,6 +279,7 @@ public class ImageQuantizationFactory {
             PopularityRegionQuantization palette = new PopularityRegionQuantization();
             palette.setRegionSize(regionSize)
                     .setWeight1(weight1).setWeight2(weight2).setWeight3(weight3)
+                    .setRecordCount(false)
                     .setImage(image).setScope(scope).
                     setOperationType(PixelsOperation.OperationType.Quantization).
                     setIsDithering(dithering);
@@ -412,6 +413,7 @@ public class ImageQuantizationFactory {
             KMeansRegionQuantization palette = new KMeansRegionQuantization();
             palette.setRegionSize(regionSize)
                     .setWeight1(weight1).setWeight2(weight2).setWeight3(weight3)
+                    .setRecordCount(true)
                     .setImage(image).setScope(scope).
                     setOperationType(PixelsOperation.OperationType.Quantization).
                     setIsDithering(dithering);

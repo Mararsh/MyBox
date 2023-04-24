@@ -699,7 +699,7 @@ public class ControlMap extends BaseController {
 
     @FXML
     public void aboutCoordinateSystem() {
-        openLink(HelpTools.aboutCoordinateSystem());
+        openHtml(HelpTools.aboutCoordinateSystem());
     }
 
     @Override

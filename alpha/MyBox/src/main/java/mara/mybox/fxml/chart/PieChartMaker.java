@@ -110,7 +110,7 @@ public class PieChartMaker extends PieChartOptions {
                 paletteList.add(FxColorTools.randomRGB(random));
             }
 
-            pieChart.setLegendVisible(legendSide == null);
+            pieChart.setLegendVisible(legendSide != null);
             pieChart.setLabelsVisible(labelVisible());
             pieChart.setClockwise(clockwise);
             ChartTools.setPieColors(pieChart, paletteList, showLegend(), labelFontSize);

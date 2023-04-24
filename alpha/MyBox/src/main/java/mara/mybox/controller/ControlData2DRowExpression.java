@@ -5,6 +5,7 @@ import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.data2d.Data2D;
@@ -136,8 +137,15 @@ public class ControlData2DRowExpression extends ControlJavaScriptRefer {
     }
 
     @FXML
-    public void aboutRowExpression() {
-        openLink(HelpTools.aboutRowExpression());
+    public void showRowExpressionHelps(Event event) {
+        popEventMenu(event, HelpTools.rowExpressionHelps(this));
+    }
+
+    @FXML
+    public void popRowExpressionHelps(Event event) {
+        if (UserConfig.getBoolean("RowExpressionsHelpsPopWhenMouseHovering", false)) {
+            showRowExpressionHelps(event);
+        }
     }
 
 }

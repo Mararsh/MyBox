@@ -11,21 +11,28 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.bufferedimage.ImageQuantization;
 import mara.mybox.bufferedimage.ImageQuantization.ColorCount;
+import mara.mybox.bufferedimage.ImageQuantization.QuantizationAlgorithm;
 import static mara.mybox.bufferedimage.ImageQuantization.QuantizationAlgorithm.KMeansClustering;
 import mara.mybox.bufferedimage.ImageQuantizationFactory;
 import mara.mybox.bufferedimage.ImageQuantizationFactory.KMeansClusteringQuantization;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.FloatTools;
@@ -35,15 +42,18 @@ import mara.mybox.value.UserConfig;
 /**
  * @Author Mara
  * @CreateDate 2019-9-6
- * @Description
  * @License Apache License Version 2.0
  */
 public class ImageAnalyseDominantController extends BaseController {
 
     protected ImageAnalyseController analyseController;
     protected int colorNumber, regionSize, kmeansLoop, weight1, weight2, weight3;
-    protected List<Color> kmeansColors, popularityColors;
+    protected List<Color> colors;
 
+    @FXML
+    protected ToggleGroup algorithmGroup;
+    @FXML
+    protected RadioButton kmeansRadio;
     @FXML
     protected Button paletteButton;
     @FXML
@@ -53,6 +63,8 @@ public class ImageAnalyseDominantController extends BaseController {
     protected ControlWebView colorsController;
     @FXML
     protected PieChart dominantPie;
+    @FXML
+    protected FlowPane loopPane;
     @FXML
     protected Label actualLoopLabel;
 
@@ -72,6 +84,14 @@ public class ImageAnalyseDominantController extends BaseController {
         try {
             super.initControls();
 
+            algorithmGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    checkAlgorithm();
+                }
+            });
+            checkAlgorithm();
+
             colorNumber = UserConfig.getInt(baseName + "ColorNumber", 16);
             colorNumber = colorNumber <= 0 ? 16 : colorNumber;
             colorsNumberSelectors.getItems().addAll(Arrays.asList(
@@ -86,7 +106,6 @@ public class ImageAnalyseDominantController extends BaseController {
                             colorNumber = v;
                             UserConfig.setInt(baseName + "ColorNumber", colorNumber);
                             ValidationTools.setEditorNormal(colorsNumberSelectors);
-//                            loadData(false, true);
                         } else {
                             ValidationTools.setEditorBadStyle(colorsNumberSelectors);
                         }
@@ -179,66 +198,81 @@ public class ImageAnalyseDominantController extends BaseController {
 
     }
 
+    public void checkAlgorithm() {
+        loopPane.setDisable(!kmeansRadio.isSelected());
+        actualLoopLabel.setVisible(kmeansRadio.isSelected());
+    }
+
+    @FXML
+    @Override
+    public void goAction() {
+        if (task != null) {
+            task.cancel();
+        }
+        clear();
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                BufferedImage bufferedImage = analyseController.imageToHandle();
+                if (bufferedImage == null) {
+                    return false;
+                }
+                return loadDominantData(task, bufferedImage);
+            }
+
+            @Override
+            protected void whenSucceeded() {
+            }
+
+        };
+        start(task);
+    }
+
     public void clear() {
         colorsController.loadContents("");
         dominantPie.getData().clear();
+        actualLoopLabel.setText("");
+        colors = null;
     }
 
-    protected boolean loadDominantData(BufferedImage image) {
+    protected boolean loadDominantData(SingletonTask stask, BufferedImage image) {
         try {
-//            if (loadingController != null) {
-//                Platform.runLater(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        loadingController.setInfo(message("CalculatingDominantColors"));
-//                    }
-//                });
-//            }
-            KMeansClusteringQuantization quantization = (KMeansClusteringQuantization) ImageQuantizationFactory
-                    .create(image, null, KMeansClustering, colorNumber,
-                            regionSize, weight1, weight2, weight3,
-                            true, true, true);
-            quantization.getKmeans().setMaxIteration(kmeansLoop);
-            showDominantData(quantization, image, message("DominantKMeansComments"));
+            stask.setInfo(message("CalculatingDominantColors"));
+            ImageQuantization quantization;
+            if (kmeansRadio.isSelected()) {
+                KMeansClusteringQuantization kquantization
+                        = (KMeansClusteringQuantization) ImageQuantizationFactory
+                                .create(image, null, KMeansClustering, colorNumber,
+                                        regionSize, weight1, weight2, weight3,
+                                        true, true, true);
+                kquantization.getKmeans().setMaxIteration(kmeansLoop);
+                quantization = kquantization;
+            } else {
+                quantization = ImageQuantizationFactory.create(image,
+                        null, QuantizationAlgorithm.PopularityQuantization, colorNumber,
+                        regionSize, weight1, weight2, weight3,
+                        true, true, true);
+            }
+            quantization.operate();
+            return showDominantData(quantization, image);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+            return false;
         }
-        return false;
     }
 
-//    protected boolean loadDominant2Data(BufferedImage image) {
-//        try {
-//            if (loadingController != null) {
-//                Platform.runLater(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        loadingController.setInfo(message("CalculatingDominantColors"));
-//                    }
-//                });
-//            }
-//            ImageQuantization quantization = ImageQuantizationFactory.create(image,
-//                    null, QuantizationAlgorithm.PopularityQuantization, colorNumber2,
-//                    regionSize2, weight21, weight22, weight23,
-//                    true, true, true);
-//            return showDominantData(quantization, image,
-//                    message("DominantPopularityComments"), dominantView2, dominantPie2);
-//        } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
-//        }
-//        return false;
-//    }
-    protected boolean showDominantData(ImageQuantization quantization,
-            BufferedImage image, String title) {
+    protected boolean showDominantData(ImageQuantization quantization, BufferedImage image) {
         if (quantization == null || image == null) {
             return false;
         }
         try {
-            quantization.operate();
             StringTable table = quantization.countTable(null);
             if (table == null) {
                 return false;
             }
-            table.setTitle(title);
+            table.setTitle(kmeansRadio.isSelected() ? message("DominantKMeansComments")
+                    : message("DominantPopularityComments"));
             final long total = quantization.getTotalCount();
             final String html = StringTable.tableHtml(table);
             List<ColorCount> sortedCounts = quantization.getSortedCounts();
@@ -246,9 +280,9 @@ public class ImageAnalyseDominantController extends BaseController {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    colorsController.loadContents​(html);
+
                     ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
-                    List<Color> colors = new ArrayList<>();
+                    colors = new ArrayList<>();
                     for (int i = 0; i < sortedCounts.size(); ++i) {
                         ColorCount count = sortedCounts.get(i);
                         Color color = ColorConvertTools.converColor(count.color);
@@ -262,15 +296,9 @@ public class ImageAnalyseDominantController extends BaseController {
                         String colorString = FxColorTools.color2rgb(colors.get(i));
                         PieChart.Data data = pieChartData.get(i);
                         data.getNode().setStyle("-fx-pie-color: " + colorString + ";");
-
                     }
-                    if (quantization instanceof KMeansClusteringQuantization) {
-                        kmeansColors = colors;
-                        actualLoopLabel.setText(message("ActualLoop") + ":"
-                                + ((KMeansClusteringQuantization) quantization).getKmeans().getLoopCount());
-                    } else {
-                        popularityColors = colors;
-                    }
+                    dominantPie.setLegendSide(Side.TOP);
+                    dominantPie.setLegendVisible(true);
                     Set<Node> legendItems = dominantPie.lookupAll("Label.chart-legend-item");
                     if (legendItems.isEmpty()) {
                         return;
@@ -284,6 +312,11 @@ public class ImageAnalyseDominantController extends BaseController {
                         }
                     }
 
+                    colorsController.loadContents​(html);
+                    if (quantization instanceof KMeansClusteringQuantization) {
+                        actualLoopLabel.setText(message("ActualLoop") + ":"
+                                + ((KMeansClusteringQuantization) quantization).getKmeans().getLoopCount());
+                    }
                 }
             });
 
@@ -296,13 +329,11 @@ public class ImageAnalyseDominantController extends BaseController {
 
     @FXML
     public void addPalette() {
-        ColorsManageController.addColors(kmeansColors);
-    }
-
-    @FXML
-    public void addPopularity() {
-        ColorsManageController.addColors(popularityColors);
-
+        if (colors == null || colors.isEmpty()) {
+            popError(message("NoData"));
+            return;
+        }
+        ColorsManageController.addColors(colors);
     }
 
 }

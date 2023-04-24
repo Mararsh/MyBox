@@ -985,7 +985,7 @@ public class ControlFFmpegOptions extends BaseController {
 
     @FXML
     public void aboutMedia() {
-        openLink(HelpTools.aboutMedia());
+        openHtml(HelpTools.aboutMedia());
     }
 
     @FXML

@@ -124,66 +124,70 @@ public class ImageAnalyseController extends BaseController {
                 }
             });
 
+            showRightPane();
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    protected void loadData() {
-        loadData(true, true);
+    protected BufferedImage imageToHandle() {
+        try {
+            Image aImage = null;
+            if (sourceController.selectAreaCheck.isSelected()) {
+                aImage = sourceController.imageToHandle();
+            }
+            if (aImage == null) {
+                aImage = sourceController.image;
+            }
+            return SwingFXUtils.fromFXImage(aImage, null);
+        } catch (Exception e) {
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e.toString());
+            }
+            return null;
+        }
     }
 
-    protected synchronized void loadData(boolean components, boolean dominant) {
+    protected void loadData() {
         if (task != null && !task.isQuit()) {
             return;
         }
-        if (sourceController.image == null || isSettingValues
-                || (!components && !dominant)) {
+        if (sourceController.image == null || isSettingValues) {
             return;
         }
         sourceFile = sourceController.sourceFile;
-        if (components) {
-            statisticController.loadContents("");
-            colorsBarchart.getData().clear();
-            grayView.getEngine().loadContent("");
-            grayBarchart.getData().clear();
-            redView.getEngine().loadContent("");
-            redBarchart.getData().clear();
-            greenView.getEngine().loadContent("");
-            greenBarchart.getData().clear();
-            blueView.getEngine().loadContent("");
-            blueBarchart.getData().clear();
-            hueView.getEngine().loadContent("");
-            hueBarchart.getData().clear();
-            saturationView.getEngine().loadContent("");
-            saturationBarchart.getData().clear();
-            brightnessView.getEngine().loadContent("");
-            brightnessBarchart.getData().clear();
-            alphaView.getEngine().loadContent("");
-            alphaBarchart.getData().clear();
-        }
-        if (dominant) {
-            dominantController.clear();
-        }
+        statisticController.loadContents("");
+        colorsBarchart.getData().clear();
+        grayView.getEngine().loadContent("");
+        grayBarchart.getData().clear();
+        redView.getEngine().loadContent("");
+        redBarchart.getData().clear();
+        greenView.getEngine().loadContent("");
+        greenBarchart.getData().clear();
+        blueView.getEngine().loadContent("");
+        blueBarchart.getData().clear();
+        hueView.getEngine().loadContent("");
+        hueBarchart.getData().clear();
+        saturationView.getEngine().loadContent("");
+        saturationBarchart.getData().clear();
+        brightnessView.getEngine().loadContent("");
+        brightnessBarchart.getData().clear();
+        alphaView.getEngine().loadContent("");
+        alphaBarchart.getData().clear();
+        dominantController.clear();
         task = new SingletonTask<Void>(this) {
 
             @Override
             protected boolean handle() {
-                Image aImage = null;
-                if (sourceController.selectAreaCheck.isSelected()) {
-                    aImage = sourceController.imageToHandle();
+                BufferedImage bufferedImage = imageToHandle();
+                if (bufferedImage == null) {
+                    return false;
                 }
-                if (aImage == null) {
-                    aImage = sourceController.image;
-                }
-                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(aImage, null);
-
-                if (components) {
-                    loadComponentsData(bufferedImage);
-                }
-                if (dominant) {
-                    dominantController.loadDominantData(bufferedImage);
-                }
+                loadComponentsData(bufferedImage);
+                dominantController.loadDominantData(task, bufferedImage);
                 return true;
             }
 
@@ -312,7 +316,7 @@ public class ImageAnalyseController extends BaseController {
             String rgb = FxColorTools.color2rgb(color);
             int width = (int) (50 * ColorComponentTools.percentage(component, value));
             return "<TD><DIV style=\"white-space:nowrap;\">" + value + "</BR>\n"
-                    + "  <DIV style=\"display: inline-block; width: 50px; background-color: lightgray; \">\n"
+                    + "  <DIV style=\"display: inline-block; width: 50px; background-color: #EEEEEE; \">\n"
                     + "  <DIV style=\"display: inline-block; width: " + width + "px;  background-color: "
                     + rgb + "; \">&nbsp;</DIV></DIV>\n"
                     + "</DIV></TD>\n";

@@ -682,7 +682,7 @@ public class ControlData2D extends BaseController {
             helpMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    openLink(HelpTools.aboutData2D());
+                    openHtml(HelpTools.aboutData2D());
                 }
             });
             items.add(helpMenu);

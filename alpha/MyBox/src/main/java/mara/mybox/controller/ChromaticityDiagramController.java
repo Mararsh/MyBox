@@ -969,7 +969,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
 
     @FXML
     public void aboutColor() {
-        openLink(HelpTools.aboutColorHtml());
+        openHtml(HelpTools.aboutColorHtml());
     }
 
     @FXML

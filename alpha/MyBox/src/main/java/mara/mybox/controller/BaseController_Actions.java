@@ -58,7 +58,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         WebBrowserController.openAddress(address, true);
     }
 
-    public void openLink(File file) {
+    public void openHtml(File file) {
         if (file == null || !file.exists()) {
             return;
         }

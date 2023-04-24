@@ -171,8 +171,15 @@ public class RowFilterEditor extends TreeNodeEditor {
     }
 
     @FXML
-    public void aboutRowExpression() {
-        openLink(HelpTools.aboutRowExpression());
+    public void showRowExpressionHelps(Event event) {
+        popEventMenu(event, HelpTools.rowExpressionHelps(this));
+    }
+
+    @FXML
+    public void popRowExpressionHelps(Event event) {
+        if (UserConfig.getBoolean("RowExpressionsHelpsPopWhenMouseHovering", false)) {
+            showRowExpressionHelps(event);
+        }
     }
 
 }

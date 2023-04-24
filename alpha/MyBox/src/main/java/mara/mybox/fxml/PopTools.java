@@ -1128,7 +1128,7 @@ public class PopTools {
             jlink.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    parent.openLink("https://www.ecma-international.org/publications-and-standards/standards/ecma-262/");
+                    parent.openLink(HelpTools.javaScriptSpecification());
                 }
             });
             controller.addNode(jlink);
@@ -1137,7 +1137,7 @@ public class PopTools {
             mlink.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    parent.openLink("https://developer.mozilla.org/en-US/docs/Web/JavaScript");
+                    parent.openLink(HelpTools.javaScriptEnLink());
                 }
             });
             controller.addNode(mlink);
@@ -1146,7 +1146,7 @@ public class PopTools {
             alink.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    parent.openLink("https://www.w3school.com.cn/js/index.asp");
+                    parent.openLink(HelpTools.javaScriptZhLink());
                 }
             });
             controller.addNode(alink);

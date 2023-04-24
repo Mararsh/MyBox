@@ -316,6 +316,10 @@ public class HelpTools {
         return "https://developer.mozilla.org/en-US/docs/Web/JavaScript";
     }
 
+    public static String javaScriptSpecification() {
+        return "https://www.ecma-international.org/publications-and-standards/standards/ecma-262/";
+    }
+
     public static List<MenuItem> htmlHelps(BaseController controller) {
         try {
             List<MenuItem> items = new ArrayList<>();
@@ -395,6 +399,76 @@ public class HelpTools {
                 @Override
                 public void handle(ActionEvent event) {
                     UserConfig.setBoolean("HtmlHelpsPopWhenMouseHovering", hoverMenu.isSelected());
+                }
+            });
+            items.add(hoverMenu);
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static List<MenuItem> rowExpressionHelps(BaseController controller) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+
+            MenuItem menuItem = new MenuItem(message("AboutRowExpression"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    controller.openHtml(HelpTools.aboutRowExpression());
+                }
+            });
+            items.add(menuItem);
+
+            items.add(new SeparatorMenuItem());
+
+            menuItem = new MenuItem(message("JavaScriptTutorial") + " - " + message("English"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    controller.openLink(HelpTools.javaScriptEnLink());
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("JavaScriptTutorial") + " - " + message("Chinese"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    controller.openLink(HelpTools.javaScriptZhLink());
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem("JavaScript language specification");
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    controller.openLink(HelpTools.javaScriptSpecification());
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem("Nashorn User's Guide");
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    controller.openLink(HelpTools.nashornLink());
+                }
+            });
+            items.add(menuItem);
+
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            hoverMenu.setSelected(UserConfig.getBoolean("RowExpressionsHelpsPopWhenMouseHovering", false));
+            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("RowExpressionsHelpsPopWhenMouseHovering", hoverMenu.isSelected());
                 }
             });
             items.add(hoverMenu);

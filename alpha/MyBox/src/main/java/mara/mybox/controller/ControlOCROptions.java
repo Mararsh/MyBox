@@ -453,7 +453,7 @@ public class ControlOCROptions extends BaseController {
             table.newLinkRow("ImproveQuality", "https://tesseract-ocr.github.io/tessdoc/ImproveQuality.html");
 
             File htmFile = HtmlWriteTools.writeHtml(table.html());
-            openLink(htmFile);
+            openHtml(htmFile);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

@@ -11,7 +11,7 @@ import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -92,12 +92,12 @@ public class ImageQuantization extends PixelsOperation {
                 return null;
             }
             List<String> names = new ArrayList<>();
-            names.addAll(Arrays.asList(Languages.message("ID"), Languages.message("PixelsNumber"),
-                    Languages.message("Percentage"), Languages.message("Color"),
-                    Languages.message("Red"), Languages.message("Green"), Languages.message("Blue"), Languages.message("Opacity"),
-                    Languages.message("Hue"), Languages.message("Brightness"), Languages.message("Saturation")
+            names.addAll(Arrays.asList(message("ID"), message("PixelsNumber"),
+                    message("Percentage"), message("Color"),
+                    message("Red"), message("Green"), message("Blue"), message("Opacity"),
+                    message("Hue"), message("Brightness"), message("Saturation")
             ));
-            String title = Languages.message(algorithm.name());
+            String title = message(algorithm.name());
             if (name != null) {
                 title += "_" + name;
             }

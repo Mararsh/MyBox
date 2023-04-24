@@ -48,19 +48,20 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
     public void initCenters() {
         try {
             centers = new ArrayList<>();
-            if (data.size() < k) {
+            int dataSize = data.size();
+            if (dataSize < k) {
                 centers.addAll(data);
                 return;
             }
             int mod = data.size() / k;
-            for (int i = 0; i < data.size(); i = i + mod) {
+            for (int i = 0; i < dataSize; i = i + mod) {
                 centers.add(data.get(i));
                 if (centers.size() == k) {
                     return;
                 }
             }
             while (centers.size() < k) {
-                int index = new Random().nextInt(data.size());
+                int index = new Random().nextInt(dataSize);
                 Color d = data.get(index);
                 if (!centers.contains(d)) {
                     centers.add(d);
@@ -75,12 +76,12 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
     public double distance(Color p1, Color p2) {
         try {
             if (p1 == null || p2 == null) {
-                return Integer.MAX_VALUE;
+                return Double.MAX_VALUE;
             }
             return ColorMatchTools.calculateColorDistanceSquare(p1, p2);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
-            return Integer.MAX_VALUE;
+            return Double.MAX_VALUE;
         }
     }
 
@@ -99,6 +100,29 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
 
     @Override
     public Color calculateCenters(List<Integer> cluster) {
+        try {
+            if (cluster == null || cluster.isEmpty()) {
+                return null;
+            }
+            long maxCount = 0;
+            Color centerColor = null;
+            for (Integer index : cluster) {
+                Color regionColor = data.get(index);
+                long colorCount = regionQuantization.rgbPalette.counts.get(regionColor);
+                if (colorCount > maxCount) {
+                    centerColor = regionColor;
+                    maxCount = colorCount;
+                }
+            }
+            return centerColor;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
+        }
+    }
+
+//    @Override
+    public Color calculateCenters2(List<Integer> cluster) {
         try {
             if (cluster == null || cluster.isEmpty()) {
                 return null;
