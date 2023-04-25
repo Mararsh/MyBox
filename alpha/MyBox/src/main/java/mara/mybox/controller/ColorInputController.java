@@ -107,11 +107,11 @@ public class ColorInputController extends BaseController {
                         TableColorPalette tableColorPalette = null;
                         long paletteid = -1;
                         if (colorsManager != null) {
-                            tableColor = colorsManager.colorsController.tableColor;
-                            if (!colorsManager.colorsController.isAllColors()) {
-                                paletteid = colorsManager.colorsController.currentPalette.getCpnid();
+                            tableColor = colorsManager.tableColor;
+                            if (!colorsManager.isAllColors()) {
+                                paletteid = colorsManager.currentPalette.getCpnid();
                             }
-                            tableColorPalette = colorsManager.colorsController.tableColorPalette;
+                            tableColorPalette = colorsManager.tableColorPalette;
                         }
                         if (tableColor == null) {
                             tableColor = new TableColor();
@@ -146,7 +146,7 @@ public class ColorInputController extends BaseController {
                     if (colorsManager == null || !colorsManager.getMyStage().isShowing()) {
                         colorsManager = ColorsManageController.oneOpen();
                     } else {
-                        colorsManager.colorsController.refreshPalette();
+                        colorsManager.refreshPalette();
                     }
                     closeStage();
                 }

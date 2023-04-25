@@ -54,7 +54,7 @@ public abstract class BaseImageController_ImageView extends BaseController {
     protected LoadingController loadingController;
     protected SingletonTask loadTask;
     protected double mouseX, mouseY;
-    protected ColorsManageController paletteController;
+    protected ColorsPickingController paletteController;
     protected Label imageLabelOriginal;
 
     @FXML
@@ -577,7 +577,7 @@ public abstract class BaseImageController_ImageView extends BaseController {
         if (color != null) {
             startPickingColor();
             if (paletteController != null && paletteController.getMyStage().isShowing()) {
-                paletteController.colorsController.addColor(color);
+                paletteController.pickColor(color);
             }
         }
         return color;

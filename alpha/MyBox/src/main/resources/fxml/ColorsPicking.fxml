@@ -7,28 +7,51 @@ License:    Apache License Version 2.0
 -->
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-
-
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" 
-      prefHeight="500.0" prefWidth="600.0"  spacing="2.0"
-      xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ColorsPickingController">
+<VBox fx:id="thisPane" prefHeight="300.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ColorsPickingController">
     <children>
-        <FlowPane alignment="CENTER_RIGHT">
-            <children>
-                <CheckBox fx:id="onlyNewCheck" mnemonicParsing="false" text="%OnlyAddNewWhenPick"  wrapText="true"  minHeight="-Infinity"/>
-            </children>
-        </FlowPane>
-        <fx:include fx:id="colors" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlColors.fxml" VBox.vgrow="ALWAYS" />
+      <SplitPane fx:id="splitPane" dividerPositions="0.3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+         <items>
+            <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+               <content>
+                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                     <children>
+                        <fx:include fx:id="palettes" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlColorPaletteSelector.fxml" VBox.vgrow="ALWAYS" />
+                     </children>
+                  </VBox>
+               </content>
+            </ScrollPane>
+            <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+               <children>
+                  <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="NEVER">
+                     <children>
+                        <ImageView fx:id="leftPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconDoubleLeft.png" />
+                           </image>
+                        </ImageView>
+                        <Label fx:id="paletteLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+                  <CheckBox fx:id="onlyNewCheck" minHeight="-Infinity" mnemonicParsing="false" text="%OnlyAddNewWhenPick" wrapText="true" />
+                  <fx:include fx:id="colors" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlColorsPane.fxml" VBox.vgrow="ALWAYS" />
+               </children>
+               <padding>
+                  <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+               </padding>
+            </VBox>
+         </items>
+      </SplitPane>
     </children>
     <padding>
-        <Insets left="5.0"  top="5.0" />
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
     </padding>
-    <BorderPane.margin>
-        <Insets />
-    </BorderPane.margin>
 </VBox>

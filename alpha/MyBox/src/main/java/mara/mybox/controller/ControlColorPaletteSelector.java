@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -25,11 +24,10 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlColorPaletteSelector extends BaseController {
 
-    protected ColorsManageController colorsManager;
+    protected ColorsManageController manageController;
     protected TableColorPaletteName tableColorPaletteName;
     protected ColorPaletteName allColors, defaultPalette;
-    protected SimpleBooleanProperty selected;
-    protected boolean includeAll;
+    protected boolean isManager;
     protected String ignore;
 
     @FXML
@@ -60,24 +58,17 @@ public class ControlColorPaletteSelector extends BaseController {
                 }
             });
 
-            includeAll = false;
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    public void setParameter(ColorsManageController colorsManager) {
-        parentController = colorsManager;
-        includeAll = true;
-        setManager(colorsManager);
-    }
-
-    public void setManager(ColorsManageController colorsManager) {
-        this.colorsManager = colorsManager;
-        baseName = colorsManager.baseName;
+    public void setParameter(ColorsManageController manageController, boolean isManager) {
+        this.manageController = manageController;
+        this.isManager = isManager;
+        baseName = manageController.baseName;
         ignore = null;
-        if (includeAll) {
+        if (isManager) {
             allColors = new ColorPaletteName(message("AllColors"));
             palettesList.getItems().add(allColors);
         } else {
@@ -169,8 +160,8 @@ public class ControlColorPaletteSelector extends BaseController {
             @Override
             protected void whenSucceeded() {
                 palettesList.getItems().add(newPalatte);
-                if (colorsManager != null) {
-                    colorsManager.colorsController.palettesController.palettesList.getItems().add(newPalatte);
+                if (manageController != null) {
+                    manageController.palettesController.palettesList.getItems().add(newPalatte);
                 }
                 palettesList.getSelectionModel().select(newPalatte);
                 popSuccessful();
@@ -181,10 +172,14 @@ public class ControlColorPaletteSelector extends BaseController {
     }
 
     public ColorsManageController colorsManager() {
-        if (colorsManager == null || !colorsManager.getMyStage().isShowing()) {
-            colorsManager = ColorsManageController.oneOpen();
+        if (manageController == null || !manageController.getMyStage().isShowing()) {
+            manageController = ColorsManageController.oneOpen();
         }
-        return colorsManager;
+        return manageController;
+    }
+
+    public ColorPaletteName selected() {
+        return palettesList.getSelectionModel().getSelectedItem();
     }
 
 }
