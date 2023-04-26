@@ -108,8 +108,8 @@ public class ColorInputController extends BaseController {
                         long paletteid = -1;
                         if (colorsManager != null) {
                             tableColor = colorsManager.tableColor;
-                            if (!colorsManager.isAllColors()) {
-                                paletteid = colorsManager.currentPalette.getCpnid();
+                            if (!colorsManager.palettesController.isAllColors()) {
+                                paletteid = colorsManager.palettesController.currentPaletteId();
                             }
                             tableColorPalette = colorsManager.tableColorPalette;
                         }

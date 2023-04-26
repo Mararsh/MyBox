@@ -108,6 +108,8 @@ public class ColorPalettePopupController extends BaseChildController {
         try {
             super.initControls();
 
+            colorsController.setParameter(null, false);
+
             popCheck.setSelected(UserConfig.getBoolean("PopColorSetWhenMouseHovering", true));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
@@ -178,7 +180,7 @@ public class ColorPalettePopupController extends BaseChildController {
 
             @Override
             protected void whenSucceeded() {
-                colorsController.loadColors(colors);
+                colorsController.loadColors(currentPalette, colors);
                 label.setText(currentPalette.getName() + ": " + colors.size());
             }
 

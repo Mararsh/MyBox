@@ -7,6 +7,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
@@ -19,6 +20,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import mara.mybox.db.data.ColorData;
+import mara.mybox.db.data.ColorPaletteName;
 import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
@@ -34,16 +36,20 @@ import mara.mybox.value.AppVariables;
 public class ControlColorsPane extends BaseController {
 
     protected ColorsManageController manageController;
+    protected ColorPaletteName palette;
     protected TableColorPalette tableColorPalette;
     protected Rectangle clickedRect, enteredRect;
     protected DropShadow shadowEffect;
     protected double rectSize;
     protected SimpleBooleanProperty clickNotify;
+    protected boolean canDragDrop;
 
     @FXML
     protected ScrollPane scrollPane;
     @FXML
     protected FlowPane colorsPane;
+    @FXML
+    protected Label colorsPaneLabel;
 
     @Override
     public void initValues() {
@@ -54,12 +60,28 @@ public class ControlColorsPane extends BaseController {
             clickNotify = new SimpleBooleanProperty(false);
             shadowEffect = new DropShadow();
             rectSize = AppVariables.iconSize * 0.8;
+            canDragDrop = false;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    public synchronized void loadPalette(long paletteid) {
+    public void setParameter(ColorsManageController manageController, boolean canDragDrop) {
+        this.manageController = manageController;
+        this.canDragDrop = canDragDrop;
+    }
+
+    public boolean canDragDrop() {
+        if (!canDragDrop) {
+            return false;
+        }
+        return manageController == null || !manageController.palettesController.isAllColors();
+    }
+
+    public void loadPalette(ColorPaletteName palette, boolean scrollEnd) {
+        if (palette == null) {
+            return;
+        }
         if (task != null) {
             task.cancel();
         }
@@ -68,21 +90,33 @@ public class ControlColorsPane extends BaseController {
 
             @Override
             protected boolean handle() {
-                colors = tableColorPalette.colors(paletteid);
+                colors = tableColorPalette.colors(palette.getCpnid());
                 return true;
             }
 
             @Override
             protected void whenSucceeded() {
-                loadColors(colors);
-                scrollPane.setVvalue(1.0);
+                loadColors(palette, colors);
+                if (scrollEnd) {
+                    scrollPane.setVvalue(1.0);
+                }
             }
 
         };
         start(task);
     }
 
-    public synchronized void loadColors(List<ColorData> colors) {
+    public synchronized void loadColors(ColorPaletteName palette, List<ColorData> colors) {
+        this.palette = palette;
+        if (canDragDrop()) {
+            if (!thisPane.getChildren().contains(colorsPaneLabel)) {
+                thisPane.getChildren().add(0, colorsPaneLabel);
+            }
+        } else {
+            if (thisPane.getChildren().contains(colorsPaneLabel)) {
+                thisPane.getChildren().remove(colorsPaneLabel);
+            }
+        }
         if (colors == null || colors.isEmpty()) {
             colorsPane.getChildren().clear();
             return;
@@ -124,7 +158,7 @@ public class ControlColorsPane extends BaseController {
                     }
                 });
             });
-            if (manageController != null && !manageController.isAllColors()) {
+            if (canDragDrop()) {
                 rect.setOnDragDetected(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
@@ -210,13 +244,13 @@ public class ControlColorsPane extends BaseController {
     }
 
     public synchronized void colorDropped(DragEvent event, Rectangle targetRect) {
-        if (event == null || manageController == null) {
+        if (event == null || !canDragDrop()) {
             return;
         }
         if (task != null && !task.isQuit()) {
             return;
         }
-        if (targetRect == null || manageController.isAllColors()) {
+        if (targetRect == null) {
             event.setDropCompleted(true);
             event.consume();
             return;
@@ -268,7 +302,7 @@ public class ControlColorsPane extends BaseController {
                         ColorData data = colors.get(i);
                         data.setOrderNumner(f0 + offset * i);
                     }
-                    manageController.tableColorPalette.write(manageController.currentPalette.getCpnid(), colors, true, false);
+                    tableColorPalette.write(palette.getCpnid(), colors, true, false);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -278,7 +312,11 @@ public class ControlColorsPane extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                manageController.refreshPalette();
+                if (manageController != null) {
+                    manageController.refreshPalette();
+                } else {
+                    loadPalette(palette, false);
+                }
             }
 
             @Override

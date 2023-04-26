@@ -138,12 +138,10 @@ public class BaseTreeInfoController extends BaseController {
                     TreeItem<TreeNode> item = selected();
                     if (event.getButton() == MouseButton.SECONDARY) {
                         showItemMenu(item);
+                    } else if (event.getClickCount() > 1) {
+                        doubleClicked(item);
                     } else {
-                        if (event.getClickCount() > 1) {
-                            doubleClicked(item);
-                        } else {
-                            itemSelected(item);
-                        }
+                        itemSelected(item);
                     }
                 }
             });

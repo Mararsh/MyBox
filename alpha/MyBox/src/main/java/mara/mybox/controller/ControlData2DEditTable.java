@@ -34,7 +34,6 @@ public class ControlData2DEditTable extends ControlData2DLoad {
     protected Button verifyButton;
 
     public ControlData2DEditTable() {
-        TipsLabelKey = "Data2DTips";
         readOnly = false;
         columnChangedNotify = new SimpleBooleanProperty(false);
     }

@@ -51,6 +51,9 @@ public class ColorsPickingController extends BaseChildController {
         try {
             super.initControls();
 
+            palettesController.setParameter(null, false);
+            colorsController.setParameter(null, true);
+
             onlyNewCheck.setSelected(UserConfig.getBoolean("ColorsOnlyPickNew", true));
             onlyNewCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -90,14 +93,14 @@ public class ColorsPickingController extends BaseChildController {
         if (currentPalette == null) {
             setTitle(baseTitle);
             paletteLabel.setText("");
-            colorsController.loadColors(null);
+            colorsController.loadColors(null, null);
             return;
         }
         String name = currentPalette.getName();
         UserConfig.setString(baseName + "Palette", name);
         setTitle(baseTitle + " - " + name);
         paletteLabel.setText(name);
-        colorsController.loadPalette(currentPalette.getCpnid());
+        colorsController.loadPalette(currentPalette, false);
     }
 
     protected void pickColor(Color color) {
@@ -129,7 +132,7 @@ public class ColorsPickingController extends BaseChildController {
 
                 @Override
                 protected void whenSucceeded() {
-                    colorsController.loadPalette(currentPalette.getCpnid());
+                    colorsController.loadPalette(currentPalette, true);
                 }
 
             };

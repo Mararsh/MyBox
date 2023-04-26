@@ -22,8 +22,8 @@ import mara.mybox.bufferedimage.ImageQuantization.QuantizationAlgorithm;
 import mara.mybox.bufferedimage.PixelsOperation.OperationType;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -66,7 +66,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
     protected ComboBox<String> intBox, stringBox, weightSelector, quanColorsSelector,
             regionSizeSelector, kmeansLoopSelector;
     @FXML
-    protected CheckBox valueCheck, quanDitherCheck, quanDataCheck, ceilCheck;
+    protected CheckBox valueCheck, quanDitherCheck, quanDataCheck, firstColorCheck;
     @FXML
     protected Label intBoxLabel, intLabel, intLabel2, intLabel3, stringLabel,
             actualLoopLabel, weightLabel;
@@ -293,11 +293,11 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                 }
             });
 
-            ceilCheck.setSelected(UserConfig.getBoolean(baseName + "QuanCeil", true));
-            ceilCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            firstColorCheck.setSelected(UserConfig.getBoolean(baseName + "QuanFirstColor", true));
+            firstColorCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "QuanCeil", newValue);
+                    UserConfig.setBoolean(baseName + "QuanFirstColor", newValue);
                 }
             });
 
@@ -359,9 +359,9 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
             weight1 = 4;
             weight2 = 4;
             weight3 = 1;
-            String defaultV = UserConfig.getString(baseName + "HSBWeights", "4:4:1");
+            String defaultV = UserConfig.getString(baseName + "HSBWeights", "6:10:100");
             weightSelector.getItems().addAll(Arrays.asList(
-                    "4:4:1", "4:4:2", "1:1:1", "5:3:2", "2:2:1", "4:2:1"
+                    "6:10:100", "12:4:10", "24:10:10", "12:10:40", "24:10:40", "12:20:40", "12:10:80", "6:10:80"
             ));
             weightSelector.setValue(defaultV);
         } else {

@@ -33,6 +33,9 @@ public class ColorPaletteSelectorController extends BaseChildController {
             super.initControls();
 
             this.popupController = popupController;
+
+            palettesController.setParameter(null, false);
+
             okButton.disableProperty().bind(palettesController.palettesList.getSelectionModel().selectedItemProperty().isNull());
             palettesController.loadPalettes();
             palettesController.palettesList.setOnMouseClicked((MouseEvent event) -> {

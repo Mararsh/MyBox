@@ -87,7 +87,7 @@ public class ImageManufactureBatchEffectsController extends BaseImageManufacture
                                 optionsController.quanColors, optionsController.regionSize,
                                 optionsController.weight1, optionsController.weight2, optionsController.weight3,
                                 optionsController.quanDataCheck.isSelected(), optionsController.quanDitherCheck.isSelected(),
-                                optionsController.ceilCheck.isSelected());
+                                optionsController.firstColorCheck.isSelected());
                         target = quantization.operate();
                         break;
                     case Gray:

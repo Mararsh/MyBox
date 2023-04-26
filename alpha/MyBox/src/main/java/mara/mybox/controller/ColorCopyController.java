@@ -38,8 +38,9 @@ public class ColorCopyController extends BaseChildController {
     public void setParameters(ColorsManageController colorsManager) {
         try {
             palettesController.setParameter(colorsManager, false);
-            if (!colorsManager.isAllColors()) {
-                palettesController.ignore = colorsManager.currentPalette.getName();
+
+            if (!colorsManager.palettesController.isAllColors()) {
+                palettesController.ignore = colorsManager.palettesController.currentPaletteName();
             }
             loadPalettes();
         } catch (Exception e) {

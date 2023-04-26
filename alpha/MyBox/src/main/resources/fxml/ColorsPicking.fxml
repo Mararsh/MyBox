@@ -39,9 +39,9 @@ License:    Apache License Version 2.0
                            </image>
                         </ImageView>
                         <Label fx:id="paletteLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
+                        <CheckBox fx:id="onlyNewCheck" minHeight="-Infinity" mnemonicParsing="false" text="%OnlyAddNewColors" wrapText="true" />
                      </children>
                   </HBox>
-                  <CheckBox fx:id="onlyNewCheck" minHeight="-Infinity" mnemonicParsing="false" text="%OnlyAddNewWhenPick" wrapText="true" />
                   <fx:include fx:id="colors" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlColorsPane.fxml" VBox.vgrow="ALWAYS" />
                </children>
                <padding>

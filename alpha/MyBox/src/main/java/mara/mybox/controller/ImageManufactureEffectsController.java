@@ -148,7 +148,8 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                                         scopeController.scope, optionsController.quantizationAlgorithm,
                                         optionsController.quanColors, optionsController.regionSize,
                                         optionsController.weight1, optionsController.weight2, optionsController.weight3,
-                                        true, optionsController.quanDitherCheck.isSelected(), optionsController.ceilCheck.isSelected());
+                                        true, optionsController.quanDitherCheck.isSelected(),
+                                        optionsController.firstColorCheck.isSelected());
                                 if (optionsController.quantizationAlgorithm == QuantizationAlgorithm.KMeansClustering) {
                                     KMeansClusteringQuantization q = (KMeansClusteringQuantization) quantization;
                                     q.getKmeans().setMaxIteration(optionsController.kmeansLoop);
