@@ -37,7 +37,7 @@ public class ControlData2DHtml extends BaseController {
             this.columns = columns;
             this.data = data;
             if (data == null || data.isEmpty()) {
-                webViewController.loadContents("");
+                webViewController.clear();
                 return;
             }
             List<String> names = new ArrayList<>();

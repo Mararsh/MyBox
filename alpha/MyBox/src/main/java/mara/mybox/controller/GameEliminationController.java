@@ -669,7 +669,7 @@ public class GameEliminationController extends BaseController {
         if (isSettingValues) {
             return;
         }
-        imageInfoController.loadContents("");
+        imageInfoController.clear();
         ImageItem selected = imagesListview.getSelectionModel().getSelectedItem();
         if (selected == null || selected.isColor()) {
             return;

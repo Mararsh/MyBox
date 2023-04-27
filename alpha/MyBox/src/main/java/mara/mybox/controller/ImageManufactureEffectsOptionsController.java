@@ -206,9 +206,9 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
                 }
             });
 
-            regionSize = UserConfig.getInt(baseName + "RegionSize", 256);
-            regionSize = regionSize <= 0 ? 256 : regionSize;
-            regionSizeSelector.getItems().addAll(Arrays.asList("256", "1024", "64", "512", "1024", "4096", "128"));
+            regionSize = UserConfig.getInt(baseName + "RegionSize", 4096);
+            regionSize = regionSize <= 0 ? 4096 : regionSize;
+            regionSizeSelector.getItems().addAll(Arrays.asList("4096", "1024", "256", "8192", "512", "128"));
             regionSizeSelector.setValue(regionSize + "");
             regionSizeSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override

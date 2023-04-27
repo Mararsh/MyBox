@@ -83,7 +83,7 @@ public class NoteEditor extends ControlHtmlEditor {
     }
 
     @Override
-    protected void updateStageTitle() {
+    public void updateStageTitle() {
     }
 
     @FXML

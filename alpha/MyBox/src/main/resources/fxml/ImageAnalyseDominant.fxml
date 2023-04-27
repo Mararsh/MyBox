@@ -23,84 +23,92 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.VBox?>
 
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageAnalyseDominantController">
-                <children>
-      <SplitPane dividerPositions="0.35" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-         <items>
-            <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-               <content>
-                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                     <children>
-                        <Label text="%Algorithm" />
-                        <RadioButton fx:id="kmeansRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%DominantKMeansComments" wrapText="true">
-                           <toggleGroup>
-                              <ToggleGroup fx:id="algorithmGroup" />
-                           </toggleGroup>
-                        </RadioButton>
-                        <RadioButton minHeight="-Infinity" mnemonicParsing="false" text="%DominantPopularityComments" toggleGroup="$algorithmGroup" wrapText="true" />
-                        <FlowPane hgap="2.0" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" prefWrapLength="100.0" vgap="2.0">
-                           <children>
-                                                  <Label fx:id="intBoxLabel" text="%ColorsNumber" />
-                                                  <ComboBox fx:id="colorsNumberSelectors" editable="true" prefWidth="100.0" />
-                           </children>
-                        </FlowPane>
-                        <FlowPane hgap="2.0" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" prefWrapLength="100.0" vgap="2.0">
-                           <children>
-                                                  <Label text="%PreprocessedRegionSize" />
-                                                  <ComboBox fx:id="regionSizeSelector" editable="true" prefWidth="100.0" />
-                           </children>
-                        </FlowPane>
-                        <FlowPane hgap="2.0" layoutX="10.0" layoutY="122.0" maxWidth="1.7976931348623157E308" prefWrapLength="100.0" vgap="2.0">
-                           <children>
-                                                  <Label fx:id="weightLabel" text="%RGBWeight" />
-                                                  <ComboBox fx:id="weightSelector" editable="true" prefWidth="120.0" />
-                           </children>
-                        </FlowPane>
-                        <FlowPane fx:id="loopPane" hgap="2.0" layoutX="10.0" layoutY="122.0" maxWidth="1.7976931348623157E308" prefWrapLength="100.0" vgap="2.0">
-                           <children>
-                                                  <Label fx:id="intBoxLabel2" text="%MaximumLoop" />
-                                                  <ComboBox fx:id="kmeansLoopSelector" editable="true" prefWidth="100.0" />
-                           </children>
-                        </FlowPane>
-                        <Button fx:id="goButton" mnemonicParsing="false" onAction="#goAction">
-                           <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../buttons/Red/iconGo.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                                            <Button fx:id="paletteButton" mnemonicParsing="false" onAction="#addPalette">
-                                                <graphic>
-                                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                        <image>
-                                                            <Image url="@../buttons/iconPalette.png" />
-                                                        </image>
-                                                    </ImageView>
-                                                </graphic>
-                                            </Button>
-                                            <Label fx:id="actualLoopLabel" minHeight="-Infinity" wrapText="true" />
-                     </children>
-                     <padding>
-                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                     </padding>
-                  </VBox>
-               </content>
-            </ScrollPane>
-            <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE">
-              <tabs>
-                <Tab text="%Colors">
+    <children>
+        <SplitPane dividerPositions="0.35" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+            <items>
+                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                    <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                            <children>
+                                <Label text="%Algorithm" />
+                                <RadioButton fx:id="kmeansRadio" minHeight="-Infinity" mnemonicParsing="false" selected="true" text="%DominantKMeansComments" wrapText="true">
+                                    <toggleGroup>
+                                        <ToggleGroup fx:id="algorithmGroup" />
+                                    </toggleGroup>
+                                </RadioButton>
+                                <RadioButton minHeight="-Infinity" mnemonicParsing="false" text="%DominantPopularityComments" toggleGroup="$algorithmGroup" wrapText="true" />
+                                <FlowPane hgap="2.0" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" prefWrapLength="100.0" vgap="2.0">
+                                    <children>
+                                        <Label fx:id="intBoxLabel" text="%ColorsNumber" />
+                                        <ComboBox fx:id="colorsNumberSelectors" editable="true" prefWidth="100.0" />
+                                    </children>
+                                </FlowPane>
+                                <FlowPane hgap="2.0" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" prefWrapLength="100.0" vgap="2.0">
+                                    <children>
+                                        <Label text="%PreprocessedRegionSize" />
+                                        <ComboBox fx:id="regionSizeSelector" editable="true" prefWidth="100.0" />
+                                    </children>
+                                </FlowPane>
+                                <FlowPane hgap="2.0" layoutX="10.0" layoutY="122.0" maxWidth="1.7976931348623157E308" prefWrapLength="100.0" vgap="2.0">
+                                    <children>
+                                        <Label fx:id="weightLabel" text="%RGBWeight" />
+                                        <ComboBox fx:id="weightSelector" editable="true" prefWidth="120.0" />
+                                    </children>
+                                </FlowPane>
+                                <FlowPane fx:id="loopPane" hgap="2.0" layoutX="10.0" layoutY="122.0" maxWidth="1.7976931348623157E308" prefWrapLength="100.0" vgap="2.0">
+                                    <children>
+                                        <Label fx:id="intBoxLabel2" text="%MaximumLoop" />
+                                        <ComboBox fx:id="kmeansLoopSelector" editable="true" prefWidth="100.0" />
+                                    </children>
+                                </FlowPane>
+                                <Button fx:id="goButton" mnemonicParsing="false" onAction="#goAction">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/Red/iconGo.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="paletteButton" mnemonicParsing="false" onAction="#addPalette">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconPalette.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Label fx:id="actualLoopLabel" minHeight="-Infinity" wrapText="true" />
+                            </children>
+                            <padding>
+                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                            </padding>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+                <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE">
+                    <tabs>
+                        <Tab text="%Colors">
                      <content>
-                        <fx:include fx:id="colors" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlHtmlView.fxml" />
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                           <children>
+                              <fx:include fx:id="colors" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlHtmlView.fxml" VBox.vgrow="ALWAYS" />
+                           </children>
+                           <padding>
+                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                           </padding>
+                        </VBox>
                      </content>
-                  </Tab>
-                <Tab text="%PieChart">
-                     <content>
-                        <PieChart fx:id="dominantPie" legendSide="RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" titleSide="LEFT" />
-                     </content></Tab>
-              </tabs>
-            </TabPane>
-         </items>
-      </SplitPane>
-                </children>
-            </VBox>
+                        </Tab>
+                        <Tab text="%PieChart">
+                            <content>
+                                <PieChart fx:id="dominantPie" legendSide="RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" titleSide="LEFT" />
+                            </content>
+                        </Tab>
+                    </tabs>
+                </TabPane>
+            </items>
+        </SplitPane>
+    </children>
+</VBox>

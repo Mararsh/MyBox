@@ -383,7 +383,7 @@ public class ControlMathFunctionCalculator extends BaseController {
     @FXML
     public void clearResults() {
         outputs = "";
-        outputController.loadContents("");
+        outputController.clear();
     }
 
     /*

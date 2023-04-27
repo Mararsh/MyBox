@@ -16,48 +16,48 @@ License:    Apache License Version 2.0
 
 <VBox fx:id="thisPane" alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlWebView">
     <children>
-      <HBox alignment="CENTER_LEFT" spacing="5.0">
-         <children>
-            <Button fx:id="styleLinksButton" mnemonicParsing="false" onAction="#showHtmlStyle" onMouseEntered="#popHtmlStyle">
-               <graphic>
-                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconStyle.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Label maxWidth="1.7976931348623157E308" visible="false" HBox.hgrow="ALWAYS" />
-            <Button fx:id="menuHtmlButton" mnemonicParsing="false" onAction="#menuAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconMenu.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Button fx:id="editHtmlButton" mnemonicParsing="false" onAction="#editAction">
-               <graphic>
-                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconEdit.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Button fx:id="functionsButton" mnemonicParsing="false" onAction="#showFunctionsMenu" onMouseEntered="#popFunctionsMenu">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconFunction.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-         </children>
-      </HBox>
-        <WebView fx:id="webView" minHeight="200.0" minWidth="200.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
-        <Label fx:id="webViewLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" />
+        <HBox alignment="CENTER_LEFT" spacing="5.0">
+            <children>
+                <Button fx:id="styleLinksButton" mnemonicParsing="false" onAction="#showHtmlStyle" onMouseEntered="#popHtmlStyle">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconStyle.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Label maxWidth="1.7976931348623157E308" visible="false" HBox.hgrow="ALWAYS" />
+                <Button fx:id="menuHtmlButton" mnemonicParsing="false" onAction="#menuAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconMenu.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="editHtmlButton" mnemonicParsing="false" onAction="#editAction">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconEdit.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="functionsButton" mnemonicParsing="false" onAction="#showFunctionsMenu" onMouseEntered="#popFunctionsMenu">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconFunction.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+        </HBox>
+      <WebView fx:id="webView" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
+      <Label fx:id="webViewLabel" />
     </children>
 </VBox>

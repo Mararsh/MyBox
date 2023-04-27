@@ -33,7 +33,8 @@ public class HtmlTableController extends BaseWebViewController {
         baseTitle = Languages.message("Html");
     }
 
-    protected String html() {
+    @Override
+    public String html() {
         if (table != null) {
             html = HtmlWriteTools.html(title, HtmlStyles.styleValue("Default"), StringTable.tableDiv(table));
 

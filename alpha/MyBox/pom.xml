@@ -172,11 +172,6 @@
             <version>1.9</version>
         </dependency>
         <dependency>
-            <groupId>net.sf.image4j</groupId>
-            <artifactId>image4j</artifactId>
-            <version>0.7.2</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
             <version>5.2.3</version>
@@ -253,12 +248,6 @@
         </dependency>
     </dependencies>
     
-    <repositories>
-        <repository>
-            <id>mybox-repo</id>
-            <url>file:${basedir}/repo</url>
-        </repository>
-    </repositories>
 
     <build>
         <plugins>

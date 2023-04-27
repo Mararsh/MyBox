@@ -83,7 +83,7 @@ public class JShellController extends TreeManageController {
     @FXML
     public void clearResults() {
         editorController.outputs = "";
-        webViewController.loadContents("");
+        webViewController.clear();
     }
 
     public void edit(String script) {

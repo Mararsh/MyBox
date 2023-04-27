@@ -83,7 +83,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
         if (task != null) {
             task.cancel();
         }
-        modelController.loadContents("");
+        modelController.clear();
         task = new SingletonTask<Void>(this) {
 
             @Override

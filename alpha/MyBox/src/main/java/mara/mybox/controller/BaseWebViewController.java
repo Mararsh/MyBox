@@ -189,25 +189,39 @@ public class BaseWebViewController extends BaseController {
         webViewController.initStyle(style);
     }
 
-    protected void updateStageTitle() {
+    public void updateStageTitle() {
         if (getMyStage() == null) {
             return;
         }
         myStage.setTitle(title());
     }
 
-    protected void setWebViewLabel(String string) {
+    public void setWebViewLabel(String string) {
         if (webViewController == null) {
             return;
         }
         webViewController.setWebViewLabel(string);
     }
 
-    protected Charset getCharset() {
+    public Charset getCharset() {
         if (webViewController == null) {
             return null;
         }
         return webViewController.charset;
+    }
+
+    public String html() {
+        if (webViewController == null) {
+            return null;
+        }
+        return webViewController.currentHtml();
+    }
+
+    public void clear() {
+        if (webViewController == null) {
+            return;
+        }
+        webViewController.clear();
     }
 
     @FXML

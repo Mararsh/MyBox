@@ -30,7 +30,9 @@ public class JavaScriptController extends TreeManageController {
     @FXML
     protected JavaScriptEditor editorController;
     @FXML
-    protected ControlWebView outputController, htmlController;
+    protected ControlWebView outputController;
+    @FXML
+    protected WebAddressController htmlController;
 
     public JavaScriptController() {
         baseTitle = "JavaScript";
@@ -49,9 +51,9 @@ public class JavaScriptController extends TreeManageController {
             editorController.setParameters(this);
             outputController.setParent(this, ControlWebView.ScrollType.Bottom);
 
-            htmlWebView = htmlController;
+            htmlWebView = htmlController.webViewController;
             if (htmlController != null) {
-                htmlController.setParent(this, ControlWebView.ScrollType.Bottom);
+                htmlController.webViewController.setParent(this, ControlWebView.ScrollType.Bottom);
                 htmlController.loadContents(HtmlWriteTools.emptyHmtl(message("AppTitle")));
             }
         } catch (Exception e) {
@@ -98,7 +100,7 @@ public class JavaScriptController extends TreeManageController {
     @FXML
     public void clearResults() {
         outputs = "";
-        outputController.loadContents("");
+        outputController.clear();
     }
 
     public void edit(String script) {

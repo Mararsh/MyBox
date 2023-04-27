@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
@@ -131,6 +130,66 @@ public class ImageAnalyseController extends BaseController {
         }
     }
 
+    protected void loadData() {
+        if (sourceController.image == null || isSettingValues) {
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        sourceFile = sourceController.sourceFile;
+        statisticController.clear();
+        colorsBarchart.getData().clear();
+        grayView.getEngine().loadContent("");
+        grayBarchart.getData().clear();
+        redView.getEngine().loadContent("");
+        redBarchart.getData().clear();
+        greenView.getEngine().loadContent("");
+        greenBarchart.getData().clear();
+        blueView.getEngine().loadContent("");
+        blueBarchart.getData().clear();
+        hueView.getEngine().loadContent("");
+        hueBarchart.getData().clear();
+        saturationView.getEngine().loadContent("");
+        saturationBarchart.getData().clear();
+        brightnessView.getEngine().loadContent("");
+        brightnessBarchart.getData().clear();
+        alphaView.getEngine().loadContent("");
+        alphaBarchart.getData().clear();
+        dominantController.clear();
+        task = new SingletonTask<Void>(this) {
+            private BufferedImage bufferedImage;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    bufferedImage = imageToHandle();
+                    if (bufferedImage == null) {
+                        return false;
+                    }
+                    task.setInfo(message("CalculatingImageComponents"));
+                    ImageStatistic imageStatistic = ImageStatistic.create(bufferedImage);
+                    data = imageStatistic.analyze();
+                    nonTransparent = imageStatistic.getNonTransparent();
+                    return data != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                showStatistic();
+                showComponentsHistogram();
+                showColorData();
+                dominantController.loadDominantData(bufferedImage);
+            }
+
+        };
+        start(task);
+    }
+
     protected BufferedImage imageToHandle() {
         try {
             Image aImage = null;
@@ -151,98 +210,12 @@ public class ImageAnalyseController extends BaseController {
         }
     }
 
-    protected void loadData() {
-        if (task != null && !task.isQuit()) {
-            return;
-        }
-        if (sourceController.image == null || isSettingValues) {
-            return;
-        }
-        sourceFile = sourceController.sourceFile;
-        statisticController.loadContents("");
-        colorsBarchart.getData().clear();
-        grayView.getEngine().loadContent("");
-        grayBarchart.getData().clear();
-        redView.getEngine().loadContent("");
-        redBarchart.getData().clear();
-        greenView.getEngine().loadContent("");
-        greenBarchart.getData().clear();
-        blueView.getEngine().loadContent("");
-        blueBarchart.getData().clear();
-        hueView.getEngine().loadContent("");
-        hueBarchart.getData().clear();
-        saturationView.getEngine().loadContent("");
-        saturationBarchart.getData().clear();
-        brightnessView.getEngine().loadContent("");
-        brightnessBarchart.getData().clear();
-        alphaView.getEngine().loadContent("");
-        alphaBarchart.getData().clear();
-        dominantController.clear();
-        task = new SingletonTask<Void>(this) {
-
-            @Override
-            protected boolean handle() {
-                BufferedImage bufferedImage = imageToHandle();
-                if (bufferedImage == null) {
-                    return false;
-                }
-                loadComponentsData(bufferedImage);
-                dominantController.loadDominantData(task, bufferedImage);
-                return true;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-
-            }
-
-        };
-        start(task);
-    }
-
-    protected boolean loadComponentsData(BufferedImage image) {
-        try {
-            task.setInfo(message("CalculatingImageComponents"));
-            ImageStatistic imageStatistic = ImageStatistic.create(image);
-            data = imageStatistic.analyze();
-            nonTransparent = imageStatistic.getNonTransparent();
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    showStatistic();
-                    if (data != null) {
-                        showComponentsHistogram();
-                        showColorData();
-                    }
-                }
-            });
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-        return false;
-    }
-
-    @FXML
-    @Override
-    public void refreshAction() {
-        try {
-            sourceController.fitSize();
-            sourceController.drawMaskRulerXY();
-            sourceController.checkCoordinate();
-            sourceController.setMaskStroke();
-            loadData();
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-    }
-
     /*
         statistic
      */
     protected void showStatistic() {
         try {
-            if (sourceController.image == null || isSettingValues) {
+            if (sourceController.image == null || data == null) {
                 return;
             }
             StringBuilder s = new StringBuilder();
@@ -252,7 +225,7 @@ public class ImageAnalyseController extends BaseController {
                     .append("(").append(FloatTools.percentage(nonTransparent, imageSize)).append("%)").append("</P>");
             String indent = "    ";
             s.append(indent).append(indent).append("<DIV align=\"center\" >\n");
-            s.append(indent).append(indent).append(indent).append("<TABLE >\n");
+            s.append(indent).append(indent).append(indent).append("<TABLE>\n");
 
             s.append(indent).append(indent).append(indent).append(indent).
                     append("<TR  style=\"font-weight:bold; \">");
@@ -275,10 +248,10 @@ public class ImageAnalyseController extends BaseController {
             s.append(componentRow(ColorComponent.Brightness, indent));
             s.append(componentRow(ColorComponent.AlphaChannel, indent));
 
-            s.append(indent).append(indent).append(indent).append("</TABLE >\n");
+            s.append(indent).append(indent).append(indent).append("</TABLE>\n");
             s.append(indent).append(indent).append("</DIV>\n");
 
-            final String html = HtmlWriteTools.html(null, HtmlStyles.styleValue("Default"), s.toString());
+            String html = HtmlWriteTools.html(null, HtmlStyles.styleValue("Default"), s.toString());
             statisticController.loadContents(html);
 
         } catch (Exception e) {
@@ -483,18 +456,16 @@ public class ImageAnalyseController extends BaseController {
     }
 
     protected void showComponentsHistogram() {
-        if (isSettingValues || colorsBarchart.getData() == null) {
+        if (sourceController.image == null || data == null || colorsBarchart.getData() == null) {
             return;
         }
+
         // https://stackoverflow.com/questions/29124723/javafx-chart-auto-scaling-wrong-with-low-numbers?r=SearchResults
         colorsBarchart.setAnimated(false);
         colorsBarchart.getData().clear();
         colorsBarchart.setAnimated(true);
         colorsBarchart.getXAxis().setAnimated(false);  // X-Axis labels are messed if true
 
-        if (sourceController.image == null || data == null) {
-            return;
-        }
         List<ColorComponent> selected = new ArrayList();
         if (grayHistCheck.isSelected()) {
             selected.add(ColorComponent.Gray);
@@ -869,6 +840,20 @@ public class ImageAnalyseController extends BaseController {
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    @Override
+    public void refreshAction() {
+        try {
+            sourceController.fitSize();
+            sourceController.drawMaskRulerXY();
+            sourceController.checkCoordinate();
+            sourceController.setMaskStroke();
+            loadData();
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
         }
     }
 

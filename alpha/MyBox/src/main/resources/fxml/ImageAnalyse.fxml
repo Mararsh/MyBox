@@ -37,11 +37,11 @@ License:    Apache License Version 2.0
                             <children>
                                 <HBox fx:id="sourceBox1" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
                                     <children>
-                                                  <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                      <image>
-                                                          <Image url="@../buttons/Red/iconTips.png" />
-                                                      </image>
-                                                  </ImageView>
+                                        <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/Red/iconTips.png" />
+                                            </image>
+                                        </ImageView>
                                         <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                         <HBox fx:id="dataOpBox" alignment="CENTER_LEFT" spacing="5.0">
                                             <children>
@@ -65,84 +65,87 @@ License:    Apache License Version 2.0
                                                 </Button>
                                             </children>
                                         </HBox>
-                                          <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                              <image>
-                                                  <Image url="@../buttons/Red/iconDoubleRIght.png" />
-                                              </image>
-                                          </ImageView>
+                                        <ImageView fx:id="rightPaneControl" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/Red/iconDoubleRIght.png" />
+                                            </image>
+                                        </ImageView>
                                     </children>
                                 </HBox>
                                 <TabPane fx:id="dataPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                     <tabs>
-                              <Tab fx:id="statisticTab" closable="false" text="%Statistic">
-                                 <content>
-                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                       <children>
-                                          <fx:include fx:id="statistic" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlHtmlView.fxml" VBox.vgrow="ALWAYS" />
-                                       </children>
-                                    </VBox>
-                                 </content>
-                              </Tab>
+                                        <Tab fx:id="statisticTab" closable="false" text="%Statistic">
+                                            <content>
+                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                                    <children>
+                                                        <fx:include fx:id="statistic" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlHtmlView.fxml" VBox.vgrow="ALWAYS" />
+                                                    </children>
+                                       <padding>
+                                          <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                       </padding>
+                                                </VBox>
+                                            </content>
+                                        </Tab>
                                         <Tab fx:id="histogramTab" closable="false" text="%Histogram">
                                             <content>
-                                                  <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                                      <children>
-                                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
-                                                              <children>
-                                                                  <BarChart fx:id="colorsBarchart" alternativeRowFillVisible="false" barGap="1.0" categoryGap="1.0" horizontalGridLinesVisible="false" horizontalZeroLineVisible="false" legendSide="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" verticalGridLinesVisible="false" verticalZeroLineVisible="false" VBox.vgrow="ALWAYS">
-                                                                      <xAxis>
-                                                                          <CategoryAxis fx:id="grayX" animated="false" tickLabelGap="1.0" tickLabelRotation="45.0" tickMarkVisible="false" />
-                                                                      </xAxis>
-                                                                      <yAxis>
-                                                                          <NumberAxis fx:id="grayY" label="%PixelsNumber" side="LEFT" tickLabelGap="1.0" tickLength="10.0" />
-                                                                      </yAxis>
-                                                                  </BarChart>
-                                                              </children>
-                                                          </VBox>
-                                                          <VBox minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="RIGHT_TO_LEFT" spacing="5.0" HBox.hgrow="NEVER">
-                                                              <children>
-                                                <Button fx:id="selectAllChannelsButton" mnemonicParsing="false" onAction="#selectAllChannels">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/Red/iconSelectAll.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </Button>
-                                                <Button fx:id="selectNoneChannelsButton" mnemonicParsing="false" onAction="#selectNoneChannels">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/Red/iconSelectNone.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </Button>
-                                                                  <CheckBox fx:id="grayHistCheck" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" text="%Gray" />
-                                                                  <CheckBox fx:id="redHistCheck" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" selected="true" text="%RedChannel" />
-                                                                  <CheckBox fx:id="greenHistCheck" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" selected="true" text="%GreenChannel" />
-                                                                  <CheckBox fx:id="blueHistCheck" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" selected="true" text="%BlueChannel" />
-                                                                  <CheckBox fx:id="hueHistCheck" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" text="%Hue" />
-                                                                  <CheckBox fx:id="saturationHistCheck" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" text="%Saturation" />
-                                                                  <CheckBox fx:id="brightnessHistCheck" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" text="%Brightness" />
-                                                                  <CheckBox fx:id="alphaHistCheck" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" text="%AlphaChannel" />
-                                                                  <CheckBox fx:id="componentsLegendCheck" layoutX="10.0" layoutY="420.0" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" selected="true" text="%ChartLegend" />
-                                                              </children>
-                                                              <HBox.margin>
-                                                                  <Insets top="10.0" />
-                                                              </HBox.margin>
-                                                          </VBox>
-                                                      </children>
-                                                  </HBox>
+                                                <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                                    <children>
+                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
+                                                            <children>
+                                                                <BarChart fx:id="colorsBarchart" alternativeRowFillVisible="false" barGap="1.0" categoryGap="1.0" horizontalGridLinesVisible="false" horizontalZeroLineVisible="false" legendSide="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" verticalGridLinesVisible="false" verticalZeroLineVisible="false" VBox.vgrow="ALWAYS">
+                                                                    <xAxis>
+                                                                        <CategoryAxis fx:id="grayX" animated="false" tickLabelGap="1.0" tickLabelRotation="45.0" tickMarkVisible="false" />
+                                                                    </xAxis>
+                                                                    <yAxis>
+                                                                        <NumberAxis fx:id="grayY" label="%PixelsNumber" side="LEFT" tickLabelGap="1.0" tickLength="10.0" />
+                                                                    </yAxis>
+                                                                </BarChart>
+                                                            </children>
+                                                        </VBox>
+                                                        <VBox minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="RIGHT_TO_LEFT" spacing="5.0" HBox.hgrow="NEVER">
+                                                            <children>
+                                                                <Button fx:id="selectAllChannelsButton" mnemonicParsing="false" onAction="#selectAllChannels">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconSelectAll.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                                <Button fx:id="selectNoneChannelsButton" mnemonicParsing="false" onAction="#selectNoneChannels">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconSelectNone.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                                <CheckBox fx:id="grayHistCheck" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" text="%Gray" />
+                                                                <CheckBox fx:id="redHistCheck" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" selected="true" text="%RedChannel" />
+                                                                <CheckBox fx:id="greenHistCheck" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" selected="true" text="%GreenChannel" />
+                                                                <CheckBox fx:id="blueHistCheck" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" selected="true" text="%BlueChannel" />
+                                                                <CheckBox fx:id="hueHistCheck" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" text="%Hue" />
+                                                                <CheckBox fx:id="saturationHistCheck" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" text="%Saturation" />
+                                                                <CheckBox fx:id="brightnessHistCheck" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" text="%Brightness" />
+                                                                <CheckBox fx:id="alphaHistCheck" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" text="%AlphaChannel" />
+                                                                <CheckBox fx:id="componentsLegendCheck" layoutX="10.0" layoutY="420.0" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" selected="true" text="%ChartLegend" />
+                                                            </children>
+                                                            <HBox.margin>
+                                                                <Insets top="10.0" />
+                                                            </HBox.margin>
+                                                        </VBox>
+                                                    </children>
+                                                </HBox>
                                             </content>
                                         </Tab>
                                         <Tab fx:id="dominantTab" closable="false" text="%DominantColors">
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                       <children>
-                                          <fx:include fx:id="dominant" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ImageAnalyseDominant.fxml" VBox.vgrow="ALWAYS" />
-                                       </children>
+                                                    <children>
+                                                        <fx:include fx:id="dominant" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ImageAnalyseDominant.fxml" VBox.vgrow="ALWAYS" />
+                                                    </children>
                                                 </VBox>
                                             </content>
                                         </Tab>
@@ -317,19 +320,19 @@ License:    Apache License Version 2.0
                                     </tabs>
                                 </TabPane>
                             </children>
-                     <padding>
-                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                     </padding>
+                            <padding>
+                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                            </padding>
                         </VBox>
                         <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                     <children>
-                              <fx:include fx:id="source" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageSource.fxml" VBox.vgrow="ALWAYS" />
+                                        <fx:include fx:id="source" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageSource.fxml" VBox.vgrow="ALWAYS" />
                                     </children>
-                           <padding>
-                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                           </padding>
+                                    <padding>
+                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </padding>
                                 </VBox>
                             </content>
                         </ScrollPane>

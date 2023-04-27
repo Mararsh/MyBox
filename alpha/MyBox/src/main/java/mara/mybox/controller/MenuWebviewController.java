@@ -108,12 +108,12 @@ public class MenuWebviewController extends MenuController {
     }
 
     public void checkWebviewPane() {
-        if (webView == null) {
-            return;
-        }
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                if (webView == null) {
+                    return;
+                }
                 String tag;
                 if (element != null) {
                     tag = element.getTagName();

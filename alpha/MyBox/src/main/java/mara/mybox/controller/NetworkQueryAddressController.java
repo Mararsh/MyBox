@@ -106,9 +106,9 @@ public class NetworkQueryAddressController extends BaseController {
             if (task != null) {
                 task.cancel();
             }
-            infoController.loadContents(null);
-            ipaddressController.loadContents(null);
-            headerController.loadContents(null);
+            infoController.clear();
+            ipaddressController.clear();
+            headerController.clear();
             certArea.clear();
             host = null;
             ip = null;
@@ -124,7 +124,6 @@ public class NetworkQueryAddressController extends BaseController {
                         certString = null;
                         URL url = new URI(UrlTools.checkURL(address, Charset.defaultCharset())).toURL();
                         String urlAddress = url.toString();
-                        MyBoxLog.console(urlAddress);
                         task.setInfo(message("Query") + ": " + urlAddress);
                         host = url.getHost();
                         StringTable table = new StringTable(null, urlAddress);

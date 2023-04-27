@@ -1,246 +1,384 @@
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-        <title>Data
+ <head>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+  <title>Data
             in Two-dimensional Storage Structure</title>
-    </head>
-    <body style="width: 900px; margin:0 auto;" contenteditable="false">
-        <h1 align="center">Data in Two-dimensional Storage Structure</h1>
-        <h2>1. Data Objects</h2>
-        <ol>
-            <li><p><font face="Times New Roman, serif"><span lang="en-US">Following objects can be edited in consistent way: </span></font></p></li><font face="Times New Roman, serif"> </font>
-        </ol><font face="Times New Roman, serif">
-        <ul>
-            <ul>
-                <ul>
-                    <li><p><font face="Times New Roman, serif"><span lang="en-US">Data files, including CSV File, Excel file, texts file.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Data of MyBox Clipboard</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Matrices</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Database tables. </span></font></p></li><font face="Times New Roman, serif"> </font></font></font></font>
-                </ul><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif"> </font></font></font>
-            </ul><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif"> </font></font></font>
-        </ul><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif">
-        <ol start="2">
-            <li><p><font face="Times New Roman, serif"><span lang="en-US">Data are represented as two-dimensional storage structure:</span></font></p></li><font face="Times New Roman, serif"> </font>
-        </ol><font face="Times New Roman, serif">
-        <ul>
-            <ul>
-                <ul>
-                    <li><p><font face="Times New Roman, serif"><span lang="en-US">"Columns" define attributes/fields of data and extend data dimensions in horizontal direction.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">"Rows" save instances of data and extend data set in vertical direction. </span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Data should be in same width. That is all rows have equal number of columns. </span></font></p></li><font face="Times New Roman, serif"> </font></font></font>
-                </ul><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif"> </font></font></font>
-            </ul><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif"> </font></font></font>
-        </ul><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif"> <h2>2. Define Columns</h2> <h3>2.1 Interface of Columns Management</h3> <p><font face="Times New Roman, serif"><span lang="en-US"> Under tab “Columns”, add/delete/change columns in table view:</span></font></p><font face="Times New Roman, serif">
-        <ol>
-            <li><p><font face="Times New Roman, serif"><span lang="en-US">Column names should not be null nor duplicated.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Click table cell to edit value directly.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Select one row and click button “Edit” to open edit window.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Can rename all columns with sequence numbers.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Can set random colors.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Can adjust orders of columns.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Click button "OK" to apply modifications of columns to "Table" of current data.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Click button "Cancel" to discard modifications of columns and pick data from "Table" of current data.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">When changes have not been saved, if modifications have not been applied to data, “**” is displayed in tab header, or else “*” is displayed in tab header.</span></font></p></li><font face="Times New Roman, serif"> </font></font></font></font></font></font></font></font></font>
-        </ol><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif"> <h3>2.2 Types of Columns</h3>
-        <ol>
-            <li value="1"><p><font face="Times New Roman, serif"><span lang="en-US">Types of columns include: String, Double, Float, Long, Integer, Short, Boolean, Datetime, Date, Era, Longitude, Latitude, Enumeration, Color.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">This attribute is used to display, edit, calculate, and save data.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Longitutde and Latitude are defined together generally.</span></font></p></li><font face="Times New Roman, serif"> </font></font></font>
-        </ol><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif"> <h3>2.3 Format of Column</h3>
-        <ol>
-            <li><p><font face="Times New Roman, serif"><span lang="en-US">This attribute is mainly for display. When data are inputted/edited, formats are not applied automatically and original inputs are kept. </span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">In some interfaces, like "Copy" or "Export", options "Save date/time/era and numbers as columns' formats" can be checked. </span></font></p><font face="Times New Roman, serif"> <p></p></font></li><font face="Times New Roman, serif"> </font></font>
-        </ol><font face="Times New Roman, serif"><font face="Times New Roman, serif"> <h4>2.3.1 Format for Numbers</h4> <p><font face="Times New Roman, serif"><span lang="en-US"> To numbers, format can be: group in thousands, group in ten thousands, scientific notation, and no format. </span></font></p><font face="Times New Roman, serif"> <h4>2.3.2 Format for Datetime/Date</h4> <p><font face="Times New Roman, serif"><span lang="en-US"> To Datetime/Date, following are supported in formats: MM/dd/yy, yy-MM-dd, milliseconds, time zone, T separator, patch century, etc.. </span></font></p><font face="Times New Roman, serif"> <h4>2.3.3 Format for Era</h4> <p><font face="Times New Roman, serif"><span lang="en-US"> To Era, following are supported in formats: MM/dd/yy, yy-MM-dd, milliseconds, time zone, T separator, patch century, prefix/suffix of “AD” and “BC” in Chinese and English,etc.. </span></font></p><font face="Times New Roman, serif"> <h4>2.3.4 Define Enumeration</h4> <p><font face="Times New Roman, serif"><span lang="en-US"> To Enumeration, list of values can be defined. </span></font></p><font face="Times New Roman, serif"> <h3>2.4 Handle Invalid Values</h3>
-        <ol>
-            <li><p><font face="Times New Roman, serif"><span lang="en-US">How columns handle invalid values, including: skip, count as empty, and count as zero. </span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">In some context, “count as empty” equals to “skip”.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">This attribute is only used for display or calculation. When data are inputted/edited, invalid values are not handled automatically. </span></font></p></li><font face="Times New Roman, serif"> </font></font></font>
-        </ol><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif"> <h2>3. Usages of Columns</h2> <p><font face="Times New Roman, serif"><span lang="en-US"> Principle of column usages is “Most tolerability and least manufacture”.</span></font></p><font face="Times New Roman, serif"> <h3>3.1 Load Data</h3> <p><font face="Times New Roman, serif"><span lang="en-US"> When load data, types of columns are not checked, and original values are read and imported.</span></font></p><font face="Times New Roman, serif"> <h3>3.2 Display Data</h3>
-        <ol>
-            <li><p><font face="Times New Roman, serif"><span lang="en-US">Parse values as columns' types.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Handle invalid values as columns' definitions.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Rewrite values as columns' formats.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Displayed values may be different from current actual values.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Example, Column type is Double and value “abc” is read:</span></font></p></li><font face="Times New Roman, serif"> </font></font></font></font></font>
-        </ol><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif">
-        <ul>
-            <ul>
-                <li><p><font face="Times New Roman, serif"><span lang="en-US">If count invalid as zero, then display it as zero(actual value is still “abc”).</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">If skip or count invalid as empty, then display it as “abc”.</span></font></p></li><font face="Times New Roman, serif"> </font></font>
-            </ul><font face="Times New Roman, serif"><font face="Times New Roman, serif"> </font></font>
-        </ul><font face="Times New Roman, serif"><font face="Times New Roman, serif"> <h3>3.3 Controls for editing</h3>
-        <ul>
-            <li><p><font face="Times New Roman, serif"><span lang="en-US">To Boolean, checkbox is provided. </span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">To Enumeration, list view is provided with selections. </span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">To Color, palette is provided. </span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">To Longitude and Latitude, map can be popped to locate coordinate. </span></font></p></li><font face="Times New Roman, serif"> </font></font></font></font>
-        </ul><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif"> <h3>3.4 Edit Data Cell</h3>
-        <ol>
-            <li><p><font face="Times New Roman, serif"><span lang="en-US">Click editable cell to start editing.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">When editing is started, its original value is displayed, while both type and format of column are ignored.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">While user inputs and modifies the value, value in the edit control is checked by column type:</span></font></p></li><font face="Times New Roman, serif"> </font></font></font>
-        </ol><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif">
-        <ul>
-            <ul>
-                <li><p><font face="Times New Roman, serif"><span lang="en-US">If value is invalid, then edit contorl is displayed in abnormal color.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">If value is valid, then edit control is displayed in normal color.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">The value is always kept as what user has inputted.</span></font></p></li><font face="Times New Roman, serif"> </font></font></font>
-            </ul><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif"> </font></font></font>
-        </ul><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif">
-        <ol start="4">
-            <li><p><font face="Times New Roman, serif"><span lang="en-US">Press key ENTER to commit modification, and press key ESC to cancel editing.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Option: Auto-commit modification when cell loses focus(click other control).</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">When modification is committed, value in the edit control is checked:</span></font></p></li><font face="Times New Roman, serif"> </font></font></font>
-        </ol><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif">
-        <ul>
-            <ul>
-                <li><p><font face="Times New Roman, serif"><span lang="en-US">If value is not changed, then no checking of column type nor saving.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">If value is changed, then check the changed value as column type:</span></font></p><font face="Times New Roman, serif">
-                    <ul>
-                        <li><p><font face="Times New Roman, serif"><span lang="en-US">To invalid value, discard it, and then restore and display original value. </span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">To valid value, submit and save as new value, and then dsiplay saved value as type and format of the column.</span></font></p></li><font face="Times New Roman, serif"> </font></font>
-                    </ul></font></li><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif"> </font></font></font></font>
-            </ul><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif"> </font></font></font>
-        </ul><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif">
-        <ol start="7">
-            <li><p><font face="Times New Roman, serif"><span lang="en-US">Example, column type is Double, count invalid as empty, and decimal scale is 2. When read “abc”:</span></font></p></li><font face="Times New Roman, serif"> </font>
-        </ol><font face="Times New Roman, serif">
-        <ul>
-            <ul>
-                <li><p><font face="Times New Roman, serif"><span lang="en-US">The data cell is displayed as “abc”.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">User modifies it as “abc123”:</span></font></p><font face="Times New Roman, serif">
-                    <ul>
-                        <li><p><font face="Times New Roman, serif"><span lang="en-US">While user inputs the change, the text field is always in abnormal color.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">After user clicks Enter or other control, this data cell comes back as “abc” in normal color.</span></font></p></li><font face="Times New Roman, serif"> </font></font>
-                    </ul></font></li><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">User modifies it as “123.4567”:</span></font></p><font face="Times New Roman, serif">
-                    <ul>
-                        <li><p><font face="Times New Roman, serif"><span lang="en-US">While user inputs the change, the text field is always in normal color.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">After user clicks Enter or other control, this data cell is saved as “123.4567” and displayed as “123.46”.</span></font></p></li><font face="Times New Roman, serif"> </font></font>
-                    </ul></font></li><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif"> </font></font></font></font></font></font></font>
-            </ul><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif"> </font></font></font>
-        </ul><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif">
-        <ol start="8">
-            <li><p><font face="Times New Roman, serif"><span lang="en-US">Other data cells are not affected. That is, data cells are always in originial values if they are not changed.</span></font></p></li><font face="Times New Roman, serif"> </font>
-        </ol><font face="Times New Roman, serif"> <h3>3.5 Verify Data Values</h3>
-        <ol>
-            <li value="1"><p><font face="Times New Roman, serif"><span lang="en-US">The verified objects are rows in current page.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">To start the verification:</span></font></p></li><font face="Times New Roman, serif"> </font></font>
-        </ol><font face="Times New Roman, serif"><font face="Times New Roman, serif">
-        <ul>
-            <ul>
-                <li><p><font face="Times New Roman, serif"><span lang="en-US">Click button “Verify data in current page”.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Option: Verify values automatically when save data.</span></font></p></li><font face="Times New Roman, serif"> </font></font>
-            </ul><font face="Times New Roman, serif"><font face="Times New Roman, serif"> </font></font>
-        </ul><font face="Times New Roman, serif"><font face="Times New Roman, serif">
-        <ol start="3">
-            <li><p><font face="Times New Roman, serif"><span lang="en-US">Following are checked:</span></font></p></li><font face="Times New Roman, serif"> </font>
-        </ol><font face="Times New Roman, serif">
-        <ul>
-            <ul>
-                <li><p><font face="Times New Roman, serif"><span lang="en-US">If a column is defined as “not null”, then null values are invalid for this column.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">If a value is not satisfied with the column type, then the value is invalid. </span></font></p></li><font face="Times New Roman, serif"> </font></font>
-            </ul><font face="Times New Roman, serif"><font face="Times New Roman, serif"> </font></font>
-        </ul><font face="Times New Roman, serif"><font face="Times New Roman, serif">
-        <ol start="4">
-            <li><p><font face="Times New Roman, serif"><span lang="en-US">The results of verification are displayed in a html table.</span></font></p></li><font face="Times New Roman, serif"> </font>
-        </ol><font face="Times New Roman, serif"> <h3>3.6 Save Data</h3>
-        <ol>
-            <li value="1"><p><font face="Times New Roman, serif"><span lang="en-US">Values are written into file of CSV/Texts/Excel as strings.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Values are written into database table as nearest types:</span></font></p></li><font face="Times New Roman, serif"> </font></font>
-        </ol><font face="Times New Roman, serif"><font face="Times New Roman, serif">
-        <ol>
-            <p style="margin-bottom: 0cm"></p>
-        </ol>
-        <dl>
-            <dl>
-                <dl>
-                    <dl>
-                        <dd>
-                            <table width="322" border="1" bordercolor="#000000" cellpadding="4" cellspacing="0">
-                                <colgroup>
-                                    <col width="146">
-                                    <col width="158">
-                                </colgroup>
-                                <tbody>
-                                    <tr valign="TOP">
-                                        <td width="146"><p align="CENTER"><font face="Times New Roman, serif"><span lang="en-US"><b>Column Type of MyBox</b></span></font></p></td>
-                                        <td width="158"><p align="CENTER"><font face="Times New Roman, serif"><span lang="en-US"><b>Data Type of JDBC</b></span></font></p></td>
-                                    </tr>
-                                    <tr valign="TOP">
-                                        <td width="146"><p><font face="Times New Roman, serif"><span lang="en-US">String</span></font></p></td>
-                                        <td width="158"><p><font face="Times New Roman, serif"><span lang="en-US">VARCHAR</span></font></p></td>
-                                    </tr>
-                                    <tr valign="TOP">
-                                        <td width="146"><p><font face="Times New Roman, serif"><span lang="en-US">Double</span></font></p></td>
-                                        <td width="158"><p><font face="Times New Roman, serif"><span lang="en-US">DOUBLE</span></font></p></td>
-                                    </tr>
-                                    <tr valign="TOP">
-                                        <td width="146"><p><font face="Times New Roman, serif"><span lang="en-US">Float</span></font></p></td>
-                                        <td width="158"><p><font face="Times New Roman, serif"><span lang="en-US">FLOAT</span></font></p></td>
-                                    </tr>
-                                    <tr valign="TOP">
-                                        <td width="146"><p><font face="Times New Roman, serif"><span lang="en-US">Long</span></font></p></td>
-                                        <td width="158"><p><font face="Times New Roman, serif"><span lang="en-US">BIGINT</span></font></p></td>
-                                    </tr>
-                                    <tr valign="TOP">
-                                        <td width="146"><p><font face="Times New Roman, serif"><span lang="en-US">Integer</span></font></p></td>
-                                        <td width="158"><p><font face="Times New Roman, serif"><span lang="en-US">INT</span></font></p></td>
-                                    </tr>
-                                    <tr valign="TOP">
-                                        <td width="146"><p><font face="Times New Roman, serif"><span lang="en-US">Short</span></font></p></td>
-                                        <td width="158"><p><font face="Times New Roman, serif"><span lang="en-US">SMALLINT</span></font></p></td>
-                                    </tr>
-                                    <tr valign="TOP">
-                                        <td width="146"><p><font face="Times New Roman, serif"><span lang="en-US">Boolean</span></font></p></td>
-                                        <td width="158"><p><font face="Times New Roman, serif"><span lang="en-US">BOOLEAN</span></font></p></td>
-                                    </tr>
-                                    <tr valign="TOP">
-                                        <td width="146"><p><font face="Times New Roman, serif"><span lang="en-US">Datetime</span></font></p></td>
-                                        <td width="158"><p><font face="Times New Roman, serif"><span lang="en-US">TIMESTAMP</span></font></p></td>
-                                    </tr>
-                                    <tr valign="TOP">
-                                        <td width="146"><p><font face="Times New Roman, serif"><span lang="en-US">Date</span></font></p></td>
-                                        <td width="158"><p><font face="Times New Roman, serif"><span lang="en-US">DATE</span></font></p></td>
-                                    </tr>
-                                    <tr valign="TOP">
-                                        <td width="146"><p><font face="Times New Roman, serif"><span lang="en-US">Era</span></font></p></td>
-                                        <td width="158"><p><font face="Times New Roman, serif"><span lang="en-US">BIGINT</span></font></p></td>
-                                    </tr>
-                                    <tr valign="TOP">
-                                        <td width="146"><p><font face="Times New Roman, serif"><span lang="en-US">Longitude</span></font></p></td>
-                                        <td width="158"><p><font face="Times New Roman, serif"><span lang="en-US">DOUBLE</span></font></p></td>
-                                    </tr>
-                                    <tr valign="TOP">
-                                        <td width="146"><p><font face="Times New Roman, serif"><span lang="en-US">Latitude</span></font></p></td>
-                                        <td width="158"><p><font face="Times New Roman, serif"><span lang="en-US">DOUBLE</span></font></p></td>
-                                    </tr>
-                                    <tr valign="TOP">
-                                        <td width="146"><p><font face="Times New Roman, serif"><span lang="en-US">Enumeration</span></font></p></td>
-                                        <td width="158"><p><font face="Times New Roman, serif"><span lang="en-US">VARCHAR</span></font></p></td>
-                                    </tr>
-                                    <tr valign="TOP">
-                                        <td width="146"><p><font face="Times New Roman, serif"><span lang="en-US">Color</span></font></p></td>
-                                        <td width="158"><p><font face="Times New Roman, serif"><span lang="en-US">VARCHAR</span></font></p></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </dd>
-                    </dl>
-                </dl>
-            </dl>
-        </dl> <p><br><br></p> <p><font face="Times New Roman, serif"><span lang="en-US"> Notice: derby does not support negative date, so Ear is saved as long.</span></font></p><font face="Times New Roman, serif">
-        <ol start="3">
-            <li><p><font face="Times New Roman, serif"><span lang="en-US">All values in Matrix are saved as Double.</span></font></p></li><font face="Times New Roman, serif"> </font>
-        </ol><font face="Times New Roman, serif"> <h3>3.7 Calculate Data</h3>
-        <ol>
-            <li><p><font face="Times New Roman, serif"><span lang="en-US">Data are handled as original values, without concern about types and formats of columns.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Values are parsed as need. Example, if the calculation requires double values, then try to convert values as doubles.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">If value conversion fails, then invalid value is handled as definition of column.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Calculation itself can define how to handle invalid values. Definition of calculation priors to definition of column.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Both column and calcultion can define decimal scale. Definition of calculation priors to definition of column.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Example, Column type is String, and descriptive statistic is running against it:</span></font></p></li><font face="Times New Roman, serif"> </font></font></font></font></font></font>
-        </ol><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif">
-        <ul>
-            <ul>
-                <li><p><font face="Times New Roman, serif"><span lang="en-US">Try to convert each value as double.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">If “count invalid value as zero”, then invalid values are calculated into “Count”, and participate in calculations of “Mean” and “Sum”.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">If “skip invalid value”, then invalid values are not involved in any calculation.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">If “count invalid value as empty”, then invalid values cause results of all calculations as invalid(Double.NaN). </span></font></p></li><font face="Times New Roman, serif"> </font></font></font></font>
-            </ul><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif"> </font></font></font>
-        </ul><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif"> <h3>3.8 Sort Data</h3>
-        <ol>
-            <li><p><font face="Times New Roman, serif"><span lang="en-US">For any calculations involved in sorting, data will be translated into a temporary database table, and be sorted by database system.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Results of sorting are related to columns' types. Example, string “124” is smaller than string “18”, while number “124” is bigger than number “18”.</span></font></p></li><font face="Times New Roman, serif"> </font></font>
-        </ol><font face="Times New Roman, serif"><font face="Times New Roman, serif"> <h3>3.9 Color of Column</h3> <p><font face="Times New Roman, serif"><span lang="en-US"> Column color is mainly used for data charts.</span></font></p><font face="Times New Roman, serif"> <p><font face="Times New Roman, serif"><span lang="en-US"> When chart is generated, elements in it are displayed in colors as their columns' definitions.. Then user can set chart in random colors.</span></font></p><font face="Times New Roman, serif"> <h2>4. Edit Data</h2> <h3>4.1 Mode "Table"</h3> <p><font face="Times New Roman, serif"><span lang="en-US"> "Table" is the master edit mode:</span></font></p><font face="Times New Roman, serif">
-        <ol>
-            <ol>
-                <li><p><font face="Times New Roman, serif"><span lang="en-US">Its modifications are applied to other panes automatically.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">It is the final data to save.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">To string values, except for text file, multiple lines can be edited and saved:</span></font></p></li><font face="Times New Roman, serif"> </font></font></font>
-            </ol><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif"> </font></font></font>
-        </ol><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif">
-        <ul>
-            <ul>
-                <ul>
-                    <li><p><font face="Times New Roman, serif"><span lang="en-US">When the value is single line(not contain line break):</span></font></p><font face="Times New Roman, serif">
-                        <ul>
-                            <ul>
-                                <li><p><font face="Times New Roman, serif"><span lang="en-US">Text field is shown when click the data cell.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Write "\n" as line break in the value and commit the change(return or click other place).</span></font></p></li><font face="Times New Roman, serif"> </font></font>
-                            </ul><font face="Times New Roman, serif"><font face="Times New Roman, serif"> </font></font>
-                        </ul></font></li><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">When the value contains line breaks:</span></font></p><font face="Times New Roman, serif">
-                        <ul>
-                            <ul>
-                                <li><p><font face="Times New Roman, serif"><span lang="en-US">Text area is shown when click the data cell.</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Write the text in multiple lines directly.</span></font></p></li><font face="Times New Roman, serif"> </font></font>
-                            </ul><font face="Times New Roman, serif"><font face="Times New Roman, serif"> </font></font>
-                        </ul></font></li><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif"> </font></font></font></font></font></font>
-                </ul><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif"> </font></font></font>
-            </ul><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif"> </font></font></font>
-        </ul><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif"> <h3>4.2 Mode "CSV"</h3> <p><font face="Times New Roman, serif"><span lang="en-US"> "CSV" is the assist edit mode. </span></font></p><font face="Times New Roman, serif">
-        <ol>
-            <ol>
-                <li><p><font face="Times New Roman, serif"><span lang="en-US">Click button "OK" to apply its modifications to "Table".</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Click button "Cancel" to discard its modifications and pick data from "Table".</span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Click button "Delimiter" to pick data from "Table" and apply new delimiter while its modifications are discarded. </span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">If value contains delimeter or line break, it should be surrounded by quotes.</span></font></p></li><font face="Times New Roman, serif"> </font></font></font></font>
-            </ol><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif"> </font></font></font>
-        </ol><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif"> <h3>4.3 Save and Recover</h3>
-        <ol>
-            <li value="1"><p><font face="Times New Roman, serif"><span lang="en-US">When changes are not saved, * is displayed in tab header. </span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Click button "Save" to write modifications to file and database:</span></font></p></li><font face="Times New Roman, serif"> </font></font>
-        </ol><font face="Times New Roman, serif"><font face="Times New Roman, serif">
-        <ul>
-            <li><p><font face="Times New Roman, serif"><span lang="en-US">Changes of rows in "Table", including modify/add/delete/sort, affect rows of current page in file. </span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Changes in "Columns" tab, including modify/add/delete/sort, affect all rows in file. </span></font></p></li><font face="Times New Roman, serif"> <li><p><font face="Times New Roman, serif"><span lang="en-US">Changes of attributes and columns are saved in database. </span></font></p></li><font face="Times New Roman, serif"> </font></font></font>
-        </ul><font face="Times New Roman, serif"><font face="Times New Roman, serif"><font face="Times New Roman, serif">
-        <ol start="3">
-            <li><p><font face="Times New Roman, serif"><span lang="en-US">Click button "Recover" to discard all modifications and load data from file and database.</span></font></p></li><font face="Times New Roman, serif"> </font>
-        </ol><font face="Times New Roman, serif"> <br> </font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font></font>
-        <hr>
-        <p>More details can be referred in <a href="https://mara-mybox.sourceforge.io/guide/MyBox-DataTools-en.pdf">"User Guide - Data Tools"</a></p>
-        </br>
-    </body>
+ </head>
+ <body style="width: 900px; margin:0 auto;" contenteditable="false">
+  <h1 align="center">Data in Two-dimensional Storage Structure</h1>
+  <h2>1. Data Objects</h2>
+  <ol>
+   <li><p>Following objects can be edited in consistent way:</p></li>
+  </ol>
+  <ul>
+   <ul>
+    <ul>
+     <li><p>Data files, including CSV File, Excel file, texts file.</p></li>
+     <li><p>Data of MyBox Clipboard</p></li>
+     <li><p>Matrices</p></li>
+     <li><p>Database tables.</p></li>
+    </ul>
+   </ul>
+  </ul>
+  <ol start="2">
+   <li><p>Data are represented as two-dimensional storage structure:</p></li>
+  </ol>
+  <ul>
+   <ul>
+    <ul>
+     <li><p>"Columns" define attributes/fields of data and extend data dimensions in horizontal direction.</p></li>
+     <li><p>"Rows" save instances of data and extend data set in vertical direction.</p></li>
+     <li><p>Data should be in same width. That is all rows have equal number of columns.</p></li>
+    </ul>
+   </ul>
+  </ul>
+  <h2>2. Define Columns</h2>
+  <h3>2.1 Interface of Columns Management</h3>
+  <p>Under tab “Columns”, add/delete/change columns in table view:</p>
+  <ol>
+   <li><p>Column names should not be null nor duplicated.</p></li>
+   <li><p>Click table cell to edit value directly.</p></li>
+   <li><p>Select one row and click button “Edit” to open edit window.</p></li>
+   <li><p>Can rename all columns with sequence numbers.</p></li>
+   <li><p>Can set random colors.</p></li>
+   <li><p>Can adjust orders of columns.</p></li>
+   <li><p>Click button "OK" to apply modifications of columns to "Table" of current data.</p></li>
+   <li><p>Click button "Cancel" to discard modifications of columns and pick data from "Table" of current data.</p></li>
+   <li><p>When changes have not been saved, if modifications have not been applied to data, “**” is displayed in tab header, or else “*” is displayed in tab header.</p></li>
+  </ol>
+  <h3>2.2 Types of Columns</h3>
+  <ol>
+   <li value="1"><p>Types of columns include: String, Double, Float, Long, Integer, Short, Boolean, Datetime, Date, Era, Longitude, Latitude, Enumeration, Color.</p></li>
+   <li><p>This attribute is used to display, edit, calculate, and save data.</p></li>
+   <li><p>Longitutde and Latitude are defined together generally.</p></li>
+  </ol>
+  <h3>2.3 Format of Column</h3>
+  <ol>
+   <li><p>This attribute is mainly for display. When data are inputted/edited, formats are not applied automatically and original inputs are kept.</p></li>
+   <li><p>In some interfaces, like "Copy" or "Export", options "Save date/time/era and numbers as columns' formats" can be checked.</p><p></p></li>
+  </ol>
+  <h4>2.3.1 Format for Numbers</h4>
+  <p>To numbers, format can be: group in thousands, group in ten thousands, scientific notation, and no format.</p>
+  <h4>2.3.2 Format for Datetime/Date</h4>
+  <p>To Datetime/Date, following are supported in formats: MM/dd/yy, yy-MM-dd, milliseconds, time zone, T separator, patch century, etc..</p>
+  <h4>2.3.3 Format for Era</h4>
+  <p>To Era, following are supported in formats: MM/dd/yy, yy-MM-dd, milliseconds, time zone, T separator, patch century, prefix/suffix of “AD” and “BC” in Chinese and English,etc..</p>
+  <h4>2.3.4 Define Enumeration</h4>
+  <p>To Enumeration, list of values can be defined.</p>
+  <h3>2.4 Handle Invalid Values</h3>
+  <ol>
+   <li><p>How columns handle invalid values, including: skip, count as empty, and count as zero.</p></li>
+   <li><p>In some context, “count as empty” equals to “skip”.</p></li>
+   <li><p>This attribute is only used for display or calculation. When data are inputted/edited, invalid values are not handled automatically.</p></li>
+  </ol>
+  <h2>3. Usages of Columns</h2>
+  <p>Principle of column usages is “Most tolerability and least manufacture”.</p>
+  <h3>3.1 Load Data</h3>
+  <p>When load data, types of columns are not checked, and original values are read and imported.</p>
+  <h3>3.2 Display Data</h3>
+  <ol>
+   <li><p>Parse values as columns' types.</p></li>
+   <li><p>Handle invalid values as columns' definitions.</p></li>
+   <li><p>Rewrite values as columns' formats.</p></li>
+   <li><p>Displayed values may be different from current actual values.</p></li>
+   <li><p>Example, Column type is Double and value “abc” is read:</p></li>
+  </ol>
+  <ul>
+   <ul>
+    <li><p>If count invalid as zero, then display it as zero(actual value is still “abc”).</p></li>
+    <li><p>If skip or count invalid as empty, then display it as “abc”.</p></li>
+   </ul>
+  </ul>
+  <h3>3.3 Controls for editing</h3>
+  <ul>
+   <li><p>To Boolean, checkbox is provided.</p></li>
+   <li><p>To Enumeration, list view is provided with selections.</p></li>
+   <li><p>To Color, palette is provided.</p></li>
+   <li><p>To Longitude and Latitude, map can be popped to locate coordinate.</p></li>
+  </ul>
+  <h3>3.4 Edit Data Cell</h3>
+  <ol>
+   <li><p>Click editable cell to start editing.</p></li>
+   <li><p>When editing is started, its original value is displayed, while both type and format of column are ignored.</p></li>
+   <li><p>While user inputs and modifies the value, value in the edit control is checked by column type:</p></li>
+  </ol>
+  <ul>
+   <ul>
+    <li><p>If value is invalid, then edit contorl is displayed in abnormal color.</p></li>
+    <li><p>If value is valid, then edit control is displayed in normal color.</p></li>
+    <li><p>The value is always kept as what user has inputted.</p></li>
+   </ul>
+  </ul>
+  <ol start="4">
+   <li><p>Press key ENTER to commit modification, and press key ESC to cancel editing.</p></li>
+   <li><p>Option: Auto-commit modification when cell loses focus(click other control).</p></li>
+   <li><p>When modification is committed, value in the edit control is checked:</p></li>
+  </ol>
+  <ul>
+   <ul>
+    <li><p>If value is not changed, then no checking of column type nor saving.</p></li>
+    <li><p>If value is changed, then check the changed value as column type:</p>
+     <ul>
+      <li><p>To invalid value, discard it, and then restore and display original value.</p></li>
+      <li><p>To valid value, submit and save as new value, and then dsiplay saved value as type and format of the column.</p></li>
+     </ul></li>
+   </ul>
+  </ul>
+  <ol start="7">
+   <li><p>Example, column type is Double, count invalid as empty, and decimal scale is 2. When read “abc”:</p></li>
+  </ol>
+  <ul>
+   <ul>
+    <li><p>The data cell is displayed as “abc”.</p></li>
+    <li><p>User modifies it as “abc123”:</p>
+     <ul>
+      <li><p>While user inputs the change, the text field is always in abnormal color.</p></li>
+      <li><p>After user clicks Enter or other control, this data cell comes back as “abc” in normal color.</p></li>
+     </ul></li>
+    <li><p>User modifies it as “123.4567”:</p>
+     <ul>
+      <li><p>While user inputs the change, the text field is always in normal color.</p></li>
+      <li><p>After user clicks Enter or other control, this data cell is saved as “123.4567” and displayed as “123.46”.</p></li>
+     </ul></li>
+   </ul>
+  </ul>
+  <ol start="8">
+   <li><p>Other data cells are not affected. That is, data cells are always in originial values if they are not changed.</p></li>
+  </ol>
+  <h3>3.5 Verify Data Values</h3>
+  <ol>
+   <li value="1"><p>The verified objects are rows in current page.</p></li>
+   <li><p>To start the verification:</p></li>
+  </ol>
+  <ul>
+   <ul>
+    <li><p>Click button “Verify data in current page”.</p></li>
+    <li><p>Option: Verify values automatically when save data.</p></li>
+   </ul>
+  </ul>
+  <ol start="3">
+   <li><p>Following are checked:</p></li>
+  </ol>
+  <ul>
+   <ul>
+    <li><p>If a column is defined as “not null”, then null values are invalid for this column.</p></li>
+    <li><p>If a value is not satisfied with the column type, then the value is invalid.</p></li>
+   </ul>
+  </ul>
+  <ol start="4">
+   <li><p>The results of verification are displayed in a html table.</p></li>
+  </ol>
+  <h3>3.6 Save Data</h3>
+  <ol>
+   <li value="1"><p>Values are written into file of CSV/Texts/Excel as strings.</p></li>
+   <li><p>Values are written into database table as nearest types:</p></li>
+  </ol>
+  <ol>
+   <p style="margin-bottom: 0cm"></p>
+  </ol>
+  <dl>
+   <dl>
+    <dl>
+     <dl>
+      <dd>
+       <table width="322" border="1" bordercolor="#000000" cellpadding="4" cellspacing="0">
+        <colgroup>
+         <col width="146">
+         <col width="158">
+        </colgroup>
+        <tbody>
+         <tr valign="TOP">
+          <td width="146"><p align="CENTER"><b>Column Type of MyBox</b></p></td>
+          <td width="158"><p align="CENTER"><b>Data Type of JDBC</b></p></td>
+         </tr>
+         <tr valign="TOP">
+          <td width="146"><p>String</p></td>
+          <td width="158"><p>VARCHAR</p></td>
+         </tr>
+         <tr valign="TOP">
+          <td width="146"><p>Double</p></td>
+          <td width="158"><p>DOUBLE</p></td>
+         </tr>
+         <tr valign="TOP">
+          <td width="146"><p>Float</p></td>
+          <td width="158"><p>FLOAT</p></td>
+         </tr>
+         <tr valign="TOP">
+          <td width="146"><p>Long</p></td>
+          <td width="158"><p>BIGINT</p></td>
+         </tr>
+         <tr valign="TOP">
+          <td width="146"><p>Integer</p></td>
+          <td width="158"><p>INT</p></td>
+         </tr>
+         <tr valign="TOP">
+          <td width="146"><p>Short</p></td>
+          <td width="158"><p>SMALLINT</p></td>
+         </tr>
+         <tr valign="TOP">
+          <td width="146"><p>Boolean</p></td>
+          <td width="158"><p>BOOLEAN</p></td>
+         </tr>
+         <tr valign="TOP">
+          <td width="146"><p>Datetime</p></td>
+          <td width="158"><p>TIMESTAMP</p></td>
+         </tr>
+         <tr valign="TOP">
+          <td width="146"><p>Date</p></td>
+          <td width="158"><p>DATE</p></td>
+         </tr>
+         <tr valign="TOP">
+          <td width="146"><p>Era</p></td>
+          <td width="158"><p>BIGINT</p></td>
+         </tr>
+         <tr valign="TOP">
+          <td width="146"><p>Longitude</p></td>
+          <td width="158"><p>DOUBLE</p></td>
+         </tr>
+         <tr valign="TOP">
+          <td width="146"><p>Latitude</p></td>
+          <td width="158"><p>DOUBLE</p></td>
+         </tr>
+         <tr valign="TOP">
+          <td width="146"><p>Enumeration</p></td>
+          <td width="158"><p>VARCHAR</p></td>
+         </tr>
+         <tr valign="TOP">
+          <td width="146"><p>Color</p></td>
+          <td width="158"><p>VARCHAR</p></td>
+         </tr>
+        </tbody>
+       </table>
+      </dd>
+     </dl>
+    </dl>
+   </dl>
+  </dl>
+  <p><br><br></p>
+  <p>Notice: derby does not support negative date, so Ear is saved as long.</p>
+  <ol start="3">
+   <li><p>All values in Matrix are saved as Double.</p></li>
+  </ol>
+  <h3>3.7 Calculate Data</h3>
+  <ol>
+   <li><p>Data are handled as original values, without concern about types and formats of columns.</p></li>
+   <li><p>Values are parsed as need. Example, if the calculation requires double values, then try to convert values as doubles.</p></li>
+   <li><p>If value conversion fails, then invalid value is handled as definition of column.</p></li>
+   <li><p>Calculation itself can define how to handle invalid values. Definition of calculation priors to definition of column.</p></li>
+   <li><p>Both column and calcultion can define decimal scale. Definition of calculation priors to definition of column.</p></li>
+   <li><p>Example, Column type is String, and descriptive statistic is running against it:</p></li>
+  </ol>
+  <ul>
+   <ul>
+    <li><p>Try to convert each value as double.</p></li>
+    <li><p>If “count invalid value as zero”, then invalid values are calculated into “Count”, and participate in calculations of “Mean” and “Sum”.</p></li>
+    <li><p>If “skip invalid value”, then invalid values are not involved in any calculation.</p></li>
+    <li><p>If “count invalid value as empty”, then invalid values cause results of all calculations as invalid(Double.NaN).</p></li>
+   </ul>
+  </ul>
+  <h3>3.8 Sort Data</h3>
+  <ol>
+   <li><p>For any calculations involved in sorting, data will be translated into a temporary database table, and be sorted by database system.</p></li>
+   <li><p>Results of sorting are related to columns' types. Example, string “124” is smaller than string “18”, while number “124” is bigger than number “18”.</p></li>
+  </ol>
+  <h3>3.9 Color of Column</h3>
+  <p>Column color is mainly used for data charts.</p>
+  <p>When chart is generated, elements in it are displayed in colors as their columns' definitions.. Then user can set chart in random colors.</p>
+  <h2>4. Edit Data</h2>
+  <h3>4.1 Mode "Table"</h3>
+  <p>"Table" is the master edit mode:</p>
+  <ol>
+   <ol>
+    <li><p>Its modifications are applied to other panes automatically.</p></li>
+    <li><p>It is the final data to save.</p></li>
+    <li><p>To string values, except for text file, multiple lines can be edited and saved:</p></li>
+   </ol>
+  </ol>
+  <ul>
+   <ul>
+    <ul>
+     <li><p>When the value is single line(not contain line break):</p>
+      <ul>
+       <ul>
+        <li><p>Text field is shown when click the data cell.</p></li>
+        <li><p>Write "\n" as line break in the value and commit the change(return or click other place).</p></li>
+       </ul>
+      </ul></li>
+     <li><p>When the value contains line breaks:</p>
+      <ul>
+       <ul>
+        <li><p>Text area is shown when click the data cell.</p></li>
+        <li><p>Write the text in multiple lines directly.</p></li>
+       </ul>
+      </ul></li>
+    </ul>
+   </ul>
+  </ul>
+  <h3>4.2 Mode "CSV"</h3>
+  <p>"CSV" is the assist edit mode.</p>
+  <ol>
+   <ol>
+    <li><p>Click button "OK" to apply its modifications to "Table".</p></li>
+    <li><p>Click button "Cancel" to discard its modifications and pick data from "Table".</p></li>
+    <li><p>Click button "Delimiter" to pick data from "Table" and apply new delimiter while its modifications are discarded.</p></li>
+    <li><p>If value contains delimeter or line break, it should be surrounded by quotes.</p></li>
+   </ol>
+  </ol>
+  <h3>4.3 Save and Recover</h3>
+  <ol>
+   <li value="1"><p>When changes are not saved, * is displayed in tab header.</p></li>
+   <li><p>Click button "Save" to write modifications to file and database:</p></li>
+  </ol>
+  <ul>
+   <li><p>Changes of rows in "Table", including modify/add/delete/sort, affect rows of current page in file.</p></li>
+   <li><p>Changes in "Columns" tab, including modify/add/delete/sort, affect all rows in file.</p></li>
+   <li><p>Changes of attributes and columns are saved in database.</p></li>
+  </ul>
+  <ol start="3">
+   <li><p>Click button "Recover" to discard all modifications and load data from file and database.</p></li>
+  </ol><br>
+  <h2>5. Manage Data</h2>
+  <p>MyBox records definition of data objects in its internal table:</p>
+  <table width="100%" border="1" bordercolor="#000000" cellpadding="4" cellspacing="0">
+   <colgroup>
+    <col width="46*">
+    <col width="49*">
+    <col width="53*">
+    <col width="50*">
+    <col width="58*">
+   </colgroup>
+   <tbody>
+    <tr valign="TOP">
+     <td width="18%"><p><br></p></td>
+     <td width="19%"><p align="CENTER"><b>csv/excel/text files</b></p></td>
+     <td width="21%"><p align="CENTER"><b>MyBox Clipboard</b></p></td>
+     <td width="20%"><p align="CENTER"><b>Matrice</b></p></td>
+     <td width="22%"><p align="CENTER"><b>Database tables</b></p></td>
+    </tr>
+    <tr valign="TOP">
+     <td width="18%"><p><b>Time to create data definition</b></p></td>
+     <td width="19%"><p>When data file is opened for the first time</p></td>
+     <td width="21%"><p>When data are copied in MyBox Clipboard</p></td>
+     <td width="20%"><p>When new matrix is saved in Matrices Manager</p></td>
+     <td width="22%"><p>When new table is saved in Database Table Manager</p></td>
+    </tr>
+    <tr valign="TOP">
+     <td width="18%"><p><b>Storage location of data</b></p></td>
+     <td width="19%"><p>Data file</p></td>
+     <td width="21%"><p>Files under MyBox internal path.</p></td>
+     <td width="20%"><p>Database table of MyBox</p></td>
+     <td width="22%"><p>Database tables of MyBox</p></td>
+    </tr>
+    <tr valign="TOP">
+     <td width="18%"><p><b>When delete data definition</b></p></td>
+     <td width="19%"><p>Data file is not affected</p></td>
+     <td width="21%"><p>Internal file is deleted</p></td>
+     <td width="20%"><p>Data of matrix are cleared</p></td>
+     <td width="22%"><p>Database table is dropped</p></td>
+    </tr>
+   </tbody>
+  </table> <br>
+  <hr>
+  <p>More details can be referred in <a href="https://mara-mybox.sourceforge.io/guide/MyBox-DataTools-en.pdf">"User Guide - Data Tools"</a></p> <br>
+ </body>
 </html>
