@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package net.sf.image4j.codec.bmp;
+package thridparty.image4j;
 
 import java.io.IOException;
 
@@ -39,7 +39,7 @@ public class ColorEntry {
    * @param in the source input
    * @throws java.io.IOException if an error occurs
    */
-  public ColorEntry(net.sf.image4j.io.LittleEndianInputStream in) throws IOException {
+  public ColorEntry(thridparty.image4j.LittleEndianInputStream in) throws IOException {
     bBlue = in.readUnsignedByte();
     bGreen = in.readUnsignedByte();
     bRed = in.readUnsignedByte();

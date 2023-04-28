@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package net.sf.image4j.codec.ico;
+package thridparty.image4j;
 
 /**
  * Provides constants used with ICO format.

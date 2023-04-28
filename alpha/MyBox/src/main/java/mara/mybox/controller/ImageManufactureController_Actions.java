@@ -36,7 +36,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
         try {
             redoButton.setDisable(true);
             undoButton.setDisable(true);
-            recoverButton.disableProperty().bind(undoButton.disableProperty());
+            recoverButton.setDisable(true);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

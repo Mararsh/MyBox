@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package net.sf.image4j.codec.bmp;
+package thridparty.image4j;
 
 /**
  * Contains a decoded BMP image, as well as information about the source encoded image.

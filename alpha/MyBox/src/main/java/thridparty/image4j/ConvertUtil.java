@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package net.sf.image4j.util;
+package thridparty.image4j;
 
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;

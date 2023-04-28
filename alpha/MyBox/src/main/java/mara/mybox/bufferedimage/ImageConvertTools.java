@@ -33,8 +33,8 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.FileExtensions;
 import static mara.mybox.value.Languages.message;
-import net.sf.image4j.codec.ico.ICODecoder;
-import net.sf.image4j.codec.ico.ICOEncoder;
+import thridparty.image4j.ICODecoder;
+import thridparty.image4j.ICOEncoder;
 
 /**
  * @Author Mara

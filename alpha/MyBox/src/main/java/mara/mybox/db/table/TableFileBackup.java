@@ -65,50 +65,77 @@ public class TableFileBackup extends BaseTable<FileBackup> {
     public static final String DeleteBackup
             = "DELETE FROM File_Backup  WHERE file=? AND backup=?";
 
-    public List<FileBackup> read(String file) {
-        List<FileBackup> dataList = new ArrayList<>();
-        if (file == null || file.isBlank()) {
-            return dataList;
-        }
-        try (Connection conn = DerbyBase.getConnection()) {
-            return read(conn, file);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-        return dataList;
-    }
-
-    public List<FileBackup> read(Connection conn, String filename) {
+    public List<FileBackup> read(File srcFile) {
         List<FileBackup> records = new ArrayList<>();
-        if (filename == null || filename.isBlank()) {
+        if (srcFile == null || !srcFile.exists()) {
             return records;
         }
-        int max = UserConfig.getInt(conn, "MaxFileBackups", FileBackup.Default_Max_Backups);
-        if (max <= 0) {
-            max = FileBackup.Default_Max_Backups;
-            UserConfig.setInt(conn, "MaxFileBackups", FileBackup.Default_Max_Backups);
+        try (Connection conn = DerbyBase.getConnection()) {
+            return read(conn, srcFile);
+        } catch (Exception e) {
+            MyBoxLog.debug(e, srcFile.getAbsolutePath());
+            return records;
+        }
+    }
+
+    public List<FileBackup> read(Connection conn, File srcFile) {
+        List<FileBackup> records = new ArrayList<>();
+        if (srcFile == null || !srcFile.exists()) {
+            return records;
         }
         try (PreparedStatement statement = conn.prepareStatement(FileQuery)) {
+            int max = UserConfig.getInt(conn, "MaxFileBackups", FileBackup.Default_Max_Backups);
+            if (max <= 0) {
+                max = FileBackup.Default_Max_Backups;
+                UserConfig.setInt(conn, "MaxFileBackups", FileBackup.Default_Max_Backups);
+            }
             conn.setAutoCommit(true);
-            statement.setString(1, filename);
-            try (ResultSet results = statement.executeQuery();
-                    PreparedStatement delete = conn.prepareStatement(deleteStatement())) {
+            statement.setString(1, srcFile.getAbsolutePath());
+            try (ResultSet results = statement.executeQuery()) {
                 while (results.next()) {
                     FileBackup data = readData(results);
-                    File backup = data.getBackup();
-                    if (backup == null || !backup.exists() || records.size() >= max) {
-                        if (setDeleteStatement(conn, delete, data)) {
-                            delete.executeUpdate();
-                        }
+                    if (data == null) {
+                        continue;
+                    }
+                    if (!data.valid() || records.size() >= max) {
+                        deleteData(conn, data);
                     } else {
                         records.add(data);
                     }
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e, filename);
+            MyBoxLog.debug(e, srcFile.getAbsolutePath());
         }
         return records;
+    }
+
+    public List<FileBackup> addBackups(FileBackup data) {
+        if (data == null) {
+            return null;
+        }
+        try (Connection conn = DerbyBase.getConnection()) {
+            data = super.insertData(conn, data);
+            if (data == null) {
+                return null;
+            }
+            return read(conn, data.getFile());
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    @Override
+    public int deleteData(Connection conn, FileBackup data) {
+        if (data == null) {
+            return 0;
+        }
+        int count = super.deleteData(conn, data);
+        if (count > 0) {
+            FileDeleteTools.delete(data.getBackup());
+        }
+        return count;
     }
 
     public void clearBackups(SingletonTask task, String filename) {
@@ -129,15 +156,15 @@ public class TableFileBackup extends BaseTable<FileBackup> {
             return;
         }
         taskInfo(task, FileQuery);
-        try (PreparedStatement statement = conn.prepareStatement(FileQuery)) {
+        try (PreparedStatement query = conn.prepareStatement(FileQuery)) {
             conn.setAutoCommit(true);
             for (String file : files) {
                 if (task != null && task.isCancelled()) {
                     return;
                 }
                 taskInfo(task, message("Check") + ": " + file);
-                statement.setString(1, file);
-                try (ResultSet results = statement.executeQuery()) {
+                query.setString(1, file);
+                try (ResultSet results = query.executeQuery()) {
                     while (results.next()) {
                         if (task != null && task.isCancelled()) {
                             return;
@@ -158,6 +185,7 @@ public class TableFileBackup extends BaseTable<FileBackup> {
             return;
         }
         try (PreparedStatement statement = conn.prepareStatement(DeleteFile)) {
+            conn.setAutoCommit(true);
             for (String file : files) {
                 if (task != null && task.isCancelled()) {
                     return;

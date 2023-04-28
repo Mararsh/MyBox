@@ -9,7 +9,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -22,7 +22,7 @@ import mara.mybox.value.Languages;
 public class ImageManufactureController extends ImageManufactureController_Actions {
 
     public ImageManufactureController() {
-        baseTitle = Languages.message("EditImage");
+        baseTitle = message("EditImage");
         TipsLabelKey = "ImageManufactureTips";
     }
 
@@ -61,8 +61,8 @@ public class ImageManufactureController extends ImageManufactureController_Actio
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeStyleTools.setTooltip(popButton, Languages.message("PopTabImage"));
-            NodeStyleTools.setTooltip(viewImageButton, Languages.message("PopManufacturedImage"));
+            NodeStyleTools.setTooltip(popButton, message("PopTabImage"));
+            NodeStyleTools.setTooltip(viewImageButton, message("PopManufacturedImage"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -104,13 +104,21 @@ public class ImageManufactureController extends ImageManufactureController_Actio
             backupTab.setDisable(sourceFile == null);
             hisController.recordImageHistory(ImageOperation.Load, image);
             backupController.loadBackups(sourceFile);
-            updateLabelString(Languages.message("Loaded"));
+
+            recoverButton.setDisable(true);
+            updateLabelString(message("Loaded"));
 
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return false;
         }
+    }
+
+    @Override
+    public void setImageChanged(boolean imageChanged) {
+        super.setImageChanged(imageChanged);
+        recoverButton.setDisable(!imageChanged);
     }
 
     /*

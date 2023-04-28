@@ -7,16 +7,16 @@
  * and open the template in the editor.
  */
 
-package net.sf.image4j.codec.ico;
+package thridparty.image4j;
 
-import net.sf.image4j.codec.bmp.InfoHeader;
+import thridparty.image4j.InfoHeader;
 
 /**
  * Contains a decoded ICO image, as well as information about the source encoded ICO image.
  * @since 0.7
  * @author Ian McDonagh
  */
-public class ICOImage extends net.sf.image4j.codec.bmp.BMPImage {
+public class ICOImage extends thridparty.image4j.BMPImage {
   
   protected IconEntry iconEntry;
   protected boolean pngCompressed = false;
@@ -28,7 +28,7 @@ public class ICOImage extends net.sf.image4j.codec.bmp.BMPImage {
    * @param infoHeader the BMP InfoHeader structure for the BMP encoded ICO image
    * @param iconEntry the IconEntry structure describing the ICO image
    */
-  public ICOImage(java.awt.image.BufferedImage image, net.sf.image4j.codec.bmp.InfoHeader infoHeader,
+  public ICOImage(java.awt.image.BufferedImage image, thridparty.image4j.InfoHeader infoHeader,
       IconEntry iconEntry) {
     super(image, infoHeader);
     this.iconEntry = iconEntry;

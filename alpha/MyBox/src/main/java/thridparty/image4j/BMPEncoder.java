@@ -7,14 +7,13 @@
  * and open the template in the editor.
  */
 
-package net.sf.image4j.codec.bmp;
+package thridparty.image4j;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 import java.awt.image.Raster;
 import java.io.*;
 
-import net.sf.image4j.io.LittleEndianOutputStream;
 
 /**
  * Encodes images in BMP format.
@@ -169,7 +168,7 @@ public class BMPEncoder {
    * @throws java.io.IOException if an error occurs
    */
   public static void writeFileHeader(int fileSize, int dataOffset,
-      net.sf.image4j.io.LittleEndianOutputStream out) throws IOException {
+      thridparty.image4j.LittleEndianOutputStream out) throws IOException {
     //signature
     byte[] signature = BMPConstants.FILE_HEADER.getBytes("UTF-8");
     out.write(signature);
@@ -187,7 +186,7 @@ public class BMPEncoder {
    * @param out the output to which the colour map will be written
    * @throws java.io.IOException if an error occurs
    */
-  public static void writeColorMap(IndexColorModel icm, net.sf.image4j.io.LittleEndianOutputStream out) throws IOException {
+  public static void writeColorMap(IndexColorModel icm, thridparty.image4j.LittleEndianOutputStream out) throws IOException {
     int mapSize = icm.getMapSize();
     for (int i = 0; i < mapSize; i++) {
       int rgb = icm.getRGB(i);
@@ -296,7 +295,7 @@ public class BMPEncoder {
    * @param out the output to which the bitmap will be written
    * @throws java.io.IOException if an error occurs
    */
-  public static void write1(Raster raster, net.sf.image4j.io.LittleEndianOutputStream out) throws IOException {
+  public static void write1(Raster raster, thridparty.image4j.LittleEndianOutputStream out) throws IOException {
     int bytesPerLine = getBytesPerLine1(raster.getWidth());
     
     byte[] line = new byte[bytesPerLine];
@@ -323,7 +322,7 @@ public class BMPEncoder {
    * @param out the output to which the bitmap will be written
    * @throws java.io.IOException if an error occurs
    */
-  public static void write4(Raster raster, net.sf.image4j.io.LittleEndianOutputStream out) throws IOException {
+  public static void write4(Raster raster, thridparty.image4j.LittleEndianOutputStream out) throws IOException {
     
     // The approach taken here is to use a buffer to hold encoded raster data
     // one line at a time.
@@ -376,7 +375,7 @@ public class BMPEncoder {
    * @param out the output to which the bitmap will be written
    * @throws java.io.IOException if an error occurs
    */
-  public static void write8(Raster raster, net.sf.image4j.io.LittleEndianOutputStream out) throws IOException {
+  public static void write8(Raster raster, thridparty.image4j.LittleEndianOutputStream out) throws IOException {
     
     int width = raster.getWidth();
     int height = raster.getHeight();
@@ -411,7 +410,7 @@ public class BMPEncoder {
    * @param out the output to which the bitmap will be written
    * @throws java.io.IOException if an error occurs
    */
-  public static void write24(Raster raster, net.sf.image4j.io.LittleEndianOutputStream out) throws IOException {
+  public static void write24(Raster raster, thridparty.image4j.LittleEndianOutputStream out) throws IOException {
     
     int width = raster.getWidth();    
     int height = raster.getHeight();
@@ -450,7 +449,7 @@ public class BMPEncoder {
    * @param out the output to which the bitmap will be written
    * @throws java.io.IOException if an error occurs
    */
-  public static void write32(Raster raster, Raster alpha, net.sf.image4j.io.LittleEndianOutputStream out) throws IOException {
+  public static void write32(Raster raster, Raster alpha, thridparty.image4j.LittleEndianOutputStream out) throws IOException {
     
     int width = raster.getWidth();
     int height = raster.getHeight();

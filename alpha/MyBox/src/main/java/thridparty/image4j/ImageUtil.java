@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package net.sf.image4j.util;
+package thridparty.image4j;
 
 import java.awt.AlphaComposite;
 import java.awt.Composite;

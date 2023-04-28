@@ -22,7 +22,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TmpFileTools;
 import static mara.mybox.value.Languages.message;
-import net.sf.image4j.codec.ico.ICODecoder;
+import thridparty.image4j.ICODecoder;
 
 /**
  * @Author Mara

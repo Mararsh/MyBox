@@ -678,14 +678,36 @@ public class ControlData2D extends BaseController {
 
             }
 
-            MenuItem helpMenu = new MenuItem(message("AboutData2D"), StyleTools.getIconImageView("iconClaw.png"));
-            helpMenu.setOnAction(new EventHandler<ActionEvent>() {
+            Menu helpMenu = new Menu(message("Help"), StyleTools.getIconImageView("iconClaw.png"));
+            items.add(helpMenu);
+
+            MenuItem about2D = new MenuItem(message("AboutData2D"));
+            about2D.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
                     openHtml(HelpTools.aboutData2D());
                 }
             });
-            items.add(helpMenu);
+            helpMenu.getItems().add(about2D);
+
+            MenuItem aboutRowExpression = new MenuItem(message("AboutRowExpression"));
+            aboutRowExpression.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    openHtml(HelpTools.aboutRowExpression());
+                }
+            });
+            helpMenu.getItems().add(aboutRowExpression);
+
+            MenuItem aboutGrouping = new MenuItem(message("AboutGroupingRows"));
+            aboutGrouping.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    openHtml(HelpTools.aboutGroupingRows());
+                }
+            });
+            helpMenu.getItems().add(aboutGrouping);
+
             items.add(new SeparatorMenuItem());
 
             CheckMenuItem focusMenu = new CheckMenuItem(message("CommitModificationWhenDataCellLoseFocus"),

@@ -1235,6 +1235,10 @@ public abstract class BaseTable<D> {
     }
 
     public D insertData(D data) {
+        if (data == null) {
+            newID = -1;
+            return data;
+        }
         try (Connection conn = DerbyBase.getConnection()) {
             return insertData(conn, data);
         } catch (Exception e) {
@@ -1285,7 +1289,7 @@ public abstract class BaseTable<D> {
         } catch (Exception e) {
             MyBoxLog.error(e, tableName);
         }
-        MyBoxLog.console(tableName + "  " + newID);
+//        MyBoxLog.console(tableName + "  " + newID);
         return null;
     }
 

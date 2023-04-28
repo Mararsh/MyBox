@@ -512,10 +512,19 @@ License:    Apache License Version 2.0
                         <Menu fx:id="helpMenu" mnemonicParsing="false" text="%Help">
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#Overview" text="%Overview" />
-                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#Shortcuts" text="%Shortcuts" />
                                 <MenuItem mnemonicParsing="false" onAction="#FunctionsList" text="%FunctionsList" />
-                                <MenuItem mnemonicParsing="false" onAction="#stories" text="%StoriesOfImages" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
+                                <MenuItem mnemonicParsing="false" onAction="#AboutData2D" text="%AboutData2D" />
+                                <MenuItem mnemonicParsing="false" onAction="#AboutRowExpression" text="%AboutRowExpression" />
+                                <MenuItem mnemonicParsing="false" onAction="#AboutGroupingRows" text="%AboutGroupingRows" />
+                                <MenuItem mnemonicParsing="false" onAction="#AboutDataAnalysis" text="%AboutDataAnalysis" />
+                                <MenuItem mnemonicParsing="false" onAction="#AboutCoordinateSystem" text="%AboutCoordinateSystem" />
+                                <MenuItem mnemonicParsing="false" onAction="#AboutColor" text="%AboutColor" />
+                                <MenuItem mnemonicParsing="false" onAction="#AboutMedia" text="%AboutMedia" />
+                                <MenuItem mnemonicParsing="false" onAction="#Links" text="%Links" />
+                                <MenuItem mnemonicParsing="false" onAction="#StoriesOfImages" text="%StoriesOfImages" />
+                                <SeparatorMenuItem mnemonicParsing="false" />
                                 <MenuItem mnemonicParsing="false" onAction="#readme" text="%ReadMe" />
                             </items>
                         </Menu>

@@ -4,12 +4,11 @@
  * @author Ian McDonagh
  */
 
-package net.sf.image4j.codec.bmp;
+package thridparty.image4j;
 
 import java.awt.image.*;
 import java.io.*;
 
-import net.sf.image4j.io.*;
 
 /**
  * Decodes images in BMP format.
@@ -107,7 +106,7 @@ public class BMPDecoder {
    * @return the <tt>InfoHeader</tt> structure
    * @throws java.io.IOException if an error occurred
    */
-  public static InfoHeader readInfoHeader(net.sf.image4j.io.LittleEndianInputStream lis) throws IOException {
+  public static InfoHeader readInfoHeader(thridparty.image4j.LittleEndianInputStream lis) throws IOException {
     InfoHeader infoHeader = new InfoHeader(lis);
     return infoHeader;
   }
@@ -115,7 +114,7 @@ public class BMPDecoder {
   /**
    * @since 0.6
    */
-  public static InfoHeader readInfoHeader(net.sf.image4j.io.LittleEndianInputStream lis, int infoSize) throws IOException {
+  public static InfoHeader readInfoHeader(thridparty.image4j.LittleEndianInputStream lis, int infoSize) throws IOException {
     InfoHeader infoHeader = new InfoHeader(lis, infoSize);
     return infoHeader;
   }
@@ -129,7 +128,7 @@ public class BMPDecoder {
    * @return the decoded image read from the source input
    * @throws java.io.IOException if an error occurs
    */
-  public static BufferedImage read(InfoHeader infoHeader, net.sf.image4j.io.LittleEndianInputStream lis) throws IOException {
+  public static BufferedImage read(InfoHeader infoHeader, thridparty.image4j.LittleEndianInputStream lis) throws IOException {
     BufferedImage img = null;
     
     /* Color table (palette) */
@@ -156,7 +155,7 @@ public class BMPDecoder {
    * @return the decoded image read from the source input
    * @throws java.io.IOException if any error occurs
    */
-  public static BufferedImage read(InfoHeader infoHeader, net.sf.image4j.io.LittleEndianInputStream lis,
+  public static BufferedImage read(InfoHeader infoHeader, thridparty.image4j.LittleEndianInputStream lis,
       ColorEntry[] colorTable) throws IOException {
     
     BufferedImage img = null;
@@ -207,7 +206,7 @@ public class BMPDecoder {
    * @throws java.io.IOException if an error occurs
    * @return the decoded image read from the source input
    */
-  public static ColorEntry[] readColorTable(InfoHeader infoHeader, net.sf.image4j.io.LittleEndianInputStream lis) throws IOException {
+  public static ColorEntry[] readColorTable(InfoHeader infoHeader, thridparty.image4j.LittleEndianInputStream lis) throws IOException {
     ColorEntry[] colorTable = new ColorEntry[infoHeader.iNumColors];
     for (int i = 0; i < infoHeader.iNumColors; i++) {
       ColorEntry ce = new ColorEntry(lis);
@@ -228,7 +227,7 @@ public class BMPDecoder {
    * @return the decoded image read from the source input
    */
   public static BufferedImage read1(InfoHeader infoHeader,
-      net.sf.image4j.io.LittleEndianInputStream lis,
+      thridparty.image4j.LittleEndianInputStream lis,
       ColorEntry[] colorTable) throws IOException {
     //1 bit per pixel or 8 pixels per byte
     //each pixel specifies the palette index
@@ -299,7 +298,7 @@ public class BMPDecoder {
    * @return the decoded image read from the source input
    */
   public static BufferedImage read4(InfoHeader infoHeader,
-      net.sf.image4j.io.LittleEndianInputStream lis,
+      thridparty.image4j.LittleEndianInputStream lis,
       ColorEntry[] colorTable) throws IOException {
     
     // 2 pixels per byte or 4 bits per pixel.
@@ -365,7 +364,7 @@ public class BMPDecoder {
    * @return the decoded image read from the source input
    */
   public static BufferedImage read8(InfoHeader infoHeader,
-      net.sf.image4j.io.LittleEndianInputStream lis,
+      thridparty.image4j.LittleEndianInputStream lis,
       ColorEntry[] colorTable) throws IOException {
     //1 byte per pixel
     //  color index 1 (index of color in palette)
@@ -433,7 +432,7 @@ public class BMPDecoder {
    * @return the decoded image read from the source input
    */
   public static BufferedImage read24(InfoHeader infoHeader,
-      net.sf.image4j.io.LittleEndianInputStream lis) throws IOException {
+      thridparty.image4j.LittleEndianInputStream lis) throws IOException {
     //3 bytes per pixel
     //  blue 1
     //  green 1
@@ -485,7 +484,7 @@ public class BMPDecoder {
    * @return the decoded image read from the source input
    */
   public static BufferedImage read32(InfoHeader infoHeader,
-      net.sf.image4j.io.LittleEndianInputStream lis) throws IOException {
+      thridparty.image4j.LittleEndianInputStream lis) throws IOException {
     //4 bytes per pixel
     // blue 1
     // green 1

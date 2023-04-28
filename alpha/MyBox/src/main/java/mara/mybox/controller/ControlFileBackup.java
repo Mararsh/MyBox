@@ -205,12 +205,12 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
     }
 
     public synchronized void loadBackups() {
+        if (backgroundTask != null) {
+            backgroundTask.cancel();
+        }
         if (sourceFile == null || !backupCheck.isSelected()) {
             tableData.clear();
             return;
-        }
-        if (backgroundTask != null) {
-            backgroundTask.cancel();
         }
         backgroundTask = new SingletonTask<Void>(this) {
             private List<FileBackup> list;
@@ -220,8 +220,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
             protected boolean handle() {
                 try {
                     currentFile = sourceFile;
-                    String key = currentFile.getAbsolutePath();
-                    list = tableFileBackup.read(key);
+                    list = tableFileBackup.read(currentFile);
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -246,15 +245,15 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
             }
 
         };
-        start(backgroundTask, false, null);
+        start(backgroundTask, backupsListBox);
     }
 
-    public FileBackup addBackup(SingletonTask task, File sourceFile) {
+    public List<FileBackup> addBackup(SingletonTask task, File sourceFile) {
         this.sourceFile = sourceFile;
         return addBackup(task);
     }
 
-    public synchronized FileBackup addBackup(SingletonTask task) {
+    public synchronized List<FileBackup> addBackup(SingletonTask task) {
         if (sourceFile == null || !sourceFile.exists()) {
             return null;
         }
@@ -268,15 +267,16 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
                 return null;
             }
             FileBackup newBackup = new FileBackup(sourceFile, backupFile);
-            FileBackup savedBackup = tableFileBackup.insertData(newBackup);
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-//                    tableData.add(0, savedBackup);
-//                    tableView.refresh();
-                    loadBackups();
-                }
-            });
+            List<FileBackup> savedBackup = tableFileBackup.addBackups(newBackup);
+            if (savedBackup != null) {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        tableData.setAll(savedBackup);
+                        tableView.refresh();
+                    }
+                });
+            }
             return savedBackup;
         } catch (Exception e) {
             if (task != null) {

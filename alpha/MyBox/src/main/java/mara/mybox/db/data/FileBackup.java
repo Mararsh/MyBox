@@ -43,6 +43,10 @@ public class FileBackup extends BaseData {
         return backup != null ? backup.length() : 0;
     }
 
+    public boolean valid() {
+        return valid(this);
+    }
+
     /*
         Static methods
      */

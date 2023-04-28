@@ -22,12 +22,6 @@ import static mara.mybox.value.Languages.message;
  */
 public class TableImageClipboard extends BaseTable<ImageClipboard> {
 
-    public static final String FileQuery
-            = "SELECT * FROM Image_Clipboard  WHERE image_file=? OR thumbnail_file=?";
-
-    public static final String DeleteFile
-            = "DELETE FROM Image_Clipboard  WHERE image_file=?";
-
     public TableImageClipboard() {
         tableName = "Image_Clipboard";
         defineColumns();
@@ -51,6 +45,12 @@ public class TableImageClipboard extends BaseTable<ImageClipboard> {
         orderColumns = "create_time DESC";
         return this;
     }
+
+    public static final String FileQuery
+            = "SELECT * FROM Image_Clipboard  WHERE image_file=? OR thumbnail_file=?";
+
+    public static final String DeleteFile
+            = "DELETE FROM Image_Clipboard  WHERE image_file=?";
 
     public int clearInvalid(BaseTaskController taskController, Connection conn) {
         int count = clearInvalidRows(taskController, conn);

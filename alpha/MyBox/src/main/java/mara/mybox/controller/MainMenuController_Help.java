@@ -42,7 +42,48 @@ public abstract class MainMenuController_Help extends MainMenuController_Develop
     }
 
     @FXML
-    protected void stories(ActionEvent event) {
+    protected void StoriesOfImages(ActionEvent event) {
         HelpTools.imageStories(parentController);
     }
+
+    @FXML
+    protected void AboutData2D(ActionEvent event) {
+        openHtml(HelpTools.aboutData2D());
+    }
+
+    @FXML
+    protected void AboutRowExpression(ActionEvent event) {
+        openHtml(HelpTools.aboutRowExpression());
+    }
+
+    @FXML
+    protected void AboutGroupingRows(ActionEvent event) {
+        openHtml(HelpTools.aboutGroupingRows());
+    }
+
+    @FXML
+    protected void AboutDataAnalysis(ActionEvent event) {
+        openHtml(HelpTools.AboutDataAnalysisHtml());
+    }
+
+    @FXML
+    protected void AboutCoordinateSystem(ActionEvent event) {
+        openHtml(HelpTools.aboutCoordinateSystem());
+    }
+
+    @FXML
+    protected void AboutColor(ActionEvent event) {
+        openHtml(HelpTools.aboutColorHtml());
+    }
+
+    @FXML
+    protected void AboutMedia(ActionEvent event) {
+        openHtml(HelpTools.aboutMedia());
+    }
+
+    @FXML
+    protected void Links(ActionEvent event) {
+        openHtml(HelpTools.usefulLinks());
+    }
+
 }

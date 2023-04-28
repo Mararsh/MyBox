@@ -1,4 +1,4 @@
-package net.sf.image4j.io;
+package thridparty.image4j;
 
 /**
  * Provides utility methods for endian conversions [big-endian to little-endian;

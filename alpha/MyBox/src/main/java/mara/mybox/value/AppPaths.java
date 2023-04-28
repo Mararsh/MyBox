@@ -1,7 +1,6 @@
 package mara.mybox.value;
 
 import java.io.File;
-import java.util.Date;
 import mara.mybox.db.table.TableStringValue;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
@@ -59,32 +58,6 @@ public class AppPaths {
 
     public static String getImageHisPath() {
         return getPath("imageHistories");
-    }
-
-    public static String getImageHisPath(File file) {
-        if (file == null) {
-            return null;
-        }
-        try {
-            String key = "ImageHisPath-" + file.getAbsolutePath();
-            String pathname = TableStringValue.read(key);
-            if (pathname == null) {
-                String fname = file.getName();
-                String subPath = FileNameTools.prefix(fname);
-                subPath += FileNameTools.suffix(fname);
-                pathname = getImageHisPath() + File.separator + subPath
-                        + (new Date()).getTime() + File.separator;
-                TableStringValue.write(key, pathname);
-            }
-            File path = new File(pathname);
-            if (!path.exists()) {
-                path.mkdirs();
-            }
-            return pathname;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
     }
 
     public static String getImageScopePath() {

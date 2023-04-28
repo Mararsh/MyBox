@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package net.sf.image4j.io;
+package thridparty.image4j;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

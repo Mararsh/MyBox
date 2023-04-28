@@ -96,6 +96,7 @@ public class HelpTools {
             table.newLinkRow("", "https://github.com/susanli2016/Machine-Learning-with-Python/tree/master/data");
             table.newLinkRow("", "https://www.datarepository.movebank.org");
             table.newLinkRow("", "https://github.com/CSSEGISandData/COVID-19");
+            table.newLinkRow("", "https://data.stats.gov.cn/index.htm");
             table.newLinkRow("Apache-Math", "https://commons.apache.org/proper/commons-math/");
             table.newLinkRow("", "https://commons.apache.org/proper/commons-math/apidocs/index.html");
             table.newLinkRow(message("Study"), "https://github.com/InfolabAI/DeepLearning");
@@ -246,6 +247,36 @@ public class HelpTools {
 
         };
         controller.start(task);
+    }
+
+    public static File usefulLinks() {
+        try {
+            StringTable table = new StringTable(null, message("Links"));
+            table.newLinkRow(message("DecimalFormat"), decimalFormatLink());
+            table.newLinkRow(message("DateFormat"), simpleDateFormatLink());
+            table.newLinkRow(message("HtmlTutorial") + " - " + message("Chinese"), htmlZhLink());
+            table.newLinkRow(message("HtmlTutorial") + " - " + message("English"), htmlEnLink());
+            table.newLinkRow(message("JavaScriptTutorial") + " - " + message("Chinese"), javaScriptZhLink());
+            table.newLinkRow(message("JavaScriptTutorial") + " - " + message("English"), javaScriptEnLink());
+            table.newLinkRow("JavaScript language specification", javaScriptSpecification());
+            table.newLinkRow("Nashorn User's Guide", nashornLink());
+            table.newLinkRow(message("CssTutorial") + " - " + message("Chinese"), cssZhLink());
+            table.newLinkRow(message("CssTutorial") + " - " + message("English"), cssEnLink());
+            table.newLinkRow(message("CssReference"), cssLink());
+            table.newLinkRow(message("JavafxCssGuide"), javaFxCssLink());
+            table.newLinkRow("Full list of Math functions", javaMathLink());
+            table.newLinkRow("Learning the Java Language", javaLink());
+            table.newLinkRow("Java Development Kit (JDK) APIs", javaAPILink());
+            table.newLinkRow(message("DerbyReferenceManual"), derbyLink());
+            table.newLinkRow(message("SqlIdentifier"), sqlLink());
+            table.newLinkRow("RenderingHints", renderingHintsLink());
+
+            File htmFile = HtmlWriteTools.writeHtml(table.html());
+            return htmFile;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
     }
 
     public static String javaFxCssLink() {

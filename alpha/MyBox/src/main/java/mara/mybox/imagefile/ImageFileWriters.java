@@ -31,7 +31,7 @@ import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.FileExtensions;
-import net.sf.image4j.codec.ico.ICOEncoder;
+import thridparty.image4j.ICOEncoder;
 
 /**
  * @Author Mara

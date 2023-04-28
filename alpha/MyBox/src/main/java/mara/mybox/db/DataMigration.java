@@ -166,6 +166,9 @@ public class DataMigration {
                 if (lastVersion < 6007001) {
                     updateIn671(conn);
                 }
+                if (lastVersion < 6007003) {
+                    updateIn673(conn);
+                }
 
             }
             TableStringValues.add(conn, "InstalledVersions", AppValues.AppVersion);
@@ -174,6 +177,18 @@ public class DataMigration {
             MyBoxLog.debug(e.toString());
         }
         return true;
+    }
+
+    private static void updateIn673(Connection conn) {
+        try (Statement statement = conn.createStatement()) {
+            MyBoxLog.info("Updating tables in 6.7.3...");
+
+            conn.setAutoCommit(true);
+            statement.executeUpdate("ALTER TABLE Image_Edit_History ADD COLUMN thumbnail_file VARCHAR(" + StringMaxLength + ")");
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     private static void updateIn671(Connection conn) {
@@ -1051,8 +1066,16 @@ public class DataMigration {
                 TableImageEditHistory tableImageEditHistory = new TableImageEditHistory();
                 while (results.next()) {
                     ImageEditHistory his = new ImageEditHistory();
-                    his.setImage(results.getString("image_location"));
-                    his.setHistoryLocation(results.getString("history_location"));
+                    String image = results.getString("image_location");
+                    if (image == null) {
+                        continue;
+                    }
+                    his.setImageFile(new File(image));
+                    String hisfile = results.getString("history_location");
+                    if (hisfile == null) {
+                        continue;
+                    }
+                    his.setHistoryFile(new File(hisfile));
                     his.setUpdateType(results.getString("update_type"));
                     his.setObjectType(results.getString("object_type"));
                     his.setOpType(results.getString("op_type"));

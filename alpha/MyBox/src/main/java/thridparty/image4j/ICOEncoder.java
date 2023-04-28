@@ -7,7 +7,7 @@
  * and open the template in the editor.
  */
 
-package net.sf.image4j.codec.ico;
+package thridparty.image4j;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
@@ -18,10 +18,8 @@ import java.util.List;
 
 import javax.imageio.ImageWriter;
 
-import net.sf.image4j.io.LittleEndianOutputStream;
-import net.sf.image4j.codec.bmp.BMPEncoder;
-import net.sf.image4j.util.ConvertUtil;
-import net.sf.image4j.codec.bmp.InfoHeader;
+import thridparty.image4j.BMPEncoder;
+import thridparty.image4j.InfoHeader;
 
 /**
  * Encodes images in ICO format.
@@ -294,7 +292,7 @@ public class ICOEncoder {
    * @param out the output to which the <em>AND</em> bitmap will be written
    * @throws java.io.IOException if an error occurs.
    */
-  public static void writeAndBitmap(BufferedImage img, net.sf.image4j.io.LittleEndianOutputStream out) throws IOException {
+  public static void writeAndBitmap(BufferedImage img, thridparty.image4j.LittleEndianOutputStream out) throws IOException {
     WritableRaster alpha = img.getAlphaRaster();
     
     //indexed transparency (eg. GIF files)

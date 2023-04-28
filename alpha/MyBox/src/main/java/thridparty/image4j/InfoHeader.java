@@ -7,10 +7,9 @@
  * and open the template in the editor.
  */
 
-package net.sf.image4j.codec.bmp;
+package thridparty.image4j;
 
 import java.io.IOException;
-import net.sf.image4j.io.LittleEndianOutputStream;
 
 /**
  * Represents a bitmap <tt>InfoHeader</tt> structure, which provides header information.
@@ -79,7 +78,7 @@ public class InfoHeader {
    * @param in the source input
    * @throws java.io.IOException if an error occurs
    */
-  public InfoHeader(net.sf.image4j.io.LittleEndianInputStream in) throws IOException {
+  public InfoHeader(thridparty.image4j.LittleEndianInputStream in) throws IOException {
     //Size of InfoHeader structure = 40
     iSize = in.readIntLE();
     
@@ -89,14 +88,14 @@ public class InfoHeader {
   /**
    * @since 0.6
    */
-  public InfoHeader(net.sf.image4j.io.LittleEndianInputStream in, int infoSize) throws IOException {
+  public InfoHeader(thridparty.image4j.LittleEndianInputStream in, int infoSize) throws IOException {
     init(in, infoSize);
   }
   
   /**
    * @since 0.6
    */
-  protected void init(net.sf.image4j.io.LittleEndianInputStream in, int infoSize) throws IOException {
+  protected void init(thridparty.image4j.LittleEndianInputStream in, int infoSize) throws IOException {
     this.iSize = infoSize;
     
     //Width
@@ -182,7 +181,7 @@ public class InfoHeader {
    * @param out the output to which the structure will be written
    * @throws java.io.IOException if an error occurs
    */ 
-  public void write(net.sf.image4j.io.LittleEndianOutputStream out) throws IOException {
+  public void write(thridparty.image4j.LittleEndianOutputStream out) throws IOException {
       //Size of InfoHeader structure = 40
     out.writeIntLE(iSize);
     //Width
