@@ -31,7 +31,7 @@ import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.SystemTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -414,7 +414,7 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
                     parameters.add("-v");
                     parameters.add("panic");
                     parameters.addAll(Arrays.asList(args));
-                    file = TmpFileTools.getTempFile(".txt");
+                    file = FileTmpTools.getTempFile(".txt");
                     ProcessBuilder pb = new ProcessBuilder(makeCommand(parameters)).redirectErrorStream(true);
                     Process process = pb.start();
                     try (BufferedReader inReader = process.inputReader(Charset.defaultCharset());

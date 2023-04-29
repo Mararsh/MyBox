@@ -11,7 +11,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -442,7 +442,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                     if (sourceFile != null) {
                         filterInfo = sourceInformation;
                     } else {
-                        File tmpfile = TextFileTools.writeFile(TmpFileTools.getTempFile(".txt"), mainArea.getText(), Charset.forName("utf-8"));
+                        File tmpfile = TextFileTools.writeFile(FileTmpTools.getTempFile(".txt"), mainArea.getText(), Charset.forName("utf-8"));
                         filterInfo = FileEditInformation.create(editType, tmpfile);
                         filterConditionsString = "";
                         if (editType != Edit_Type.Bytes) {

@@ -34,8 +34,8 @@ import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.tools.TmpFileTools;
-import static mara.mybox.tools.TmpFileTools.getPathTempFile;
+import mara.mybox.tools.FileTmpTools;
+import static mara.mybox.tools.FileTmpTools.getPathTempFile;
 import mara.mybox.value.AppPaths;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVParser;
@@ -343,7 +343,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
     }
 
     public static DataFileCSV toCSV(SingletonTask task, DataTable dataTable) {
-        File csvFile = TmpFileTools.getPathTempFile(AppPaths.getGeneratedPath(), dataTable.dataName(), ".csv");
+        File csvFile = FileTmpTools.getPathTempFile(AppPaths.getGeneratedPath(), dataTable.dataName(), ".csv");
         return toCSV(task, dataTable, csvFile, true);
     }
 
@@ -351,7 +351,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         if (task == null || dataTable == null || !dataTable.isValid()) {
             return null;
         }
-        File txtFile = TmpFileTools.getPathTempFile(AppPaths.getGeneratedPath(), dataTable.dataName(), ".txt");
+        File txtFile = FileTmpTools.getPathTempFile(AppPaths.getGeneratedPath(), dataTable.dataName(), ".txt");
         DataFileCSV csvData = toCSV(task, dataTable, txtFile, false);
         if (csvData != null && txtFile != null && txtFile.exists()) {
             DataFileText targetData = new DataFileText();
@@ -372,7 +372,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         if (task == null || dataTable == null || !dataTable.isValid()) {
             return null;
         }
-        File excelFile = TmpFileTools.getPathTempFile(AppPaths.getGeneratedPath(), dataTable.dataName(), ".xlsx");
+        File excelFile = FileTmpTools.getPathTempFile(AppPaths.getGeneratedPath(), dataTable.dataName(), ".xlsx");
         String targetSheetName = message("Sheet") + "1";
         TableData2D tableData2D = dataTable.getTableData2D();
         List<Data2DColumn> dataColumns = dataTable.getColumns();
@@ -492,7 +492,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         if (task == null || dataTable == null || !dataTable.isValid()) {
             return null;
         }
-        File txtFile = TmpFileTools.getPathTempFile(AppPaths.getGeneratedPath(), dataTable.dataName(), ".txt");
+        File txtFile = FileTmpTools.getPathTempFile(AppPaths.getGeneratedPath(), dataTable.dataName(), ".txt");
         DataFileCSV csvData = toCSV(task, dataTable, txtFile, false);
         if (csvData != null && txtFile != null && txtFile.exists()) {
             return TextFileTools.readTexts(txtFile);

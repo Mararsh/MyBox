@@ -11,7 +11,7 @@ import javafx.scene.control.IndexRange;
 import mara.mybox.data.FindReplaceString.Operation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -491,7 +491,7 @@ public class FindReplaceTextFile {
         sourceInfo.setFindReplace(findReplaceFile);
         findReplaceFile.setFileInfo(sourceInfo);
         File sourceFile = sourceInfo.getFile();
-        File tmpFile = TmpFileTools.getTempFile();
+        File tmpFile = FileTmpTools.getTempFile();
 //        MyBoxLog.debug(sourceFile + " --> " + tmpFile);
         Charset charset = sourceInfo.getCharset();
         try ( BufferedReader reader = new BufferedReader(new FileReader(sourceFile, charset));

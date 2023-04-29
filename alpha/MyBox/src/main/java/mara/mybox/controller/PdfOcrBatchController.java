@@ -42,7 +42,7 @@ import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.OCRTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import net.sourceforge.tess4j.ITesseract;
@@ -309,7 +309,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
                     ocrOptionsController.dataPathController.fileInput.setStyle(UserConfig.badStyle());
                     return false;
                 }
-                configFile = TmpFileTools.getTempFile();
+                configFile = FileTmpTools.getTempFile();
                 String s = "tessedit_create_txt 1\n";
                 Map<String, String> p = ocrOptionsController.checkParameters();
                 if (p != null) {
@@ -558,11 +558,11 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
                 process.destroy();
                 process = null;
             }
-            String imageFile = TmpFileTools.getTempFile(".png").getAbsolutePath();
+            String imageFile = FileTmpTools.getTempFile(".png").getAbsolutePath();
             BufferedImage bufferedImage = AlphaTools.removeAlpha(lastImage);
             ImageFileWriters.writeImageFile(bufferedImage, "png", imageFile);
 
-            String fileBase = TmpFileTools.getTempFile().getAbsolutePath();
+            String fileBase = FileTmpTools.getTempFile().getAbsolutePath();
             List<String> parameters = new ArrayList<>();
             parameters.addAll(Arrays.asList(
                     ocrOptionsController.tesseractPathController.file().getAbsolutePath(),

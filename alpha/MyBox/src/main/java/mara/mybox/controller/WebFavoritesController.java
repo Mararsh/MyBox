@@ -42,17 +42,6 @@ public class WebFavoritesController extends TreeManageController {
     }
 
     @Override
-    public void afterSceneLoaded() {
-        try {
-            super.afterSceneLoaded();
-
-            hideRightPane();
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-    }
-
-    @Override
     public void itemDoubleClicked() {
         goAction();
     }

@@ -14,7 +14,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -146,7 +146,7 @@ public class ImageMetaDataController extends BaseController {
 
     @FXML
     public void editAction() {
-        File file = TmpFileTools.getTempFile(".txt");
+        File file = FileTmpTools.getTempFile(".txt");
         save(file, true);
     }
 

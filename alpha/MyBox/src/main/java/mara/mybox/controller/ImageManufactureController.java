@@ -1,13 +1,18 @@
 package mara.mybox.controller;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -91,6 +96,10 @@ public class ImageManufactureController extends ImageManufactureController_Actio
             if (!super.afterImageLoaded() || image == null) {
                 return false;
             }
+            if (sourceFile == null) {
+                saveAsTmp();
+                return true;
+            }
             imageLoaded.set(true);
             imageChanged = false;
             resetImagePane();
@@ -102,10 +111,9 @@ public class ImageManufactureController extends ImageManufactureController_Actio
 //            autoSize();
             hisTab.setDisable(sourceFile == null);
             backupTab.setDisable(sourceFile == null);
-            hisController.recordImageHistory(ImageOperation.Load, image);
+            hisController.loadHistories();
             backupController.loadBackups(sourceFile);
 
-            recoverButton.setDisable(true);
             updateLabelString(message("Loaded"));
 
             return true;
@@ -113,6 +121,35 @@ public class ImageManufactureController extends ImageManufactureController_Actio
             MyBoxLog.debug(e.toString());
             return false;
         }
+    }
+
+    public boolean saveAsTmp() {
+        if (image == null) {
+            return false;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        File tmpFile = FileTmpTools.getTempFile(".png");
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                BufferedImage bufferedImage = SwingFXUtils.fromFXImage((Image) image, null);
+                if (bufferedImage == null || task == null || isCancelled()) {
+                    return false;
+                }
+                return ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile.getAbsolutePath());
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                sourceFileChanged(tmpFile);
+                alertInformation(message("TempFileComments"));
+            }
+        };
+        start(task);
+        return true;
     }
 
     @Override

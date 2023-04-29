@@ -27,7 +27,9 @@ Without enough testings, MyBox has low reliability and bad stability. When use M
 * Files/Data are damaged.       
 * Output wrong results.      
 * Functions fail.      
-* Other unexpected behaviours.      
+* Other unexpected behaviours.     
+
+Welcome to [submit problems or requitements](https://github.com/Mararsh/MyBox/issues) . Your help can make MyBox better.     
 
 # Download and Execution
 Packages of each version have been uploaded at [Releases](https://github.com/Mararsh/MyBox/releases?) directory. 

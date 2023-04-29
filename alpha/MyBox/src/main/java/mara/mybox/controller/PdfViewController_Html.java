@@ -15,7 +15,7 @@ import javafx.scene.web.WebView;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -162,7 +162,7 @@ public abstract class PdfViewController_Html extends PdfViewController_Texts {
                 @Override
                 protected boolean handle() {
                     title = sourceFile.getAbsolutePath() + " " + MessageFormat.format(message("PageNumber3"), (frameIndex + 1) + "");
-                    htmlFile = TmpFileTools.getTempFile(".html");
+                    htmlFile = FileTmpTools.getTempFile(".html");
                     subPath = new File(htmlFile.getParent() + File.separator
                             + htmlFile.getName().substring(0, htmlFile.getName().length() - 5));
                     subPath.mkdirs();

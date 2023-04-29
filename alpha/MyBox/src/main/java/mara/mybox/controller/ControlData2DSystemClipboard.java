@@ -21,7 +21,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -159,7 +159,7 @@ public class ControlData2DSystemClipboard extends BaseController {
             @Override
             protected boolean handle() {
                 try {
-                    File tmpFile = TmpFileTools.getTempFile();
+                    File tmpFile = FileTmpTools.getTempFile();
                     TextFileTools.writeFile(tmpFile, text, Charset.forName("UTF-8"));
                     if (csvRadio.isSelected()) {
                         textData = new DataFileCSV();

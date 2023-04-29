@@ -355,8 +355,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                     }
                     popSaved();
                     if (indexs == null || indexs.isEmpty() || indexs.contains(currentIndex)) {
-                        imageInformation.setThumbnail(null);
-                        loadImageFile(imageInformation.getFile(), loadWidth, 0);
+                        viewImage(imageController.sourceFile);
                     }
                 }
 
@@ -425,7 +424,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                 return;
             }
             File file = info.getImageFileInformation().getFile();
-            changeFile(info, newFile);
+            imageController.changeFile(info, newFile);
             tableData.set(index, info);
             imageFileList.set(index, newFile);
             if (displayMode == DisplayMode.ImagesGrid) {
@@ -435,7 +434,6 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
             }
             if (index == currentIndex) {
                 super.fileRenamed(newFile);
-                filenameLabel.setText(newFile.getAbsolutePath());
             } else {
                 recordFileOpened(newFile);
                 popInformation(MessageFormat.format(Languages.message("FileRenamed"), file.getAbsolutePath(), newFile.getAbsolutePath()));

@@ -12,7 +12,7 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.ByteFileTools;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -72,7 +72,7 @@ public class BytesPopController extends TextPopController {
                 @Override
                 protected boolean handle() {
                     try {
-                        File tmpFile = TmpFileTools.getTempFile();
+                        File tmpFile = FileTmpTools.getTempFile();
                         tmpFile = ByteFileTools.writeFile(tmpFile, ByteTools.hexFormatToBytes(textArea.getText()));
                         return FileTools.rename(tmpFile, file);
                     } catch (Exception e) {

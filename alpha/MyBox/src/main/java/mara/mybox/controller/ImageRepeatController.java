@@ -14,7 +14,6 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Paint;
 import mara.mybox.bufferedimage.RepeatTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -72,29 +71,29 @@ public class ImageRepeatController extends ImageViewerController {
 
             intervalSelector.getItems().addAll(Arrays.asList("0", "1", "2", "3", "5", "-1", "-3", "-5", "10", "15", "20", "30"));
             intervalSelector.getSelectionModel().select(UserConfig.getString(baseName + "Interval", "5"));
-            intervalSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> sv, String ov, String nv) {
-                    okAction();
-                }
-            });
+//            intervalSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+//                @Override
+//                public void changed(ObservableValue<? extends String> sv, String ov, String nv) {
+//                    okAction();
+//                }
+//            });
 
             marginSelector.getItems().addAll(Arrays.asList("5", "10", "15", "20", "1", "3", "30", "0"));
             marginSelector.getSelectionModel().select(UserConfig.getString(baseName + "Margins", "5"));
-            marginSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> sv, String ov, String nv) {
-                    okAction();
-                }
-            });
+//            marginSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+//                @Override
+//                public void changed(ObservableValue<? extends String> sv, String ov, String nv) {
+//                    okAction();
+//                }
+//            });
 
             colorSetController.init(this, baseName + "Color");
-            colorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
-                @Override
-                public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
-                    drawRepeat();
-                }
-            });
+//            colorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+//                @Override
+//                public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
+//                    drawRepeat();
+//                }
+//            });
 
             sourceController.loadNotify.addListener(new ChangeListener<Boolean>() {
                 @Override

@@ -15,7 +15,7 @@ import javafx.stage.FileChooser;
 import mara.mybox.controller.BaseController_Files;
 import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.UserConfig;
 
@@ -60,7 +60,7 @@ public class FxFileTools {
         if (resourceFile == null) {
             return null;
         }
-        File file = TmpFileTools.getTempFile();
+        File file = FileTmpTools.getTempFile();
         try (final InputStream input = NodeTools.class.getResourceAsStream(resourceFile);
                 final OutputStream out = new FileOutputStream(file)) {
             int read;

@@ -11,7 +11,7 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -146,7 +146,7 @@ public class HtmlTableController extends BaseWebViewController {
     @FXML
     @Override
     public void editAction() {
-        File file = TmpFileTools.getTempFile(".html");
+        File file = FileTmpTools.getTempFile(".html");
         save(file, html, true);
     }
 

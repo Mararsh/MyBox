@@ -768,6 +768,20 @@ public abstract class BaseController_Interface extends BaseController_Files {
         return WindowTools.openChildStage(getOwner(), newFxml, isModal);
     }
 
+    public void updateStageTitle(File file) {
+        try {
+            if (getMyStage() == null) {
+                return;
+            }
+            String title = getBaseTitle();
+            if (file != null) {
+                title += " - " + file.getAbsolutePath();
+            }
+            getMyStage().setTitle(title);
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
 
     /*
         close fxml

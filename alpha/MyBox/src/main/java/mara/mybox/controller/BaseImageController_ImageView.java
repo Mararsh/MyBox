@@ -354,7 +354,6 @@ public abstract class BaseImageController_ImageView extends BaseController {
             if (getMyStage() == null || thisPane.getParent() != null) {
                 return;
             }
-
             String title;
             if (sourceFile != null) {
                 title = getBaseTitle() + " " + sourceFile.getAbsolutePath();

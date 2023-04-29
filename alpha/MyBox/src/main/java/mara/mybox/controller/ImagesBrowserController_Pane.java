@@ -43,10 +43,6 @@ import mara.mybox.value.Languages;
 public abstract class ImagesBrowserController_Pane extends ImagesBrowserController_Menu {
 
     @Override
-    public void makeImageNevigator() {
-    }
-
-    @Override
     protected void makeImagesNevigator(boolean makeCurrentList) {
         if (isSettingValues) {
             return;
@@ -331,8 +327,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
                     return;
                 }
                 currentIndex = index;
-                filenameLabel.setText(clickedFile.getAbsolutePath());
-                loadImageFile(clickedFile, loadWidth, 0);
+                viewImage(clickedFile);
                 Integer o = Integer.valueOf(index);
                 if (event.isControlDown()) {
                     if (selectedIndexes.contains(o)) {
@@ -629,7 +624,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
                         if (event.getClickCount() > 1) {
                             ImageViewerController.openFile(file);
                         } else {
-                            loadImageFile(file, loadWidth, 0);
+                            viewImage(file);
                         }
                     }
                 }

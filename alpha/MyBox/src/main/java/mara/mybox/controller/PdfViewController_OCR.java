@@ -26,7 +26,7 @@ import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -94,13 +94,13 @@ public abstract class PdfViewController_OCR extends BaseFileImagesViewController
                     if (selected == null) {
                         selected = imageView.getImage();
                     }
-                    String imageFile = TmpFileTools.getTempFile(".png").getAbsolutePath();
+                    String imageFile = FileTmpTools.getTempFile(".png").getAbsolutePath();
                     BufferedImage bufferedImage = SwingFXUtils.fromFXImage(selected, null);
                     bufferedImage = AlphaTools.removeAlpha(bufferedImage);
                     ImageFileWriters.writeImageFile(bufferedImage, "png", imageFile);
 
                     int version = ocrOptionsController.tesseractVersion();
-                    String fileBase = TmpFileTools.getTempFile().getAbsolutePath();
+                    String fileBase = FileTmpTools.getTempFile().getAbsolutePath();
                     List<String> parameters = new ArrayList<>();
                     parameters.addAll(Arrays.asList(
                             tesseract.getAbsolutePath(),
@@ -111,7 +111,7 @@ public abstract class PdfViewController_OCR extends BaseFileImagesViewController
                     if (ocrOptionsController.selectedLanguages != null) {
                         parameters.addAll(Arrays.asList("-l", ocrOptionsController.selectedLanguages));
                     }
-                    File configFile = TmpFileTools.getTempFile();
+                    File configFile = FileTmpTools.getTempFile();
                     String s = "tessedit_create_txt 1\n";
                     Map<String, String> p = ocrOptionsController.checkParameters();
                     if (p != null) {

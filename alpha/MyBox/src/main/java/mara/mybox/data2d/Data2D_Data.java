@@ -14,7 +14,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.NumberTools;
-import static mara.mybox.tools.TmpFileTools.getPathTempFile;
+import static mara.mybox.tools.FileTmpTools.getPathTempFile;
 import mara.mybox.value.AppPaths;
 import static mara.mybox.value.Languages.message;
 

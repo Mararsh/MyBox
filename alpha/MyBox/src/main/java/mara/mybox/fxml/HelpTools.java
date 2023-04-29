@@ -49,7 +49,7 @@ public class HelpTools {
         }
     }
 
-    public static File aboutColorHtml() {
+    public static File aboutColor() {
         try {
             StringTable table = new StringTable(null, message("ResourcesAboutColor"));
             table.newLinkRow("ICCWebsite", "http://www.color.org");
@@ -83,7 +83,7 @@ public class HelpTools {
         }
     }
 
-    public static File AboutDataAnalysisHtml() {
+    public static File aboutDataAnalysis() {
         try {
             StringTable table = new StringTable(null, message("AboutDataAnalysis"));
             table.newLinkRow(message("Dataset"), "http://archive.ics.uci.edu/ml/datasets.php");

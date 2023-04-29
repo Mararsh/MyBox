@@ -11,7 +11,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 
 /**
  * @Author Mara
@@ -36,7 +36,7 @@ public class DataFileTextWriter extends Data2DWriter {
         if (!FileTools.hasData(sourceFile)) {
             return;
         }
-        File tmpFile = TmpFileTools.getTempFile();
+        File tmpFile = FileTmpTools.getTempFile();
         File validFile = FileTools.removeBOM(sourceFile);
         rowIndex = 0;
         count = 0;

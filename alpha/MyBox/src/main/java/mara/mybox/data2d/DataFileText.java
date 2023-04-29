@@ -14,7 +14,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.tools.TextTools.validLine;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 
 /**
  * @Author Mara
@@ -188,7 +188,7 @@ public class DataFileText extends DataFile {
             return false;
         }
         DataFileText targetTextFile = (DataFileText) targetData;
-        File tmpFile = TmpFileTools.getTempFile();
+        File tmpFile = FileTmpTools.getTempFile();
         File tFile = targetTextFile.getFile();
         if (tFile == null) {
             return false;

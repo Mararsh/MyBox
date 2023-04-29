@@ -11,7 +11,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
@@ -68,7 +68,7 @@ public class PptToPdfController extends BaseBatchFileController {
         if (target == null) {
             return message("Skip");
         }
-        File tmpFile = TmpFileTools.getTempFile();
+        File tmpFile = FileTmpTools.getTempFile();
         try ( PDDocument document = new PDDocument(AppVariables.pdfMemUsage);
                  SlideShow ppt = SlideShowFactory.create(srcFile)) {
             PDDocumentInformation info = new PDDocumentInformation();

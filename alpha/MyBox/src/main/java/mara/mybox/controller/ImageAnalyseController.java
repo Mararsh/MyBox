@@ -157,6 +157,7 @@ public class ImageAnalyseController extends BaseController {
         alphaView.getEngine().loadContent("");
         alphaBarchart.getData().clear();
         dominantController.clear();
+        updateStageTitle(sourceFile);
         task = new SingletonTask<Void>(this) {
             private BufferedImage bufferedImage;
 
@@ -184,6 +185,11 @@ public class ImageAnalyseController extends BaseController {
                 showComponentsHistogram();
                 showColorData();
                 dominantController.loadDominantData(bufferedImage);
+                String title = getBaseTitle();
+                if (sourceFile != null) {
+                    title += " - " + sourceFile.getAbsolutePath();
+                }
+                getMyStage().setTitle(title);
             }
 
         };

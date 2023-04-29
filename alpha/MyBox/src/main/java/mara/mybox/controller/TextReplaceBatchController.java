@@ -13,7 +13,7 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -108,7 +108,7 @@ public class TextReplaceBatchController extends BaseBatchFileController {
             if (target == null) {
                 return message("Skip");
             }
-            File tmpFile = TmpFileTools.getTempFile();
+            File tmpFile = FileTmpTools.getTempFile();
             Files.copy(srcFile, tmpFile);
             TextEditInformation fileInfo = new TextEditInformation(tmpFile);
             if (optionsController.autoDetermine && !TextTools.checkCharset(fileInfo)) {

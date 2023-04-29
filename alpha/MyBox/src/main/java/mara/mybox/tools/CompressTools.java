@@ -275,7 +275,7 @@ public class CompressTools {
         if (compressorInputStream == null) {
             return null;
         }
-        File file = TmpFileTools.getTempFile();
+        File file = FileTmpTools.getTempFile();
         try ( BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
             IOUtils.copy(compressorInputStream, out);
         } catch (Exception e) {

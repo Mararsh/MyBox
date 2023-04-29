@@ -31,6 +31,9 @@ MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出�
 * 功能失效。       
 * 其它非预期的行为。    
 
+欢迎[提交问题和需求](https://github.com/Mararsh/MyBox/issues) 。你的帮助可以使MyBox更好。                   
+
+
 # 下载与运行
 每个版本编译好的包已发布在[Releases](https://github.com/Mararsh/MyBox/releases)目录下。      
 

@@ -122,7 +122,7 @@ public class ChromaticityBaseController extends BaseWebViewController {
 
     @FXML
     public void aboutColor() {
-        openHtml(HelpTools.aboutColorHtml());
+        openHtml(HelpTools.aboutColor());
     }
 
     public void showExportPathMenu(Event event) {

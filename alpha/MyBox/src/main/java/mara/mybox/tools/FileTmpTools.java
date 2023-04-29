@@ -9,7 +9,7 @@ import mara.mybox.value.AppVariables;
  * @CreateDate 2021-8-1
  * @License Apache License Version 2.0
  */
-public class TmpFileTools {
+public class FileTmpTools {
 
     public static String getTempFileName() {
         return getTempFileName(AppVariables.MyBoxTempPath.getAbsolutePath());

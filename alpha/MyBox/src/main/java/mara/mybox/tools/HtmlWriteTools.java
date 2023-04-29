@@ -38,7 +38,7 @@ public class HtmlWriteTools {
      */
     public static File writeHtml(String html) {
         try {
-            File htmFile = TmpFileTools.getTempFile(".html");
+            File htmFile = FileTmpTools.getTempFile(".html");
             Charset charset = HtmlReadTools.charset(html);
             TextFileTools.writeFile(htmFile, html, charset);
             return htmFile;
@@ -521,7 +521,7 @@ public class HtmlWriteTools {
                 }
             }
             replaced += unchecked;
-            File tmpFile = TmpFileTools.getTempFile();
+            File tmpFile = FileTmpTools.getTempFile();
             TextFileTools.writeFile(tmpFile, replaced, TextFileTools.charset(httpFile));
             return FileTools.rename(tmpFile, httpFile);
         } catch (Exception e) {

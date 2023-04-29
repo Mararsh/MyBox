@@ -25,7 +25,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -468,7 +468,7 @@ public class PdfAttributesController extends BaseController {
             if (file == null || info == null) {
                 return false;
             }
-            File tmpFile = TmpFileTools.getTempFile();
+            File tmpFile = FileTmpTools.getTempFile();
             FileCopyTools.copyFile(file, tmpFile);
             try ( PDDocument doc = PDDocument.load(tmpFile, password, AppVariables.pdfMemUsage)) {
                 PDDocumentInformation docInfo = doc.getDocumentInformation();

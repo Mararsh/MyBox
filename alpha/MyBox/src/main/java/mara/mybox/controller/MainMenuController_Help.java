@@ -63,7 +63,7 @@ public abstract class MainMenuController_Help extends MainMenuController_Develop
 
     @FXML
     protected void AboutDataAnalysis(ActionEvent event) {
-        openHtml(HelpTools.AboutDataAnalysisHtml());
+        openHtml(HelpTools.aboutDataAnalysis());
     }
 
     @FXML
@@ -73,7 +73,7 @@ public abstract class MainMenuController_Help extends MainMenuController_Develop
 
     @FXML
     protected void AboutColor(ActionEvent event) {
-        openHtml(HelpTools.aboutColorHtml());
+        openHtml(HelpTools.aboutColor());
     }
 
     @FXML
@@ -82,7 +82,7 @@ public abstract class MainMenuController_Help extends MainMenuController_Develop
     }
 
     @FXML
-    protected void Links(ActionEvent event) {
+    protected void SomeLinks(ActionEvent event) {
         openHtml(HelpTools.usefulLinks());
     }
 

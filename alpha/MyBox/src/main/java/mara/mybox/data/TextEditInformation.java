@@ -13,7 +13,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.tools.TextTools.bomBytes;
 import static mara.mybox.tools.TextTools.bomSize;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 
 /**
  * @Author Mara
@@ -163,7 +163,7 @@ public class TextEditInformation extends FileEditInformation {
             if (file == null || filterStrings == null || filterStrings.length == 0) {
                 return file;
             }
-            File targetFile = TmpFileTools.getTempFile();
+            File targetFile = FileTmpTools.getTempFile();
             long lineIndex = 0;
             try ( BufferedReader reader = new BufferedReader(new FileReader(file, charset));
                      BufferedWriter writer = new BufferedWriter(new FileWriter(targetFile, charset, false))) {
@@ -221,7 +221,7 @@ public class TextEditInformation extends FileEditInformation {
             }
             File targetFile = file;
             if (sourceInfo.getFile().equals(file)) {
-                targetFile = TmpFileTools.getTempFile();
+                targetFile = FileTmpTools.getTempFile();
             }
             try ( BufferedReader reader = new BufferedReader(new FileReader(sourceInfo.getFile(), sourceInfo.charset));
                      BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile));

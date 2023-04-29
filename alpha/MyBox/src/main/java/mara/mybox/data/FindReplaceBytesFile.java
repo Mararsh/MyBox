@@ -9,7 +9,7 @@ import javafx.scene.control.IndexRange;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -408,7 +408,7 @@ public class FindReplaceBytesFile {
         sourceInfo.setFindReplace(findReplaceFile);
         findReplaceFile.setFileInfo(sourceInfo);
         File sourceFile = sourceInfo.getFile();
-        File tmpFile = TmpFileTools.getTempFile();
+        File tmpFile = FileTmpTools.getTempFile();
         try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(sourceFile));
                  BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
             int pageSize = FileTools.bufSize(sourceFile, 48);

@@ -32,7 +32,7 @@ import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.NumberTools;
 import mara.mybox.tools.ScheduleTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -327,7 +327,7 @@ public class ControlPlay extends BaseController {
                 loadingController.setInfo(message("Snapshot") + ": " + frameSelector.getValue());
             }
             Image snapshot = snapNode.snapshot(snapParameters, null);
-            File tmpfile = TmpFileTools.getTempFile(".png");
+            File tmpfile = FileTmpTools.getTempFile(".png");
             ImageFileWriters.writeImageFile(SwingFXUtils.fromFXImage(snapshot, null), "png", tmpfile.getAbsolutePath());
             snaps.add(tmpfile);
             synchronized (snapNode) {

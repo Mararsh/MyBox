@@ -28,7 +28,7 @@ import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -72,7 +72,7 @@ public class GeographyCodeTools {
                                 + "\"}", "UTF-8") + "&tk="
                         + UserConfig.getString("TianDiTuWebKey", AppValues.TianDiTuWebKey);
                 URL url = new URI(urlString).toURL();
-                File jsonFile = TmpFileTools.getTempFile(".json");
+                File jsonFile = FileTmpTools.getTempFile(".json");
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
@@ -176,7 +176,7 @@ public class GeographyCodeTools {
     public static GeographyCode tiandituCode(String urlString, GeographyCode geographyCode) {
         try {
             URL url = new URI(urlString).toURL();
-            File jsonFile = TmpFileTools.getTempFile(".json");
+            File jsonFile = FileTmpTools.getTempFile(".json");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");

@@ -24,7 +24,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Fxmls;
@@ -219,7 +219,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
                     }
                     BufferedImage fitImage = ScaleTools.fitSize(bufferedImage,
                             ffmpegOptionsController.width, ffmpegOptionsController.height);
-                    File tmpFile = TmpFileTools.getTempFile(".png");
+                    File tmpFile = FileTmpTools.getTempFile(".png");
                     if (ImageFileWriters.writeImageFile(fitImage, tmpFile) && tmpFile.exists()) {
                         lastFile = tmpFile;
                         s.append("file '").append(lastFile.getAbsolutePath()).append("'\n");
@@ -234,7 +234,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
                 return null;
             }
             s.append("file '").append(lastFile.getAbsolutePath()).append("'\n");
-            File imagesListFile = TmpFileTools.getTempFile(".txt");
+            File imagesListFile = FileTmpTools.getTempFile(".txt");
             TextFileTools.writeFile(imagesListFile, s.toString(), Charset.forName("utf-8"));
             return imagesListFile;
         } catch (Exception e) {
@@ -268,7 +268,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
             if (ss.isEmpty()) {
                 return null;
             }
-            File audiosListFile = TmpFileTools.getTempFile(".txt");
+            File audiosListFile = FileTmpTools.getTempFile(".txt");
             TextFileTools.writeFile(audiosListFile, s.toString(), Charset.forName("utf-8"));
             return audiosListFile;
         } catch (Exception e) {

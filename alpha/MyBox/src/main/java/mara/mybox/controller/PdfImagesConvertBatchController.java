@@ -14,7 +14,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -93,7 +93,7 @@ public class PdfImagesConvertBatchController extends BaseBatchPdfController {
             File tFile = makeTargetFile(FileNameTools.prefix(currentParameters.currentSourceFile.getName()),
                     ".pdf", currentParameters.currentTargetPath);
             currentTargetFile = tFile.getAbsolutePath();
-            tmpFile = TmpFileTools.getTempFile();
+            tmpFile = FileTmpTools.getTempFile();
             if (copyAllCheck.isSelected()) {
 //                doc.save(tFile);
                 targetDoc = doc;

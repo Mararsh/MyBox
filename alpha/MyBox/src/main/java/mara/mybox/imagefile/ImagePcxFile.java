@@ -15,7 +15,7 @@ import javax.imageio.stream.ImageOutputStream;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 
 /**
  * @Author Mara
@@ -35,7 +35,7 @@ public class ImagePcxFile {
             ImageAttributes attributes, File file) {
         try {
             ImageWriter writer = getWriter();
-            File tmpFile = TmpFileTools.getTempFile();
+            File tmpFile = FileTmpTools.getTempFile();
             try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);
                 writer.write(null, new IIOImage(image, null, null), null);

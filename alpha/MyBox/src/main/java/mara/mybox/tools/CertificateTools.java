@@ -105,7 +105,7 @@ public class CertificateTools {
             } catch (Exception e) {
                 return e.toString();
             }
-            File tmpFile = TmpFileTools.getTempFile();
+            File tmpFile = FileTmpTools.getTempFile();
             try (final BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
                 for (int i = 0; i < certs.length; i++) {
                     String alias = names[i].replaceAll(" ", "-");
@@ -272,7 +272,7 @@ public class CertificateTools {
             } catch (Exception e) {
                 return e.toString();
             }
-            File tmpFile = TmpFileTools.getTempFile();
+            File tmpFile = FileTmpTools.getTempFile();
             try (final BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
                 for (String alias : aliases) {
                     keyStore.deleteEntry(alias);

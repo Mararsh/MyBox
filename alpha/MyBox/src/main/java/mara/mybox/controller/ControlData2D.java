@@ -708,6 +708,15 @@ public class ControlData2D extends BaseController {
             });
             helpMenu.getItems().add(aboutGrouping);
 
+            MenuItem aboutDataAnalysis = new MenuItem(message("AboutDataAnalysis"));
+            aboutDataAnalysis.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    openHtml(HelpTools.aboutDataAnalysis());
+                }
+            });
+            helpMenu.getItems().add(aboutDataAnalysis);
+
             items.add(new SeparatorMenuItem());
 
             CheckMenuItem focusMenu = new CheckMenuItem(message("CommitModificationWhenDataCellLoseFocus"),

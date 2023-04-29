@@ -11,7 +11,7 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -79,7 +79,7 @@ public class Data2DSplit extends Data2DOperator {
                 return;
             }
             if (currentFile == null) {
-                currentFile = TmpFileTools.getTempFile(".csv");
+                currentFile = FileTmpTools.getTempFile(".csv");
                 csvPrinter = CsvTools.csvPrinter(currentFile);
                 csvPrinter.printRecord(names);
                 startIndex = rowIndex;

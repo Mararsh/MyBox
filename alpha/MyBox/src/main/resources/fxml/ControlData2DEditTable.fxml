@@ -8,7 +8,6 @@ License:    Apache License Version 2.0
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.image.Image?>
@@ -21,7 +20,6 @@ License:    Apache License Version 2.0
     <children>
         <HBox alignment="CENTER_LEFT" spacing="2.0">
             <children>
-            <Hyperlink minHeight="-Infinity" onAction="#aboutData2D" text="%AboutData2D" underline="true" />
                 <FlowPane fx:id="buttonsPane" alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
                     <children>
                         <Button fx:id="verifyButton" layoutX="68.0" layoutY="10.0" mnemonicParsing="false" onAction="#verifyAction">

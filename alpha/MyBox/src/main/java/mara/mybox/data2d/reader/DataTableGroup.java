@@ -33,7 +33,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
-import static mara.mybox.tools.TmpFileTools.getPathTempFile;
+import static mara.mybox.tools.FileTmpTools.getPathTempFile;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;

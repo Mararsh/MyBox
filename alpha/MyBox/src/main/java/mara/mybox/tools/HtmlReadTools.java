@@ -54,7 +54,7 @@ public class HtmlReadTools {
             } catch (Exception e) {
                 return null;
             }
-            File tmpFile = TmpFileTools.getTempFile();
+            File tmpFile = FileTmpTools.getTempFile();
             String protocal = url.getProtocol();
             if ("file".equalsIgnoreCase(protocal)) {
                 FileCopyTools.copyFile(new File(url.getFile()), tmpFile);

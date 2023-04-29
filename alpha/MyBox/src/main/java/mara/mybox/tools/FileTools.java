@@ -174,7 +174,7 @@ public class FileTools {
             MyBoxLog.debug(e.toString());
             return null;
         }
-        File tmpFile = TmpFileTools.getTempFile();
+        File tmpFile = FileTmpTools.getTempFile();
         try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
                 BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
             int bomSize = TextTools.bomSize(bom);

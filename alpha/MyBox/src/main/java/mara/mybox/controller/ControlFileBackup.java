@@ -34,7 +34,7 @@ import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
@@ -403,7 +403,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
             @Override
             protected boolean handle() {
                 try {
-                    File tmpFile = TmpFileTools.getTempFile();
+                    File tmpFile = FileTmpTools.getTempFile();
                     FileCopyTools.copyFile(backup, tmpFile, true, true);  // backup may be cleared due to max
                     addBackup(task, sourceFile);
                     FileCopyTools.copyFile(tmpFile, sourceFile, true, true);

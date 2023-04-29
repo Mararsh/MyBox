@@ -62,7 +62,7 @@ public class TextFileTools {
     }
 
     public static File writeFile(String data) {
-        return writeFile(TmpFileTools.getTempFile(), data);
+        return writeFile(FileTmpTools.getTempFile(), data);
     }
 
     public static Charset charset(File file) {

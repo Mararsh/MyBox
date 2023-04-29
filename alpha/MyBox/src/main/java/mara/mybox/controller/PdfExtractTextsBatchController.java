@@ -10,7 +10,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -68,7 +68,7 @@ public class PdfExtractTextsBatchController extends BaseBatchPdfController {
             File tFile = makeTargetFile(FileNameTools.prefix(currentParameters.currentSourceFile.getName()),
                     ".txt", currentParameters.currentTargetPath);
             currentTargetFile = tFile.getAbsolutePath();
-            tmpFile = TmpFileTools.getTempFile();
+            tmpFile = FileTmpTools.getTempFile();
             fileWriter = new FileWriter(tmpFile, Charset.forName("utf-8"), false);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

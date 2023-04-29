@@ -54,7 +54,7 @@ import mara.mybox.tools.FileTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
@@ -599,7 +599,7 @@ public class ControlImagesSave extends BaseController {
 
                 @Override
                 protected boolean handle() {
-                    File tmpFile = TmpFileTools.getTempFile();
+                    File tmpFile = FileTmpTools.getTempFile();
                     try (PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
                         PDDocumentInformation info = new PDDocumentInformation();
                         info.setCreationDate(Calendar.getInstance());
@@ -672,7 +672,7 @@ public class ControlImagesSave extends BaseController {
                 @Override
                 protected boolean handle() {
                     System.gc();
-                    File tmpFile = TmpFileTools.getTempFile();
+                    File tmpFile = FileTmpTools.getTempFile();
                     try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                         ImageWriter writer = ImageTiffFile.getWriter();
                         writer.setOutput(out);
@@ -733,7 +733,7 @@ public class ControlImagesSave extends BaseController {
                 @Override
                 protected boolean handle() {
                     System.gc();
-                    File tmpFile = TmpFileTools.getTempFile();
+                    File tmpFile = FileTmpTools.getTempFile();
                     try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                         ImageWriter gifWriter = ImageGifFile.getWriter();
                         ImageWriteParam param = gifWriter.getDefaultWriteParam();
@@ -799,7 +799,7 @@ public class ControlImagesSave extends BaseController {
                 @Override
                 protected boolean handle() {
                     System.gc();
-                    File tmpFile = TmpFileTools.getTempFile();
+                    File tmpFile = FileTmpTools.getTempFile();
                     try (HSLFSlideShow ppt = new HSLFSlideShow()) {
                         for (int i = 0; i < imageInfos.size(); ++i) {
                             if (task == null || task.isCancelled()) {

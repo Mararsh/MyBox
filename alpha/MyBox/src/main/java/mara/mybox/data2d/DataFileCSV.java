@@ -16,8 +16,8 @@ import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
-import mara.mybox.tools.TmpFileTools;
-import static mara.mybox.tools.TmpFileTools.getPathTempFile;
+import mara.mybox.tools.FileTmpTools;
+import static mara.mybox.tools.FileTmpTools.getPathTempFile;
 import mara.mybox.value.AppPaths;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -61,7 +61,7 @@ public class DataFileCSV extends DataFileText {
             return false;
         }
         DataFileCSV targetCSVFile = (DataFileCSV) targetData;
-        File tmpFile = TmpFileTools.getTempFile();
+        File tmpFile = FileTmpTools.getTempFile();
         File tFile = targetCSVFile.getFile();
         if (tFile == null) {
             return false;
