@@ -225,36 +225,34 @@ public abstract class BaseMapFramesController extends BaseMapController {
         snapPara.setTransform(Transform.scale(scale, scale));
         final Image mapSnap = snapBox.snapshot(snapPara, null);
 
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        String format = FileNameTools.suffix(file.getName());
-                        format = format == null || format.isBlank() ? "png" : format;
-                        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(mapSnap, null);
-                        ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
-                        return file.exists();
-                    } catch (Exception e) {
-                        error = e.toString();
-                        MyBoxLog.error(e.toString());
-                        return false;
-                    }
-
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    ImageViewerController.openFile(file);
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    String format = FileNameTools.suffix(file.getName());
+                    format = format == null || format.isBlank() ? "png" : format;
+                    BufferedImage bufferedImage = SwingFXUtils.fromFXImage(mapSnap, null);
+                    ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
+                    return file.exists();
+                } catch (Exception e) {
+                    error = e.toString();
+                    MyBoxLog.error(e.toString());
+                    return false;
+                }
+
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                ImageViewerController.openFile(file);
+            }
+
+        };
+        start(task);
 
     }
 

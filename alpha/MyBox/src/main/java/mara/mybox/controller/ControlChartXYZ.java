@@ -19,9 +19,8 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.tools.DoubleTools;
+import static mara.mybox.tools.FileTmpTools.generateFile;
 import mara.mybox.tools.TextFileTools;
-import static mara.mybox.tools.FileTmpTools.getPathTempFile;
-import mara.mybox.value.AppPaths;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -440,7 +439,7 @@ public class ControlChartXYZ extends BaseController {
                     + "  </body>\n"
                     + "</html>";
 
-            chartFile = getPathTempFile(AppPaths.getGeneratedPath(), dataName + "_" + chartName, ".html");
+            chartFile = generateFile(dataName + "_" + chartName, "html");
             TextFileTools.writeFile(chartFile, html, Charset.forName("UTF-8"));
             return chartFile;
         } catch (Exception e) {

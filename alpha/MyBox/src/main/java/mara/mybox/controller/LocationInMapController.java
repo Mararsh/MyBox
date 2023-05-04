@@ -160,51 +160,49 @@ public class LocationInMapController extends GeographyCodeMapController {
         if (value.isBlank()) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
 
-                @Override
-                protected boolean handle() {
-                    GeographyCode code;
-                    if (!addressRadio.isSelected()) {
-                        try {
-                            String[] values = value.split(",");
-                            double longitude = DoubleTools.scale6(Double.parseDouble(values[0].trim()));
-                            double latitude = DoubleTools.scale6(Double.parseDouble(values[1].trim()));
-                            code = GeographyCodeTools.geoCode(mapOptions.getCoordinateSystem(),
-                                    longitude, latitude, true);
-                        } catch (Exception e) {
-                            MyBoxLog.error(e.toString());
-                            return false;
-                        }
-                    } else {
-                        code = GeographyCodeTools.geoCode(mapOptions.getCoordinateSystem(), value);
-                    }
-                    if (code == null) {
+            @Override
+            protected boolean handle() {
+                GeographyCode code;
+                if (!addressRadio.isSelected()) {
+                    try {
+                        String[] values = value.split(",");
+                        double longitude = DoubleTools.scale6(Double.parseDouble(values[0].trim()));
+                        double latitude = DoubleTools.scale6(Double.parseDouble(values[1].trim()));
+                        code = GeographyCodeTools.geoCode(mapOptions.getCoordinateSystem(),
+                                longitude, latitude, true);
+                    } catch (Exception e) {
+                        MyBoxLog.error(e.toString());
                         return false;
                     }
-                    geographyCode = code;
-                    return true;
+                } else {
+                    code = GeographyCodeTools.geoCode(mapOptions.getCoordinateSystem(), value);
                 }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (geographyCodes == null
-                            || multipleCheck == null || !multipleCheck.isSelected()) {
-                        geographyCodes = new ArrayList<>();
-                    }
-                    geographyCodes.add(geographyCode);
-                    drawPoints();
-                    dataArea.setText(BaseDataAdaptor.displayData(geoTable, geographyCode, null, false));
-                    setButtons();
+                if (code == null) {
+                    return false;
                 }
+                geographyCode = code;
+                return true;
+            }
 
-            };
-            start(task);
-        }
+            @Override
+            protected void whenSucceeded() {
+                if (geographyCodes == null
+                        || multipleCheck == null || !multipleCheck.isSelected()) {
+                    geographyCodes = new ArrayList<>();
+                }
+                geographyCodes.add(geographyCode);
+                drawPoints();
+                dataArea.setText(BaseDataAdaptor.displayData(geoTable, geographyCode, null, false));
+                setButtons();
+            }
+
+        };
+        start(task);
     }
 
     @FXML

@@ -843,36 +843,34 @@ public abstract class BaseTableViewController<P> extends BaseController {
             clearAction();
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private int deletedCount = 0;
-
-                @Override
-                protected boolean handle() {
-                    deletedCount = deleteSelectedData();
-                    return deletedCount >= 0;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popInformation(message("Deleted") + ":" + deletedCount);
-                    if (deletedCount > 0) {
-                        if (indice.contains(editingIndex)) {
-                            editNull();
-                        }
-                        if (indice.contains(viewingIndex)) {
-                            viewNull();
-                        }
-                        afterDeletion();
-                    }
-                }
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private int deletedCount = 0;
+
+            @Override
+            protected boolean handle() {
+                deletedCount = deleteSelectedData();
+                return deletedCount >= 0;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popInformation(message("Deleted") + ":" + deletedCount);
+                if (deletedCount > 0) {
+                    if (indice.contains(editingIndex)) {
+                        editNull();
+                    }
+                    if (indice.contains(viewingIndex)) {
+                        viewNull();
+                    }
+                    afterDeletion();
+                }
+            }
+        };
+        start(task);
     }
 
     protected int deleteSelectedData() {
@@ -901,29 +899,27 @@ public abstract class BaseTableViewController<P> extends BaseController {
         if (!PopTools.askSure(getTitle(), message("SureClearData"))) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                long deletedCount = 0;
-
-                @Override
-                protected boolean handle() {
-                    deletedCount = clearData();
-                    return deletedCount >= 0;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popInformation(message("Deleted") + ":" + deletedCount);
-                    if (deletedCount > 0) {
-                        afterClear();
-                    }
-                }
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+            long deletedCount = 0;
+
+            @Override
+            protected boolean handle() {
+                deletedCount = clearData();
+                return deletedCount >= 0;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popInformation(message("Deleted") + ":" + deletedCount);
+                if (deletedCount > 0) {
+                    afterClear();
+                }
+            }
+        };
+        start(task);
     }
 
     protected long clearData() {

@@ -571,7 +571,7 @@ public class PdfTools {
             if (html == null || html.isBlank()) {
                 return null;
             }
-            File pdfFile = FileTmpTools.pdfFile();
+            File pdfFile = FileTmpTools.generateFile("pdf");
             File wqy_microhei = FxFileTools.getInternalFile("/data/wqy-microhei.ttf", "data", "wqy-microhei.ttf");
             String css = "@font-face {\n"
                     + "  font-family: 'myFont';\n"

@@ -11,8 +11,8 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.ByteFileTools;
 import mara.mybox.tools.ByteTools;
-import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FileTmpTools;
+import mara.mybox.tools.FileTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -60,37 +60,35 @@ public class BytesPopController extends TextPopController {
     @FXML
     @Override
     public void saveAsAction() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            File file = chooseSaveFile();
-            if (file == null) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                @Override
-                protected boolean handle() {
-                    try {
-                        File tmpFile = FileTmpTools.getTempFile();
-                        tmpFile = ByteFileTools.writeFile(tmpFile, ByteTools.hexFormatToBytes(textArea.getText()));
-                        return FileTools.rename(tmpFile, file);
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSaved();
-                    recordFileWritten(file);
-                    BytesEditorController controller = (BytesEditorController) WindowTools.openStage(Fxmls.BytesEditorFxml);
-                    controller.sourceFileChanged(file);
-                }
-            };
-            start(task);
+        File file = chooseSaveFile();
+        if (file == null) {
+            return;
         }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+            @Override
+            protected boolean handle() {
+                try {
+                    File tmpFile = FileTmpTools.getTempFile();
+                    tmpFile = ByteFileTools.writeFile(tmpFile, ByteTools.hexFormatToBytes(textArea.getText()));
+                    return FileTools.rename(tmpFile, file);
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popSaved();
+                recordFileWritten(file);
+                BytesEditorController controller = (BytesEditorController) WindowTools.openStage(Fxmls.BytesEditorFxml);
+                controller.sourceFileChanged(file);
+            }
+        };
+        start(task);
     }
 
     /*

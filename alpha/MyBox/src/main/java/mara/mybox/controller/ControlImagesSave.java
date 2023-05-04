@@ -50,11 +50,11 @@ import mara.mybox.imagefile.ImageGifFile;
 import mara.mybox.imagefile.ImageTiffFile;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
@@ -500,64 +500,61 @@ public class ControlImagesSave extends BaseController {
     }
 
     protected void saveAsImages() {
-        synchronized (this) {
-            if (targetFile == null || imageInfos == null || imageInfos.isEmpty()) {
-                return;
-            }
-            if (task != null && !task.isQuit()) {
-                task.cancel();
-                loading = null;
-            }
-
-            if (imagesFormat == null) {
-                parentController.popError(message("InvalidParameters"));
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                List<String> fileNames;
-
-                @Override
-                protected boolean handle() {
-                    fileNames = new ArrayList<>();
-                    try {
-                        String imagesFilePrefix = targetFile.getParent() + File.separator + FileNameTools.prefix(targetFile.getName());
-                        for (int i = 0; i < imageInfos.size(); ++i) {
-                            if (task == null || task.isCancelled()) {
-                                return false;
-                            }
-                            BufferedImage bufferedImage = image(i);
-                            if (task == null || task.isCancelled()) {
-                                return false;
-                            }
-                            if (bufferedImage == null) {
-                                continue;
-                            }
-                            String filename = imagesFilePrefix + "-" + StringTools.fillLeftZero(i, digit) + "." + imagesFormat;
-                            BufferedImage converted = ImageConvertTools.convertColorSpace(bufferedImage, formatController.attributes);
-                            ImageFileWriters.writeImageFile(converted, formatController.attributes, filename);
-                            if (task == null || task.isCancelled()) {
-                                return false;
-                            }
-                            fileNames.add(filename);
-                            String msg = MessageFormat.format(message("NumberFileGenerated"),
-                                    (i + 1) + "/" + imageInfos.size(), "\"" + filename + "\"");
-                            updateLabel(msg, i + 1);
-                        }
-                    } catch (Exception e) {
-                        MyBoxLog.error(e.toString());
-                    }
-                    return !fileNames.isEmpty();
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    recordFileWritten(targetFile.getParent());
-                    multipleFilesGenerated(fileNames);
-                }
-
-            };
-            loading = parentController.start(task);
+        if (targetFile == null || imageInfos == null || imageInfos.isEmpty()) {
+            return;
         }
+        if (task != null) {
+            task.cancel();
+            loading = null;
+        }
+        if (imagesFormat == null) {
+            parentController.popError(message("InvalidParameters"));
+            return;
+        }
+        task = new SingletonTask<Void>(this) {
+            List<String> fileNames;
+
+            @Override
+            protected boolean handle() {
+                fileNames = new ArrayList<>();
+                try {
+                    String imagesFilePrefix = targetFile.getParent() + File.separator + FileNameTools.prefix(targetFile.getName());
+                    for (int i = 0; i < imageInfos.size(); ++i) {
+                        if (task == null || task.isCancelled()) {
+                            return false;
+                        }
+                        BufferedImage bufferedImage = image(i);
+                        if (task == null || task.isCancelled()) {
+                            return false;
+                        }
+                        if (bufferedImage == null) {
+                            continue;
+                        }
+                        String filename = imagesFilePrefix + "-" + StringTools.fillLeftZero(i, digit) + "." + imagesFormat;
+                        BufferedImage converted = ImageConvertTools.convertColorSpace(bufferedImage, formatController.attributes);
+                        ImageFileWriters.writeImageFile(converted, formatController.attributes, filename);
+                        if (task == null || task.isCancelled()) {
+                            return false;
+                        }
+                        fileNames.add(filename);
+                        String msg = MessageFormat.format(message("NumberFileGenerated"),
+                                (i + 1) + "/" + imageInfos.size(), "\"" + filename + "\"");
+                        updateLabel(msg, i + 1);
+                    }
+                } catch (Exception e) {
+                    MyBoxLog.error(e.toString());
+                }
+                return !fileNames.isEmpty();
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                recordFileWritten(targetFile.getParent());
+                multipleFilesGenerated(fileNames);
+            }
+
+        };
+        loading = start(task);
     }
 
     protected void saveAsSplice() {
@@ -587,259 +584,251 @@ public class ControlImagesSave extends BaseController {
     }
 
     protected void saveAsPdf() {
-        synchronized (this) {
-            if (targetFile == null || imageInfos == null || imageInfos.isEmpty()) {
-                return;
-            }
-            if (task != null && !task.isQuit()) {
-                task.cancel();
-                loading = null;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    File tmpFile = FileTmpTools.getTempFile();
-                    try (PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
-                        PDDocumentInformation info = new PDDocumentInformation();
-                        info.setCreationDate(Calendar.getInstance());
-                        info.setModificationDate(Calendar.getInstance());
-                        info.setProducer("MyBox v" + AppValues.AppVersion);
-                        info.setAuthor(pdfOptionsController.authorInput.getText());
-                        document.setDocumentInformation(info);
-                        document.setVersion(1.0f);
-
-                        int count = 0;
-                        for (int i = 0; i < imageInfos.size(); ++i) {
-                            if (task == null || task.isCancelled()) {
-                                return false;
-                            }
-                            BufferedImage bufferedImage = image(i);
-                            if (task == null || task.isCancelled()) {
-                                return false;
-                            }
-                            String sourceFormat = imageInfos.get(i).getImageFormat();
-                            PdfTools.writePage(document, sourceFormat, bufferedImage, ++count, imageInfos.size(), pdfOptionsController);
-                            if (task == null || task.isCancelled()) {
-                                return false;
-                            }
-                            String msg = MessageFormat.format(message("NumberPageWritten"), (i + 1) + "/" + imageInfos.size());
-                            updateLabel(msg, i + 1);
-                        }
-
-                        PDPage page = document.getPage(0);
-                        PDPageXYZDestination dest = new PDPageXYZDestination();
-                        dest.setPage(page);
-                        dest.setZoom(pdfOptionsController.zoom / 100.0f);
-                        dest.setTop((int) page.getCropBox().getHeight());
-                        PDActionGoTo action = new PDActionGoTo();
-                        action.setDestination(dest);
-                        document.getDocumentCatalog().setOpenAction(action);
-
-                        document.save(tmpFile);
-                        document.close();
-
-                        return FileTools.rename(tmpFile, targetFile);
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    parentController.popSuccessful();
-                    recordFileWritten(targetFile);
-                    PdfViewController.open(targetFile);
-                }
-
-            };
-            loading = parentController.start(task);
+        if (targetFile == null || imageInfos == null || imageInfos.isEmpty()) {
+            return;
         }
+        if (task != null) {
+            task.cancel();
+            loading = null;
+        }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                File tmpFile = FileTmpTools.getTempFile();
+                try (PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
+                    PDDocumentInformation info = new PDDocumentInformation();
+                    info.setCreationDate(Calendar.getInstance());
+                    info.setModificationDate(Calendar.getInstance());
+                    info.setProducer("MyBox v" + AppValues.AppVersion);
+                    info.setAuthor(pdfOptionsController.authorInput.getText());
+                    document.setDocumentInformation(info);
+                    document.setVersion(1.0f);
+
+                    int count = 0;
+                    for (int i = 0; i < imageInfos.size(); ++i) {
+                        if (task == null || task.isCancelled()) {
+                            return false;
+                        }
+                        BufferedImage bufferedImage = image(i);
+                        if (task == null || task.isCancelled()) {
+                            return false;
+                        }
+                        String sourceFormat = imageInfos.get(i).getImageFormat();
+                        PdfTools.writePage(document, sourceFormat, bufferedImage, ++count, imageInfos.size(), pdfOptionsController);
+                        if (task == null || task.isCancelled()) {
+                            return false;
+                        }
+                        String msg = MessageFormat.format(message("NumberPageWritten"), (i + 1) + "/" + imageInfos.size());
+                        updateLabel(msg, i + 1);
+                    }
+
+                    PDPage page = document.getPage(0);
+                    PDPageXYZDestination dest = new PDPageXYZDestination();
+                    dest.setPage(page);
+                    dest.setZoom(pdfOptionsController.zoom / 100.0f);
+                    dest.setTop((int) page.getCropBox().getHeight());
+                    PDActionGoTo action = new PDActionGoTo();
+                    action.setDestination(dest);
+                    document.getDocumentCatalog().setOpenAction(action);
+
+                    document.save(tmpFile);
+                    document.close();
+
+                    return FileTools.rename(tmpFile, targetFile);
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                parentController.popSuccessful();
+                recordFileWritten(targetFile);
+                PdfViewController.open(targetFile);
+            }
+
+        };
+        loading = start(task);
     }
 
     protected void saveAsTiff() {
-        synchronized (this) {
-            if (targetFile == null || imageInfos == null || imageInfos.isEmpty()) {
-                return;
-            }
-            if (task != null && !task.isQuit()) {
-                task.cancel();
-                loading = null;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    System.gc();
-                    File tmpFile = FileTmpTools.getTempFile();
-                    try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
-                        ImageWriter writer = ImageTiffFile.getWriter();
-                        writer.setOutput(out);
-                        writer.prepareWriteSequence(null);
-                        ImageWriteParam param = ImageTiffFile.getPara(null, writer);
-                        for (int i = 0; i < imageInfos.size(); ++i) {
-                            if (task == null || task.isCancelled()) {
-                                return false;
-                            }
-                            BufferedImage bufferedImage = image(i);
-                            if (task == null || task.isCancelled()) {
-                                return false;
-                            }
-                            IIOMetadata metaData = ImageTiffFile.getWriterMeta(null, bufferedImage, writer, param);
-                            writer.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
-                            if (task == null || task.isCancelled()) {
-                                return false;
-                            }
-                            String msg = MessageFormat.format(message("NumberImageWritten"), (i + 1) + "/" + imageInfos.size());
-                            updateLabel(msg, i + 1);
-                        }
-                        writer.endWriteSequence();
-                        writer.dispose();
-                        out.flush();
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    return FileTools.rename(tmpFile, targetFile);
-
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    parentController.popSuccessful();
-                    recordFileWritten(targetFile);
-                    ImageViewerController controller = (ImageViewerController) openStage(Fxmls.ImageViewerFxml);
-                    controller.selectSourceFile(targetFile);
-                    controller.requestMouse();
-                }
-
-            };
-            loading = parentController.start(task);
+        if (targetFile == null || imageInfos == null || imageInfos.isEmpty()) {
+            return;
         }
+        if (task != null) {
+            task.cancel();
+            loading = null;
+        }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                System.gc();
+                File tmpFile = FileTmpTools.getTempFile();
+                try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
+                    ImageWriter writer = ImageTiffFile.getWriter();
+                    writer.setOutput(out);
+                    writer.prepareWriteSequence(null);
+                    ImageWriteParam param = ImageTiffFile.getPara(null, writer);
+                    for (int i = 0; i < imageInfos.size(); ++i) {
+                        if (task == null || task.isCancelled()) {
+                            return false;
+                        }
+                        BufferedImage bufferedImage = image(i);
+                        if (task == null || task.isCancelled()) {
+                            return false;
+                        }
+                        IIOMetadata metaData = ImageTiffFile.getWriterMeta(null, bufferedImage, writer, param);
+                        writer.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
+                        if (task == null || task.isCancelled()) {
+                            return false;
+                        }
+                        String msg = MessageFormat.format(message("NumberImageWritten"), (i + 1) + "/" + imageInfos.size());
+                        updateLabel(msg, i + 1);
+                    }
+                    writer.endWriteSequence();
+                    writer.dispose();
+                    out.flush();
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return FileTools.rename(tmpFile, targetFile);
+
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                parentController.popSuccessful();
+                recordFileWritten(targetFile);
+                ImageViewerController controller = (ImageViewerController) openStage(Fxmls.ImageViewerFxml);
+                controller.selectSourceFile(targetFile);
+                controller.requestMouse();
+            }
+
+        };
+        loading = start(task);
     }
 
     protected void saveAsGif() {
-        synchronized (this) {
-            if (targetFile == null || imageInfos == null || imageInfos.isEmpty()) {
-                return;
-            }
-            if (task != null && !task.isQuit()) {
-                task.cancel();
-                loading = null;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    System.gc();
-                    File tmpFile = FileTmpTools.getTempFile();
-                    try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
-                        ImageWriter gifWriter = ImageGifFile.getWriter();
-                        ImageWriteParam param = gifWriter.getDefaultWriteParam();
-                        GIFImageMetadata metaData = (GIFImageMetadata) gifWriter.getDefaultImageMetadata(
-                                ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB), param);
-                        gifWriter.setOutput(out);
-                        gifWriter.prepareWriteSequence(null);
-                        for (int i = 0; i < imageInfos.size(); ++i) {
-                            if (task == null || task.isCancelled()) {
-                                return false;
-                            }
-                            BufferedImage bufferedImage = image(i);
-                            if (task == null || task.isCancelled()) {
-                                return false;
-                            }
-                            if (!gifKeepSize) {
-                                bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, gifWidth);
-                            }
-                            ImageGifFile.getParaMeta(imageInfos.get(i).getDuration(), gifLoopCheck.isSelected(), param, metaData);
-                            gifWriter.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
-                            if (task == null || task.isCancelled()) {
-                                return false;
-                            }
-                            String msg = MessageFormat.format(message("NumberImageWritten"), (i + 1) + "/" + imageInfos.size());
-                            updateLabel(msg, i + 1);
-                        }
-                        gifWriter.endWriteSequence();
-                        gifWriter.dispose();
-                        out.flush();
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    return FileTools.rename(tmpFile, targetFile);
-
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    parentController.popSuccessful();
-                    recordFileWritten(targetFile);
-                    ImageViewerController controller = (ImageViewerController) openStage(Fxmls.ImageViewerFxml);
-                    controller.selectSourceFile(targetFile);
-                    controller.requestMouse();
-                }
-
-            };
-            loading = parentController.start(task);
+        if (targetFile == null || imageInfos == null || imageInfos.isEmpty()) {
+            return;
         }
+        if (task != null) {
+            task.cancel();
+            loading = null;
+        }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                System.gc();
+                File tmpFile = FileTmpTools.getTempFile();
+                try (ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
+                    ImageWriter gifWriter = ImageGifFile.getWriter();
+                    ImageWriteParam param = gifWriter.getDefaultWriteParam();
+                    GIFImageMetadata metaData = (GIFImageMetadata) gifWriter.getDefaultImageMetadata(
+                            ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB), param);
+                    gifWriter.setOutput(out);
+                    gifWriter.prepareWriteSequence(null);
+                    for (int i = 0; i < imageInfos.size(); ++i) {
+                        if (task == null || task.isCancelled()) {
+                            return false;
+                        }
+                        BufferedImage bufferedImage = image(i);
+                        if (task == null || task.isCancelled()) {
+                            return false;
+                        }
+                        if (!gifKeepSize) {
+                            bufferedImage = ScaleTools.scaleImageWidthKeep(bufferedImage, gifWidth);
+                        }
+                        ImageGifFile.getParaMeta(imageInfos.get(i).getDuration(), gifLoopCheck.isSelected(), param, metaData);
+                        gifWriter.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
+                        if (task == null || task.isCancelled()) {
+                            return false;
+                        }
+                        String msg = MessageFormat.format(message("NumberImageWritten"), (i + 1) + "/" + imageInfos.size());
+                        updateLabel(msg, i + 1);
+                    }
+                    gifWriter.endWriteSequence();
+                    gifWriter.dispose();
+                    out.flush();
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return FileTools.rename(tmpFile, targetFile);
+
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                parentController.popSuccessful();
+                recordFileWritten(targetFile);
+                ImageViewerController controller = (ImageViewerController) openStage(Fxmls.ImageViewerFxml);
+                controller.selectSourceFile(targetFile);
+                controller.requestMouse();
+            }
+
+        };
+        loading = start(task);
     }
 
     protected void saveAsPPT() {
-        synchronized (this) {
-            if (targetFile == null || imageInfos == null || imageInfos.isEmpty()) {
-                return;
-            }
-            if (task != null && !task.isQuit()) {
-                task.cancel();
-                loading = null;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    System.gc();
-                    File tmpFile = FileTmpTools.getTempFile();
-                    try (HSLFSlideShow ppt = new HSLFSlideShow()) {
-                        for (int i = 0; i < imageInfos.size(); ++i) {
-                            if (task == null || task.isCancelled()) {
-                                return false;
-                            }
-                            ppt.setPageSize(new java.awt.Dimension(pptWidth, pptHeight));
-                            BufferedImage image = ImageConvertTools.convertToPNG(image(i));
-                            if (task == null || task.isCancelled()) {
-                                return false;
-                            }
-                            HSLFPictureShape shape = MicrosoftDocumentTools.imageShape(ppt, image, "png");
-                            shape.setAnchor(new java.awt.Rectangle(pptMargin, pptMargin, image.getWidth(), image.getHeight()));
-                            HSLFSlide slide = ppt.createSlide();
-                            slide.addShape(shape);
-                            if (task == null || task.isCancelled()) {
-                                return false;
-                            }
-                            String msg = MessageFormat.format(message("NumberImageWritten"), (i + 1) + "/" + imageInfos.size());
-                            updateLabel(msg, i + 1);
-                        }
-                        ppt.write(tmpFile);
-                    } catch (Exception e) {
-                        MyBoxLog.error(e.toString());
-                        return false;
-                    }
-                    return FileTools.rename(tmpFile, targetFile);
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    parentController.popSuccessful();
-                    recordFileWritten(targetFile);
-                    PptViewController controller = (PptViewController) openStage(Fxmls.PptViewFxml);
-                    controller.sourceFileChanged(targetFile);
-                    controller.requestMouse();
-                }
-
-            };
-            loading = parentController.start(task);
+        if (targetFile == null || imageInfos == null || imageInfos.isEmpty()) {
+            return;
         }
+        if (task != null) {
+            task.cancel();
+            loading = null;
+        }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                System.gc();
+                File tmpFile = FileTmpTools.getTempFile();
+                try (HSLFSlideShow ppt = new HSLFSlideShow()) {
+                    for (int i = 0; i < imageInfos.size(); ++i) {
+                        if (task == null || task.isCancelled()) {
+                            return false;
+                        }
+                        ppt.setPageSize(new java.awt.Dimension(pptWidth, pptHeight));
+                        BufferedImage image = ImageConvertTools.convertToPNG(image(i));
+                        if (task == null || task.isCancelled()) {
+                            return false;
+                        }
+                        HSLFPictureShape shape = MicrosoftDocumentTools.imageShape(ppt, image, "png");
+                        shape.setAnchor(new java.awt.Rectangle(pptMargin, pptMargin, image.getWidth(), image.getHeight()));
+                        HSLFSlide slide = ppt.createSlide();
+                        slide.addShape(shape);
+                        if (task == null || task.isCancelled()) {
+                            return false;
+                        }
+                        String msg = MessageFormat.format(message("NumberImageWritten"), (i + 1) + "/" + imageInfos.size());
+                        updateLabel(msg, i + 1);
+                    }
+                    ppt.write(tmpFile);
+                } catch (Exception e) {
+                    MyBoxLog.error(e.toString());
+                    return false;
+                }
+                return FileTools.rename(tmpFile, targetFile);
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                parentController.popSuccessful();
+                recordFileWritten(targetFile);
+                PptViewController controller = (PptViewController) openStage(Fxmls.PptViewFxml);
+                controller.sourceFileChanged(targetFile);
+                controller.requestMouse();
+            }
+
+        };
+        loading = start(task);
     }
 
     @FXML

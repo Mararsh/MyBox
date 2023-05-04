@@ -298,49 +298,47 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
     }
 
     public void popBackup() {
-        synchronized (this) {
-            FileBackup selected = backupController.selectedBackup();
-            if (selected == null) {
-                return;
-            }
-            File file = selected.getBackup();
-            if (file == null) {
-                return;
-            }
-            SingletonTask bgTask = new SingletonTask<Void>(this) {
-                private Image backImage;
+        FileBackup selected = backupController.selectedBackup();
+        if (selected == null) {
+            return;
+        }
+        File file = selected.getBackup();
+        if (file == null) {
+            return;
+        }
+        SingletonTask bgTask = new SingletonTask<Void>(this) {
+            private Image backImage;
 
-                @Override
-                protected boolean handle() {
-                    try {
-                        if (!file.exists()) {
-                            TableFileBackup.deleteBackup(selected);
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    backupController.tableData.remove(selected);
-                                }
-                            });
-                            return false;
-                        }
-                        BufferedImage bufferedImage = ImageFileReaders.readImage(file);
-                        if (bufferedImage != null) {
-                            backImage = SwingFXUtils.toFXImage(bufferedImage, null);
-                        }
-                        return backImage != null;
-                    } catch (Exception e) {
+            @Override
+            protected boolean handle() {
+                try {
+                    if (!file.exists()) {
+                        TableFileBackup.deleteBackup(selected);
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                backupController.tableData.remove(selected);
+                            }
+                        });
                         return false;
                     }
+                    BufferedImage bufferedImage = ImageFileReaders.readImage(file);
+                    if (bufferedImage != null) {
+                        backImage = SwingFXUtils.toFXImage(bufferedImage, null);
+                    }
+                    return backImage != null;
+                } catch (Exception e) {
+                    return false;
                 }
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    ImagePopController.openImage(myController, backImage);
-                }
+            @Override
+            protected void whenSucceeded() {
+                ImagePopController.openImage(myController, backImage);
+            }
 
-            };
-            start(bgTask, false);
-        }
+        };
+        start(bgTask, false);
     }
 
     @Override

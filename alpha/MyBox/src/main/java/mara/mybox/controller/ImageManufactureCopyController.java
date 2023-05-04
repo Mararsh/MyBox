@@ -72,66 +72,64 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
     @FXML
     @Override
     public void okAction() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
 
-                private Image newImage;
+            private Image newImage;
 
-                @Override
-                protected boolean handle() {
-                    try {
-                        Color bgColor = colorSetController.color();
-                        if (wholeRadio.isSelected()) {
+            @Override
+            protected boolean handle() {
+                try {
+                    Color bgColor = colorSetController.color();
+                    if (wholeRadio.isSelected()) {
+                        newImage = imageView.getImage();
+
+                    } else if (includeRadio.isSelected()) {
+                        if (scopeController.scopeWhole()
+                                || scopeController.scope.getScopeType() == ImageScope.ScopeType.Operate) {
                             newImage = imageView.getImage();
-
-                        } else if (includeRadio.isSelected()) {
-                            if (scopeController.scopeWhole()
-                                    || scopeController.scope.getScopeType() == ImageScope.ScopeType.Operate) {
-                                newImage = imageView.getImage();
-                            } else {
-                                newImage = ScopeTools.scopeImage(imageView.getImage(),
-                                        scopeController.scope, bgColor, marginsCheck.isSelected());
-                            }
-
-                        } else if (excludeRadio.isSelected()) {
-                            if (scopeController.scope == null
-                                    || scopeController.scope.getScopeType() == ImageScope.ScopeType.All
-                                    || scopeController.scope.getScopeType() == ImageScope.ScopeType.Operate) {
-                                return false;
-                            } else {
-                                newImage = ScopeTools.scopeExcludeImage(imageView.getImage(),
-                                        scopeController.scope, bgColor, marginsCheck.isSelected());
-                            }
+                        } else {
+                            newImage = ScopeTools.scopeImage(imageView.getImage(),
+                                    scopeController.scope, bgColor, marginsCheck.isSelected());
                         }
 
-                        if (task == null || isCancelled()) {
+                    } else if (excludeRadio.isSelected()) {
+                        if (scopeController.scope == null
+                                || scopeController.scope.getScopeType() == ImageScope.ScopeType.All
+                                || scopeController.scope.getScopeType() == ImageScope.ScopeType.Operate) {
                             return false;
+                        } else {
+                            newImage = ScopeTools.scopeExcludeImage(imageView.getImage(),
+                                    scopeController.scope, bgColor, marginsCheck.isSelected());
                         }
-                        return ImageClipboard.add(newImage, ImageClipboard.ImageSource.Copy) != null;
-                    } catch (Exception e) {
-                        MyBoxLog.debug(e.toString());
-                        error = e.toString();
+                    }
+
+                    if (task == null || isCancelled()) {
                         return false;
                     }
+                    return ImageClipboard.add(newImage, ImageClipboard.ImageSource.Copy) != null;
+                } catch (Exception e) {
+                    MyBoxLog.debug(e.toString());
+                    error = e.toString();
+                    return false;
                 }
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    imageController.popSuccessful();
-                    imageController.updateLabel(ImageOperation.Copy);
-                    if (clipboardCheck.isSelected()) {
-                        if (operationsController.clipboardController != null) {
-                            operationsController.clipboardController.clipsController.refreshAction();
-                        }
-                        operationsController.clipboardPane.setExpanded(true);
+            @Override
+            protected void whenSucceeded() {
+                imageController.popSuccessful();
+                imageController.updateLabel(ImageOperation.Copy);
+                if (clipboardCheck.isSelected()) {
+                    if (operationsController.clipboardController != null) {
+                        operationsController.clipboardController.clipsController.refreshAction();
                     }
+                    operationsController.clipboardPane.setExpanded(true);
                 }
-            };
-            start(task);
-        }
+            }
+        };
+        start(task);
     }
 
     @Override

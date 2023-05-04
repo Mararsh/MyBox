@@ -94,21 +94,19 @@ public class BaseTaskController extends BaseLogs {
         if (!checkOptions()) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            if (startButton != null) {
-                StyleTools.setNameIcon(startButton, message("Stop"), "iconStop.png");
-                startButton.applyCss();
-                startButton.setUserData("started");
-            }
-            if (tabPane != null && logsTab != null) {
-                tabPane.getSelectionModel().select(logsTab);
-            }
-            beforeTask();
-            startTask();
+        if (task != null) {
+            task.cancel();
         }
+        if (startButton != null) {
+            StyleTools.setNameIcon(startButton, message("Stop"), "iconStop.png");
+            startButton.applyCss();
+            startButton.setUserData("started");
+        }
+        if (tabPane != null && logsTab != null) {
+            tabPane.getSelectionModel().select(logsTab);
+        }
+        beforeTask();
+        startTask();
     }
 
     public void beforeTask() {

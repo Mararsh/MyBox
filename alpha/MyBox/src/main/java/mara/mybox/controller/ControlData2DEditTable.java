@@ -5,20 +5,27 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.Clipboard;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import mara.mybox.data.StringTable;
+import mara.mybox.data2d.Data2DMenuTools;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -303,8 +310,29 @@ public class ControlData2DEditTable extends ControlData2DLoad {
     }
 
     @FXML
-    public void aboutData2D() {
-        openHtml(HelpTools.aboutData2D());
+    public void showHelps(Event event) {
+        List<MenuItem> items = Data2DMenuTools.helpMenus(this);
+
+        items.add(new SeparatorMenuItem());
+
+        CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+        hoverMenu.setSelected(UserConfig.getBoolean("Data2DHelpsPopWhenMouseHovering", false));
+        hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setBoolean("Data2DHelpsPopWhenMouseHovering", hoverMenu.isSelected());
+            }
+        });
+        items.add(hoverMenu);
+
+        popEventMenu(event, items);
+    }
+
+    @FXML
+    public void popHelps(Event event) {
+        if (UserConfig.getBoolean("Data2DHelpsPopWhenMouseHovering", false)) {
+            showHelps(event);
+        }
     }
 
     @Override

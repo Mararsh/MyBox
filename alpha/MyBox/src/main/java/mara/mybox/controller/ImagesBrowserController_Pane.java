@@ -203,63 +203,61 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
                 || imageFileList == null || imageFileList.isEmpty()) {
             return;
         }
-        synchronized (this) {
-            if (backgroundTask != null) {
-                backgroundTask.cancel();
-            }
-            makeGridBox();
-            tableData.clear();
-            backgroundTask = new SingletonTask<Void>(this) {
-
-                private List<Integer> mfList;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        mfList = new ArrayList<>();
-                        for (int i = 0; i < imageFileList.size(); ++i) {
-                            if (backgroundTask == null || backgroundTask.isCancelled()) {
-                                break;
-                            }
-                            ImageView iView = imageViewList.get(i);
-                            File file = imageFileList.get(i);
-                            ImageInformation imageInfo = loadInfo(file);
-                            if (imageInfo == null) {
-                                continue;
-                            }
-                            iView.setImage(imageInfo.getThumbnail());
-                            if (imageInfo.isIsMultipleFrames()) {
-                                mfList.add(i);
-                            }
-                            tableData.add(imageInfo);
-                        }
-                        return true;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    for (Integer i : mfList) {
-                        Label titleLabel = imageTitleList.get(i);
-                        String title = imageFileList.get(i).getName() + " " + Languages.message("MultipleFrames");
-                        titleLabel.setText(title);
-                        titleLabel.setStyle("-fx-text-box-border: purple;   -fx-text-fill: purple;");
-                    }
-                }
-
-                @Override
-                protected void finalAction() {
-                    paneSizeAll();
-                    imagesPane.applyCss();
-                    imagesPane.layout();
-                }
-
-            };
-            start(backgroundTask, false);
+        if (backgroundTask != null) {
+            backgroundTask.cancel();
         }
+        makeGridBox();
+        tableData.clear();
+        backgroundTask = new SingletonTask<Void>(this) {
+
+            private List<Integer> mfList;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    mfList = new ArrayList<>();
+                    for (int i = 0; i < imageFileList.size(); ++i) {
+                        if (backgroundTask == null || backgroundTask.isCancelled()) {
+                            break;
+                        }
+                        ImageView iView = imageViewList.get(i);
+                        File file = imageFileList.get(i);
+                        ImageInformation imageInfo = loadInfo(file);
+                        if (imageInfo == null) {
+                            continue;
+                        }
+                        iView.setImage(imageInfo.getThumbnail());
+                        if (imageInfo.isIsMultipleFrames()) {
+                            mfList.add(i);
+                        }
+                        tableData.add(imageInfo);
+                    }
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                for (Integer i : mfList) {
+                    Label titleLabel = imageTitleList.get(i);
+                    String title = imageFileList.get(i).getName() + " " + Languages.message("MultipleFrames");
+                    titleLabel.setText(title);
+                    titleLabel.setStyle("-fx-text-box-border: purple;   -fx-text-fill: purple;");
+                }
+            }
+
+            @Override
+            protected void finalAction() {
+                paneSizeAll();
+                imagesPane.applyCss();
+                imagesPane.layout();
+            }
+
+        };
+        start(backgroundTask, false);
     }
 
     protected void makeGridBox() {
@@ -380,39 +378,37 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
             if (imageFileList == null || imageFileList.isEmpty()) {
                 return;
             }
-            synchronized (this) {
-                if (backgroundTask != null) {
-                    backgroundTask.cancel();
-                }
-                backgroundTask = new SingletonTask<Void>(this) {
-
-                    @Override
-                    protected boolean handle() {
-                        try {
-                            for (int i = 0; i < imageFileList.size(); ++i) {
-                                if (backgroundTask == null || backgroundTask.isCancelled()) {
-                                    break;
-                                }
-                                File file = imageFileList.get(i);
-                                ImageInformation imageInfo = loadInfo(file);
-                                if (imageInfo != null) {
-                                    tableData.add(imageInfo);
-                                }
-                            }
-                            return true;
-                        } catch (Exception e) {
-                            error = e.toString();
-                            return false;
-                        }
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                    }
-
-                };
-                start(backgroundTask, false);
+            if (backgroundTask != null) {
+                backgroundTask.cancel();
             }
+            backgroundTask = new SingletonTask<Void>(this) {
+
+                @Override
+                protected boolean handle() {
+                    try {
+                        for (int i = 0; i < imageFileList.size(); ++i) {
+                            if (backgroundTask == null || backgroundTask.isCancelled()) {
+                                break;
+                            }
+                            File file = imageFileList.get(i);
+                            ImageInformation imageInfo = loadInfo(file);
+                            if (imageInfo != null) {
+                                tableData.add(imageInfo);
+                            }
+                        }
+                        return true;
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                }
+
+            };
+            start(backgroundTask, false);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }

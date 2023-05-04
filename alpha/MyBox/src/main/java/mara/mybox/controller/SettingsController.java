@@ -803,37 +803,35 @@ public class SettingsController extends BaseController {
         if (isSettingValues) {
             return;
         }
+        if (task != null) {
+            task.cancel();
+        }
         DerbyBase.mode = networkRadio.isSelected() ? "client" : "embedded";
         ConfigTools.writeConfigValue("DerbyMode", DerbyBase.mode);
         derbyBox.setDisable(true);
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
+        task = new SingletonTask<Void>(this) {
+            private String ret;
+
+            @Override
+            protected boolean handle() {
+                ret = DerbyBase.startDerby();
+                return ret != null;
             }
-            task = new SingletonTask<Void>(this) {
-                private String ret;
 
-                @Override
-                protected boolean handle() {
-                    ret = DerbyBase.startDerby();
-                    return ret != null;
-                }
+            @Override
+            protected void whenSucceeded() {
+                popInformation(ret, 6000);
+                setDerbyMode();
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    popInformation(ret, 6000);
-                    setDerbyMode();
-                }
+            @Override
+            protected void finalAction() {
+                derbyBox.setDisable(false);
+                task = null;
+            }
 
-                @Override
-                protected void finalAction() {
-                    derbyBox.setDisable(false);
-                    task = null;
-                }
-
-            };
-            start(task);
-        }
+        };
+        start(task);
     }
 
     /*

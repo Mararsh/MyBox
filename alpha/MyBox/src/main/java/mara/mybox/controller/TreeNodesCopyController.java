@@ -77,40 +77,38 @@ public class TreeNodesCopyController extends ControlTreeInfoSelect {
                 return;
             }
         }
-        synchronized (this) {
-            if (task != null) {
-                task.cancel();
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    try (Connection conn = DerbyBase.getConnection()) {
-                        for (TreeNode sourceNode : nodes) {
-                            if (nodeAndDescendantsRadio.isSelected()) {
-                                ok = copyNodeAndDescendants(conn, sourceNode, targetNode);
-                            } else if (descendantsRadio.isSelected()) {
-                                ok = copyDescendants(conn, sourceNode, targetNode);
-                            } else {
-                                ok = copyNode(conn, sourceNode, targetNode) != null;
-                            }
-                        }
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    manageController.popSuccessful();
-                    manageController.nodesCopied(targetNode);
-                    closeStage();
-                }
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    for (TreeNode sourceNode : nodes) {
+                        if (nodeAndDescendantsRadio.isSelected()) {
+                            ok = copyNodeAndDescendants(conn, sourceNode, targetNode);
+                        } else if (descendantsRadio.isSelected()) {
+                            ok = copyDescendants(conn, sourceNode, targetNode);
+                        } else {
+                            ok = copyNode(conn, sourceNode, targetNode) != null;
+                        }
+                    }
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                manageController.popSuccessful();
+                manageController.nodesCopied(targetNode);
+                closeStage();
+            }
+        };
+        start(task);
     }
 
     /*

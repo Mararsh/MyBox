@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
@@ -25,10 +24,10 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.value.AppPaths;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -70,95 +69,93 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
         if (imageController == null || optionsController.enhanceType == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private Image newImage;
-                private String value = null;
-
-                @Override
-                protected boolean handle() {
-                    ImageConvolution imageConvolution;
-                    switch (optionsController.enhanceType) {
-                        case Contrast:
-                            ImageContrast imageContrast = new ImageContrast(imageView.getImage(), optionsController.contrastAlgorithm);
-                            imageContrast.setIntPara1(optionsController.intPara1);
-                            imageContrast.setIntPara2(optionsController.intPara2);
-                            newImage = imageContrast.operateFxImage();
-                            break;
-                        case Convolution:
-                            if (optionsController.kernel == null) {
-                                int index = optionsController.stringSelector.getSelectionModel().getSelectedIndex();
-                                if (optionsController.kernels == null || optionsController.kernels.isEmpty() || index < 0) {
-                                    return false;
-                                }
-                                optionsController.kernel = optionsController.kernels.get(index);
-                            }
-                            imageConvolution = ImageConvolution.create().
-                                    setImage(imageView.getImage()).setScope(scopeController.scope).
-                                    setKernel(optionsController.kernel);
-                            newImage = imageConvolution.operateFxImage();
-                            optionsController.loadedKernel = null;
-                            break;
-                        case Smooth:
-                            switch (optionsController.smoothAlgorithm) {
-                                case AverageBlur:
-                                    optionsController.kernel = ConvolutionKernel.makeAverageBlur(optionsController.intPara1);
-                                    break;
-                                case GaussianBlur:
-                                    optionsController.kernel = ConvolutionKernel.makeGaussBlur(optionsController.intPara1);
-                                    break;
-                                case MotionBlur:
-                                    optionsController.kernel = ConvolutionKernel.makeMotionBlur(optionsController.intPara1);
-                                    break;
-                                default:
-                                    return false;
-                            }
-                            imageConvolution = ImageConvolution.create().
-                                    setImage(imageView.getImage()).setScope(scopeController.scope).
-                                    setKernel(optionsController.kernel);
-                            newImage = imageConvolution.operateFxImage();
-                            value = optionsController.intPara1 + "";
-                            break;
-                        case Sharpen:
-                            switch (optionsController.sharpenAlgorithm) {
-                                case EightNeighborLaplace:
-                                    optionsController.kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
-                                    break;
-                                case FourNeighborLaplace:
-                                    optionsController.kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
-                                    break;
-                                case UnsharpMasking:
-                                    optionsController.kernel = ConvolutionKernel.makeUnsharpMasking(optionsController.intPara1);
-                                    break;
-                                default:
-                                    return false;
-                            }
-                            imageConvolution = ImageConvolution.create().
-                                    setImage(imageView.getImage()).setScope(scopeController.scope).
-                                    setKernel(optionsController.kernel);
-                            newImage = imageConvolution.operateFxImage();
-                            break;
-                        default:
-                            return false;
-                    }
-                    if (task == null || isCancelled()) {
-                        return false;
-                    }
-                    return newImage != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    imageController.popSuccessful();
-                    imageController.updateImage(ImageOperation.Effects, optionsController.enhanceType.name(), value, newImage, cost);
-                }
-            };
-            imageController.start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private Image newImage;
+            private String value = null;
+
+            @Override
+            protected boolean handle() {
+                ImageConvolution imageConvolution;
+                switch (optionsController.enhanceType) {
+                    case Contrast:
+                        ImageContrast imageContrast = new ImageContrast(imageView.getImage(), optionsController.contrastAlgorithm);
+                        imageContrast.setIntPara1(optionsController.intPara1);
+                        imageContrast.setIntPara2(optionsController.intPara2);
+                        newImage = imageContrast.operateFxImage();
+                        break;
+                    case Convolution:
+                        if (optionsController.kernel == null) {
+                            int index = optionsController.stringSelector.getSelectionModel().getSelectedIndex();
+                            if (optionsController.kernels == null || optionsController.kernels.isEmpty() || index < 0) {
+                                return false;
+                            }
+                            optionsController.kernel = optionsController.kernels.get(index);
+                        }
+                        imageConvolution = ImageConvolution.create().
+                                setImage(imageView.getImage()).setScope(scopeController.scope).
+                                setKernel(optionsController.kernel);
+                        newImage = imageConvolution.operateFxImage();
+                        optionsController.loadedKernel = null;
+                        break;
+                    case Smooth:
+                        switch (optionsController.smoothAlgorithm) {
+                            case AverageBlur:
+                                optionsController.kernel = ConvolutionKernel.makeAverageBlur(optionsController.intPara1);
+                                break;
+                            case GaussianBlur:
+                                optionsController.kernel = ConvolutionKernel.makeGaussBlur(optionsController.intPara1);
+                                break;
+                            case MotionBlur:
+                                optionsController.kernel = ConvolutionKernel.makeMotionBlur(optionsController.intPara1);
+                                break;
+                            default:
+                                return false;
+                        }
+                        imageConvolution = ImageConvolution.create().
+                                setImage(imageView.getImage()).setScope(scopeController.scope).
+                                setKernel(optionsController.kernel);
+                        newImage = imageConvolution.operateFxImage();
+                        value = optionsController.intPara1 + "";
+                        break;
+                    case Sharpen:
+                        switch (optionsController.sharpenAlgorithm) {
+                            case EightNeighborLaplace:
+                                optionsController.kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
+                                break;
+                            case FourNeighborLaplace:
+                                optionsController.kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
+                                break;
+                            case UnsharpMasking:
+                                optionsController.kernel = ConvolutionKernel.makeUnsharpMasking(optionsController.intPara1);
+                                break;
+                            default:
+                                return false;
+                        }
+                        imageConvolution = ImageConvolution.create().
+                                setImage(imageView.getImage()).setScope(scopeController.scope).
+                                setKernel(optionsController.kernel);
+                        newImage = imageConvolution.operateFxImage();
+                        break;
+                    default:
+                        return false;
+                }
+                if (task == null || isCancelled()) {
+                    return false;
+                }
+                return newImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                imageController.popSuccessful();
+                imageController.updateImage(ImageOperation.Effects, optionsController.enhanceType.name(), value, newImage, cost);
+            }
+        };
+        start(task);
     }
 
     @FXML
@@ -166,7 +163,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
         if (imageView.getImage() == null) {
             return;
         }
-        imageController.popInformation(Languages.message("WaitAndHandling"));
+        imageController.popInformation(message("WaitAndHandling"));
         demoButton.setDisable(true);
         Task demoTask = new Task<Void>() {
             private List<String> files;
@@ -182,8 +179,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     ImageContrast imageContrast = new ImageContrast(image,
                             ContrastAlgorithm.HSB_Histogram_Equalization);
                     BufferedImage bufferedImage = imageContrast.operateImage();
-                    String tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("HSBHistogramEqualization") + ".png";
+                    String tmpFile = FileTmpTools.generateFile(message("HSBHistogramEqualization"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -191,8 +187,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     imageContrast = new ImageContrast(image,
                             ContrastAlgorithm.Gray_Histogram_Equalization);
                     bufferedImage = imageContrast.operateImage();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("GrayHistogramEqualization") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("GrayHistogramEqualization"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -202,8 +197,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     imageContrast.setIntPara1(100);
                     imageContrast.setIntPara2(100);
                     bufferedImage = imageContrast.operateImage();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("GrayHistogramStretching") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("GrayHistogramStretching"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -212,8 +206,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                             ContrastAlgorithm.Gray_Histogram_Shifting);
                     imageContrast.setIntPara1(40);
                     bufferedImage = imageContrast.operateImage();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("GrayHistogramShifting") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("GrayHistogramShifting"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -235,8 +228,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     ImageConvolution imageConvolution = ImageConvolution.create().
                             setImage(image).setScope(scope).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("UnsharpMasking") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("UnsharpMasking"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -245,8 +237,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     imageConvolution = ImageConvolution.create().
                             setImage(image).setScope(scope).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("FourNeighborLaplace") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("FourNeighborLaplace"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -255,8 +246,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     imageConvolution = ImageConvolution.create().
                             setImage(image).setScope(scope).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("EightNeighborLaplace") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("EightNeighborLaplace"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -265,8 +255,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     imageConvolution = ImageConvolution.create().
                             setImage(image).setScope(scope).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("GaussianBlur") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("GaussianBlur"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -275,8 +264,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                     imageConvolution = ImageConvolution.create().
                             setImage(image).setScope(scope).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("AverageBlur") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("AverageBlur"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }

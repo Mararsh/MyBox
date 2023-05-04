@@ -20,12 +20,10 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.tools.FileTmpTools;
-import mara.mybox.value.AppPaths;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -92,7 +90,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
         }
         String v = targetFileController.text();
         if (v == null || v.isBlank()) {
-            targetFileController.input(AppPaths.getGeneratedPath() + File.separator + DateTools.nowFileString() + "." + ext);
+            targetFileController.input(FileTmpTools.generateFile(ext).getAbsolutePath());
         } else if (!v.endsWith("." + ext)) {
             targetFileController.input(FileNameTools.replaceSuffix(v, ext));
         }
@@ -120,62 +118,59 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
             if (videoFile == null) {
                 return;
             }
-            showLogs(message("TargetFile") + ": " + videoFile);
-            synchronized (this) {
-                if (task != null && !task.isQuit()) {
-                    return;
-                }
-                processStartTime = new Date();
-                totalFilesHandled = 0;
-                updateInterface("Started");
-                task = new SingletonTask<Void>(this) {
-
-                    @Override
-                    public Void call() {
-                        try {
-                            File imagesListFile = handleImages();
-                            if (imagesListFile == null) {
-                                return null;
-                            }
-                            File audiosListFile = handleAudios();
-                            merge(imagesListFile, audiosListFile, videoFile);
-
-                        } catch (Exception e) {
-                            showLogs(e.toString());
-                        }
-                        ok = true;
-                        return null;
-                    }
-
-                    @Override
-                    public void succeeded() {
-                        super.succeeded();
-                        updateInterface("Done");
-                    }
-
-                    @Override
-                    public void cancelled() {
-                        super.cancelled();
-                        updateInterface("Canceled");
-                    }
-
-                    @Override
-                    public void failed() {
-                        super.failed();
-                        updateInterface("Failed");
-                    }
-
-                    @Override
-                    protected void finalAction() {
-                        super.finalAction();
-                        task = null;
-                        afterTask();
-                    }
-
-                };
-                start(task, false);
+            if (task != null) {
+                task.cancel();
             }
+            showLogs(message("TargetFile") + ": " + videoFile);
+            processStartTime = new Date();
+            totalFilesHandled = 0;
+            updateInterface("Started");
+            task = new SingletonTask<Void>(this) {
 
+                @Override
+                public Void call() {
+                    try {
+                        File imagesListFile = handleImages();
+                        if (imagesListFile == null) {
+                            return null;
+                        }
+                        File audiosListFile = handleAudios();
+                        merge(imagesListFile, audiosListFile, videoFile);
+
+                    } catch (Exception e) {
+                        showLogs(e.toString());
+                    }
+                    ok = true;
+                    return null;
+                }
+
+                @Override
+                public void succeeded() {
+                    super.succeeded();
+                    updateInterface("Done");
+                }
+
+                @Override
+                public void cancelled() {
+                    super.cancelled();
+                    updateInterface("Canceled");
+                }
+
+                @Override
+                public void failed() {
+                    super.failed();
+                    updateInterface("Failed");
+                }
+
+                @Override
+                protected void finalAction() {
+                    super.finalAction();
+                    task = null;
+                    afterTask();
+                }
+
+            };
+            start(task, false);
         } catch (Exception e) {
             updateInterface("Failed");
             MyBoxLog.error(e.toString());

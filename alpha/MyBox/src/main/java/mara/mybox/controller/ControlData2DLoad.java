@@ -276,26 +276,24 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         if (file == null || file.exists()) {
             return true;
         }
-        synchronized (this) {
-            SingletonTask nullTask = new SingletonTask<Void>(this) {
-                @Override
-                protected boolean handle() {
-                    try {
-                        tableData2DDefinition.deleteData(data2D);
-                        return true;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
+        SingletonTask nullTask = new SingletonTask<Void>(this) {
+            @Override
+            protected boolean handle() {
+                try {
+                    tableData2DDefinition.deleteData(data2D);
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
                 }
+            }
 
-                @Override
-                protected void finalAction() {
-                    loadNull();
-                }
-            };
-            start(nullTask, false);
-        }
+            @Override
+            protected void finalAction() {
+                loadNull();
+            }
+        };
+        start(nullTask, false);
         return false;
     }
 
@@ -606,42 +604,40 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         if (newName == null || newName.isBlank()) {
             return;
         }
-        if (task != null && !task.isQuit()) {
-            return;
+        if (task != null) {
+            task.cancel();
         }
-        synchronized (this) {
-            task = new SingletonTask<Void>(this) {
-                private Data2DDefinition def;
+        task = new SingletonTask<Void>(this) {
+            private Data2DDefinition def;
 
-                @Override
-                protected boolean handle() {
-                    targetData.setDataName(newName);
-                    def = tableData2DDefinition.updateData(targetData);
-                    return def != null;
+            @Override
+            protected boolean handle() {
+                targetData.setDataName(newName);
+                def = tableData2DDefinition.updateData(targetData);
+                return def != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popSuccessful();
+                if (parent != null) {
+                    parent.tableData.set(index, def);
                 }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSuccessful();
+                if (def.getD2did() == data2D.getD2did()) {
+                    data2D.setDataName(newName);
+                    if (dataController != null) {
+                        dataController.attributesController.updateDataName();
+                    }
                     if (parent != null) {
-                        parent.tableData.set(index, def);
+                        parent.updateStatus();
                     }
-                    if (def.getD2did() == data2D.getD2did()) {
-                        data2D.setDataName(newName);
-                        if (dataController != null) {
-                            dataController.attributesController.updateDataName();
-                        }
-                        if (parent != null) {
-                            parent.updateStatus();
-                        }
-                        updateStatus();
-                    }
-
+                    updateStatus();
                 }
 
-            };
-            start(task);
-        }
+            }
+
+        };
+        start(task);
     }
 
     @FXML
@@ -902,27 +898,25 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         }
         if (data2D.getColsNumber() != data2D.getColumns().size()
                 || data2D.getRowsNumber() != data2D.getDataSize()) {
-            synchronized (this) {
-                SingletonTask updateTask = new SingletonTask<Void>(this) {
+            SingletonTask updateTask = new SingletonTask<Void>(this) {
 
-                    @Override
-                    protected boolean handle() {
-                        data2D.countSize();
-                        return data2D.saveAttributes();
-                    }
+                @Override
+                protected boolean handle() {
+                    data2D.countSize();
+                    return data2D.saveAttributes();
+                }
 
-                    @Override
-                    protected void whenSucceeded() {
-                        notifySaved();
-                    }
+                @Override
+                protected void whenSucceeded() {
+                    notifySaved();
+                }
 
-                    @Override
-                    protected void whenFailed() {
-                    }
+                @Override
+                protected void whenFailed() {
+                }
 
-                };
-                start(updateTask, false);
-            }
+            };
+            start(updateTask, false);
         }
     }
 
@@ -935,52 +929,50 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             afterLoaded(false);
             return;
         }
-        synchronized (this) {
-            if (backgroundTask != null) {
-                backgroundTask.cancel();
-            }
-            data2D.setDataSize(0);
-            dataSizeLoaded = false;
-            if (paginationPane != null) {
-                paginationPane.setVisible(false);
-            }
-            if (saveButton != null) {
-                saveButton.setDisable(true);
-            }
-            backgroundTask = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    data2D.setBackgroundTask(backgroundTask);
-                    return data2D.readTotal() >= 0;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                }
-
-                @Override
-                protected void whenFailed() {
-                    if (isCancelled()) {
-                        return;
-                    }
-                    if (error != null) {
-                        popError(message(error));
-                    } else {
-                        popFailed();
-                    }
-                }
-
-                @Override
-                protected void finalAction() {
-                    data2D.setBackgroundTask(null);
-                    backgroundTask = null;
-                    afterLoaded(true);
-                }
-
-            };
-            start(backgroundTask, false);
+        if (backgroundTask != null) {
+            backgroundTask.cancel();
         }
+        data2D.setDataSize(0);
+        dataSizeLoaded = false;
+        if (paginationPane != null) {
+            paginationPane.setVisible(false);
+        }
+        if (saveButton != null) {
+            saveButton.setDisable(true);
+        }
+        backgroundTask = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                data2D.setBackgroundTask(backgroundTask);
+                return data2D.readTotal() >= 0;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+            }
+
+            @Override
+            protected void whenFailed() {
+                if (isCancelled()) {
+                    return;
+                }
+                if (error != null) {
+                    popError(message(error));
+                } else {
+                    popFailed();
+                }
+            }
+
+            @Override
+            protected void finalAction() {
+                data2D.setBackgroundTask(null);
+                backgroundTask = null;
+                afterLoaded(true);
+            }
+
+        };
+        start(backgroundTask, false);
     }
 
     protected void afterLoaded(boolean paginate) {

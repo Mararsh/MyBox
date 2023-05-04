@@ -34,10 +34,9 @@ import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileDeleteTools;
+import static mara.mybox.tools.FileTmpTools.generateFile;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
-import static mara.mybox.tools.FileTmpTools.getPathTempFile;
-import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -396,7 +395,7 @@ public class ControlMathFunctionCalculator extends BaseController {
             }
             variablesSize = variables.size();
             count = 0;
-            File csvFile = getPathTempFile(AppPaths.getGeneratedPath(), functionName(), ".csv");
+            File csvFile = generateFile(functionName(), "csv");
             List<Data2DColumn> db2Columns = new ArrayList<>();
             try (CSVPrinter printer = CsvTools.csvPrinter(csvFile)) {
                 csvPrinter = printer;

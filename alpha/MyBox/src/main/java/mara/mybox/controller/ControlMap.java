@@ -34,10 +34,10 @@ import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.LocationTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.FileFilters;
 import static mara.mybox.value.Languages.message;
@@ -604,8 +604,7 @@ public class ControlMap extends BaseController {
                     s.append("<h1  class=\"center\">").append(title).append("</h1>\n");
                     s.append("<hr>\n");
 
-                    File imageFile = new File(AppPaths.getGeneratedPath() + File.separator
-                            + DateTools.nowFileString() + ".jpg");
+                    File imageFile = FileTmpTools.generateFile("jpg");
                     BufferedImage bufferedImage = SwingFXUtils.fromFXImage(mapSnap, null);
                     ImageFileWriters.writeImageFile(bufferedImage, "jpg", imageFile.getAbsolutePath());
                     s.append("<h2  class=\"center\">").append(message("Image")).append("</h2>\n");

@@ -13,9 +13,8 @@ import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.tools.DoubleTools;
+import static mara.mybox.tools.FileTmpTools.generateFile;
 import mara.mybox.tools.NumberTools;
-import static mara.mybox.tools.FileTmpTools.getPathTempFile;
-import mara.mybox.value.AppPaths;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -39,10 +38,9 @@ public abstract class Data2D_Data extends Data2D_Attributes {
         return this;
     }
 
-    public File tmpFile(String name, String operation, String suffix) {
-        String path = AppPaths.getGeneratedPath();
+    public File tmpFile(String name, String operation, String ext) {
         if (name != null && !name.isBlank()) {
-            return getPathTempFile(path, name, suffix);
+            return generateFile(name, ext);
         }
         String pname = shortName();
         if (pname.startsWith(TmpTable.TmpTablePrefix)
@@ -50,7 +48,7 @@ public abstract class Data2D_Data extends Data2D_Attributes {
             pname = pname.substring(TmpTable.TmpTablePrefix.length());
         }
         pname = pname + ((operation == null || operation.isBlank()) ? "" : "_" + operation);
-        return getPathTempFile(path, pname, suffix);
+        return generateFile(pname, ext);
     }
 
     /*

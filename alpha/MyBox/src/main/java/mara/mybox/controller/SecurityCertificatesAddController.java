@@ -73,6 +73,9 @@ public class SecurityCertificatesAddController extends BaseController {
             popError(Languages.message("NotExist"));
             return;
         }
+        if (task != null) {
+            task.cancel();
+        }
         String name;
         if (addressRadio.isSelected()) {
             if (addressInput.getText().isEmpty()) {
@@ -104,61 +107,52 @@ public class SecurityCertificatesAddController extends BaseController {
             return;
         }
         final String alias = result.get().trim();
-        try {
-            synchronized (this) {
-                if (task != null && !task.isQuit()) {
-                    return;
+
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                error = null;
+                if (certController.backupController.needBackup()) {
+                    certController.backupController.addBackup(task, certController.sourceFile);
                 }
-                task = new SingletonTask<Void>(this) {
-
-                    @Override
-                    protected boolean handle() {
-                        error = null;
-                        if (certController.backupController.needBackup()) {
-                            certController.backupController.addBackup(task, certController.sourceFile);
-                        }
-                        if (addressRadio.isSelected()) {
-                            try {
-                                error = CertificateTools.installCertificateByHost(
-                                        ksFile.getAbsolutePath(), password,
-                                        addressInput.getText(), alias, chainCheck.isSelected());
-                            } catch (Exception e) {
-                                error = e.toString();
-                            }
-                        } else if (fileRadio.isSelected()) {
-                            try {
-                                error = CertificateTools.installCertificateByFile(
-                                        ksFile.getAbsolutePath(), password,
-                                        sourceFile, alias, chainCheck.isSelected());
-                            } catch (Exception e) {
-                                error = e.toString();
-                            }
-                        }
-                        return true;
+                if (addressRadio.isSelected()) {
+                    try {
+                        error = CertificateTools.installCertificateByHost(
+                                ksFile.getAbsolutePath(), password,
+                                addressInput.getText(), alias, chainCheck.isSelected());
+                    } catch (Exception e) {
+                        error = e.toString();
                     }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        if (error == null) {
-                            if (certController == null || !certController.getMyStage().isShowing()) {
-                                certController = SecurityCertificatesController.oneOpen(ksFile);
-                            }
-                            certController.loadAll(alias);
-                            if (saveCloseCheck.isSelected()) {
-                                closeStage();
-                            }
-                            popSuccessful();
-                        } else {
-                            popError(error);
-                        }
+                } else if (fileRadio.isSelected()) {
+                    try {
+                        error = CertificateTools.installCertificateByFile(
+                                ksFile.getAbsolutePath(), password,
+                                sourceFile, alias, chainCheck.isSelected());
+                    } catch (Exception e) {
+                        error = e.toString();
                     }
-                };
-                start(task);
+                }
+                return true;
             }
 
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+            @Override
+            protected void whenSucceeded() {
+                if (error == null) {
+                    if (certController == null || !certController.getMyStage().isShowing()) {
+                        certController = SecurityCertificatesController.oneOpen(ksFile);
+                    }
+                    certController.loadAll(alias);
+                    if (saveCloseCheck.isSelected()) {
+                        closeStage();
+                    }
+                    popSuccessful();
+                } else {
+                    popError(error);
+                }
+            }
+        };
+        start(task);
     }
 
     @FXML
@@ -168,48 +162,40 @@ public class SecurityCertificatesAddController extends BaseController {
             popError(Languages.message("NotExist"));
             return;
         }
-        try {
-            synchronized (this) {
-                if (task != null && !task.isQuit()) {
-                    return;
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+            private String result;
+
+            @Override
+            protected boolean handle() {
+                result = error = null;
+                try {
+                    Certificate[] certs = CertificateTools.getCertificatesByFile(sourceFile);
+                    StringBuilder s = new StringBuilder();
+                    s.append("<h1  class=\"center\">").append(sourceFile.getAbsolutePath()).append("</h1>\n");
+                    for (Certificate cert : certs) {
+                        s.append("<hr>\n");
+                        s.append("<pre>").append(cert).append("</pre>\n\n");
+                    }
+                    result = s.toString();
+                } catch (Exception e) {
+                    error = e.toString();
                 }
-                task = new SingletonTask<Void>(this) {
-                    private String result;
-
-                    @Override
-                    protected boolean handle() {
-                        result = error = null;
-                        try {
-                            Certificate[] certs = CertificateTools.getCertificatesByFile(sourceFile);
-                            StringBuilder s = new StringBuilder();
-                            s.append("<h1  class=\"center\">").append(sourceFile.getAbsolutePath()).append("</h1>\n");
-                            for (Certificate cert : certs) {
-                                s.append("<hr>\n");
-                                s.append("<pre>").append(cert).append("</pre>\n\n");
-                            }
-                            result = s.toString();
-                        } catch (Exception e) {
-                            error = e.toString();
-                        }
-                        return error == null;
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        if (result != null) {
-                            HtmlTableController.open(result);
-                        } else {
-                            popError(error);
-                        }
-                    }
-                };
-                start(task);
+                return error == null;
             }
 
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-
+            @Override
+            protected void whenSucceeded() {
+                if (result != null) {
+                    HtmlTableController.open(result);
+                } else {
+                    popError(error);
+                }
+            }
+        };
+        start(task);
     }
 
     @FXML

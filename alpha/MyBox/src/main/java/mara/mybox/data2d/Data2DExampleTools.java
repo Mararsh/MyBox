@@ -22,7 +22,6 @@ import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTmpTools;
-import mara.mybox.value.AppPaths;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
@@ -477,10 +476,14 @@ public class Data2DExampleTools {
 
             chinaMenu.getItems().add(new SeparatorMenuItem());
 
-            menu = new MenuItem(message("ChinaNationalBureauOfStatistics"));
+            menu = new MenuItem(message("UserGuideDataTools"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent event) -> {
-                controller.browse("https://data.stats.gov.cn/");
+                if (isChinese) {
+                    controller.browse("https://mara-mybox.sourceforge.io/guide/MyBox-DataTools-zh.pdf");
+                } else {
+                    controller.browse("https://mara-mybox.sourceforge.io/guide/MyBox-DataTools-en.pdf");
+                }
             });
             chinaMenu.getItems().add(menu);
 
@@ -1202,7 +1205,7 @@ public class Data2DExampleTools {
                 return false;
             }
             File srcFile = FxFileTools.getInternalFile("/data/examples/" + fileName + ".csv");
-            File targetFile = FileTmpTools.getPathTempFile(AppPaths.getGeneratedPath(), fileName, ".csv");
+            File targetFile = FileTmpTools.generateFile(fileName, "csv");
             if (targetFile.exists()) {
                 targetFile.delete();
             }

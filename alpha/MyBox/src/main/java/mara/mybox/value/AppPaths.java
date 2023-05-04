@@ -1,10 +1,7 @@
 package mara.mybox.value;
 
 import java.io.File;
-import mara.mybox.db.table.TableStringValue;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.DateTools;
-import mara.mybox.tools.FileNameTools;
 
 /**
  * @Author Mara
@@ -70,31 +67,6 @@ public class AppPaths {
 
     public static String getBackupsPath() {
         return getPath("fileBackups");
-    }
-
-    public static String getFileBackupsPath(File file) {
-        if (file == null) {
-            return null;
-        }
-        try {
-            String key = "BackupPath-" + file;
-            String fileBackupsPath = TableStringValue.read(key);
-            if (fileBackupsPath == null) {
-                String fname = file.getName();
-                fileBackupsPath = getBackupsPath() + File.separator
-                        + FileNameTools.prefix(fname) + FileNameTools.suffix(fname)
-                        + DateTools.nowFileString() + File.separator;
-                TableStringValue.write(key, fileBackupsPath);
-            }
-            File path = new File(fileBackupsPath);
-            if (!path.exists()) {
-                path.mkdirs();
-            }
-            return fileBackupsPath;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
     }
 
     public static String getDownloadsPath() {

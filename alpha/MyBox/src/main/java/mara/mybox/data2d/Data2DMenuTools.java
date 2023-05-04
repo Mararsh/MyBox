@@ -1,5 +1,7 @@
 package mara.mybox.data2d;
 
+import java.util.ArrayList;
+import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Menu;
@@ -41,6 +43,7 @@ import mara.mybox.controller.Data2DStatisticController;
 import mara.mybox.controller.Data2DTransposeController;
 import mara.mybox.controller.DataTableQueryController;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 
@@ -462,6 +465,62 @@ public class Data2DMenuTools {
 //            menu.setDisable(data2D == null || !data2D.includeCoordinate());
 //            chartMenu.getItems().add(menu);
             return chartMenu;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static List<MenuItem> helpMenus(ControlData2DLoad controller) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+
+            MenuItem about2D = new MenuItem(message("AboutData2D"));
+            about2D.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    controller.openHtml(HelpTools.aboutData2D());
+                }
+            });
+            items.add(about2D);
+
+            MenuItem aboutRowExpression = new MenuItem(message("AboutRowExpression"));
+            aboutRowExpression.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    controller.openHtml(HelpTools.aboutRowExpression());
+                }
+            });
+            items.add(aboutRowExpression);
+
+            MenuItem aboutGrouping = new MenuItem(message("AboutGroupingRows"));
+            aboutGrouping.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    controller.openHtml(HelpTools.aboutGroupingRows());
+                }
+            });
+            items.add(aboutGrouping);
+
+            MenuItem aboutDataAnalysis = new MenuItem(message("AboutDataAnalysis"));
+            aboutDataAnalysis.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    controller.openHtml(HelpTools.aboutDataAnalysis());
+                }
+            });
+            items.add(aboutDataAnalysis);
+
+            items.add(new SeparatorMenuItem());
+
+            MenuItem guidemenu = new MenuItem(message("ChinaNationalBureauOfStatistics"));
+            guidemenu.setStyle("-fx-text-fill: #2e598a;");
+            guidemenu.setOnAction((ActionEvent event) -> {
+                controller.browse("https://data.stats.gov.cn/");
+            });
+            items.add(guidemenu);
+
+            return items;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;

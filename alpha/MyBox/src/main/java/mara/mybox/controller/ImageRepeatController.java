@@ -303,39 +303,37 @@ public class ImageRepeatController extends ImageViewerController {
     }
 
     public void drawRepeat() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                @Override
-                protected boolean handle() {
-                    BufferedImage bufferedImage = SwingFXUtils.fromFXImage(sourceImage(), null);
-                    if (repeatRadio.isSelected()) {
-                        bufferedImage = RepeatTools.repeat(bufferedImage, scaleWidth, scaleHeight,
-                                repeatH, repeatV, interval, margin, colorSetController.awtColor());
-                    } else {
-                        bufferedImage = RepeatTools.tile(bufferedImage, scaleWidth, scaleHeight,
-                                canvasWidth, canvasHeight, interval, margin, colorSetController.awtColor());
-                    }
-                    if (bufferedImage == null) {
-                        return false;
-                    }
-                    image = SwingFXUtils.toFXImage(bufferedImage, null);
-                    return image != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    imageView.setImage(image);
-                    setZoomStep(image);
-                    fitSize();
-                    imageLabel.setText((int) image.getWidth() + "x" + (int) image.getHeight());
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+            @Override
+            protected boolean handle() {
+                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(sourceImage(), null);
+                if (repeatRadio.isSelected()) {
+                    bufferedImage = RepeatTools.repeat(bufferedImage, scaleWidth, scaleHeight,
+                            repeatH, repeatV, interval, margin, colorSetController.awtColor());
+                } else {
+                    bufferedImage = RepeatTools.tile(bufferedImage, scaleWidth, scaleHeight,
+                            canvasWidth, canvasHeight, interval, margin, colorSetController.awtColor());
+                }
+                if (bufferedImage == null) {
+                    return false;
+                }
+                image = SwingFXUtils.toFXImage(bufferedImage, null);
+                return image != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                imageView.setImage(image);
+                setZoomStep(image);
+                fitSize();
+                imageLabel.setText((int) image.getWidth() + "x" + (int) image.getHeight());
+            }
+
+        };
+        start(task);
     }
 
 }

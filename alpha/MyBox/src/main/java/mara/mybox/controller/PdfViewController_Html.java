@@ -151,57 +151,55 @@ public abstract class PdfViewController_Html extends PdfViewController_Texts {
         if (imageView.getImage() == null) {
             return;
         }
-        synchronized (this) {
-            if (htmlTask != null) {
-                htmlTask.cancel();
-            }
-            htmlTask = new SingletonTask<Void>(this) {
+        if (htmlTask != null) {
+            htmlTask.cancel();
+        }
+        htmlTask = new SingletonTask<Void>(this) {
 
-                protected String title;
+            protected String title;
 
-                @Override
-                protected boolean handle() {
-                    title = sourceFile.getAbsolutePath() + " " + MessageFormat.format(message("PageNumber3"), (frameIndex + 1) + "");
-                    htmlFile = FileTmpTools.getTempFile(".html");
-                    subPath = new File(htmlFile.getParent() + File.separator
-                            + htmlFile.getName().substring(0, htmlFile.getName().length() - 5));
-                    subPath.mkdirs();
-                    domConfig.setFontHandler(new PDFResourceToDirHandler(subPath));
-                    domConfig.setImageHandler(new PDFResourceToDirHandler(subPath));
-                    try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
-                        PDFDomTree parser = new PDFDomTree(domConfig);
-                        parser.setStartPage(frameIndex + 1);
-                        parser.setEndPage(frameIndex + 1);
-                        parser.setPageStart(title);
+            @Override
+            protected boolean handle() {
+                title = sourceFile.getAbsolutePath() + " " + MessageFormat.format(message("PageNumber3"), (frameIndex + 1) + "");
+                htmlFile = FileTmpTools.getTempFile(".html");
+                subPath = new File(htmlFile.getParent() + File.separator
+                        + htmlFile.getName().substring(0, htmlFile.getName().length() - 5));
+                subPath.mkdirs();
+                domConfig.setFontHandler(new PDFResourceToDirHandler(subPath));
+                domConfig.setImageHandler(new PDFResourceToDirHandler(subPath));
+                try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
+                    PDFDomTree parser = new PDFDomTree(domConfig);
+                    parser.setStartPage(frameIndex + 1);
+                    parser.setEndPage(frameIndex + 1);
+                    parser.setPageStart(title);
 //                    MyBoxLog.debug(parser.getSpacingTolerance());
 //                    parser.setSpacingTolerance(0f);
-                        try (Writer output = new PrintWriter(htmlFile, "utf-8")) {
-                            try {
-                                parser.writeText(doc, output);
-                            } catch (Exception e) {
-//                                MyBoxLog.debug(error);
-                            }
+                    try (Writer output = new PrintWriter(htmlFile, "utf-8")) {
+                        try {
+                            parser.writeText(doc, output);
                         } catch (Exception e) {
-                            error = e.toString();
-//                            MyBoxLog.debug(error);
+//                                MyBoxLog.debug(error);
                         }
                     } catch (Exception e) {
                         error = e.toString();
-//                        MyBoxLog.debug(error);
+//                            MyBoxLog.debug(error);
                     }
-                    return htmlFile.exists();
+                } catch (Exception e) {
+                    error = e.toString();
+//                        MyBoxLog.debug(error);
                 }
+                return htmlFile.exists();
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    webViewController.loadFile(htmlFile);
-                    webView.requestFocus();
-                    atBottom = false;
-                    htmlPage = frameIndex;
-                }
-            };
-            start(htmlTask, MessageFormat.format(message("LoadingPageNumber"), (frameIndex + 1) + ""));
-        }
+            @Override
+            protected void whenSucceeded() {
+                webViewController.loadFile(htmlFile);
+                webView.requestFocus();
+                atBottom = false;
+                htmlPage = frameIndex;
+            }
+        };
+        start(htmlTask, MessageFormat.format(message("LoadingPageNumber"), (frameIndex + 1) + ""));
     }
 
     @FXML

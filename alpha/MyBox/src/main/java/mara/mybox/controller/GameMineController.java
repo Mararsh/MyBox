@@ -410,68 +410,64 @@ public class GameMineController extends BaseWebViewController {
 
     protected void loadRecords() {
         webViewController.loadContents(null);
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private String html;
-
-                @Override
-                protected boolean handle() {
-                    List<String> names = new ArrayList<>();
-                    names.addAll(Arrays.asList(message("Height"), message("Width"), message("MinesNumber"),
-                            message("Cost"), message("Time")
-                    ));
-                    StringTable table = new StringTable(names);
-                    List<StringValues> records = TableStringValues.values("GameMineHistory");
-                    for (StringValues record : records) {
-                        String[] values = record.getValue().split("-");
-                        if (values.length != 4) {
-                            continue;
-                        }
-                        List<String> row = new ArrayList<>();
-                        row.addAll(Arrays.asList(
-                                values[0], values[1], values[2],
-                                DateTools.timeMsDuration(Long.parseLong(values[3])),
-                                DateTools.datetimeToString(record.getTime())
-                        ));
-                        table.add(row);
-                    }
-                    html = HtmlWriteTools.html(null, HtmlStyles.styleValue("Default"), StringTable.tableDiv(table));
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    webViewController.loadContents(html);
-                }
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private String html;
+
+            @Override
+            protected boolean handle() {
+                List<String> names = new ArrayList<>();
+                names.addAll(Arrays.asList(message("Height"), message("Width"), message("MinesNumber"),
+                        message("Cost"), message("Time")
+                ));
+                StringTable table = new StringTable(names);
+                List<StringValues> records = TableStringValues.values("GameMineHistory");
+                for (StringValues record : records) {
+                    String[] values = record.getValue().split("-");
+                    if (values.length != 4) {
+                        continue;
+                    }
+                    List<String> row = new ArrayList<>();
+                    row.addAll(Arrays.asList(
+                            values[0], values[1], values[2],
+                            DateTools.timeMsDuration(Long.parseLong(values[3])),
+                            DateTools.datetimeToString(record.getTime())
+                    ));
+                    table.add(row);
+                }
+                html = HtmlWriteTools.html(null, HtmlStyles.styleValue("Default"), StringTable.tableDiv(table));
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                webViewController.loadContents(html);
+            }
+        };
+        start(task);
     }
 
     @FXML
     public void clearHistories() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                @Override
-                protected boolean handle() {
-                    TableStringValues.clear("GameMineHistory");
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    webViewController.loadContents(null);
-                }
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+            @Override
+            protected boolean handle() {
+                TableStringValues.clear("GameMineHistory");
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                webViewController.loadContents(null);
+            }
+        };
+        start(task);
     }
 
     public void failed() {
@@ -738,25 +734,22 @@ public class GameMineController extends BaseWebViewController {
             historiesNumberSelector.getEditor().setStyle(UserConfig.badStyle());
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                @Override
-                protected boolean handle() {
-                    TableStringValues.max("GameMineHistory", historiesNumber);
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    loadRecords();
-                }
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+            @Override
+            protected boolean handle() {
+                TableStringValues.max("GameMineHistory", historiesNumber);
+                return true;
+            }
 
+            @Override
+            protected void whenSucceeded() {
+                loadRecords();
+            }
+        };
+        start(task);
     }
 
     @Override

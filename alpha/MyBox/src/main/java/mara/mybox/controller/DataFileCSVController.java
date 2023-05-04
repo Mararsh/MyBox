@@ -18,8 +18,8 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.value.AppPaths;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 
@@ -112,49 +112,47 @@ public class DataFileCSVController extends BaseData2DFileController {
         if (tables == null || tables.isEmpty()) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private File filePath;
-                private LinkedHashMap<File, Boolean> files;
-                private int count;
-
-                @Override
-                protected boolean handle() {
-                    filePath = new File(AppPaths.getGeneratedPath());
-                    files = DataFileCSV.save(filePath, "tmp", tables);
-                    count = files != null ? files.size() : 0;
-                    return count > 0;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    Iterator<File> iterator = files.keySet().iterator();
-                    File csvFile = iterator.next();
-                    setFile(csvFile, Charset.forName("UTF-8"), files.get(csvFile), ",");
-                    if (count > 1) {
-                        browseURI(filePath.toURI());
-                        String info = MessageFormat.format(message("GeneratedFilesResult"),
-                                count, "\"" + filePath + "\"");
-                        int num = 1;
-                        info += "\n    " + csvFile.getName();
-                        while (iterator.hasNext()) {
-                            info += "\n    " + iterator.next().getName();
-                            if (++num > 10) {
-                                info += "\n    ......";
-                                break;
-                            }
-                        }
-                        alertInformation(info);
-                    }
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private File filePath;
+            private LinkedHashMap<File, Boolean> files;
+            private int count;
+
+            @Override
+            protected boolean handle() {
+                filePath = new File(FileTmpTools.generatePath("csv"));
+                files = DataFileCSV.save(filePath, "tmp", tables);
+                count = files != null ? files.size() : 0;
+                return count > 0;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                Iterator<File> iterator = files.keySet().iterator();
+                File csvFile = iterator.next();
+                setFile(csvFile, Charset.forName("UTF-8"), files.get(csvFile), ",");
+                if (count > 1) {
+                    browseURI(filePath.toURI());
+                    String info = MessageFormat.format(message("GeneratedFilesResult"),
+                            count, "\"" + filePath + "\"");
+                    int num = 1;
+                    info += "\n    " + csvFile.getName();
+                    while (iterator.hasNext()) {
+                        info += "\n    " + iterator.next().getName();
+                        if (++num > 10) {
+                            info += "\n    ......";
+                            break;
+                        }
+                    }
+                    alertInformation(info);
+                }
+            }
+
+        };
+        start(task);
     }
 
     /*

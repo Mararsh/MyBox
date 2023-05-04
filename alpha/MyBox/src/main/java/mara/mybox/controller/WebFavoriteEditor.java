@@ -76,31 +76,32 @@ public class WebFavoriteEditor extends TreeNodeEditor {
 
     @FXML
     protected void downloadIcon() {
-        synchronized (this) {
-            String address;
-            try {
-                URI uri = new URI(valueInput.getText());
-                address = uri.toString();
-            } catch (Exception e) {
-                popError(message("InvalidData"));
-                return;
-            }
-            SingletonTask updateTask = new SingletonTask<Void>(this) {
-                private File iconFile;
-
-                @Override
-                protected boolean handle() {
-                    iconFile = IconTools.readIcon(address, true);
-                    return iconFile != null && iconFile.exists();
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    iconController.input(iconFile.getAbsolutePath());
-                }
-            };
-            start(updateTask);
+        String address;
+        try {
+            URI uri = new URI(valueInput.getText());
+            address = uri.toString();
+        } catch (Exception e) {
+            popError(message("InvalidData"));
+            return;
         }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+            private File iconFile;
+
+            @Override
+            protected boolean handle() {
+                iconFile = IconTools.readIcon(address, true);
+                return iconFile != null && iconFile.exists();
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                iconController.input(iconFile.getAbsolutePath());
+            }
+        };
+        start(task);
     }
 
     @FXML

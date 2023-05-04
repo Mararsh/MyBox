@@ -42,45 +42,43 @@ public class TreeNodeMoveController extends ControlTreeInfoSelect {
         if (sourceNode == null || sourceNode.isRoot()) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            TreeItem<TreeNode> targetItem = selected();
-            if (targetItem == null) {
-                alertError(message("SelectNodeMoveInto"));
-                return;
-            }
-            TreeNode targetNode = targetItem.getValue();
-            if (targetNode == null) {
-                return;
-            }
-            if (equalOrDescendant(targetItem, find(sourceNode))) {
-                alertError(message("TreeTargetComments"));
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    sourceNode.setParentid(targetNode.getNodeid());
-                    tableTreeNode.updateData(sourceNode);
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (caller != null && caller.getMyStage() != null && caller.getMyStage().isShowing()) {
-                        caller.loadTree(targetNode);
-                        manager.nodeMoved(targetNode, sourceNode);
-                        caller.popSuccessful();
-                    }
-                    closeStage();
-
-                }
-            };
-            start(task);
+        TreeItem<TreeNode> targetItem = selected();
+        if (targetItem == null) {
+            alertError(message("SelectNodeMoveInto"));
+            return;
         }
+        TreeNode targetNode = targetItem.getValue();
+        if (targetNode == null) {
+            return;
+        }
+        if (equalOrDescendant(targetItem, find(sourceNode))) {
+            alertError(message("TreeTargetComments"));
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                sourceNode.setParentid(targetNode.getNodeid());
+                tableTreeNode.updateData(sourceNode);
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (caller != null && caller.getMyStage() != null && caller.getMyStage().isShowing()) {
+                    caller.loadTree(targetNode);
+                    manager.nodeMoved(targetNode, sourceNode);
+                    caller.popSuccessful();
+                }
+                closeStage();
+
+            }
+        };
+        start(task);
     }
 
 }

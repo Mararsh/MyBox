@@ -182,35 +182,33 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
         if (clipsController.tableData.isEmpty()) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private Image clipImage;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        ImageClipboard clip = clipsController.selectedItem();
-                        if (clip == null) {
-                            clip = clipsController.tableData.get(0);
-                        }
-                        clipImage = ImageClipboard.loadImage(clip);
-                        return clipImage != null;
-                    } catch (Exception e) {
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    setSourceClip(clipImage);
-                }
-            };
-            imageController.start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private Image clipImage;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    ImageClipboard clip = clipsController.selectedItem();
+                    if (clip == null) {
+                        clip = clipsController.tableData.get(0);
+                    }
+                    clipImage = ImageClipboard.loadImage(clip);
+                    return clipImage != null;
+                } catch (Exception e) {
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                setSourceClip(clipImage);
+            }
+        };
+        start(task);
     }
 
     public void setSourceClip(Image image) {
@@ -235,88 +233,85 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             return;
         }
         imageController.showRightPane();
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
 
-                private boolean enlarged;
+            private boolean enlarged;
 
-                @Override
-                protected boolean handle() {
-                    try {
-                        if (angle != 0) {
-                            currentClip = TransformTools.rotateImage(clipSource, angle);
-                            if (task == null || isCancelled()) {
-                                return false;
-                            }
-                        }
-                        finalClip = ScaleTools.scaleImage(currentClip,
-                                (int) imageController.scope.getRectangle().getWidth(),
-                                (int) imageController.scope.getRectangle().getHeight(),
-                                keepRatioCheck.isSelected(), keepRatioType);
+            @Override
+            protected boolean handle() {
+                try {
+                    if (angle != 0) {
+                        currentClip = TransformTools.rotateImage(clipSource, angle);
                         if (task == null || isCancelled()) {
                             return false;
                         }
-                        bgImage = imageView.getImage();
-                        enlarged = false;
-                        if (enlargeCheck.isSelected()) {
-                            if (finalClip.getWidth() > bgImage.getWidth()) {
-                                bgImage = MarginTools.addMarginsFx(bgImage,
-                                        Color.TRANSPARENT, (int) (finalClip.getWidth() - bgImage.getWidth()) + 1,
-                                        false, false, false, true);
-                                enlarged = true;
-                            }
-                            if (finalClip.getHeight() > bgImage.getHeight()) {
-                                bgImage = MarginTools.addMarginsFx(bgImage,
-                                        Color.TRANSPARENT, (int) (finalClip.getHeight() - bgImage.getHeight()) + 1,
-                                        false, true, false, false);
-                                enlarged = true;
-                            }
-                        }
-                        blendedImage = blendController.blend(finalClip, bgImage,
-                                (int) imageController.scope.getRectangle().getSmallX(),
-                                (int) imageController.scope.getRectangle().getSmallY());
-                        if (task == null || isCancelled()) {
-                            return false;
-                        }
-                        return blendedImage != null;
-                    } catch (Exception e) {
-                        MyBoxLog.error(e.toString());
+                    }
+                    finalClip = ScaleTools.scaleImage(currentClip,
+                            (int) imageController.scope.getRectangle().getWidth(),
+                            (int) imageController.scope.getRectangle().getHeight(),
+                            keepRatioCheck.isSelected(), keepRatioType);
+                    if (task == null || isCancelled()) {
                         return false;
                     }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    currentAngle = angle;
-                    if (enlarged) {
-                        imageController.setImage(ImageOperation.Margins, bgImage);
+                    bgImage = imageView.getImage();
+                    enlarged = false;
+                    if (enlargeCheck.isSelected()) {
+                        if (finalClip.getWidth() > bgImage.getWidth()) {
+                            bgImage = MarginTools.addMarginsFx(bgImage,
+                                    Color.TRANSPARENT, (int) (finalClip.getWidth() - bgImage.getWidth()) + 1,
+                                    false, false, false, true);
+                            enlarged = true;
+                        }
+                        if (finalClip.getHeight() > bgImage.getHeight()) {
+                            bgImage = MarginTools.addMarginsFx(bgImage,
+                                    Color.TRANSPARENT, (int) (finalClip.getHeight() - bgImage.getHeight()) + 1,
+                                    false, true, false, false);
+                            enlarged = true;
+                        }
                     }
-                    imageController.setMaskRectangleLineVisible(true);
-                    imageController.maskRectangleData = new DoubleRectangle(
-                            imageController.maskRectangleData.getSmallX(),
-                            imageController.maskRectangleData.getSmallY(),
-                            imageController.maskRectangleData.getSmallX() + finalClip.getWidth() - 1,
-                            imageController.maskRectangleData.getSmallY() + finalClip.getHeight() - 1);
-                    imageController.drawMaskRectangleLineAsData();
-                    imageController.scope.setRectangle(imageController.maskRectangleData.cloneValues());
-                    maskView.setImage(blendedImage);
-                    maskView.setOpacity(1.0);
-                    maskView.setVisible(true);
-                    imageView.setVisible(false);
-                    imageView.toBack();
-                    tabPane.getSelectionModel().select(setPane);
-                    okButton.setDisable(false);
-                    okButton.requestFocus();
-                    imageController.adjustRightPane();
-                    imageController.operation = ImageOperation.Paste;
+                    blendedImage = blendController.blend(finalClip, bgImage,
+                            (int) imageController.scope.getRectangle().getSmallX(),
+                            (int) imageController.scope.getRectangle().getSmallY());
+                    if (task == null || isCancelled()) {
+                        return false;
+                    }
+                    return blendedImage != null;
+                } catch (Exception e) {
+                    MyBoxLog.error(e.toString());
+                    return false;
                 }
-            };
-            imageController.start(task);
-        }
+            }
 
+            @Override
+            protected void whenSucceeded() {
+                currentAngle = angle;
+                if (enlarged) {
+                    imageController.setImage(ImageOperation.Margins, bgImage);
+                }
+                imageController.setMaskRectangleLineVisible(true);
+                imageController.maskRectangleData = new DoubleRectangle(
+                        imageController.maskRectangleData.getSmallX(),
+                        imageController.maskRectangleData.getSmallY(),
+                        imageController.maskRectangleData.getSmallX() + finalClip.getWidth() - 1,
+                        imageController.maskRectangleData.getSmallY() + finalClip.getHeight() - 1);
+                imageController.drawMaskRectangleLineAsData();
+                imageController.scope.setRectangle(imageController.maskRectangleData.cloneValues());
+                maskView.setImage(blendedImage);
+                maskView.setOpacity(1.0);
+                maskView.setVisible(true);
+                imageView.setVisible(false);
+                imageView.toBack();
+                tabPane.getSelectionModel().select(setPane);
+                okButton.setDisable(false);
+                okButton.requestFocus();
+                imageController.adjustRightPane();
+                imageController.operation = ImageOperation.Paste;
+            }
+        };
+        start(task);
     }
 
     @FXML

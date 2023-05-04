@@ -539,76 +539,68 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     }
 
     public void doCurrentProcess() {
-        try {
-            if (currentParameters == null || sourceFiles.isEmpty()) {
-                return;
-            }
-            synchronized (this) {
-                if (task != null && !task.isQuit()) {
-                    return;
-                }
-                processStartTime = new Date();
-                totalFilesHandled = totalItemsHandled = 0;
-                tableController.markFileHandling(-1);
-                updateInterface("Started");
-                task = new SingletonTask<Void>(this) {
-
-                    @Override
-                    protected boolean handle() {
-                        if (!beforeHandleFiles()) {
-                            return false;
-                        }
-                        updateTaskProgress(currentParameters.currentIndex, sourceFiles.size());
-                        int len = sourceFiles.size();
-                        for (; currentParameters.currentIndex < len; currentParameters.currentIndex++) {
-                            if (task == null || isCancelled()) {
-                                break;
-                            }
-                            currentParameters.currentSourceFile = sourceFiles.get(currentParameters.currentIndex);
-                            handleCurrentFile();
-                            updateTaskProgress(currentParameters.currentIndex + 1, len);
-                            if (task == null || isCancelled() || isPreview) {
-                                break;
-                            }
-                        }
-                        afterHandleFiles();
-                        updateTaskProgress(currentParameters.currentIndex, len);
-                        return true;
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        updateInterface("Done");
-                        afterSuccessful();
-                    }
-
-                    @Override
-                    protected void whenCanceled() {
-                        updateInterface("Canceled");
-                        taskCanceled();
-                    }
-
-                    @Override
-                    protected void whenFailed() {
-                        updateInterface("Failed");
-                    }
-
-                    @Override
-                    protected void finalAction() {
-                        super.finalAction();
-                        task = null;
-                        tableController.markFileHandling(-1);
-                        afterTask();
-                    }
-
-                };
-                start(task, false, null);
-            }
-
-        } catch (Exception e) {
-            updateInterface("Failed");
-            MyBoxLog.error(e.toString());
+        if (currentParameters == null || sourceFiles.isEmpty()) {
+            return;
         }
+        if (task != null) {
+            task.cancel();
+        }
+        processStartTime = new Date();
+        totalFilesHandled = totalItemsHandled = 0;
+        tableController.markFileHandling(-1);
+        updateInterface("Started");
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                if (!beforeHandleFiles()) {
+                    return false;
+                }
+                updateTaskProgress(currentParameters.currentIndex, sourceFiles.size());
+                int len = sourceFiles.size();
+                for (; currentParameters.currentIndex < len; currentParameters.currentIndex++) {
+                    if (task == null || isCancelled()) {
+                        break;
+                    }
+                    currentParameters.currentSourceFile = sourceFiles.get(currentParameters.currentIndex);
+                    handleCurrentFile();
+                    updateTaskProgress(currentParameters.currentIndex + 1, len);
+                    if (task == null || isCancelled() || isPreview) {
+                        break;
+                    }
+                }
+                afterHandleFiles();
+                updateTaskProgress(currentParameters.currentIndex, len);
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                updateInterface("Done");
+                afterSuccessful();
+            }
+
+            @Override
+            protected void whenCanceled() {
+                updateInterface("Canceled");
+                taskCanceled();
+            }
+
+            @Override
+            protected void whenFailed() {
+                updateInterface("Failed");
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                task = null;
+                tableController.markFileHandling(-1);
+                afterTask();
+            }
+
+        };
+        start(task, false, null);
     }
 
     public boolean beforeHandleFiles() {

@@ -77,7 +77,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
     @FXML
     protected TextField maxHistoriesInput;
     @FXML
-    protected CheckBox recordHistoriesCheck;
+    protected CheckBox recordHistoriesCheck, loadCheck;
     @FXML
     protected Label infoLabel;
 
@@ -145,6 +145,14 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
                     checkRecordHistoriesStatus();
+                }
+            });
+
+            loadCheck.setSelected(UserConfig.getBoolean(baseName + "RecordLoading", true));
+            loadCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                    UserConfig.setBoolean(baseName + "RecordLoading", loadCheck.isSelected());
                 }
             });
 
@@ -220,11 +228,16 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
             String objectType, String opType, Image hisImage) {
         imageController.redoButton.setDisable(true);
         imageController.undoButton.setDisable(true);
-        if (imageController.sourceFile == null || !recordHistoriesCheck.isSelected()
-                || operation == null || hisImage == null) {
+        if (imageController.sourceFile == null || !recordHistoriesCheck.isSelected()) {
             tableData.clear();
             setHistoryIndex(-1);
             return;
+        }
+        if (operation == null || hisImage == null) {
+            return;
+        }
+        if (operation == ImageOperation.Load) {
+            tableData.clear();
         }
         infoLabel.setText(message("Handling..."));
         SingletonTask recordTask = new SingletonTask<Void>(this) {
@@ -245,6 +258,35 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
                                     + subPath + (new Date()).getTime());
                         }
                     }
+                    if (operation == ImageOperation.Load && !loadCheck.isSelected()) {
+                        list = tableImageEditHistory.read(conn, currentFile);
+                    } else if (!writeRecord(conn)) {
+                        return false;
+                    }
+                    if (list != null) {
+                        for (ImageEditHistory item : list) {
+                            if (isCancelled() || !currentFile.equals(imageController.sourceFile)) {
+                                return false;
+                            }
+                            for (ImageEditHistory row : tableData) {
+                                if (row.getIehid() == item.getIehid()) {
+                                    item.setThumbnail(row.getThumbnail());
+                                }
+                            }
+                            if (item.getThumbnail() == null) {
+                                loadThumbnail(conn, item);
+                            }
+                        }
+                    }
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            private boolean writeRecord(Connection conn) {
+                try {
                     BufferedImage bufferedImage = FxImageTools.toBufferedImage(hisImage);
                     if (isCancelled()) {
                         return false;
@@ -284,21 +326,6 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
                         }
                     }
                     list = tableImageEditHistory.addHistory(conn, his);
-                    if (list != null) {
-                        for (ImageEditHistory item : list) {
-                            if (isCancelled() || !currentFile.equals(imageController.sourceFile)) {
-                                return false;
-                            }
-                            for (ImageEditHistory row : tableData) {
-                                if (row.getIehid() == item.getIehid()) {
-                                    item.setThumbnail(row.getThumbnail());
-                                }
-                            }
-                            if (item.getThumbnail() == null) {
-                                loadThumbnail(conn, item);
-                            }
-                        }
-                    }
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
@@ -595,34 +622,32 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
     }
 
     public void popHistory() {
-        synchronized (this) {
-            ImageEditHistory selected = selectedItem();
-            if (selected == null) {
-                return;
-            }
-            SingletonTask bgTask = new SingletonTask<Void>(this) {
-                private Image hisImage;
-
-                @Override
-                protected boolean handle() {
-                    hisImage = selected.historyImage();
-                    return hisImage != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    ImagePopController.openImage(myController, hisImage);
-                }
-
-                @Override
-                protected void whenFailed() {
-                    super.whenFailed();
-                    checkValid(selected);
-                }
-
-            };
-            start(bgTask, false);
+        ImageEditHistory selected = selectedItem();
+        if (selected == null) {
+            return;
         }
+        SingletonTask bgTask = new SingletonTask<Void>(this) {
+            private Image hisImage;
+
+            @Override
+            protected boolean handle() {
+                hisImage = selected.historyImage();
+                return hisImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                ImagePopController.openImage(myController, hisImage);
+            }
+
+            @Override
+            protected void whenFailed() {
+                super.whenFailed();
+                checkValid(selected);
+            }
+
+        };
+        start(bgTask, false);
     }
 
     @Override

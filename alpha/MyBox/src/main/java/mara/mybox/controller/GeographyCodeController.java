@@ -209,33 +209,31 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
         if (isSettingValues || queryCondition == null || dataQuerySQL == null) {
             return;
         }
-        synchronized (this) {
-            if (backgroundTask != null && !backgroundTask.isQuit()) {
-                return;
-            }
-            backgroundTask = new SingletonTask<Void>(this) {
-                private List<GeographyCode> mapData;
-
-                @Override
-                protected boolean handle() {
-                    mapData = TableGeographyCode.queryCodes(dataQuerySQL, -1, true);
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    mapController.drawGeographyCodes(mapData, queryCondition.getTitle());
-                    loadInfo();
-                }
-
-                @Override
-                protected void finalAction() {
-                    super.finalAction();
-                    backgroundTask = null;
-                }
-            };
-            start(backgroundTask);
+        if (backgroundTask != null) {
+            backgroundTask.cancel();
         }
+        backgroundTask = new SingletonTask<Void>(this) {
+            private List<GeographyCode> mapData;
+
+            @Override
+            protected boolean handle() {
+                mapData = TableGeographyCode.queryCodes(dataQuerySQL, -1, true);
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                mapController.drawGeographyCodes(mapData, queryCondition.getTitle());
+                loadInfo();
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                backgroundTask = null;
+            }
+        };
+        start(backgroundTask);
     }
 
     @Override
@@ -373,49 +371,45 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
     }
 
     public void predefined() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    GeographyCodeTools.importPredefined(null, loading);
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    refreshAction();
-                }
-            };
-            loading = start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                GeographyCodeTools.importPredefined(null, loading);
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                refreshAction();
+            }
+        };
+        loading = start(task);
     }
 
     public void importChinaTowns() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    File file = FxFileTools.getInternalFile("/data/examples/Geography_Code_china_towns_internal.csv",
-                            "data", "Geography_Code_china_towns_internal.csv");
-                    GeographyCodeTools.importInternalCSV(loading, file, true);
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    refreshAction();
-                }
-            };
-            loading = start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                File file = FxFileTools.getInternalFile("/data/examples/Geography_Code_china_towns_internal.csv",
+                        "data", "Geography_Code_china_towns_internal.csv");
+                GeographyCodeTools.importInternalCSV(loading, file, true);
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                refreshAction();
+            }
+        };
+        loading = start(task);
     }
 
     @FXML
@@ -450,33 +444,31 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
         if (selected == null || selected.isEmpty()) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    for (GeographyCode code : selected) {
-                        if (predefined) {
-                            code.setSource(GeographyCode.AddressSource.PredefinedData);
-                        } else {
-                            code.setSource(GeographyCode.AddressSource.InputtedData);
-                        }
-                    }
-                    TableGeographyCode.write(selected);
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSuccessful();
-                    refreshAction();
-                }
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                for (GeographyCode code : selected) {
+                    if (predefined) {
+                        code.setSource(GeographyCode.AddressSource.PredefinedData);
+                    } else {
+                        code.setSource(GeographyCode.AddressSource.InputtedData);
+                    }
+                }
+                TableGeographyCode.write(selected);
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popSuccessful();
+                refreshAction();
+            }
+        };
+        start(task);
     }
 
     @Override

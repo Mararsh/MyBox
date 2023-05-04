@@ -72,18 +72,6 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
     public static final String QueryFile
             = "SELECT * FROM Image_Edit_History  WHERE history_location=? OR thumbnail_file=?";
 
-    public File path(File srcFile) {
-        if (srcFile == null || !srcFile.exists()) {
-            return null;
-        }
-        try (Connection conn = DerbyBase.getConnection()) {
-            return path(conn, srcFile);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-        return null;
-    }
-
     public File path(Connection conn, File srcFile) {
         if (conn == null || srcFile == null || !srcFile.exists()) {
             return null;

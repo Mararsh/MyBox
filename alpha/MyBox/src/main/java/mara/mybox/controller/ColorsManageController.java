@@ -523,31 +523,29 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
                     displayHtml(title, rows);
                 } else {
                     String atitle = title;
-                    synchronized (this) {
-                        if (task != null && !task.isQuit()) {
-                            return;
-                        }
-                        task = new SingletonTask<Void>(this) {
-
-                            private List<ColorData> data;
-
-                            @Override
-                            protected boolean handle() {
-                                if (isAll) {
-                                    data = tableColor.readAll();
-                                } else {
-                                    data = tableColorPalette.colors(palettesController.currentPaletteId());
-                                }
-                                return data != null;
-                            }
-
-                            @Override
-                            protected void whenSucceeded() {
-                                displayHtml(atitle, data);
-                            }
-                        };
-                        start(task);
+                    if (task != null) {
+                        task.cancel();
                     }
+                    task = new SingletonTask<Void>(this) {
+
+                        private List<ColorData> data;
+
+                        @Override
+                        protected boolean handle() {
+                            if (isAll) {
+                                data = tableColor.readAll();
+                            } else {
+                                data = tableColorPalette.colors(palettesController.currentPaletteId());
+                            }
+                            return data != null;
+                        }
+
+                        @Override
+                        protected void whenSucceeded() {
+                            displayHtml(atitle, data);
+                        }
+                    };
+                    start(task);
                 }
             }
 
@@ -662,32 +660,31 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
             super.deleteAction();
             return;
         }
-        if (colorsController.clickedRect != null) {
-            synchronized (this) {
-                if (task != null && !task.isQuit()) {
-                    return;
-                }
-                task = new SingletonTask<Void>(this) {
-
-                    private int deletedCount = 0;
-
-                    @Override
-                    protected boolean handle() {
-                        deletedCount = tableColorPalette.delete(colorsController.clickedColor());
-                        return deletedCount >= 0;
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        popInformation(message("Deleted") + ":" + deletedCount);
-                        if (deletedCount > 0) {
-                            afterDeletion();
-                        }
-                    }
-                };
-                start(task);
-            }
+        if (colorsController.clickedRect == null) {
+            return;
         }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+
+            private int deletedCount = 0;
+
+            @Override
+            protected boolean handle() {
+                deletedCount = tableColorPalette.delete(colorsController.clickedColor());
+                return deletedCount >= 0;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popInformation(message("Deleted") + ":" + deletedCount);
+                if (deletedCount > 0) {
+                    afterDeletion();
+                }
+            }
+        };
+        start(task);
     }
 
     @Override
@@ -711,25 +708,23 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
         if (palettesController.isAllColors()) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    return tableColorPalette.trim(palettesController.currentPaletteId());
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    refreshPalette();
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                return tableColorPalette.trim(palettesController.currentPaletteId());
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                refreshPalette();
+            }
+
+        };
+        start(task);
     }
 
     @FXML

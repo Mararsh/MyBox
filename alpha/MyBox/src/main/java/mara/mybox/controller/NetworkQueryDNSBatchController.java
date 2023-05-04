@@ -48,68 +48,66 @@ public class NetworkQueryDNSBatchController extends BaseController {
         dnsList.clear();
         loadingController = null;
         UserConfig.setString(baseName + "Hosts", hostsList.getText());
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                private StringBuilder s, f;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        String[] names = hostsList.getText().split("\n");
-                        s = new StringBuilder();
-                        f = new StringBuilder();
-                        String host, ip;
-                        for (String name : names) {
-                            if (NetworkTools.isIPv4(name)) {
-                                ip = name;
-                                host = NetworkTools.ip2host(ip);
-                            } else {
-                                host = name;
-                                ip = NetworkTools.host2ipv4(host);
-                            }
-                            if (host == null || host.isBlank() || ip == null || ip.isBlank()) {
-                                f.append(name).append("\n");
-                                if (loadingController != null) {
-                                    loadingController.setInfo(Languages.message("Failed") + ":  " + name);
-                                }
-                            } else {
-                                s.append(ip).append("\t ").append(host).append("\n");
-                                if (loadingController != null) {
-                                    loadingController.setInfo(host + "\t\t" + ip);
-                                }
-                            }
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    dnsList.setText(s.toString());
-                                }
-                            });
-                            Thread.sleep(2000);
-                        }
-                        return true;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void finalAction() {
-                    dnsList.setText(s.toString());
-                    dnsList.setScrollTop(0);
-                    String failed = f.toString();
-                    if (!failed.isBlank()) {
-                        alertError(Languages.message("Failed") + ":\n" + failed);
-                    }
-                    task = null;
-                }
-
-            };
-            loadingController = start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+            private StringBuilder s, f;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    String[] names = hostsList.getText().split("\n");
+                    s = new StringBuilder();
+                    f = new StringBuilder();
+                    String host, ip;
+                    for (String name : names) {
+                        if (NetworkTools.isIPv4(name)) {
+                            ip = name;
+                            host = NetworkTools.ip2host(ip);
+                        } else {
+                            host = name;
+                            ip = NetworkTools.host2ipv4(host);
+                        }
+                        if (host == null || host.isBlank() || ip == null || ip.isBlank()) {
+                            f.append(name).append("\n");
+                            if (loadingController != null) {
+                                loadingController.setInfo(Languages.message("Failed") + ":  " + name);
+                            }
+                        } else {
+                            s.append(ip).append("\t ").append(host).append("\n");
+                            if (loadingController != null) {
+                                loadingController.setInfo(host + "\t\t" + ip);
+                            }
+                        }
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                dnsList.setText(s.toString());
+                            }
+                        });
+                        Thread.sleep(2000);
+                    }
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void finalAction() {
+                dnsList.setText(s.toString());
+                dnsList.setScrollTop(0);
+                String failed = f.toString();
+                if (!failed.isBlank()) {
+                    alertError(Languages.message("Failed") + ":\n" + failed);
+                }
+                task = null;
+            }
+
+        };
+        loadingController = start(task);
     }
 
     @FXML

@@ -70,6 +70,8 @@ public class Fxmls {
     public static final String MarkdownToPdfFxml = "/fxml/MarkdownToPdf.fxml";
     public static final String MarkdownPopFxml = "/fxml/MarkdownPop.fxml";
 
+    public static final String JsonEditorFxml = "/fxml/JsonEditor.fxml";
+
     public static final String TextEditorFxml = "/fxml/TextEditor.fxml";
     public static final String TextFilesConvertFxml = "/fxml/TextFilesConvert.fxml";
     public static final String TextFilesMergeFxml = "/fxml/TextFilesMerge.fxml";

@@ -333,6 +333,12 @@ public class FileFilters {
         }
     };
 
+    public static List<FileChooser.ExtensionFilter> JSONExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("json", "*.json"));
+        }
+    };
+
     public static List<FileChooser.ExtensionFilter> ImagesListExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
             add(new FileChooser.ExtensionFilter("*", "*.png", "*.jpg", "*.jpeg", "*.bmp",

@@ -31,8 +31,8 @@ import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.FileTmpTools;
+import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -270,7 +270,7 @@ public class ImageOCRController extends ImageViewerController {
                     ProcessBuilder pb = new ProcessBuilder(parameters).redirectErrorStream(true);
                     long startTime = new Date().getTime();
                     process = pb.start();
-                    try ( BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
+                    try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                         String line;
                         while ((line = inReader.readLine()) != null) {
                             outputs += line + "\n";
@@ -346,140 +346,137 @@ public class ImageOCRController extends ImageViewerController {
                 || ocrOptionsController.dataPathController.file() == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null) {
-                task.cancel();
-            }
-            task = new SingletonTask<Void>(this) {
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
 
-                private String texts, html;
-                private List<Rectangle> rectangles;
-                private List<Word> words;
+            private String texts, html;
+            private List<Rectangle> rectangles;
+            private List<Word> words;
 
-                @Override
-                protected boolean handle() {
-                    try {
-                        Tesseract instance = new Tesseract();
-                        // https://stackoverflow.com/questions/58286373/tess4j-pdf-to-tiff-to-tesseract-warning-invalid-resolution-0-dpi-using-70/58296472#58296472
-                        instance.setVariable("user_defined_dpi", "96");
-                        instance.setVariable("debug_file", "/dev/null");
-                        instance.setPageSegMode(ocrOptionsController.psm);
-                        Map<String, String> p = ocrOptionsController.checkParameters();
-                        if (p != null && !p.isEmpty()) {
-                            for (String key : p.keySet()) {
-                                instance.setVariable(key, p.get(key));
-                            }
+            @Override
+            protected boolean handle() {
+                try {
+                    Tesseract instance = new Tesseract();
+                    // https://stackoverflow.com/questions/58286373/tess4j-pdf-to-tiff-to-tesseract-warning-invalid-resolution-0-dpi-using-70/58296472#58296472
+                    instance.setVariable("user_defined_dpi", "96");
+                    instance.setVariable("debug_file", "/dev/null");
+                    instance.setPageSegMode(ocrOptionsController.psm);
+                    Map<String, String> p = ocrOptionsController.checkParameters();
+                    if (p != null && !p.isEmpty()) {
+                        for (String key : p.keySet()) {
+                            instance.setVariable(key, p.get(key));
                         }
-                        instance.setDatapath(ocrOptionsController.dataPathController.file().getAbsolutePath());
-                        if (ocrOptionsController.selectedLanguages != null) {
-                            instance.setLanguage(ocrOptionsController.selectedLanguages);
-                        }
-                        Image selected = preprocessController.imageToHandle();
-                        if (selected == null) {
-                            selected = preprocessController.imageView.getImage();
-                        }
+                    }
+                    instance.setDatapath(ocrOptionsController.dataPathController.file().getAbsolutePath());
+                    if (ocrOptionsController.selectedLanguages != null) {
+                        instance.setLanguage(ocrOptionsController.selectedLanguages);
+                    }
+                    Image selected = preprocessController.imageToHandle();
+                    if (selected == null) {
+                        selected = preprocessController.imageView.getImage();
+                    }
 
-                        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(selected, null);
-                        bufferedImage = AlphaTools.removeAlpha(bufferedImage);
-                        if (task == null || isCancelled() || bufferedImage == null) {
-                            return false;
-                        }
-
-                        List<ITesseract.RenderedFormat> formats = new ArrayList<>();
-                        formats.add(ITesseract.RenderedFormat.TEXT);
-                        formats.add(ITesseract.RenderedFormat.HOCR);
-
-                        File tmpFile = File.createTempFile("MyboxOCR", "");
-                        String tmp = File.createTempFile("MyboxOCR", "").getAbsolutePath();
-                        FileDeleteTools.delete(tmpFile);
-
-                        instance.createDocumentsWithResults​(bufferedImage, tmp,
-                                tmp, formats, ITessAPI.TessPageIteratorLevel.RIL_SYMBOL);
-                        File txtFile = new File(tmp + ".txt");
-                        texts = TextFileTools.readTexts(txtFile);
-                        FileDeleteTools.delete(txtFile);
-
-                        File htmlFile = new File(tmp + ".hocr");
-                        html = TextFileTools.readTexts(htmlFile);
-                        FileDeleteTools.delete(htmlFile);
-
-                        if (ocrOptionsController.wordLevel >= 0) {
-                            words = instance.getWords(bufferedImage, ocrOptionsController.wordLevel);
-                        }
-
-                        if (ocrOptionsController.regionLevel >= 0) {
-                            rectangles = instance.getSegmentedRegions(bufferedImage, ocrOptionsController.regionLevel);
-                        }
-
-                        return texts != null;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        MyBoxLog.debug(e.toString());
+                    BufferedImage bufferedImage = SwingFXUtils.fromFXImage(selected, null);
+                    bufferedImage = AlphaTools.removeAlpha(bufferedImage);
+                    if (task == null || isCancelled() || bufferedImage == null) {
                         return false;
                     }
+
+                    List<ITesseract.RenderedFormat> formats = new ArrayList<>();
+                    formats.add(ITesseract.RenderedFormat.TEXT);
+                    formats.add(ITesseract.RenderedFormat.HOCR);
+
+                    File tmpFile = File.createTempFile("MyboxOCR", "");
+                    String tmp = File.createTempFile("MyboxOCR", "").getAbsolutePath();
+                    FileDeleteTools.delete(tmpFile);
+
+                    instance.createDocumentsWithResults​(bufferedImage, tmp,
+                            tmp, formats, ITessAPI.TessPageIteratorLevel.RIL_SYMBOL);
+                    File txtFile = new File(tmp + ".txt");
+                    texts = TextFileTools.readTexts(txtFile);
+                    FileDeleteTools.delete(txtFile);
+
+                    File htmlFile = new File(tmp + ".hocr");
+                    html = TextFileTools.readTexts(htmlFile);
+                    FileDeleteTools.delete(htmlFile);
+
+                    if (ocrOptionsController.wordLevel >= 0) {
+                        words = instance.getWords(bufferedImage, ocrOptionsController.wordLevel);
+                    }
+
+                    if (ocrOptionsController.regionLevel >= 0) {
+                        rectangles = instance.getSegmentedRegions(bufferedImage, ocrOptionsController.regionLevel);
+                    }
+
+                    return texts != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    MyBoxLog.debug(e.toString());
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (texts.length() == 0) {
+                    popWarn(Languages.message("OCRMissComments"));
+                }
+                textArea.setText(texts);
+                resultLabel.setText(MessageFormat.format(Languages.message("OCRresults"),
+                        texts.length(), DateTools.datetimeMsDuration(cost)));
+                ocrTabPane.getSelectionModel().select(txtTab);
+
+                htmlController.loadHtml(html);
+
+                if (rectangles != null) {
+                    List<String> names = new ArrayList<>();
+                    names.addAll(Arrays.asList(Languages.message("Index"),
+                            Languages.message("CoordinateX"), Languages.message("CoordinateY"),
+                            Languages.message("Width"), Languages.message("Height")
+                    ));
+                    regionsTableController.initTable(Languages.message(""), names);
+                    for (int i = 0; i < rectangles.size(); ++i) {
+                        Rectangle rect = rectangles.get(i);
+                        List<String> data = new ArrayList<>();
+                        data.addAll(Arrays.asList(
+                                i + "", rect.x + "", rect.y + "", rect.width + "", rect.height + ""
+                        ));
+                        regionsTableController.addData(data);
+                    }
+                    regionsTableController.displayHtml();
+                } else {
+                    regionsTableController.clear();
                 }
 
-                @Override
-                protected void whenSucceeded() {
-                    if (texts.length() == 0) {
-                        popWarn(Languages.message("OCRMissComments"));
-                    }
-                    textArea.setText(texts);
-                    resultLabel.setText(MessageFormat.format(Languages.message("OCRresults"),
-                            texts.length(), DateTools.datetimeMsDuration(cost)));
-                    ocrTabPane.getSelectionModel().select(txtTab);
-
-                    htmlController.loadHtml(html);
-
-                    if (rectangles != null) {
-                        List<String> names = new ArrayList<>();
-                        names.addAll(Arrays.asList(Languages.message("Index"),
-                                Languages.message("CoordinateX"), Languages.message("CoordinateY"),
-                                Languages.message("Width"), Languages.message("Height")
+                if (words != null) {
+                    List<String> names = new ArrayList<>();
+                    names.addAll(Arrays.asList(Languages.message("Index"),
+                            Languages.message("Contents"), Languages.message("Confidence"),
+                            Languages.message("CoordinateX"), Languages.message("CoordinateY"),
+                            Languages.message("Width"), Languages.message("Height")
+                    ));
+                    wordsTableController.initTable(Languages.message(""), names);
+                    for (int i = 0; i < words.size(); ++i) {
+                        Word word = words.get(i);
+                        Rectangle rect = word.getBoundingBox();
+                        List<String> data = new ArrayList<>();
+                        data.addAll(Arrays.asList(
+                                i + "", word.getText(), word.getConfidence() + "",
+                                rect.x + "", rect.y + "", rect.width + "", rect.height + ""
                         ));
-                        regionsTableController.initTable(Languages.message(""), names);
-                        for (int i = 0; i < rectangles.size(); ++i) {
-                            Rectangle rect = rectangles.get(i);
-                            List<String> data = new ArrayList<>();
-                            data.addAll(Arrays.asList(
-                                    i + "", rect.x + "", rect.y + "", rect.width + "", rect.height + ""
-                            ));
-                            regionsTableController.addData(data);
-                        }
-                        regionsTableController.displayHtml();
-                    } else {
-                        regionsTableController.clear();
+                        wordsTableController.addData(data);
+                        wordsTableController.displayHtml();
                     }
-
-                    if (words != null) {
-                        List<String> names = new ArrayList<>();
-                        names.addAll(Arrays.asList(Languages.message("Index"),
-                                Languages.message("Contents"), Languages.message("Confidence"),
-                                Languages.message("CoordinateX"), Languages.message("CoordinateY"),
-                                Languages.message("Width"), Languages.message("Height")
-                        ));
-                        wordsTableController.initTable(Languages.message(""), names);
-                        for (int i = 0; i < words.size(); ++i) {
-                            Word word = words.get(i);
-                            Rectangle rect = word.getBoundingBox();
-                            List<String> data = new ArrayList<>();
-                            data.addAll(Arrays.asList(
-                                    i + "", word.getText(), word.getConfidence() + "",
-                                    rect.x + "", rect.y + "", rect.width + "", rect.height + ""
-                            ));
-                            wordsTableController.addData(data);
-                            wordsTableController.displayHtml();
-                        }
-                    } else {
-                        wordsTableController.clear();
-                    }
-
+                } else {
+                    wordsTableController.clear();
                 }
 
-            };
-            start(task);
-        }
+            }
 
+        };
+        start(task);
     }
 
     @Override

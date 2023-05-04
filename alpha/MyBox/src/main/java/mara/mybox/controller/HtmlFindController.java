@@ -171,98 +171,97 @@ public class HtmlFindController extends WebAddressController {
 
     @FXML
     protected void queryAction() {
-        synchronized (this) {
-            if (task != null) {
-                task.cancel();
-                task = null;
-            }
-            if (sourceHtml == null) {
-                sourceHtml = WebViewTools.getHtml(webEngine);
-            }
-            if (sourceHtml == null || sourceHtml.isBlank()) {
-                popError(message("NoData"));
-                return;
-            }
-            String string = findInput.getText();
-            if (string == null || string.isBlank()) {
-                popError(message("InvalidParameters") + ": " + message("Find"));
-                return;
-            }
-            TableStringValues.add("HtmlFindHistories", string);
-            reset();
-            isQuerying = true;
-            task = new SingletonTask<Void>(this) {
+        if (task != null) {
+            task.cancel();
+            task = null;
+        }
+        if (sourceHtml == null) {
+            sourceHtml = WebViewTools.getHtml(webEngine);
+        }
+        if (sourceHtml == null || sourceHtml.isBlank()) {
+            popError(message("NoData"));
+            return;
+        }
+        String string = findInput.getText();
+        if (string == null || string.isBlank()) {
+            popError(message("InvalidParameters") + ": " + message("Find"));
+            return;
+        }
+        TableStringValues.add("HtmlFindHistories", string);
+        reset();
+        isQuerying = true;
+        task = new SingletonTask<Void>(this) {
 
-                private StringBuilder results;
+            private StringBuilder results;
 
-                @Override
-                protected boolean handle() {
-                    try {
-                        String findString = HtmlWriteTools.stringToHtml(string);
+            @Override
+            protected boolean handle() {
+                try {
+                    String findString = HtmlWriteTools.stringToHtml(string);
 
-                        String font = findFontSelector.getValue();
-                        UserConfig.setString(baseName + "Font", font);
+                    String font = findFontSelector.getValue();
+                    UserConfig.setString(baseName + "Font", font);
 
-                        FindReplaceString textsChecker = FindReplaceString.create()
-                                .setOperation(FindReplaceString.Operation.FindNext)
-                                .setIsRegex(false).setCaseInsensitive(true).setMultiline(true);
+                    FindReplaceString textsChecker = FindReplaceString.create()
+                            .setOperation(FindReplaceString.Operation.FindNext)
+                            .setIsRegex(false).setCaseInsensitive(true).setMultiline(true);
 
-                        FindReplaceString finder = FindReplaceString.create()
-                                .setOperation(FindReplaceString.Operation.FindNext).setFindString(findString)
-                                .setIsRegex(regCheck.isSelected()).setCaseInsensitive(caseCheck.isSelected()).setMultiline(true);
-                        String inputString = sourceHtml;
-                        String replaceSuffix = " style=\"" + itemsStyle() + "\" >" + findString + "</span>";
+                    FindReplaceString finder = FindReplaceString.create()
+                            .setOperation(FindReplaceString.Operation.FindNext).setFindString(findString)
+                            .setIsRegex(regCheck.isSelected()).setCaseInsensitive(caseCheck.isSelected()).setMultiline(true);
+                    String inputString = sourceHtml;
+                    String replaceSuffix = " style=\"" + itemsStyle() + "\" >" + findString + "</span>";
 
-                        results = new StringBuilder();
-                        String texts;
+                    results = new StringBuilder();
+                    String texts;
 
-                        textsChecker.setInputString(inputString).setFindString("</head>").setAnchor(0).run();
-                        if (textsChecker.getStringRange() != null) {
-                            results.append(inputString.substring(0, textsChecker.getLastEnd()));
-                            inputString = inputString.substring(textsChecker.getLastEnd());
+                    textsChecker.setInputString(inputString).setFindString("</head>").setAnchor(0).run();
+                    if (textsChecker.getStringRange() != null) {
+                        results.append(inputString.substring(0, textsChecker.getLastEnd()));
+                        inputString = inputString.substring(textsChecker.getLastEnd());
+                    }
+                    while (!inputString.isBlank()) {
+                        textsChecker.setInputString(inputString).setFindString(">").setAnchor(0).run();
+                        if (textsChecker.getStringRange() == null) {
+                            break;
                         }
-                        while (!inputString.isBlank()) {
-                            textsChecker.setInputString(inputString).setFindString(">").setAnchor(0).run();
-                            if (textsChecker.getStringRange() == null) {
+                        results.append(inputString.substring(0, textsChecker.getLastEnd()));
+                        inputString = inputString.substring(textsChecker.getLastEnd());
+                        textsChecker.setInputString(inputString).setFindString("<").setAnchor(0).run();
+                        if (textsChecker.getStringRange() == null) {
+                            texts = inputString;
+                            inputString = "";
+                        } else {
+                            if (textsChecker.getLastStart() > 0) {
+                                texts = inputString.substring(0, textsChecker.getLastStart());
+                            } else {
+                                texts = "";
+                            }
+                            inputString = inputString.substring(textsChecker.getLastStart());
+                        }
+                        if (texts.isEmpty()) {
+                            continue;
+                        }
+                        StringBuilder r = new StringBuilder();
+                        while (!texts.isBlank()) {
+                            finder.setInputString(texts).setAnchor(0).run();
+                            if (finder.getStringRange() == null) {
                                 break;
                             }
-                            results.append(inputString.substring(0, textsChecker.getLastEnd()));
-                            inputString = inputString.substring(textsChecker.getLastEnd());
-                            textsChecker.setInputString(inputString).setFindString("<").setAnchor(0).run();
-                            if (textsChecker.getStringRange() == null) {
-                                texts = inputString;
-                                inputString = "";
-                            } else {
-                                if (textsChecker.getLastStart() > 0) {
-                                    texts = inputString.substring(0, textsChecker.getLastStart());
-                                } else {
-                                    texts = "";
-                                }
-                                inputString = inputString.substring(textsChecker.getLastStart());
+                            String replaceString = "<span id=\"" + ItemPrefix + (++foundCount) + "\" " + replaceSuffix;
+                            if (finder.getLastStart() > 0) {
+                                r.append(texts.substring(0, finder.getLastStart()));
                             }
-                            if (texts.isEmpty()) {
-                                continue;
-                            }
-                            StringBuilder r = new StringBuilder();
-                            while (!texts.isBlank()) {
-                                finder.setInputString(texts).setAnchor(0).run();
-                                if (finder.getStringRange() == null) {
-                                    break;
-                                }
-                                String replaceString = "<span id=\"" + ItemPrefix + (++foundCount) + "\" " + replaceSuffix;
-                                if (finder.getLastStart() > 0) {
-                                    r.append(texts.substring(0, finder.getLastStart()));
-                                }
-                                r.append(replaceString);
-                                texts = texts.substring(finder.getLastEnd());
-                                Platform.runLater(() -> {
-                                    loading.setInfo(message("Found") + ": " + foundCount);
-                                });
-                            }
-                            r.append(texts);
-                            results.append(r.toString());
+                            r.append(replaceString);
+                            texts = texts.substring(finder.getLastEnd());
+                            Platform.runLater(() -> {
+                                loading.setInfo(message("Found") + ": " + foundCount);
+                            });
                         }
-                        results.append(inputString);
+                        r.append(texts);
+                        results.append(r.toString());
+                    }
+                    results.append(inputString);
 
 //                        String prehead = HtmlReadTools.preHtml(sourceHtml);
 //                        String head = HtmlReadTools.tag(sourceHtml, "head", true);
@@ -272,44 +271,43 @@ public class HtmlFindController extends WebAddressController {
 //                                + "\n<body>\n"
 //                                + results.toString()
 //                                + "\n</body>\n</html>";
-                        return true;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                String info = message("Found") + ": " + foundCount;
+                foundLabel.setText(info);
+
+                foundItem = 0;
+                if (foundCount > 0) {
+                    List<String> numbers = new ArrayList<>();
+                    for (int i = 1; i <= foundCount; i++) {
+                        numbers.add(i + "");
                     }
+                    foundItemSelector.getItems().setAll(numbers);
+                    foundItemSelector.getSelectionModel().select(0);
+                    goItemButton.setDisable(false);
+                    firstButton.setDisable(false);
+                    previousButton.setDisable(false);
+                    nextButton.setDisable(false);
+                    lastButton.setDisable(false);
                 }
+                loadContents(results.toString());
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    String info = message("Found") + ": " + foundCount;
-                    foundLabel.setText(info);
+            @Override
+            protected void finalAction() {
+                loading = null;
+                task = null;
+            }
 
-                    foundItem = 0;
-                    if (foundCount > 0) {
-                        List<String> numbers = new ArrayList<>();
-                        for (int i = 1; i <= foundCount; i++) {
-                            numbers.add(i + "");
-                        }
-                        foundItemSelector.getItems().setAll(numbers);
-                        foundItemSelector.getSelectionModel().select(0);
-                        goItemButton.setDisable(false);
-                        firstButton.setDisable(false);
-                        previousButton.setDisable(false);
-                        nextButton.setDisable(false);
-                        lastButton.setDisable(false);
-                    }
-                    loadContents(results.toString());
-                }
-
-                @Override
-                protected void finalAction() {
-                    loading = null;
-                    task = null;
-                }
-
-            };
-            loading = start(task);
-        }
+        };
+        loading = start(task);
     }
 
     protected String itemsStyle() {

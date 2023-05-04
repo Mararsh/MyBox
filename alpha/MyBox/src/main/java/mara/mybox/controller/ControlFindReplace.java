@@ -502,187 +502,183 @@ public class ControlFindReplace extends BaseController {
         if (editerController == null || !makeParamters(operation)) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            textInput.deselect();
-            task = new SingletonTask<Void>(this) {
+        if (task != null) {
+            task.cancel();
+        }
+        textInput.deselect();
+        task = new SingletonTask<Void>(this) {
 
-                protected IndexRange lastStringRange;
-                private boolean askSave = false;
+            protected IndexRange lastStringRange;
+            private boolean askSave = false;
 
-                @Override
-                protected boolean handle() {
-                    if (!findReplace.isMultiplePages()) {
-                        if (!findReplace.run()) {
-                            error = findReplace.getError();
-                        }
-                    } else if (!findReplace.page()) {
-                        if (editerController.fileChanged.getValue()) {
-                            askSave = true;
-                            return false;
-                        }
-                        if (!findReplace.file()) {
-                            error = findReplace.getError();
-                        }
+            @Override
+            protected boolean handle() {
+                if (!findReplace.isMultiplePages()) {
+                    if (!findReplace.run()) {
+                        error = findReplace.getError();
                     }
-                    if (error != null) {
+                } else if (!findReplace.page()) {
+                    if (editerController.fileChanged.getValue()) {
+                        askSave = true;
                         return false;
                     }
-                    lastStringRange = findReplace.getStringRange();
-                    return true;
+                    if (!findReplace.file()) {
+                        error = findReplace.getError();
+                    }
                 }
+                if (error != null) {
+                    return false;
+                }
+                lastStringRange = findReplace.getStringRange();
+                return true;
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    String info = "";
-                    switch (operation) {
-                        case Count: {
-                            int count = findReplace.getCount();
-                            if (count > 0) {
-                                info = MessageFormat.format(message("CountNumber"), count);
-                            } else {
-                                info = message("NotFound");
-                            }
-                            break;
+            @Override
+            protected void whenSucceeded() {
+                String info = "";
+                switch (operation) {
+                    case Count: {
+                        int count = findReplace.getCount();
+                        if (count > 0) {
+                            info = MessageFormat.format(message("CountNumber"), count);
+                        } else {
+                            info = message("NotFound");
                         }
-                        case ReplaceAll: {
-                            int count = findReplace.getCount();
-                            if (count > 0) {
-                                textInput.deselect();
-                                if (findReplace.isMultiplePages()) {
-                                    editerController.sourceInformation.setTotalNumberRead(false);
-                                    editerController.loadPage();
-                                } else {
-                                    editerController.loadText(findReplace.getOutputString(), true);
-                                }
-                                info = MessageFormat.format(message("ReplaceAllOk"), count);
+                        break;
+                    }
+                    case ReplaceAll: {
+                        int count = findReplace.getCount();
+                        if (count > 0) {
+                            textInput.deselect();
+                            if (findReplace.isMultiplePages()) {
+                                editerController.sourceInformation.setTotalNumberRead(false);
+                                editerController.loadPage();
                             } else {
-                                info = message("NotFound");
+                                editerController.loadText(findReplace.getOutputString(), true);
                             }
-                            break;
+                            info = MessageFormat.format(message("ReplaceAllOk"), count);
+                        } else {
+                            info = message("NotFound");
                         }
-                        default:
-                            if (lastStringRange != null) {
-                                int unit = findReplace.getUnit();
-                                if (operation == Operation.FindNext || operation == Operation.FindPrevious) {
-                                    editerController.loadText(findReplace.getOutputString(), editerController.fileChanged.getValue());
-                                    editerController.selectObjects(lastStringRange.getStart(), (int) lastStringRange.getLength());
-                                } else if (operation == Operation.ReplaceFirst) {
-                                    editerController.loadText(findReplace.getOutputString(), true);
-                                    editerController.selectObjects(lastStringRange.getStart(), findReplace.getReplaceString().length());
-                                }
-                                LongRange fileRange = findReplace.getFileRange();
-                                if (fileRange != null && findReplace.isMultiplePages()) {
-                                    info = message("RangeInFile") + ":" + (fileRange.getStart() / unit + 1) + "-" + (fileRange.getEnd() / unit) + "\n";
-                                }
-                                info += message("RangeInPage") + ":" + (lastStringRange.getStart() / unit + 1) + "-" + (lastStringRange.getEnd() / unit);
-                            } else {
-                                info = message("NotFound");
+                        break;
+                    }
+                    default:
+                        if (lastStringRange != null) {
+                            int unit = findReplace.getUnit();
+                            if (operation == Operation.FindNext || operation == Operation.FindPrevious) {
+                                editerController.loadText(findReplace.getOutputString(), editerController.fileChanged.getValue());
+                                editerController.selectObjects(lastStringRange.getStart(), (int) lastStringRange.getLength());
+                            } else if (operation == Operation.ReplaceFirst) {
+                                editerController.loadText(findReplace.getOutputString(), true);
+                                editerController.selectObjects(lastStringRange.getStart(), findReplace.getReplaceString().length());
                             }
-                    }
-                    if (!info.isBlank()) {
-                        findLabel.setText(info);
-                        editerController.popInformation(info);
-                    }
+                            LongRange fileRange = findReplace.getFileRange();
+                            if (fileRange != null && findReplace.isMultiplePages()) {
+                                info = message("RangeInFile") + ":" + (fileRange.getStart() / unit + 1) + "-" + (fileRange.getEnd() / unit) + "\n";
+                            }
+                            info += message("RangeInPage") + ":" + (lastStringRange.getStart() / unit + 1) + "-" + (lastStringRange.getEnd() / unit);
+                        } else {
+                            info = message("NotFound");
+                        }
                 }
-
-                @Override
-                protected void whenFailed() {
-                    if (askSave) {
-                        editerController.checkBeforeNextAction();
-                    } else if (error != null) {
-                        popError(message(error));
-                    } else {
-                        popFailed();
-                    }
+                if (!info.isBlank()) {
+                    findLabel.setText(info);
+                    editerController.popInformation(info);
                 }
+            }
 
-            };
-            editerController.start(task);
-        }
+            @Override
+            protected void whenFailed() {
+                if (askSave) {
+                    editerController.checkBeforeNextAction();
+                } else if (error != null) {
+                    popError(message(error));
+                } else {
+                    popFailed();
+                }
+            }
+
+        };
+        start(task);
     }
 
     protected void inputFindReplace(Operation operation) {
         if (textInput == null || !makeParamters(operation)) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                protected IndexRange lastStringRange;
-
-                @Override
-                protected boolean handle() {
-                    if (!findReplace.run()) {
-                        error = findReplace.getError();
-                    }
-                    if (error != null) {
-                        return false;
-                    }
-                    lastStringRange = findReplace.getStringRange();
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    String info = "";
-                    if (textInput instanceof TextField) {
-                        textInput.getScene().getWindow().requestFocus();
-                        textInput.requestFocus();
-                    }
-                    switch (operation) {
-                        case Count: {
-                            int count = findReplace.getCount();
-                            if (count > 0) {
-                                info = MessageFormat.format(message("CountNumber"), count);
-                            } else {
-                                info = message("NotFound");
-                            }
-                            break;
-                        }
-                        case ReplaceAll: {
-                            int count = findReplace.getCount();
-                            if (count > 0) {
-                                textInput.deselect();
-                                textInput.setText(findReplace.getOutputString());
-                                info = MessageFormat.format(message("ReplaceAllOk"), count);
-                            } else {
-                                info = message("NotFound");
-                            }
-                            break;
-                        }
-                        default:
-                            if (lastStringRange != null) {
-                                int start = lastStringRange.getStart();
-                                int end = lastStringRange.getEnd();
-                                textInput.deselect();
-                                if (operation == Operation.FindNext || operation == Operation.FindPrevious) {
-                                    textInput.selectRange(end, start);
-                                    info = message("Found") + ": " + (start + 1) + "-" + end;
-
-                                } else if (operation == Operation.ReplaceFirst) {
-                                    textInput.replaceText(lastStringRange, findReplace.getReplaceString());
-                                    textInput.selectRange(start + findReplace.getReplaceString().length(), start);
-                                    info = message("Replaced") + ": " + (start + 1) + "-" + end;
-                                }
-                            } else {
-                                info = message("NotFound");
-                            }
-                    }
-                    if (!info.isBlank()) {
-                        findLabel.setText(info);
-                        popInformation(info, textInput);
-                    }
-                }
-
-            };
-            start(task, false);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            protected IndexRange lastStringRange;
+
+            @Override
+            protected boolean handle() {
+                if (!findReplace.run()) {
+                    error = findReplace.getError();
+                }
+                if (error != null) {
+                    return false;
+                }
+                lastStringRange = findReplace.getStringRange();
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                String info = "";
+                if (textInput instanceof TextField) {
+                    textInput.getScene().getWindow().requestFocus();
+                    textInput.requestFocus();
+                }
+                switch (operation) {
+                    case Count: {
+                        int count = findReplace.getCount();
+                        if (count > 0) {
+                            info = MessageFormat.format(message("CountNumber"), count);
+                        } else {
+                            info = message("NotFound");
+                        }
+                        break;
+                    }
+                    case ReplaceAll: {
+                        int count = findReplace.getCount();
+                        if (count > 0) {
+                            textInput.deselect();
+                            textInput.setText(findReplace.getOutputString());
+                            info = MessageFormat.format(message("ReplaceAllOk"), count);
+                        } else {
+                            info = message("NotFound");
+                        }
+                        break;
+                    }
+                    default:
+                        if (lastStringRange != null) {
+                            int start = lastStringRange.getStart();
+                            int end = lastStringRange.getEnd();
+                            textInput.deselect();
+                            if (operation == Operation.FindNext || operation == Operation.FindPrevious) {
+                                textInput.selectRange(end, start);
+                                info = message("Found") + ": " + (start + 1) + "-" + end;
+
+                            } else if (operation == Operation.ReplaceFirst) {
+                                textInput.replaceText(lastStringRange, findReplace.getReplaceString());
+                                textInput.selectRange(start + findReplace.getReplaceString().length(), start);
+                                info = message("Replaced") + ": " + (start + 1) + "-" + end;
+                            }
+                        } else {
+                            info = message("NotFound");
+                        }
+                }
+                if (!info.isBlank()) {
+                    findLabel.setText(info);
+                    popInformation(info, textInput);
+                }
+            }
+
+        };
+        start(task, false);
     }
 
     @FXML

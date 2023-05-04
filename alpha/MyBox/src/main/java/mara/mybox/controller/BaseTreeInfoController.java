@@ -521,36 +521,34 @@ public class BaseTreeInfoController extends BaseController {
             popError(message("NameShouldNotInclude") + " \"" + NodeSeparater + "\"");
             return;
         }
-        synchronized (this) {
-            if (task != null) {
-                task.cancel();
-            }
-            task = new SingletonTask<Void>(this) {
-                private TreeNode newNode;
-
-                @Override
-                protected boolean handle() {
-                    newNode = createNode(targetNode, name);
-                    return newNode != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    TreeItem<TreeNode> newItem = new TreeItem<>(newNode);
-                    targetItem.getChildren().add(newItem);
-                    targetItem.setExpanded(true);
-                    nodeAdded(targetNode, newNode);
-                    popSuccessful();
-                }
-
-                @Override
-                protected void finalAction() {
-                    super.finalAction();
-                }
-
-            };
-            start(task, infoTree);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+            private TreeNode newNode;
+
+            @Override
+            protected boolean handle() {
+                newNode = createNode(targetNode, name);
+                return newNode != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                TreeItem<TreeNode> newItem = new TreeItem<>(newNode);
+                targetItem.getChildren().add(newItem);
+                targetItem.setExpanded(true);
+                nodeAdded(targetNode, newNode);
+                popSuccessful();
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+            }
+
+        };
+        start(task, infoTree);
     }
 
     @FXML

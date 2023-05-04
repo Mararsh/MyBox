@@ -364,9 +364,14 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
                 ExtractTextsFromMS
         );
 
+        MenuItem jsonMenu = new MenuItem("JSON");
+        jsonMenu.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.JsonEditorFxml);
+        });
+
         List<MenuItem> items = new ArrayList<>();
         items.addAll(Arrays.asList(Notes, InformationInTree, new SeparatorMenuItem(),
-                pdfMenu, markdownMenu, htmlMenu, textsMenu, msMenu, bytesEditer, new SeparatorMenuItem(),
+                pdfMenu, markdownMenu, jsonMenu, htmlMenu, textsMenu, msMenu, bytesEditer, new SeparatorMenuItem(),
                 TextInMyBoxClipboard, TextInSystemClipboard));
 
         items.add(new SeparatorMenuItem());

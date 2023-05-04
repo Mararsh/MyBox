@@ -130,7 +130,7 @@ public class ImageManufactureController extends ImageManufactureController_Actio
         if (task != null) {
             task.cancel();
         }
-        File tmpFile = FileTmpTools.getTempFile(".png");
+        File tmpFile = FileTmpTools.generateFile("png");
         task = new SingletonTask<Void>(this) {
 
             @Override
@@ -145,7 +145,6 @@ public class ImageManufactureController extends ImageManufactureController_Actio
             @Override
             protected void whenSucceeded() {
                 sourceFileChanged(tmpFile);
-                alertInformation(message("TempFileComments"));
             }
         };
         start(task);

@@ -122,26 +122,24 @@ public abstract class BaseSysTableController<P> extends BaseTableViewController<
         if (file == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    importData(file);
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSuccessful();
-                    refreshAction();
-                }
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                importData(file);
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popSuccessful();
+                refreshAction();
+            }
+        };
+        start(task);
     }
 
     protected void importData(File file) {
@@ -155,27 +153,25 @@ public abstract class BaseSysTableController<P> extends BaseTableViewController<
         if (file == null) {
             return;
         }
-        recordFileWritten(file);
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    DerbyBase.exportData(tableName, file.getAbsolutePath());
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSuccessful();
-                    TextEditorController.open(file);
-                }
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                DerbyBase.exportData(tableName, file.getAbsolutePath());
+                recordFileWritten(file);
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popSuccessful();
+                TextEditorController.open(file);
+            }
+        };
+        start(task);
     }
 
     @FXML

@@ -35,34 +35,35 @@ public class ImageScopePopController extends ImagePopController {
         if (scopeController == null) {
             return;
         }
-        synchronized (this) {
-            SingletonTask popTask = new SingletonTask<Void>(this) {
-
-                private Image scopeImage;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        PixelsOperation pixelsOperation = PixelsOperationFactory.create(scopeController.imageView.getImage(),
-                                scopeController.scope, PixelsOperation.OperationType.PreOpacity, PixelsOperation.ColorActionType.Set);
-                        pixelsOperation.setSkipTransparent(scopeController.ignoreTransparentCheck.isSelected());
-                        pixelsOperation.setIntPara1(255 - (int) (scopeController.opacity * 255));
-                        pixelsOperation.setExcludeScope(true);
-                        scopeImage = pixelsOperation.operateFxImage();
-                        return true;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    loadImage(scopeImage);
-                }
-            };
-            start(popTask, false);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private Image scopeImage;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    PixelsOperation pixelsOperation = PixelsOperationFactory.create(scopeController.imageView.getImage(),
+                            scopeController.scope, PixelsOperation.OperationType.PreOpacity, PixelsOperation.ColorActionType.Set);
+                    pixelsOperation.setSkipTransparent(scopeController.ignoreTransparentCheck.isSelected());
+                    pixelsOperation.setIntPara1(255 - (int) (scopeController.opacity * 255));
+                    pixelsOperation.setExcludeScope(true);
+                    scopeImage = pixelsOperation.operateFxImage();
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                loadImage(scopeImage);
+            }
+        };
+        start(task);
     }
 
     @Override

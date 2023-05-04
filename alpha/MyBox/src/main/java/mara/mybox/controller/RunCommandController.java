@@ -56,55 +56,53 @@ public class RunCommandController extends HtmlPopController {
             return;
         }
         output("<font color=\"blue\"><b>&gt;&nbsp;" + HtmlWriteTools.stringToHtml(cmd) + "</b></font><br>");
-        synchronized (this) {
-            if (task != null) {
-                task.cancel();
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        List<String> p = new ArrayList<>();
-                        p.addAll(Arrays.asList(StringTools.splitBySpace(cmd)));
-                        ProcessBuilder pb = new ProcessBuilder(p).redirectErrorStream(true);
-                        process = pb.start();
-                        try ( BufferedReader inReader = process.inputReader(charset)) {
-                            String line;
-                            while ((line = inReader.readLine()) != null) {
-                                output(HtmlWriteTools.stringToHtml(line) + "<br>");
-                            }
-                        }
-                        process.waitFor();
-                        return true;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    setStatus(message("Completed"));
-                }
-
-                @Override
-                protected void whenCanceled() {
-                    setStatus(message("Canceled"));
-                }
-
-                @Override
-                protected void whenFailed() {
-                    setStatus(message("Failed") + "<br>\n" + error);
-                }
-
-                @Override
-                protected void finalAction() {
-                    cancelCommand();
-                }
-            };
-            start(task, false);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    List<String> p = new ArrayList<>();
+                    p.addAll(Arrays.asList(StringTools.splitBySpace(cmd)));
+                    ProcessBuilder pb = new ProcessBuilder(p).redirectErrorStream(true);
+                    process = pb.start();
+                    try (BufferedReader inReader = process.inputReader(charset)) {
+                        String line;
+                        while ((line = inReader.readLine()) != null) {
+                            output(HtmlWriteTools.stringToHtml(line) + "<br>");
+                        }
+                    }
+                    process.waitFor();
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                setStatus(message("Completed"));
+            }
+
+            @Override
+            protected void whenCanceled() {
+                setStatus(message("Canceled"));
+            }
+
+            @Override
+            protected void whenFailed() {
+                setStatus(message("Failed") + "<br>\n" + error);
+            }
+
+            @Override
+            protected void finalAction() {
+                cancelCommand();
+            }
+        };
+        start(task, false);
     }
 
     public void cancelCommand() {

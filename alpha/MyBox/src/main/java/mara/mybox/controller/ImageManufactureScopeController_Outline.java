@@ -169,34 +169,31 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
         if (file == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private BufferedImage bufferedImage;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        bufferedImage = ImageFileReaders.readImage(file);
-                        return bufferedImage != null;
-                    } catch (Exception e) {
-                        MyBoxLog.error(e.toString());
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    loadOutlineSource(bufferedImage);
-                }
-
-            };
-            parentController.start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
 
+            private BufferedImage bufferedImage;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    bufferedImage = ImageFileReaders.readImage(file);
+                    return bufferedImage != null;
+                } catch (Exception e) {
+                    MyBoxLog.error(e.toString());
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                loadOutlineSource(bufferedImage);
+            }
+
+        };
+        start(task);
     }
 
     public void loadOutlineSource(BufferedImage bufferedImage) {
@@ -227,97 +224,88 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
     }
 
     public void makeOutline() {
-        try {
-            if (isSettingValues || image == null
-                    || scope == null || scope.getScopeType() != ImageScope.ScopeType.Outline
-                    || outlineSource == null || maskRectangleData == null) {
-                return;
+        if (isSettingValues || image == null
+                || scope == null || scope.getScopeType() != ImageScope.ScopeType.Outline
+                || outlineSource == null || maskRectangleData == null) {
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+            private BufferedImage[] outline;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    outline = AlphaTools.outline(outlineSource,
+                            maskRectangleData, (int) getImageWidth(), (int) getImageHeight(),
+                            scopeOutlineKeepRatioCheck.isSelected(),
+                            ColorConvertTools.converColor(Color.WHITE), areaExcludedCheck.isSelected());
+                    if (task == null || isCancelled()) {
+                        return false;
+                    }
+                    return outline != null;
+                } catch (Exception e) {
+                    MyBoxLog.error(e.toString());
+                    return false;
+                }
             }
-            synchronized (this) {
-                if (task != null && !task.isQuit()) {
+
+            @Override
+            protected void whenSucceeded() {
+                if (scope == null) {   // this may happen jn quitOpearting()
                     return;
                 }
-                task = new SingletonTask<Void>(this) {
-                    private BufferedImage[] outline;
-
-                    @Override
-                    protected boolean handle() {
-                        try {
-                            outline = AlphaTools.outline(outlineSource,
-                                    maskRectangleData, (int) getImageWidth(), (int) getImageHeight(),
-                                    scopeOutlineKeepRatioCheck.isSelected(),
-                                    ColorConvertTools.converColor(Color.WHITE), areaExcludedCheck.isSelected());
-                            if (task == null || isCancelled()) {
-                                return false;
-                            }
-                            return outline != null;
-                        } catch (Exception e) {
-                            MyBoxLog.error(e.toString());
-                            return false;
-                        }
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        if (scope == null) {   // this may happen jn quitOpearting()
-                            return;
-                        }
-                        maskRectangleData = new DoubleRectangle(
-                                maskRectangleData.getSmallX(), maskRectangleData.getSmallY(),
-                                maskRectangleData.getSmallX() + outline[0].getWidth() - 1,
-                                maskRectangleData.getSmallY() + outline[0].getHeight() - 1);
-                        drawMaskRectangleLineAsData();
-                        scope.setOutlineSource(outlineSource);
-                        scope.setOutline(outline[1]);
-                        scope.setRectangle(maskRectangleData.cloneValues());
-                        displayOutline(outline[1]);
-                    }
-
-                };
-                parentController.start(task);
+                maskRectangleData = new DoubleRectangle(
+                        maskRectangleData.getSmallX(), maskRectangleData.getSmallY(),
+                        maskRectangleData.getSmallX() + outline[0].getWidth() - 1,
+                        maskRectangleData.getSmallY() + outline[0].getHeight() - 1);
+                drawMaskRectangleLineAsData();
+                scope.setOutlineSource(outlineSource);
+                scope.setOutline(outline[1]);
+                scope.setRectangle(maskRectangleData.cloneValues());
+                displayOutline(outline[1]);
             }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+
+        };
+        start(task);
     }
 
     protected void displayOutline(BufferedImage bufferedImage) {
         if (scope == null || bufferedImage == null || scope.getScopeType() != ImageScope.ScopeType.Outline) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                private Image outlineImage;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        outlineImage = SwingFXUtils.toFXImage(bufferedImage, null);
-                        return outlineImage != null;
-                    } catch (Exception e) {
-                        MyBoxLog.error(e.toString());
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    scopeView.setImage(outlineImage);
-                    double radio = imageView.getBoundsInParent().getWidth() / getImageWidth();
-                    double offsetX = maskRectangleData.getSmallX() >= 0 ? 0 : maskRectangleData.getSmallX();
-                    double offsetY = maskRectangleData.getSmallY() >= 0 ? 0 : maskRectangleData.getSmallY();
-                    scopeView.setLayoutX(imageView.getLayoutX() + offsetX * radio);
-                    scopeView.setLayoutY(imageView.getLayoutY() + offsetY * radio);
-                    scopeView.setFitWidth(outlineImage.getWidth() * radio);
-                    scopeView.setFitHeight(outlineImage.getHeight() * radio);
-                }
-            };
-            parentController.start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+            private Image outlineImage;
 
+            @Override
+            protected boolean handle() {
+                try {
+                    outlineImage = SwingFXUtils.toFXImage(bufferedImage, null);
+                    return outlineImage != null;
+                } catch (Exception e) {
+                    MyBoxLog.error(e.toString());
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                scopeView.setImage(outlineImage);
+                double radio = imageView.getBoundsInParent().getWidth() / getImageWidth();
+                double offsetX = maskRectangleData.getSmallX() >= 0 ? 0 : maskRectangleData.getSmallX();
+                double offsetY = maskRectangleData.getSmallY() >= 0 ? 0 : maskRectangleData.getSmallY();
+                scopeView.setLayoutX(imageView.getLayoutX() + offsetX * radio);
+                scopeView.setLayoutY(imageView.getLayoutY() + offsetY * radio);
+                scopeView.setFitWidth(outlineImage.getWidth() * radio);
+                scopeView.setFitHeight(outlineImage.getHeight() * radio);
+            }
+        };
+        start(task);
     }
 
 }

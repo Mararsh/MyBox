@@ -35,7 +35,6 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.AppVariables;
@@ -679,43 +678,8 @@ public class ControlData2D extends BaseController {
             }
 
             Menu helpMenu = new Menu(message("Help"), StyleTools.getIconImageView("iconClaw.png"));
+            helpMenu.getItems().addAll(Data2DMenuTools.helpMenus(tableController));
             items.add(helpMenu);
-
-            MenuItem about2D = new MenuItem(message("AboutData2D"));
-            about2D.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    openHtml(HelpTools.aboutData2D());
-                }
-            });
-            helpMenu.getItems().add(about2D);
-
-            MenuItem aboutRowExpression = new MenuItem(message("AboutRowExpression"));
-            aboutRowExpression.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    openHtml(HelpTools.aboutRowExpression());
-                }
-            });
-            helpMenu.getItems().add(aboutRowExpression);
-
-            MenuItem aboutGrouping = new MenuItem(message("AboutGroupingRows"));
-            aboutGrouping.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    openHtml(HelpTools.aboutGroupingRows());
-                }
-            });
-            helpMenu.getItems().add(aboutGrouping);
-
-            MenuItem aboutDataAnalysis = new MenuItem(message("AboutDataAnalysis"));
-            aboutDataAnalysis.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    openHtml(HelpTools.aboutDataAnalysis());
-                }
-            });
-            helpMenu.getItems().add(aboutDataAnalysis);
 
             items.add(new SeparatorMenuItem());
 

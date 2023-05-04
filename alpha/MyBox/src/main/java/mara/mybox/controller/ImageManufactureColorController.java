@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
@@ -46,7 +45,7 @@ import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.value.AppPaths;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -607,8 +606,8 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                     pixelsOperation.setColorPara1(ColorConvertTools.converColor(Color.LIGHTPINK));
                     pixelsOperation.setFloatPara1(0.5f);
                     bufferedImage = pixelsOperation.operate();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + message("Color") + "_" + message("Filter") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("Color") + "_" + message("Filter"), "png")
+                            .getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -617,8 +616,8 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                             scope, OperationType.Brightness, ColorActionType.Increase);
                     pixelsOperation.setFloatPara1(0.5f);
                     bufferedImage = pixelsOperation.operate();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + message("Brightness") + "_" + message("Increase") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("Brightness") + "_" + message("Increase"), "png")
+                            .getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -627,8 +626,8 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                             scope, OperationType.Hue, ColorActionType.Decrease);
                     pixelsOperation.setFloatPara1(0.3f);
                     bufferedImage = pixelsOperation.operate();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + message("Hue") + "_" + message("Decrease") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("Hue") + "_" + message("Decrease"), "png")
+                            .getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -637,8 +636,8 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                             scope, OperationType.Saturation, ColorActionType.Increase);
                     pixelsOperation.setFloatPara1(0.5f);
                     bufferedImage = pixelsOperation.operate();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + message("Saturation") + "_" + message("Increase") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("Saturation") + "_" + message("Increase"), "png")
+                            .getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -647,8 +646,8 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                             scope, OperationType.Opacity, ColorActionType.Decrease);
                     pixelsOperation.setIntPara1(128);
                     bufferedImage = pixelsOperation.operate();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + message("Opacity") + "_" + message("Decrease") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("Opacity") + "_" + message("Decrease"), "png")
+                            .getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -656,8 +655,8 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                     pixelsOperation = PixelsOperationFactory.create(image,
                             scope, OperationType.RGB, ColorActionType.Invert);
                     bufferedImage = pixelsOperation.operate();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + message("RGB") + "_" + message("Invert") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("RGB") + "_" + message("Invert"), "png")
+                            .getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -665,8 +664,8 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                     pixelsOperation = PixelsOperationFactory.create(image,
                             scope, OperationType.Red, ColorActionType.Filter);
                     bufferedImage = pixelsOperation.operate();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + message("Red") + "_" + message("Filter") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("Red") + "_" + message("Filter"), "png")
+                            .getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -675,8 +674,8 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                             scope, OperationType.Yellow, ColorActionType.Increase);
                     pixelsOperation.setIntPara1(60);
                     bufferedImage = pixelsOperation.operate();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + message("Yellow") + "_" + message("Increase") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("Yellow") + "_" + message("Increase"), "png")
+                            .getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -685,8 +684,8 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                             scope, OperationType.Magenta, ColorActionType.Decrease);
                     pixelsOperation.setIntPara1(60);
                     bufferedImage = pixelsOperation.operate();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + message("Magenta") + "_" + message("Decrease") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("Magenta") + "_" + message("Decrease"), "png")
+                            .getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }

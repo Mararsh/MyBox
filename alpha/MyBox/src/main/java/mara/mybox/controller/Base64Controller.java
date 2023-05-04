@@ -26,7 +26,7 @@ import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -56,7 +56,7 @@ public class Base64Controller extends BaseController {
     protected ComboBox<String> charsetSelector;
 
     public Base64Controller() {
-        baseTitle = Languages.message("Base64Conversion");
+        baseTitle = message("Base64Conversion");
     }
 
     @Override
@@ -130,71 +130,69 @@ public class Base64Controller extends BaseController {
 
     @FXML
     public void txtAction() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
+        if (textRadio.isSelected() || base64TextRadio.isSelected()) {
+            if (inputArea.getText().isEmpty()) {
+                popError(message("NoData"));
                 return;
             }
-            if (textRadio.isSelected() || base64TextRadio.isSelected()) {
-                if (inputArea.getText().isEmpty()) {
-                    popError(Languages.message("NoData"));
-                    return;
-                }
-            } else if (sourceFile == null || UserConfig.badStyle().equals(sourceFileInput.getStyle())) {
-                popError(Languages.message("NoData"));
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private long bytesLen;
-                private String results;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        if (textRadio.isSelected()) {
-                            Base64.Encoder encoder = Base64.getEncoder();
-                            byte[] bytes = inputArea.getText().getBytes(charset);
-                            bytesLen = bytes.length;
-                            results = encoder.encodeToString(bytes);
-
-                        } else if (fileRadio.isSelected()) {
-                            Base64.Encoder encoder = Base64.getEncoder();
-                            byte[] bytes = ByteFileTools.readBytes(sourceFile);
-                            bytesLen = bytes.length;
-                            results = encoder.encodeToString(bytes);
-
-                        } else if (base64TextRadio.isSelected()) {
-                            Base64.Decoder decoder = Base64.getDecoder();
-                            byte[] bytes = decoder.decode(inputArea.getText());
-                            bytesLen = bytes.length;
-                            results = new String(bytes, charset);
-
-                        } else if (base64FileRadio.isSelected()) {
-                            Base64.Decoder decoder = Base64.getDecoder();
-                            byte[] bytes = decoder.decode(TextFileTools.readTexts(sourceFile));
-                            bytesLen = bytes.length;
-                            results = new String(bytes, charset);
-                        }
-                        return true;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    resultArea.setVisible(true);
-                    resultArea.setText(results);
-                    copyButton.setVisible(true);
-                    String s = Languages.message("Bytes") + ": " + StringTools.format(bytesLen)
-                            + "  " + Languages.message("Cost") + ":" + DateTools.datetimeMsDuration(cost);
-                    bottomLabel.setText(s);
-                }
-
-            };
-            start(task);
+        } else if (sourceFile == null || UserConfig.badStyle().equals(sourceFileInput.getStyle())) {
+            popError(message("NoData"));
+            return;
         }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+
+            private long bytesLen;
+            private String results;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    if (textRadio.isSelected()) {
+                        Base64.Encoder encoder = Base64.getEncoder();
+                        byte[] bytes = inputArea.getText().getBytes(charset);
+                        bytesLen = bytes.length;
+                        results = encoder.encodeToString(bytes);
+
+                    } else if (fileRadio.isSelected()) {
+                        Base64.Encoder encoder = Base64.getEncoder();
+                        byte[] bytes = ByteFileTools.readBytes(sourceFile);
+                        bytesLen = bytes.length;
+                        results = encoder.encodeToString(bytes);
+
+                    } else if (base64TextRadio.isSelected()) {
+                        Base64.Decoder decoder = Base64.getDecoder();
+                        byte[] bytes = decoder.decode(inputArea.getText());
+                        bytesLen = bytes.length;
+                        results = new String(bytes, charset);
+
+                    } else if (base64FileRadio.isSelected()) {
+                        Base64.Decoder decoder = Base64.getDecoder();
+                        byte[] bytes = decoder.decode(TextFileTools.readTexts(sourceFile));
+                        bytesLen = bytes.length;
+                        results = new String(bytes, charset);
+                    }
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                resultArea.setVisible(true);
+                resultArea.setText(results);
+                copyButton.setVisible(true);
+                String s = message("Bytes") + ": " + StringTools.format(bytesLen)
+                        + "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(cost);
+                bottomLabel.setText(s);
+            }
+
+        };
+        start(task);
     }
 
     @FXML
@@ -206,111 +204,108 @@ public class Base64Controller extends BaseController {
     @FXML
     @Override
     public void saveAsAction() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            if (textRadio.isSelected() || base64TextRadio.isSelected()) {
-                if (inputArea.getText().isEmpty()) {
-                    popError(Languages.message("NoData"));
-                    return;
-                }
-            } else if (sourceFile == null || UserConfig.badStyle().equals(sourceFileInput.getStyle())) {
-                popError(Languages.message("NoData"));
-                return;
-            }
-            File file;
-            if (textRadio.isSelected()) {
-                file = chooseSaveFile(VisitHistory.FileType.Text, "encodeBase64.txt");
-            } else if (fileRadio.isSelected()) {
-                file = chooseSaveFile(VisitHistory.FileType.Text, sourceFile.getName() + "-encodeBase64.txt");
-            } else if (base64FileRadio.isSelected()) {
-                file = chooseSaveFile(VisitHistory.FileType.All, sourceFile.getName() + "-decodeBase64");
-            } else {
-                file = chooseSaveFile(VisitHistory.FileType.All, "decodeBase64");
-            }
-            if (file == null) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                private long bytesLen;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        if (textRadio.isSelected()) {
-                            Base64.Encoder encoder = Base64.getEncoder();
-                            byte[] bytes = inputArea.getText().getBytes(charset);
-                            bytesLen = bytes.length;
-                            String results = encoder.encodeToString(bytes);
-                            if (TextFileTools.writeFile(file, results) != null) {
-                                recordFileWritten(file);
-                                return true;
-                            } else {
-                                return false;
-                            }
-                        } else if (fileRadio.isSelected()) {
-                            Base64.Encoder encoder = Base64.getEncoder();
-                            byte[] bytes = ByteFileTools.readBytes(sourceFile);
-                            bytesLen = bytes.length;
-                            String results = encoder.encodeToString(bytes);
-                            if (TextFileTools.writeFile(file, results) != null) {
-                                recordFileWritten(file);
-                                return true;
-                            } else {
-                                return false;
-                            }
-
-                        } else if (base64TextRadio.isSelected()) {
-                            Base64.Decoder decoder = Base64.getDecoder();
-                            byte[] bytes = decoder.decode(inputArea.getText());
-                            bytesLen = bytes.length;
-                            if (ByteFileTools.writeFile(file, bytes) != null) {
-                                recordFileWritten(file);
-                                return true;
-                            } else {
-                                return false;
-                            }
-
-                        } else if (base64FileRadio.isSelected()) {
-                            Base64.Decoder decoder = Base64.getDecoder();
-                            byte[] bytes = decoder.decode(TextFileTools.readTexts(sourceFile));
-                            bytesLen = bytes.length;
-                            if (ByteFileTools.writeFile(file, bytes) != null) {
-                                recordFileWritten(file);
-                                return true;
-                            } else {
-                                return false;
-                            }
-                        }
-                        return false;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    resultArea.setVisible(false);
-                    resultArea.clear();
-                    copyButton.setVisible(false);
-                    String s = Languages.message("Bytes") + ": " + StringTools.format(bytesLen)
-                            + "  " + Languages.message("Cost") + ":" + DateTools.datetimeMsDuration(cost);
-                    bottomLabel.setText(s);
-                    popSuccessful();
-                    if (textRadio.isSelected() || fileRadio.isSelected()) {
-                        TextEditorController controller
-                                = (TextEditorController) openStage(Fxmls.TextEditorFxml);
-                        controller.sourceFileChanged(file);
-                    } else {
-                        browseURI(file.getParentFile().toURI());
-                    }
-                }
-
-            };
-            start(task);
+        if (task != null && !task.isQuit()) {
+            return;
         }
+        if (textRadio.isSelected() || base64TextRadio.isSelected()) {
+            if (inputArea.getText().isEmpty()) {
+                popError(message("NoData"));
+                return;
+            }
+        } else if (sourceFile == null || UserConfig.badStyle().equals(sourceFileInput.getStyle())) {
+            popError(message("NoData"));
+            return;
+        }
+        File file;
+        if (textRadio.isSelected()) {
+            file = chooseSaveFile(VisitHistory.FileType.Text, "encodeBase64.txt");
+        } else if (fileRadio.isSelected()) {
+            file = chooseSaveFile(VisitHistory.FileType.Text, sourceFile.getName() + "-encodeBase64.txt");
+        } else if (base64FileRadio.isSelected()) {
+            file = chooseSaveFile(VisitHistory.FileType.All, sourceFile.getName() + "-decodeBase64");
+        } else {
+            file = chooseSaveFile(VisitHistory.FileType.All, "decodeBase64");
+        }
+        if (file == null) {
+            return;
+        }
+        task = new SingletonTask<Void>(this) {
+            private long bytesLen;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    if (textRadio.isSelected()) {
+                        Base64.Encoder encoder = Base64.getEncoder();
+                        byte[] bytes = inputArea.getText().getBytes(charset);
+                        bytesLen = bytes.length;
+                        String results = encoder.encodeToString(bytes);
+                        if (TextFileTools.writeFile(file, results) != null) {
+                            recordFileWritten(file);
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    } else if (fileRadio.isSelected()) {
+                        Base64.Encoder encoder = Base64.getEncoder();
+                        byte[] bytes = ByteFileTools.readBytes(sourceFile);
+                        bytesLen = bytes.length;
+                        String results = encoder.encodeToString(bytes);
+                        if (TextFileTools.writeFile(file, results) != null) {
+                            recordFileWritten(file);
+                            return true;
+                        } else {
+                            return false;
+                        }
+
+                    } else if (base64TextRadio.isSelected()) {
+                        Base64.Decoder decoder = Base64.getDecoder();
+                        byte[] bytes = decoder.decode(inputArea.getText());
+                        bytesLen = bytes.length;
+                        if (ByteFileTools.writeFile(file, bytes) != null) {
+                            recordFileWritten(file);
+                            return true;
+                        } else {
+                            return false;
+                        }
+
+                    } else if (base64FileRadio.isSelected()) {
+                        Base64.Decoder decoder = Base64.getDecoder();
+                        byte[] bytes = decoder.decode(TextFileTools.readTexts(sourceFile));
+                        bytesLen = bytes.length;
+                        if (ByteFileTools.writeFile(file, bytes) != null) {
+                            recordFileWritten(file);
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                    return false;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                resultArea.setVisible(false);
+                resultArea.clear();
+                copyButton.setVisible(false);
+                String s = message("Bytes") + ": " + StringTools.format(bytesLen)
+                        + "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(cost);
+                bottomLabel.setText(s);
+                popSuccessful();
+                if (textRadio.isSelected() || fileRadio.isSelected()) {
+                    TextEditorController c = (TextEditorController) openStage(Fxmls.TextEditorFxml);
+                    c.sourceFileChanged(file);
+                } else {
+                    browseURI(file.getParentFile().toURI());
+                }
+            }
+
+        };
+        start(task);
     }
 
     @FXML

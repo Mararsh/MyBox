@@ -188,6 +188,11 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
     }
 
     @FXML
+    protected void JsonEditor(ActionEvent event) {
+        loadScene(Fxmls.JsonEditorFxml);
+    }
+
+    @FXML
     protected void openTextEditer(ActionEvent event) {
         loadScene(Fxmls.TextEditorFxml);
     }

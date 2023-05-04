@@ -92,62 +92,60 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
             popError(Languages.message("InvalidScope"));
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
 
-                private Image newImage, cuttedClip;
+            private Image newImage, cuttedClip;
 
-                @Override
-                protected boolean handle() {
-                    Color bgColor = colorSetController.color();
+            @Override
+            protected boolean handle() {
+                Color bgColor = colorSetController.color();
 
+                if (includeRadio.isSelected()) {
+                    newImage = ScopeTools.scopeExcludeImage(imageView.getImage(),
+                            scopeController.scope, bgColor, imageMarginsCheck.isSelected());
+
+                } else if (excludeRadio.isSelected()) {
+                    newImage = ScopeTools.scopeImage(imageView.getImage(),
+                            scopeController.scope, bgColor, imageMarginsCheck.isSelected());
+                } else {
+                    return false;
+                }
+                if (task == null || isCancelled()) {
+                    return false;
+                }
+                if (UserConfig.getBoolean(baseName + "CropPutClipboard", false)) {
                     if (includeRadio.isSelected()) {
-                        newImage = ScopeTools.scopeExcludeImage(imageView.getImage(),
-                                scopeController.scope, bgColor, imageMarginsCheck.isSelected());
+                        cuttedClip = ScopeTools.scopeImage(imageView.getImage(),
+                                scopeController.scope, bgColor, clipMarginsCheck.isSelected());
 
                     } else if (excludeRadio.isSelected()) {
-                        newImage = ScopeTools.scopeImage(imageView.getImage(),
-                                scopeController.scope, bgColor, imageMarginsCheck.isSelected());
-                    } else {
-                        return false;
+                        cuttedClip = ScopeTools.scopeExcludeImage(imageView.getImage(),
+                                scopeController.scope, bgColor, clipMarginsCheck.isSelected());
                     }
-                    if (task == null || isCancelled()) {
-                        return false;
-                    }
-                    if (UserConfig.getBoolean(baseName + "CropPutClipboard", false)) {
-                        if (includeRadio.isSelected()) {
-                            cuttedClip = ScopeTools.scopeImage(imageView.getImage(),
-                                    scopeController.scope, bgColor, clipMarginsCheck.isSelected());
-
-                        } else if (excludeRadio.isSelected()) {
-                            cuttedClip = ScopeTools.scopeExcludeImage(imageView.getImage(),
-                                    scopeController.scope, bgColor, clipMarginsCheck.isSelected());
-                        }
-                        ImageClipboard.add(cuttedClip, ImageClipboard.ImageSource.Crop);
-                    }
-                    return newImage != null;
+                    ImageClipboard.add(cuttedClip, ImageClipboard.ImageSource.Crop);
                 }
+                return newImage != null;
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    imageController.popSuccessful();
-                    if (excludeRadio.isSelected() && imageMarginsCheck.isSelected()) {
-                        scopeController.scopeAllRadio.setSelected(true);
-                    }
-                    imageController.updateImage(ImageOperation.Crop, newImage, cost);
-                    if (cuttedClip != null) {
-                        if (operationsController.clipboardController != null) {
-                            operationsController.clipboardController.clipsController.refreshAction();
-                        }
-                        operationsController.clipboardPane.setExpanded(true);
-                    }
+            @Override
+            protected void whenSucceeded() {
+                imageController.popSuccessful();
+                if (excludeRadio.isSelected() && imageMarginsCheck.isSelected()) {
+                    scopeController.scopeAllRadio.setSelected(true);
                 }
-            };
-            start(task);
-        }
+                imageController.updateImage(ImageOperation.Crop, newImage, cost);
+                if (cuttedClip != null) {
+                    if (operationsController.clipboardController != null) {
+                        operationsController.clipboardController.clipsController.refreshAction();
+                    }
+                    operationsController.clipboardPane.setExpanded(true);
+                }
+            }
+        };
+        start(task);
     }
 
 }

@@ -1,7 +1,6 @@
 package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
@@ -36,10 +35,10 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.value.AppPaths;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -61,8 +60,8 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeStyleTools.setTooltip(paletteAddButton, Languages.message("AddInColorPalette"));
-            NodeStyleTools.setTooltip(htmlButton, Languages.message("ShowData"));
+            NodeStyleTools.setTooltip(paletteAddButton, message("AddInColorPalette"));
+            NodeStyleTools.setTooltip(htmlButton, message("ShowData"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -100,152 +99,150 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
         if (imageController == null || optionsController.effectType == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
 
-                private Image newImage;
-                private String value = null;
-                private ImageQuantization quantization;
-                private int actualLoop = -1;
+            private Image newImage;
+            private String value = null;
+            private ImageQuantization quantization;
+            private int actualLoop = -1;
 
-                @Override
-                protected boolean handle() {
-                    try {
-                        PixelsOperation pixelsOperation;
-                        ImageConvolution imageConvolution;
-                        switch (optionsController.effectType) {
-                            case EdgeDetect:
-                                if (optionsController.eightLaplaceRadio.isSelected()) {
-                                    optionsController.kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplace();
-                                } else if (optionsController.eightLaplaceExcludedRadio.isSelected()) {
-                                    optionsController.kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplaceInvert();
-                                } else if (optionsController.fourLaplaceRadio.isSelected()) {
-                                    optionsController.kernel = ConvolutionKernel.makeEdgeDetectionFourNeighborLaplace();
-                                } else if (optionsController.fourLaplaceExcludedRadio.isSelected()) {
-                                    optionsController.kernel = ConvolutionKernel.makeEdgeDetectionFourNeighborLaplaceInvert();
-                                } else {
-                                    return false;
-                                }
-                                optionsController.kernel.setGray(optionsController.valueCheck.isSelected());
-                                imageConvolution = ImageConvolution.create().
-                                        setImage(imageView.getImage()).setScope(scopeController.scope).
-                                        setKernel(optionsController.kernel);
-                                newImage = imageConvolution.operateFxImage();
-                                break;
-                            case Emboss:
-                                optionsController.kernel = ConvolutionKernel.makeEmbossKernel(
-                                        optionsController.intPara1, optionsController.intPara2, optionsController.valueCheck.isSelected());
-                                imageConvolution = ImageConvolution.create().
-                                        setImage(imageView.getImage()).setScope(scopeController.scope).
-                                        setKernel(optionsController.kernel);
-                                newImage = imageConvolution.operateFxImage();
-                                break;
-                            case Quantization:
-                                quantization = ImageQuantizationFactory.create(imageView.getImage(),
-                                        scopeController.scope, optionsController.quantizationAlgorithm,
-                                        optionsController.quanColors, optionsController.regionSize,
-                                        optionsController.weight1, optionsController.weight2, optionsController.weight3,
-                                        true, optionsController.quanDitherCheck.isSelected(),
-                                        optionsController.firstColorCheck.isSelected());
-                                if (optionsController.quantizationAlgorithm == QuantizationAlgorithm.KMeansClustering) {
-                                    KMeansClusteringQuantization q = (KMeansClusteringQuantization) quantization;
-                                    q.getKmeans().setMaxIteration(optionsController.kmeansLoop);
-                                    newImage = q.operateFxImage();
-                                    actualLoop = q.getKmeans().getLoopCount();
-                                } else {
-                                    newImage = quantization.operateFxImage();
-                                }
-                                value = optionsController.intPara1 + "";
-                                break;
-                            case Thresholding:
-                                pixelsOperation = PixelsOperationFactory.create(imageView.getImage(),
-                                        scopeController.scope, optionsController.effectType);
-                                pixelsOperation.setIntPara1(optionsController.intPara1);
-                                pixelsOperation.setIntPara2(optionsController.intPara2);
-                                pixelsOperation.setIntPara3(optionsController.intPara3);
-                                pixelsOperation.setIsDithering(false);
-                                newImage = pixelsOperation.operateFxImage();
-                                break;
-                            case BlackOrWhite:
-                                int threshold = optionsController.binaryController.threshold();
-                                value = threshold + "";
-                                ImageBinary imageBinary = new ImageBinary(imageView.getImage(), scopeController.scope, threshold);
-                                imageBinary.setIsDithering(optionsController.binaryController.dither());
-                                newImage = imageBinary.operateFxImage();
-                                break;
-                            case Gray:
-                                ImageGray imageGray = new ImageGray(imageView.getImage(), scopeController.scope);
-                                newImage = imageGray.operateFxImage();
-                                break;
-                            case Sepia:
-                                pixelsOperation = PixelsOperationFactory.create(imageView.getImage(), scopeController.scope, optionsController.effectType);
-                                pixelsOperation.setIntPara1(optionsController.intPara1);
-                                newImage = pixelsOperation.operateFxImage();
-                                value = optionsController.intPara1 + "";
-                                break;
-                            case Mosaic: {
-                                ImageMosaic mosaic
-                                        = ImageMosaic.create(imageView.getImage(), scopeController.scope, ImageMosaic.MosaicType.Mosaic, optionsController.intPara1);
-                                newImage = mosaic.operateFxImage();
-                                value = optionsController.intPara1 + "";
-                            }
-                            break;
-                            case FrostedGlass: {
-                                ImageMosaic mosaic
-                                        = ImageMosaic.create(imageView.getImage(), scopeController.scope, ImageMosaic.MosaicType.FrostedGlass, optionsController.intPara1);
-                                newImage = mosaic.operateFxImage();
-                                value = optionsController.intPara1 + "";
-                            }
-                            break;
-                            default:
+            @Override
+            protected boolean handle() {
+                try {
+                    PixelsOperation pixelsOperation;
+                    ImageConvolution imageConvolution;
+                    switch (optionsController.effectType) {
+                        case EdgeDetect:
+                            if (optionsController.eightLaplaceRadio.isSelected()) {
+                                optionsController.kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplace();
+                            } else if (optionsController.eightLaplaceExcludedRadio.isSelected()) {
+                                optionsController.kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplaceInvert();
+                            } else if (optionsController.fourLaplaceRadio.isSelected()) {
+                                optionsController.kernel = ConvolutionKernel.makeEdgeDetectionFourNeighborLaplace();
+                            } else if (optionsController.fourLaplaceExcludedRadio.isSelected()) {
+                                optionsController.kernel = ConvolutionKernel.makeEdgeDetectionFourNeighborLaplaceInvert();
+                            } else {
                                 return false;
+                            }
+                            optionsController.kernel.setGray(optionsController.valueCheck.isSelected());
+                            imageConvolution = ImageConvolution.create().
+                                    setImage(imageView.getImage()).setScope(scopeController.scope).
+                                    setKernel(optionsController.kernel);
+                            newImage = imageConvolution.operateFxImage();
+                            break;
+                        case Emboss:
+                            optionsController.kernel = ConvolutionKernel.makeEmbossKernel(
+                                    optionsController.intPara1, optionsController.intPara2, optionsController.valueCheck.isSelected());
+                            imageConvolution = ImageConvolution.create().
+                                    setImage(imageView.getImage()).setScope(scopeController.scope).
+                                    setKernel(optionsController.kernel);
+                            newImage = imageConvolution.operateFxImage();
+                            break;
+                        case Quantization:
+                            quantization = ImageQuantizationFactory.create(imageView.getImage(),
+                                    scopeController.scope, optionsController.quantizationAlgorithm,
+                                    optionsController.quanColors, optionsController.regionSize,
+                                    optionsController.weight1, optionsController.weight2, optionsController.weight3,
+                                    true, optionsController.quanDitherCheck.isSelected(),
+                                    optionsController.firstColorCheck.isSelected());
+                            if (optionsController.quantizationAlgorithm == QuantizationAlgorithm.KMeansClustering) {
+                                KMeansClusteringQuantization q = (KMeansClusteringQuantization) quantization;
+                                q.getKmeans().setMaxIteration(optionsController.kmeansLoop);
+                                newImage = q.operateFxImage();
+                                actualLoop = q.getKmeans().getLoopCount();
+                            } else {
+                                newImage = quantization.operateFxImage();
+                            }
+                            value = optionsController.intPara1 + "";
+                            break;
+                        case Thresholding:
+                            pixelsOperation = PixelsOperationFactory.create(imageView.getImage(),
+                                    scopeController.scope, optionsController.effectType);
+                            pixelsOperation.setIntPara1(optionsController.intPara1);
+                            pixelsOperation.setIntPara2(optionsController.intPara2);
+                            pixelsOperation.setIntPara3(optionsController.intPara3);
+                            pixelsOperation.setIsDithering(false);
+                            newImage = pixelsOperation.operateFxImage();
+                            break;
+                        case BlackOrWhite:
+                            int threshold = optionsController.binaryController.threshold();
+                            value = threshold + "";
+                            ImageBinary imageBinary = new ImageBinary(imageView.getImage(), scopeController.scope, threshold);
+                            imageBinary.setIsDithering(optionsController.binaryController.dither());
+                            newImage = imageBinary.operateFxImage();
+                            break;
+                        case Gray:
+                            ImageGray imageGray = new ImageGray(imageView.getImage(), scopeController.scope);
+                            newImage = imageGray.operateFxImage();
+                            break;
+                        case Sepia:
+                            pixelsOperation = PixelsOperationFactory.create(imageView.getImage(), scopeController.scope, optionsController.effectType);
+                            pixelsOperation.setIntPara1(optionsController.intPara1);
+                            newImage = pixelsOperation.operateFxImage();
+                            value = optionsController.intPara1 + "";
+                            break;
+                        case Mosaic: {
+                            ImageMosaic mosaic
+                                    = ImageMosaic.create(imageView.getImage(), scopeController.scope, ImageMosaic.MosaicType.Mosaic, optionsController.intPara1);
+                            newImage = mosaic.operateFxImage();
+                            value = optionsController.intPara1 + "";
                         }
-                        if (task == null || isCancelled()) {
+                        break;
+                        case FrostedGlass: {
+                            ImageMosaic mosaic
+                                    = ImageMosaic.create(imageView.getImage(), scopeController.scope, ImageMosaic.MosaicType.FrostedGlass, optionsController.intPara1);
+                            newImage = mosaic.operateFxImage();
+                            value = optionsController.intPara1 + "";
+                        }
+                        break;
+                        default:
                             return false;
-                        }
-                        return newImage != null;
-                    } catch (Exception e) {
+                    }
+                    if (task == null || isCancelled()) {
                         return false;
                     }
+                    return newImage != null;
+                } catch (Exception e) {
+                    return false;
                 }
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    imageController.popSuccessful();
-                    imageController.updateImage(ImageOperation.Effects, optionsController.effectType.name(), value, newImage, cost);
-                    if (quantization != null) {
-                        String name = null;
-                        if (imageController.sourceFile != null) {
-                            name = imageController.sourceFile.getName();
-                        }
-                        quanTable = quantization.countTable(name);
-                        if (quanTable != null) {
-                            htmlButton.setVisible(true);
-                            if (optionsController.quanDataCheck.isSelected()) {
-                                htmlAction();
-                            }
-                        }
-                        if (actualLoop >= 0) {
-                            optionsController.actualLoopLabel.setText(Languages.message("ActualLoop") + ":" + actualLoop);
-                        }
-                        List<ImageQuantization.ColorCount> sortedCounts = quantization.getSortedCounts();
-                        if (sortedCounts != null && !sortedCounts.isEmpty()) {
-                            quantizationColors = new ArrayList<>();
-                            for (int i = 0; i < sortedCounts.size(); ++i) {
-                                ImageQuantization.ColorCount count = sortedCounts.get(i);
-                                Color color = ColorConvertTools.converColor(count.color);
-                                quantizationColors.add(color);
-                            }
-                            paletteAddButton.setVisible(true);
+            @Override
+            protected void whenSucceeded() {
+                imageController.popSuccessful();
+                imageController.updateImage(ImageOperation.Effects, optionsController.effectType.name(), value, newImage, cost);
+                if (quantization != null) {
+                    String name = null;
+                    if (imageController.sourceFile != null) {
+                        name = imageController.sourceFile.getName();
+                    }
+                    quanTable = quantization.countTable(name);
+                    if (quanTable != null) {
+                        htmlButton.setVisible(true);
+                        if (optionsController.quanDataCheck.isSelected()) {
+                            htmlAction();
                         }
                     }
+                    if (actualLoop >= 0) {
+                        optionsController.actualLoopLabel.setText(message("ActualLoop") + ":" + actualLoop);
+                    }
+                    List<ImageQuantization.ColorCount> sortedCounts = quantization.getSortedCounts();
+                    if (sortedCounts != null && !sortedCounts.isEmpty()) {
+                        quantizationColors = new ArrayList<>();
+                        for (int i = 0; i < sortedCounts.size(); ++i) {
+                            ImageQuantization.ColorCount count = sortedCounts.get(i);
+                            Color color = ColorConvertTools.converColor(count.color);
+                            quantizationColors.add(color);
+                        }
+                        paletteAddButton.setVisible(true);
+                    }
                 }
-            };
-            imageController.start(task);
-        }
+            }
+        };
+        start(task);
     }
 
     @FXML
@@ -263,7 +260,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
         if (imageView.getImage() == null) {
             return;
         }
-        imageController.popInformation(Languages.message("WaitAndHandling"));
+        imageController.popInformation(message("WaitAndHandling"));
         demoButton.setDisable(true);
         Task demoTask = new Task<Void>() {
             private List<String> files;
@@ -300,8 +297,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                             = ImageQuantizationFactory.create(image, scope,
                                     QuantizationAlgorithm.PopularityQuantization, 16, 256, 2, 4, 3, false, true, true);
                     bufferedImage = quantization.operateImage();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("Posterizing") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("Posterizing"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -313,16 +309,14 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                     pixelsOperation.setIntPara3(255);
                     pixelsOperation.setIsDithering(false);
                     bufferedImage = pixelsOperation.operateImage();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("Thresholding") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("Thresholding"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
 
                     ImageGray imageGray = new ImageGray(image, scope);
                     bufferedImage = imageGray.operate();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("Gray") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("Gray"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -331,8 +325,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                             image, scope, OperationType.Sepia);
                     pixelsOperation.setIntPara1(60);
                     bufferedImage = pixelsOperation.operate();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("Sepia") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("Sepia"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -340,8 +333,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                     ImageBinary imageBinary = new ImageBinary(imageView.getImage(), scope, -1);
                     imageBinary.setIsDithering(true);
                     bufferedImage = imageBinary.operate();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("BlackOrWhite") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("BlackOrWhite"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -350,8 +342,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                     imageConvolution = ImageConvolution.create().
                             setImage(image).setScope(scope).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("EdgeDetection") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("EdgeDetection"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -360,8 +351,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                     imageConvolution = ImageConvolution.create().
                             setImage(image).setScope(scope).setKernel(kernel);
                     bufferedImage = imageConvolution.operate();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("Emboss") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("Emboss"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -369,8 +359,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                     ImageMosaic mosaic = ImageMosaic.create(
                             image, scope, ImageMosaic.MosaicType.Mosaic, 30);
                     bufferedImage = mosaic.operate();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("Mosaic") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("Mosaic"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -378,8 +367,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                     mosaic = ImageMosaic.create(image, scope,
                             ImageMosaic.MosaicType.FrostedGlass, 20);
                     bufferedImage = mosaic.operate();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("FrostedGlass") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("FrostedGlass"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }

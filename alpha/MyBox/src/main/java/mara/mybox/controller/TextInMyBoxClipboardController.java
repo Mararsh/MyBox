@@ -141,14 +141,12 @@ public class TextInMyBoxClipboardController extends BaseSysTableController<TextC
     @FXML
     @Override
     public void pasteContentInSystemClipboard() {
-        synchronized (this) {
-            String clip = clipboard.getString();
-            if (clip == null) {
-                popInformation(Languages.message("NoTextInClipboard"));
-                return;
-            }
-            TextClipboardTools.copyToMyBoxClipboard(myController, clip);
+        String clip = clipboard.getString();
+        if (clip == null) {
+            popInformation(Languages.message("NoTextInClipboard"));
+            return;
         }
+        TextClipboardTools.copyToMyBoxClipboard(myController, clip);
     }
 
     @FXML

@@ -75,6 +75,7 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#openMarkdownToPdf" text="%MarkdownToPdf" />
                                     </items>
                                 </Menu>
+                                <MenuItem mnemonicParsing="false" onAction="#JsonEditor" text="JSON" />
                                 <Menu mnemonicParsing="false" text="%Html">
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#openHtmlEditor" text="%HtmlEditor" />

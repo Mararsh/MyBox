@@ -25,8 +25,8 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
-import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.FileTmpTools;
+import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -125,7 +125,7 @@ public abstract class PdfViewController_OCR extends BaseFileImagesViewController
                     ProcessBuilder pb = new ProcessBuilder(parameters).redirectErrorStream(true);
                     long start = new Date().getTime();
                     process = pb.start();
-                    try ( BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
+                    try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                         String line;
                         while ((line = inReader.readLine()) != null) {
                             outputs += line + "\n";
@@ -190,61 +190,58 @@ public abstract class PdfViewController_OCR extends BaseFileImagesViewController
         if (imageView.getImage() == null) {
             return;
         }
-        synchronized (this) {
-            if (ocrTask != null) {
-                ocrTask.cancel();
-            }
-            ocrTask = new SingletonTask<Void>(this) {
+        if (ocrTask != null) {
+            ocrTask.cancel();
+        }
+        ocrTask = new SingletonTask<Void>(this) {
 
-                private String texts;
+            private String texts;
 
-                @Override
-                protected boolean handle() {
-                    try {
-                        ITesseract instance = new Tesseract();
-                        instance.setVariable("user_defined_dpi", "96");
-                        instance.setVariable("debug_file", "/dev/null");
-                        instance.setPageSegMode(ocrOptionsController.psm);
-                        Map<String, String> p = ocrOptionsController.checkParameters();
-                        if (p != null && !p.isEmpty()) {
-                            for (String key : p.keySet()) {
-                                instance.setVariable(key, p.get(key));
-                            }
+            @Override
+            protected boolean handle() {
+                try {
+                    ITesseract instance = new Tesseract();
+                    instance.setVariable("user_defined_dpi", "96");
+                    instance.setVariable("debug_file", "/dev/null");
+                    instance.setPageSegMode(ocrOptionsController.psm);
+                    Map<String, String> p = ocrOptionsController.checkParameters();
+                    if (p != null && !p.isEmpty()) {
+                        for (String key : p.keySet()) {
+                            instance.setVariable(key, p.get(key));
                         }
-                        instance.setDatapath(ocrOptionsController.dataPathController.file().getAbsolutePath());
-                        if (ocrOptionsController.selectedLanguages != null) {
-                            instance.setLanguage(ocrOptionsController.selectedLanguages);
-                        }
-                        Image selected = imageToHandle();
-                        if (selected == null) {
-                            selected = imageView.getImage();
-                        }
-                        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(selected, null);
-                        bufferedImage = AlphaTools.removeAlpha(bufferedImage);
-                        if (task == null || isCancelled() || bufferedImage == null) {
-                            return false;
-                        }
-                        texts = instance.doOCR(bufferedImage);
-                        return texts != null;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        MyBoxLog.debug(e.toString());
+                    }
+                    instance.setDatapath(ocrOptionsController.dataPathController.file().getAbsolutePath());
+                    if (ocrOptionsController.selectedLanguages != null) {
+                        instance.setLanguage(ocrOptionsController.selectedLanguages);
+                    }
+                    Image selected = imageToHandle();
+                    if (selected == null) {
+                        selected = imageView.getImage();
+                    }
+                    BufferedImage bufferedImage = SwingFXUtils.fromFXImage(selected, null);
+                    bufferedImage = AlphaTools.removeAlpha(bufferedImage);
+                    if (task == null || isCancelled() || bufferedImage == null) {
                         return false;
                     }
+                    texts = instance.doOCR(bufferedImage);
+                    return texts != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    MyBoxLog.debug(e.toString());
+                    return false;
                 }
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    ocrArea.setText(texts);
-                    ocrLabel.setText(MessageFormat.format(Languages.message("OCRresults"),
-                            texts.length(), DateTools.datetimeMsDuration(new Date().getTime() - startTime.getTime())));
-                    orcPage = frameIndex;
-                    tabPane.getSelectionModel().select(ocrTab);
-                }
-            };
-            start(ocrTask, MessageFormat.format(message("LoadingPageNumber"), (frameIndex + 1) + ""));
-        }
-
+            @Override
+            protected void whenSucceeded() {
+                ocrArea.setText(texts);
+                ocrLabel.setText(MessageFormat.format(Languages.message("OCRresults"),
+                        texts.length(), DateTools.datetimeMsDuration(new Date().getTime() - startTime.getTime())));
+                orcPage = frameIndex;
+                tabPane.getSelectionModel().select(ocrTab);
+            }
+        };
+        start(ocrTask, MessageFormat.format(message("LoadingPageNumber"), (frameIndex + 1) + ""));
     }
 
     @FXML

@@ -70,7 +70,7 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
         if (item == null) {
             return;
         }
-        String clickAction = UserConfig.getString(baseName + "TreeWhenClickNode", "DoNothing");
+        String clickAction = UserConfig.getString(baseName + "TreeWhenClickNode", "PopMenu");
         switch (clickAction) {
             case "PopMenu":
                 showItemMenu(item);
@@ -179,7 +179,7 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
 
         Menu clickMenu = new Menu(message("WhenClickNode"), StyleTools.getIconImageView("iconSelect.png"));
         ToggleGroup clickGroup = new ToggleGroup();
-        String currentClick = UserConfig.getString(baseName + "TreeWhenClickNode", "DoNothing");
+        String currentClick = UserConfig.getString(baseName + "TreeWhenClickNode", "PopMenu");
 
         RadioMenuItem nothingMenu = new RadioMenuItem(message("DoNothing"));
         nothingMenu.setSelected(currentClick == null || "DoNothing".equals(currentClick));
@@ -435,48 +435,46 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
                 return;
             }
         }
-        synchronized (this) {
-            if (task != null) {
-                task.cancel();
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private TreeItem<TreeNode> rootItem;
-
-                @Override
-                protected boolean handle() {
-                    try (Connection conn = DerbyBase.getConnection()) {
-                        if (isRoot) {
-                            tableTreeNode.deleteChildren(conn, node.getNodeid());
-                            TreeNode rootNode = root(conn);
-                            rootItem = new TreeItem(rootNode);
-                        } else {
-                            tableTreeNode.deleteData(conn, node);
-                        }
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (isRoot) {
-                        infoTree.setRoot(rootItem);
-                        rootItem.setExpanded(true);
-                    } else {
-                        targetItem.getChildren().clear();
-                        if (targetItem.getParent() != null) {
-                            targetItem.getParent().getChildren().remove(targetItem);
-                        }
-                    }
-                    popSuccessful();
-                }
-
-            };
-            start(task, infoTree);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private TreeItem<TreeNode> rootItem;
+
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    if (isRoot) {
+                        tableTreeNode.deleteChildren(conn, node.getNodeid());
+                        TreeNode rootNode = root(conn);
+                        rootItem = new TreeItem(rootNode);
+                    } else {
+                        tableTreeNode.deleteData(conn, node);
+                    }
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (isRoot) {
+                    infoTree.setRoot(rootItem);
+                    rootItem.setExpanded(true);
+                } else {
+                    targetItem.getChildren().clear();
+                    if (targetItem.getParent() != null) {
+                        targetItem.getParent().getChildren().remove(targetItem);
+                    }
+                }
+                popSuccessful();
+            }
+
+        };
+        start(task, infoTree);
     }
 
     protected void nodeDeleted(TreeNode node) {
@@ -502,30 +500,28 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
             popError(message("NodeNameNotInclude") + " \"" + NodeSeparater + "\"");
             return;
         }
-        synchronized (this) {
-            if (task != null) {
-                task.cancel();
-            }
-            task = new SingletonTask<Void>(this) {
-                private TreeNode updatedNode;
-
-                @Override
-                protected boolean handle() {
-                    nodeValue.setTitle(name);
-                    updatedNode = tableTreeNode.updateData(nodeValue);
-                    return updatedNode != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    item.setValue(updatedNode);
-                    infoTree.refresh();
-                    manageController.nodeRenamed(updatedNode);
-                    popSuccessful();
-                }
-            };
-            start(task, infoTree);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+            private TreeNode updatedNode;
+
+            @Override
+            protected boolean handle() {
+                nodeValue.setTitle(name);
+                updatedNode = tableTreeNode.updateData(nodeValue);
+                return updatedNode != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                item.setValue(updatedNode);
+                infoTree.refresh();
+                manageController.nodeRenamed(updatedNode);
+                popSuccessful();
+            }
+        };
+        start(task, infoTree);
     }
 
     protected void copyNode(TreeItem<TreeNode> item) {

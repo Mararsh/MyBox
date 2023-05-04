@@ -29,9 +29,9 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.RecentVisitMenu;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.SystemTools;
-import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -306,68 +306,61 @@ public class FFmpegProbeMediaInformationController extends ControlFFmpegOptions 
     @FXML
     @Override
     public void startAction() {
-        try {
-            if (executable == null) {
-                return;
-            }
-            media = sourceFileInput.getText();
-            if (media == null || media.isEmpty()) {
-                sourceFileInput.setStyle(UserConfig.badStyle());
-                popError(message("InvaidParameter") + ": " + message("Media"));
-                return;
-            }
-            formatArea.clear();
-            streamsArea.clear();
-            queryArea.clear();
-            synchronized (this) {
-                if (task != null && !task.isQuit()) {
-                    return;
-                }
-                task = new SingletonTask<Void>(this) {
-
-                    @Override
-                    protected boolean handle() {
-                        try {
-                            error = null;
-                            List<String> parameters = new ArrayList<>();
-                            parameters.add("-show_format");
-                            String fs = SystemTools.run(makeCommand(parameters));
-                            Platform.runLater(() -> {
-                                formatArea.setText(fs);
-                            });
-
-                            parameters.clear();
-                            parameters.add("-v");
-                            parameters.add("panic");
-                            parameters.add("-show_streams");
-                            String ss = SystemTools.run(makeCommand(parameters));
-                            Platform.runLater(() -> {
-                                streamsArea.setText(ss);
-                            });
-
-                            parameters.clear();
-                            parameters.add("-h");
-                            String h = SystemTools.run(makeCommand(parameters));
-                            Platform.runLater(() -> {
-                                queryArea.setText(h);
-                            });
-
-                        } catch (Exception e) {
-                            error = e.toString();
-                        }
-                        return true;
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                    }
-                };
-                start(task);
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+        if (executable == null) {
+            return;
         }
+        media = sourceFileInput.getText();
+        if (media == null || media.isEmpty()) {
+            sourceFileInput.setStyle(UserConfig.badStyle());
+            popError(message("InvaidParameter") + ": " + message("Media"));
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        formatArea.clear();
+        streamsArea.clear();
+        queryArea.clear();
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    error = null;
+                    List<String> parameters = new ArrayList<>();
+                    parameters.add("-show_format");
+                    String fs = SystemTools.run(makeCommand(parameters));
+                    Platform.runLater(() -> {
+                        formatArea.setText(fs);
+                    });
+
+                    parameters.clear();
+                    parameters.add("-v");
+                    parameters.add("panic");
+                    parameters.add("-show_streams");
+                    String ss = SystemTools.run(makeCommand(parameters));
+                    Platform.runLater(() -> {
+                        streamsArea.setText(ss);
+                    });
+
+                    parameters.clear();
+                    parameters.add("-h");
+                    String h = SystemTools.run(makeCommand(parameters));
+                    Platform.runLater(() -> {
+                        queryArea.setText(h);
+                    });
+
+                } catch (Exception e) {
+                    error = e.toString();
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+            }
+        };
+        start(task);
     }
 
     protected List<String> makeCommand(List<String> parameters) {

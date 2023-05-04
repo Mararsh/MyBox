@@ -63,7 +63,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
     protected void initSplitPane() {
         try {
             String mv = UserConfig.getString(baseName + "ScopePanePosition", "0.5");
-            splitPane.setDividerPositions(Double.parseDouble(mv));
+            splitPane.setDividerPositions(Double.valueOf(mv));
 
             splitPane.getDividers().get(0).positionProperty().addListener(
                     (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
@@ -358,6 +358,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
     }
 
     @FXML
+    @Override
     public void refreshAction() {
         isSettingValues = false;
         if (task != null) {

@@ -377,18 +377,25 @@ public class BaseHtmlDomTreeController extends BaseController {
     @FXML
     public void showFunctionsMenu(Event event) {
         List<MenuItem> items = makeFunctionsMenu(selected());
+        if (items == null) {
+            return;
+        }
 
         CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
         popItem.setSelected(UserConfig.getBoolean(baseName + "DomFunctionsPopWhenMouseHovering", true));
         popItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(ActionEvent event) {
+            public void handle(ActionEvent e) {
                 UserConfig.setBoolean(baseName + "DomFunctionsPopWhenMouseHovering", popItem.isSelected());
             }
         });
         items.add(popItem);
 
-        popEventMenu(event, items);
+        if (event == null) {
+            popNodeMenu(domTree, items);
+        } else {
+            popEventMenu(event, items);
+        }
     }
 
     public List<MenuItem> makeFunctionsMenu(TreeItem<HtmlNode> inItem) {

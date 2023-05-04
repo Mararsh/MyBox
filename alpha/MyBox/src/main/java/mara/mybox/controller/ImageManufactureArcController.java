@@ -78,31 +78,29 @@ public class ImageManufactureArcController extends ImageManufactureOperationCont
         if (arc <= 0) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private Image newImage;
-
-                @Override
-                protected boolean handle() {
-                    newImage = FxImageTools.addArc(imageView.getImage(), arc, (Color) colorSetController.rect.getFill());
-                    if (task == null || isCancelled()) {
-                        return false;
-                    }
-                    return newImage != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    imageController.popSuccessful();
-                    imageController.updateImage(ImageOperation.Arc, arc + "", null, newImage, cost);
-                }
-
-            };
-            imageController.start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private Image newImage;
+
+            @Override
+            protected boolean handle() {
+                newImage = FxImageTools.addArc(imageView.getImage(), arc, (Color) colorSetController.rect.getFill());
+                if (task == null || isCancelled()) {
+                    return false;
+                }
+                return newImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                imageController.popSuccessful();
+                imageController.updateImage(ImageOperation.Arc, arc + "", null, newImage, cost);
+            }
+
+        };
+        start(task);
     }
 }

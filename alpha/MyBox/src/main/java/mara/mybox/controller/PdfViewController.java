@@ -287,50 +287,48 @@ public class PdfViewController extends PdfViewController_Html {
             }
             pdfInformation = new PdfInformation(sourceFile);
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            bottomLabel.setText("");
-            isSettingValues = true;
-            pageSelector.getItems().clear();
-            isSettingValues = false;
-            pageLabel.setText("");
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    setTotalPages(0);
-                    if (!PdfInformation.readPDF(pdfInformation)) {
-                        error = pdfInformation.getError();
-                        return false;
-                    }
-                    password = pdfInformation.getUserPassword();
-                    infoLoaded.set(true);
-                    setTotalPages(pdfInformation.getNumberOfPages());
-                    return framesNumber > 0;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    List<String> pages = new ArrayList<>();
-                    for (int i = 1; i <= framesNumber; i++) {
-                        pages.add(i + "");
-                    }
-                    isSettingValues = true;
-                    pageSelector.getItems().clear();
-                    pageSelector.getItems().setAll(pages);
-                    pageLabel.setText("/" + framesNumber);
-                    isSettingValues = false;
-                    initCurrentPage();
-                    loadPage();
-                    checkOutline();
-                    checkThumbs();
-                }
-
-            };
-            start(task, message("LoadingFileInfo"));
+        if (task != null) {
+            task.cancel();
         }
+        bottomLabel.setText("");
+        isSettingValues = true;
+        pageSelector.getItems().clear();
+        isSettingValues = false;
+        pageLabel.setText("");
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                setTotalPages(0);
+                if (!PdfInformation.readPDF(pdfInformation)) {
+                    error = pdfInformation.getError();
+                    return false;
+                }
+                password = pdfInformation.getUserPassword();
+                infoLoaded.set(true);
+                setTotalPages(pdfInformation.getNumberOfPages());
+                return framesNumber > 0;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                List<String> pages = new ArrayList<>();
+                for (int i = 1; i <= framesNumber; i++) {
+                    pages.add(i + "");
+                }
+                isSettingValues = true;
+                pageSelector.getItems().clear();
+                pageSelector.getItems().setAll(pages);
+                pageLabel.setText("/" + framesNumber);
+                isSettingValues = false;
+                initCurrentPage();
+                loadPage();
+                checkOutline();
+                checkThumbs();
+            }
+
+        };
+        start(task, message("LoadingFileInfo"));
     }
 
     @Override
@@ -365,43 +363,41 @@ public class PdfViewController extends PdfViewController_Html {
         if (!infoLoaded.get()) {
             return;
         }
-        synchronized (this) {
-            if (outlineTask != null && !outlineTask.isQuit()) {
-                return;
-            }
-            TreeItem outlineRoot = new TreeItem<>(message("Bookmarks"));
-            outlineRoot.setExpanded(true);
-            outlineTree.setRoot(outlineRoot);
-            outlineTask = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
-                        PDDocumentOutline outline = doc.getDocumentCatalog().getDocumentOutline();
-                        if (outline != null) {
-                            loadOutlineItem(outline, outlineRoot);
-                        }
-                        doc.close();
-                    } catch (Exception e) {
-                        error = e.toString();
-                        MyBoxLog.debug(e);
-                        return false;
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenFailed() {
-                    if (error != null) {
-                        popError(error);
-                    } else {
-                        popFailed();
-                    }
-                }
-
-            };
-            start(outlineTask, false);
+        if (outlineTask != null) {
+            outlineTask.cancel();
         }
+        TreeItem outlineRoot = new TreeItem<>(message("Bookmarks"));
+        outlineRoot.setExpanded(true);
+        outlineTree.setRoot(outlineRoot);
+        outlineTask = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
+                    PDDocumentOutline outline = doc.getDocumentCatalog().getDocumentOutline();
+                    if (outline != null) {
+                        loadOutlineItem(outline, outlineRoot);
+                    }
+                    doc.close();
+                } catch (Exception e) {
+                    error = e.toString();
+                    MyBoxLog.debug(e);
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenFailed() {
+                if (error != null) {
+                    popError(error);
+                } else {
+                    popFailed();
+                }
+            }
+
+        };
+        start(outlineTask, false);
     }
 
     protected void loadOutlineItem(PDOutlineNode parentOutlineItem, TreeItem parentTreeItem) {

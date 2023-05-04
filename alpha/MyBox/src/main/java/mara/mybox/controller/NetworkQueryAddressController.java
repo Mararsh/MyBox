@@ -102,78 +102,76 @@ public class NetworkQueryAddressController extends BaseController {
             popError(message("InvalidData"));
             return;
         }
-        synchronized (this) {
-            if (task != null) {
-                task.cancel();
-            }
-            infoController.clear();
-            ipaddressController.clear();
-            headerController.clear();
-            certArea.clear();
-            host = null;
-            ip = null;
-            chain = null;
-            TableStringValues.add("NetworkQueryURLHistories", address);
-            task = new SingletonTask<Void>(this) {
-
-                private String info, certString, headerTable;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        certString = null;
-                        URL url = new URI(UrlTools.checkURL(address, Charset.defaultCharset())).toURL();
-                        String urlAddress = url.toString();
-                        task.setInfo(message("Query") + ": " + urlAddress);
-                        host = url.getHost();
-                        StringTable table = new StringTable(null, urlAddress);
-                        table.add(Arrays.asList(message("Address"), url.toString()));
-                        table.add(Arrays.asList(message("ExternalForm"), url.toExternalForm()));
-                        table.add(Arrays.asList(message("Decode"), UrlTools.decodeURL(url.toString(), Charset.defaultCharset())));
-                        table.add(Arrays.asList(message("Protocal"), url.getProtocol()));
-                        table.add(Arrays.asList(message("Host"), url.getHost()));
-                        table.add(Arrays.asList(message("Path"), url.getPath()));
-                        table.add(Arrays.asList(message("File"), url.getFile()));
-                        table.add(Arrays.asList(message("Query"), url.getQuery()));
-                        table.add(Arrays.asList(message("Authority"), url.getAuthority()));
-                        table.add(Arrays.asList(message("Reference"), url.getRef()));
-                        table.add(Arrays.asList(message("Port"), (url.getPort() < 0 ? url.getDefaultPort() : url.getPort()) + ""));
-
-                        InetAddress inetAddress = InetAddress.getByName(host);
-                        ip = inetAddress.getHostAddress();
-                        table.add(Arrays.asList("IP by local lookup", ip));
-                        table.add(Arrays.asList("Host", inetAddress.getHostName()));
-                        table.add(Arrays.asList("Canonical Host", inetAddress.getCanonicalHostName()));
-                        table.add(Arrays.asList("isAnyLocalAddress", inetAddress.isAnyLocalAddress() + ""));
-                        table.add(Arrays.asList("isLinkLocalAddress", inetAddress.isLinkLocalAddress() + ""));
-                        table.add(Arrays.asList("isLoopbackAddress", inetAddress.isLoopbackAddress() + ""));
-                        table.add(Arrays.asList("isMulticastAddress", inetAddress.isMulticastAddress() + ""));
-                        table.add(Arrays.asList("isSiteLocalAddress", inetAddress.isSiteLocalAddress() + ""));
-
-                        info = table.html();
-
-                        task.setInfo(message("Query") + ": " + message("Certificate"));
-                        certString = readCert(url);
-
-                        task.setInfo(message("Query") + ": " + message("Header"));
-                        headerTable = HtmlReadTools.requestHeadTable(url);
-                        return true;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    infoController.loadContents(info);
-                    headerController.loadContents(headerTable);
-                    ipaddressController.loadAddress("https://www.ipaddress.com/site/" + ip);
-                    certArea.setText(certString);
-                }
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        infoController.clear();
+        ipaddressController.clear();
+        headerController.clear();
+        certArea.clear();
+        host = null;
+        ip = null;
+        chain = null;
+        TableStringValues.add("NetworkQueryURLHistories", address);
+        task = new SingletonTask<Void>(this) {
+
+            private String info, certString, headerTable;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    certString = null;
+                    URL url = new URI(UrlTools.checkURL(address, Charset.defaultCharset())).toURL();
+                    String urlAddress = url.toString();
+                    task.setInfo(message("Query") + ": " + urlAddress);
+                    host = url.getHost();
+                    StringTable table = new StringTable(null, urlAddress);
+                    table.add(Arrays.asList(message("Address"), url.toString()));
+                    table.add(Arrays.asList(message("ExternalForm"), url.toExternalForm()));
+                    table.add(Arrays.asList(message("Decode"), UrlTools.decodeURL(url.toString(), Charset.defaultCharset())));
+                    table.add(Arrays.asList(message("Protocal"), url.getProtocol()));
+                    table.add(Arrays.asList(message("Host"), url.getHost()));
+                    table.add(Arrays.asList(message("Path"), url.getPath()));
+                    table.add(Arrays.asList(message("File"), url.getFile()));
+                    table.add(Arrays.asList(message("Query"), url.getQuery()));
+                    table.add(Arrays.asList(message("Authority"), url.getAuthority()));
+                    table.add(Arrays.asList(message("Reference"), url.getRef()));
+                    table.add(Arrays.asList(message("Port"), (url.getPort() < 0 ? url.getDefaultPort() : url.getPort()) + ""));
+
+                    InetAddress inetAddress = InetAddress.getByName(host);
+                    ip = inetAddress.getHostAddress();
+                    table.add(Arrays.asList("IP by local lookup", ip));
+                    table.add(Arrays.asList("Host", inetAddress.getHostName()));
+                    table.add(Arrays.asList("Canonical Host", inetAddress.getCanonicalHostName()));
+                    table.add(Arrays.asList("isAnyLocalAddress", inetAddress.isAnyLocalAddress() + ""));
+                    table.add(Arrays.asList("isLinkLocalAddress", inetAddress.isLinkLocalAddress() + ""));
+                    table.add(Arrays.asList("isLoopbackAddress", inetAddress.isLoopbackAddress() + ""));
+                    table.add(Arrays.asList("isMulticastAddress", inetAddress.isMulticastAddress() + ""));
+                    table.add(Arrays.asList("isSiteLocalAddress", inetAddress.isSiteLocalAddress() + ""));
+
+                    info = table.html();
+
+                    task.setInfo(message("Query") + ": " + message("Certificate"));
+                    certString = readCert(url);
+
+                    task.setInfo(message("Query") + ": " + message("Header"));
+                    headerTable = HtmlReadTools.requestHeadTable(url);
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                infoController.loadContents(info);
+                headerController.loadContents(headerTable);
+                ipaddressController.loadAddress("https://www.ipaddress.com/site/" + ip);
+                certArea.setText(certString);
+            }
+        };
+        start(task);
     }
 
     protected String readCert(URL url) {
@@ -224,47 +222,45 @@ public class NetworkQueryAddressController extends BaseController {
         if (file == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        StringBuilder s = new StringBuilder();
-                        Base64.Encoder encoder = Base64.getEncoder();
-                        for (Certificate cert : chain) {
-                            s.append("-----BEGIN CERTIFICATE-----\n");
-                            String certString = encoder.encodeToString(cert.getEncoded());
-                            while (true) {
-                                if (certString.length() <= 64) {
-                                    s.append(certString).append("\n");
-                                    break;
-                                }
-                                s.append(certString.substring(0, 64)).append("\n");
-                                certString = certString.substring(64);
-                            }
-                            s.append("-----END CERTIFICATE-----\n");
-                        }
-                        TextFileTools.writeFile(file, s.toString());
-                        recordFileWritten(file);
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    return file.exists();
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    TextEditorController.open(file);
-                }
-
-            };
-            start(task);
+        if (task != null && !task.isQuit()) {
+            return;
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    StringBuilder s = new StringBuilder();
+                    Base64.Encoder encoder = Base64.getEncoder();
+                    for (Certificate cert : chain) {
+                        s.append("-----BEGIN CERTIFICATE-----\n");
+                        String certString = encoder.encodeToString(cert.getEncoded());
+                        while (true) {
+                            if (certString.length() <= 64) {
+                                s.append(certString).append("\n");
+                                break;
+                            }
+                            s.append(certString.substring(0, 64)).append("\n");
+                            certString = certString.substring(64);
+                        }
+                        s.append("-----END CERTIFICATE-----\n");
+                    }
+                    TextFileTools.writeFile(file, s.toString());
+                    recordFileWritten(file);
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return file.exists();
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                TextEditorController.open(file);
+            }
+
+        };
+        start(task);
     }
 
     public void showSaveCertMenu(Event event) { //

@@ -315,89 +315,87 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
         if (!checkMatrix()) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            resultLabel.setText("");
-            resultBox.getChildren().clear();
-            task = new SingletonTask<Void>(this) {
-                private String op;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        result = null;
-                        resultValue = AppValues.InvalidDouble;
-                        op = ((RadioButton) opGroup.getSelectedToggle()).getText();
-                        if (message("Transpose").equals(op)) {
-                            result = DoubleMatrixTools.transpose(dataMatrix.toMatrix());
-
-                        } else if (message("RowEchelonForm").equals(op)) {
-                            result = DoubleMatrixTools.rowEchelonForm(dataMatrix.toMatrix());
-
-                        } else if (message("ReducedRowEchelonForm").equals(op)) {
-                            result = DoubleMatrixTools.reducedRowEchelonForm(dataMatrix.toMatrix());
-
-                        } else if (message("ComplementMinor").equals(op)) {
-                            result = DoubleMatrixTools.complementMinor(dataMatrix.toMatrix(), row - 1, column - 1);
-
-                        } else if (message("Normalize").equals(op)) {
-                            result = normalizeController.calculateDoubles(dataMatrix.toMatrix(), InvalidAs.Blank);
-
-                        } else if (message("MultiplyNumber").equals(op)) {
-                            result = DoubleMatrixTools.multiply(dataMatrix.toMatrix(), number);
-
-                        } else if (message("DivideNumber").equals(op)) {
-                            result = DoubleMatrixTools.divide(dataMatrix.toMatrix(), number);
-
-                        } else if (message("DeterminantByElimination").equals(op)) {
-                            resultValue = DoubleMatrixTools.determinantByElimination(dataMatrix.toMatrix());
-
-                        } else if (message("DeterminantByComplementMinor").equals(op)) {
-                            resultValue = DoubleMatrixTools.determinantByComplementMinor(dataMatrix.toMatrix());
-
-                        } else if (message("InverseMatrixByElimination").equals(op)) {
-                            result = DoubleMatrixTools.inverseByElimination(dataMatrix.toMatrix());
-
-                        } else if (message("InverseMatrixByAdjoint").equals(op)) {
-                            result = DoubleMatrixTools.inverseByAdjoint(dataMatrix.toMatrix());
-
-                        } else if (message("MatrixRank").equals(op)) {
-                            resultValue = DoubleMatrixTools.rank(dataMatrix.toMatrix());
-
-                        } else if (message("AdjointMatrix").equals(op)) {
-                            result = DoubleMatrixTools.adjoint(dataMatrix.toMatrix());
-
-                        } else if (message("Power").equals(op)) {
-                            result = DoubleMatrixTools.power(dataMatrix.toMatrix(), power);
-
-                        }
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    cost = new Date().getTime() - startTime.getTime();
-                    resultLabel.setText(op + "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(cost));
-                    if (result != null) {
-                        resultBox.getChildren().add(resultTablePane);
-                        resultController.loadMatrix(result);
-                    } else if (!DoubleTools.invalidDouble(resultValue)) {
-                        resultBox.getChildren().add(resultArea);
-                        resultArea.setText(resultValue + "");
-                    }
-                    refreshStyle(resultBox);
-                    tabPane.getSelectionModel().select(resultTab);
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        resultLabel.setText("");
+        resultBox.getChildren().clear();
+        task = new SingletonTask<Void>(this) {
+            private String op;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    result = null;
+                    resultValue = AppValues.InvalidDouble;
+                    op = ((RadioButton) opGroup.getSelectedToggle()).getText();
+                    if (message("Transpose").equals(op)) {
+                        result = DoubleMatrixTools.transpose(dataMatrix.toMatrix());
+
+                    } else if (message("RowEchelonForm").equals(op)) {
+                        result = DoubleMatrixTools.rowEchelonForm(dataMatrix.toMatrix());
+
+                    } else if (message("ReducedRowEchelonForm").equals(op)) {
+                        result = DoubleMatrixTools.reducedRowEchelonForm(dataMatrix.toMatrix());
+
+                    } else if (message("ComplementMinor").equals(op)) {
+                        result = DoubleMatrixTools.complementMinor(dataMatrix.toMatrix(), row - 1, column - 1);
+
+                    } else if (message("Normalize").equals(op)) {
+                        result = normalizeController.calculateDoubles(dataMatrix.toMatrix(), InvalidAs.Blank);
+
+                    } else if (message("MultiplyNumber").equals(op)) {
+                        result = DoubleMatrixTools.multiply(dataMatrix.toMatrix(), number);
+
+                    } else if (message("DivideNumber").equals(op)) {
+                        result = DoubleMatrixTools.divide(dataMatrix.toMatrix(), number);
+
+                    } else if (message("DeterminantByElimination").equals(op)) {
+                        resultValue = DoubleMatrixTools.determinantByElimination(dataMatrix.toMatrix());
+
+                    } else if (message("DeterminantByComplementMinor").equals(op)) {
+                        resultValue = DoubleMatrixTools.determinantByComplementMinor(dataMatrix.toMatrix());
+
+                    } else if (message("InverseMatrixByElimination").equals(op)) {
+                        result = DoubleMatrixTools.inverseByElimination(dataMatrix.toMatrix());
+
+                    } else if (message("InverseMatrixByAdjoint").equals(op)) {
+                        result = DoubleMatrixTools.inverseByAdjoint(dataMatrix.toMatrix());
+
+                    } else if (message("MatrixRank").equals(op)) {
+                        resultValue = DoubleMatrixTools.rank(dataMatrix.toMatrix());
+
+                    } else if (message("AdjointMatrix").equals(op)) {
+                        result = DoubleMatrixTools.adjoint(dataMatrix.toMatrix());
+
+                    } else if (message("Power").equals(op)) {
+                        result = DoubleMatrixTools.power(dataMatrix.toMatrix(), power);
+
+                    }
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                cost = new Date().getTime() - startTime.getTime();
+                resultLabel.setText(op + "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(cost));
+                if (result != null) {
+                    resultBox.getChildren().add(resultTablePane);
+                    resultController.loadMatrix(result);
+                } else if (!DoubleTools.invalidDouble(resultValue)) {
+                    resultBox.getChildren().add(resultArea);
+                    resultArea.setText(resultValue + "");
+                }
+                refreshStyle(resultBox);
+                tabPane.getSelectionModel().select(resultTab);
+            }
+
+        };
+        start(task);
     }
 
     /*

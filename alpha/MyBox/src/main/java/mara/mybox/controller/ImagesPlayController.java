@@ -197,7 +197,7 @@ public class ImagesPlayController extends BaseImagesListController {
         if (timer != null) {
             timer.cancel();
         }
-        if (task != null && !task.isQuit()) {
+        if (task != null) {
             task.cancel();
         }
         framesNumber = 0;
@@ -213,43 +213,41 @@ public class ImagesPlayController extends BaseImagesListController {
 
     @Override
     public void sourceFileChanged(File file) {
-        synchronized (this) {
-            clearList();
-            if (file == null) {
-                return;
-            }
-            String format = FileNameTools.suffix(file.getName());
-            if (format == null || format.isBlank()) {
-                popError(message("NotSupport"));
-                return;
-            }
-            sourceFile = file;
-            fileFormat = format;
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    if (fileFormat.equalsIgnoreCase("pdf")) {
-                        return loadPDF();
-                    } else if (fileFormat.equalsIgnoreCase("ppt") || fileFormat.equalsIgnoreCase("pptx")) {
-                        return loadPPT();
-                    } else if (fileFormat.equalsIgnoreCase("ico") || fileFormat.equalsIgnoreCase("icon")) {
-                        return loadIconFile();
-                    } else {
-                        return loadImageFile();
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (error != null && !error.isBlank()) {
-                        alertError(error);
-                    }
-                    playImages();
-                }
-            };
-            loading = start(task);
+        clearList();
+        if (file == null) {
+            return;
         }
+        String format = FileNameTools.suffix(file.getName());
+        if (format == null || format.isBlank()) {
+            popError(message("NotSupport"));
+            return;
+        }
+        sourceFile = file;
+        fileFormat = format;
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                if (fileFormat.equalsIgnoreCase("pdf")) {
+                    return loadPDF();
+                } else if (fileFormat.equalsIgnoreCase("ppt") || fileFormat.equalsIgnoreCase("pptx")) {
+                    return loadPPT();
+                } else if (fileFormat.equalsIgnoreCase("ico") || fileFormat.equalsIgnoreCase("icon")) {
+                    return loadIconFile();
+                } else {
+                    return loadImageFile();
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (error != null && !error.isBlank()) {
+                    alertError(error);
+                }
+                playImages();
+            }
+        };
+        loading = start(task);
     }
 
     // Read images as more as possible
@@ -450,48 +448,46 @@ public class ImagesPlayController extends BaseImagesListController {
     }
 
     public void loadImages(List<ImageInformation> infos) {
-        synchronized (this) {
-            clearList();
-            if (infos == null || infos.isEmpty()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        for (ImageInformation info : infos) {
-                            imageInfos.add(info.cloneAttributes());
-                        }
-                        framesNumber = imageInfos.size();
-                        for (int i = 0; i < framesNumber; i++) {
-                            if (task == null || task.isCancelled()) {
-                                return false;
-                            }
-                            ImageInformation info = imageInfos.get(i);
-                            if (info.getDuration() < 0) {
-                                info.setDuration(playController.timeValue);
-                            }
-                        }
-                        return true;
-                    } catch (Exception e) {
-                        if (task != null) {
-                            task.setError(e.toString());
-                        }
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (error != null && !error.isBlank()) {
-                        alertError(error);
-                    }
-                    playImages();
-                }
-            };
-            start(task);
+        clearList();
+        if (infos == null || infos.isEmpty()) {
+            return;
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    for (ImageInformation info : infos) {
+                        imageInfos.add(info.cloneAttributes());
+                    }
+                    framesNumber = imageInfos.size();
+                    for (int i = 0; i < framesNumber; i++) {
+                        if (task == null || task.isCancelled()) {
+                            return false;
+                        }
+                        ImageInformation info = imageInfos.get(i);
+                        if (info.getDuration() < 0) {
+                            info.setDuration(playController.timeValue);
+                        }
+                    }
+                    return true;
+                } catch (Exception e) {
+                    if (task != null) {
+                        task.setError(e.toString());
+                    }
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (error != null && !error.isBlank()) {
+                    alertError(error);
+                }
+                playImages();
+            }
+        };
+        start(task);
     }
 
     public synchronized boolean playImages() {

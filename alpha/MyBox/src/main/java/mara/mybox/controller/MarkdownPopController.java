@@ -57,36 +57,34 @@ public class MarkdownPopController extends TextPopController {
     @FXML
     @Override
     public void saveAsAction() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            File file = chooseSaveFile();
-            if (file == null) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                @Override
-                protected boolean handle() {
-                    try {
-                        File tmpFile = TextFileTools.writeFile(textArea.getText());
-                        return FileTools.rename(tmpFile, file);
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSaved();
-                    recordFileWritten(file);
-                    MarkdownEditorController controller = (MarkdownEditorController) WindowTools.openStage(Fxmls.MarkdownEditorFxml);
-                    controller.sourceFileChanged(file);
-                }
-            };
-            start(task);
+        File file = chooseSaveFile();
+        if (file == null) {
+            return;
         }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+            @Override
+            protected boolean handle() {
+                try {
+                    File tmpFile = TextFileTools.writeFile(textArea.getText());
+                    return FileTools.rename(tmpFile, file);
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popSaved();
+                recordFileWritten(file);
+                MarkdownEditorController controller = (MarkdownEditorController) WindowTools.openStage(Fxmls.MarkdownEditorFxml);
+                controller.sourceFileChanged(file);
+            }
+        };
+        start(task);
     }
 
     /*

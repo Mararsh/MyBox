@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import com.recognition.software.jdeskew.ImageDeskew;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,10 +31,10 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.OCRTools;
-import mara.mybox.value.AppPaths;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import net.sourceforge.tess4j.util.ImageHelper;
 
@@ -165,34 +164,32 @@ public class ImageOCRProcessController extends ImageViewerController {
         if (isSettingValues || imageView.getImage() == null || scale <= 0) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                private Image changedImage;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imageView.getImage(), null);
-                        bufferedImage = ScaleTools.scaleImageByScale(bufferedImage, scale);
-                        changedImage = SwingFXUtils.toFXImage(bufferedImage, null);
-                        return changedImage != null;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    loadImage(changedImage);
-                }
-
-            };
-            OCRController.start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+            private Image changedImage;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imageView.getImage(), null);
+                    bufferedImage = ScaleTools.scaleImageByScale(bufferedImage, scale);
+                    changedImage = SwingFXUtils.toFXImage(bufferedImage, null);
+                    return changedImage != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                loadImage(changedImage);
+            }
+
+        };
+        start(task);
     }
 
     @FXML
@@ -200,51 +197,49 @@ public class ImageOCRProcessController extends ImageViewerController {
         if (isSettingValues || imageView.getImage() == null || threshold <= 0) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                private Image ocrImage;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imageView.getImage(), null);
-                        ImageBinary bin = new ImageBinary(bufferedImage, threshold);
-                        bufferedImage = bin.operateImage();
-                        ocrImage = SwingFXUtils.toFXImage(bufferedImage, null);
-                        return ocrImage != null;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    loadImage(ocrImage);
-
-                }
-
-            };
-            OCRController.start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+            private Image ocrImage;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imageView.getImage(), null);
+                    ImageBinary bin = new ImageBinary(bufferedImage, threshold);
+                    bufferedImage = bin.operateImage();
+                    ocrImage = SwingFXUtils.toFXImage(bufferedImage, null);
+                    return ocrImage != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                loadImage(ocrImage);
+
+            }
+
+        };
+        start(task);
     }
 
     @FXML
     protected void popAlgorithmsMenu(MouseEvent mouseEvent) {
         try {
             List<String> algorithms = new ArrayList<>();
-            algorithms.addAll(Arrays.asList(Languages.message("Deskew"), Languages.message("Invert"),
-                    Languages.message("EdgeDetection") + "-" + Languages.message("EightNeighborLaplaceInvert"),
-                    Languages.message("EdgeDetection") + "-" + Languages.message("EightNeighborLaplace"),
-                    Languages.message("HSBHistogramEqualization"), Languages.message("GrayHistogramEqualization"),
-                    Languages.message("GrayHistogramStretching"), Languages.message("GrayHistogramShifting"),
-                    Languages.message("UnsharpMasking"),
-                    Languages.message("Enhancement") + "-" + Languages.message("EightNeighborLaplace"),
-                    Languages.message("Enhancement") + "-" + Languages.message("FourNeighborLaplace"),
-                    Languages.message("GaussianBlur"), Languages.message("AverageBlur")
+            algorithms.addAll(Arrays.asList(message("Deskew"), message("Invert"),
+                    message("EdgeDetection") + "-" + message("EightNeighborLaplaceInvert"),
+                    message("EdgeDetection") + "-" + message("EightNeighborLaplace"),
+                    message("HSBHistogramEqualization"), message("GrayHistogramEqualization"),
+                    message("GrayHistogramStretching"), message("GrayHistogramShifting"),
+                    message("UnsharpMasking"),
+                    message("Enhancement") + "-" + message("EightNeighborLaplace"),
+                    message("Enhancement") + "-" + message("FourNeighborLaplace"),
+                    message("GaussianBlur"), message("AverageBlur")
             ));
 
             List<MenuItem> items = new ArrayList<>();
@@ -270,114 +265,112 @@ public class ImageOCRProcessController extends ImageViewerController {
         if (algorithm == null || isSettingValues || imageView.getImage() == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                private Image ocrImage;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        if (Languages.message("Deskew").equals(algorithm)) {
-                            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imageView.getImage(), null);
-                            ImageDeskew id = new ImageDeskew(bufferedImage);
-                            double imageSkewAngle = id.getSkewAngle();
-                            if ((imageSkewAngle > OCRTools.MINIMUM_DESKEW_THRESHOLD
-                                    || imageSkewAngle < -(OCRTools.MINIMUM_DESKEW_THRESHOLD))) {
-                                bufferedImage = ImageHelper.rotateImage(bufferedImage, -imageSkewAngle);
-                            }
-                            ocrImage = SwingFXUtils.toFXImage(bufferedImage, null);
-
-                        } else if (Languages.message("Invert").equals(algorithm)) {
-                            PixelsOperation pixelsOperation = PixelsOperationFactory.create(imageView.getImage(),
-                                    null, PixelsOperation.OperationType.RGB, PixelsOperation.ColorActionType.Invert);
-                            ocrImage = pixelsOperation.operateFxImage();
-
-                        } else if (Languages.message("GrayHistogramEqualization").equals(algorithm)) {
-                            ImageContrast imageContrast = new ImageContrast(imageView.getImage(),
-                                    ContrastAlgorithm.Gray_Histogram_Equalization);
-                            ocrImage = imageContrast.operateFxImage();
-
-                        } else if (Languages.message("GrayHistogramStretching").equals(algorithm)) {
-                            ImageContrast imageContrast = new ImageContrast(imageView.getImage(),
-                                    ImageContrast.ContrastAlgorithm.Gray_Histogram_Stretching);
-                            imageContrast.setIntPara1(50);
-                            imageContrast.setIntPara2(50);
-                            ocrImage = imageContrast.operateFxImage();
-
-                        } else if (Languages.message("GrayHistogramShifting").equals(algorithm)) {
-                            ImageContrast imageContrast = new ImageContrast(imageView.getImage(),
-                                    ImageContrast.ContrastAlgorithm.Gray_Histogram_Shifting);
-                            imageContrast.setIntPara1(10);
-                            ocrImage = imageContrast.operateFxImage();
-
-                        } else if (Languages.message("HSBHistogramEqualization").equals(algorithm)) {
-                            ImageContrast imageContrast = new ImageContrast(imageView.getImage(),
-                                    ImageContrast.ContrastAlgorithm.HSB_Histogram_Equalization);
-                            ocrImage = imageContrast.operateFxImage();
-
-                        } else if (Languages.message("UnsharpMasking").equals(algorithm)) {
-                            ConvolutionKernel kernel = ConvolutionKernel.makeUnsharpMasking(3);
-                            ImageConvolution imageConvolution = ImageConvolution.create().
-                                    setImage(imageView.getImage()).setKernel(kernel);
-                            ocrImage = imageConvolution.operateFxImage();
-
-                        } else if ((Languages.message("Enhancement") + "-" + Languages.message("EightNeighborLaplace")).equals(algorithm)) {
-                            ConvolutionKernel kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
-                            ImageConvolution imageConvolution = ImageConvolution.create().
-                                    setImage(imageView.getImage()).setKernel(kernel);
-                            ocrImage = imageConvolution.operateFxImage();
-
-                        } else if ((Languages.message("Enhancement") + "-" + Languages.message("FourNeighborLaplace")).equals(algorithm)) {
-                            ConvolutionKernel kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
-                            ImageConvolution imageConvolution = ImageConvolution.create().
-                                    setImage(imageView.getImage()).setKernel(kernel);
-                            ocrImage = imageConvolution.operateFxImage();
-
-                        } else if (Languages.message("GaussianBlur").equals(algorithm)) {
-                            ConvolutionKernel kernel = ConvolutionKernel.makeGaussBlur(2);
-                            ImageConvolution imageConvolution = ImageConvolution.create().
-                                    setImage(imageView.getImage()).setKernel(kernel);
-                            ocrImage = imageConvolution.operateFxImage();
-
-                        } else if (Languages.message("AverageBlur").equals(algorithm)) {
-                            ConvolutionKernel kernel = ConvolutionKernel.makeAverageBlur(1);
-                            ImageConvolution imageConvolution = ImageConvolution.create().
-                                    setImage(imageView.getImage()).setKernel(kernel);
-                            ocrImage = imageConvolution.operateFxImage();
-
-                        } else if ((Languages.message("EdgeDetection") + "-" + Languages.message("EightNeighborLaplaceInvert")).equals(algorithm)) {
-                            ConvolutionKernel kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplaceInvert().setGray(true);
-                            ImageConvolution imageConvolution = ImageConvolution.create().
-                                    setImage(imageView.getImage()).setKernel(kernel);
-                            ocrImage = imageConvolution.operateFxImage();
-
-                        } else if ((Languages.message("EdgeDetection") + "-" + Languages.message("EightNeighborLaplace")).equals(algorithm)) {
-                            ConvolutionKernel kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplace().setGray(true);
-                            ImageConvolution imageConvolution = ImageConvolution.create().
-                                    setImage(imageView.getImage()).setKernel(kernel);
-                            ocrImage = imageConvolution.operateFxImage();
-
-                        }
-
-                        return ocrImage != null;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    loadImage(ocrImage);
-
-                }
-
-            };
-            OCRController.start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+            private Image ocrImage;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    if (message("Deskew").equals(algorithm)) {
+                        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imageView.getImage(), null);
+                        ImageDeskew id = new ImageDeskew(bufferedImage);
+                        double imageSkewAngle = id.getSkewAngle();
+                        if ((imageSkewAngle > OCRTools.MINIMUM_DESKEW_THRESHOLD
+                                || imageSkewAngle < -(OCRTools.MINIMUM_DESKEW_THRESHOLD))) {
+                            bufferedImage = ImageHelper.rotateImage(bufferedImage, -imageSkewAngle);
+                        }
+                        ocrImage = SwingFXUtils.toFXImage(bufferedImage, null);
+
+                    } else if (message("Invert").equals(algorithm)) {
+                        PixelsOperation pixelsOperation = PixelsOperationFactory.create(imageView.getImage(),
+                                null, PixelsOperation.OperationType.RGB, PixelsOperation.ColorActionType.Invert);
+                        ocrImage = pixelsOperation.operateFxImage();
+
+                    } else if (message("GrayHistogramEqualization").equals(algorithm)) {
+                        ImageContrast imageContrast = new ImageContrast(imageView.getImage(),
+                                ContrastAlgorithm.Gray_Histogram_Equalization);
+                        ocrImage = imageContrast.operateFxImage();
+
+                    } else if (message("GrayHistogramStretching").equals(algorithm)) {
+                        ImageContrast imageContrast = new ImageContrast(imageView.getImage(),
+                                ImageContrast.ContrastAlgorithm.Gray_Histogram_Stretching);
+                        imageContrast.setIntPara1(50);
+                        imageContrast.setIntPara2(50);
+                        ocrImage = imageContrast.operateFxImage();
+
+                    } else if (message("GrayHistogramShifting").equals(algorithm)) {
+                        ImageContrast imageContrast = new ImageContrast(imageView.getImage(),
+                                ImageContrast.ContrastAlgorithm.Gray_Histogram_Shifting);
+                        imageContrast.setIntPara1(10);
+                        ocrImage = imageContrast.operateFxImage();
+
+                    } else if (message("HSBHistogramEqualization").equals(algorithm)) {
+                        ImageContrast imageContrast = new ImageContrast(imageView.getImage(),
+                                ImageContrast.ContrastAlgorithm.HSB_Histogram_Equalization);
+                        ocrImage = imageContrast.operateFxImage();
+
+                    } else if (message("UnsharpMasking").equals(algorithm)) {
+                        ConvolutionKernel kernel = ConvolutionKernel.makeUnsharpMasking(3);
+                        ImageConvolution imageConvolution = ImageConvolution.create().
+                                setImage(imageView.getImage()).setKernel(kernel);
+                        ocrImage = imageConvolution.operateFxImage();
+
+                    } else if ((message("Enhancement") + "-" + message("EightNeighborLaplace")).equals(algorithm)) {
+                        ConvolutionKernel kernel = ConvolutionKernel.MakeSharpenEightNeighborLaplace();
+                        ImageConvolution imageConvolution = ImageConvolution.create().
+                                setImage(imageView.getImage()).setKernel(kernel);
+                        ocrImage = imageConvolution.operateFxImage();
+
+                    } else if ((message("Enhancement") + "-" + message("FourNeighborLaplace")).equals(algorithm)) {
+                        ConvolutionKernel kernel = ConvolutionKernel.MakeSharpenFourNeighborLaplace();
+                        ImageConvolution imageConvolution = ImageConvolution.create().
+                                setImage(imageView.getImage()).setKernel(kernel);
+                        ocrImage = imageConvolution.operateFxImage();
+
+                    } else if (message("GaussianBlur").equals(algorithm)) {
+                        ConvolutionKernel kernel = ConvolutionKernel.makeGaussBlur(2);
+                        ImageConvolution imageConvolution = ImageConvolution.create().
+                                setImage(imageView.getImage()).setKernel(kernel);
+                        ocrImage = imageConvolution.operateFxImage();
+
+                    } else if (message("AverageBlur").equals(algorithm)) {
+                        ConvolutionKernel kernel = ConvolutionKernel.makeAverageBlur(1);
+                        ImageConvolution imageConvolution = ImageConvolution.create().
+                                setImage(imageView.getImage()).setKernel(kernel);
+                        ocrImage = imageConvolution.operateFxImage();
+
+                    } else if ((message("EdgeDetection") + "-" + message("EightNeighborLaplaceInvert")).equals(algorithm)) {
+                        ConvolutionKernel kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplaceInvert().setGray(true);
+                        ImageConvolution imageConvolution = ImageConvolution.create().
+                                setImage(imageView.getImage()).setKernel(kernel);
+                        ocrImage = imageConvolution.operateFxImage();
+
+                    } else if ((message("EdgeDetection") + "-" + message("EightNeighborLaplace")).equals(algorithm)) {
+                        ConvolutionKernel kernel = ConvolutionKernel.makeEdgeDetectionEightNeighborLaplace().setGray(true);
+                        ImageConvolution imageConvolution = ImageConvolution.create().
+                                setImage(imageView.getImage()).setKernel(kernel);
+                        ocrImage = imageConvolution.operateFxImage();
+
+                    }
+
+                    return ocrImage != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                loadImage(ocrImage);
+
+            }
+
+        };
+        start(task);
     }
 
     @FXML
@@ -385,7 +378,7 @@ public class ImageOCRProcessController extends ImageViewerController {
         if (imageView.getImage() == null) {
             return;
         }
-        popInformation(Languages.message("WaitAndHandling"), 6000);
+        popInformation(message("WaitAndHandling"), 6000);
         demoButton.setDisable(true);
         Task demoTask = new Task<Void>() {
             private List<String> files;
@@ -402,8 +395,8 @@ public class ImageOCRProcessController extends ImageViewerController {
                     ImageConvolution imageConvolution = ImageConvolution.create().
                             setImage(image).setKernel(kernel);
                     BufferedImage bufferedImage = imageConvolution.operateImage();
-                    String tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("EdgeDetection") + "-" + Languages.message("EightNeighborLaplaceInvert") + ".png";
+                    String tmpFile = FileTmpTools.generateFile(message("EdgeDetection")
+                            + "-" + message("EightNeighborLaplaceInvert"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -412,8 +405,8 @@ public class ImageOCRProcessController extends ImageViewerController {
                     imageConvolution = ImageConvolution.create().
                             setImage(image).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("EdgeDetection") + "-" + Languages.message("EightNeighborLaplace") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("EdgeDetection")
+                            + "-" + message("EightNeighborLaplace"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -421,8 +414,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                     ImageContrast imageContrast = new ImageContrast(image,
                             ContrastAlgorithm.HSB_Histogram_Equalization);
                     bufferedImage = imageContrast.operateImage();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("HSBHistogramEqualization") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("HSBHistogramEqualization"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -430,8 +422,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                     imageContrast = new ImageContrast(image,
                             ContrastAlgorithm.Gray_Histogram_Equalization);
                     bufferedImage = imageContrast.operateImage();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("GrayHistogramEqualization") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("GrayHistogramEqualization"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -441,8 +432,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                     imageContrast.setIntPara1(100);
                     imageContrast.setIntPara2(100);
                     bufferedImage = imageContrast.operateImage();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("GrayHistogramStretching") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("GrayHistogramStretching"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -451,8 +441,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                             ContrastAlgorithm.Gray_Histogram_Shifting);
                     imageContrast.setIntPara1(40);
                     bufferedImage = imageContrast.operateImage();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("GrayHistogramShifting") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("GrayHistogramShifting"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -461,8 +450,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                     imageConvolution = ImageConvolution.create().
                             setImage(image).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("UnsharpMasking") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("UnsharpMasking"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -471,8 +459,8 @@ public class ImageOCRProcessController extends ImageViewerController {
                     imageConvolution = ImageConvolution.create().
                             setImage(image).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("Enhancement") + "-" + Languages.message("FourNeighborLaplace") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("Enhancement")
+                            + "-" + message("FourNeighborLaplace"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -481,8 +469,8 @@ public class ImageOCRProcessController extends ImageViewerController {
                     imageConvolution = ImageConvolution.create().
                             setImage(image).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("Enhancement") + "-" + Languages.message("EightNeighborLaplace") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("Enhancement")
+                            + "-" + message("EightNeighborLaplace"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -491,8 +479,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                     imageConvolution = ImageConvolution.create().
                             setImage(image).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("GaussianBlur") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("GaussianBlur"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -501,8 +488,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                     imageConvolution = ImageConvolution.create().
                             setImage(image).setKernel(kernel);
                     bufferedImage = imageConvolution.operateImage();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("AverageBlur") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("AverageBlur"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -510,8 +496,7 @@ public class ImageOCRProcessController extends ImageViewerController {
                     PixelsOperation pixelsOperation = PixelsOperationFactory.create(imageView.getImage(),
                             null, PixelsOperation.OperationType.RGB, PixelsOperation.ColorActionType.Invert);
                     bufferedImage = pixelsOperation.operateImage();
-                    tmpFile = AppPaths.getGeneratedPath() + File.separator
-                            + Languages.message("Invert") + ".png";
+                    tmpFile = FileTmpTools.generateFile(message("Invert"), "png").getAbsolutePath();
                     if (ImageFileWriters.writeImageFile(bufferedImage, tmpFile)) {
                         files.add(tmpFile);
                     }
@@ -553,35 +538,33 @@ public class ImageOCRProcessController extends ImageViewerController {
         if (isSettingValues || imageView.getImage() == null || rotate == 0) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                private Image ocrImage;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imageView.getImage(), null);
-                        bufferedImage = TransformTools.rotateImage(bufferedImage, rotate);
-                        ocrImage = SwingFXUtils.toFXImage(bufferedImage, null);
-                        return ocrImage != null;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    loadImage(ocrImage);
-
-                }
-
-            };
-            OCRController.start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+            private Image ocrImage;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imageView.getImage(), null);
+                    bufferedImage = TransformTools.rotateImage(bufferedImage, rotate);
+                    ocrImage = SwingFXUtils.toFXImage(bufferedImage, null);
+                    return ocrImage != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                loadImage(ocrImage);
+
+            }
+
+        };
+        start(task);
     }
 
 }

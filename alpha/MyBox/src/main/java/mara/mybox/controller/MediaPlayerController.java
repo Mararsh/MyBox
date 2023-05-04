@@ -570,73 +570,66 @@ public class MediaPlayerController extends BaseController {
             initPlayer();
             return;
         }
-        synchronized (this) {
-            try {
-                if (task != null && !task.isQuit()) {
-                    task.cancel();
-                }
-                task = new SingletonTask<Void>(this) {
-
-                    private int index;
-                    private MediaInformation info;
-
-                    @Override
-                    protected boolean handle() {
-                        error = null;
-                        try {
-                            index = getIndex(currentIndex);
-                            List<Integer> tried = new ArrayList();
-                            while (tried.size() < tableData.size()) {
-                                info = tableData.get(index);
-                                if (!tried.contains(index)) {
-                                    tried.add(index);
-                                }
-                                if (info == null) {
-                                    index = getIndex(++index);
-                                    continue;
-                                }
-                                return true;
-                            }
-                        } catch (Exception e) {
-                            error = e.toString();
-                        }
-                        return false;
-                    }
-
-                    private int getIndex(int index) {
-                        int newIndex = index;
-                        if (newIndex >= tableData.size()) {
-                            newIndex = 0;
-                        }
-                        if (!randomCheck.isSelected()) {
-                            return newIndex;
-                        }
-                        if (randomPlayed == null || randomPlayed.size() >= tableData.size()) {
-                            randomPlayed = new ArrayList();
-                        }
-                        if (randomPlayed.contains(newIndex)) {
-                            Random r = new Random();
-                            int v = r.nextInt(tableData.size());
-                            while (randomPlayed.contains(v)) {
-                                v = r.nextInt(tableData.size());
-                            }
-                            return v;
-                        }
-                        return newIndex;
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        playMedia(index, info);
-                    }
-
-                };
-                start(task, message("ReadingMedia..."));
-            } catch (Exception e) {
-                MyBoxLog.error(e.toString());
-            }
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
 
+            private int index;
+            private MediaInformation info;
+
+            @Override
+            protected boolean handle() {
+                error = null;
+                try {
+                    index = getIndex(currentIndex);
+                    List<Integer> tried = new ArrayList();
+                    while (tried.size() < tableData.size()) {
+                        info = tableData.get(index);
+                        if (!tried.contains(index)) {
+                            tried.add(index);
+                        }
+                        if (info == null) {
+                            index = getIndex(++index);
+                            continue;
+                        }
+                        return true;
+                    }
+                } catch (Exception e) {
+                    error = e.toString();
+                }
+                return false;
+            }
+
+            private int getIndex(int index) {
+                int newIndex = index;
+                if (newIndex >= tableData.size()) {
+                    newIndex = 0;
+                }
+                if (!randomCheck.isSelected()) {
+                    return newIndex;
+                }
+                if (randomPlayed == null || randomPlayed.size() >= tableData.size()) {
+                    randomPlayed = new ArrayList();
+                }
+                if (randomPlayed.contains(newIndex)) {
+                    Random r = new Random();
+                    int v = r.nextInt(tableData.size());
+                    while (randomPlayed.contains(v)) {
+                        v = r.nextInt(tableData.size());
+                    }
+                    return v;
+                }
+                return newIndex;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                playMedia(index, info);
+            }
+
+        };
+        start(task, message("ReadingMedia..."));
     }
 
     public void playMedia(int index, MediaInformation info) {
@@ -645,127 +638,120 @@ public class MediaPlayerController extends BaseController {
             initPlayer();
             return;
         }
-        synchronized (this) {
-            try {
-                if (task != null && !task.isQuit()) {
-                    task.cancel();
-                }
-                if (player != null) {
-                    player.dispose();
-                    player = null;
-                }
-                currentIndex = index;
-                currentMedia = info;
-                if (randomCheck.isSelected()) {
-                    randomPlayed.add(currentIndex);
-                }
-                myStage.setTitle(getBaseTitle() + " - " + currentMedia.getAddress());
-                isSettingValues = true;
-                tableController.markFileHandling(currentIndex);
-                isSettingValues = false;
-                if (!currentMedia.getURI().getScheme().startsWith("file")) {
-                    popInformation(message("ReadingStreamMedia...") + "\n" + currentMedia.getAddress(), 6000);
-                } else {
-                    popInformation(message("ReadingMedia...") + "\n" + currentMedia.getAddress());
-                }
-                task = new SingletonTask<Void>(this) {
+        if (task != null) {
+            task.cancel();
+        }
+        if (player != null) {
+            player.dispose();
+            player = null;
+        }
+        currentIndex = index;
+        currentMedia = info;
+        if (randomCheck.isSelected()) {
+            randomPlayed.add(currentIndex);
+        }
+        myStage.setTitle(getBaseTitle() + " - " + currentMedia.getAddress());
+        isSettingValues = true;
+        tableController.markFileHandling(currentIndex);
+        isSettingValues = false;
+        if (!currentMedia.getURI().getScheme().startsWith("file")) {
+            popInformation(message("ReadingStreamMedia...") + "\n" + currentMedia.getAddress(), 6000);
+        } else {
+            popInformation(message("ReadingMedia...") + "\n" + currentMedia.getAddress());
+        }
+        task = new SingletonTask<Void>(this) {
 
-                    @Override
-                    protected boolean handle() {
-                        error = null;
-                        try {
-                            Media media = new Media(currentMedia.getURI().toString());
-                            if (media.getError() == null) {
-                                media.setOnError(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        handleMediaError(currentMedia, media.getError());
-//                                        task.cancel();
-                                    }
-                                });
-                            } else {
-                                error = media.getError().toString();
+            @Override
+            protected boolean handle() {
+                error = null;
+                try {
+                    Media media = new Media(currentMedia.getURI().toString());
+                    if (media.getError() == null) {
+                        media.setOnError(new Runnable() {
+                            @Override
+                            public void run() {
                                 handleMediaError(currentMedia, media.getError());
-                                return true;
+//                                        task.cancel();
                             }
-                            player = new MediaPlayer(media);
-                            if (player == null) {
-                                error = message("InvalidData");
-                                return true;
-                            }
-                            if (player.getError() != null) {
-                                handleMediaError(currentMedia, player.getError());
-                                return true;
-                            }
-                            player.setOnError(new Runnable() {
-                                @Override
-                                public void run() {
-                                    handleMediaError(currentMedia, player.getError());
-                                }
-                            });
-
-                            player.setVolume(volumeSlider.getValue() / 100.0);
-                            player.setRate(speed);
-                            checkControls();
-
-                            player.setOnReady(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mediaReady();
-                                }
-                            });
-
-                            player.currentTimeProperty().addListener(new ChangeListener<Duration>() {
-                                @Override
-                                public void changed(ObservableValue ov, Duration oldValue, Duration newValue) {
-                                    updateStatus();
-                                }
-                            });
-
-                            player.setOnEndOfMedia(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mediaEnd();
-                                }
-                            });
-
-                            player.setOnStopped(new Runnable() {
-                                @Override
-                                public void run() {
-//                                    MyBoxLog.debug("Stopped");
-                                    Platform.runLater(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            initPlayer();
-                                        }
-                                    });
-
-                                }
-                            });
-
-                            showPlayer();
-
-                        } catch (Exception e) {
-                            error = e.toString();
-                        }
+                        });
+                    } else {
+                        error = media.getError().toString();
+                        handleMediaError(currentMedia, media.getError());
                         return true;
                     }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        if (error != null) {
-                            popError(error);
-                        }
-                        tableController.tableView.refresh();
+                    player = new MediaPlayer(media);
+                    if (player == null) {
+                        error = message("InvalidData");
+                        return true;
                     }
+                    if (player.getError() != null) {
+                        handleMediaError(currentMedia, player.getError());
+                        return true;
+                    }
+                    player.setOnError(new Runnable() {
+                        @Override
+                        public void run() {
+                            handleMediaError(currentMedia, player.getError());
+                        }
+                    });
 
-                };
-                start(task);
-            } catch (Exception e) {
-                MyBoxLog.error(e.toString());
+                    player.setVolume(volumeSlider.getValue() / 100.0);
+                    player.setRate(speed);
+                    checkControls();
+
+                    player.setOnReady(new Runnable() {
+                        @Override
+                        public void run() {
+                            mediaReady();
+                        }
+                    });
+
+                    player.currentTimeProperty().addListener(new ChangeListener<Duration>() {
+                        @Override
+                        public void changed(ObservableValue ov, Duration oldValue, Duration newValue) {
+                            updateStatus();
+                        }
+                    });
+
+                    player.setOnEndOfMedia(new Runnable() {
+                        @Override
+                        public void run() {
+                            mediaEnd();
+                        }
+                    });
+
+                    player.setOnStopped(new Runnable() {
+                        @Override
+                        public void run() {
+//                                    MyBoxLog.debug("Stopped");
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    initPlayer();
+                                }
+                            });
+
+                        }
+                    });
+
+                    showPlayer();
+
+                } catch (Exception e) {
+                    error = e.toString();
+                }
+                return true;
             }
-        }
 
+            @Override
+            protected void whenSucceeded() {
+                if (error != null) {
+                    popError(error);
+                }
+                tableController.tableView.refresh();
+            }
+
+        };
+        start(task);
     }
 
     public void handleMediaError(MediaInformation info, MediaException exception) {

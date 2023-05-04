@@ -81,41 +81,39 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                 || text.isEmpty()) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private Image newImage;
-
-                @Override
-                protected boolean handle() {
-                    newImage = FxImageTools.addText(imageView.getImage(), optionsController);
-                    if (task == null || isCancelled()) {
-                        return false;
-                    }
-                    return newImage != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (editing) {
-                        maskView.setImage(newImage);
-                        maskView.setOpacity(1);
-                        maskView.setVisible(true);
-                        imageView.setVisible(false);
-                        imageView.toBack();
-
-                    } else {
-                        imageController.popSuccessful();
-                        imageController.updateImage(ImageOperation.Text, null, null, newImage, cost);
-                    }
-                }
-
-            };
-            imageController.start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private Image newImage;
+
+            @Override
+            protected boolean handle() {
+                newImage = FxImageTools.addText(imageView.getImage(), optionsController);
+                if (task == null || isCancelled()) {
+                    return false;
+                }
+                return newImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (editing) {
+                    maskView.setImage(newImage);
+                    maskView.setOpacity(1);
+                    maskView.setVisible(true);
+                    imageView.setVisible(false);
+                    imageView.toBack();
+
+                } else {
+                    imageController.popSuccessful();
+                    imageController.updateImage(ImageOperation.Text, null, null, newImage, cost);
+                }
+            }
+
+        };
+        start(task);
     }
 
     @FXML

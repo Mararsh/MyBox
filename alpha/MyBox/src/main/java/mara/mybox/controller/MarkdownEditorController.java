@@ -272,72 +272,70 @@ public class MarkdownEditorController extends TextEditorController {
         if (webViewController == null || !updateHtml && !updateCodes) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            if (updateHtml) {
-                webViewController.loadContents(null);
-            }
-            htmlScrollLeft = codesArea.getScrollLeft();
-            htmlScrollTop = codesArea.getScrollTop();
-            if (updateCodes) {
-                codesArea.clear();
-            }
-            if (mainArea.getText().isEmpty()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private String html;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        if (htmlOptions == null || htmlParser == null || htmlRenderer == null) {
-                            makeHtmlConverter();
-                        }
-                        Node document = htmlParser.parse(mainArea.getText());
-                        html = htmlRenderer.render(document);
-
-                        html = HtmlWriteTools.html(titleInput.getText(), html);
-                        return html != null;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    try {
-                        if (updateHtml) {
-                            Platform.runLater(() -> {
-                                webViewController.loadContents(html);
-                                htmlPage = sourceInformation.getCurrentPage();
-                            });
-                        }
-                        if (updateCodes) {
-                            Platform.runLater(() -> {
-                                codesArea.setText(html);
-                                codesPage = sourceInformation.getCurrentPage();
-                                new Timer().schedule(new TimerTask() {
-                                    @Override
-                                    public void run() {
-                                        codesArea.setScrollLeft(htmlScrollLeft);
-                                        codesArea.setScrollTop(htmlScrollTop);
-                                    }
-                                }, 300);
-                            });
-                        }
-                    } catch (Exception e) {
-                        MyBoxLog.error(e);
-                    }
-                }
-
-            };
-            start(task, false);
+        if (task != null) {
+            task.cancel();
         }
+        if (updateHtml) {
+            webViewController.loadContents(null);
+        }
+        htmlScrollLeft = codesArea.getScrollLeft();
+        htmlScrollTop = codesArea.getScrollTop();
+        if (updateCodes) {
+            codesArea.clear();
+        }
+        if (mainArea.getText().isEmpty()) {
+            return;
+        }
+        task = new SingletonTask<Void>(this) {
+
+            private String html;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    if (htmlOptions == null || htmlParser == null || htmlRenderer == null) {
+                        makeHtmlConverter();
+                    }
+                    Node document = htmlParser.parse(mainArea.getText());
+                    html = htmlRenderer.render(document);
+
+                    html = HtmlWriteTools.html(titleInput.getText(), html);
+                    return html != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                try {
+                    if (updateHtml) {
+                        Platform.runLater(() -> {
+                            webViewController.loadContents(html);
+                            htmlPage = sourceInformation.getCurrentPage();
+                        });
+                    }
+                    if (updateCodes) {
+                        Platform.runLater(() -> {
+                            codesArea.setText(html);
+                            codesPage = sourceInformation.getCurrentPage();
+                            new Timer().schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    codesArea.setScrollLeft(htmlScrollLeft);
+                                    codesArea.setScrollTop(htmlScrollTop);
+                                }
+                            }, 300);
+                        });
+                    }
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                }
+            }
+
+        };
+        start(task, false);
     }
 
     @FXML

@@ -80,32 +80,30 @@ public class ImageManufactureShadowController extends ImageManufactureOperationC
         if (shadow <= 0) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private Image newImage;
-
-                @Override
-                protected boolean handle() {
-                    newImage = FxImageTools.addShadowAlpha(imageView.getImage(),
-                            shadow, (Color) colorSetController.rect.getFill());
-                    if (task == null || isCancelled()) {
-                        return false;
-                    }
-                    return newImage != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    imageController.popSuccessful();
-                    imageController.updateImage(ImageOperation.Shadow, shadow + "", null, newImage, cost);
-                }
-
-            };
-            imageController.start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private Image newImage;
+
+            @Override
+            protected boolean handle() {
+                newImage = FxImageTools.addShadowAlpha(imageView.getImage(),
+                        shadow, (Color) colorSetController.rect.getFill());
+                if (task == null || isCancelled()) {
+                    return false;
+                }
+                return newImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                imageController.popSuccessful();
+                imageController.updateImage(ImageOperation.Shadow, shadow + "", null, newImage, cost);
+            }
+
+        };
+        start(task);
     }
 }

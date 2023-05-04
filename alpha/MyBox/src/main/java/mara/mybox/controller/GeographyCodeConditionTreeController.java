@@ -46,100 +46,98 @@ public class GeographyCodeConditionTreeController extends ControlConditionTree {
 
     @Override
     public void loadTree() {
+        if (task != null) {
+            task.cancel();
+        }
         treeView.setRoot(null);
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                private GeographyCode earch;
-                private List<GeographyCode> continents, others;
-                private List<Long> haveChildren;
-                private List<Short> haveLevels;
+        task = new SingletonTask<Void>(this) {
+            private GeographyCode earch;
+            private List<GeographyCode> continents, others;
+            private List<Long> haveChildren;
+            private List<Short> haveLevels;
 
-                @Override
-                protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    earch = TableGeographyCode.earth(conn);
+                    if (earch == null) {
+                        GeographyCodeTools.importPredefined(conn, loading);
                         earch = TableGeographyCode.earth(conn);
                         if (earch == null) {
-                            GeographyCodeTools.importPredefined(conn, loading);
-                            earch = TableGeographyCode.earth(conn);
-                            if (earch == null) {
-                                return false;
-                            }
+                            return false;
                         }
-                        conn.setReadOnly(true);
-                        conn.setAutoCommit(true);
+                    }
+                    conn.setReadOnly(true);
+                    conn.setAutoCommit(true);
 
-                        if (loading != null) {
-                            loading.setInfo(Languages.message("LoadingContinents"));
+                    if (loading != null) {
+                        loading.setInfo(Languages.message("LoadingContinents"));
+                    }
+                    continents = new ArrayList<>();
+                    others = new ArrayList<>();
+                    List<GeographyCode> nodes = TableGeographyCode.queryChildren(conn, earch.getGcid());
+                    nodes.forEach((node) -> {
+                        if (node.getLevel() == 2 && node.getGcid() >= 2 && node.getGcid() <= 8) {
+                            continents.add(node);
+                        } else if (node.getLevel() > 1) {
+                            others.add(node);
                         }
-                        continents = new ArrayList<>();
-                        others = new ArrayList<>();
-                        List<GeographyCode> nodes = TableGeographyCode.queryChildren(conn, earch.getGcid());
-                        nodes.forEach((node) -> {
-                            if (node.getLevel() == 2 && node.getGcid() >= 2 && node.getGcid() <= 8) {
-                                continents.add(node);
-                            } else if (node.getLevel() > 1) {
-                                others.add(node);
-                            }
-                        });
+                    });
 
-                        if (loading != null) {
-                            loading.setInfo(Languages.message("CheckingLeafNodes"));
-                        }
-                        haveChildren = TableGeographyCode.haveChildren(conn, nodes);
+                    if (loading != null) {
+                        loading.setInfo(Languages.message("CheckingLeafNodes"));
+                    }
+                    haveChildren = TableGeographyCode.haveChildren(conn, nodes);
 
-                        if (loading != null) {
-                            loading.setInfo(Languages.message("LoadingLevels"));
-                        }
-                        haveLevels = new ArrayList();
-                        try ( PreparedStatement query = conn.prepareStatement(TableGeographyCode.LevelSizeQuery)) {
-                            query.setMaxRows(1);
-                            for (short i = 2; i <= 9; i++) {
-                                query.setLong(1, i);
-                                try ( ResultSet results = query.executeQuery()) {
-                                    if (results.next()) {
-                                        int size = results.getInt(1);
-                                        if (size > 0) {
-                                            haveLevels.add(i);
-                                        }
+                    if (loading != null) {
+                        loading.setInfo(Languages.message("LoadingLevels"));
+                    }
+                    haveLevels = new ArrayList();
+                    try (PreparedStatement query = conn.prepareStatement(TableGeographyCode.LevelSizeQuery)) {
+                        query.setMaxRows(1);
+                        for (short i = 2; i <= 9; i++) {
+                            query.setLong(1, i);
+                            try (ResultSet results = query.executeQuery()) {
+                                if (results.next()) {
+                                    int size = results.getInt(1);
+                                    if (size > 0) {
+                                        haveLevels.add(i);
                                     }
                                 }
                             }
                         }
-                        return true;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        MyBoxLog.debug(error);
-                        return false;
                     }
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    MyBoxLog.debug(error);
+                    return false;
                 }
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    CheckBoxTreeItem<ConditionNode> allItem = new CheckBoxTreeItem(
-                            ConditionNode.create(Languages.message("Earth"))
-                                    .setCode(earch)
-                                    .setTitle(Languages.message("AllLocations"))
+            @Override
+            protected void whenSucceeded() {
+                CheckBoxTreeItem<ConditionNode> allItem = new CheckBoxTreeItem(
+                        ConditionNode.create(Languages.message("Earth"))
+                                .setCode(earch)
+                                .setTitle(Languages.message("AllLocations"))
+                                .setCondition(""));
+                allItem.setExpanded(true);
+                treeView.setRoot(allItem);
+                addNodes(allItem, continents, haveChildren, haveLevels);
+
+                if (!others.isEmpty()) {
+                    CheckBoxTreeItem<ConditionNode> othersItem = new CheckBoxTreeItem(
+                            ConditionNode.create(Languages.message("Others"))
+                                    .setTitle(Languages.message("Others"))
                                     .setCondition(""));
-                    allItem.setExpanded(true);
-                    treeView.setRoot(allItem);
-                    addNodes(allItem, continents, haveChildren, haveLevels);
-
-                    if (!others.isEmpty()) {
-                        CheckBoxTreeItem<ConditionNode> othersItem = new CheckBoxTreeItem(
-                                ConditionNode.create(Languages.message("Others"))
-                                        .setTitle(Languages.message("Others"))
-                                        .setCondition(""));
-                        allItem.getChildren().add(othersItem);
-                        addNodes(othersItem, others, haveChildren, null);
-                    }
-                    treeView.setSelection();
+                    allItem.getChildren().add(othersItem);
+                    addNodes(othersItem, others, haveChildren, null);
                 }
-            };
-            loading = start(task);
-        }
+                treeView.setSelection();
+            }
+        };
+        loading = start(task);
     }
 
     protected void addNodes(CheckBoxTreeItem<ConditionNode> parent, List<GeographyCode> codes,
@@ -232,68 +230,66 @@ public class GeographyCodeConditionTreeController extends ControlConditionTree {
         if (parent == null || code == null) {
             return;
         }
+        if (task != null) {
+            task.cancel();
+        }
         parent.getChildren().clear();
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                private List<GeographyCode> nodes;
-                private List<Long> haveChildren;
-                private List<Short> haveLevels;
+        task = new SingletonTask<Void>(this) {
+            private List<GeographyCode> nodes;
+            private List<Long> haveChildren;
+            private List<Short> haveLevels;
 
-                @Override
-                protected boolean handle() {
-                    try ( Connection conn = DerbyBase.getConnection()) {
-                        conn.setReadOnly(true);
-                        GeographyCodeLevel level = code.getLevelCode();
-                        int codeLevel = level.getLevel();
-                        if (level.getKey() == null || codeLevel < 2 || codeLevel > 8) {
-                            return false;
-                        }
-                        if (loading != null) {
-                            loading.setInfo(Languages.message("Loading") + " " + level.getName()
-                                    + " " + code.getName());
-                        }
-                        nodes = TableGeographyCode.queryChildren(conn, code.getGcid());
-                        if (nodes == null || nodes.isEmpty()) {
-                            return false;
-                        }
-
-                        if (loading != null) {
-                            loading.setInfo(Languages.message("CheckingLeafNodes"));
-                        }
-                        haveChildren = TableGeographyCode.haveChildren(conn, nodes);
-
-                        if (loading != null) {
-                            loading.setInfo(Languages.message("LoadingLevels"));
-                        }
-                        haveLevels = new ArrayList();
-                        for (int i = codeLevel + 1; i <= 9; i++) {
-                            String sql = "SELECT gcid FROM Geography_Code WHERE "
-                                    + " level=" + i + " AND "
-                                    + level.getKey() + "=" + code.getGcid()
-                                    + " OFFSET 0 ROWS FETCH NEXT 1 ROWS ONLY";
-                            try ( ResultSet results = conn.createStatement().executeQuery(sql)) {
-                                if (results.next()) {
-                                    haveLevels.add(Short.parseShort(i + ""));
-                                }
-                            }
-                        }
-                        return true;
-                    } catch (Exception e) {
-                        error = e.toString();
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    conn.setReadOnly(true);
+                    GeographyCodeLevel level = code.getLevelCode();
+                    int codeLevel = level.getLevel();
+                    if (level.getKey() == null || codeLevel < 2 || codeLevel > 8) {
                         return false;
                     }
-                }
+                    if (loading != null) {
+                        loading.setInfo(Languages.message("Loading") + " " + level.getName()
+                                + " " + code.getName());
+                    }
+                    nodes = TableGeographyCode.queryChildren(conn, code.getGcid());
+                    if (nodes == null || nodes.isEmpty()) {
+                        return false;
+                    }
 
-                @Override
-                protected void whenSucceeded() {
-                    addNodes(parent, nodes, haveChildren, haveLevels);
+                    if (loading != null) {
+                        loading.setInfo(Languages.message("CheckingLeafNodes"));
+                    }
+                    haveChildren = TableGeographyCode.haveChildren(conn, nodes);
+
+                    if (loading != null) {
+                        loading.setInfo(Languages.message("LoadingLevels"));
+                    }
+                    haveLevels = new ArrayList();
+                    for (int i = codeLevel + 1; i <= 9; i++) {
+                        String sql = "SELECT gcid FROM Geography_Code WHERE "
+                                + " level=" + i + " AND "
+                                + level.getKey() + "=" + code.getGcid()
+                                + " OFFSET 0 ROWS FETCH NEXT 1 ROWS ONLY";
+                        try (ResultSet results = conn.createStatement().executeQuery(sql)) {
+                            if (results.next()) {
+                                haveLevels.add(Short.parseShort(i + ""));
+                            }
+                        }
+                    }
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
                 }
-            };
-            loading = start(task);
-        }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                addNodes(parent, nodes, haveChildren, haveLevels);
+            }
+        };
+        loading = start(task);
     }
 
     protected boolean loaded(TreeItem item) {

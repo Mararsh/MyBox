@@ -66,86 +66,78 @@ public class ControlTimesTree extends ControlConditionTree {
     }
 
     public void loadYears() {
-        synchronized (this) {
-            if (task != null) {
-                task.cancel();
-            }
-            clearTree();
-            thisPane.setDisable(true);
-            CheckBoxTreeItem<ConditionNode> root = new CheckBoxTreeItem(
-                    ConditionNode.create(message("AllTime"))
-                            .setTitle(message("AllTime"))
-                            .setCondition("")
-            );
-            root.setExpanded(true);
-            treeView.setRoot(root);
-            task = new SingletonTask<Void>(this) {
-                private List<String> years;
-
-                @Override
-                protected boolean handle() {
-                    years = new ArrayList<>();
-                    String sql = "SELECT DISTINCT YEAR(" + fieldName + ") AS dvalue FROM " + tableName
-                            + (baseCondition != null && !baseCondition.isBlank() ? " WHERE " + baseCondition : "")
-                            + " ORDER BY dvalue DESC";
-                    try ( Connection conn = DerbyBase.getConnection();
-                             PreparedStatement query = conn.prepareStatement(sql);
-                             ResultSet results = query.executeQuery()) {
-                        while (results.next()) {
-                            String d = results.getString("dvalue");
-                            if (d != null) {
-                                String name;
-                                if (d.length() < 4) {
-                                    name = "0".repeat(4 - d.length()) + d;
-                                } else {
-                                    name = d;
-                                }
-                                years.add(name);
-                            } else {
-                                years.add(null);
-                            }
-                        }
-                    } catch (Exception e) {
-                        MyBoxLog.error(e);
-                        return false;
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    for (String year : years) {
-                        String name = year == null ? message("Null") : year;
-                        CheckBoxTreeItem<ConditionNode> yearItem = new CheckBoxTreeItem(
-                                ConditionNode.create(name)
-                                        .setTitle(name)
-                                        .setCondition(year == null ? fieldName + " IS NULL"
-                                                : condition(name + "-01-01 00:00:00", year + "-12-31 23:59:59"))
-                        );
-                        root.getChildren().add(yearItem);
-                        yearItem.setExpanded(false);
-                        if (year == null) {
-                            continue;
-                        }
-                        TreeItem<ConditionNode> dummyItem = new TreeItem("Loading");
-                        yearItem.getChildren().add(dummyItem);
-                        yearItem.expandedProperty().addListener(
-                                (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
-                                    if (newVal && !yearItem.isLeaf() && !loaded(yearItem)) {
-                                        loadMonths(yearItem);
-                                    }
-                                });
-                    }
-                }
-
-                @Override
-                protected void finalAction() {
-                    thisPane.setDisable(false);
-                }
-
-            };
-            start(task, false);
+        if (task != null) {
+            task.cancel();
         }
+        clearTree();
+        CheckBoxTreeItem<ConditionNode> root = new CheckBoxTreeItem(
+                ConditionNode.create(message("AllTime"))
+                        .setTitle(message("AllTime"))
+                        .setCondition("")
+        );
+        root.setExpanded(true);
+        treeView.setRoot(root);
+        task = new SingletonTask<Void>(this) {
+            private List<String> years;
+
+            @Override
+            protected boolean handle() {
+                years = new ArrayList<>();
+                String sql = "SELECT DISTINCT YEAR(" + fieldName + ") AS dvalue FROM " + tableName
+                        + (baseCondition != null && !baseCondition.isBlank() ? " WHERE " + baseCondition : "")
+                        + " ORDER BY dvalue DESC";
+                try (Connection conn = DerbyBase.getConnection();
+                        PreparedStatement query = conn.prepareStatement(sql);
+                        ResultSet results = query.executeQuery()) {
+                    while (results.next()) {
+                        String d = results.getString("dvalue");
+                        if (d != null) {
+                            String name;
+                            if (d.length() < 4) {
+                                name = "0".repeat(4 - d.length()) + d;
+                            } else {
+                                name = d;
+                            }
+                            years.add(name);
+                        } else {
+                            years.add(null);
+                        }
+                    }
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                for (String year : years) {
+                    String name = year == null ? message("Null") : year;
+                    CheckBoxTreeItem<ConditionNode> yearItem = new CheckBoxTreeItem(
+                            ConditionNode.create(name)
+                                    .setTitle(name)
+                                    .setCondition(year == null ? fieldName + " IS NULL"
+                                            : condition(name + "-01-01 00:00:00", year + "-12-31 23:59:59"))
+                    );
+                    root.getChildren().add(yearItem);
+                    yearItem.setExpanded(false);
+                    if (year == null) {
+                        continue;
+                    }
+                    TreeItem<ConditionNode> dummyItem = new TreeItem("Loading");
+                    yearItem.getChildren().add(dummyItem);
+                    yearItem.expandedProperty().addListener(
+                            (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
+                                if (newVal && !yearItem.isLeaf() && !loaded(yearItem)) {
+                                    loadMonths(yearItem);
+                                }
+                            });
+                }
+            }
+
+        };
+        start(task, thisPane);
     }
 
     protected void loadMonths(CheckBoxTreeItem<ConditionNode> yearItem) {
@@ -167,9 +159,9 @@ public class ControlTimesTree extends ControlConditionTree {
                         + " WHERE " + (baseCondition != null && !baseCondition.isBlank() ? baseCondition + " AND " : "")
                         + yearItem.getValue().getCondition()
                         + " ORDER BY dvalue DESC";
-                try ( Connection conn = DerbyBase.getConnection();
-                         PreparedStatement query = conn.prepareStatement(sql);
-                         ResultSet results = query.executeQuery()) {
+                try (Connection conn = DerbyBase.getConnection();
+                        PreparedStatement query = conn.prepareStatement(sql);
+                        ResultSet results = query.executeQuery()) {
                     while (results.next()) {
                         String d = results.getString("dvalue");
                         if (d.length() < 2) {
@@ -240,9 +232,9 @@ public class ControlTimesTree extends ControlConditionTree {
                         + " WHERE " + (baseCondition != null && !baseCondition.isBlank() ? baseCondition + " AND " : "")
                         + monthItem.getValue().getCondition()
                         + " ORDER BY dvalue DESC";
-                try ( Connection conn = DerbyBase.getConnection();
-                         PreparedStatement query = conn.prepareStatement(sql);
-                         ResultSet results = query.executeQuery()) {
+                try (Connection conn = DerbyBase.getConnection();
+                        PreparedStatement query = conn.prepareStatement(sql);
+                        ResultSet results = query.executeQuery()) {
                     while (results.next()) {
                         String d = results.getString("dvalue");
                         if (d.length() < 2) {
@@ -307,9 +299,9 @@ public class ControlTimesTree extends ControlConditionTree {
                         + " WHERE " + (baseCondition != null && !baseCondition.isBlank() ? baseCondition + " AND " : "")
                         + dayItem.getValue().getCondition()
                         + " ORDER BY dvalue DESC";
-                try ( Connection conn = DerbyBase.getConnection();
-                         PreparedStatement query = conn.prepareStatement(sql);
-                         ResultSet results = query.executeQuery()) {
+                try (Connection conn = DerbyBase.getConnection();
+                        PreparedStatement query = conn.prepareStatement(sql);
+                        ResultSet results = query.executeQuery()) {
                     while (results.next()) {
                         String d = results.getString("dvalue");
                         if (d.length() < 2) {
@@ -374,9 +366,9 @@ public class ControlTimesTree extends ControlConditionTree {
                         + " WHERE " + (baseCondition != null && !baseCondition.isBlank() ? baseCondition + " AND " : "")
                         + hourItem.getValue().getCondition()
                         + " ORDER BY dvalue DESC";
-                try ( Connection conn = DerbyBase.getConnection();
-                         PreparedStatement query = conn.prepareStatement(sql);
-                         ResultSet results = query.executeQuery()) {
+                try (Connection conn = DerbyBase.getConnection();
+                        PreparedStatement query = conn.prepareStatement(sql);
+                        ResultSet results = query.executeQuery()) {
                     while (results.next()) {
                         String d = results.getString("dvalue");
                         if (d.length() < 2) {
@@ -441,9 +433,9 @@ public class ControlTimesTree extends ControlConditionTree {
                         + " WHERE " + (baseCondition != null && !baseCondition.isBlank() ? baseCondition + " AND " : "")
                         + minuteItem.getValue().getCondition()
                         + " ORDER BY " + fieldName + " DESC";
-                try ( Connection conn = DerbyBase.getConnection();
-                         PreparedStatement query = conn.prepareStatement(sql);
-                         ResultSet results = query.executeQuery()) {
+                try (Connection conn = DerbyBase.getConnection();
+                        PreparedStatement query = conn.prepareStatement(sql);
+                        ResultSet results = query.executeQuery()) {
                     while (results.next()) {
                         times.add(results.getTimestamp(fieldName));
                     }

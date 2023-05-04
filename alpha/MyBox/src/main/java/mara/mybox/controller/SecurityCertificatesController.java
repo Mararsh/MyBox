@@ -138,178 +138,169 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
             return;
         }
         recoverButton.setVisible(sourceFile.getAbsolutePath().equals(CertificateTools.myboxCacerts().getAbsolutePath()));
-        try {
-            synchronized (this) {
-                if (task != null && !task.isQuit()) {
-                    return;
-                }
-                task = new SingletonTask<Void>(this) {
-                    private String texts;
-                    private List<CertificateEntry> entires;
-                    private CertificateEntry selectCert;
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+            private String texts;
+            private List<CertificateEntry> entires;
+            private CertificateEntry selectCert;
 
-                    @Override
-                    protected boolean handle() {
-                        try {
-                            texts = error = null;
-                            entires = new ArrayList();
-                            selectCert = null;
-                            // https://docs.oracle.com/javase/10/docs/api/java/security/KeyStore.html
+            @Override
+            protected boolean handle() {
+                try {
+                    texts = error = null;
+                    entires = new ArrayList();
+                    selectCert = null;
+                    // https://docs.oracle.com/javase/10/docs/api/java/security/KeyStore.html
+                    try {
+                        char[] passphrase = passwordInput.getText().toCharArray();
+                        KeyStore keyStore = KeyStore.getInstance(sourceFile, passphrase);
+                        Enumeration<String> storeAliases = keyStore.aliases();
+                        while (storeAliases.hasMoreElements()) {
+                            String alias = storeAliases.nextElement();
+                            if (!keyStore.isCertificateEntry(alias)) {
+                                continue;
+                            }
                             try {
-                                char[] passphrase = passwordInput.getText().toCharArray();
-                                KeyStore keyStore = KeyStore.getInstance(sourceFile, passphrase);
-                                Enumeration<String> storeAliases = keyStore.aliases();
-                                while (storeAliases.hasMoreElements()) {
-                                    String alias = storeAliases.nextElement();
-                                    if (!keyStore.isCertificateEntry(alias)) {
-                                        continue;
-                                    }
-                                    try {
-                                        Certificate[] chain = keyStore.getCertificateChain(alias);
-                                        if (chain == null) {
-                                            Certificate cert = keyStore.getCertificate(alias);
-                                            if (cert != null) {
-                                                chain = new Certificate[1];
-                                                chain[0] = cert;
-                                            }
-                                        }
-                                        CertificateEntry entry = CertificateEntry.create()
-                                                .setAlias(alias)
-                                                .setCreateTime(keyStore.getCreationDate(alias).getTime())
-                                                .setCertificateChain(chain);
-                                        entires.add(entry);
-                                        if (selectAlias != null && alias.equals(selectAlias)) {
-                                            selectCert = entry;
-                                        }
-                                    } catch (Exception e) {
-                                        error = e.toString();
+                                Certificate[] chain = keyStore.getCertificateChain(alias);
+                                if (chain == null) {
+                                    Certificate cert = keyStore.getCertificate(alias);
+                                    if (cert != null) {
+                                        chain = new Certificate[1];
+                                        chain[0] = cert;
                                     }
                                 }
-                                if (selectCert == null) {
-                                    StringBuilder s = new StringBuilder();
-                                    s.append(sourceFile).append("\n\n");
-
-                                    s.append("## ").append(Languages.message("Type")).append(": ").append(keyStore.getType()).append("   ").
-                                            append(Languages.message("Size")).append(": ").append(keyStore.size()).
-                                            append("\n\n");
-                                    for (CertificateEntry entry : entires) {
-                                        s.append("#### ").append(Languages.message("Alias")).append(": ").append(entry.getAlias()).append("\n");
-                                        s.append("----------------------------\n");
-                                        if (entry.getCertificateChain() != null) {
-                                            for (Certificate cert : entry.getCertificateChain()) {
-                                                s.append(cert).append("\n\n");
-                                            }
-                                        }
-                                    }
-                                    texts = s.toString();
+                                CertificateEntry entry = CertificateEntry.create()
+                                        .setAlias(alias)
+                                        .setCreateTime(keyStore.getCreationDate(alias).getTime())
+                                        .setCertificateChain(chain);
+                                entires.add(entry);
+                                if (selectAlias != null && alias.equals(selectAlias)) {
+                                    selectCert = entry;
                                 }
                             } catch (Exception e) {
                                 error = e.toString();
                             }
-                        } catch (Exception e) {
-                            error = e.toString();
                         }
-                        return !entires.isEmpty();
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        isSettingValues = true;
-                        tableView.getItems().addAll(entires);
-                        // https://stackoverflow.com/questions/36240142/sort-tableview-by-certain-column-javafx?r=SearchResults
-                        tableView.getSortOrder().add(timeColumn);
-                        timeColumn.setSortType(TableColumn.SortType.DESCENDING);
-                        tableView.sort();
-                        isSettingValues = false;
-                        if (selectCert != null) {
-                            tableView.scrollTo(selectCert);
-                            tableView.getSelectionModel().select(selectCert);
-                        } else {
-                            showRightPane();
-                            certArea.setText(texts);
-                        }
-                        htmlButton.setDisable(false);
-                        addButton.setDisable(false);
-                        recoverButton.setDisable(false);
-                        bottomLabel.setText(Languages.message("Count") + ": " + tableData.size());
-                        backupController.loadBackups(sourceFile);
-                    }
-                };
-                start(task);
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-
-    }
-
-    @FXML
-    public void htmlAction() {
-        if (sourceFile == null) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                private String result;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        result = error = null;
-                        try {
-                            char[] passphrase = passwordInput.getText().toCharArray();
-                            KeyStore keyStore = KeyStore.getInstance(sourceFile, passphrase);
+                        if (selectCert == null) {
                             StringBuilder s = new StringBuilder();
-                            s.append("<h1  class=\"center\">").append(sourceFile.getAbsolutePath()).append("</h1>\n");
-                            s.append("<h2  class=\"center\">").
-                                    append(Languages.message("Type")).append(": ").append(keyStore.getType()).append(" ").
+                            s.append(sourceFile).append("\n\n");
+
+                            s.append("## ").append(Languages.message("Type")).append(": ").append(keyStore.getType()).append("   ").
                                     append(Languages.message("Size")).append(": ").append(keyStore.size()).
-                                    append("</h2>\n");
-                            s.append("<hr>\n");
-                            Enumeration<String> aliases = keyStore.aliases();
-                            while (aliases.hasMoreElements()) {
-                                String alias = aliases.nextElement();
-                                s.append("<h3  class=\"center\">").
-                                        append(Languages.message("Alias")).append(": ").append(alias).
-                                        append("</h3>\n");
-                                Certificate[] chain = keyStore.getCertificateChain(alias);
-                                if (chain != null) {
-                                    for (Certificate cert : chain) {
-                                        s.append("<pre>").append(cert).append("</pre>\n\n");
-                                    }
-                                } else {
-                                    Certificate cert = keyStore.getCertificate(alias);
-                                    if (cert != null) {
-                                        s.append("<pre>").append(cert).append("</pre>\n");
+                                    append("\n\n");
+                            for (CertificateEntry entry : entires) {
+                                s.append("#### ").append(Languages.message("Alias")).append(": ").append(entry.getAlias()).append("\n");
+                                s.append("----------------------------\n");
+                                if (entry.getCertificateChain() != null) {
+                                    for (Certificate cert : entry.getCertificateChain()) {
+                                        s.append(cert).append("\n\n");
                                     }
                                 }
                             }
-                            result = s.toString();
-                        } catch (Exception e) {
-                            error = e.toString();
+                            texts = s.toString();
                         }
                     } catch (Exception e) {
                         error = e.toString();
                     }
-                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
                 }
+                return !entires.isEmpty();
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    if (result != null) {
-                        HtmlTableController.open(result);
-                    } else {
-                        popError(error);
-                    }
-
+            @Override
+            protected void whenSucceeded() {
+                isSettingValues = true;
+                tableView.getItems().addAll(entires);
+                // https://stackoverflow.com/questions/36240142/sort-tableview-by-certain-column-javafx?r=SearchResults
+                tableView.getSortOrder().add(timeColumn);
+                timeColumn.setSortType(TableColumn.SortType.DESCENDING);
+                tableView.sort();
+                isSettingValues = false;
+                if (selectCert != null) {
+                    tableView.scrollTo(selectCert);
+                    tableView.getSelectionModel().select(selectCert);
+                } else {
+                    showRightPane();
+                    certArea.setText(texts);
                 }
-            };
-            start(task);
+                htmlButton.setDisable(false);
+                addButton.setDisable(false);
+                recoverButton.setDisable(false);
+                bottomLabel.setText(Languages.message("Count") + ": " + tableData.size());
+                backupController.loadBackups(sourceFile);
+            }
+        };
+        start(task);
+    }
+
+    @FXML
+    @Override
+    public void htmlAction() {
+        if (sourceFile == null) {
+            return;
         }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+            private String result;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    result = error = null;
+                    try {
+                        char[] passphrase = passwordInput.getText().toCharArray();
+                        KeyStore keyStore = KeyStore.getInstance(sourceFile, passphrase);
+                        StringBuilder s = new StringBuilder();
+                        s.append("<h1  class=\"center\">").append(sourceFile.getAbsolutePath()).append("</h1>\n");
+                        s.append("<h2  class=\"center\">").
+                                append(Languages.message("Type")).append(": ").append(keyStore.getType()).append(" ").
+                                append(Languages.message("Size")).append(": ").append(keyStore.size()).
+                                append("</h2>\n");
+                        s.append("<hr>\n");
+                        Enumeration<String> aliases = keyStore.aliases();
+                        while (aliases.hasMoreElements()) {
+                            String alias = aliases.nextElement();
+                            s.append("<h3  class=\"center\">").
+                                    append(Languages.message("Alias")).append(": ").append(alias).
+                                    append("</h3>\n");
+                            Certificate[] chain = keyStore.getCertificateChain(alias);
+                            if (chain != null) {
+                                for (Certificate cert : chain) {
+                                    s.append("<pre>").append(cert).append("</pre>\n\n");
+                                }
+                            } else {
+                                Certificate cert = keyStore.getCertificate(alias);
+                                if (cert != null) {
+                                    s.append("<pre>").append(cert).append("</pre>\n");
+                                }
+                            }
+                        }
+                        result = s.toString();
+                    } catch (Exception e) {
+                        error = e.toString();
+                    }
+                } catch (Exception e) {
+                    error = e.toString();
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (result != null) {
+                    HtmlTableController.open(result);
+                } else {
+                    popError(error);
+                }
+
+            }
+        };
+        start(task);
     }
 
     @FXML
@@ -337,45 +328,42 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
         if (selected == null || selected.isEmpty()) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    error = null;
-                    try {
-                        if (backupController.needBackup()) {
-                            backupController.addBackup(task, sourceFile);
-                        }
-                        List<String> aliases = new ArrayList();
-                        for (CertificateEntry cert : selected) {
-                            aliases.add(cert.getAlias());
-                        }
-                        error = CertificateTools.uninstallCertificate(
-                                sourceFile.getAbsolutePath(), passwordInput.getText(),
-                                aliases);
-                    } catch (Exception e) {
-                        error = e.toString();
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (error == null) {
-                        loadAll(null);
-                        popSuccessful();
-                    } else {
-                        popError(error);
-                    }
-                }
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
 
+            @Override
+            protected boolean handle() {
+                error = null;
+                try {
+                    if (backupController.needBackup()) {
+                        backupController.addBackup(task, sourceFile);
+                    }
+                    List<String> aliases = new ArrayList();
+                    for (CertificateEntry cert : selected) {
+                        aliases.add(cert.getAlias());
+                    }
+                    error = CertificateTools.uninstallCertificate(
+                            sourceFile.getAbsolutePath(), passwordInput.getText(),
+                            aliases);
+                } catch (Exception e) {
+                    error = e.toString();
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (error == null) {
+                    loadAll(null);
+                    popSuccessful();
+                } else {
+                    popError(error);
+                }
+            }
+        };
+        start(task);
     }
 
     @FXML
@@ -384,26 +372,24 @@ public class SecurityCertificatesController extends BaseTableViewController<Cert
                 || !sourceFile.getAbsolutePath().equals(CertificateTools.myboxCacerts().getAbsolutePath())) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    CertificateTools.resetKeystore();
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    alertInformation(Languages.message("TakeEffectWhenReboot"));
-                    loadAll(null);
-                }
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                CertificateTools.resetKeystore();
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                alertInformation(Languages.message("TakeEffectWhenReboot"));
+                loadAll(null);
+            }
+        };
+        start(task);
     }
 
     @FXML

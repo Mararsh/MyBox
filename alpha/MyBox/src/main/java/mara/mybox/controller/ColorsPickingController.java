@@ -107,37 +107,34 @@ public class ColorsPickingController extends BaseChildController {
         if (color == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null) {
-                task.cancel();
-                task = null;
-            }
-            task = new SingletonTask<Void>(this) {
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
 
-                @Override
-                protected boolean handle() {
-                    try (Connection conn = DerbyBase.getConnection()) {
-                        ColorData colorData = tableColor.write(conn, new ColorData(color), false);
-                        if (colorData == null) {
-                            return false;
-                        }
-                        colorData.setPaletteid(currentPalette.getCpnid());
-                        tableColorPalette.findAndCreate(conn, colorData, false, onlyNewCheck.isSelected());
-                    } catch (Exception e) {
-                        error = e.toString();
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    ColorData colorData = tableColor.write(conn, new ColorData(color), false);
+                    if (colorData == null) {
                         return false;
                     }
-                    return true;
+                    colorData.setPaletteid(currentPalette.getCpnid());
+                    tableColorPalette.findAndCreate(conn, colorData, false, onlyNewCheck.isSelected());
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
                 }
+                return true;
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    colorsController.loadPalette(currentPalette, true);
-                }
+            @Override
+            protected void whenSucceeded() {
+                colorsController.loadPalette(currentPalette, true);
+            }
 
-            };
-            start(task);
-        }
+        };
+        start(task);
     }
 
     @Override

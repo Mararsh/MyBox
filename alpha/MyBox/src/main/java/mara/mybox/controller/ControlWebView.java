@@ -984,48 +984,46 @@ public class ControlWebView extends BaseController {
         if (address == null || target == null) {
             return;
         }
-        synchronized (this) {
-            popInformation(message("Handling..."));
-            SingletonTask bgTask = new SingletonTask<Void>(this) {
+        popInformation(message("Handling..."));
+        SingletonTask bgTask = new SingletonTask<Void>(this) {
 
-                private Image image = null;
+            private Image image = null;
 
-                @Override
-                protected boolean handle() {
-                    try {
-                        File imageFile = HtmlReadTools.url2image(address, name);
-                        BufferedImage bi = ImageFileReaders.readImage(imageFile);
-                        if (bi == null) {
-                            return false;
-                        }
-                        image = SwingFXUtils.toFXImage(bi, null);
-                        return image != null;
-                    } catch (Exception e) {
-                        error = e.toString();
+            @Override
+            protected boolean handle() {
+                try {
+                    File imageFile = HtmlReadTools.url2image(address, name);
+                    BufferedImage bi = ImageFileReaders.readImage(imageFile);
+                    if (bi == null) {
                         return false;
                     }
+                    image = SwingFXUtils.toFXImage(bi, null);
+                    return image != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
                 }
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    switch (target) {
-                        case "toSystemClipboard":
-                            ImageClipboardTools.copyToSystemClipboard(myController, image);
-                            break;
-                        case "toMyBoxClipboard":
-                            ImageClipboardTools.copyToMyBoxClipboard(myController, image, ImageClipboard.ImageSource.Link);
-                            break;
-                        case "edit":
-                            ImageManufactureController.openImage(image);
-                            break;
-                        default:
-                            ImageViewerController.openImage(image);
-                    }
+            @Override
+            protected void whenSucceeded() {
+                switch (target) {
+                    case "toSystemClipboard":
+                        ImageClipboardTools.copyToSystemClipboard(myController, image);
+                        break;
+                    case "toMyBoxClipboard":
+                        ImageClipboardTools.copyToMyBoxClipboard(myController, image, ImageClipboard.ImageSource.Link);
+                        break;
+                    case "edit":
+                        ImageManufactureController.openImage(image);
+                        break;
+                    default:
+                        ImageViewerController.openImage(image);
                 }
+            }
 
-            };
-            start(bgTask, false);
-        }
+        };
+        start(bgTask, false);
     }
 
     public void zoomIn() {
@@ -1778,33 +1776,31 @@ public class ControlWebView extends BaseController {
             popError(message("NoData"));
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            File file = chooseSaveFile();
-            if (file == null) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                @Override
-                protected boolean handle() {
-                    File tmpFile = HtmlWriteTools.writeHtml(html);
-                    if (tmpFile == null || !tmpFile.exists()) {
-                        return false;
-                    }
-                    return FileTools.rename(tmpFile, file);
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSaved();
-                    recordFileWritten(file);
-                    WebBrowserController.openFile(file);
-                }
-            };
-            start(task);
+        File file = chooseSaveFile();
+        if (file == null) {
+            return;
         }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+            @Override
+            protected boolean handle() {
+                File tmpFile = HtmlWriteTools.writeHtml(html);
+                if (tmpFile == null || !tmpFile.exists()) {
+                    return false;
+                }
+                return FileTools.rename(tmpFile, file);
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popSaved();
+                recordFileWritten(file);
+                WebBrowserController.openFile(file);
+            }
+        };
+        start(task);
     }
 
     @FXML

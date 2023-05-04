@@ -9,9 +9,9 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.HtmlStyles;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -154,31 +154,29 @@ public class HtmlTableController extends BaseWebViewController {
         if (file == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    ok = TextFileTools.writeFile(file, txt) != null;
-                    recordFileWritten(file);
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (isEdit) {
-                        HtmlEditorController.openFile(file);
-                    } else {
-                        WebBrowserController.openFile(file);
-                    }
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                ok = TextFileTools.writeFile(file, txt) != null;
+                recordFileWritten(file);
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (isEdit) {
+                    HtmlEditorController.openFile(file);
+                } else {
+                    WebBrowserController.openFile(file);
+                }
+            }
+
+        };
+        start(task);
     }
 
     @FXML

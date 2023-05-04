@@ -14,7 +14,7 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.value.AppPaths;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -47,7 +47,7 @@ public class ControlTargetFile extends ControlFileSelecter {
         permitNull = false;
         mustExist = false;
         notify = new SimpleBooleanProperty(false);
-        defaultFile = new File(AppPaths.getGeneratedPath() + File.separator + DateTools.nowFileString());
+        defaultFile = FileTmpTools.generateFile(null);
     }
 
     public void initTargetExistType() {

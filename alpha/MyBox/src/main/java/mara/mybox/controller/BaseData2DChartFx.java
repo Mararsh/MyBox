@@ -26,9 +26,8 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.chart.ChartOptions.ChartType;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.tools.DateTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.HtmlWriteTools;
-import mara.mybox.value.AppPaths;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -186,7 +185,7 @@ public abstract class BaseData2DChartFx extends BaseController {
             @Override
             protected boolean handle() {
                 try {
-                    File imageFile = new File(AppPaths.getGeneratedPath() + File.separator + DateTools.nowFileString() + ".jpg");
+                    File imageFile = FileTmpTools.generateFile("jpg");
                     BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
                     ImageFileWriters.writeImageFile(bufferedImage, "jpg", imageFile.getAbsolutePath());
 

@@ -187,28 +187,28 @@ public class ChromaticityBaseController extends BaseWebViewController {
         if (file == null) {
             return;
         }
-        recordFileWritten(file, VisitHistory.FileType.Text);
-
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    return TextFileTools.writeFile(file, exportTexts()) != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    view(file);
-                    popSuccessful();
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                if (TextFileTools.writeFile(file, exportTexts()) == null) {
+                    return false;
+                }
+                recordFileWritten(file, VisitHistory.FileType.Text);
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                view(file);
+                popSuccessful();
+            }
+
+        };
+        start(task);
     }
 
 }

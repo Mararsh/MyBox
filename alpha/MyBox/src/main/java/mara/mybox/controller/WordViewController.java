@@ -34,37 +34,33 @@ public class WordViewController extends BaseWebViewController {
 
     @Override
     public boolean loadFile(File file) {
-        openSourceButton.setDisable(true);
         if (file == null) {
             getMyStage().setTitle(getBaseTitle());
             return false;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return false;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private File htmlFile;
-
-                @Override
-                protected boolean handle() {
-                    htmlFile = MicrosoftDocumentTools.word2HtmlFile(file, getCharset());
-                    return htmlFile != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    sourceFile = file;
-                    getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath());
-                    webViewController.loadFile(htmlFile);
-                    openSourceButton.setDisable(false);
-                }
-
-            };
-            start(task);
-            return true;
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private File htmlFile;
+
+            @Override
+            protected boolean handle() {
+                htmlFile = MicrosoftDocumentTools.word2HtmlFile(file, getCharset());
+                return htmlFile != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                sourceFile = file;
+                getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath());
+                webViewController.loadFile(htmlFile);
+            }
+
+        };
+        start(task);
+        return true;
     }
 
     @Override

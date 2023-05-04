@@ -51,54 +51,51 @@ public class MessageAuthorController extends BaseController {
 
     @FXML
     public void messageAction() {
-        synchronized (this) {
-            SingletonTask mailTask = new SingletonTask<Void>(this) {
+        task = new SingletonTask<Void>(this) {
 
-                @Override
-                protected boolean handle() {
-                    Properties props = new Properties();
-                    props.put("mail.smtp.host", "smtp.163.com");
-                    props.put("mail.smtp.port", "25");
-                    props.put("mail.transport.protocol", "smtp");
-                    props.put("mail.debug", "false");
-                    Session session = Session.getDefaultInstance(props, null);
-                    try ( Transport transport = session.getTransport("smtp")) {
-                        Message message = new MimeMessage(session);
-                        String title = titleInput.getText();
-                        if (title.isBlank()) {
-                            title = "MyBox message from " + nameInput.getText();
-                        }
-                        message.setSubject(title);
-                        String s = commentsArea.getText() + "<hr><br>"
-                                + "OS: " + osInput.getText() + "<br>"
-                                + "From: " + nameInput.getText() + "<br>"
-                                + DateTools.nowString();
-                        message.setContent(s, "text/html;charset=UTF-8");
-                        message.setFrom(new InternetAddress("mybox_message@163.com", "MyBox - " + nameInput.getText()));
-                        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("mararsh@sina.com"));
-                        message.setSentDate(new Date());
-                        message.saveChanges();
-
-                        transport.connect("smtp.163.com", "mybox_message@163.com", "ARUPFZMLULNSHFOI");
-                        transport.sendMessage(message, message.getRecipients(Message.RecipientType.TO));
-
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
+            @Override
+            protected boolean handle() {
+                Properties props = new Properties();
+                props.put("mail.smtp.host", "smtp.163.com");
+                props.put("mail.smtp.port", "25");
+                props.put("mail.transport.protocol", "smtp");
+                props.put("mail.debug", "false");
+                Session session = Session.getDefaultInstance(props, null);
+                try (Transport transport = session.getTransport("smtp")) {
+                    Message message = new MimeMessage(session);
+                    String title = titleInput.getText();
+                    if (title.isBlank()) {
+                        title = "MyBox message from " + nameInput.getText();
                     }
-                    return true;
+                    message.setSubject(title);
+                    String s = commentsArea.getText() + "<hr><br>"
+                            + "OS: " + osInput.getText() + "<br>"
+                            + "From: " + nameInput.getText() + "<br>"
+                            + DateTools.nowString();
+                    message.setContent(s, "text/html;charset=UTF-8");
+                    message.setFrom(new InternetAddress("mybox_message@163.com", "MyBox - " + nameInput.getText()));
+                    message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("mararsh@sina.com"));
+                    message.setSentDate(new Date());
+                    message.saveChanges();
+
+                    transport.connect("smtp.163.com", "mybox_message@163.com", "ARUPFZMLULNSHFOI");
+                    transport.sendMessage(message, message.getRecipients(Message.RecipientType.TO));
+
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
                 }
+                return true;
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    popInformation(Languages.message("ThanksMessage") + "\n" + DateTools.nowString(), 6000);
-                    SoundTools.miao5();
-                }
+            @Override
+            protected void whenSucceeded() {
+                popInformation(Languages.message("ThanksMessage") + "\n" + DateTools.nowString(), 6000);
+                SoundTools.miao5();
+            }
 
-            };
-            start(mailTask, false);
-        }
-
+        };
+        start(task);
     }
 
 }

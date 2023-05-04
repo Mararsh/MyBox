@@ -462,30 +462,28 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
         if (!PopTools.askSure(getTitle(), Languages.message("SureDelete"))) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    List<String> names = new ArrayList<>();
-                    for (ConvolutionKernel k : selected) {
-                        names.add(k.getName());
-                    }
-                    TableConvolutionKernel.delete(names);
-                    TableFloatMatrix.delete(names);
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    loadList();
-                }
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                List<String> names = new ArrayList<>();
+                for (ConvolutionKernel k : selected) {
+                    names.add(k.getName());
+                }
+                TableConvolutionKernel.delete(names);
+                TableFloatMatrix.delete(names);
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                loadList();
+            }
+        };
+        start(task);
     }
 
     @FXML
@@ -497,26 +495,24 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
         if (!PopTools.askSure(getTitle(), Languages.message("SureDelete"))) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    new TableConvolutionKernel().clearData();
-                    new TableFloatMatrix().clearData();
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    loadList();
-                }
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                new TableConvolutionKernel().clearData();
+                new TableFloatMatrix().clearData();
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                loadList();
+            }
+        };
+        start(task);
     }
 
     @FXML
@@ -590,26 +586,24 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
 
     @FXML
     public void examplesAction(ActionEvent event) {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    TableConvolutionKernel.writeExamples();
-                    TableFloatMatrix.writeExamples();
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    loadList();
-                }
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                TableConvolutionKernel.writeExamples();
+                TableFloatMatrix.writeExamples();
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                loadList();
+            }
+        };
+        start(task);
     }
 
     public boolean pickKernel() {
@@ -649,26 +643,24 @@ public class ConvolutionKernelManagerController extends BaseTableViewController<
         if (!pickKernel() || name == null || name.isEmpty()) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    TableConvolutionKernel.write(kernel);
-                    TableFloatMatrix.write(name, matrixValues);
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    loadList();
-                }
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                TableConvolutionKernel.write(kernel);
+                TableFloatMatrix.write(name, matrixValues);
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                loadList();
+            }
+        };
+        start(task);
     }
 
 }

@@ -34,9 +34,6 @@ import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.tools.FileTmpTools;
-import static mara.mybox.tools.FileTmpTools.getPathTempFile;
-import mara.mybox.value.AppPaths;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -60,7 +57,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
      */
     public DataTable toTable(SingletonTask task, String targetName) {
         DataTable dataTable = null;
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             String tableName = DerbyBase.fixedIdentifier(targetName);
             int index = 1;
             while (DerbyBase.exist(conn, tableName) > 0) {
@@ -148,7 +145,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
     }
 
     public DataTable singleColumn(SingletonTask task, List<Integer> cols) {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             if (columns == null || columns.isEmpty()) {
                 readColumns(conn);
             }
@@ -300,10 +297,10 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         if (task != null) {
             task.setInfo(sql);
         }
-        try ( Connection conn = DerbyBase.getConnection();
-                 PreparedStatement statement = conn.prepareStatement(sql);
-                 ResultSet results = statement.executeQuery();
-                 CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(file, Charset.forName("UTF-8")), CsvTools.csvFormat(",", true))) {
+        try (Connection conn = DerbyBase.getConnection();
+                PreparedStatement statement = conn.prepareStatement(sql);
+                ResultSet results = statement.executeQuery();
+                CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(file, Charset.forName("UTF-8")), CsvTools.csvFormat(",", true))) {
             csvPrinter.printRecord(dataTable.columnNames());
             while (results.next() && task != null && !task.isCancelled()) {
                 try {
@@ -343,7 +340,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
     }
 
     public static DataFileCSV toCSV(SingletonTask task, DataTable dataTable) {
-        File csvFile = FileTmpTools.getPathTempFile(AppPaths.getGeneratedPath(), dataTable.dataName(), ".csv");
+        File csvFile = dataTable.tmpFile(dataTable.dataName(), null, "csv");
         return toCSV(task, dataTable, csvFile, true);
     }
 
@@ -351,7 +348,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         if (task == null || dataTable == null || !dataTable.isValid()) {
             return null;
         }
-        File txtFile = FileTmpTools.getPathTempFile(AppPaths.getGeneratedPath(), dataTable.dataName(), ".txt");
+        File txtFile = dataTable.tmpFile(dataTable.dataName(), null, "txt");
         DataFileCSV csvData = toCSV(task, dataTable, txtFile, false);
         if (csvData != null && txtFile != null && txtFile.exists()) {
             DataFileText targetData = new DataFileText();
@@ -372,7 +369,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         if (task == null || dataTable == null || !dataTable.isValid()) {
             return null;
         }
-        File excelFile = FileTmpTools.getPathTempFile(AppPaths.getGeneratedPath(), dataTable.dataName(), ".xlsx");
+        File excelFile = dataTable.tmpFile(dataTable.dataName(), null, "xlsx");
         String targetSheetName = message("Sheet") + "1";
         TableData2D tableData2D = dataTable.getTableData2D();
         List<Data2DColumn> dataColumns = dataTable.getColumns();
@@ -381,10 +378,10 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         if (task != null) {
             task.setInfo(sql);
         }
-        try ( Connection conn = DerbyBase.getConnection();
-                 PreparedStatement statement = conn.prepareStatement(sql);
-                 ResultSet results = statement.executeQuery();
-                 Workbook targetBook = new XSSFWorkbook()) {
+        try (Connection conn = DerbyBase.getConnection();
+                PreparedStatement statement = conn.prepareStatement(sql);
+                ResultSet results = statement.executeQuery();
+                Workbook targetBook = new XSSFWorkbook()) {
             Sheet targetSheet = targetBook.createSheet(targetSheetName);
             Row targetRow = targetSheet.createRow(0);
             for (int col = 0; col < tcolsNumber; col++) {
@@ -404,7 +401,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                     MyBoxLog.error(e);
                 }
             }
-            try ( FileOutputStream fileOut = new FileOutputStream(excelFile)) {
+            try (FileOutputStream fileOut = new FileOutputStream(excelFile)) {
                 targetBook.write(fileOut);
             }
             targetBook.close();
@@ -442,9 +439,9 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         if (task != null) {
             task.setInfo(sql);
         }
-        try ( Connection conn = DerbyBase.getConnection();
-                 PreparedStatement statement = conn.prepareStatement(sql);
-                 ResultSet results = statement.executeQuery()) {
+        try (Connection conn = DerbyBase.getConnection();
+                PreparedStatement statement = conn.prepareStatement(sql);
+                ResultSet results = statement.executeQuery()) {
             while (results.next() && task != null && !task.isCancelled()) {
                 try {
                     List<String> row = new ArrayList<>();
@@ -492,7 +489,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         if (task == null || dataTable == null || !dataTable.isValid()) {
             return null;
         }
-        File txtFile = FileTmpTools.getPathTempFile(AppPaths.getGeneratedPath(), dataTable.dataName(), ".txt");
+        File txtFile = dataTable.tmpFile(dataTable.dataName(), null, "txt");
         DataFileCSV csvData = toCSV(task, dataTable, txtFile, false);
         if (csvData != null && txtFile != null && txtFile.exists()) {
             return TextFileTools.readTexts(txtFile);
@@ -511,12 +508,12 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             if (results == null) {
                 return null;
             }
-            File csvFile = getPathTempFile(AppPaths.getGeneratedPath(), dname, ".csv");
+            File csvFile = dataTable.tmpFile(dname, null, "csv");
             long count = 0;
             int colsSize;
             List<Data2DColumn> db2Columns = new ArrayList<>();
             List<String> fileRow = new ArrayList<>();
-            try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
+            try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
                 List<String> names = new ArrayList<>();
                 if (rowNumberName != null) {
                     names.add(rowNumberName);
@@ -617,13 +614,13 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         if (csvFile == null || !csvFile.exists() || csvFile.length() == 0) {
             return null;
         }
-        File excelFile = getPathTempFile(AppPaths.getGeneratedPath(), csvData.dataName(), ".xlsx");
+        File excelFile = csvData.tmpFile(csvData.dataName(), null, "xlsx");
         boolean targetHasHeader = false;
         int tcolsNumber = 0, trowsNumber = 0;
         String targetSheetName = message("Sheet") + "1";
         File validFile = FileTools.removeBOM(csvFile);
-        try ( CSVParser parser = CSVParser.parse(validFile, csvData.getCharset(), csvData.cvsFormat());
-                 Workbook targetBook = new XSSFWorkbook()) {
+        try (CSVParser parser = CSVParser.parse(validFile, csvData.getCharset(), csvData.cvsFormat());
+                Workbook targetBook = new XSSFWorkbook()) {
             Sheet targetSheet = targetBook.createSheet(targetSheetName);
             int targetRowIndex = 0;
             Iterator<CSVRecord> iterator = parser.iterator();
@@ -659,7 +656,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                         MyBoxLog.error(e);
                     }
                 }
-                try ( FileOutputStream fileOut = new FileOutputStream(excelFile)) {
+                try (FileOutputStream fileOut = new FileOutputStream(excelFile)) {
                     targetBook.write(fileOut);
                 }
                 targetBook.close();
@@ -694,7 +691,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         if (csvFile == null || !csvFile.exists() || csvFile.length() == 0) {
             return null;
         }
-        File txtFile = getPathTempFile(AppPaths.getGeneratedPath(), csvData.dataName(), ".txt");
+        File txtFile = csvData.tmpFile(csvData.dataName(), null, "txt");
         if (FileCopyTools.copyFile(csvFile, txtFile)) {
             DataFileText targetData = new DataFileText();
             targetData.cloneAll(csvData);
@@ -717,7 +714,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         List<List<String>> data = csvData.allRows(false);
         List<Data2DColumn> cols = csvData.getColumns();
         if (cols == null || cols.isEmpty()) {
-            try ( Connection conn = DerbyBase.getConnection()) {
+            try (Connection conn = DerbyBase.getConnection()) {
                 csvData.readColumns(conn);
                 cols = csvData.getColumns();
                 if (cols == null || cols.isEmpty()) {
@@ -751,7 +748,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
         }
         List<Data2DColumn> cols = csvData.getColumns();
         if (cols == null || cols.isEmpty()) {
-            try ( Connection conn = DerbyBase.getConnection()) {
+            try (Connection conn = DerbyBase.getConnection()) {
                 csvData.readColumns(conn);
                 cols = csvData.getColumns();
                 if (cols == null || cols.isEmpty()) {

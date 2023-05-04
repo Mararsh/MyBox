@@ -503,41 +503,38 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
         }
         updateLogs(message("WebPageAddress") + ": " + address);
         updateLogs(message("TargetPath") + ": " + downloadPath);
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                private String title;
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+            private String title;
 
-                @Override
-                protected boolean handle() {
-                    try {
-                        URL url = new URI(address).toURL();
-                        File urlFile = HtmlReadTools.download(address);
-                        String html = TextFileTools.readTexts(urlFile);
-                        if (html == null) {
-                            return false;
-                        }
-                        title = HtmlReadTools.title(html);
-                        addressLink = Link.create().setUrl(url).setAddress(url.toString())
-                                .setName(title).setTitle(title).setHtml(html);
-                        addressLink.setFile(urlFile.getAbsolutePath());
-                        return true;
-                    } catch (Exception e) {
-                        error = e.toString();
+            @Override
+            protected boolean handle() {
+                try {
+                    URL url = new URI(address).toURL();
+                    File urlFile = HtmlReadTools.download(address);
+                    String html = TextFileTools.readTexts(urlFile);
+                    if (html == null) {
                         return false;
                     }
+                    title = HtmlReadTools.title(html);
+                    addressLink = Link.create().setUrl(url).setAddress(url.toString())
+                            .setName(title).setTitle(title).setHtml(html);
+                    addressLink.setFile(urlFile.getAbsolutePath());
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
                 }
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    setValues(title);
-                }
-            };
-            start(task);
-        }
-
+            @Override
+            protected void whenSucceeded() {
+                setValues(title);
+            }
+        };
+        start(task);
     }
 
     public void setValues(String title) {
@@ -557,51 +554,49 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
         filenameType = nameType;
         tableData.clear();
         File downloadPath = targetPathInputController.file;
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+
+            private List<Link> links;
+
+            @Override
+            protected boolean handle() {
+                File path = new File(downloadPath.getAbsolutePath() + File.separator + subPath);
+                links = HtmlReadTools.links(addressLink, path, nameType);
+                return links != null;
             }
-            task = new SingletonTask<Void>(this) {
 
-                private List<Link> links;
+            @Override
+            protected void whenSucceeded() {
+                if (!links.isEmpty()) {
+                    tableData.addAll(links);
+                    tableView.getSortOrder().clear();
+                    tableView.getSortOrder().addAll(addressPathColumn, indexColumn);
 
-                @Override
-                protected boolean handle() {
-                    File path = new File(downloadPath.getAbsolutePath() + File.separator + subPath);
-                    links = HtmlReadTools.links(addressLink, path, nameType);
-                    return links != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (!links.isEmpty()) {
-                        tableData.addAll(links);
-                        tableView.getSortOrder().clear();
-                        tableView.getSortOrder().addAll(addressPathColumn, indexColumn);
-
-                        for (Link link : links) {
-                            if (link.getAddressPath().startsWith(addressLink.getAddressPath())) {
-                                tableView.getSelectionModel().select(link);
-                            }
+                    for (Link link : links) {
+                        if (link.getAddressPath().startsWith(addressLink.getAddressPath())) {
+                            tableView.getSelectionModel().select(link);
                         }
                     }
-
-                    String txt = message("Links") + ": " + tableData.size();
-                    linksLabel.setText(txt);
-                    updateLogs(txt);
-
-                    FadeTransition fade = new FadeTransition(Duration.millis(500));
-                    fade.setFromValue(1.0);
-                    fade.setToValue(0f);
-                    fade.setCycleCount(6);
-                    fade.setAutoReverse(true);
-                    fade.setNode(tipsView);
-                    fade.play();
-
                 }
-            };
-            start(task);
-        }
+
+                String txt = message("Links") + ": " + tableData.size();
+                linksLabel.setText(txt);
+                updateLogs(txt);
+
+                FadeTransition fade = new FadeTransition(Duration.millis(500));
+                fade.setFromValue(1.0);
+                fade.setToValue(0f);
+                fade.setCycleCount(6);
+                fade.setAutoReverse(true);
+                fade.setNode(tipsView);
+                fade.play();
+
+            }
+        };
+        start(task);
     }
 
     @FXML

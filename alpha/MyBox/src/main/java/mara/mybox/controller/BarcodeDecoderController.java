@@ -14,7 +14,6 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.BarcodeTools.BarcodeType;
 import mara.mybox.tools.ByteTools;
@@ -52,72 +51,64 @@ public class BarcodeDecoderController extends ImageViewerController {
         if (imageView.getImage() == null) {
             return;
         }
-        try {
-            synchronized (this) {
-                if (task != null && !task.isQuit()) {
-                    return;
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+            private Result result;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    LuminanceSource source = new BufferedImageLuminanceSource(
+                            SwingFXUtils.fromFXImage(imageView.getImage(), null));
+                    BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
+
+                    HashMap hints = new HashMap();
+                    hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+                    result = new MultiFormatReader().decode(bitmap, hints);
+
+                    return result != null;
+
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
                 }
-                task = new SingletonTask<Void>(this) {
-                    private Result result;
-
-                    @Override
-                    protected boolean handle() {
-                        try {
-                            LuminanceSource source = new BufferedImageLuminanceSource(
-                                    SwingFXUtils.fromFXImage(imageView.getImage(), null));
-                            BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
-
-                            HashMap hints = new HashMap();
-                            hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
-                            result = new MultiFormatReader().decode(bitmap, hints);
-
-                            return result != null;
-
-                        } catch (Exception e) {
-                            error = e.toString();
-                            return false;
-                        }
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        String s = "---------" + Languages.message("Contents") + "---------\n"
-                                + result.getText()
-                                + "\n\n---------" + Languages.message("MetaData") + "---------\n"
-                                + Languages.message("Type") + ": "
-                                + result.getBarcodeFormat().name();
-                        if (result.getResultMetadata() != null) {
-                            for (ResultMetadataType type : result.getResultMetadata().keySet()) {
-                                Object value = result.getResultMetadata().get(type);
-                                switch (type) {
-                                    case PDF417_EXTRA_METADATA:
-//                                        PDF417ResultMetadata pdf417meta
-//                                            = (PDF417ResultMetadata) result.getResultMetadata().get(ResultMetadataType.PDF417_EXTRA_METADATA);
-                                        break;
-                                    case BYTE_SEGMENTS:
-                                        s += "\n" + Languages.message("BYTE_SEGMENTS") + ": ";
-                                        for (byte[] bytes : (List<byte[]>) value) {
-                                            s += ByteTools.bytesToHexFormat(bytes) + "        ";
-                                        }
-                                        break;
-                                    default:
-                                        s += "\n" + Languages.message(type.name()) + ": " + value;
-                                }
-                            }
-                        }
-                        result.getTimestamp();
-                        codeInput.setText(s);
-
-                    }
-
-                };
-                start(task);
             }
 
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+            @Override
+            protected void whenSucceeded() {
+                String s = "---------" + Languages.message("Contents") + "---------\n"
+                        + result.getText()
+                        + "\n\n---------" + Languages.message("MetaData") + "---------\n"
+                        + Languages.message("Type") + ": "
+                        + result.getBarcodeFormat().name();
+                if (result.getResultMetadata() != null) {
+                    for (ResultMetadataType type : result.getResultMetadata().keySet()) {
+                        Object value = result.getResultMetadata().get(type);
+                        switch (type) {
+                            case PDF417_EXTRA_METADATA:
+//                                        PDF417ResultMetadata pdf417meta
+//                                            = (PDF417ResultMetadata) result.getResultMetadata().get(ResultMetadataType.PDF417_EXTRA_METADATA);
+                                break;
+                            case BYTE_SEGMENTS:
+                                s += "\n" + Languages.message("BYTE_SEGMENTS") + ": ";
+                                for (byte[] bytes : (List<byte[]>) value) {
+                                    s += ByteTools.bytesToHexFormat(bytes) + "        ";
+                                }
+                                break;
+                            default:
+                                s += "\n" + Languages.message(type.name()) + ": " + value;
+                        }
+                    }
+                }
+                result.getTimestamp();
+                codeInput.setText(s);
 
+            }
+
+        };
+        start(task);
     }
 
 }
