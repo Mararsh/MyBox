@@ -92,6 +92,9 @@ public class ControlJsonDom extends BaseController {
         }
     }
 
+    /*
+        make tree
+     */
     public void treeClicked(MouseEvent event, TreeItem<JsonDomNode> item) {
         editNode(item);
     }
@@ -226,6 +229,20 @@ public class ControlJsonDom extends BaseController {
         }
     }
 
+
+    /*
+        values
+     */
+    public String jsonString() {
+        try {
+            return jsonMapper.writerWithDefaultPrettyPrinter()
+                    .writeValueAsString(domTree.getRoot().getValue().getNode());
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public TreeItem<JsonDomNode> selected() {
         TreeItem<JsonDomNode> item = domTree.getSelectionModel().getSelectedItem();
         return validItem(item);
@@ -327,6 +344,9 @@ public class ControlJsonDom extends BaseController {
         }
     }
 
+    /*
+        actions
+     */
     @FXML
     public void foldAction() {
         setExpanded(selected(), false);

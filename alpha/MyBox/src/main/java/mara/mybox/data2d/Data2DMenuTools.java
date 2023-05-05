@@ -45,6 +45,7 @@ import mara.mybox.controller.DataTableQueryController;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -513,10 +514,14 @@ public class Data2DMenuTools {
 
             items.add(new SeparatorMenuItem());
 
-            MenuItem guidemenu = new MenuItem(message("ChinaNationalBureauOfStatistics"));
+            MenuItem guidemenu = new MenuItem(message("UserGuideDataTools"));
             guidemenu.setStyle("-fx-text-fill: #2e598a;");
             guidemenu.setOnAction((ActionEvent event) -> {
-                controller.browse("https://data.stats.gov.cn/");
+                if (Languages.isChinese()) {
+                    controller.browse("https://mara-mybox.sourceforge.io/guide/MyBox-DataTools-zh.pdf");
+                } else {
+                    controller.browse("https://mara-mybox.sourceforge.io/guide/MyBox-DataTools-en.pdf");
+                }
             });
             items.add(guidemenu);
 

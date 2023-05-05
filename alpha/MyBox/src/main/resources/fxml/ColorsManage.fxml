@@ -34,7 +34,7 @@ License:    Apache License Version 2.0
                 <Insets />
             </BorderPane.margin>
          <children>
-            <SplitPane fx:id="splitPane" dividerPositions="0.3, 0.75" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+            <SplitPane fx:id="splitPane" dividerPositions="0.3, 0.75" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                <items>
                   <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                      <content>
@@ -194,12 +194,13 @@ License:    Apache License Version 2.0
                                                 <TableColumn fx:id="rgbaColumn" prefWidth="100.0" text="RGBA" />
                                                 <TableColumn fx:id="rgbColumn" prefWidth="100.0" text="RGB" />
                                                 <TableColumn fx:id="sRGBColumn" prefWidth="150.0" text="sRGB" />
-                                                <TableColumn fx:id="hueColumn" prefWidth="100.0" text="%Hue" />
-                                                <TableColumn fx:id="rybColumn" prefWidth="100.0" text="%RYBAngle" />
+                                                <TableColumn fx:id="hueColumn" text="%Hue" />
+                                                <TableColumn fx:id="rybColumn" text="%RYBAngle" />
+                                                <TableColumn fx:id="saturationColumn" text="%Saturation" />
+                                                <TableColumn fx:id="brightnessColumn" text="%Brightness" />
+                                                <TableColumn fx:id="opacityColumn" text="%Opacity" />
                                                 <TableColumn fx:id="CalculatedCMYKColumn" prefWidth="120.0" text="%CalculatedCMYK" />
-                                                <TableColumn fx:id="saturationColumn" prefWidth="100.0" text="%Saturation" />
-                                                <TableColumn fx:id="brightnessColumn" prefWidth="100.0" text="%Brightness" />
-                                                <TableColumn fx:id="HSBColumn" prefWidth="140.0" text="HSB" />
+                                                <TableColumn fx:id="HSBColumn" prefWidth="160.0" text="HSBA" />
                                                 <TableColumn fx:id="AdobeRGBColumn" prefWidth="100.0" text="Adobe RGB" />
                                                 <TableColumn fx:id="AppleRGBColumn" prefWidth="100.0" text="Apple RGB" />
                                                 <TableColumn fx:id="ECIRGBColumn" prefWidth="100.0" text="ECI RGB" />
@@ -217,9 +218,9 @@ License:    Apache License Version 2.0
                                                 <TableColumn fx:id="dataColumn" prefWidth="150.0" text="%Data" />
                                                 <TableColumn fx:id="descColumn" prefWidth="200.0" text="%Description" />
                                                 <TableColumn fx:id="invertColumn" text="%RGBInvertColor" />
-                                                <TableColumn fx:id="invertRGBColumn" text="%RGBInvertColor" />
+                                                <TableColumn fx:id="invertRGBColumn" prefWidth="160.0" text="%RGBInvertColor" />
                                                 <TableColumn fx:id="complementaryColumn" text="%RYBComplementaryColor" />
-                                                <TableColumn fx:id="complementaryRGBColumn" text="%RYBComplementaryColor" />
+                                                <TableColumn fx:id="complementaryRGBColumn" prefWidth="160.0" text="%RYBComplementaryColor" />
                                              </columns>
                                           </TableView>
                                        </children>

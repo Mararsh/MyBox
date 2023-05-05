@@ -337,11 +337,11 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
         if (selected == null || selected.isEmpty()) {
             return;
         }
-        List<FileBackup> targets = new ArrayList<>();
-        targets.addAll(selected);
         if (task != null) {
             task.cancel();
         }
+        List<FileBackup> targets = new ArrayList<>();
+        targets.addAll(selected);
         task = new SingletonTask<Void>(this) {
 
             @Override

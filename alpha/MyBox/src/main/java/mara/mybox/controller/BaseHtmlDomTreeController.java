@@ -336,35 +336,62 @@ public class BaseHtmlDomTreeController extends BaseController {
         }
     }
 
-    @FXML
-    public void foldAction() {
-        setExpanded(selected(), false);
+    protected void foldNode() {
+        fold(selected(), false);
     }
 
-    @FXML
-    public void unfoldAction() {
-        setExpanded(selected(), true);
+    protected void foldNodeAndDecendants() {
+        fold(selected(), true);
+    }
+
+    protected void fold(TreeItem<HtmlNode> item, boolean descendants) {
+        TreeItem<HtmlNode> validItem = validItem(item);
+        if (validItem == null) {
+            return;
+        }
+        validItem.setExpanded(false);
+        if (descendants) {
+            List<TreeItem<HtmlNode>> children = validItem.getChildren();
+            if (children == null || children.isEmpty()) {
+                return;
+            }
+            for (TreeItem child : children) {
+                fold(child, true);
+            }
+        }
+    }
+
+    protected void unfoldNode() {
+        unfold(selected(), false);
+    }
+
+    protected void unfoldNodeAndDecendants() {
+        unfold(selected(), true);
+    }
+
+    protected void unfold(TreeItem<HtmlNode> item, boolean descendants) {
+        TreeItem<HtmlNode> validItem = validItem(item);
+        if (validItem == null) {
+            return;
+        }
+        validItem.setExpanded(true);
+        List<TreeItem<HtmlNode>> children = validItem.getChildren();
+        if (children == null || children.isEmpty()) {
+            return;
+        }
+        for (TreeItem child : children) {
+            if (descendants) {
+                unfold(child, true);
+            } else {
+                child.setExpanded(false);
+            }
+        }
     }
 
     @FXML
     @Override
     public void refreshAction() {
         updateTreeItem(domTree.getRoot());
-    }
-
-    public void setExpanded(TreeItem<HtmlNode> item, boolean unfold) {
-        TreeItem<HtmlNode> validItem = validItem(item);
-        if (validItem == null) {
-            return;
-        }
-        validItem.setExpanded(unfold);
-        List<TreeItem<HtmlNode>> children = validItem.getChildren();
-        if (children == null || children.isEmpty()) {
-            return;
-        }
-        for (TreeItem child : children) {
-            setExpanded(child, unfold);
-        }
     }
 
     @FXML
@@ -409,27 +436,42 @@ public class BaseHtmlDomTreeController extends BaseController {
         items.add(menuItem);
         items.add(new SeparatorMenuItem());
 
-        menuItem = new MenuItem(message("Unfold"), StyleTools.getIconImageView("iconPlus.png"));
-        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
-            setExpanded(item, true);
-        });
-        items.add(menuItem);
+        Menu viewMenu = new Menu(message("View"), StyleTools.getIconImageView("iconView.png"));
+        items.add(viewMenu);
 
-        menuItem = new MenuItem(message("Fold"), StyleTools.getIconImageView("iconMinus.png"));
+        menuItem = new MenuItem(message("UnfoldNode"), StyleTools.getIconImageView("iconPlus.png"));
         menuItem.setOnAction((ActionEvent menuItemEvent) -> {
-            setExpanded(item, false);
+            unfoldNode();
         });
-        items.add(menuItem);
+        viewMenu.getItems().add(menuItem);
+
+        menuItem = new MenuItem(message("UnfoldNodeAndDescendants"), StyleTools.getIconImageView("iconPlus.png"));
+        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
+            unfoldNodeAndDecendants();
+        });
+        viewMenu.getItems().add(menuItem);
+
+        menuItem = new MenuItem(message("FoldNode"), StyleTools.getIconImageView("iconMinus.png"));
+        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
+            foldNode();
+        });
+        viewMenu.getItems().add(menuItem);
+
+        menuItem = new MenuItem(message("FoldNodeAndDescendants"), StyleTools.getIconImageView("iconMinus.png"));
+        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
+            foldNodeAndDecendants();
+        });
+        viewMenu.getItems().add(menuItem);
 
         menuItem = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
         menuItem.setOnAction((ActionEvent menuItemEvent) -> {
             updateTreeItem(item);
         });
-        items.add(menuItem);
+        viewMenu.getItems().add(menuItem);
 
         items.add(new SeparatorMenuItem());
 
-        items.addAll(viewMenu(item));
+        items.addAll(codesMenu(item));
 
         List<MenuItem> more = moreMenu(item);
         if (more != null) {
@@ -439,12 +481,12 @@ public class BaseHtmlDomTreeController extends BaseController {
         return items;
     }
 
-    public List<MenuItem> viewMenu(TreeItem<HtmlNode> item) {
+    public List<MenuItem> codesMenu(TreeItem<HtmlNode> item) {
         List<MenuItem> items = new ArrayList<>();
         if (item == null) {
             return items;
         }
-        Menu viewMenu = new Menu(message("View"), StyleTools.getIconImageView("iconView.png"));
+        Menu viewMenu = new Menu(message("Codes"), StyleTools.getIconImageView("iconMeta.png"));
         items.add(viewMenu);
 
         MenuItem menuItem = new MenuItem(message("InnerHtml"), StyleTools.getIconImageView("iconMeta.png"));

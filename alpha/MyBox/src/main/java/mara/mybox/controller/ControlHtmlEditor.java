@@ -501,10 +501,11 @@ public class ControlHtmlEditor extends BaseWebViewController {
         if (getMyStage() == null) {
             return;
         }
-        super.updateStageTitle();
+        String title = title();
         if (fileChanged) {
-            myStage.setTitle(myStage.getTitle() + " *");
+            title += " *";
         }
+        myStage.setTitle(title);
     }
 
     protected void updateFileStatus(boolean changed) {

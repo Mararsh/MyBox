@@ -77,7 +77,6 @@ public class ControllerTools {
             controller = MediaPlayerController.open(file);
         } else if (mustOpen) {
             PopTools.browseURI(controller, file.toURI());
-//            controller = BytesEditorController.open(file);
         }
         return controller;
     }

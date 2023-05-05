@@ -536,8 +536,15 @@ public class ControlColorPaletteSelector extends BaseController {
     }
 
     @FXML
-    protected void popExamplesMenu(MouseEvent mouseEvent) {
-        PaletteTools.popPaletteExamplesMenu(this, mouseEvent);
+    protected void popExamplesMenu(MouseEvent event) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+            items.addAll(PaletteTools.paletteExamplesMenu(this));
+            items.add(new SeparatorMenuItem());
+            popEventMenu(event, items);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
 }

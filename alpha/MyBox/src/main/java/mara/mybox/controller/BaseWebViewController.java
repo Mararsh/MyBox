@@ -177,12 +177,12 @@ public class BaseWebViewController extends BaseController {
     }
 
     public String title() {
-        String title = webViewController.title();
-        if (title == null) {
-            return getBaseTitle();
-        } else {
-            return getBaseTitle() + "  " + title;
+        String title = getBaseTitle();
+        String htmlTitle = webViewController.title();
+        if (htmlTitle != null) {
+            title += " - " + htmlTitle;
         }
+        return title;
     }
 
     public void initStyle(String style) {

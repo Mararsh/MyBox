@@ -22,7 +22,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Fxmls;
@@ -74,7 +73,10 @@ public class JsonEditorController extends BaseController {
                     tabChanged();
                 }
             });
+
             initTextsTab();
+
+            domController.jsonEditor = this;
 
             backupController.setParameters(this, baseName);
 
@@ -121,15 +123,12 @@ public class JsonEditorController extends BaseController {
         writePanes(TextFileTools.readTexts(file));
     }
 
-    public boolean loadContents(String contents) {
-        return writePanes(contents);
-    }
-
     public boolean writePanes(String json) {
         fileChanged = false;
         isSettingValues = true;
         loadDom(json, false);
         loadText(json, false);
+        updateTitle();
         isSettingValues = false;
         if (backupController != null) {
             backupController.loadBackups(sourceFile);
@@ -151,9 +150,6 @@ public class JsonEditorController extends BaseController {
     @FXML
     @Override
     public void saveAction() {
-        if (task != null && !task.isQuit()) {
-            return;
-        }
         if (sourceFile == null) {
             targetFile = chooseSaveFile();
         } else {
@@ -162,20 +158,23 @@ public class JsonEditorController extends BaseController {
         if (targetFile == null) {
             return;
         }
-        String html = currentJSON(true);
-        if (html == null || html.isBlank()) {
+        String json = currentJSON(true);
+        if (json == null || json.isBlank()) {
             popError(message("NoData"));
             return;
+        }
+        if (task != null) {
+            task.cancel();
         }
         task = new SingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
                 try {
-                    File tmpFile = HtmlWriteTools.writeHtml(html);
+                    File tmpFile = TextFileTools.writeFile(json);
                     if (tmpFile == null || !tmpFile.exists()) {
                         return false;
                     }
-                    if (sourceFile != null && backupController != null && backupController.needBackup()) {
+                    if (sourceFile != null && backupController.needBackup()) {
                         backupController.addBackup(task, sourceFile);
                     }
                     return FileTools.rename(tmpFile, targetFile);
@@ -189,9 +188,9 @@ public class JsonEditorController extends BaseController {
             protected void whenSucceeded() {
                 popSaved();
                 recordFileWritten(targetFile);
-                fileChanged = false;
                 sourceFileChanged(targetFile);
             }
+
         };
         start(task);
     }
@@ -201,14 +200,14 @@ public class JsonEditorController extends BaseController {
             Tab currentTab = tabPane.getSelectionModel().getSelectedItem();
 
             if (currentTab == domTab) {
-                String json = htmlByDom();
+                String json = jsonByDom();
                 if (synchronize) {
                     loadText(json, false);
                 }
                 return json;
 
             } else if (currentTab == textsTab) {
-                String json = htmlByText();
+                String json = jsonByText();
                 if (synchronize) {
                     loadDom(json, false);
                 }
@@ -226,7 +225,7 @@ public class JsonEditorController extends BaseController {
             if (!checkBeforeNextAction()) {
                 return false;
             }
-            loadContents(HtmlWriteTools.emptyHmtl(null));
+            writePanes(null);
             getMyStage().setTitle(getBaseTitle());
             fileChanged = false;
             if (backupController != null) {
@@ -239,23 +238,60 @@ public class JsonEditorController extends BaseController {
         }
     }
 
-    public void updateStageTitle() {
+    public void updateTitle() {
         if (getMyStage() == null) {
             return;
         }
-        if (fileChanged) {
-            myStage.setTitle(myStage.getTitle() + " *");
+        title = baseTitle;
+        if (sourceFile != null) {
+            title += " - " + sourceFile.getAbsolutePath();
         }
+        if (fileChanged) {
+            title += " *";
+        }
+        myStage.setTitle(title);
     }
 
-    protected void updateFileStatus(boolean changed) {
-        fileChanged = changed;
-        updateStageTitle();
-        if (!changed) {
-            domChanged(false);
-            textsChanged(false);
-        }
+    protected void fileChanged() {
+        fileChanged = true;
+        updateTitle();
     }
+
+    @FXML
+    @Override
+    public void saveAsAction() {
+        File file = chooseSaveFile();
+        if (file == null) {
+            return;
+        }
+        String json = currentJSON(false);
+        if (json == null || json.isBlank()) {
+            popError(message("NoData"));
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+            @Override
+            protected boolean handle() {
+                File tmpFile = TextFileTools.writeFile(json);
+                if (tmpFile == null || !tmpFile.exists()) {
+                    return false;
+                }
+                return FileTools.rename(tmpFile, file);
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popSaved();
+                recordFileWritten(file);
+                JsonEditorController.open(file);
+            }
+        };
+        start(task);
+    }
+
 
     /*
         dom
@@ -268,16 +304,15 @@ public class JsonEditorController extends BaseController {
         domChanged(updated);
     }
 
-    public String htmlByDom() {
-        return null;
-//        return domController.html();
+    public String jsonByDom() {
+        return domController.jsonString();
     }
 
     public void domChanged(boolean changed) {
         domChanged = changed;
         domTab.setText("dom" + (changed ? " *" : ""));
         if (changed) {
-            updateFileStatus(true);
+            fileChanged();
         }
     }
 
@@ -293,21 +328,20 @@ public class JsonEditorController extends BaseController {
     /*
         texts
      */
-    public void loadText(String html, boolean updated) {
+    public void loadText(String json, boolean updated) {
         if (!tabPane.getTabs().contains(textsTab)) {
             return;
         }
         try {
-            textsArea.setText(HtmlWriteTools.htmlToText(html));
+            textsArea.setText(json);
             textsChanged(updated);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    public String htmlByText() {
-        String body = HtmlWriteTools.stringToHtml(textsArea.getText());
-        return HtmlWriteTools.html(title, body);
+    public String jsonByText() {
+        return textsArea.getText();
     }
 
     protected void textsChanged(boolean changed) {
@@ -316,7 +350,7 @@ public class JsonEditorController extends BaseController {
         textsTab.setText(message("Texts") + (changed ? " *" : ""));
         textsLabel.setText(message("CharactersNumber") + ": " + StringTools.format(textsArea.getLength()));
         if (changed) {
-            updateFileStatus(true);
+            fileChanged();
         }
     }
 
@@ -376,15 +410,13 @@ public class JsonEditorController extends BaseController {
 
     public void synchronizeDom() {
         Platform.runLater(() -> {
-            String html = htmlByDom();
-            loadText(html, true);
+            loadText(jsonByDom(), true);
         });
     }
 
     public void synchronizeTexts() {
         Platform.runLater(() -> {
-            String html = htmlByText();
-            loadDom(html, true);
+            loadDom(jsonByText(), true);
         });
     }
 
@@ -494,10 +526,22 @@ public class JsonEditorController extends BaseController {
     /*
         static
      */
-    public static JsonEditorController load(String html) {
+    public static JsonEditorController load(String json) {
         try {
             JsonEditorController controller = (JsonEditorController) WindowTools.openStage(Fxmls.JsonEditorFxml);
-            controller.loadContents(html);
+            controller.writePanes(json);
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static JsonEditorController open(File file) {
+        try {
+            JsonEditorController controller = (JsonEditorController) WindowTools.openStage(Fxmls.JsonEditorFxml);
+            controller.sourceFileChanged(file);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {

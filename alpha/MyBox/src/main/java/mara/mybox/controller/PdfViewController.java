@@ -264,7 +264,7 @@ public class PdfViewController extends PdfViewController_Html {
                 checkCurrentPage();
             } else {
                 pdfInformation = new PdfInformation(sourceFile);
-                loadInformation(null);
+                loadInformation();
             }
 
         } catch (Exception e) {
@@ -280,7 +280,7 @@ public class PdfViewController extends PdfViewController_Html {
         htmlPage = -1;
     }
 
-    public void loadInformation(String inPassword) {
+    public void loadInformation() {
         if (pdfInformation == null) {
             if (sourceFile == null) {
                 return;
@@ -289,6 +289,12 @@ public class PdfViewController extends PdfViewController_Html {
         }
         if (task != null) {
             task.cancel();
+        }
+        if (outlineTask != null) {
+            outlineTask.cancel();
+        }
+        if (thumbTask != null) {
+            thumbTask.cancel();
         }
         bottomLabel.setText("");
         isSettingValues = true;
@@ -366,9 +372,9 @@ public class PdfViewController extends PdfViewController_Html {
         if (outlineTask != null) {
             outlineTask.cancel();
         }
+        outlineTree.setRoot(null);
         TreeItem outlineRoot = new TreeItem<>(message("Bookmarks"));
         outlineRoot.setExpanded(true);
-        outlineTree.setRoot(outlineRoot);
         outlineTask = new SingletonTask<Void>(this) {
 
             @Override
@@ -394,6 +400,14 @@ public class PdfViewController extends PdfViewController_Html {
                 } else {
                     popFailed();
                 }
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                outlineTree.setRoot(outlineRoot);
+                outlineScrollPane.applyCss();
+                outlineScrollPane.layout();
             }
 
         };

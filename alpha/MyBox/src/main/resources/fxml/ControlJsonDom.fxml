@@ -52,8 +52,8 @@ License:    Apache License Version 2.0
                         </FlowPane>
                         <TreeTableView fx:id="domTree" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                             <columns>
-                                <TreeTableColumn fx:id="nameColumn" prefWidth="120.0" text="%Name" />
-                                <TreeTableColumn fx:id="hierarchyColumn" prefWidth="150.0" text="%HierarchyNumber" />
+                                <TreeTableColumn fx:id="nameColumn" prefWidth="200.0" text="%Name" />
+                                <TreeTableColumn fx:id="hierarchyColumn" prefWidth="100.0" text="%HierarchyNumber" />
                         <TreeTableColumn fx:id="typeColumn" text="%Type" />
                                 <TreeTableColumn fx:id="valueColumn" prefWidth="300.0" text="%Value" />
                             </columns>
@@ -96,7 +96,7 @@ License:    Apache License Version 2.0
                            </children>
                         </HBox>
                         <Label text="%Value" />
-                        <TextArea fx:id="textInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
+                        <TextArea fx:id="textArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
                               </children>
                               <padding>
                                   <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

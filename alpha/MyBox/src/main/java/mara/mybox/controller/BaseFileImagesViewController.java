@@ -262,6 +262,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
                     mainPane.setDividerPosition(1, 0.5);
                     break;
             }
+            mainPane.applyCss();
             mainPane.layout();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

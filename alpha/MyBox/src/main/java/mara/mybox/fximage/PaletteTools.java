@@ -5,16 +5,14 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.paint.Color;
 import javafx.stage.Window;
 import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.ColorPalettePopupController;
 import mara.mybox.controller.ColorSet;
-import mara.mybox.controller.ColorsManageController;
+import mara.mybox.controller.ControlColorPaletteSelector;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColorData;
 import mara.mybox.db.data.ColorDataTools;
@@ -38,17 +36,6 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public class PaletteTools {
-
-    public static void popPaletteExamplesMenu(BaseController parent, Event event) {
-        try {
-            List<MenuItem> items = new ArrayList<>();
-            items.addAll(paletteExamplesMenu(parent));
-            items.add(new SeparatorMenuItem());
-            parent.popEventMenu(event, items);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
 
     public static List<MenuItem> paletteExamplesMenu(BaseController parent) {
         try {
@@ -143,9 +130,12 @@ public class PaletteTools {
     }
 
     public static void importPalette(BaseController parent, String paletteName) {
-        if (parent == null || (parent.getTask() != null && !parent.getTask().isQuit())
-                || paletteName == null) {
+        MyBoxLog.console(paletteName);
+        if (parent == null || paletteName == null) {
             return;
+        }
+        if (parent.getTask() != null) {
+            parent.getTask().cancel();
         }
         SingletonTask task = new SingletonTask<Void>(parent) {
             @Override
@@ -402,10 +392,10 @@ public class PaletteTools {
         if (parent == null) {
             return;
         }
-        if (parent instanceof ColorsManageController) {
-            ColorsManageController controller = (ColorsManageController) parent;
+        if (parent instanceof ControlColorPaletteSelector) {
+            ControlColorPaletteSelector controller = (ControlColorPaletteSelector) parent;
             UserConfig.setString(controller.getBaseName() + "Palette", paletteName);
-            controller.refreshPalettes();
+            controller.loadPalettes();
             parent.popSuccessful();
         } else if (parent instanceof ColorSet) {
             ColorSet controller = (ColorSet) parent;

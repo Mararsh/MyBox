@@ -476,14 +476,10 @@ public class Data2DExampleTools {
 
             chinaMenu.getItems().add(new SeparatorMenuItem());
 
-            menu = new MenuItem(message("UserGuideDataTools"));
+            menu = new MenuItem(message("ChinaNationalBureauOfStatistics"));
             menu.setStyle("-fx-text-fill: #2e598a;");
             menu.setOnAction((ActionEvent event) -> {
-                if (isChinese) {
-                    controller.browse("https://mara-mybox.sourceforge.io/guide/MyBox-DataTools-zh.pdf");
-                } else {
-                    controller.browse("https://mara-mybox.sourceforge.io/guide/MyBox-DataTools-en.pdf");
-                }
+                controller.browse("https://data.stats.gov.cn/");
             });
             chinaMenu.getItems().add(menu);
 

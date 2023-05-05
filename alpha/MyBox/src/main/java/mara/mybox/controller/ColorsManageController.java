@@ -69,7 +69,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
     protected TableColumn<ColorData, Color> colorColumn, invertColumn, complementaryColumn;
     @FXML
     protected TableColumn<ColorData, String> colorNameColumn, dataColumn,
-            rgbaColumn, rgbColumn, hueColumn, rybColumn, saturationColumn, brightnessColumn,
+            rgbaColumn, rgbColumn, hueColumn, rybColumn, saturationColumn, brightnessColumn, opacityColumn,
             sRGBColumn, HSBColumn, AdobeRGBColumn, AppleRGBColumn, ECIRGBColumn,
             sRGBLinearColumn, AdobeRGBLinearColumn, AppleRGBLinearColumn, CalculatedCMYKColumn,
             ECICMYKColumn, AdobeCMYKColumn, descColumn,
@@ -232,6 +232,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
             hueColumn.setCellValueFactory(new PropertyValueFactory<>("hue"));
             saturationColumn.setCellValueFactory(new PropertyValueFactory<>("saturation"));
             brightnessColumn.setCellValueFactory(new PropertyValueFactory<>("brightness"));
+            opacityColumn.setCellValueFactory(new PropertyValueFactory<>("opacity"));
 
             sRGBColumn.setCellValueFactory(new PropertyValueFactory<>("srgb"));
             HSBColumn.setCellValueFactory(new PropertyValueFactory<>("hsb"));
@@ -309,7 +310,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
                 tableView.getColumns().addAll(dataColumn);
             } else {
                 tableView.getColumns().addAll(sRGBColumn, HSBColumn, hueColumn, saturationColumn,
-                        brightnessColumn, rybColumn, CalculatedCMYKColumn);
+                        brightnessColumn, rybColumn, opacityColumn, CalculatedCMYKColumn);
                 if (allColumnsCheck.isSelected()) {
                     tableView.getColumns().addAll(AdobeRGBColumn, AppleRGBColumn, ECIRGBColumn,
                             sRGBLinearColumn, AdobeRGBLinearColumn, AppleRGBLinearColumn,
@@ -592,6 +593,8 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
                         row.add(data.getBrightness());
                     } else if (column.equals(rybColumn)) {
                         row.add(data.getRybAngle());
+                    } else if (column.equals(opacityColumn)) {
+                        row.add(data.getOpacity());
                     } else if (column.equals(AdobeRGBColumn)) {
                         row.add(data.getAdobeRGB());
                     } else if (column.equals(AppleRGBColumn)) {
