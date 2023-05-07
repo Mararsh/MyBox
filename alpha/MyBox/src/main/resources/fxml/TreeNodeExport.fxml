@@ -42,7 +42,7 @@ License:    Apache License Version 2.0
                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                             </padding>
                                             <children>
-                                                <fx:include fx:id="nodes" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlTreeInfoSelect.fxml" VBox.vgrow="ALWAYS" />
+                                                <fx:include fx:id="nodes" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlInfoTreeSelector.fxml" VBox.vgrow="ALWAYS" />
                                             </children>
                                         </VBox>
                                         <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">

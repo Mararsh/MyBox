@@ -16,6 +16,9 @@ public class FileTmpTools {
     }
 
     public static String tmpFilename(String path, String prefix) {
+        if (path == null) {
+            return null;
+        }
         if (prefix == null) {
             return FileTmpTools.tmpFilename(path);
         }
@@ -32,6 +35,10 @@ public class FileTmpTools {
     }
 
     public static File getPathTempFile(String path) {
+        if (path == null) {
+            return null;
+        }
+        new File(path).mkdirs();
         File file = new File(FileTmpTools.tmpFilename(path));
         while (file.exists()) {
             file = new File(FileTmpTools.tmpFilename(path));
@@ -40,6 +47,10 @@ public class FileTmpTools {
     }
 
     public static File getPathTempFile(String path, String suffix) {
+        if (path == null) {
+            return null;
+        }
+        new File(path).mkdirs();
         String s = FileNameTools.filter(suffix);
         s = s == null || s.isBlank() ? "" : s;
         File file = new File(FileTmpTools.tmpFilename(path) + s);
@@ -50,6 +61,10 @@ public class FileTmpTools {
     }
 
     public static File getPathTempFile(String path, String prefix, String suffix) {
+        if (path == null) {
+            return null;
+        }
+        new File(path).mkdirs();
         String p = FileNameTools.filter(prefix);
         String s = FileNameTools.filter(suffix);
         s = s == null || s.isBlank() ? "" : s;
@@ -68,6 +83,10 @@ public class FileTmpTools {
     }
 
     public static File getPathTempDirectory(String path) {
+        if (path == null) {
+            return null;
+        }
+        new File(path).mkdirs();
         File file = new File(FileTmpTools.tmpFilename(path) + File.separator);
         while (file.exists()) {
             file = new File(FileTmpTools.tmpFilename(path) + File.separator);

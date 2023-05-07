@@ -19,7 +19,7 @@ import org.jsoup.nodes.Element;
  * @CreateDate 2023-2-20
  * @License Apache License Version 2.0
  */
-public class ControlHtmlDomSource extends BaseHtmlDomTreeController {
+public class ControlHtmlDomSource extends BaseHtmlTreeController {
 
     private List<TreeItem<HtmlNode>> selected;
 

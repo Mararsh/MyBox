@@ -245,12 +245,17 @@ public class ColorConvertTools {
         if (originalColor == null) {
             return null;
         }
-        float ryb = data.getRyb();
-        if (ryb < 0) {
+        float colorRyb = data.getRyb();
+        if (colorRyb < 0) {
             return null;
         }
-        float hue = ryb2hue(ryb + 180);
-        Color c = Color.getHSBColor(hue / 360, (float) originalColor.getSaturation(), (float) originalColor.getBrightness());
+        float complementaryRyb = colorRyb + 180;
+        float complementaryHue = ryb2hue(complementaryRyb) / 360;
+        float complementaryRybBrightness = ryb2brightness(complementaryRyb);
+        float colorRybBrightness = ryb2brightness(colorRyb);
+        float colorBrightness = (float) data.getColor().getBrightness();
+        float complementaryBrightness = Math.min(1f, complementaryRybBrightness * colorBrightness / colorRybBrightness);
+        Color c = Color.getHSBColor(complementaryHue, (float) originalColor.getSaturation(), complementaryBrightness);
         return new Color(c.getRed(), c.getGreen(), c.getBlue(), (int) (originalColor.getOpacity() * 255));
     }
 

@@ -11,9 +11,9 @@ import mara.mybox.data.TextEditInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
-import mara.mybox.tools.FileTmpTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -23,7 +23,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class TextReplaceBatchController extends BaseBatchFileController {
 
-    protected FindReplaceFile replace;
+    protected FindReplaceFile findReplace;
 
     @FXML
     protected TextReplaceBatchOptions optionsController;
@@ -66,32 +66,35 @@ public class TextReplaceBatchController extends BaseBatchFileController {
             if (!findString.isBlank()) {
                 TableStringValues.add(baseName + "FindString", findString);
             }
-
-            String replaceString = optionsController.replaceArea.getText();
-            if (replaceString == null) {
-                replaceString = "";
-            }
-            if (!replaceString.isBlank()) {
-                TableStringValues.add(baseName + "ReplaceString", findString);
-            }
-
-            replace = new FindReplaceFile().setPosition(0);
-            replace.setOperation(FindReplaceString.Operation.ReplaceAll)
+            findReplace = new FindReplaceFile();
+            findReplace.reset();
+            findReplace.setPosition(0)
                     .setFindString(findString)
                     .setAnchor(0)
-                    .setReplaceString(replaceString)
                     .setUnit(1)
                     .setIsRegex(optionsController.regexCheck.isSelected())
                     .setCaseInsensitive(optionsController.caseInsensitiveCheck.isSelected())
                     .setMultiline(optionsController.multilineCheck.isSelected())
                     .setDotAll(optionsController.dotallCheck.isSelected())
                     .setWrap(false);
+            if (optionsController.replaceArea != null) {
+                findReplace.setOperation(FindReplaceString.Operation.ReplaceAll);
+                String replaceString = optionsController.replaceArea.getText();
+                if (replaceString == null) {
+                    replaceString = "";
+                }
+                findReplace.setReplaceString(replaceString);
+                if (!replaceString.isBlank()) {
+                    TableStringValues.add(baseName + "ReplaceString", findString);
+                }
+            } else {
+                findReplace.setOperation(FindReplaceString.Operation.FindAll);
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return false;
         }
-
         return super.makeMoreParameters();
     }
 
@@ -117,17 +120,22 @@ public class TextReplaceBatchController extends BaseBatchFileController {
             fileInfo.setLineBreak(TextTools.checkLineBreak(srcFile));
             fileInfo.setLineBreakValue(TextTools.lineBreakValue(fileInfo.getLineBreak()));
             fileInfo.setPagesNumber(2);
-            fileInfo.setFindReplace(replace);
-            replace.setFileInfo(fileInfo);
-
-            if (!replace.file() || !tmpFile.exists()) {
+            fileInfo.setFindReplace(findReplace);
+            findReplace.setFileInfo(fileInfo);
+            if (!findReplace.handleFile() || !tmpFile.exists()) {
                 return message("Failed");
             }
-            if (FileTools.rename(tmpFile, target)) {
-                targetFileGenerated(target);
-                return MessageFormat.format(message("ReplaceAllOk"), replace.getCount());
+            int count = findReplace.getCount();
+            if (count > 0) {
+                updateLogs(message("Count") + ": " + findReplace.getCount());
+                if (FileTools.rename(tmpFile, target)) {
+                    targetFileGenerated(target);
+                    return MessageFormat.format(message("ReplaceAllOk"), count);
+                } else {
+                    return message("Failed");
+                }
             } else {
-                return message("Failed");
+                return message("NotFound");
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

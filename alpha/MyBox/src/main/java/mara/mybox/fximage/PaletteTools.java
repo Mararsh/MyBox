@@ -130,7 +130,6 @@ public class PaletteTools {
     }
 
     public static void importPalette(BaseController parent, String paletteName) {
-        MyBoxLog.console(paletteName);
         if (parent == null || paletteName == null) {
             return;
         }

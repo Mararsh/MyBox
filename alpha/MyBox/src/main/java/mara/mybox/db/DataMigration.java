@@ -31,7 +31,7 @@ import mara.mybox.db.data.GeographyCodeLevel;
 import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.data.ImageClipboard;
 import mara.mybox.db.data.ImageEditHistory;
-import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.InfoNode;
 import mara.mybox.db.data.WebHistory;
 import static mara.mybox.db.table.BaseTable.StringMaxLength;
 import mara.mybox.db.table.TableAlarmClock;
@@ -625,9 +625,9 @@ public class DataMigration {
             conn.setAutoCommit(false);
             TableTreeNode tableTreeNode = new TableTreeNode();
             ResultSet query = statement.executeQuery("SELECT * FROM Tree_Node "
-                    + "WHERE category='" + TreeNode.WebFavorite + "' AND more is not null");
+                    + "WHERE category='" + InfoNode.WebFavorite + "' AND more is not null");
             while (query.next()) {
-                TreeNode node = tableTreeNode.readData(query);
+                InfoNode node = tableTreeNode.readData(query);
                 String icon = node.getMore();
                 if (icon != null && icon.endsWith(".ico")) {
                     icon = icon.replace(".ico", ".png");
@@ -666,26 +666,26 @@ public class DataMigration {
             statement.executeUpdate("ALTER TABLE Tag ADD COLUMN color VARCHAR(" + StringMaxLength + ")");
             statement.executeUpdate("DROP INDEX Tag_unique_index");
             statement.executeUpdate("CREATE UNIQUE INDEX Tag_unique_index on Tag (  category, tag )");
-            statement.executeUpdate("UPDATE Tag SET category='" + TreeNode.Notebook + "'");
+            statement.executeUpdate("UPDATE Tag SET category='" + InfoNode.Notebook + "'");
 
             TableTreeNode tableTreeNode = new TableTreeNode();
             tableTreeNode.checkBase(conn);
             statement.executeUpdate("ALTER TABLE tree_node ADD COLUMN oldNodeid BIGINT");
             statement.executeUpdate("ALTER TABLE tree_node ADD COLUMN oldParentid BIGINT");
             statement.executeUpdate("INSERT INTO tree_node (category, title, value, oldNodeid, oldParentid) "
-                    + "SELECT '" + TreeNode.WebFavorite + "', title, attribute, nodeid, parent FROM tree WHERE nodeid > 1");
+                    + "SELECT '" + InfoNode.WebFavorite + "', title, attribute, nodeid, parent FROM tree WHERE nodeid > 1");
             statement.executeUpdate("INSERT INTO tree_node ( category, title, value, more, oldParentid) "
-                    + "SELECT '" + TreeNode.WebFavorite + "', title, address, icon, owner FROM Web_Favorite");
+                    + "SELECT '" + InfoNode.WebFavorite + "', title, address, icon, owner FROM Web_Favorite");
             statement.executeUpdate("Update tree_node AS A set parentid="
-                    + "(select B.nodeid from tree_node AS B WHERE A.oldParentid=B.oldNodeid AND B.category='" + TreeNode.WebFavorite + "')  "
-                    + "WHERE A.category='" + TreeNode.WebFavorite + "'");
+                    + "(select B.nodeid from tree_node AS B WHERE A.oldParentid=B.oldNodeid AND B.category='" + InfoNode.WebFavorite + "')  "
+                    + "WHERE A.category='" + InfoNode.WebFavorite + "'");
 
             statement.executeUpdate("INSERT INTO tree_node (category, title, value, oldNodeid, oldParentid)  "
-                    + "SELECT '" + TreeNode.Notebook + "', name , description, nbid, owner FROM notebook");
+                    + "SELECT '" + InfoNode.Notebook + "', name , description, nbid, owner FROM notebook");
             statement.executeUpdate("Update tree_node AS A set parentid="
                     + "(select B.nodeid from tree_node AS B WHERE A.oldParentid=B.oldNodeid AND B.category='"
-                    + TreeNode.Notebook + "' AND A.category='" + TreeNode.Notebook + "') "
-                    + " WHERE A.category='" + TreeNode.Notebook + "'");
+                    + InfoNode.Notebook + "' AND A.category='" + InfoNode.Notebook + "') "
+                    + " WHERE A.category='" + InfoNode.Notebook + "'");
             statement.executeUpdate("INSERT INTO tree_node (category, title, value, update_time, oldNodeid, oldParentid) "
                     + "SELECT 'Note', title, html, update_time, ntid, notebook FROM note");
             statement.executeUpdate("Update tree_node AS A set parentid="
@@ -694,7 +694,7 @@ public class DataMigration {
             statement.executeUpdate("INSERT INTO tree_node_tag (tnodeid, tagid)  "
                     + "SELECT tree_node.nodeid, note_tag.tagid FROM tree_node, note_tag "
                     + "where tree_node.oldNodeid=note_tag.noteid AND tree_node.category='Note'");
-            statement.executeUpdate("Update tree_node set category='" + TreeNode.Notebook + "' WHERE category='Note'");
+            statement.executeUpdate("Update tree_node set category='" + InfoNode.Notebook + "' WHERE category='Note'");
 
             statement.executeUpdate("ALTER TABLE tree_node DROP COLUMN oldNodeid");
             statement.executeUpdate("ALTER TABLE tree_node DROP COLUMN oldParentid");

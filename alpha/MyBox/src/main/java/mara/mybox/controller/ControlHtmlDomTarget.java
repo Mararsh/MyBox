@@ -11,7 +11,7 @@ import mara.mybox.data.HtmlNode;
  * @CreateDate 2023-2-18
  * @License Apache License Version 2.0
  */
-public class ControlHtmlDomTarget extends BaseHtmlDomTreeController {
+public class ControlHtmlDomTarget extends BaseHtmlTreeController {
     
     @FXML
     protected RadioButton beforeRadio, afterRadio, inRadio;

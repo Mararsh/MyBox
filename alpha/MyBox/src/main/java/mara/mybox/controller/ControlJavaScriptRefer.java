@@ -8,7 +8,7 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.MouseEvent;
-import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.InfoNode;
 import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
@@ -20,7 +20,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-9-5
  * @License Apache License Version 2.0
  */
-public class ControlJavaScriptRefer extends BaseTreeInfoController {
+public class ControlJavaScriptRefer extends BaseInfoTreeController {
 
     @FXML
     protected TextArea scriptInput;
@@ -29,7 +29,7 @@ public class ControlJavaScriptRefer extends BaseTreeInfoController {
 
     public ControlJavaScriptRefer() {
         baseTitle = "JavaScript";
-        category = TreeNode.JavaScript;
+        category = InfoNode.JavaScript;
     }
 
     @Override
@@ -64,20 +64,20 @@ public class ControlJavaScriptRefer extends BaseTreeInfoController {
         tree
      */
     @Override
-    protected void doubleClicked(TreeItem<TreeNode> item) {
+    public void doubleClicked(TreeItem<InfoNode> item) {
         editNode(item);
     }
 
     @Override
-    public void itemSelected(TreeItem<TreeNode> item) {
+    public void itemSelected(TreeItem<InfoNode> item) {
         editNode(item);
     }
 
-    protected void editNode(TreeItem<TreeNode> item) {
+    protected void editNode(TreeItem<InfoNode> item) {
         if (item == null) {
             return;
         }
-        TreeNode node = item.getValue();
+        InfoNode node = item.getValue();
         if (node == null || node.getValue() == null) {
             return;
         }

@@ -10,7 +10,7 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.value.UserConfig;
@@ -57,7 +57,7 @@ public class ControlMathFunctionEditor extends TreeNodeEditor {
     }
 
     @Override
-    protected synchronized void editNode(TreeNode node) {
+    protected synchronized void editNode(InfoNode node) {
         super.editNode(node);
         if (node == null) {
             functionController.calculateController.variablesChanged();
@@ -96,8 +96,8 @@ public class ControlMathFunctionEditor extends TreeNodeEditor {
     }
 
     @Override
-    public TreeNode pickNodeData() {
-        TreeNode node = super.pickNodeData();
+    public InfoNode pickNodeData() {
+        InfoNode node = super.pickNodeData();
         if (node == null) {
             return node;
         }

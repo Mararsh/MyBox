@@ -80,10 +80,10 @@ public class BaseDataAdaptor {
         } else if (data instanceof ColorPalette) {
             return new TableColorPalette();
 
-        } else if (data instanceof TreeNode) {
+        } else if (data instanceof InfoNode) {
             return new TableTreeNode();
 
-        } else if (data instanceof TreeNodeTag) {
+        } else if (data instanceof InfoNodeTag) {
             return new TableTreeNodeTag();
 
         } else if (data instanceof WebHistory) {
@@ -166,11 +166,11 @@ public class BaseDataAdaptor {
         } else if (data instanceof ColorPalette) {
             return ColorPalette.valid((ColorPalette) data);
 
-        } else if (data instanceof TreeNode) {
-            return TreeNode.valid((TreeNode) data);
+        } else if (data instanceof InfoNode) {
+            return InfoNode.valid((InfoNode) data);
 
-        } else if (data instanceof TreeNodeTag) {
-            return TreeNodeTag.valid((TreeNodeTag) data);
+        } else if (data instanceof InfoNodeTag) {
+            return InfoNodeTag.valid((InfoNodeTag) data);
 
         } else if (data instanceof WebHistory) {
             return WebHistory.valid((WebHistory) data);
@@ -251,11 +251,11 @@ public class BaseDataAdaptor {
         } else if (data instanceof ColorPalette) {
             return ColorPalette.getValue((ColorPalette) data, name);
 
-        } else if (data instanceof TreeNode) {
-            return TreeNode.getValue((TreeNode) data, name);
+        } else if (data instanceof InfoNode) {
+            return InfoNode.getValue((InfoNode) data, name);
 
-        } else if (data instanceof TreeNodeTag) {
-            return TreeNodeTag.getValue((TreeNodeTag) data, name);
+        } else if (data instanceof InfoNodeTag) {
+            return InfoNodeTag.getValue((InfoNodeTag) data, name);
 
         } else if (data instanceof WebHistory) {
             return WebHistory.getValue((WebHistory) data, name);
@@ -333,11 +333,11 @@ public class BaseDataAdaptor {
         } else if (data instanceof ColorPalette) {
             return ColorPalette.setValue((ColorPalette) data, name, value);
 
-        } else if (data instanceof TreeNode) {
-            return TreeNode.setValue((TreeNode) data, name, value);
+        } else if (data instanceof InfoNode) {
+            return InfoNode.setValue((InfoNode) data, name, value);
 
-        } else if (data instanceof TreeNodeTag) {
-            return TreeNodeTag.setValue((TreeNodeTag) data, name, value);
+        } else if (data instanceof InfoNodeTag) {
+            return InfoNodeTag.setValue((InfoNodeTag) data, name, value);
 
         } else if (data instanceof WebHistory) {
             return WebHistory.setValue((WebHistory) data, name, value);

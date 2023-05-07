@@ -11,7 +11,7 @@ import mara.mybox.value.Languages;
  * @CreateDate 2021-4-23
  * @License Apache License Version 2.0
  */
-public class TreeNode extends BaseData {
+public class InfoNode extends BaseData {
 
     public static final String RootIdentify = "MyBoxTreeRoot;;;";
     public static final String NodeSeparater = " > ";
@@ -44,19 +44,19 @@ public class TreeNode extends BaseData {
         updateTime = new Date();
     }
 
-    public TreeNode() {
+    public InfoNode() {
         init();
     }
 
-    public TreeNode(TreeNode parent, String title) {
+    public InfoNode(InfoNode parent, String title) {
         init();
         this.parentid = parent.getNodeid();
         this.category = parent.getCategory();
         this.title = title;
     }
 
-    public TreeNode copyTo(TreeNode parent) {
-        TreeNode node = new TreeNode();
+    public InfoNode copyTo(InfoNode parent) {
+        InfoNode node = new InfoNode();
         node.setParentid(parent.getNodeid());
         node.setCategory(parent.getCategory());
         node.setTitle(title);
@@ -72,11 +72,11 @@ public class TreeNode extends BaseData {
     /*
         Static methods
      */
-    public static TreeNode create() {
-        return new TreeNode();
+    public static InfoNode create() {
+        return new InfoNode();
     }
 
-    public static boolean setValue(TreeNode data, String column, Object value) {
+    public static boolean setValue(InfoNode data, String column, Object value) {
         if (data == null || column == null) {
             return false;
         }
@@ -110,7 +110,7 @@ public class TreeNode extends BaseData {
         return false;
     }
 
-    public static Object getValue(TreeNode data, String column) {
+    public static Object getValue(InfoNode data, String column) {
         if (data == null || column == null) {
             return null;
         }
@@ -133,7 +133,7 @@ public class TreeNode extends BaseData {
         return null;
     }
 
-    public static boolean valid(TreeNode data) {
+    public static boolean valid(InfoNode data) {
         return data != null && data.getCategory() != null
                 && data.getTitle() != null && !data.getTitle().isBlank()
                 && !data.getTitle().contains(NodeSeparater);
@@ -156,7 +156,7 @@ public class TreeNode extends BaseData {
         return nodeid;
     }
 
-    public TreeNode setNodeid(long nodeid) {
+    public InfoNode setNodeid(long nodeid) {
         this.nodeid = nodeid;
         return this;
     }
@@ -165,7 +165,7 @@ public class TreeNode extends BaseData {
         return parentid;
     }
 
-    public TreeNode setParentid(long parentid) {
+    public InfoNode setParentid(long parentid) {
         this.parentid = parentid;
         return this;
     }
@@ -174,7 +174,7 @@ public class TreeNode extends BaseData {
         return title;
     }
 
-    public TreeNode setTitle(String title) {
+    public InfoNode setTitle(String title) {
         this.title = title;
         return this;
     }
@@ -183,7 +183,7 @@ public class TreeNode extends BaseData {
         return value;
     }
 
-    public TreeNode setValue(String value) {
+    public InfoNode setValue(String value) {
         this.value = value;
         return this;
     }
@@ -192,7 +192,7 @@ public class TreeNode extends BaseData {
         return more;
     }
 
-    public TreeNode setMore(String more) {
+    public InfoNode setMore(String more) {
         this.more = more;
         return this;
     }
@@ -201,7 +201,7 @@ public class TreeNode extends BaseData {
         return category;
     }
 
-    public TreeNode setCategory(String category) {
+    public InfoNode setCategory(String category) {
         this.category = category;
         return this;
     }
@@ -210,7 +210,7 @@ public class TreeNode extends BaseData {
         return updateTime;
     }
 
-    public TreeNode setUpdateTime(Date updateTime) {
+    public InfoNode setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
         return this;
     }

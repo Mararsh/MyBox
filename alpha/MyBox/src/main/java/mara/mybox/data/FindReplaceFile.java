@@ -1,8 +1,17 @@
 package mara.mybox.data;
 
 import java.io.File;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 import mara.mybox.controller.ControlFileBackup;
 import mara.mybox.data.FileEditInformation.Edit_Type;
+import static mara.mybox.data.FindReplaceString.Operation.FindAll;
+import static mara.mybox.data.FindReplaceString.Operation.ReplaceAll;
+import mara.mybox.data2d.DataFileCSV;
+import mara.mybox.db.data.ColumnDefinition;
+import mara.mybox.db.data.Data2DColumn;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -15,6 +24,7 @@ public class FindReplaceFile extends FindReplaceString {
     protected long position;
     protected LongRange fileRange;  // location in whole file
     protected ControlFileBackup backupController;
+    protected DataFileCSV matchesData;
 
     public FindReplaceFile() {
     }
@@ -23,6 +33,7 @@ public class FindReplaceFile extends FindReplaceString {
     public FindReplaceString reset() {
         super.reset();
         fileRange = null;
+        matchesData = null;
         return this;
     }
 
@@ -42,7 +53,11 @@ public class FindReplaceFile extends FindReplaceString {
         return findReplaceString;
     }
 
-    public boolean page() {
+    public boolean shouldHandleAsString() {
+        return fileInfo.pagesNumber < 2 && inputString != null && !inputString.isEmpty();
+    }
+
+    public boolean handlePage() {
         reset();
         if (operation == null || fileInfo == null
                 || findString == null || findString.isEmpty()) {
@@ -51,19 +66,20 @@ public class FindReplaceFile extends FindReplaceString {
         fileInfo.setFindReplace(this);
 //        MyBoxLog.debug("operation:" + operation + " unit:" + unit
 //                + " anchor:" + anchor + " position:" + position + " page:" + fileInfo.getCurrentPage());
-        if (fileInfo.pagesNumber < 2) {
-            return run();
+        if (shouldHandleAsString()) {
+            return handleString();
         }
         // try current page at first
         if (operation == Operation.FindNext || operation == Operation.ReplaceFirst
                 || operation == Operation.FindPrevious) {
             FindReplaceString findReplaceString = findReplaceString().setWrap(false);
-            findReplaceString.run();
+            findReplaceString.handleString();
             if (findReplaceString.getStringRange() != null) {
                 stringRange = findReplaceString.getStringRange();
                 lastMatch = findReplaceString.getLastMatch();
                 outputString = findReplaceString.getOutputString();
                 lastReplacedLength = findReplaceString.getLastReplacedLength();
+                matches = findReplaceString.getMatches();
 //                MyBoxLog.debug("stringRange:" + stringRange.getStart() + " " + stringRange.getEnd());
                 fileRange = FindReplaceTextFile.fileRange(this);
 //                MyBoxLog.debug("fileRange:" + fileRange.getStart() + " " + fileRange.getEnd());
@@ -73,7 +89,7 @@ public class FindReplaceFile extends FindReplaceString {
         return false;
     }
 
-    public boolean file() {
+    public boolean handleFile() {
         reset();
         if (operation == null || fileInfo == null
                 || findString == null || findString.isEmpty()) {
@@ -82,8 +98,8 @@ public class FindReplaceFile extends FindReplaceString {
         fileInfo.setFindReplace(this);
 //        MyBoxLog.debug("operation:" + operation + " unit:" + unit
 //                + " anchor:" + anchor + " position:" + position + " page:" + fileInfo.getCurrentPage());
-        if (fileInfo.pagesNumber < 2) {
-            return run();
+        if (shouldHandleAsString()) {
+            return handleString();
         }
 
 //        MyBoxLog.debug("findString.length()：" + findString.length());
@@ -101,6 +117,8 @@ public class FindReplaceFile extends FindReplaceString {
                     return FindReplaceTextFile.replaceFirstText(fileInfo, this);
                 case ReplaceAll:
                     return FindReplaceTextFile.replaceAllText(fileInfo, this);
+                case FindAll:
+                    return FindReplaceTextFile.findAllText(fileInfo, this);
                 default:
                     break;
             }
@@ -116,6 +134,8 @@ public class FindReplaceFile extends FindReplaceString {
                     return FindReplaceBytesFile.replaceFirstBytes(fileInfo, this);
                 case ReplaceAll:
                     return FindReplaceBytesFile.replaceAllBytes(fileInfo, this);
+                case FindAll:
+                    return FindReplaceBytesFile.findAllBytes(fileInfo, this);
                 default:
                     break;
             }
@@ -131,6 +151,25 @@ public class FindReplaceFile extends FindReplaceString {
 
     public boolean isMultiplePages() {
         return fileInfo != null && fileInfo.pagesNumber > 1;
+    }
+
+    public DataFileCSV initMatchesData(File sourceFile) {
+        String dname = sourceFile.getName() + "_" + message("Find");
+        matchesData = new DataFileCSV();
+        File matchesFile = matchesData.tmpFile(dname, null, "csv");
+        matchesData.setFile(matchesFile)
+                .setDataName(dname)
+                .setCharset(Charset.forName("UTF-8"))
+                .setDelimiter(",").setHasHeader(true)
+                .setColsNumber(3)
+                .setComments(message("SourceFile") + ": " + sourceFile + "\n"
+                        + message("Find") + ": " + findString);
+        List<Data2DColumn> columns = new ArrayList<>();
+        columns.add(new Data2DColumn(message("Start"), ColumnDefinition.ColumnType.Long));
+        columns.add(new Data2DColumn(message("End"), ColumnDefinition.ColumnType.Long));
+        columns.add(new Data2DColumn(message("String") + "1", ColumnDefinition.ColumnType.String));
+        matchesData.setColumns(columns);
+        return matchesData;
     }
 
     /*
@@ -169,6 +208,15 @@ public class FindReplaceFile extends FindReplaceString {
 
     public FindReplaceFile setPosition(long position) {
         this.position = position;
+        return this;
+    }
+
+    public DataFileCSV getMatchesData() {
+        return matchesData;
+    }
+
+    public FindReplaceFile setMatchesData(DataFileCSV matchesData) {
+        this.matchesData = matchesData;
         return this;
     }
 

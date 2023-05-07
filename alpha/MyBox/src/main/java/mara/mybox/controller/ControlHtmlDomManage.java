@@ -24,7 +24,7 @@ import org.jsoup.nodes.Element;
  * @CreateDate 2023-2-14
  * @License Apache License Version 2.0
  */
-public class ControlHtmlDomManage extends BaseHtmlDomTreeController {
+public class ControlHtmlDomManage extends BaseHtmlTreeController {
 
     protected ObservableList<Attribute> attributesData;
     protected ControlHtmlEditor htmlEditor;

@@ -7,10 +7,10 @@ import mara.mybox.dev.MyBoxLog;
  * @CreateDate 2022-3-11
  * @License Apache License Version 2.0
  */
-public class TreeNodeTag extends BaseData {
+public class InfoNodeTag extends BaseData {
 
     protected long ttid, tnodeid, tagid;
-    protected TreeNode node;
+    protected InfoNode node;
     protected Tag tag;
 
     private void init() {
@@ -19,17 +19,17 @@ public class TreeNodeTag extends BaseData {
         tag = null;
     }
 
-    public TreeNodeTag() {
+    public InfoNodeTag() {
         init();
     }
 
-    public TreeNodeTag(long tnodeid, long tagid) {
+    public InfoNodeTag(long tnodeid, long tagid) {
         init();
         this.tnodeid = tnodeid;
         this.tagid = tagid;
     }
 
-    public TreeNodeTag(TreeNode node, Tag tag) {
+    public InfoNodeTag(InfoNode node, Tag tag) {
         init();
         this.node = node;
         this.tag = tag;
@@ -40,11 +40,11 @@ public class TreeNodeTag extends BaseData {
     /*
         Static methods
      */
-    public static TreeNodeTag create() {
-        return new TreeNodeTag();
+    public static InfoNodeTag create() {
+        return new InfoNodeTag();
     }
 
-    public static boolean setValue(TreeNodeTag data, String column, Object value) {
+    public static boolean setValue(InfoNodeTag data, String column, Object value) {
         if (data == null || column == null) {
             return false;
         }
@@ -66,7 +66,7 @@ public class TreeNodeTag extends BaseData {
         return false;
     }
 
-    public static Object getValue(TreeNodeTag data, String column) {
+    public static Object getValue(InfoNodeTag data, String column) {
         if (data == null || column == null) {
             return null;
         }
@@ -81,7 +81,7 @@ public class TreeNodeTag extends BaseData {
         return null;
     }
 
-    public static boolean valid(TreeNodeTag data) {
+    public static boolean valid(InfoNodeTag data) {
         return data != null
                 && data.getTnodeid() > 0 && data.getTagid() > 0;
     }
@@ -113,11 +113,11 @@ public class TreeNodeTag extends BaseData {
         this.tagid = tagid;
     }
 
-    public TreeNode getNode() {
+    public InfoNode getNode() {
         return node;
     }
 
-    public void setNode(TreeNode node) {
+    public void setNode(InfoNode node) {
         this.node = node;
     }
 

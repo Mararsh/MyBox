@@ -1,6 +1,6 @@
 package mara.mybox.controller;
 
-import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -33,8 +33,8 @@ public class NoteAttributes extends TreeNodeEditor {
     }
 
     @Override
-    public TreeNode pickNodeData() {
-        TreeNode node = super.pickNodeData();
+    public InfoNode pickNodeData() {
+        InfoNode node = super.pickNodeData();
         if (node == null) {
             return null;
         }

@@ -17,8 +17,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Tag;
-import mara.mybox.db.data.TreeNode;
-import static mara.mybox.db.data.TreeNode.NodeSeparater;
+import mara.mybox.db.data.InfoNode;
+import static mara.mybox.db.data.InfoNode.NodeSeparater;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -36,7 +36,7 @@ public class TreeNodeEditor extends TreeTagsController {
 
     protected boolean nodeChanged;
     protected String defaultExt;
-    protected TreeNode parentNode;
+    protected InfoNode parentNode;
     protected SingletonTask tagsTask;
 
     @FXML
@@ -175,7 +175,7 @@ public class TreeNodeEditor extends TreeTagsController {
         selectedNotify.set(!selectedNotify.get());
     }
 
-    protected void editNode(TreeNode node) {
+    protected void editNode(InfoNode node) {
         isSettingValues = true;
         currentNode = node;
         if (node != null) {
@@ -220,14 +220,14 @@ public class TreeNodeEditor extends TreeTagsController {
         treeController.showRightPane();
     }
 
-    protected void checkParentNode(TreeNode node) {
+    protected void checkParentNode(InfoNode node) {
         if (parentNode == null || node.getNodeid() != parentNode.getNodeid()) {
             return;
         }
         refreshParentNode();
     }
 
-    protected void setParentNode(TreeNode node) {
+    protected void setParentNode(InfoNode node) {
         parentNode = node;
         refreshParentNode();
     }
@@ -277,7 +277,7 @@ public class TreeNodeEditor extends TreeTagsController {
         nodeChanged(false);
     }
 
-    public TreeNode pickNodeData() {
+    public InfoNode pickNodeData() {
         String name = nameInput.getText();
         if (name == null || name.isBlank()) {
             popError(message("InvalidParameters") + ": " + treeController.nameMsg);
@@ -290,7 +290,7 @@ public class TreeNodeEditor extends TreeTagsController {
             popError(message("NameShouldNotInclude") + " \"" + NodeSeparater + "\"");
             return null;
         }
-        TreeNode node = TreeNode.create()
+        InfoNode node = InfoNode.create()
                 .setCategory(category).setTitle(name);
         if (valueInput != null) {
             node.setValue(valueInput.getText());
@@ -302,7 +302,7 @@ public class TreeNodeEditor extends TreeTagsController {
     }
 
     public void saveNode() {
-        TreeNode node = pickNodeData();
+        InfoNode node = pickNodeData();
         if (node == null) {
             return;
         }

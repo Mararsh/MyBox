@@ -15,8 +15,8 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.TreeNode;
-import static mara.mybox.db.data.TreeNode.NodeSeparater;
+import mara.mybox.db.data.InfoNode;
+import static mara.mybox.db.data.InfoNode.NodeSeparater;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
@@ -31,7 +31,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-4-23
  * @License Apache License Version 2.0
  */
-public class ControlTreeInfoManage extends BaseTreeInfoController {
+public class ControlInfoTreeManage extends BaseInfoTreeController {
 
     protected TreeManageController manageController;
 
@@ -50,14 +50,14 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
                 || manageController.nodeController.goButton != null)));
     }
 
-    public String chainName(Connection conn, TreeNode node) {
+    public String chainName(Connection conn, InfoNode node) {
         if (node == null) {
             return null;
         }
         String chainName = "";
-        List<TreeNode> ancestor = ancestor(conn, node);
+        List<InfoNode> ancestor = ancestor(conn, node);
         if (ancestor != null) {
-            for (TreeNode a : ancestor) {
+            for (InfoNode a : ancestor) {
                 chainName += a.getTitle() + NodeSeparater;
             }
         }
@@ -66,7 +66,7 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
     }
 
     @Override
-    public void itemSelected(TreeItem<TreeNode> item) {
+    public void itemSelected(TreeItem<InfoNode> item) {
         if (item == null) {
             return;
         }
@@ -96,7 +96,7 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
     }
 
     @Override
-    protected void doubleClicked(TreeItem<TreeNode> item) {
+    public void doubleClicked(TreeItem<InfoNode> item) {
         editNode(item);
     }
 
@@ -172,7 +172,7 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
     }
 
     @Override
-    protected List<MenuItem> functionItems(TreeItem<TreeNode> treeItem) {
+    public List<MenuItem> functionItems(TreeItem<InfoNode> treeItem) {
         boolean isRoot = treeItem == null || isRoot(treeItem.getValue());
 
         List<MenuItem> items = new ArrayList<>();
@@ -344,7 +344,7 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
 
         menu = new MenuItem(message("AddNode"), StyleTools.getIconImageView("iconAdd.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            addNode(treeItem);
+            addChild(treeItem);
         });
         items.add(menu);
 
@@ -410,16 +410,16 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
     }
 
     @Override
-    protected void nodeAdded(TreeNode parent, TreeNode newNode) {
+    public void nodeAdded(InfoNode parent, InfoNode newNode) {
         manageController.nodeAdded(parent, newNode);
     }
 
-    protected void deleteNode(TreeItem<TreeNode> targetItem) {
+    protected void deleteNode(TreeItem<InfoNode> targetItem) {
         if (targetItem == null) {
             popError(message("SelectToHandle"));
             return;
         }
-        TreeNode node = targetItem.getValue();
+        InfoNode node = targetItem.getValue();
         if (node == null) {
             popError(message("SelectToHandle"));
             return;
@@ -440,14 +440,14 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
         }
         task = new SingletonTask<Void>(this) {
 
-            private TreeItem<TreeNode> rootItem;
+            private TreeItem<InfoNode> rootItem;
 
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
                     if (isRoot) {
                         tableTreeNode.deleteChildren(conn, node.getNodeid());
-                        TreeNode rootNode = root(conn);
+                        InfoNode rootNode = root(conn);
                         rootItem = new TreeItem(rootNode);
                     } else {
                         tableTreeNode.deleteData(conn, node);
@@ -462,7 +462,7 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
             @Override
             protected void whenSucceeded() {
                 if (isRoot) {
-                    infoTree.setRoot(rootItem);
+                    treeView.setRoot(rootItem);
                     rootItem.setExpanded(true);
                 } else {
                     targetItem.getChildren().clear();
@@ -474,19 +474,19 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
             }
 
         };
-        start(task, infoTree);
+        start(task, treeView);
     }
 
-    protected void nodeDeleted(TreeNode node) {
+    protected void nodeDeleted(InfoNode node) {
         manageController.nodeDeleted(node);
     }
 
-    protected void renameNode(TreeItem<TreeNode> item) {
+    protected void renameNode(TreeItem<InfoNode> item) {
         if (item == null) {
             popError(message("SelectToHandle"));
             return;
         }
-        TreeNode nodeValue = item.getValue();
+        InfoNode nodeValue = item.getValue();
         if (nodeValue == null || isRoot(nodeValue)) {
             popError(message("SelectToHandle"));
             return;
@@ -504,7 +504,7 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
             task.cancel();
         }
         task = new SingletonTask<Void>(this) {
-            private TreeNode updatedNode;
+            private InfoNode updatedNode;
 
             @Override
             protected boolean handle() {
@@ -516,15 +516,15 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
             @Override
             protected void whenSucceeded() {
                 item.setValue(updatedNode);
-                infoTree.refresh();
+                treeView.refresh();
                 manageController.nodeRenamed(updatedNode);
                 popSuccessful();
             }
         };
-        start(task, infoTree);
+        start(task, treeView);
     }
 
-    protected void copyNode(TreeItem<TreeNode> item) {
+    protected void copyNode(TreeItem<InfoNode> item) {
         if (item == null || isRoot(item.getValue())) {
             return;
         }
@@ -534,7 +534,7 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
         controller.setCaller(this, item.getValue(), chainName);
     }
 
-    protected void moveNode(TreeItem<TreeNode> item) {
+    protected void moveNode(TreeItem<InfoNode> item) {
         if (item == null || isRoot(item.getValue())) {
             return;
         }
@@ -543,32 +543,32 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
         controller.setCaller(this, item.getValue(), chainName);
     }
 
-    protected void nodeMoved(TreeNode parent, TreeNode node) {
+    protected void nodeMoved(InfoNode parent, InfoNode node) {
         manageController.nodeMoved(parent, node);
     }
 
-    protected void editNode(TreeItem<TreeNode> item) {
+    protected void editNode(TreeItem<InfoNode> item) {
         if (item == null) {
             return;
         }
         manageController.editNode(item.getValue());
     }
 
-    protected void pasteNode(TreeItem<TreeNode> item) {
+    protected void pasteNode(TreeItem<InfoNode> item) {
         if (item == null) {
             return;
         }
         manageController.pasteNode(item.getValue());
     }
 
-    protected void executeNode(TreeItem<TreeNode> item) {
+    protected void executeNode(TreeItem<InfoNode> item) {
         if (item == null) {
             return;
         }
         manageController.executeNode(item.getValue());
     }
 
-    protected void exportNode(TreeItem<TreeNode> item) {
+    protected void exportNode(TreeItem<InfoNode> item) {
         TreeNodeExportController exportController
                 = (TreeNodeExportController) WindowTools.openChildStage(getMyWindow(), Fxmls.TreeNodeExportFxml);
         exportController.setParamters(manageController, item);
@@ -586,14 +586,14 @@ public class ControlTreeInfoManage extends BaseTreeInfoController {
         manageController.refreshTimes();
     }
 
-    protected void listChildren(TreeItem<TreeNode> item) {
+    protected void listChildren(TreeItem<InfoNode> item) {
         if (item == null) {
             return;
         }
         manageController.loadChildren(item.getValue());
     }
 
-    protected void listDescentants(TreeItem<TreeNode> item) {
+    protected void listDescentants(TreeItem<InfoNode> item) {
         if (item == null) {
             return;
         }

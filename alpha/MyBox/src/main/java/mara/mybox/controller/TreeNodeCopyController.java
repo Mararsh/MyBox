@@ -6,7 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TreeItem;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.InfoNode;
 import mara.mybox.fxml.SingletonTask;
 import static mara.mybox.value.Languages.message;
 
@@ -15,9 +15,9 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-4-27
  * @License Apache License Version 2.0
  */
-public class TreeNodeCopyController extends ControlTreeInfoSelect {
+public class TreeNodeCopyController extends ControlInfoTreeSelector {
 
-    protected TreeNode sourceNode;
+    protected InfoNode sourceNode;
 
     @FXML
     protected Label sourceLabel;
@@ -28,14 +28,14 @@ public class TreeNodeCopyController extends ControlTreeInfoSelect {
         baseTitle = message("CopyNode");
     }
 
-    public void setCaller(BaseTreeInfoController nodesController, TreeNode sourceNode, String name) {
+    public void setCaller(BaseInfoTreeController nodesController, InfoNode sourceNode, String name) {
         this.sourceNode = sourceNode;
         sourceLabel.setText(message("NodeCopyed") + ":\n" + name);
         setCaller(nodesController);
     }
 
     @Override
-    public boolean isSourceNode(TreeNode node) {
+    public boolean isSourceNode(InfoNode node) {
         return equal(node, sourceNode);
     }
 
@@ -46,12 +46,12 @@ public class TreeNodeCopyController extends ControlTreeInfoSelect {
             alertError(message("SelectToHandle"));
             return;
         }
-        TreeItem<TreeNode> targetItem = selected();
+        TreeItem<InfoNode> targetItem = selected();
         if (targetItem == null) {
             alertError(message("SelectNodeCopyInto"));
             return;
         }
-        TreeNode targetNode = targetItem.getValue();
+        InfoNode targetNode = targetItem.getValue();
         if (targetNode == null) {
             alertError(message("SelectNodeCopyInto"));
             return;

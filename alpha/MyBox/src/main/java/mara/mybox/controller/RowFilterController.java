@@ -1,7 +1,7 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
-import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -22,7 +22,7 @@ public class RowFilterController extends TreeManageController {
 
     public RowFilterController() {
         baseTitle = message("RowFilter");
-        category = TreeNode.RowFilter;
+        category = InfoNode.RowFilter;
         nameMsg = message("Title");
         valueMsg = message("RowFilter");
     }

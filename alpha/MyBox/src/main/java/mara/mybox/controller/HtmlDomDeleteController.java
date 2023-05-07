@@ -22,7 +22,7 @@ public class HtmlDomDeleteController extends BaseChildController {
 
     protected ControlHtmlEditor editor;
     protected TreeTableView<HtmlNode> sourceTree;
-    protected BaseHtmlDomTreeController manageController;
+    protected BaseHtmlTreeController manageController;
     protected int count;
 
     @FXML

@@ -461,7 +461,7 @@ public class HtmlWriteTools {
         if (texts != null && !texts.isBlank()) {
             StringBuilder s = new StringBuilder();
             while (true) {
-                finder.setInputString(texts).setAnchor(0).run();
+                finder.setInputString(texts).setAnchor(0).handleString();
                 if (finder.getStringRange() == null) {
                     break;
                 }

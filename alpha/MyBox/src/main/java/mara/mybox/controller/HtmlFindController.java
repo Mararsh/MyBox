@@ -215,19 +215,19 @@ public class HtmlFindController extends WebAddressController {
                     results = new StringBuilder();
                     String texts;
 
-                    textsChecker.setInputString(inputString).setFindString("</head>").setAnchor(0).run();
+                    textsChecker.setInputString(inputString).setFindString("</head>").setAnchor(0).handleString();
                     if (textsChecker.getStringRange() != null) {
                         results.append(inputString.substring(0, textsChecker.getLastEnd()));
                         inputString = inputString.substring(textsChecker.getLastEnd());
                     }
                     while (!inputString.isBlank()) {
-                        textsChecker.setInputString(inputString).setFindString(">").setAnchor(0).run();
+                        textsChecker.setInputString(inputString).setFindString(">").setAnchor(0).handleString();
                         if (textsChecker.getStringRange() == null) {
                             break;
                         }
                         results.append(inputString.substring(0, textsChecker.getLastEnd()));
                         inputString = inputString.substring(textsChecker.getLastEnd());
-                        textsChecker.setInputString(inputString).setFindString("<").setAnchor(0).run();
+                        textsChecker.setInputString(inputString).setFindString("<").setAnchor(0).handleString();
                         if (textsChecker.getStringRange() == null) {
                             texts = inputString;
                             inputString = "";
@@ -244,7 +244,7 @@ public class HtmlFindController extends WebAddressController {
                         }
                         StringBuilder r = new StringBuilder();
                         while (!texts.isBlank()) {
-                            finder.setInputString(texts).setAnchor(0).run();
+                            finder.setInputString(texts).setAnchor(0).handleString();
                             if (finder.getStringRange() == null) {
                                 break;
                             }

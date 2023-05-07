@@ -35,7 +35,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.InfoNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.db.table.TableTag;
@@ -57,7 +57,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-3-9
  * @License Apache License Version 2.0
  */
-public class TreeManageController extends BaseSysTableController<TreeNode> {
+public class TreeManageController extends BaseSysTableController<InfoNode> {
 
     protected String category;
     protected TableTreeNode tableTreeNode;
@@ -65,16 +65,16 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     protected TableTreeNodeTag tableTreeNodeTag;
     protected String queryLabel;
     protected String nameMsg, valueMsg, moreMsg, timeMsg;
-    protected TreeNode loadedParent;
+    protected InfoNode loadedParent;
 
     @FXML
-    protected ControlTreeInfoManage nodesController;
+    protected ControlInfoTreeManage nodesController;
     @FXML
-    protected TableColumn<TreeNode, Long> nodeidColumn;
+    protected TableColumn<InfoNode, Long> nodeidColumn;
     @FXML
-    protected TableColumn<TreeNode, String> nameColumn, valueColumn, moreColumn;
+    protected TableColumn<InfoNode, String> nameColumn, valueColumn, moreColumn;
     @FXML
-    protected TableColumn<TreeNode, Date> timeColumn;
+    protected TableColumn<InfoNode, Date> timeColumn;
     @FXML
     protected VBox conditionBox, timesBox;
     @FXML
@@ -104,7 +104,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
 
     public TreeManageController() {
         baseTitle = message("InformationInTree");
-        category = TreeNode.InformationInTree;
+        category = InfoNode.InformationInTree;
         nameMsg = message("Title");
         valueMsg = message("Value");
         moreMsg = message("More");
@@ -251,7 +251,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     /*
         synchronize
      */
-    public void nodeAdded(TreeNode parent, TreeNode newNode) {
+    public void nodeAdded(InfoNode parent, InfoNode newNode) {
         if (parent == null || newNode == null) {
             return;
         }
@@ -260,7 +260,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         }
     }
 
-    public void nodeRenamed(TreeNode node) {
+    public void nodeRenamed(InfoNode node) {
         if (node == null) {
             return;
         }
@@ -270,7 +270,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             makeConditionPane();
         } else {
             for (int i = 0; i < tableData.size(); i++) {
-                TreeNode tnode = tableData.get(i);
+                InfoNode tnode = tableData.get(i);
                 if (tnode.getNodeid() == id) {
                     tableData.set(i, node);
                     break;
@@ -285,7 +285,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         }
     }
 
-    public void nodeDeleted(TreeNode node) {
+    public void nodeDeleted(InfoNode node) {
         if (node == null) {
             return;
         }
@@ -296,7 +296,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             tableData.clear();
         } else {
             for (int i = 0; i < tableData.size(); i++) {
-                TreeNode tnode = tableData.get(i);
+                InfoNode tnode = tableData.get(i);
                 if (tnode.getNodeid() == id) {
                     tableData.remove(tnode);
                     break;
@@ -312,7 +312,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         }
     }
 
-    public void nodeMoved(TreeNode parent, TreeNode node) {
+    public void nodeMoved(InfoNode parent, InfoNode node) {
         if (parent == null || node == null) {
             return;
         }
@@ -328,7 +328,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         }
     }
 
-    public void nodesMoved(TreeNode parent, List<TreeNode> nodes) {
+    public void nodesMoved(InfoNode parent, List<InfoNode> nodes) {
         if (parent == null || nodes == null || nodes.isEmpty()) {
             return;
         }
@@ -336,8 +336,8 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         nodesController.loadTree(null);
     }
 
-    public void nodesCopied(TreeNode parent) {
-        nodesController.updateParent(parent);
+    public void nodesCopied(InfoNode parent) {
+        nodesController.updateNode(parent);
     }
 
     public void nodesDeleted() {
@@ -375,13 +375,13 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             makeConditionPane();
         }
         for (int i = 0; i < tableData.size(); i++) {
-            TreeNode tnode = tableData.get(i);
+            InfoNode tnode = tableData.get(i);
             if (tnode.getNodeid() == id) {
                 tableData.set(i, nodeController.currentNode);
                 break;
             }
         }
-        nodesController.updateParent(nodeController.parentNode);
+        nodesController.updateNode(nodeController.parentNode);
     }
 
     public void newNodeSaved() {
@@ -414,9 +414,9 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     /*
         tree
      */
-    public void loadTree(TreeNode selectedNode) {
+    public void loadTree(InfoNode selectedNode) {
         try {
-            File file = TreeNode.exampleFile(category);
+            File file = InfoNode.exampleFile(category);
             if (file != null && tableTreeNode.categoryEmpty(category)) {
                 if (AppVariables.isTesting
                         || PopTools.askSure(getTitle(), message("ImportExamples") + ": " + message(category))) {
@@ -443,7 +443,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     /*
         table
      */
-    public void loadNodes(TreeNode parentNode) {
+    public void loadNodes(InfoNode parentNode) {
         showNodesList(true);
         clearQuery();
         loadedParent = parentNode;
@@ -454,12 +454,12 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         }
     }
 
-    public void loadChildren(TreeNode parentNode) {
+    public void loadChildren(InfoNode parentNode) {
         childrenRadio.setSelected(true);
         loadNodes(parentNode);
     }
 
-    public void loadDescendants(TreeNode parentNode) {
+    public void loadDescendants(InfoNode parentNode) {
         descendantsRadio.setSelected(true);
         loadNodes(parentNode);
     }
@@ -485,7 +485,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             return;
         }
         SingletonTask bookTask = new SingletonTask<Void>(this) {
-            private List<TreeNode> ancestor;
+            private List<InfoNode> ancestor;
 
             @Override
             protected boolean handle() {
@@ -497,7 +497,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
             protected void whenSucceeded() {
                 List<Node> nodes = new ArrayList<>();
                 if (ancestor != null) {
-                    for (TreeNode node : ancestor) {
+                    for (InfoNode node : ancestor) {
                         Hyperlink link = new Hyperlink(node.getTitle());
                         link.setWrapText(true);
                         link.setMinHeight(Region.USE_PREF_SIZE);
@@ -542,7 +542,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
     }
 
     @Override
-    public List<TreeNode> readPageData(Connection conn) {
+    public List<InfoNode> readPageData(Connection conn) {
         if (loadedParent != null && descendantsRadio.isSelected()) {
             return tableTreeNode.decentants(conn, loadedParent.getNodeid(), startRowOfCurrentPage, pageSize);
 
@@ -654,7 +654,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         editNode(selectedItem());
     }
 
-    public void editNode(TreeNode node) {
+    public void editNode(InfoNode node) {
         if (!checkBeforeNextAction()) {
             return;
         }
@@ -678,7 +678,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         pasteNode(selectedItem());
     }
 
-    public void pasteNode(TreeNode node) {
+    public void pasteNode(InfoNode node) {
         if (node == null) {
             return;
         }
@@ -689,7 +689,7 @@ public class TreeManageController extends BaseSysTableController<TreeNode> {
         nodeController.pasteText(v);
     }
 
-    public void executeNode(TreeNode node) {
+    public void executeNode(InfoNode node) {
         if (node == null) {
             return;
         }

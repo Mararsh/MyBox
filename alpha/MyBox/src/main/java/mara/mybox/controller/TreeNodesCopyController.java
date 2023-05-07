@@ -8,7 +8,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TreeItem;
 import javafx.stage.Window;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.InfoNode;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -19,7 +19,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-3-9
  * @License Apache License Version 2.0
  */
-public class TreeNodesCopyController extends ControlTreeInfoSelect {
+public class TreeNodesCopyController extends ControlInfoTreeSelector {
 
     protected TreeManageController manageController;
 
@@ -36,12 +36,12 @@ public class TreeNodesCopyController extends ControlTreeInfoSelect {
     }
 
     @Override
-    public boolean isSourceNode(TreeNode node) {
-        List<TreeNode> nodes = manageController.selectedItems();
+    public boolean isSourceNode(InfoNode node) {
+        List<InfoNode> nodes = manageController.selectedItems();
         if (nodes == null || nodes.isEmpty()) {
             return false;
         }
-        for (TreeNode sourceNode : nodes) {
+        for (InfoNode sourceNode : nodes) {
             if (equal(node, sourceNode)) {
                 return true;
             }
@@ -56,22 +56,22 @@ public class TreeNodesCopyController extends ControlTreeInfoSelect {
                 || !manageController.getMyStage().isShowing()) {
             return;
         }
-        List<TreeNode> nodes = manageController.selectedItems();
+        List<InfoNode> nodes = manageController.selectedItems();
         if (nodes == null || nodes.isEmpty()) {
             alertError(message("NoData"));
             manageController.getMyStage().requestFocus();
             return;
         }
-        TreeItem<TreeNode> targetItem = selected();
+        TreeItem<InfoNode> targetItem = selected();
         if (targetItem == null) {
             alertError(message("SelectNodeCopyInto"));
             return;
         }
-        TreeNode targetNode = targetItem.getValue();
+        InfoNode targetNode = targetItem.getValue();
         if (targetNode == null) {
             return;
         }
-        for (TreeNode sourceNode : nodes) {
+        for (InfoNode sourceNode : nodes) {
             if (equalOrDescendant(targetItem, find(sourceNode))) {
                 alertError(message("TreeTargetComments"));
                 return;
@@ -85,7 +85,7 @@ public class TreeNodesCopyController extends ControlTreeInfoSelect {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    for (TreeNode sourceNode : nodes) {
+                    for (InfoNode sourceNode : nodes) {
                         if (nodeAndDescendantsRadio.isSelected()) {
                             ok = copyNodeAndDescendants(conn, sourceNode, targetNode);
                         } else if (descendantsRadio.isSelected()) {

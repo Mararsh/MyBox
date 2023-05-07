@@ -1,6 +1,9 @@
 package mara.mybox.controller;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -19,9 +22,13 @@ import javafx.scene.layout.VBox;
 import mara.mybox.data.BytesEditInformation;
 import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.data.FindReplaceFile;
+import mara.mybox.data.FindReplaceMatch;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.FindReplaceString.Operation;
+import static mara.mybox.data.FindReplaceString.Operation.Count;
 import mara.mybox.data.LongRange;
+import mara.mybox.data.StringTable;
+import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
@@ -49,7 +56,7 @@ public class ControlFindReplace extends BaseController {
     @FXML
     protected TextArea findArea, replaceArea;
     @FXML
-    protected Button findPreviousButton, findNextButton, countButton, historyFindButton,
+    protected Button findPreviousButton, findNextButton, countButton, listButton, historyFindButton,
             replaceButton, replaceAllButton, exampleFindButton, historyStringButton;
     @FXML
     protected Label findLabel;
@@ -245,6 +252,7 @@ public class ControlFindReplace extends BaseController {
     protected void checkFindInput(String string) {
         boolean invalid = string.isEmpty() || !validateFind(string);
         countButton.setDisable(invalid);
+        listButton.setDisable(invalid);
         findPreviousButton.setDisable(invalid);
         findNextButton.setDisable(invalid);
         if (replaceButton != null) {
@@ -349,6 +357,11 @@ public class ControlFindReplace extends BaseController {
     @FXML
     protected void countAction() {
         findReplace(Operation.Count);
+    }
+
+    @FXML
+    protected void listAction() {
+        findReplace(Operation.FindAll);
     }
 
     @FXML
@@ -514,15 +527,15 @@ public class ControlFindReplace extends BaseController {
             @Override
             protected boolean handle() {
                 if (!findReplace.isMultiplePages()) {
-                    if (!findReplace.run()) {
+                    if (!findReplace.handleString()) {
                         error = findReplace.getError();
                     }
-                } else if (!findReplace.page()) {
+                } else if (!findReplace.handlePage()) {
                     if (editerController.fileChanged.getValue()) {
                         askSave = true;
                         return false;
                     }
-                    if (!findReplace.file()) {
+                    if (!findReplace.handleFile()) {
                         error = findReplace.getError();
                     }
                 }
@@ -544,6 +557,10 @@ public class ControlFindReplace extends BaseController {
                         } else {
                             info = message("NotFound");
                         }
+                        break;
+                    }
+                    case FindAll: {
+                        info = reportMatches();
                         break;
                     }
                     case ReplaceAll: {
@@ -615,7 +632,7 @@ public class ControlFindReplace extends BaseController {
 
             @Override
             protected boolean handle() {
-                if (!findReplace.run()) {
+                if (!findReplace.handleString()) {
                     error = findReplace.getError();
                 }
                 if (error != null) {
@@ -640,6 +657,10 @@ public class ControlFindReplace extends BaseController {
                         } else {
                             info = message("NotFound");
                         }
+                        break;
+                    }
+                    case FindAll: {
+                        reportMatches();
                         break;
                     }
                     case ReplaceAll: {
@@ -679,6 +700,42 @@ public class ControlFindReplace extends BaseController {
 
         };
         start(task, false);
+    }
+
+    public String reportMatches() {
+        try {
+            int count = findReplace.getCount();
+            if (count <= 0) {
+                return message("NotFound");
+            }
+            DataFileCSV matchesData = findReplace.getMatchesData();
+            if (matchesData != null) {
+                DataFileCSVController.loadCSV(matchesData);
+            } else {
+                List<FindReplaceMatch> matches = findReplace.getMatches();
+                if (matches == null || matches.isEmpty()) {
+                    return message("NotFound");
+                }
+                List<String> names = new ArrayList<>();
+                names.addAll(Arrays.asList(message("Index"), message("Start"), message("End"), message("String")));
+                StringTable t = new StringTable(names, message("Find") + "\n" + findReplace.getFindString());
+                int index = 0;
+                int unit = findReplace.getUnit();
+                for (FindReplaceMatch m : matches) {
+                    List<String> row = new ArrayList<>();
+                    row.add(++index + "");
+                    row.add((m.getStart() / unit + 1) + "");
+                    row.add(m.getEnd() / unit + "");
+                    row.add(m.getMatchedPrefix());
+                    t.add(row);
+                }
+                t.htmlTable();
+            }
+            return MessageFormat.format(message("CountNumber"), count);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return message("Invalid");
+        }
     }
 
     @FXML

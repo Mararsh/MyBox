@@ -21,7 +21,7 @@ import org.jsoup.nodes.Element;
 public class HtmlDomCopyController extends BaseChildController {
 
     protected ControlHtmlEditor editor;
-    protected BaseHtmlDomTreeController manageController;
+    protected BaseHtmlTreeController manageController;
     protected Element targetElement;
     protected int count;
     protected TreeTableView<HtmlNode> sourceTree, targetTree, editorTree;

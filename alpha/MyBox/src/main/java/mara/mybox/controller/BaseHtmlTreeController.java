@@ -35,7 +35,7 @@ import org.jsoup.select.Elements;
  * @CreateDate 2023-2-14
  * @License Apache License Version 2.0
  */
-public class BaseHtmlDomTreeController extends BaseController {
+public class BaseHtmlTreeController extends BaseController {
 
     @FXML
     protected TreeTableView<HtmlNode> domTree;

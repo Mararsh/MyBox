@@ -15,8 +15,8 @@ import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Tag;
-import mara.mybox.db.data.TreeNode;
-import mara.mybox.db.data.TreeNodeTag;
+import mara.mybox.db.data.InfoNode;
+import mara.mybox.db.data.InfoNodeTag;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableTag;
 import mara.mybox.db.table.TableTreeNode;
@@ -39,11 +39,11 @@ import mara.mybox.value.UserConfig;
  */
 public class TreeNodeImportController extends BaseBatchFileController {
 
-    protected BaseTreeInfoController nodesController;
+    protected BaseInfoTreeController nodesController;
     protected TableTreeNode tableTreeNode;
     protected TableTreeNodeTag tableTreeNodeTag;
     protected TableTag tableTag;
-    protected TreeNode rootNode;
+    protected InfoNode rootNode;
     protected String category;
     protected Map<String, Long> parents;
     protected boolean isWebFavorite, downIcon;
@@ -81,20 +81,19 @@ public class TreeNodeImportController extends BaseBatchFileController {
         }
     }
 
-    public void setCaller(BaseTreeInfoController nodeController) {
+    public void setCaller(BaseInfoTreeController nodeController) {
         this.nodesController = nodeController;
         tableTreeNode = nodeController.tableTreeNode;
         tableTreeNodeTag = nodeController.tableTreeNodeTag;
         tableTag = new TableTag();
         category = nodeController.category;
-        iconCheck.setVisible(
-                (nodeController instanceof ControlTreeInfoManage)
-                && (category.equals(TreeNode.WebFavorite)
-                || category.equals(message(TreeNode.WebFavorite))));
+        iconCheck.setVisible((nodeController instanceof ControlInfoTreeManage)
+                && (category.equals(InfoNode.WebFavorite)
+                || category.equals(message(InfoNode.WebFavorite))));
     }
 
     public void importExamples() {
-        File file = TreeNode.exampleFile(category);
+        File file = InfoNode.exampleFile(category);
         if (file == null) {
             return;
         }
@@ -119,7 +118,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
         }
         parents.put(rootNode.getTitle(), rootNode.getNodeid());
         parents.put(message(rootNode.getTitle()), rootNode.getNodeid());
-        isWebFavorite = TreeNode.WebFavorite.equals(category);
+        isWebFavorite = InfoNode.WebFavorite.equals(category);
         downIcon = iconCheck.isSelected();
         return super.makeMoreParameters();
     }
@@ -192,8 +191,8 @@ public class TreeNodeImportController extends BaseBatchFileController {
                 more = null;
                 tagsString = null;
                 if (line != null && !line.isBlank()) {
-                    if (line.startsWith(TreeNode.TimePrefix)) {
-                        time = DateTools.encodeDate(line.substring(TreeNode.TimePrefix.length()));
+                    if (line.startsWith(InfoNode.TimePrefix)) {
+                        time = DateTools.encodeDate(line.substring(InfoNode.TimePrefix.length()));
                         line = reader.readLine();
                     } else {
                         time = DateTools.encodeDate(line);
@@ -201,8 +200,8 @@ public class TreeNodeImportController extends BaseBatchFileController {
                             line = reader.readLine();
                         }
                     }
-                    if (line.startsWith(TreeNode.TagsPrefix)) {
-                        tagsString = line.substring(TreeNode.TagsPrefix.length());
+                    if (line.startsWith(InfoNode.TagsPrefix)) {
+                        tagsString = line.substring(InfoNode.TagsPrefix.length());
                         line = reader.readLine();
                     }
                     value = line;
@@ -254,7 +253,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
             String line, name, value, more, tagsString;
             Date time;
             long parentid, baseTime = new Date().getTime();
-            int morePrefixLen = TreeNode.MorePrefix.length();
+            int morePrefixLen = InfoNode.MorePrefix.length();
             while ((line = reader.readLine()) != null && !line.isBlank()) {
                 parentid = getParent(conn, line);
                 if (parentid < -1) {
@@ -276,8 +275,8 @@ public class TreeNodeImportController extends BaseBatchFileController {
                 while ((line = reader.readLine()) != null && line.isBlank()) {
                 }
                 if (line != null && !line.startsWith(AppValues.MyBoxSeparator)) {
-                    if (line.startsWith(TreeNode.TimePrefix)) {
-                        time = DateTools.encodeDate(line.substring(TreeNode.TimePrefix.length()));
+                    if (line.startsWith(InfoNode.TimePrefix)) {
+                        time = DateTools.encodeDate(line.substring(InfoNode.TimePrefix.length()));
                         line = reader.readLine();
                     } else {
                         time = DateTools.encodeDate(line);
@@ -285,8 +284,8 @@ public class TreeNodeImportController extends BaseBatchFileController {
                             line = reader.readLine();
                         }
                     }
-                    if (line.startsWith(TreeNode.TagsPrefix)) {
-                        tagsString = line.substring(TreeNode.TagsPrefix.length());
+                    if (line.startsWith(InfoNode.TagsPrefix)) {
+                        tagsString = line.substring(InfoNode.TagsPrefix.length());
                         line = reader.readLine();
                     }
                     value = line;
@@ -297,7 +296,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
                     }
 
                     if (value != null && !value.isBlank()) {
-                        int pos = value.indexOf(TreeNode.MorePrefix);
+                        int pos = value.indexOf(InfoNode.MorePrefix);
                         if (pos >= 0) {
                             more = value.substring(pos + morePrefixLen).strip();
                             value = value.substring(0, pos);
@@ -335,7 +334,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
 
     public long getParent(Connection conn, String parentChain) {
         try {
-            if (TreeNode.RootIdentify.equals(parentChain)) {
+            if (InfoNode.RootIdentify.equals(parentChain)) {
                 return -1;
             } else {
 
@@ -344,22 +343,22 @@ public class TreeNodeImportController extends BaseBatchFileController {
                     parentid = parents.get(parentChain);
                 } else {
                     String chain = parentChain;
-                    String prefix = rootNode.getTitle() + TreeNode.NodeSeparater;
+                    String prefix = rootNode.getTitle() + InfoNode.NodeSeparater;
                     if (chain.startsWith(prefix)) {
                         chain = chain.substring(prefix.length());
                     } else {
-                        prefix = message(rootNode.getTitle()) + TreeNode.NodeSeparater;
+                        prefix = message(rootNode.getTitle()) + InfoNode.NodeSeparater;
                         if (chain.startsWith(prefix)) {
                             chain = chain.substring(prefix.length());
                         } else {
                             prefix = "";
                         }
                     }
-                    String[] nodes = chain.split(TreeNode.NodeSeparater);
+                    String[] nodes = chain.split(InfoNode.NodeSeparater);
                     for (String node : nodes) {
-                        TreeNode parentNode = tableTreeNode.find(conn, parentid, node);
+                        InfoNode parentNode = tableTreeNode.find(conn, parentid, node);
                         if (parentNode == null) {
-                            parentNode = TreeNode.create()
+                            parentNode = InfoNode.create()
                                     .setCategory(category)
                                     .setParentid(parentid)
                                     .setUpdateTime(new Date())
@@ -368,7 +367,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
                         }
                         parentid = parentNode.getNodeid();
                         parents.put(prefix + node, parentid);
-                        prefix = prefix + node + TreeNode.NodeSeparater;
+                        prefix = prefix + node + InfoNode.NodeSeparater;
                     }
                 }
                 return parentid;
@@ -386,7 +385,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
             if (conn == null || name == null || name.isBlank()) {
                 return false;
             }
-            TreeNode currentNode = null;
+            InfoNode currentNode = null;
             if (parentid < 0) {
                 if (name.equals(category) || name.equals(message(category))) {
                     currentNode = tableTreeNode.findAndCreateRoot(conn, category);
@@ -401,7 +400,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
                         currentNode = tableTreeNode.updateData(conn, currentNode);
                     }
                 } else {
-                    currentNode = TreeNode.create()
+                    currentNode = InfoNode.create()
                             .setCategory(category)
                             .setParentid(parentid)
                             .setTitle(name)
@@ -427,7 +426,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
             if (conn == null || s == null || s.isBlank()) {
                 return;
             }
-            String[] values = s.split(TreeNode.TagsSeparater);
+            String[] values = s.split(InfoNode.TagsSeparater);
             if (values == null || values.length == 0) {
                 return;
             }
@@ -445,7 +444,7 @@ public class TreeNodeImportController extends BaseBatchFileController {
                     continue;
                 }
                 if (tableTreeNodeTag.query(conn, nodeid, tag.getTgid()) == null) {
-                    TreeNodeTag nodeTag = new TreeNodeTag(nodeid, tag.getTgid());
+                    InfoNodeTag nodeTag = new InfoNodeTag(nodeid, tag.getTgid());
                     tableTreeNodeTag.insertData(conn, nodeTag);
                 }
             }

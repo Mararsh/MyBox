@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.util.List;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
-import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.InfoNode;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -12,11 +12,11 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-4-23
  * @License Apache License Version 2.0
  */
-public class ControlTreeInfoSelect extends BaseTreeInfoController {
+public class ControlInfoTreeSelector extends BaseInfoTreeController {
 
-    protected BaseTreeInfoController caller;
+    protected BaseInfoTreeController caller;
 
-    public void setCaller(BaseTreeInfoController caller) {
+    public void setCaller(BaseInfoTreeController caller) {
         if (caller == null) {
             return;
         }
@@ -26,33 +26,33 @@ public class ControlTreeInfoSelect extends BaseTreeInfoController {
         tableTreeNode = caller.tableTreeNode;
         tableTreeNodeTag = caller.tableTreeNodeTag;
         category = caller.category;
-        cloneTree(caller.infoTree);
+        cloneTree(caller.treeView);
     }
 
-    public void cloneTree(TreeTableView<TreeNode> sourceTreeView) {
+    public void cloneTree(TreeTableView<InfoNode> sourceTreeView) {
         if (sourceTreeView == null) {
             return;
         }
-        TreeItem<TreeNode> sourceRoot = sourceTreeView.getRoot();
+        TreeItem<InfoNode> sourceRoot = sourceTreeView.getRoot();
         if (sourceRoot == null) {
             return;
         }
-        TreeItem<TreeNode> targetRoot = new TreeItem(sourceRoot.getValue());
-        infoTree.setRoot(targetRoot);
+        TreeItem<InfoNode> targetRoot = new TreeItem(sourceRoot.getValue());
+        treeView.setRoot(targetRoot);
         targetRoot.setExpanded(sourceRoot.isExpanded());
         cloneNode(sourceRoot, targetRoot);
     }
 
-    public void cloneNode(TreeItem<TreeNode> sourceNode, TreeItem<TreeNode> targetNode) {
+    public void cloneNode(TreeItem<InfoNode> sourceNode, TreeItem<InfoNode> targetNode) {
         if (sourceNode == null || targetNode == null) {
             return;
         }
-        List<TreeItem<TreeNode>> sourceChildren = sourceNode.getChildren();
+        List<TreeItem<InfoNode>> sourceChildren = sourceNode.getChildren();
         if (sourceChildren == null) {
             return;
         }
-        for (TreeItem<TreeNode> sourceChild : sourceChildren) {
-            TreeItem<TreeNode> targetChild = new TreeItem<>(sourceChild.getValue());
+        for (TreeItem<InfoNode> sourceChild : sourceChildren) {
+            TreeItem<InfoNode> targetChild = new TreeItem<>(sourceChild.getValue());
             targetNode.getChildren().add(targetChild);
             targetChild.setExpanded(sourceChild.isExpanded());
             cloneNode(sourceChild, targetChild);
@@ -60,7 +60,7 @@ public class ControlTreeInfoSelect extends BaseTreeInfoController {
     }
 
     @Override
-    protected void doubleClicked(TreeItem<TreeNode> item) {
+    public void doubleClicked(TreeItem<InfoNode> item) {
         if (item == null) {
             return;
         }
@@ -68,11 +68,11 @@ public class ControlTreeInfoSelect extends BaseTreeInfoController {
     }
 
     @Override
-    protected void nodeAdded(TreeNode parent, TreeNode newNode) {
+    public void nodeAdded(InfoNode parent, InfoNode newNode) {
         caller.addNewNode(caller.find(parent), newNode, true);
     }
 
-    public TreeNode copyNode(Connection conn, TreeNode sourceNode, TreeNode targetNode) {
+    public InfoNode copyNode(Connection conn, InfoNode sourceNode, InfoNode targetNode) {
         if (conn == null || sourceNode == null || targetNode == null) {
             if (task != null) {
                 task.setError(message("InvalidData"));
@@ -80,7 +80,7 @@ public class ControlTreeInfoSelect extends BaseTreeInfoController {
             return null;
         }
         try {
-            TreeNode newNode = sourceNode.copyTo(targetNode);
+            InfoNode newNode = sourceNode.copyTo(targetNode);
             newNode = tableTreeNode.insertData(conn, newNode);
             if (newNode == null) {
                 return null;
@@ -95,11 +95,11 @@ public class ControlTreeInfoSelect extends BaseTreeInfoController {
         }
     }
 
-    public boolean copyNodeAndDescendants(Connection conn, TreeNode sourceNode, TreeNode targetNode) {
+    public boolean copyNodeAndDescendants(Connection conn, InfoNode sourceNode, InfoNode targetNode) {
         return copyDescendants(conn, sourceNode, copyNode(conn, sourceNode, targetNode));
     }
 
-    public boolean copyDescendants(Connection conn, TreeNode sourceNode, TreeNode targetNode) {
+    public boolean copyDescendants(Connection conn, InfoNode sourceNode, InfoNode targetNode) {
         if (conn == null || sourceNode == null || targetNode == null) {
             if (task != null) {
                 task.setError(message("InvalidData"));
@@ -109,11 +109,11 @@ public class ControlTreeInfoSelect extends BaseTreeInfoController {
         try {
             long sourceid = sourceNode.getNodeid();
             long targetid = targetNode.getNodeid();
-            List<TreeNode> children = tableTreeNode.children(conn, sourceid);
+            List<InfoNode> children = tableTreeNode.children(conn, sourceid);
             if (children != null && !children.isEmpty()) {
                 conn.setAutoCommit(true);
-                for (TreeNode child : children) {
-                    TreeNode newNode = TreeNode.create().setParentid(targetid).setCategory(category)
+                for (InfoNode child : children) {
+                    InfoNode newNode = InfoNode.create().setParentid(targetid).setCategory(category)
                             .setTitle(child.getTitle()).setValue(child.getValue()).setMore(child.getMore());
                     tableTreeNode.insertData(conn, newNode);
                     copyDescendants(conn, child, newNode);

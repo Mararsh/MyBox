@@ -3,7 +3,7 @@ package mara.mybox.controller;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
-import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.InfoNode;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
@@ -37,7 +37,7 @@ public class JavaScriptController extends TreeManageController {
     public JavaScriptController() {
         baseTitle = "JavaScript";
         TipsLabelKey = "JavaScriptTips";
-        category = TreeNode.JavaScript;
+        category = InfoNode.JavaScript;
         nameMsg = message("Name");
         valueMsg = "JavaScript";
     }

@@ -833,7 +833,8 @@ public class PopTools {
                     "(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\\d{8}      " + message("PhoneNumber"),
                     "[a-zA-z]+://[^\\s]*       " + message("URL"),
                     "^(\\s*)\\n       " + message("BlankLine"),
-                    "\\d+\\.\\d+\\.\\d+\\.\\d+      " + message("IP"));
+                    "\\d+\\.\\d+\\.\\d+\\.\\d+      " + message("IP"),
+                    "line1\\s*line2      " + message("MultipleLines"));
             List<Node> nodes = new ArrayList<>();
             for (String value : values) {
                 String[] vv = value.split("      ");

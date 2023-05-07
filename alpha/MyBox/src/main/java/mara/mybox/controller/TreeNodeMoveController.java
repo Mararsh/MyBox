@@ -3,7 +3,7 @@ package mara.mybox.controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
-import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.InfoNode;
 import mara.mybox.fxml.SingletonTask;
 import static mara.mybox.value.Languages.message;
 
@@ -12,10 +12,10 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-4-30
  * @License Apache License Version 2.0
  */
-public class TreeNodeMoveController extends ControlTreeInfoSelect {
+public class TreeNodeMoveController extends ControlInfoTreeSelector {
 
-    protected ControlTreeInfoManage manager;
-    protected TreeNode sourceNode;
+    protected ControlInfoTreeManage manager;
+    protected InfoNode sourceNode;
 
     @FXML
     protected Label sourceLabel;
@@ -24,7 +24,7 @@ public class TreeNodeMoveController extends ControlTreeInfoSelect {
         baseTitle = message("MoveNode");
     }
 
-    public void setCaller(ControlTreeInfoManage nodesController, TreeNode sourceNode, String name) {
+    public void setCaller(ControlInfoTreeManage nodesController, InfoNode sourceNode, String name) {
         manager = nodesController;
         this.sourceNode = sourceNode;
         sourceLabel.setText(message("NodeMoved") + ":\n" + name);
@@ -32,7 +32,7 @@ public class TreeNodeMoveController extends ControlTreeInfoSelect {
     }
 
     @Override
-    public boolean isSourceNode(TreeNode node) {
+    public boolean isSourceNode(InfoNode node) {
         return equal(node, sourceNode);
     }
 
@@ -42,12 +42,12 @@ public class TreeNodeMoveController extends ControlTreeInfoSelect {
         if (sourceNode == null || sourceNode.isRoot()) {
             return;
         }
-        TreeItem<TreeNode> targetItem = selected();
+        TreeItem<InfoNode> targetItem = selected();
         if (targetItem == null) {
             alertError(message("SelectNodeMoveInto"));
             return;
         }
-        TreeNode targetNode = targetItem.getValue();
+        InfoNode targetNode = targetItem.getValue();
         if (targetNode == null) {
             return;
         }

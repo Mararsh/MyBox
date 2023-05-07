@@ -5,7 +5,7 @@ import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
 import javafx.stage.Window;
-import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.InfoNode;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -16,7 +16,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-4-30
  * @License Apache License Version 2.0
  */
-public class TreeNodesMoveController extends ControlTreeInfoSelect {
+public class TreeNodesMoveController extends ControlInfoTreeSelector {
 
     protected TreeManageController manageController;
 
@@ -30,12 +30,12 @@ public class TreeNodesMoveController extends ControlTreeInfoSelect {
     }
 
     @Override
-    public boolean isSourceNode(TreeNode node) {
-        List<TreeNode> nodes = manageController.selectedItems();
+    public boolean isSourceNode(InfoNode node) {
+        List<InfoNode> nodes = manageController.selectedItems();
         if (nodes == null || nodes.isEmpty()) {
             return false;
         }
-        for (TreeNode sourceNode : nodes) {
+        for (InfoNode sourceNode : nodes) {
             if (equal(node, sourceNode)) {
                 return true;
             }
@@ -50,22 +50,22 @@ public class TreeNodesMoveController extends ControlTreeInfoSelect {
                 || !manageController.getMyStage().isShowing()) {
             return;
         }
-        List<TreeNode> nodes = manageController.selectedItems();
+        List<InfoNode> nodes = manageController.selectedItems();
         if (nodes == null || nodes.isEmpty()) {
             alertError(message("NoData"));
             manageController.getMyStage().requestFocus();
             return;
         }
-        TreeItem<TreeNode> targetItem = selected();
+        TreeItem<InfoNode> targetItem = selected();
         if (targetItem == null) {
             alertError(message("SelectNodeMoveInto"));
             return;
         }
-        TreeNode targetNode = targetItem.getValue();
+        InfoNode targetNode = targetItem.getValue();
         if (targetNode == null) {
             return;
         }
-        for (TreeNode sourceNode : nodes) {
+        for (InfoNode sourceNode : nodes) {
             if (equalOrDescendant(targetItem, find(sourceNode))) {
                 alertError(message("TreeTargetComments"));
                 return;
@@ -82,7 +82,7 @@ public class TreeNodesMoveController extends ControlTreeInfoSelect {
             @Override
             protected boolean handle() {
                 try {
-                    for (TreeNode node : nodes) {
+                    for (InfoNode node : nodes) {
                         node.setParentid(parentid);
                     }
                     count = tableTreeNode.updateList(nodes);
