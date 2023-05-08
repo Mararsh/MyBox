@@ -96,8 +96,10 @@ public class FileTmpTools {
     }
 
     public static String generatePath(String type) {
-        return AppPaths.getGeneratedPath() + File.separator
+        String path = AppPaths.getGeneratedPath() + File.separator
                 + (type == null || type.isBlank() ? "x" : FileNameTools.filter(type));
+        new File(path).mkdirs();
+        return path;
     }
 
     public static File generateFile(String ext) {

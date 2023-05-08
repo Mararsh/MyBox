@@ -69,9 +69,9 @@ public class ControlFileSelecter extends BaseController {
         if (defaultFile == null) {
             String ext = VisitHistoryTools.defaultExt(TargetFileType);
             if (isDirectory) {
-                defaultFile = FileTmpTools.generateFile(ext);
-            } else {
                 defaultFile = new File(FileTmpTools.generatePath(ext));
+            } else {
+                defaultFile = FileTmpTools.generateFile(ext);
             }
         }
         return defaultFile.getAbsolutePath();
@@ -186,11 +186,11 @@ public class ControlFileSelecter extends BaseController {
         if (savedName != null) {
             UserConfig.setString(savedName, file.getAbsolutePath());
         }
-        if (isSource) {
-            recordFileOpened(file);
-        } else {
-            recordFileWritten(file);
-        }
+//        if (isSource) {
+//            recordFileOpened(file);
+//        } else {
+//            recordFileWritten(file);
+//        }
         valid.set(true);
         notify.set(!notify.get());
     }

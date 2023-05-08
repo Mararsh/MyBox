@@ -49,7 +49,15 @@ public class VisitHistoryTools {
         if (filters == null || filters.isEmpty()) {
             return null;
         }
-        return FileNameTools.suffix(filters.get(0).getExtensions().get(0));
+        String ext = filters.get(0).getExtensions().get(0);
+        if (ext.endsWith("*")) {
+            if (filters.size() > 1) {
+                ext = filters.get(1).getExtensions().get(0);
+            } else {
+                return null;
+            }
+        }
+        return FileNameTools.suffix(ext);
     }
 
     public static List<FileChooser.ExtensionFilter> getExtensionFilter(int fileType) {
