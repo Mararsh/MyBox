@@ -16,6 +16,7 @@ import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.RecentVisitMenu;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.UserConfig;
 
@@ -64,24 +65,30 @@ public class ControlFileSelecter extends BaseController {
         label.setMinWidth(Region.USE_PREF_SIZE);
     }
 
+    public String defaultName() {
+        if (defaultFile == null) {
+            String ext = VisitHistoryTools.defaultExt(TargetFileType);
+            if (isDirectory) {
+                defaultFile = FileTmpTools.generateFile(ext);
+            } else {
+                defaultFile = new File(FileTmpTools.generatePath(ext));
+            }
+        }
+        return defaultFile.getAbsolutePath();
+    }
+
     public ControlFileSelecter init() {
+        String defaultName = defaultName();
+        String name;
         if (savedName != null) {
-            String saved = UserConfig.getString(savedName, defaultFile != null ? defaultFile.getAbsolutePath() : null);
-            if (saved != null) {
-                if (fileInput != null) {
-                    fileInput.setText(saved);
-                } else {
-                    setFile(new File(saved));
-                }
-            }
+            name = UserConfig.getString(savedName, defaultName);
         } else {
-            if (defaultFile != null) {
-                if (fileInput != null) {
-                    fileInput.setText(defaultFile.getAbsolutePath());
-                } else {
-                    setFile(defaultFile);
-                }
-            }
+            name = defaultName;
+        }
+        if (fileInput != null) {
+            fileInput.setText(name);
+        } else {
+            setFile(new File(name));
         }
         return this;
     }

@@ -1,9 +1,5 @@
 package mara.mybox.controller;
 
-import java.io.File;
-import mara.mybox.value.AppPaths;
-import mara.mybox.value.UserConfig;
-
 /**
  * @Author Mara
  * @CreateDate 2020-9-7
@@ -17,21 +13,7 @@ public class ControlTargetPath extends ControlTargetFile {
         checkQuit = false;
         permitNull = false;
         mustExist = true;
-        defaultFile = new File(AppPaths.getGeneratedPath());
-    }
-
-    @Override
-    public ControlTargetFile init() {
-        String v = null;
-        if (savedName != null) {
-            v = UserConfig.getString(savedName, null);
-        }
-        if (v == null || v.isBlank()) {
-            v = defaultFile != null ? defaultFile.getAbsolutePath() : null;
-        }
-        fileInput.setText(v);
-        initTargetExistType();
-        return this;
+        defaultFile = null;
     }
 
 }

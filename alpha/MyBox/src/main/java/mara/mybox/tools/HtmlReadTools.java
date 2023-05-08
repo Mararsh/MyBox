@@ -5,7 +5,6 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -48,10 +47,8 @@ public class HtmlReadTools {
             if (urlAddress == null) {
                 return null;
             }
-            URL url;
-            try {
-                url = new URI(urlAddress).toURL();
-            } catch (Exception e) {
+            URL url = UrlTools.url(urlAddress);
+            if (url == null) {
                 return null;
             }
             File tmpFile = FileTmpTools.getTempFile();
@@ -130,10 +127,8 @@ public class HtmlReadTools {
             if (urlAddress == null) {
                 return null;
             }
-            URL url;
-            try {
-                url = new URI(urlAddress).toURL();
-            } catch (Exception e) {
+            URL url = UrlTools.url(urlAddress);
+            if (url == null) {
                 return null;
             }
             String protocal = url.getProtocol();

@@ -29,10 +29,10 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.NumberTools;
 import mara.mybox.tools.ScheduleTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.tools.FileTmpTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -171,12 +171,6 @@ public class ControlPlay extends BaseController {
         }
     }
 
-    // 0-based, include end
-    public IndexRange currentRange() {
-        return NumberTools.scrollRange(UserConfig.selectorScrollSize(),
-                total, fromFrame, toFrame + 1, currentIndex);
-    }
-
     public void setList(List<String> list) {
         if (list == null || list.isEmpty()) {
             frameSelector.getItems().clear();
@@ -198,6 +192,13 @@ public class ControlPlay extends BaseController {
     }
 
     public void refreshList() {
+        String currentLabel = (currentIndex + 1) + "";
+        if (frameSelector.getItems().contains(currentLabel)) {
+            isSettingValues = true;
+            frameSelector.getSelectionModel().select(currentLabel);
+            isSettingValues = false;
+            return;
+        }
         IndexRange range = currentRange();
         if (range == null) {
             frameSelector.getItems().clear();
@@ -209,7 +210,7 @@ public class ControlPlay extends BaseController {
         }
         isSettingValues = true;
         frameSelector.getItems().setAll(labels);
-        frameSelector.getSelectionModel().select((currentIndex + 1) + "");
+        frameSelector.getSelectionModel().select(currentLabel);
         isSettingValues = false;
     }
 
@@ -351,9 +352,7 @@ public class ControlPlay extends BaseController {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    isSettingValues = true;
-                    frameSelector.getSelectionModel().select(currentIndex);
-                    isSettingValues = false;
+                    selectCurrentFrame();
                 }
             });
             return true;
@@ -382,6 +381,25 @@ public class ControlPlay extends BaseController {
             return end;
         }
         return index;
+    }
+
+    // 0-based, include end
+    public IndexRange currentRange() {
+        return NumberTools.scrollRange(UserConfig.selectorScrollSize(),
+                total, fromFrame, toFrame + 1, currentIndex);
+    }
+
+    public boolean selectCurrentFrame() {
+        String currentLabel = (currentIndex + 1) + "";
+        for (String label : frameSelector.getItems()) {
+            if (label.startsWith(currentLabel)) {
+                isSettingValues = true;
+                frameSelector.getSelectionModel().select(currentLabel);
+                isSettingValues = false;
+                return true;
+            }
+        }
+        return false;
     }
 
     public int nextIndex() {

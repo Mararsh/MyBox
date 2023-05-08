@@ -141,7 +141,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
     public void afterSceneLoaded() {
         try {
             super.afterSceneLoaded();
-            mapController.initMap(this);
+            mapController.dataController = this;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

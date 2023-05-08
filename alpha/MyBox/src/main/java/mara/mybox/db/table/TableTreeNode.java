@@ -9,8 +9,8 @@ import java.util.List;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
-import mara.mybox.db.data.Tag;
 import mara.mybox.db.data.InfoNode;
+import mara.mybox.db.data.Tag;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
 
@@ -96,7 +96,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         try (Connection conn = DerbyBase.getConnection()) {
             return find(conn, id);
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -109,7 +109,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
             statement.setLong(1, id);
             return query(conn, statement);
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -118,7 +118,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         try (Connection conn = DerbyBase.getConnection()) {
             return findRoots(conn, category);
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -131,7 +131,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
             statement.setString(1, category);
             return query(statement);
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -143,7 +143,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         try (Connection conn = DerbyBase.getConnection()) {
             return children(conn, parent);
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -156,7 +156,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
             statement.setLong(1, parent);
             return query(statement);
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -168,7 +168,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         try (Connection conn = DerbyBase.getConnection()) {
             return ancestor(conn, id);
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -201,7 +201,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         try (Connection conn = DerbyBase.getConnection()) {
             return find(conn, parent, title);
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -215,7 +215,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
             statement.setString(2, title);
             return query(conn, statement);
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -227,7 +227,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         try (Connection conn = DerbyBase.getConnection()) {
             return findAndCreate(conn, parent, title);
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -246,7 +246,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
             }
             return node;
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -263,7 +263,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
                 conn.commit();
                 base = find(conn, 1);
             } catch (Exception e) {
-                MyBoxLog.error(e);
+                MyBoxLog.debug(e);
             }
         }
         return base;
@@ -273,7 +273,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         try (Connection conn = DerbyBase.getConnection()) {
             return findAndCreateRoot(conn, category);
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -293,7 +293,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         try (Connection conn = DerbyBase.getConnection()) {
             return findAndCreateRoots(conn, category);
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -305,18 +305,26 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         List<InfoNode> roots = findRoots(conn, category);
         if (roots == null || roots.isEmpty()) {
             try {
+                conn.setAutoCommit(true);
                 InfoNode base = checkBase(conn);
+                if (base == null) {
+                    return null;
+                }
                 InfoNode root = InfoNode.create().setCategory(category)
                         .setTitle(message(category)).setParentid(base.getNodeid());
-                insertData(conn, root);
-                conn.commit();
+                root = insertData(conn, root);
+                if (root == null) {
+                    return null;
+                }
                 root.setParentid(root.getNodeid());
-                updateData(conn, root);
-                conn.commit();
+                root = updateData(conn, root);
+                if (root == null) {
+                    return null;
+                }
                 roots = new ArrayList<>();
                 roots.add(root);
             } catch (Exception e) {
-                MyBoxLog.error(e);
+//                MyBoxLog.debug(e);
             }
         }
         return roots;
@@ -370,7 +378,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         try (PreparedStatement query = conn.prepareStatement(QueryChildren)) {
             decentants(conn, query, parentid, start, size, children, 0);
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
         }
         return children;
     }
@@ -403,7 +411,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
                     }
                 }
             } catch (Exception e) {
-                MyBoxLog.error(e, tableName);
+                MyBoxLog.debug(e, tableName);
             }
             if (!ok) {
                 List<InfoNode> children = children(conn, parentid);
@@ -417,7 +425,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
         }
         return thisIndex;
     }
@@ -430,7 +438,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         try (PreparedStatement sizeQuery = conn.prepareStatement(ChildrenCount)) {
             count = decentantsSize(conn, sizeQuery, parentid);
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
         }
         return count;
     }
@@ -482,7 +490,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         try (Connection conn = DerbyBase.getConnection()) {
             return childrenSize(conn, parent);
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
             return -1;
         }
     }
@@ -495,7 +503,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         try (PreparedStatement sizeQuery = conn.prepareStatement(ChildrenCount)) {
             size = childrenSize(sizeQuery, parent);
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
         }
         return size;
     }
@@ -509,7 +517,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
                 isEmpty = results == null || !results.next();
             }
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
         }
         return isEmpty;
     }
@@ -518,7 +526,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         try (Connection conn = DerbyBase.getConnection()) {
             return categorySize(conn, category);
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
             return -1;
         }
     }
@@ -536,10 +544,10 @@ public class TableTreeNode extends BaseTable<InfoNode> {
                     size = results.getInt(1);
                 }
             } catch (Exception e) {
-                MyBoxLog.error(e);
+                MyBoxLog.debug(e);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
         }
         return size;
     }
@@ -553,10 +561,10 @@ public class TableTreeNode extends BaseTable<InfoNode> {
             try (ResultSet results = statement.executeQuery()) {
                 isEmpty = results == null || !results.next();
             } catch (Exception e) {
-                MyBoxLog.error(e);
+                MyBoxLog.debug(e);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
         }
         return isEmpty;
     }
@@ -565,7 +573,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
         try (Connection conn = DerbyBase.getConnection()) {
             return deleteChildren(conn, parent);
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
             return -1;
         }
     }
@@ -575,7 +583,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
             statement.setLong(1, parent);
             return statement.executeUpdate();
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
             return -1;
         }
     }
@@ -597,7 +605,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
             conn.setReadOnly(true);
             return times(conn, category);
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -619,7 +627,7 @@ public class TableTreeNode extends BaseTable<InfoNode> {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
         }
         return times;
     }

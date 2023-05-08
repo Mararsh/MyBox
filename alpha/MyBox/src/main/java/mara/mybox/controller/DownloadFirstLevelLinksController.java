@@ -13,7 +13,6 @@ import com.vladsch.flexmark.util.data.DataHolder;
 import com.vladsch.flexmark.util.data.MutableDataHolder;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 import java.io.File;
-import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -71,6 +70,7 @@ import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.MarkdownTools;
 import mara.mybox.tools.TextFileTools;
+import mara.mybox.tools.UrlTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -512,7 +512,10 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
             @Override
             protected boolean handle() {
                 try {
-                    URL url = new URI(address).toURL();
+                    URL url = UrlTools.url(address);
+                    if (url == null) {
+                        return false;
+                    }
                     File urlFile = HtmlReadTools.download(address);
                     String html = TextFileTools.readTexts(urlFile);
                     if (html == null) {

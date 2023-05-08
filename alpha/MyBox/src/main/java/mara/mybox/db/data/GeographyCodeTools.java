@@ -5,7 +5,6 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -25,10 +24,11 @@ import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.tools.FileTmpTools;
+import mara.mybox.tools.UrlTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -71,7 +71,10 @@ public class GeographyCodeTools {
                                 + address
                                 + "\"}", "UTF-8") + "&tk="
                         + UserConfig.getString("TianDiTuWebKey", AppValues.TianDiTuWebKey);
-                URL url = new URI(urlString).toURL();
+                URL url = UrlTools.url(urlString);
+                if (url == null) {
+                    return null;
+                }
                 File jsonFile = FileTmpTools.getTempFile(".json");
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
@@ -175,7 +178,10 @@ public class GeographyCodeTools {
     //"road_distance":65,"poi_distance":10,"address_distance":10}},"msg":"ok","status":"0"}
     public static GeographyCode tiandituCode(String urlString, GeographyCode geographyCode) {
         try {
-            URL url = new URI(urlString).toURL();
+            URL url = UrlTools.url(urlString);
+            if (url == null) {
+                return null;
+            }
             File jsonFile = FileTmpTools.getTempFile(".json");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
@@ -385,7 +391,10 @@ public class GeographyCodeTools {
     //"adcode":"370902","town":[],"number":[],"location":"117.157242,36.164988","levelCode":"兴趣点"}]}
     public static GeographyCode gaodeCode(String urlString, GeographyCode geographyCode) {
         try {
-            URL url = new URI(urlString).toURL();
+            URL url = UrlTools.url(urlString);
+            if (url == null) {
+                return null;
+            }
             File xmlFile = HtmlReadTools.download(url.toString());
 //            MyBoxLog.debug(FileTools.readTexts(xmlFile));
             Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xmlFile);
@@ -1977,7 +1986,10 @@ public class GeographyCodeTools {
                     + locationsString
                     + "&coordsys=" + sourceCS.gaodeConvertService()
                     + "&output=xml&key=" + UserConfig.getString("GaoDeMapServiceKey", AppValues.GaoDeMapServiceKey);
-            URL url = new URI(urlString).toURL();
+            URL url = UrlTools.url(urlString);
+            if (url == null) {
+                return null;
+            }
             File xmlFile = HtmlReadTools.download(url.toString());
             Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xmlFile);
             NodeList nodes = doc.getElementsByTagName("info");

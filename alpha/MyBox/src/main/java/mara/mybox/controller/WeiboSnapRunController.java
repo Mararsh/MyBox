@@ -9,7 +9,6 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
@@ -59,6 +58,7 @@ import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.PdfTools;
+import mara.mybox.tools.UrlTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
@@ -1134,7 +1134,10 @@ public class WeiboSnapRunController extends BaseController {
                             fname += "." + suffix;
                         }
                         try {
-                            URL url = new URI("http:" + fname).toURL();
+                            URL url = UrlTools.url("http:" + fname);
+                            if (url == null) {
+                                return false;
+                            }
                             URLConnection con = url.openConnection();
                             con.setConnectTimeout(30000);
                             try (InputStream is = con.getInputStream()) {

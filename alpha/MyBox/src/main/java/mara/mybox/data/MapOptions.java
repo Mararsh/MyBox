@@ -2,7 +2,6 @@ package mara.mybox.data;
 
 import java.io.File;
 import javafx.scene.paint.Color;
-import mara.mybox.controller.BaseMapController;
 import mara.mybox.controller.ControlMap;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -182,7 +181,7 @@ public class MapOptions {
         return mapController;
     }
 
-    public MapOptions setMapController(BaseMapController mapController) {
+    public MapOptions setMapController(ControlMap mapController) {
         this.mapController = mapController;
         return this;
     }

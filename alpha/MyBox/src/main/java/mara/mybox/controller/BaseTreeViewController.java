@@ -3,6 +3,8 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -37,6 +39,7 @@ import mara.mybox.value.UserConfig;
 public abstract class BaseTreeViewController<NodeP> extends BaseController {
 
     protected final SimpleBooleanProperty loadedNotify;
+    protected NodeP selectNodeWhenLoaded;
 
     @FXML
     protected TreeTableView<NodeP> treeView;
@@ -126,6 +129,13 @@ public abstract class BaseTreeViewController<NodeP> extends BaseController {
                 }
             });
 
+            loadedNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                    treeLoaded();
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -135,6 +145,20 @@ public abstract class BaseTreeViewController<NodeP> extends BaseController {
         tree
      */
     public void loadTree() {
+    }
+
+    public void treeLoaded() {
+        if (selectNodeWhenLoaded != null) {
+            selectNode(selectNodeWhenLoaded);
+        }
+    }
+
+    public boolean nodeLoaded(TreeItem<NodeP> item) {
+        try {
+            return title(item.getChildren().get(0).getValue()) != null;
+        } catch (Exception e) {
+            return true;
+        }
     }
 
     public void itemSelected(TreeItem<NodeP> item) {
@@ -151,15 +175,12 @@ public abstract class BaseTreeViewController<NodeP> extends BaseController {
         parent.getChildren().add(child);
         child.setExpanded(false);
         if (select) {
-            selectNode(child);
+            selectItem(child);
+            itemSelected(child);
         }
     }
 
-    public void notifyLoaded() {
-        loadedNotify.set(!loadedNotify.get());
-    }
-
-    public void selectNode(TreeItem<NodeP> nodeitem) {
+    public void selectItem(TreeItem<NodeP> nodeitem) {
         if (treeView == null || nodeitem == null) {
             return;
         }
@@ -167,7 +188,28 @@ public abstract class BaseTreeViewController<NodeP> extends BaseController {
         treeView.getSelectionModel().select(nodeitem);
         isSettingValues = false;
         treeView.scrollTo(treeView.getRow(nodeitem));
-        itemSelected(nodeitem);
+    }
+
+    public void selectNode(NodeP node) {
+        if (treeView == null || node == null) {
+            return;
+        }
+        if (treeView.getRoot() != null) {
+            selectItem(find(node));
+        }
+        selectNodeWhenLoaded = null;
+    }
+
+    public void selectNodeWhenLoaded(NodeP node) {
+        try {
+            if (treeView.getRoot() != null) {
+                selectNode(node);
+            } else {
+                selectNodeWhenLoaded = node;
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     /*

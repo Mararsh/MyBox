@@ -122,8 +122,10 @@ public class MenuWebviewController extends MenuController {
                     tagLabel.setText("");
                 }
                 if (TextClipboardTools.isMonitoringCopy()) {
-                    NodeStyleTools.setTooltip(copyToSystemClipboardTextButton, new Tooltip(message("CopyToClipboards") + "\nCTRL+c / ALT+c / CTRL+t / ALT+t"));
-                    NodeStyleTools.setTooltip(copyToSystemClipboardHtmlButton, new Tooltip(message("CopyToClipboards") + "\nCTRL+h / ALT+h"));
+                    NodeStyleTools.setTooltip(copyToSystemClipboardTextButton,
+                            new Tooltip(message("CopyToClipboards") + "\nCTRL+c / ALT+c / CTRL+t / ALT+t"));
+                    NodeStyleTools.setTooltip(copyToSystemClipboardHtmlButton,
+                            new Tooltip(message("CopyToClipboards") + "\nCTRL+h / ALT+h"));
                 } else {
                     NodeStyleTools.setTooltip(copyToSystemClipboardTextButton, new Tooltip(message("CopyToSystemClipboard") + "\nCTRL+c / ALT+c / CTRL+t / ALT+t"));
                     NodeStyleTools.setTooltip(copyToSystemClipboardHtmlButton, new Tooltip(message("CopyToSystemClipboard") + "\nCTRL+h / ALT+h"));
@@ -292,6 +294,7 @@ public class MenuWebviewController extends MenuController {
         webViewController.zoomOut();
     }
 
+    @Override
     public void refreshAction() {
         webViewController.refresh();
     }

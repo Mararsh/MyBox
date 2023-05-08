@@ -563,7 +563,7 @@ public class ControlMapOptions extends BaseController {
     }
 
     public void setMapSize(int size) {
-        if (!mapController.mapLoaded || isSettingValues) {
+        if (mapController != null && !mapController.mapLoaded || isSettingValues) {
             return;
         }
         isSettingValues = true;

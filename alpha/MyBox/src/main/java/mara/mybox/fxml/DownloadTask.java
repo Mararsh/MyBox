@@ -4,7 +4,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -17,6 +16,7 @@ import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.NetworkTools;
+import mara.mybox.tools.UrlTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.Languages;
 
@@ -50,8 +50,8 @@ public class DownloadTask<Void> extends BaseTask<Void> {
         startTime = new Date();
         currentSize = 0;
         try {
-            url = new URI(address).toURL();
-            return true;
+            url = UrlTools.url(address);
+            return url != null;
         } catch (Exception e) {
             error = e.toString();
             return false;

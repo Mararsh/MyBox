@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.io.File;
 import java.net.InetAddress;
-import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.security.cert.Certificate;
@@ -121,7 +120,10 @@ public class NetworkQueryAddressController extends BaseController {
             protected boolean handle() {
                 try {
                     certString = null;
-                    URL url = new URI(UrlTools.checkURL(address, Charset.defaultCharset())).toURL();
+                    URL url = UrlTools.url(UrlTools.checkURL(address, Charset.defaultCharset()));
+                    if (url == null) {
+                        return false;
+                    }
                     String urlAddress = url.toString();
                     task.setInfo(message("Query") + ": " + urlAddress);
                     host = url.getHost();

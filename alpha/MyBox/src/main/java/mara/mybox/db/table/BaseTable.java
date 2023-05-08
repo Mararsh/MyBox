@@ -71,7 +71,7 @@ public abstract class BaseTable<D> {
             }
             return query(conn, statement);
         } catch (Exception e) {
-            MyBoxLog.error(e, sql);
+            MyBoxLog.debug(e, sql);
             return null;
         }
     }
@@ -83,11 +83,17 @@ public abstract class BaseTable<D> {
         try {
             D data = newData();
             for (int i = 0; i < columns.size(); ++i) {
+                if (results == null) {
+                    return null;
+                }
                 ColumnDefinition column = columns.get(i);
                 Object value = readColumnValue(results, column);
                 setValue(data, column.getColumnName(), value);
             }
             for (int i = 0; i < foreignColumns.size(); ++i) {
+                if (results == null) {
+                    return null;
+                }
                 ColumnDefinition column = foreignColumns.get(i);
                 String name = column.getColumnName();
                 Object value = readForeignValue(results, name);
@@ -97,7 +103,7 @@ public abstract class BaseTable<D> {
             }
             return data;
         } catch (Exception e) {
-            MyBoxLog.error(e, tableName);
+            MyBoxLog.debug(e, tableName);
         }
         return null;
     }
@@ -321,7 +327,7 @@ public abstract class BaseTable<D> {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString(), tableName + " " + column.getColumnName());
+            MyBoxLog.debug(e.toString(), tableName + " " + column.getColumnName());
             return false;
         }
     }
@@ -340,7 +346,7 @@ public abstract class BaseTable<D> {
             }
             return index;
         } catch (Exception e) {
-            MyBoxLog.error(e, tableName);
+            MyBoxLog.debug(e, tableName);
             return -1;
         }
     }
@@ -359,7 +365,7 @@ public abstract class BaseTable<D> {
             }
             return index;
         } catch (Exception e) {
-            MyBoxLog.error(e, tableName);
+            MyBoxLog.debug(e, tableName);
             return -1;
         }
     }
@@ -382,7 +388,7 @@ public abstract class BaseTable<D> {
             }
             return setColumnsValues(statement, primaryColumns, data, index) > 0;
         } catch (Exception e) {
-            MyBoxLog.error(e, tableName);
+            MyBoxLog.debug(e, tableName);
             return false;
         }
     }
@@ -573,7 +579,7 @@ public abstract class BaseTable<D> {
             conn.createStatement().executeUpdate(sql);
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e, sql);
+            MyBoxLog.debug(e, sql);
             return false;
         }
     }
@@ -588,7 +594,7 @@ public abstract class BaseTable<D> {
             conn.createStatement().executeUpdate(sql);
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e, sql);
+            MyBoxLog.debug(e, sql);
             return false;
         }
     }
@@ -604,7 +610,7 @@ public abstract class BaseTable<D> {
             MyBoxLog.console(sql);
             return conn.createStatement().executeUpdate(sql) >= 0;
         } catch (Exception e) {
-            MyBoxLog.error(e, sql);
+            MyBoxLog.debug(e, sql);
             return false;
         }
     }
@@ -619,7 +625,7 @@ public abstract class BaseTable<D> {
                     + " ADD COLUMN  " + createColumnDefiniton(column);
             return conn.createStatement().executeUpdate(sql) >= 0;
         } catch (Exception e) {
-            MyBoxLog.error(e, sql);
+            MyBoxLog.debug(e, sql);
             return false;
         }
     }
@@ -659,7 +665,7 @@ public abstract class BaseTable<D> {
             D data = entityClass.getDeclaredConstructor().newInstance();
             return data;
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -706,7 +712,7 @@ public abstract class BaseTable<D> {
         try (Connection conn = DerbyBase.getConnection()) {
             return conditionSize(conn, condition);
         } catch (Exception e) {
-            MyBoxLog.error(e, tableName);
+            MyBoxLog.debug(e, tableName);
             return 0;
         }
     }
@@ -750,7 +756,7 @@ public abstract class BaseTable<D> {
             conn.setReadOnly(true);
             return isEmpty(conn, sql);
         } catch (Exception e) {
-            MyBoxLog.error(e, sql);
+            MyBoxLog.debug(e, sql);
             return true;
         }
     }
@@ -763,11 +769,11 @@ public abstract class BaseTable<D> {
                     ResultSet results = statement.executeQuery()) {
                 isEmpty = results == null || !results.next();
             } catch (Exception e) {
-                MyBoxLog.error(e, sql);
+                MyBoxLog.debug(e, sql);
             }
             return isEmpty;
         } catch (Exception e) {
-            MyBoxLog.error(e, tableName);
+            MyBoxLog.debug(e, tableName);
             return false;
         }
     }
@@ -1016,7 +1022,7 @@ public abstract class BaseTable<D> {
             conn.setReadOnly(true);
             return readData(conn, data);
         } catch (Exception e) {
-            MyBoxLog.error(e, tableName);
+            MyBoxLog.debug(e, tableName);
             return null;
         }
     }
@@ -1027,7 +1033,7 @@ public abstract class BaseTable<D> {
                 PreparedStatement statement = conn.prepareStatement(sql)) {
             data = query(conn, statement);
         } catch (Exception e) {
-            MyBoxLog.error(e, sql);
+            MyBoxLog.debug(e, sql);
         }
         return data;
     }
@@ -1049,7 +1055,7 @@ public abstract class BaseTable<D> {
             }
             return data;
         } catch (Exception e) {
-            MyBoxLog.error(e, tableName);
+            MyBoxLog.debug(e, tableName);
             return null;
         }
     }
@@ -1062,7 +1068,7 @@ public abstract class BaseTable<D> {
             statement.setString(1, value);
             return query(conn, statement);
         } catch (Exception e) {
-            MyBoxLog.error(e, tableName + " " + value);
+            MyBoxLog.debug(e, tableName + " " + value);
             return null;
         }
     }
@@ -1078,15 +1084,18 @@ public abstract class BaseTable<D> {
             conn.setAutoCommit(true);
             return query(statement);
         } catch (Exception e) {
-            MyBoxLog.error(e, tableName + " " + value);
+            MyBoxLog.debug(e, tableName + " " + value);
         }
         return dataList;
     }
 
     public List<D> query(PreparedStatement statement) {
         List<D> dataList = new ArrayList<>();
+        if (statement == null) {
+            return dataList;
+        }
         try (ResultSet results = statement.executeQuery()) {
-            while (results.next()) {
+            while (results != null && results.next()) {
                 D data = readData(results);
                 if (data != null) {
                     dataList.add(data);
@@ -1107,7 +1116,7 @@ public abstract class BaseTable<D> {
         try (Connection conn = DerbyBase.getConnection()) {
             dataList = query(conn, sql, max);
         } catch (Exception e) {
-            MyBoxLog.error(e, sql);
+            MyBoxLog.debug(e, sql);
         }
         return dataList;
     }
@@ -1125,7 +1134,7 @@ public abstract class BaseTable<D> {
             conn.setAutoCommit(true);
             return query(statement);
         } catch (Exception e) {
-            MyBoxLog.error(e, sql);
+            MyBoxLog.debug(e, sql);
         }
         return dataList;
     }
@@ -1152,7 +1161,7 @@ public abstract class BaseTable<D> {
         try (Connection conn = DerbyBase.getConnection()) {
             return queryConditions(conn, condition, orderby, start, size);
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
             return dataList;
         }
     }
@@ -1208,7 +1217,7 @@ public abstract class BaseTable<D> {
         try (Connection conn = DerbyBase.getConnection()) {
             return writeData(conn, data);
         } catch (Exception e) {
-            MyBoxLog.error(e, tableName);
+            MyBoxLog.debug(e, tableName);
             return null;
         }
     }
@@ -1229,7 +1238,7 @@ public abstract class BaseTable<D> {
                 return insertData(conn, data);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e, tableName);
+            MyBoxLog.debug(e, tableName);
             return null;
         }
     }
@@ -1242,7 +1251,7 @@ public abstract class BaseTable<D> {
         try (Connection conn = DerbyBase.getConnection()) {
             return insertData(conn, data);
         } catch (Exception e) {
-            MyBoxLog.error(e, tableName);
+            MyBoxLog.debug(e, tableName);
             return null;
         }
     }
@@ -1256,7 +1265,7 @@ public abstract class BaseTable<D> {
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             return insertData(conn, statement, data);
         } catch (Exception e) {
-            MyBoxLog.error(e, sql);
+            MyBoxLog.debug(e, sql);
         }
         return null;
     }
@@ -1279,7 +1288,7 @@ public abstract class BaseTable<D> {
                                 setValue(data, idColumnName, newID);
                             }
                         } catch (Exception e) {
-                            MyBoxLog.error(e, tableName);
+                            MyBoxLog.debug(e, tableName);
                         }
 //                        conn.setAutoCommit(ac);
                     }
@@ -1287,7 +1296,7 @@ public abstract class BaseTable<D> {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e, tableName);
+            MyBoxLog.debug(e, tableName);
         }
 //        MyBoxLog.console(tableName + "  " + newID);
         return null;
@@ -1303,7 +1312,7 @@ public abstract class BaseTable<D> {
             count = insertList(conn, dataList);
             conn.commit();
         } catch (Exception e) {
-            MyBoxLog.error(e, tableName);
+            MyBoxLog.debug(e, tableName);
         }
         return count;
     }
@@ -1321,7 +1330,7 @@ public abstract class BaseTable<D> {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e, sql);
+            MyBoxLog.debug(e, sql);
         }
         return count;
     }
@@ -1330,7 +1339,7 @@ public abstract class BaseTable<D> {
         try (Connection conn = DerbyBase.getConnection()) {
             return updateData(conn, data);
         } catch (Exception e) {
-            MyBoxLog.error(e, tableName);
+            MyBoxLog.debug(e, tableName);
             return null;
         }
     }
@@ -1342,7 +1351,7 @@ public abstract class BaseTable<D> {
         try (PreparedStatement statement = conn.prepareStatement(updateStatement())) {
             return updateData(conn, statement, data);
         } catch (Exception e) {
-            MyBoxLog.error(e, tableName);
+            MyBoxLog.debug(e, tableName);
             MyBoxLog.console(updateStatement());
             return null;
         }
@@ -1363,7 +1372,7 @@ public abstract class BaseTable<D> {
                 return data;
             }
         } catch (Exception e) {
-            MyBoxLog.error(e, tableName);
+            MyBoxLog.debug(e, tableName);
         }
         return null;
     }
@@ -1378,7 +1387,7 @@ public abstract class BaseTable<D> {
             count = updateList(conn, dataList);
             conn.commit();
         } catch (Exception e) {
-            MyBoxLog.error(e, tableName);
+            MyBoxLog.debug(e, tableName);
         }
         return count;
     }
@@ -1415,7 +1424,7 @@ public abstract class BaseTable<D> {
             }
             conn.commit();
         } catch (Exception e) {
-            MyBoxLog.error(e, sql);
+            MyBoxLog.debug(e, sql);
         }
         return count;
     }
@@ -1428,7 +1437,7 @@ public abstract class BaseTable<D> {
             statement.setString(1, value);
             return statement.executeUpdate();
         } catch (Exception e) {
-            MyBoxLog.error(e, tableName + " " + value);
+            MyBoxLog.debug(e, tableName + " " + value);
             return -1;
         }
     }
@@ -1441,7 +1450,7 @@ public abstract class BaseTable<D> {
             statement.setString(1, "%" + value);
             return statement.executeUpdate();
         } catch (Exception e) {
-            MyBoxLog.error(e, tableName + " " + value);
+            MyBoxLog.debug(e, tableName + " " + value);
             return -1;
         }
     }
@@ -1453,7 +1462,7 @@ public abstract class BaseTable<D> {
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             return statement.executeUpdate();
         } catch (Exception e) {
-            MyBoxLog.error(e, sql);
+            MyBoxLog.debug(e, sql);
             return -1;
         }
     }
@@ -1462,7 +1471,7 @@ public abstract class BaseTable<D> {
         try (Connection conn = DerbyBase.getConnection()) {
             return deleteData(conn, data);
         } catch (Exception e) {
-            MyBoxLog.error(e, tableName);
+            MyBoxLog.debug(e, tableName);
             return -1;
         }
     }
@@ -1472,7 +1481,7 @@ public abstract class BaseTable<D> {
             setDeleteStatement(conn, statement, data);
             return statement.executeUpdate();
         } catch (Exception e) {
-            MyBoxLog.error(e, tableName);
+            MyBoxLog.debug(e, tableName);
             return -1;
         }
     }
@@ -1484,7 +1493,7 @@ public abstract class BaseTable<D> {
         try (Connection conn = DerbyBase.getConnection()) {
             return deleteData(conn, dataList);
         } catch (Exception e) {
-            MyBoxLog.error(e, tableName);
+            MyBoxLog.debug(e, tableName);
             return -1;
         }
     }
@@ -1521,7 +1530,7 @@ public abstract class BaseTable<D> {
             }
             conn.commit();
         } catch (Exception e) {
-            MyBoxLog.error(e, tableName);
+            MyBoxLog.debug(e, tableName);
         }
         return count;
     }
@@ -1536,7 +1545,7 @@ public abstract class BaseTable<D> {
         try (Connection conn = DerbyBase.getConnection()) {
             return clearData(conn);
         } catch (Exception e) {
-            MyBoxLog.error(e, tableName);
+            MyBoxLog.debug(e, tableName);
             return -1;
         }
     }
@@ -1552,11 +1561,11 @@ public abstract class BaseTable<D> {
                 try (PreparedStatement reset = conn.prepareStatement(resetSQL)) {
                     reset.executeUpdate();
                 } catch (Exception e) {
-                    MyBoxLog.error(e, resetSQL);
+                    MyBoxLog.debug(e, resetSQL);
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e, clearSQL);
+            MyBoxLog.debug(e, clearSQL);
         }
         return count;
     }
@@ -1565,7 +1574,7 @@ public abstract class BaseTable<D> {
         try (Connection conn = DerbyBase.getConnection()) {
             return readDefinitionFromDB(conn, tableName);
         } catch (Exception e) {
-            MyBoxLog.error(e, tableName);
+            MyBoxLog.debug(e, tableName);
             return this;
         }
     }
@@ -1598,7 +1607,7 @@ public abstract class BaseTable<D> {
                     columns.add(column);
                 }
             } catch (Exception e) {
-                MyBoxLog.error(e, tableName);
+                MyBoxLog.debug(e, tableName);
             }
             primaryColumns = new ArrayList<>();
             try (ResultSet resultSet = dbMeta.getPrimaryKeys(null, "MARA", savedTableName)) {
@@ -1661,7 +1670,7 @@ public abstract class BaseTable<D> {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e, tableName);
+            MyBoxLog.debug(e, tableName);
         }
         return this;
     }

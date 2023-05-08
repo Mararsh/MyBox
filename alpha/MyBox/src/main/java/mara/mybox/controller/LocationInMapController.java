@@ -2,9 +2,6 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.Timer;
-import java.util.TimerTask;
-import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -41,6 +38,7 @@ import mara.mybox.value.UserConfig;
 public class LocationInMapController extends GeographyCodeMapController {
 
     protected GeographyCode geographyCode;
+    protected boolean needQeury;
 
     @FXML
     protected TextField locateInput;
@@ -87,7 +85,6 @@ public class LocationInMapController extends GeographyCodeMapController {
         if (isSettingValues) {
             return;
         }
-
         if (coordinateRadio.isSelected()) {
             NodeStyleTools.setTooltip(locateInput, Languages.message("InputCoordinateComments"));
             locateInput.setText("117.0983,36.25551");
@@ -114,6 +111,15 @@ public class LocationInMapController extends GeographyCodeMapController {
         clearCodeButton.setDisable(none);
     }
 
+    @Override
+    public void mapLoaded() {
+        super.mapLoaded();
+        if (needQeury) {
+            needQeury = false;
+            queryAction();
+        }
+    }
+
     public void loadCoordinate(double longitude, double latitude) {
         clickMapRadio.setSelected(true);
         setCoordinate(longitude, latitude);
@@ -121,40 +127,28 @@ public class LocationInMapController extends GeographyCodeMapController {
 
     @Override
     protected void mapClicked(double longitude, double latitude) {
-        if (!isSettingValues && clickMapRadio.isSelected()) {
+        if (clickMapRadio.isSelected()) {
             setCoordinate(longitude, latitude);
         }
     }
 
     public void setCoordinate(double longitude, double latitude) {
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
         if (!LocationTools.validCoordinate(longitude, latitude)) {
             return;
         }
-        timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Platform.runLater(() -> {
-                    if (timer == null || !mapLoaded) {
-                        return;
-                    }
-                    if (timer != null) {
-                        timer.cancel();
-                        timer = null;
-                    }
-                    locateInput.setText(longitude + "," + latitude);
-                    queryAction();
-                });
-            }
-        }, 0, 100);
+        locateInput.setText(longitude + "," + latitude);
+        if (mapLoaded) {
+            queryAction();
+        } else {
+            needQeury = true;
+        }
     }
 
     @FXML
     public void queryAction() {
+        if (!mapLoaded) {
+            return;
+        }
         clearCodeAction();
         String value = locateInput.getText().trim();
         if (value.isBlank()) {

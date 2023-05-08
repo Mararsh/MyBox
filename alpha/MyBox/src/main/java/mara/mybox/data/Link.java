@@ -1,12 +1,10 @@
 package mara.mybox.data;
 
 import java.io.File;
-import java.net.URI;
 import java.net.URL;
 import java.util.Date;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
-
 import mara.mybox.tools.UrlTools;
 
 /**
@@ -93,10 +91,7 @@ public class Link {
 
     public URL getUrl() {
         if (url == null && address != null) {
-            try {
-                url = new URI(address).toURL();
-            } catch (Exception e) {
-            }
+            url = UrlTools.url(address);
         }
         return url;
     }

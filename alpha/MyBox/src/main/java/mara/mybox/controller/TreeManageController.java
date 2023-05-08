@@ -199,7 +199,7 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
         try {
             super.afterSceneLoaded();
 
-            loadTree(null);
+            loadTree();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -333,7 +333,7 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
             return;
         }
         loadNodes(loadedParent);
-        nodesController.loadTree(null);
+        nodesController.loadTree();
     }
 
     public void nodesCopied(InfoNode parent) {
@@ -414,17 +414,20 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
     /*
         tree
      */
-    public void loadTree(InfoNode selectedNode) {
+    public void loadTree() {
         try {
-            File file = InfoNode.exampleFile(category);
-            if (file != null && tableTreeNode.categoryEmpty(category)) {
+            if (tableTreeNode.categoryEmpty(category)) {
+                File file = InfoNode.exampleFile(category);
+                if (file == null) {
+                    return;
+                }
                 if (AppVariables.isTesting
                         || PopTools.askSure(getTitle(), message("ImportExamples") + ": " + message(category))) {
                     nodesController.importExamples();
                     return;
                 }
             }
-            nodesController.loadTree(selectedNode);
+            nodesController.loadTree();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

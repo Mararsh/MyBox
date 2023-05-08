@@ -67,19 +67,12 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             super.initControls();
 
             mapController.mapOptionsController = mapOptionsController;
-            mapOptionsController.setParameters(mapController);
+            mapController.initMap();
 
             mapController.drawNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     drawPoints();
-                }
-            });
-
-            mapController.dataNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    okAction();
                 }
             });
 
@@ -174,6 +167,10 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
     public boolean checkOptions() {
         if (isSettingValues) {
             return true;
+        }
+        if (!mapController.mapLoaded) {
+            popError(message("MapNotReady"));
+            return false;
         }
         boolean ok = super.checkOptions();
         noticeLabel.setVisible(isAllPages());
@@ -499,12 +496,15 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
                 }
                 lastFrameid = frameid;
 
-                IndexRange range = playController.currentRange();
-                List<String> labels = new ArrayList<>();
-                for (int i = range.getStart(); i < range.getEnd(); i++) {
-                    labels.add((i + 1) + "  " + mapController.mapPoints.get(i).getLabel());
+                if (!playController.selectCurrentFrame()) {
+                    IndexRange range = playController.currentRange();
+                    List<String> labels = new ArrayList<>();
+                    for (int i = range.getStart(); i < range.getEnd(); i++) {
+                        labels.add((i + 1) + "  " + mapController.mapPoints.get(i).getLabel());
+                    }
+                    playController.setList(labels);
                 }
-                playController.setList(labels);
+
             }
         });
     }

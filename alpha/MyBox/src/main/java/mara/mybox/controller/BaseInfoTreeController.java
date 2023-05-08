@@ -91,6 +91,7 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
             task.cancel();
         }
         treeView.setRoot(null);
+        selectNodeWhenLoaded = null;
         task = new SingletonTask<Void>(this) {
             private TreeItem<InfoNode> rootItem;
 
@@ -99,10 +100,17 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
                     InfoNode rootNode = root(conn);
+                    if (task == null || task.isCancelled()) {
+                        return false;
+                    }
                     rootItem = new TreeItem(rootNode);
+                    rootItem.setExpanded(true);
                     int size = tableTreeNode.categorySize(conn, category);
                     if (size < 1) {
                         return true;
+                    }
+                    if (task == null || task.isCancelled()) {
+                        return false;
                     }
                     rootItem.getChildren().add(new TreeItem(new InfoNode()));
                     unfold(conn, rootItem, size < AutoExpandThreshold);
@@ -110,34 +118,20 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
                     error = e.toString();
                     return false;
                 }
-                return true;
+                return task != null && !task.isCancelled();
             }
 
             @Override
             protected void whenSucceeded() {
-            }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
                 treeView.setRoot(rootItem);
-                rootItem.setExpanded(true);
+                loadedNotify.set(!loadedNotify.get());
                 if (selectNode != null) {
-                    selectNode(find(selectNode));
+                    selectNode(selectNode);
                 }
-                notifyLoaded();
             }
 
         };
         start(task, thisPane);
-    }
-
-    public boolean nodeLoaded(TreeItem<InfoNode> item) {
-        try {
-            return item.getChildren().get(0).getValue().getTitle() != null;
-        } catch (Exception e) {
-            return true;
-        }
     }
 
     public InfoNode createNode(InfoNode targetNode, String name) {
@@ -294,50 +288,22 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
 
             @Override
             protected void whenSucceeded() {
-
-            }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
                 treeView.refresh();
             }
+
         };
         start(task, thisPane);
     }
 
     public void unfold(Connection conn, TreeItem<InfoNode> item, boolean descendants) {
-        if (item == null || item.isLeaf()) {
-            return;
-        }
-        if (nodeLoaded(item)) {
-            for (TreeItem<InfoNode> childItem : item.getChildren()) {
-                if (descendants) {
-                    unfold(conn, childItem, true);
-                } else {
-                    childItem.setExpanded(false);
-                }
-            }
-        } else {
-            item.getChildren().clear();
-            InfoNode node = item.getValue();
-            if (node == null) {
+        try {
+            if (item == null || item.isLeaf()) {
                 return;
             }
-            List<InfoNode> children = tableTreeNode.children(conn, node.getNodeid());
-            if (children != null) {
-                for (InfoNode childNode : children) {
-                    TreeItem<InfoNode> childItem = new TreeItem(childNode);
-                    item.getChildren().add(childItem);
-                    if (!tableTreeNode.childrenEmpty(conn, childNode.getNodeid())) {
-                        childItem.expandedProperty().addListener(
-                                (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
-                                    if (newVal && !childItem.isLeaf() && !nodeLoaded(childItem)) {
-                                        unfold(childItem, false);
-                                    }
-                                });
-                        TreeItem<InfoNode> dummyItem = new TreeItem(new InfoNode());
-                        childItem.getChildren().add(dummyItem);
+            if (nodeLoaded(item)) {
+                for (TreeItem<InfoNode> childItem : item.getChildren()) {
+                    if (task == null || task.isCancelled()) {
+                        return;
                     }
                     if (descendants) {
                         unfold(conn, childItem, true);
@@ -345,9 +311,42 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
                         childItem.setExpanded(false);
                     }
                 }
+            } else {
+                item.getChildren().clear();
+                InfoNode node = item.getValue();
+                if (node == null) {
+                    return;
+                }
+                List<InfoNode> children = tableTreeNode.children(conn, node.getNodeid());
+                if (children != null) {
+                    for (InfoNode childNode : children) {
+                        if (task == null || task.isCancelled()) {
+                            return;
+                        }
+                        TreeItem<InfoNode> childItem = new TreeItem(childNode);
+                        item.getChildren().add(childItem);
+                        if (!tableTreeNode.childrenEmpty(conn, childNode.getNodeid())) {
+                            childItem.expandedProperty().addListener(
+                                    (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
+                                        if (newVal && !childItem.isLeaf() && !nodeLoaded(childItem)) {
+                                            unfold(childItem, false);
+                                        }
+                                    });
+                            TreeItem<InfoNode> dummyItem = new TreeItem(new InfoNode());
+                            childItem.getChildren().add(dummyItem);
+                        }
+                        if (descendants) {
+                            unfold(conn, childItem, true);
+                        } else {
+                            childItem.setExpanded(false);
+                        }
+                    }
+                }
             }
+            item.setExpanded(true);
+        } catch (Exception e) {
+            error = e.toString();
         }
-        item.setExpanded(true);
     }
 
     @FXML

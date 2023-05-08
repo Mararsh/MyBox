@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import mara.mybox.data.MapPoint;
@@ -25,7 +26,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-1-20
  * @License Apache License Version 2.0
  */
-public class GeographyCodeMapController extends BaseMapFramesController {
+public class GeographyCodeMapController extends ControlMap {
 
     protected TableGeographyCode geoTable;
     protected BaseDataManageController dataController;
@@ -34,6 +35,8 @@ public class GeographyCodeMapController extends BaseMapFramesController {
 
     @FXML
     protected TextField chartMaxInput;
+    @FXML
+    protected Label frameLabel;
 
     public GeographyCodeMapController() {
         baseTitle = Languages.message("Map") + " - " + Languages.message("GeographyCode");
@@ -56,6 +59,8 @@ public class GeographyCodeMapController extends BaseMapFramesController {
         try {
             super.initControls();
 
+            initMap();
+
             chartMaxData = UserConfig.getInt(baseName + "ChartMaxData", 500);
             if (chartMaxData <= 0) {
                 chartMaxData = 500;
@@ -67,10 +72,6 @@ public class GeographyCodeMapController extends BaseMapFramesController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
-    }
-
-    public void initMap(BaseDataManageController dataController) {
-        this.dataController = dataController;
     }
 
     @Override

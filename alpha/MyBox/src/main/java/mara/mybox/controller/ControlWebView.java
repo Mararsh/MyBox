@@ -462,7 +462,9 @@ public class ControlWebView extends BaseController {
                 public void run() {
                     Platform.runLater(() -> {
                         if (listened) {
-                            timer.cancel();
+                            if (timer != null) {
+                                timer.cancel();
+                            }
                             return;
                         }
                         initDoc(webEngine.getDocument());

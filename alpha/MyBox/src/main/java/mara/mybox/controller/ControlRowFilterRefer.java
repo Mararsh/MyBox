@@ -39,7 +39,7 @@ public class ControlRowFilterRefer extends BaseInfoTreeController {
 
             tableTreeNode = new TableTreeNode();
             tableTreeNodeTag = new TableTreeNodeTag();
-            loadTree(null);
+            loadTree();
 
             placeholdersList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
             placeholdersList.setOnMouseClicked(new EventHandler<MouseEvent>() {

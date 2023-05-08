@@ -2,7 +2,6 @@ package mara.mybox.tools;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.net.URI;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,10 +23,8 @@ public class IconTools {
             if (address == null) {
                 return null;
             }
-            URL url;
-            try {
-                url = new URI(address).toURL();
-            } catch (Exception e) {
+            URL url = UrlTools.url(address);
+            if (url == null) {
                 return null;
             }
             String host = url.getHost();
@@ -84,10 +81,8 @@ public class IconTools {
             if (address == null || targetFile == null) {
                 return null;
             }
-            URL url;
-            try {
-                url = new URI(address).toURL();
-            } catch (Exception e) {
+            URL url = UrlTools.url(address);
+            if (url == null) {
                 return null;
             }
             String iconUrl = "https://" + url.getHost() + "/favicon.ico";
@@ -158,7 +153,10 @@ public class IconTools {
                         return iconUrl;
                     }
                     if (iconUrl.charAt(0) == '/') {
-                        URL url = new URI(address).toURL();
+                        URL url = UrlTools.url(address);
+                        if (url == null) {
+                            return null;
+                        }
                         iconUrl = url.getProtocol() + "://" + url.getHost() + iconUrl;
                     } else {
                         iconUrl = address + "/" + iconUrl;
