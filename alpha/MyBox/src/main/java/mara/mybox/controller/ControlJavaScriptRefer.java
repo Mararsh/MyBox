@@ -64,12 +64,12 @@ public class ControlJavaScriptRefer extends BaseInfoTreeController {
         tree
      */
     @Override
-    public void doubleClicked(TreeItem<InfoNode> item) {
+    public void itemClicked(MouseEvent event, TreeItem<InfoNode> item) {
         editNode(item);
     }
 
     @Override
-    public void itemSelected(TreeItem<InfoNode> item) {
+    public void doubleClicked(MouseEvent event, TreeItem<InfoNode> item) {
         editNode(item);
     }
 

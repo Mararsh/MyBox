@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.util.List;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
+import javafx.scene.input.MouseEvent;
 import mara.mybox.db.data.InfoNode;
 import static mara.mybox.value.Languages.message;
 
@@ -60,7 +61,7 @@ public class ControlInfoTreeSelector extends BaseInfoTreeController {
     }
 
     @Override
-    public void doubleClicked(TreeItem<InfoNode> item) {
+    public void doubleClicked(MouseEvent event, TreeItem<InfoNode> item) {
         if (item == null) {
             return;
         }

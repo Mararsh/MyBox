@@ -28,17 +28,17 @@ License:    Apache License Version 2.0
             <items>
                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                     <children>
-                  <HBox alignment="CENTER_RIGHT" spacing="2.0">
-                     <children>
-                        <CheckBox fx:id="rightPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
-                           <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../buttons/Red/iconDoubleRight.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </CheckBox>
+                        <HBox alignment="CENTER_RIGHT" spacing="2.0">
+                            <children>
+                                <CheckBox fx:id="rightPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/Red/iconDoubleRight.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </CheckBox>
                                 <Button fx:id="functionsButton" mnemonicParsing="false" onAction="#showFunctionsMenu" onMouseEntered="#popFunctionsMenu">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -48,13 +48,22 @@ License:    Apache License Version 2.0
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                     </children>
-                  </HBox>
-                        <TreeTableView fx:id="domTree" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
+                        <Button fx:id="operationsButton" mnemonicParsing="false" onAction="#showOperationsMenu" onMouseEntered="#popOperationsMenu">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../buttons/Red/iconAsterisk.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                            </children>
+                        </HBox>
+                        <TreeTableView fx:id="treeView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
                             <columns>
-                                <TreeTableColumn fx:id="tagColumn" prefWidth="120.0" text="Tag" />
+                                <TreeTableColumn fx:id="titleColumn" prefWidth="120.0" text="Tag" />
                                 <TreeTableColumn fx:id="hierarchyColumn" prefWidth="120.0" text="%HierarchyNumber" />
-                                <TreeTableColumn fx:id="textColumn" prefWidth="100.0" text="text" />
+                                <TreeTableColumn fx:id="valueColumn" prefWidth="100.0" text="text" />
                                 <TreeTableColumn fx:id="idColumn" text="id" />
                                 <TreeTableColumn fx:id="classnameColumn" text="classname" />
                                 <TreeTableColumn fx:id="dataColumn" prefWidth="100.0" text="data" />
@@ -66,83 +75,83 @@ License:    Apache License Version 2.0
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                     </padding>
                 </VBox>
-            <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-               <content>
-                      <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE">
-                          <tabs>
-                              <Tab fx:id="attributesTab" text="%Attributes">
-                                  <content>
-                                      <VBox fx:id="elementBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                          <children>
-                                    <HBox alignment="CENTER_RIGHT" spacing="2.0">
-                                       <children>
-                                                      <Button fx:id="recoverAttrsButton" mnemonicParsing="false" onAction="#recoverAttrs">
-                                                          <graphic>
-                                                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                  <image>
-                                                                      <Image url="@../buttons/Red/iconRecover.png" />
-                                                                  </image>
-                                                              </ImageView>
-                                                          </graphic>
-                                                      </Button>
-                                                      <Button fx:id="okAttrsButton" mnemonicParsing="false" onAction="#okAttrs">
-                                                          <graphic>
-                                                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                  <image>
-                                                                      <Image url="@../buttons/Red/iconOK.png" />
-                                                                  </image>
-                                                              </ImageView>
-                                                          </graphic>
-                                                      </Button>
-                                       </children>
-                                    </HBox>
-                                              <fx:include fx:id="node" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlHtmlDomNode.fxml" VBox.vgrow="ALWAYS" />
-                                          </children>
-                                          <padding>
-                                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                          </padding>
-                                      </VBox>
-                                  </content>
-                              </Tab>
-                              <Tab fx:id="codesTab" text="%InnerHtml">
-                                  <content>
-                                      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                          <padding>
-                                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                          </padding>
-                                          <children>
-                                              <HBox alignment="CENTER_LEFT" spacing="2.0">
-                                                  <children>
-                                                      <Label fx:id="tagLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
-                                                      <Button fx:id="recoverCodesButton" mnemonicParsing="false" onAction="#recoverCodes">
-                                                          <graphic>
-                                                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                  <image>
-                                                                      <Image url="@../buttons/Red/iconRecover.png" />
-                                                                  </image>
-                                                              </ImageView>
-                                                          </graphic>
-                                                      </Button>
-                                                      <Button fx:id="okCodesButton" mnemonicParsing="false" onAction="#okCodes">
-                                                          <graphic>
-                                                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                                  <image>
-                                                                      <Image url="@../buttons/Red/iconOK.png" />
-                                                                  </image>
-                                                              </ImageView>
-                                                          </graphic>
-                                                      </Button>
-                                                  </children>
-                                              </HBox>
-                                              <TextArea fx:id="codesArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
-                                          </children>
-                                      </VBox>
-                                  </content>
-                              </Tab>
-                          </tabs>
-                      </TabPane>
-               </content>
-            </ScrollPane>
+                <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                    <content>
+                        <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE">
+                            <tabs>
+                                <Tab fx:id="attributesTab" text="%Attributes">
+                                    <content>
+                                        <VBox fx:id="elementBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                            <children>
+                                                <HBox alignment="CENTER_RIGHT" spacing="2.0">
+                                                    <children>
+                                                        <Button fx:id="recoverAttrsButton" mnemonicParsing="false" onAction="#recoverAttrs">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconRecover.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                        <Button fx:id="okAttrsButton" mnemonicParsing="false" onAction="#okAttrs">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconOK.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                    </children>
+                                                </HBox>
+                                                <fx:include fx:id="node" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlHtmlDomNode.fxml" VBox.vgrow="ALWAYS" />
+                                            </children>
+                                            <padding>
+                                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                            </padding>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                                <Tab fx:id="codesTab" text="%InnerHtml">
+                                    <content>
+                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                            <padding>
+                                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                            </padding>
+                                            <children>
+                                                <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                                    <children>
+                                                        <Label fx:id="tagLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
+                                                        <Button fx:id="recoverCodesButton" mnemonicParsing="false" onAction="#recoverCodes">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconRecover.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                        <Button fx:id="okCodesButton" mnemonicParsing="false" onAction="#okCodes">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconOK.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                    </children>
+                                                </HBox>
+                                                <TextArea fx:id="codesArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
+                                            </children>
+                                        </VBox>
+                                    </content>
+                                </Tab>
+                            </tabs>
+                        </TabPane>
+                    </content>
+                </ScrollPane>
             </items>
         </SplitPane>
     </children>

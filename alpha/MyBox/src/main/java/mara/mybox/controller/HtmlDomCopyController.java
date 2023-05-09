@@ -46,13 +46,13 @@ public class HtmlDomCopyController extends BaseChildController {
                 return;
             }
             manageController = editor.domController;
-            editorTree = manageController.domTree;
+            editorTree = manageController.treeView;
             Element root = editorTree.getRoot().getValue().getElement();
             sourceController.load(root, sourceItem);
             targetController.loadElement(root);
 
-            sourceTree = sourceController.domTree;
-            targetTree = targetController.domTree;
+            sourceTree = sourceController.treeView;
+            targetTree = targetController.treeView;
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -128,7 +128,7 @@ public class HtmlDomCopyController extends BaseChildController {
                 error = message("SelectNodeCopyInto");
                 return false;
             }
-            editorItem = manageController.find(targetLocation);
+            editorItem = manageController.findSequenceNumber(targetLocation);
             if (editorItem == null) {
                 error = message("SelectNodeCopyInto");
                 return false;

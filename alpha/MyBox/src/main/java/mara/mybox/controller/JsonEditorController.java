@@ -125,6 +125,7 @@ public class JsonEditorController extends BaseController {
 
     public boolean writePanes(String json) {
         fileChanged = false;
+        openSourceButton.setDisable(sourceFile == null || !sourceFile.exists());
         isSettingValues = true;
         loadDom(json, false);
         loadText(json, false);
@@ -139,9 +140,21 @@ public class JsonEditorController extends BaseController {
 
     @FXML
     @Override
-    public void refreshAction() {
-        fileChanged = false;
-
+    public void createAction() {
+        try {
+            if (!checkBeforeNextAction()) {
+                return;
+            }
+            sourceFile = null;
+            getMyStage().setTitle(getBaseTitle());
+            fileChanged = false;
+            if (backupController != null) {
+                backupController.loadBackups(null);
+            }
+            writePanes("");
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     /*
@@ -218,24 +231,6 @@ public class JsonEditorController extends BaseController {
             MyBoxLog.debug(e.toString());
         }
         return null;
-    }
-
-    public boolean create() {
-        try {
-            if (!checkBeforeNextAction()) {
-                return false;
-            }
-            writePanes(null);
-            getMyStage().setTitle(getBaseTitle());
-            fileChanged = false;
-            if (backupController != null) {
-                backupController.loadBackups(null);
-            }
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
     }
 
     public void updateTitle() {
@@ -321,8 +316,15 @@ public class JsonEditorController extends BaseController {
     }
 
     public void clearDom() {
-        domController.clearDom();
+        domController.clearTree();
         domChanged(true);
+    }
+
+    @FXML
+    @Override
+    public void refreshAction() {
+        fileChanged = false;
+
     }
 
     /*

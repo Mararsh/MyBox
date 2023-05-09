@@ -54,7 +54,7 @@ public class ControlHtmlDomManage extends BaseHtmlTreeController {
         tree
      */
     @Override
-    public void treeClicked(MouseEvent event, TreeItem<HtmlNode> item) {
+    public void itemClicked(MouseEvent event, TreeItem<HtmlNode> item) {
         editNode(item);
     }
 
@@ -70,7 +70,7 @@ public class ControlHtmlDomManage extends BaseHtmlTreeController {
         }
         TreeItem<HtmlNode> parent = item.getParent();
         if (parent == null) {
-            clearDom();
+            clearTree();
         } else {
             item.getValue().getElement().remove();
             updateTreeItem(parent);
@@ -192,7 +192,7 @@ public class ControlHtmlDomManage extends BaseHtmlTreeController {
         });
         items.add(menuItem);
 
-        if (domTree.getTreeItemLevel(item) > 1) {
+        if (treeView.getTreeItemLevel(item) > 1) {
             menuItem = new MenuItem(message("CopyNodes"), StyleTools.getIconImageView("iconCopy.png"));
             menuItem.setOnAction((ActionEvent menuItemEvent) -> {
                 copy(item);
@@ -232,15 +232,13 @@ public class ControlHtmlDomManage extends BaseHtmlTreeController {
         });
         items.add(menuItem);
 
-        items.add(new SeparatorMenuItem());
-
         return items;
     }
 
     @FXML
     @Override
-    protected void clearDom() {
-        super.clearDom();
+    public void clearTree() {
+        super.clearTree();
         clearNode();
     }
 

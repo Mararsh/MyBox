@@ -629,7 +629,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
     }
 
     public void clearDom() {
-        domController.clearDom();
+        domController.clearTree();
         domChanged(true);
     }
 

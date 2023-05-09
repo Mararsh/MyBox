@@ -33,7 +33,7 @@ public class TreeNodeMoveController extends ControlInfoTreeSelector {
 
     @Override
     public boolean isSourceNode(InfoNode node) {
-        return equal(node, sourceNode);
+        return equalNode(node, sourceNode);
     }
 
     @FXML

@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
@@ -25,6 +27,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TreeTableDateCell;
 import mara.mybox.fxml.style.HtmlStyles;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -81,7 +84,6 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
     /*
         tree
      */
-    @Override
     public void loadTree() {
         loadTree(null);
     }
@@ -91,7 +93,7 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
             task.cancel();
         }
         treeView.setRoot(null);
-        selectNodeWhenLoaded = null;
+        focusNode = null;
         task = new SingletonTask<Void>(this) {
             private TreeItem<InfoNode> rootItem;
 
@@ -126,7 +128,7 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
                 treeView.setRoot(rootItem);
                 loadedNotify.set(!loadedNotify.get());
                 if (selectNode != null) {
-                    selectNode(selectNode);
+                    focusNode(selectNode);
                 }
             }
 
@@ -166,7 +168,19 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
     }
 
     @Override
-    public boolean equal(InfoNode node1, InfoNode node2) {
+    public boolean validNode(InfoNode node) {
+        return node != null;
+    }
+
+    @Override
+    public boolean equalItem(TreeItem<InfoNode> item1, TreeItem<InfoNode> item2) {
+        if (item1 == null || item2 == null) {
+            return false;
+        }
+        return equalNode(item1.getValue(), item2.getValue());
+    }
+
+    public boolean equalNode(InfoNode node1, InfoNode node2) {
         if (node1 == null || node2 == null) {
             return false;
         }
@@ -175,6 +189,13 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
 
     public InfoNode root(Connection conn) {
         return tableTreeNode.findAndCreateRoot(conn, category);
+    }
+
+    public boolean isRoot(InfoNode node) {
+        if (treeView.getRoot() == null || node == null) {
+            return false;
+        }
+        return equalNode(treeView.getRoot().getValue(), node);
     }
 
     public List<InfoNode> ancestor(Connection conn, InfoNode node) {
@@ -215,7 +236,19 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
     /*
         actions
      */
-    @Override
+    public List<MenuItem> functionItems(TreeItem<InfoNode> inItem) {
+        List<MenuItem> items = viewItems(inItem);
+
+        TreeItem<InfoNode> item = validItem(inItem);
+        MenuItem menu = new MenuItem(message("AddNode"), StyleTools.getIconImageView("iconAdd.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            addChild(item);
+        });
+        items.add(menu);
+
+        return items;
+    }
+
     public void addChild(TreeItem<InfoNode> targetItem) {
         if (targetItem == null) {
             popError(message("SelectToHandle"));
@@ -540,6 +573,12 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    @FXML
+    @Override
+    public void refreshAction() {
+        loadTree();
     }
 
     @FXML

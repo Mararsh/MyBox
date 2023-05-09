@@ -12,7 +12,7 @@ import static mara.mybox.value.Languages.message;
  */
 public class JsonDomNode {
 
-    protected String name, text;
+    protected String title, value;
     protected JsonNode node;
     protected NodeType type;
     protected final BooleanProperty selected = new SimpleBooleanProperty(false);
@@ -22,21 +22,21 @@ public class JsonDomNode {
     }
 
     public JsonDomNode() {
-        name = null;
+        title = null;
         node = null;
         type = null;
-        text = null;
+        value = null;
     }
 
     public JsonDomNode(String name, JsonNode node) {
-        this.name = name;
+        this.title = name;
         this.node = node;
         if (node == null) {
             return;
         }
         if (node.isValueNode()) {
             type = NodeType.Value;
-            text = node.asText();
+            value = node.asText();
 
         } else if (node.isArray()) {
             type = NodeType.Array;
@@ -69,8 +69,8 @@ public class JsonDomNode {
     /*
         set
      */
-    public JsonDomNode setName(String name) {
-        this.name = name;
+    public JsonDomNode setTitle(String title) {
+        this.title = title;
         return this;
     }
 
@@ -82,16 +82,16 @@ public class JsonDomNode {
     /*
         get
      */
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
     public JsonNode getNode() {
         return node;
     }
 
-    public String getText() {
-        return text;
+    public String getValue() {
+        return value;
     }
 
     public NodeType getType() {

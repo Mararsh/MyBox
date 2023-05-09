@@ -44,7 +44,7 @@ public class HtmlDomMoveController extends HtmlDomCopyController {
                 if (count > 0) {
                     closeStage();
                     editor.domController.refreshAction();
-                    editor.domController.focus(editorItem);
+                    editor.domController.focusItem(editorItem);
                     editor.domChanged(true);
                 }
                 editor.popInformation(message("Moved") + ": " + count);
@@ -71,7 +71,7 @@ public class HtmlDomMoveController extends HtmlDomCopyController {
                 error = message("SelectNodeCopyInto");
                 return false;
             }
-            editorItem = manageController.find(targetNumber);
+            editorItem = manageController.findSequenceNumber(targetNumber);
             if (editorItem == null) {
                 error = message("SelectNodeCopyInto");
                 return false;
@@ -84,7 +84,7 @@ public class HtmlDomMoveController extends HtmlDomCopyController {
                 if (isEqualOrSubNode(targetNumber, sourceNumber)) {
                     continue;
                 }
-                TreeItem<HtmlNode> manageItem = manageController.find(sourceNumber);
+                TreeItem<HtmlNode> manageItem = manageController.findSequenceNumber(sourceNumber);
                 manageItems.add(manageItem);
             }
             for (TreeItem<HtmlNode> manageItem : manageItems) {

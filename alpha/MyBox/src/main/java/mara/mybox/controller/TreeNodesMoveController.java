@@ -36,7 +36,7 @@ public class TreeNodesMoveController extends ControlInfoTreeSelector {
             return false;
         }
         for (InfoNode sourceNode : nodes) {
-            if (equal(node, sourceNode)) {
+            if (equalNode(node, sourceNode)) {
                 return true;
             }
         }

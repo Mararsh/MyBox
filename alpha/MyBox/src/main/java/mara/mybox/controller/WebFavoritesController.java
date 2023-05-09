@@ -92,7 +92,7 @@ public class WebFavoritesController extends TreeManageController {
     public static WebFavoritesController oneOpen(InfoNode node) {
         WebFavoritesController controller = oneOpen();
         if (controller != null) {
-            controller.nodesController.selectNodeWhenLoaded(node);
+            controller.nodesController.focusNodeAfterLoaded(node);
         }
         return controller;
     }

@@ -4,16 +4,15 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
+import javafx.scene.input.MouseEvent;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.InfoNode;
 import static mara.mybox.db.data.InfoNode.NodeSeparater;
@@ -66,7 +65,7 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
     }
 
     @Override
-    public void itemSelected(TreeItem<InfoNode> item) {
+    public void itemClicked(MouseEvent event, TreeItem<InfoNode> item) {
         if (item == null) {
             return;
         }
@@ -96,79 +95,8 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
     }
 
     @Override
-    public void doubleClicked(TreeItem<InfoNode> item) {
+    public void doubleClicked(MouseEvent event, TreeItem<InfoNode> item) {
         editNode(item);
-    }
-
-    @FXML
-    public void popOperationsMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "TreeOperationsPopWhenMouseHovering", true)) {
-            showOperationsMenu(event);
-        }
-    }
-
-    @FXML
-    public void showOperationsMenu(Event event) {
-        if (isSettingValues || getMyWindow() == null) {
-            return;
-        }
-        List<MenuItem> items = new ArrayList<>();
-
-        MenuItem menu = new MenuItem(message("UnfoldNode"), StyleTools.getIconImageView("iconPlus.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            unfoldNode();
-        });
-        items.add(menu);
-
-        menu = new MenuItem(message("UnfoldNodeAndDescendants"), StyleTools.getIconImageView("iconPlus.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            unfoldNodeAndDecendants();
-        });
-        items.add(menu);
-
-        menu = new MenuItem(message("FoldNode"), StyleTools.getIconImageView("iconMinus.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            foldNode();
-        });
-        items.add(menu);
-
-        menu = new MenuItem(message("FoldNodeAndDescendants"), StyleTools.getIconImageView("iconMinus.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            foldNodeAndDecendants();
-        });
-        items.add(menu);
-
-        menu = new MenuItem(message("TreeView"), StyleTools.getIconImageView("iconHtml.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            infoTree();
-        });
-        items.add(menu);
-
-        menu = new MenuItem(message("Examples"), StyleTools.getIconImageView("iconExamples.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            importExamples();
-        });
-        items.add(menu);
-
-        menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            refreshAction();
-        });
-        items.add(menu);
-
-        items.add(new SeparatorMenuItem());
-
-        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-        popItem.setSelected(UserConfig.getBoolean(baseName + "TreeOperationsPopWhenMouseHovering", true));
-        popItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                UserConfig.setBoolean(baseName + "TreeOperationsPopWhenMouseHovering", popItem.isSelected());
-            }
-        });
-        items.add(popItem);
-
-        popEventMenu(event, items);
     }
 
     @Override
@@ -404,6 +332,28 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
             TextClipboardTools.copyToSystemClipboard(this, treeItem.getValue().getTitle());
         });
         menu.setDisable(treeItem == null);
+        items.add(menu);
+
+        return items;
+    }
+
+    @Override
+    public List<MenuItem> operationsItems(TreeItem<InfoNode> item) {
+        List<MenuItem> items = new ArrayList<>();
+        items.addAll(viewItems(item));
+
+        items.add(new SeparatorMenuItem());
+
+        MenuItem menu = new MenuItem(message("TreeView"), StyleTools.getIconImageView("iconHtml.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            infoTree();
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("Examples"), StyleTools.getIconImageView("iconExamples.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            importExamples();
+        });
         items.add(menu);
 
         return items;

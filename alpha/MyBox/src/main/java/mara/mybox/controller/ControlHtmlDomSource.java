@@ -55,9 +55,9 @@ public class ControlHtmlDomSource extends BaseHtmlTreeController {
             super.loadElement(element);
 
             if (item != null) {
-                TreeItem<HtmlNode> sourceItem = find(hierarchyNumber(item));
+                TreeItem<HtmlNode> sourceItem = findSequenceNumber(hierarchyNumber(item));
                 if (sourceItem != null) {
-                    focus(sourceItem);
+                    focusItem(sourceItem);
                     sourceItem.getValue().getSelected().set(true);
                 }
             }
@@ -69,7 +69,7 @@ public class ControlHtmlDomSource extends BaseHtmlTreeController {
 
     public List<TreeItem<HtmlNode>> selectedItems() {
         selected = new ArrayList<>();
-        checkSelected(domTree.getRoot());
+        checkSelected(treeView.getRoot());
         return selected;
     }
 

@@ -12,12 +12,12 @@ import mara.mybox.data.HtmlNode;
  * @License Apache License Version 2.0
  */
 public class ControlHtmlDomTarget extends BaseHtmlTreeController {
-    
+
     @FXML
     protected RadioButton beforeRadio, afterRadio, inRadio;
-    
+
     @Override
-    public void treeClicked(MouseEvent event, TreeItem<HtmlNode> item) {
+    public void itemClicked(MouseEvent event, TreeItem<HtmlNode> item) {
         if (item == null) {
             return;
         }

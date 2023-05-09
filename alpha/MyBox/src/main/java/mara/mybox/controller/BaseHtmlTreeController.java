@@ -4,28 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
-import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import mara.mybox.data.HtmlNode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.cell.TreeTableHierachyCell;
 import mara.mybox.fxml.cell.TreeTableTextTrimCell;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -35,24 +25,19 @@ import org.jsoup.select.Elements;
  * @CreateDate 2023-2-14
  * @License Apache License Version 2.0
  */
-public class BaseHtmlTreeController extends BaseController {
+public class BaseHtmlTreeController extends BaseTreeViewController<HtmlNode> {
 
     @FXML
-    protected TreeTableView<HtmlNode> domTree;
-    @FXML
-    protected TreeTableColumn<HtmlNode, String> hierarchyColumn, tagColumn, textColumn, idColumn,
-            classnameColumn, dataColumn, rvalueColumn;
+    protected TreeTableColumn<HtmlNode, String> idColumn, classnameColumn, dataColumn, rvalueColumn;
 
+    /*
+        init
+     */
     @Override
     public void initControls() {
         try {
             super.initControls();
 
-            hierarchyColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("tag"));
-            hierarchyColumn.setCellFactory(new TreeTableHierachyCell());
-            tagColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("tag"));
-            textColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("wholeText"));
-            textColumn.setCellFactory(new TreeTableTextTrimCell());
             idColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("id"));
             classnameColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("classname"));
             dataColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("data"));
@@ -60,35 +45,18 @@ public class BaseHtmlTreeController extends BaseController {
             rvalueColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("value"));
             rvalueColumn.setCellFactory(new TreeTableTextTrimCell());
 
-            domTree.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-            domTree.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    if (popMenu != null && popMenu.isShowing()) {
-                        popMenu.hide();
-                    }
-                    TreeItem<HtmlNode> item = selected();
-                    if (event.getButton() == MouseButton.SECONDARY) {
-                        popNodeMenu(domTree, makeFunctionsMenu(item));
-                    } else {
-                        treeClicked(event, item);
-                    }
-                }
-            });
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    public void treeClicked(MouseEvent event, TreeItem<HtmlNode> item) {
-
-    }
-
+    /*
+        tree
+     */
     public TreeItem<HtmlNode> loadHtml(String html) {
         try {
             if (html == null) {
-                clearDom();
+                clearTree();
                 return null;
             } else {
                 return loadElement(Jsoup.parse(html));
@@ -101,7 +69,7 @@ public class BaseHtmlTreeController extends BaseController {
 
     public String html() {
         try {
-            return domTree.getRoot().getValue().getElement().html();
+            return treeView.getRoot().getValue().getElement().html();
         } catch (Exception e) {
             return null;
         }
@@ -109,9 +77,9 @@ public class BaseHtmlTreeController extends BaseController {
 
     public TreeItem<HtmlNode> loadElement(Element element) {
         try {
-            clearDom();
+            clearTree();
             TreeItem<HtmlNode> root = makeTreeItem(element);
-            domTree.setRoot(root);
+            treeView.setRoot(root);
             return root;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -189,6 +157,9 @@ public class BaseHtmlTreeController extends BaseController {
 
     public TreeItem<HtmlNode> updateTreeItem(TreeItem<HtmlNode> item) {
         try {
+            if (item == null) {
+                return null;
+            }
             return updateTreeItem(item, item.getValue().getElement());
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -214,7 +185,7 @@ public class BaseHtmlTreeController extends BaseController {
                 return null;
             }
             parent.getChildren().set(index, elementItem);
-            focus(elementItem);
+            focusItem(elementItem);
             return elementItem;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -222,252 +193,35 @@ public class BaseHtmlTreeController extends BaseController {
         }
     }
 
-    public void focus(TreeItem<HtmlNode> item) {
-        if (item == null) {
-            return;
-        }
-        try {
-            domTree.getSelectionModel().select(item);
-            int index = domTree.getRow(item);
-            domTree.scrollTo(index > 3 ? index - 3 : index);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public TreeItem<HtmlNode> selected() {
-        TreeItem<HtmlNode> item = domTree.getSelectionModel().getSelectedItem();
-        return validItem(item);
-    }
-
-    public TreeItem<HtmlNode> validItem(TreeItem<HtmlNode> item) {
-        TreeItem<HtmlNode> validItem = item;
-        if (validItem == null) {
-            validItem = domTree.getRoot();
-        }
-        if (validItem == null) {
-            return null;
-        }
-        HtmlNode node = validItem.getValue();
-        if (node == null || node.getElement() == null) {
-            return null;
-        }
-        return validItem;
-    }
-
-    public String tag(TreeItem<HtmlNode> item) {
-        try {
-            return item.getValue().getTag();
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public String hierarchyNumber(TreeItem<HtmlNode> item) {
-        if (item == null) {
-            return "";
-        }
-        TreeItem<HtmlNode> parent = item.getParent();
-        if (parent == null) {
-            return "";
-        }
-        String p = hierarchyNumber(parent);
-        return (p == null || p.isBlank() ? "" : p + ".") + (parent.getChildren().indexOf(item) + 1);
-    }
-
-    public String label(TreeItem<HtmlNode> item) {
-        if (item == null) {
-            return "";
-        }
-        return hierarchyNumber(item) + " " + tag(item);
-    }
-
-    public boolean isSameLocation(TreeItem<HtmlNode> item1, TreeItem<HtmlNode> item2) {
-        if (item1 == null || item2 == null) {
-            return false;
-        }
-        String s1 = hierarchyNumber(item1);
-        String s2 = hierarchyNumber(item2);
-        return s1.equals(s2);
-    }
-
-    // true when item1 is a descendant of item2
-    public boolean isSameOrDescendantLocation(TreeItem<HtmlNode> item1, TreeItem<HtmlNode> item2) {
-        try {
-            if (item1 == null || item2 == null) {
-                return false;
-            }
-            String s1 = hierarchyNumber(item1);
-            String s2 = hierarchyNumber(item2);
-            return s1.startsWith(s2);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    public TreeItem<HtmlNode> find(String number) {
-        return find(domTree.getRoot(), number);
-    }
-
-    public TreeItem<HtmlNode> find(TreeItem<HtmlNode> parent, String number) {
-        try {
-            if (parent == null || number == null || number.isBlank()) {
-                return parent;
-            }
-            String[] numbers = number.split("\\.", -1);
-            if (numbers == null || numbers.length == 0) {
-                return null;
-            }
-            int index;
-            TreeItem<HtmlNode> item = parent;
-            for (String n : numbers) {
-                index = Integer.parseInt(n);
-                List<TreeItem<HtmlNode>> children = item.getChildren();
-                if (index < 1 || index > children.size()) {
-                    return null;
-                }
-                item = children.get(index - 1);
-            }
-            return item;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
-    protected void foldNode() {
-        fold(selected(), false);
-    }
-
-    protected void foldNodeAndDecendants() {
-        fold(selected(), true);
-    }
-
-    protected void fold(TreeItem<HtmlNode> item, boolean descendants) {
-        TreeItem<HtmlNode> validItem = validItem(item);
-        if (validItem == null) {
-            return;
-        }
-        validItem.setExpanded(false);
-        if (descendants) {
-            List<TreeItem<HtmlNode>> children = validItem.getChildren();
-            if (children == null || children.isEmpty()) {
-                return;
-            }
-            for (TreeItem child : children) {
-                fold(child, true);
-            }
-        }
-    }
-
-    protected void unfoldNode() {
-        unfold(selected(), false);
-    }
-
-    protected void unfoldNodeAndDecendants() {
-        unfold(selected(), true);
-    }
-
-    protected void unfold(TreeItem<HtmlNode> item, boolean descendants) {
-        TreeItem<HtmlNode> validItem = validItem(item);
-        if (validItem == null) {
-            return;
-        }
-        validItem.setExpanded(true);
-        List<TreeItem<HtmlNode>> children = validItem.getChildren();
-        if (children == null || children.isEmpty()) {
-            return;
-        }
-        for (TreeItem child : children) {
-            if (descendants) {
-                unfold(child, true);
-            } else {
-                child.setExpanded(false);
-            }
-        }
-    }
-
-    @FXML
+    /*
+        values
+     */
     @Override
-    public void refreshAction() {
-        updateTreeItem(domTree.getRoot());
+    public boolean validNode(HtmlNode node) {
+        return node != null && node.getElement() != null;
     }
 
-    @FXML
-    public void popFunctionsMenu(Event event) {
-        if (UserConfig.getBoolean(baseName + "DomFunctionsPopWhenMouseHovering", true)) {
-            showFunctionsMenu(event);
-        }
+    @Override
+    public String title(HtmlNode node) {
+        return node == null ? null : node.getTitle();
     }
 
-    @FXML
-    public void showFunctionsMenu(Event event) {
-        List<MenuItem> items = makeFunctionsMenu(selected());
-        if (items == null) {
-            return;
-        }
-
-        CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-        popItem.setSelected(UserConfig.getBoolean(baseName + "DomFunctionsPopWhenMouseHovering", true));
-        popItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e) {
-                UserConfig.setBoolean(baseName + "DomFunctionsPopWhenMouseHovering", popItem.isSelected());
-            }
-        });
-        items.add(popItem);
-
-        if (event == null) {
-            popNodeMenu(domTree, items);
-        } else {
-            popEventMenu(event, items);
-        }
+    @Override
+    public String value(HtmlNode node) {
+        return node == null ? null : node.getValue();
     }
 
-    public List<MenuItem> makeFunctionsMenu(TreeItem<HtmlNode> inItem) {
-        TreeItem<HtmlNode> item = validItem(inItem);
-        if (item == null) {
-            return null;
-        }
+    /*
+        actions
+     */
+    @Override
+    public List<MenuItem> functionItems(TreeItem<HtmlNode> item) {
         List<MenuItem> items = new ArrayList<>();
-        MenuItem menuItem = new MenuItem(StringTools.menuPrefix(label(item)));
-        menuItem.setStyle("-fx-text-fill: #2e598a;");
-        items.add(menuItem);
-        items.add(new SeparatorMenuItem());
 
         Menu viewMenu = new Menu(message("View"), StyleTools.getIconImageView("iconView.png"));
         items.add(viewMenu);
 
-        menuItem = new MenuItem(message("UnfoldNode"), StyleTools.getIconImageView("iconPlus.png"));
-        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
-            unfoldNode();
-        });
-        viewMenu.getItems().add(menuItem);
-
-        menuItem = new MenuItem(message("UnfoldNodeAndDescendants"), StyleTools.getIconImageView("iconPlus.png"));
-        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
-            unfoldNodeAndDecendants();
-        });
-        viewMenu.getItems().add(menuItem);
-
-        menuItem = new MenuItem(message("FoldNode"), StyleTools.getIconImageView("iconMinus.png"));
-        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
-            foldNode();
-        });
-        viewMenu.getItems().add(menuItem);
-
-        menuItem = new MenuItem(message("FoldNodeAndDescendants"), StyleTools.getIconImageView("iconMinus.png"));
-        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
-            foldNodeAndDecendants();
-        });
-        viewMenu.getItems().add(menuItem);
-
-        menuItem = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
-        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
-            updateTreeItem(item);
-        });
-        viewMenu.getItems().add(menuItem);
+        viewMenu.getItems().addAll(viewItems(item));
 
         items.add(new SeparatorMenuItem());
 
@@ -475,8 +229,8 @@ public class BaseHtmlTreeController extends BaseController {
 
         List<MenuItem> more = moreMenu(item);
         if (more != null) {
+            items.add(new SeparatorMenuItem());
             items.addAll(more);
-
         }
         return items;
     }
@@ -533,16 +287,14 @@ public class BaseHtmlTreeController extends BaseController {
 
         menuItem = new MenuItem(message("Value"), StyleTools.getIconImageView("iconTxt.png"));
         menuItem.setOnAction((ActionEvent menuItemEvent) -> {
-            popText(item.getValue().getValue());
+            popText(item.getValue().getElementValue());
         });
         viewMenu.getItems().add(menuItem);
-
-        items.add(new SeparatorMenuItem());
 
         return items;
     }
 
-    public List<MenuItem> moreMenu(TreeItem<HtmlNode> inItem) {
+    public List<MenuItem> moreMenu(TreeItem<HtmlNode> item) {
         return null;
     }
 
@@ -564,8 +316,8 @@ public class BaseHtmlTreeController extends BaseController {
     }
 
     @FXML
-    protected void clearDom() {
-        domTree.setRoot(null);
+    @Override
+    public void refreshAction() {
+        updateTreeItem(treeView.getRoot());
     }
-
 }
