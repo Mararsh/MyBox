@@ -155,11 +155,8 @@ public class ControlMap extends BaseController {
                 return;
             } else if (data.startsWith("zoomSize:")) {
                 int v = Integer.parseInt(data.substring("zoomSize:".length()));
-                if (v != mapOptions.getMapSize()) {
-                    if (mapOptionsController != null) {
-                        mapOptionsController.setMapSize(v);
-                    }
-                    mapOptions.setMapSize(v);
+                if (mapOptionsController != null) {
+                    mapOptionsController.setMapSize(v);
                 }
                 return;
             }
@@ -190,15 +187,20 @@ public class ControlMap extends BaseController {
         if (mapOptionsController != null) {
             mapOptionsController.mapLoaded();
         }
+        setMapSize();
         if (mapOptions.isGaoDeMap()) {
+            setStandardLayer();
+            setSatelliteLayer();
+            setRoadLayer();
+            setTrafficLayer();
+            setFitView();
             setLanguage();
         } else {
-            webEngine.executeScript("setControl('zoom'," + mapOptions.isZoom() + ");");
-            webEngine.executeScript("setControl('scale'," + mapOptions.isScale() + ");");
-            webEngine.executeScript("setControl('mapType'," + mapOptions.isType() + ");");
-            webEngine.executeScript("setControl('symbols'," + mapOptions.isSymbols() + ");");
+            setShowZoom();
+            setShowScale();
+            setShowType();
+            setShowSymbols();
         }
-        drawPoints();
     }
 
     protected void mapClicked(double longitude, double latitude) {
@@ -210,11 +212,11 @@ public class ControlMap extends BaseController {
     }
 
     public void clearMap() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
         if (mapLoaded) {
-            if (timer != null) {
-                timer.cancel();
-                timer = null;
-            }
             if (webEngine != null) {
                 webEngine.getLoadWorker().cancel();
                 webEngine.executeScript("clearMap();");
@@ -240,7 +242,8 @@ public class ControlMap extends BaseController {
 
     public void setLanguage() {
         try {
-            if (!mapLoaded || isSettingValues || mapOptions.getLanguage() == null) {
+            if (!mapLoaded || isSettingValues
+                    || !mapOptions.isGaoDeMap() || mapOptions.getLanguage() == null) {
                 return;
             }
             Platform.runLater(() -> {
@@ -272,14 +275,12 @@ public class ControlMap extends BaseController {
         Platform.runLater(() -> {
             webEngine.executeScript("setZoom(" + mapOptions.getMapSize() + ");");
         });
-        if (mapOptionsController != null) {
-            mapOptionsController.setMapSize(mapOptions.getMapSize());
-        }
+
     }
 
     public void setStandardLayer() {
         try {
-            if (!mapLoaded || isSettingValues) {
+            if (!mapLoaded || isSettingValues || !mapOptions.isGaoDeMap()) {
                 return;
             }
             if (mapOptions.isStandardLayer()) {
@@ -297,7 +298,7 @@ public class ControlMap extends BaseController {
 
     public void setSatelliteLayer() {
         try {
-            if (!mapLoaded || isSettingValues) {
+            if (!mapLoaded || isSettingValues || !mapOptions.isGaoDeMap()) {
                 return;
             }
             if (mapOptions.isSatelliteLayer()) {
@@ -315,7 +316,7 @@ public class ControlMap extends BaseController {
 
     public void setRoadLayer() {
         try {
-            if (!mapLoaded || isSettingValues) {
+            if (!mapLoaded || isSettingValues || !mapOptions.isGaoDeMap()) {
                 return;
             }
             if (mapOptions.isRoadLayer()) {
@@ -333,7 +334,7 @@ public class ControlMap extends BaseController {
 
     public void setTrafficLayer() {
         try {
-            if (!mapLoaded || isSettingValues) {
+            if (!mapLoaded || isSettingValues || !mapOptions.isGaoDeMap()) {
                 return;
             }
             if (mapOptions.isTrafficLayer()) {
@@ -350,7 +351,7 @@ public class ControlMap extends BaseController {
     }
 
     public void setShowZoom() {
-        if (!mapLoaded || isSettingValues) {
+        if (!mapLoaded || isSettingValues || mapOptions.isGaoDeMap()) {
             return;
         }
         Platform.runLater(() -> {
@@ -359,7 +360,7 @@ public class ControlMap extends BaseController {
     }
 
     public void setShowScale() {
-        if (!mapLoaded || isSettingValues) {
+        if (!mapLoaded || isSettingValues || mapOptions.isGaoDeMap()) {
             return;
         }
         Platform.runLater(() -> {
@@ -368,7 +369,7 @@ public class ControlMap extends BaseController {
     }
 
     public void setShowType() {
-        if (!mapLoaded || isSettingValues) {
+        if (!mapLoaded || isSettingValues || mapOptions.isGaoDeMap()) {
             return;
         }
         Platform.runLater(() -> {
@@ -377,7 +378,7 @@ public class ControlMap extends BaseController {
     }
 
     public void setShowSymbols() {
-        if (!mapLoaded || isSettingValues) {
+        if (!mapLoaded || isSettingValues || mapOptions.isGaoDeMap()) {
             return;
         }
         Platform.runLater(() -> {
@@ -400,7 +401,9 @@ public class ControlMap extends BaseController {
         if (isSettingValues) {
             return;
         }
-        mapOptions.setMapSize(mapOptions.isGaoDeMap() ? 3 : 1);
+        if (mapOptionsController != null) {
+            mapOptionsController.setMapSize(mapOptions.isGaoDeMap() ? 3 : 1);
+        }
     }
 
     /*
@@ -475,7 +478,7 @@ public class ControlMap extends BaseController {
             return;
         }
         setPoints(points);
-        setMinLevel();
+//        setMinLevel();
         mapOptions.setFitView(false);
         mapPoints = points;
         if (mapPoints != null && !mapPoints.isEmpty()) {

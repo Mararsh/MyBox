@@ -343,29 +343,24 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             }
 
             if (openCheck != null) {
+                openCheck.setSelected(UserConfig.getBoolean("OpenWhenComplete"));
                 openCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
-                    public void changed(ObservableValue ov, Boolean oldValue,
-                            Boolean newValue) {
-                        UserConfig.setBoolean("OpenWhenComplete", newValue);
+                    public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                        UserConfig.setBoolean("OpenWhenComplete", nv);
 
                     }
                 });
-
-                openCheck.setSelected(UserConfig.getBoolean("OpenWhenComplete"));
             }
 
             if (verboseCheck != null) {
+                verboseCheck.setSelected(UserConfig.getBoolean("BatchLogVerbose", true));
                 verboseCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
-                    public void changed(ObservableValue ov, Boolean oldValue,
-                            Boolean newValue) {
-                        UserConfig.setBoolean("BatchLogVerbose", newValue);
-
+                    public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                        UserConfig.setBoolean("BatchLogVerbose", nv);
                     }
                 });
-
-                verboseCheck.setSelected(UserConfig.getBoolean("BatchLogVerbose", true));
             }
 
         } catch (Exception e) {

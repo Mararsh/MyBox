@@ -51,7 +51,6 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
     protected ControlMapOptions mapOptionsController;
     @FXML
     protected ControlMap mapController;
-
     @FXML
     protected CheckBox accumulateCheck, centerCheck, linkCheck;
     @FXML
@@ -319,6 +318,9 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
 
     protected boolean initPoints(DataFileCSV csvData) {
         try {
+            if (csvData == null || outputData == null) {
+                return false;
+            }
             dataPoints = new ArrayList<>();
             GeoCoordinateSystem cs
                     = new GeoCoordinateSystem(((RadioButton) csGroup.getSelectedToggle()).getText());
@@ -498,11 +500,15 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
 
                 if (!playController.selectCurrentFrame()) {
                     IndexRange range = playController.currentRange();
-                    List<String> labels = new ArrayList<>();
-                    for (int i = range.getStart(); i < range.getEnd(); i++) {
-                        labels.add((i + 1) + "  " + mapController.mapPoints.get(i).getLabel());
+                    if (range != null) {
+                        List<String> labels = new ArrayList<>();
+                        for (int i = range.getStart(); i < range.getEnd(); i++) {
+                            labels.add((i + 1) + "  " + mapController.mapPoints.get(i).getLabel());
+                        }
+                        playController.setList(labels);
+                    } else {
+                        playController.setList(null);
                     }
-                    playController.setList(labels);
                 }
 
             }

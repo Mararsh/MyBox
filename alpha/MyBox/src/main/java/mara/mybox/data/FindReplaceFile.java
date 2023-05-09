@@ -154,7 +154,7 @@ public class FindReplaceFile extends FindReplaceString {
     }
 
     public DataFileCSV initMatchesData(File sourceFile) {
-        String dname = sourceFile.getName() + "_" + message("Find");
+        String dname = sourceFile == null ? "" : (sourceFile.getName() + "_") + message("Find");
         matchesData = new DataFileCSV();
         File matchesFile = matchesData.tmpFile(dname, null, "csv");
         matchesData.setFile(matchesFile)
@@ -162,9 +162,12 @@ public class FindReplaceFile extends FindReplaceString {
                 .setCharset(Charset.forName("UTF-8"))
                 .setDelimiter(",").setHasHeader(true)
                 .setColsNumber(3)
-                .setComments(message("SourceFile") + ": " + sourceFile + "\n"
+                .setComments(sourceFile == null ? "" : (message("SourceFile") + ": " + sourceFile + "\n")
                         + message("Find") + ": " + findString);
         List<Data2DColumn> columns = new ArrayList<>();
+        if (sourceFile == null) {
+            columns.add(new Data2DColumn(message("File"), ColumnDefinition.ColumnType.String));
+        }
         columns.add(new Data2DColumn(message("Start"), ColumnDefinition.ColumnType.Long));
         columns.add(new Data2DColumn(message("End"), ColumnDefinition.ColumnType.Long));
         columns.add(new Data2DColumn(message("String") + "1", ColumnDefinition.ColumnType.String));

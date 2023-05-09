@@ -141,6 +141,11 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
             loadScene(Fxmls.TextFilesMergeFxml);
         });
 
+        MenuItem TextFindBatch = new MenuItem(message("TextFindBatch"));
+        TextFindBatch.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.TextFindBatchFxml);
+        });
+
         MenuItem TextReplaceBatch = new MenuItem(message("TextReplaceBatch"));
         TextReplaceBatch.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.TextReplaceBatchFxml);
@@ -162,7 +167,7 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
         });
 
         textsMenu.getItems().addAll(
-                textEditer, TextConvert, TextMerge, TextReplaceBatch, TextFilterBatch, TextToHtml, TextToPdf
+                textEditer, TextFindBatch, TextReplaceBatch, TextFilterBatch, TextConvert, TextMerge, TextToHtml, TextToPdf
         );
 
         MenuItem bytesEditer = new MenuItem(message("BytesEditer"));

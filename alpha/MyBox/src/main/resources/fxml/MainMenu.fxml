@@ -101,10 +101,11 @@ License:    Apache License Version 2.0
                                 <Menu mnemonicParsing="false" text="%Texts">
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#openTextEditer" text="%TextEditer" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openTextConvert" text="%TextConvertSplit" />
-                                        <MenuItem mnemonicParsing="false" onAction="#openTextMerge" text="%TextFilesMerge" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openTextFindBatch" text="%TextFindBatch" />
                                         <MenuItem mnemonicParsing="false" onAction="#openTextReplaceBatch" text="%TextReplaceBatch" />
                                         <MenuItem mnemonicParsing="false" onAction="#TextFilterBatch" text="%TextFilterBatch" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openTextConvert" text="%TextConvertSplit" />
+                                        <MenuItem mnemonicParsing="false" onAction="#openTextMerge" text="%TextFilesMerge" />
                                         <MenuItem mnemonicParsing="false" onAction="#textToHtml" text="%TextToHtml" />
                                         <MenuItem mnemonicParsing="false" onAction="#textToPdf" text="%TextToPdf" />
                                     </items>

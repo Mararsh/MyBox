@@ -413,6 +413,29 @@ public class ControlFindReplace extends BaseController {
         }
     }
 
+    protected String findString() {
+        String findString = findArea.getText();
+        if (findString == null || findString.isEmpty()) {
+            popError(message("EmptyValue") + ": " + message("Find"));
+            return null;
+        }
+        if (!findString.isBlank()) {
+            TableStringValues.add(baseName + "FindString", findString);
+        }
+        return findString;
+    }
+
+    protected String replaceString() {
+        String replaceString = replaceArea == null ? "" : replaceArea.getText();
+        if (replaceString == null) {
+            replaceString = "";
+        }
+        if (!replaceString.isBlank()) {
+            TableStringValues.add(baseName + "ReplaceString", replaceString);
+        }
+        return replaceString;
+    }
+
     protected boolean makeParamters(Operation operation) {
         if (null == operation || textInput == null) {
             popError(message("InvalidParameters"));
@@ -427,32 +450,18 @@ public class ControlFindReplace extends BaseController {
                 && !editerController.checkBeforeNextAction()) {
             return false;
         }
-
-        String findString = findArea.getText();
-        if (findString == null || findString.isEmpty()) {
-            popError(message("EmptyValue"));
-            return false;
-        }
-        if (!findString.isBlank()) {
-            TableStringValues.add(baseName + "FindString", findString);
-        }
+        String findString = findString();
         String pageText = textInput.getText();
         if (pageText == null || pageText.isEmpty()) {
             popError(message("EmptyValue"));
             return false;
         }
-        String replaceString = replaceArea == null ? "" : replaceArea.getText();
-        if (replaceString == null) {
-            replaceString = "";
-        }
+        String replaceString = replaceString();
         if (replaceString.equals(findString)) {
             if (operation == Operation.ReplaceAll || operation == Operation.ReplaceFirst) {
                 popError(message("Unchanged"));
                 return false;
             }
-        }
-        if (!replaceString.isBlank()) {
-            TableStringValues.add(baseName + "ReplaceString", replaceString);
         }
         if (operation == Operation.ReplaceAll && multiplePages) {
             if (!PopTools.askSure(getTitle(), message("SureReplaceAll"))) {

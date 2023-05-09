@@ -9,7 +9,6 @@ import mara.mybox.data.FindReplaceFile;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.data.TextEditInformation;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
@@ -45,10 +44,16 @@ public class TextReplaceBatchController extends BaseBatchFileController {
             optionsController.setParent(this);
 
             startButton.disableProperty().unbind();
-            startButton.disableProperty().bind(targetPathController.valid.not()
-                    .or(optionsController.findArea.textProperty().isEmpty())
-                    .or(Bindings.isEmpty(tableView.getItems()))
-            );
+            if (targetPathController != null) {
+                startButton.disableProperty().bind(targetPathController.valid.not()
+                        .or(optionsController.findArea.textProperty().isEmpty())
+                        .or(Bindings.isEmpty(tableView.getItems()))
+                );
+            } else {
+                startButton.disableProperty().bind(optionsController.findArea.textProperty().isEmpty()
+                        .or(Bindings.isEmpty(tableView.getItems()))
+                );
+            }
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -58,13 +63,9 @@ public class TextReplaceBatchController extends BaseBatchFileController {
     @Override
     public boolean makeMoreParameters() {
         try {
-            String findString = optionsController.findArea.getText();
+            String findString = optionsController.findString();
             if (findString == null || findString.isEmpty()) {
-                popError(message("EmptyValue"));
                 return false;
-            }
-            if (!findString.isBlank()) {
-                TableStringValues.add(baseName + "FindString", findString);
             }
             findReplace = new FindReplaceFile();
             findReplace.reset();
@@ -78,15 +79,13 @@ public class TextReplaceBatchController extends BaseBatchFileController {
                     .setDotAll(optionsController.dotallCheck.isSelected())
                     .setWrap(false);
             if (optionsController.replaceArea != null) {
+                String replaceString = optionsController.replaceString();
+                if (replaceString.equals(findString)) {
+                    popError(message("Unchanged"));
+                    return false;
+                }
                 findReplace.setOperation(FindReplaceString.Operation.ReplaceAll);
-                String replaceString = optionsController.replaceArea.getText();
-                if (replaceString == null) {
-                    replaceString = "";
-                }
                 findReplace.setReplaceString(replaceString);
-                if (!replaceString.isBlank()) {
-                    TableStringValues.add(baseName + "ReplaceString", findString);
-                }
             } else {
                 findReplace.setOperation(FindReplaceString.Operation.FindAll);
             }
@@ -104,6 +103,19 @@ public class TextReplaceBatchController extends BaseBatchFileController {
         optionsController.thisPane.setDisable(disable);
     }
 
+    public TextEditInformation info(File file) {
+        TextEditInformation fileInfo = new TextEditInformation(file);
+        if (optionsController.autoDetermine && !TextTools.checkCharset(fileInfo)) {
+            return null;
+        }
+        fileInfo.setLineBreak(TextTools.checkLineBreak(file));
+        fileInfo.setLineBreakValue(TextTools.lineBreakValue(fileInfo.getLineBreak()));
+        fileInfo.setPagesNumber(2);
+        fileInfo.setFindReplace(findReplace);
+        findReplace.setFileInfo(fileInfo);
+        return fileInfo;
+    }
+
     @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
@@ -113,15 +125,11 @@ public class TextReplaceBatchController extends BaseBatchFileController {
             }
             File tmpFile = FileTmpTools.getTempFile();
             Files.copy(srcFile, tmpFile);
-            TextEditInformation fileInfo = new TextEditInformation(tmpFile);
-            if (optionsController.autoDetermine && !TextTools.checkCharset(fileInfo)) {
+
+            TextEditInformation info = info(tmpFile);
+            if (info == null) {
                 return message("Failed");
             }
-            fileInfo.setLineBreak(TextTools.checkLineBreak(srcFile));
-            fileInfo.setLineBreakValue(TextTools.lineBreakValue(fileInfo.getLineBreak()));
-            fileInfo.setPagesNumber(2);
-            fileInfo.setFindReplace(findReplace);
-            findReplace.setFileInfo(fileInfo);
             if (!findReplace.handleFile() || !tmpFile.exists()) {
                 return message("Failed");
             }

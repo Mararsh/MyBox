@@ -338,7 +338,6 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
                 thumbTask.cancel();
                 thumbTask = null;
             }
-
             if (file == null) {
                 getMyStage().setTitle(getBaseTitle());
                 return;

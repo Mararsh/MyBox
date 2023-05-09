@@ -243,9 +243,14 @@ public class PdfViewController extends PdfViewController_Html {
     public void loadFile(File file, PdfInformation pdfInfo, int page) {
         try {
             initPage(file, page);
+            if (task != null) {
+                task.cancel();
+            }
             if (outlineTask != null) {
                 outlineTask.cancel();
-                outlineTask = null;
+            }
+            if (thumbTask != null) {
+                thumbTask.cancel();
             }
             infoLoaded.set(false);
             outlineTree.setRoot(null);
@@ -281,20 +286,14 @@ public class PdfViewController extends PdfViewController_Html {
     }
 
     public void loadInformation() {
+        if (task != null) {
+            task.cancel();
+        }
         if (pdfInformation == null) {
             if (sourceFile == null) {
                 return;
             }
             pdfInformation = new PdfInformation(sourceFile);
-        }
-        if (task != null) {
-            task.cancel();
-        }
-        if (outlineTask != null) {
-            outlineTask.cancel();
-        }
-        if (thumbTask != null) {
-            thumbTask.cancel();
         }
         bottomLabel.setText("");
         isSettingValues = true;
@@ -366,23 +365,24 @@ public class PdfViewController extends PdfViewController_Html {
     }
 
     protected void loadOutline() {
-        if (!infoLoaded.get()) {
-            return;
-        }
         if (outlineTask != null) {
             outlineTask.cancel();
         }
+        if (!infoLoaded.get()) {
+            return;
+        }
         outlineTree.setRoot(null);
-        TreeItem outlineRoot = new TreeItem<>(message("Bookmarks"));
-        outlineRoot.setExpanded(true);
         outlineTask = new SingletonTask<Void>(this) {
+            private TreeItem outlineRoot;
 
             @Override
             protected boolean handle() {
                 try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
                     PDDocumentOutline outline = doc.getDocumentCatalog().getDocumentOutline();
                     if (outline != null) {
-                        loadOutlineItem(outline, outlineRoot);
+                        outlineRoot = new TreeItem<>(message("Bookmarks"));
+                        outlineRoot.setExpanded(true);
+                        ok = loadOutlineItem(outline, outlineRoot);
                     }
                     doc.close();
                 } catch (Exception e) {
@@ -390,21 +390,11 @@ public class PdfViewController extends PdfViewController_Html {
                     MyBoxLog.debug(e);
                     return false;
                 }
-                return true;
+                return ok;
             }
 
             @Override
-            protected void whenFailed() {
-                if (error != null) {
-                    popError(error);
-                } else {
-                    popFailed();
-                }
-            }
-
-            @Override
-            protected void finalAction() {
-                super.finalAction();
+            protected void whenSucceeded() {
                 outlineTree.setRoot(outlineRoot);
                 outlineScrollPane.applyCss();
                 outlineScrollPane.layout();
@@ -414,12 +404,12 @@ public class PdfViewController extends PdfViewController_Html {
         start(outlineTask, false);
     }
 
-    protected void loadOutlineItem(PDOutlineNode parentOutlineItem, TreeItem parentTreeItem) {
+    protected boolean loadOutlineItem(PDOutlineNode parentOutlineItem, TreeItem parentTreeItem) {
         try {
             PDOutlineItem childOutlineItem = parentOutlineItem.getFirstChild();
             while (childOutlineItem != null) {
                 if (outlineTask == null || outlineTask.isCancelled()) {
-                    break;
+                    return false;
                 }
                 int pageNumber = 0;
                 if (childOutlineItem.getDestination() instanceof PDPageDestination) {
@@ -444,13 +434,17 @@ public class PdfViewController extends PdfViewController_Html {
                 TreeItem<Text> treeItem = new TreeItem<>(link);
                 treeItem.setExpanded(true);
                 parentTreeItem.getChildren().add(treeItem);
+                if (outlineTask == null || outlineTask.isCancelled()) {
+                    return false;
+                }
                 loadOutlineItem(childOutlineItem, treeItem);
                 childOutlineItem = childOutlineItem.getNextSibling();
             }
+            return true;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
+            return false;
         }
-
     }
 
     @Override

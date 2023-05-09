@@ -129,11 +129,11 @@ public class PptViewController extends BaseFileImagesViewController {
     }
 
     public void loadInformation() {
-        if (sourceFile == null) {
-            return;
-        }
         if (task != null) {
             task.cancel();
+        }
+        if (sourceFile == null) {
+            return;
         }
         task = new SingletonTask<Void>(this) {
             @Override
@@ -171,6 +171,9 @@ public class PptViewController extends BaseFileImagesViewController {
 
     @Override
     protected void loadPage() {
+        if (task != null) {
+            task.cancel();
+        }
         notesArea.clear();
         notesLabel.setText("");
         slideArea.clear();
@@ -182,9 +185,6 @@ public class PptViewController extends BaseFileImagesViewController {
         initCurrentPage();
         if (sourceFile == null) {
             return;
-        }
-        if (task != null) {
-            task.cancel();
         }
         task = new SingletonTask<Void>(this) {
             private String slideTexts, notes, master, comments;

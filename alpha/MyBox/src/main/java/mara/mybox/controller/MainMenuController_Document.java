@@ -208,6 +208,11 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
     }
 
     @FXML
+    protected void openTextFindBatch(ActionEvent event) {
+        loadScene(Fxmls.TextFindBatchFxml);
+    }
+
+    @FXML
     protected void openTextReplaceBatch(ActionEvent event) {
         loadScene(Fxmls.TextReplaceBatchFxml);
     }

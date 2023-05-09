@@ -75,6 +75,7 @@ public class Fxmls {
     public static final String TextEditorFxml = "/fxml/TextEditor.fxml";
     public static final String TextFilesConvertFxml = "/fxml/TextFilesConvert.fxml";
     public static final String TextFilesMergeFxml = "/fxml/TextFilesMerge.fxml";
+    public static final String TextFindBatchFxml = "/fxml/TextFindBatch.fxml";
     public static final String TextReplaceBatchFxml = "/fxml/TextReplaceBatch.fxml";
     public static final String TextFilterBatchFxml = "/fxml/TextFilterBatch.fxml";
     public static final String TextToHtmlFxml = "/fxml/TextToHtml.fxml";

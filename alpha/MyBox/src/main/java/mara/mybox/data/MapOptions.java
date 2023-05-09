@@ -233,7 +233,7 @@ public class MapOptions {
         }
         this.mapSize = mapSize;
         UserConfig.setInt(baseName + "MapSize", mapSize);
-        if (mapController != null && !mapController.isIsSettingValues()) {
+        if (mapController != null) {
             mapController.setMapSize();
         }
         return this;

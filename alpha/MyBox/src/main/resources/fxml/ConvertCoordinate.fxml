@@ -126,7 +126,7 @@ License:    Apache License Version 2.0
                         <Hyperlink onAction="#aboutCoordinateSystem" text="%AboutCoordinateSystem" />
                     </children>
                 </HBox>
-                <WebView fx:id="csView" maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" />
+                <WebView fx:id="csView" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS" />
             </children>
         </VBox>
     </center>
