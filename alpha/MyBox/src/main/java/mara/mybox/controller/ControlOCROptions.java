@@ -89,7 +89,7 @@ public class ControlOCROptions extends BaseController {
             super.initValues();
 
             String os = SystemTools.os();
-            tesseractPathController.type(VisitHistory.FileType.Bytes)
+            tesseractPathController.type(VisitHistory.FileType.All)
                     .isDirectory(false).mustExist(true).permitNull(true)
                     .defaultFile("win".equals(os) ? new File("D:\\Programs\\Tesseract-OCR\\tesseract.exe") : new File("/bin/tesseract"))
                     .baseName(baseName).savedName("TesseractPath").init();
@@ -355,7 +355,7 @@ public class ControlOCROptions extends BaseController {
             ));
             ProcessBuilder pb = new ProcessBuilder(parameters).redirectErrorStream(true);
             Process process = pb.start();
-            try ( BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
+            try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                 String line;
                 while ((line = inReader.readLine()) != null) {
                     if (line.contains("tesseract v4.") || line.contains("tesseract 4.")) {

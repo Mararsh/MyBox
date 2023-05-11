@@ -90,6 +90,7 @@ public class FindReplaceFile extends FindReplaceString {
     }
 
     public boolean handleFile() {
+//        MyBoxLog.console(operation);
         reset();
         if (operation == null || fileInfo == null
                 || findString == null || findString.isEmpty()) {

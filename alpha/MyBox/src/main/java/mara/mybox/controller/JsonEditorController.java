@@ -151,7 +151,7 @@ public class JsonEditorController extends BaseController {
             if (backupController != null) {
                 backupController.loadBackups(null);
             }
-            writePanes("");
+            writePanes("{}");
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

@@ -180,6 +180,9 @@ public class ControlData2DView extends BaseController {
                 }
             }
         });
+        if (data2D.isCSV() || data2D.isTexts()) {
+            controller.label.setText(message("DelimiterNotAffectSource"));
+        }
     }
 
     /*

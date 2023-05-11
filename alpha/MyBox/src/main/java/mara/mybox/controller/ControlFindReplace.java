@@ -50,6 +50,7 @@ public class ControlFindReplace extends BaseController {
     protected TextInputControl textInput;
     protected FindReplaceFile findReplace;
     protected double initX, initY;
+    protected Edit_Type editType;
 
     @FXML
     protected CheckBox caseInsensitiveCheck, wrapCheck, regexCheck, multilineCheck, dotallCheck, shareCheck;
@@ -106,6 +107,7 @@ public class ControlFindReplace extends BaseController {
         editerController = parent;
         parentController = parent;
         textInput = parent.mainArea;
+        editType = parent.editType;
         setControls();
     }
 
@@ -113,15 +115,17 @@ public class ControlFindReplace extends BaseController {
         try {
             this.parentController = parent;
             this.textInput = textInput;
+            editType = Edit_Type.Text;
             setControls();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
     }
 
-    public void setParent(BaseController parent) {
+    public void setParent(BaseController parent, Edit_Type editType) {
         try {
             this.parentController = parent;
+            this.editType = editType;
             setControls();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -262,10 +266,7 @@ public class ControlFindReplace extends BaseController {
     }
 
     protected boolean validateFind(String string) {
-        if (editerController == null) {
-            return true;
-        }
-        if (editerController.editType == Edit_Type.Bytes) {
+        if (editType == Edit_Type.Bytes) {
             return validateFindBytes(string);
         } else {
             return validateFindText(string);
@@ -273,10 +274,9 @@ public class ControlFindReplace extends BaseController {
     }
 
     protected boolean validateFindText(String string) {
-        if (editerController == null) {
-            return true;
-        }
-        if (editerController.sourceInformation != null && editerController.sourceInformation.getFile() != null
+        if (editerController != null
+                && editerController.sourceInformation != null
+                && editerController.sourceInformation.getFile() != null
                 && string.length() >= editerController.sourceInformation.getFile().length()) {
             popError(message("FindStringLimitation"));
             return false;
@@ -286,7 +286,7 @@ public class ControlFindReplace extends BaseController {
     }
 
     protected boolean validateFindBytes(String string) {
-        if (isSettingValues || regexCheck.isSelected() || editerController == null) {
+        if (isSettingValues || regexCheck.isSelected()) {
             findArea.setStyle(null);
             return true;
         }
@@ -295,7 +295,9 @@ public class ControlFindReplace extends BaseController {
             findArea.setStyle(UserConfig.badStyle());
             return false;
         } else {
-            if (editerController.sourceInformation != null && v.length() >= editerController.sourceInformation.getFile().length() * 3) {
+            if (editerController != null
+                    && editerController.sourceInformation != null
+                    && v.length() >= editerController.sourceInformation.getFile().length() * 3) {
                 popError(message("FindStringLimitation"));
                 findArea.setStyle(UserConfig.badStyle());
                 return false;
@@ -325,10 +327,7 @@ public class ControlFindReplace extends BaseController {
     }
 
     protected boolean validateReplace(String string) {
-        if (editerController == null) {
-            return true;
-        }
-        if (editerController.editType == Edit_Type.Bytes) {
+        if (editType == Edit_Type.Bytes) {
             return validateReplaceBytes(string);
         } else {
             return validateReplaceText(string);

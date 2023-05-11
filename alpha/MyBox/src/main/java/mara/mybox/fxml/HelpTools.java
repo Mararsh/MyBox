@@ -15,6 +15,7 @@ import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.MarkdownTools;
 import mara.mybox.tools.TextFileTools;
@@ -177,8 +178,8 @@ public class HelpTools {
     public static File aboutData2D() {
         try {
             String lang = Languages.getLangName();
-            File file = FxFileTools.getInternalFile("/doc/" + lang + "/MyBox-about-data2d-" + lang + ".html",
-                    "doc", "MyBox-about-data2d-" + lang + ".html");
+            File file = FxFileTools.getInternalFile("/doc/" + lang + "/mybox_about_data2d_" + lang + ".html",
+                    "doc", "mybox_about_data2d_" + lang + ".html");
             return file;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -189,8 +190,8 @@ public class HelpTools {
     public static File aboutGroupingRows() {
         try {
             String lang = Languages.getLangName();
-            File file = FxFileTools.getInternalFile("/doc/" + lang + "/MyBox-about-grouping-" + lang + ".html",
-                    "doc", "MyBox-about-grouping-" + lang + ".html");
+            File file = FxFileTools.getInternalFile("/doc/" + lang + "/mybox_about_grouping_" + lang + ".html",
+                    "doc", "mybox_about_grouping_" + lang + ".html");
             return file;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -201,8 +202,8 @@ public class HelpTools {
     public static File aboutRowExpression() {
         try {
             String lang = Languages.getLangName();
-            File file = FxFileTools.getInternalFile("/doc/" + lang + "/MyBox-about-row-expression-" + lang + ".html",
-                    "doc", "MyBox-about-row-expression-" + lang + ".html");
+            File file = FxFileTools.getInternalFile("/doc/" + lang + "/mybox_about_row_expression_" + lang + ".html",
+                    "doc", "mybox_about_row_expression_" + lang + ".html");
             return file;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -273,6 +274,317 @@ public class HelpTools {
 
             File htmFile = HtmlWriteTools.writeHtml(table.html());
             return htmFile;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static File interfaceTips() {
+        try {
+            String lang = Languages.getLangName();
+            File file = FxFileTools.getInternalFile("/doc/" + lang + "/mybox_interface_tips_" + lang + ".html",
+                    "doc", "mybox_interface_tips_" + lang + ".html");
+            return file;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static File makeInterfaceTips() {
+        try {
+            StringBuilder s = new StringBuilder();
+            s.append("<BODY>\n");
+
+            s.append("<H1>").append(message("DocumentTools")).append("</H1>\n");
+            s.append("    <H3>").append(message("Notes")).append("</H3>\n");
+            s.append("    <PRE>").append(message("NotesComments")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("PdfView")).append("</H3>\n");
+            s.append("    <PRE>").append(message("PdfViewTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("MarkdownEditer")).append("</H3>\n");
+            s.append("    <PRE>").append(message("MarkdownEditerTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("HtmlEditor")).append("</H3>\n");
+            s.append("    <PRE>").append(message("HtmlEditorTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("HtmlSnap")).append("</H3>\n");
+            s.append("    <PRE>").append(message("HtmlSnapComments")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("TextEditer")).append("</H3>\n");
+            s.append("    <PRE>").append(message("TextEditerTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("Charset")).append("</H3>\n");
+            s.append("    <PRE>").append(message("EncodeComments")).append("</PRE>\n");
+
+            s.append("    <H3>").append("BOM").append("</H3>\n");
+            s.append("    <PRE>").append(message("BOMcomments")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("FindReplace")).append(" - ").append(message("Texts")).append("</H3>\n");
+            s.append("    <PRE>").append(message("FindReplaceTextsTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("FindReplace")).append(" - ").append(message("Bytes")).append("</H3>\n");
+            s.append("    <PRE>").append(message("FindReplaceBytesTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("FilterLines")).append("</H3>\n");
+            s.append("    <PRE>").append(message("FilterTypesComments")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("TextFindBatch")).append("</H3>\n");
+            s.append("    <PRE>").append(message("TextFindBatchTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("TextReplaceBatch")).append("</H3>\n");
+            s.append("    <PRE>").append(message("TextReplaceBatchTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("TextToHtml")).append("</H3>\n");
+            s.append("    <PRE>").append(message("PasteTextAsHtml")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("BytesFindBatch")).append("</H3>\n");
+            s.append("    <PRE>").append(message("BytesFindBatchTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("TextInMyBoxClipboard")).append("</H3>\n");
+            s.append("    <PRE>").append(message("TextClipboardUseComments")).append("</PRE></BR>\n");
+            s.append("    <PRE>").append(message("TextInMyBoxClipboardTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("WordView")).append("</H3>\n");
+            s.append("    <PRE>").append(message("WordViewTips")).append("</PRE>\n");
+
+            s.append("\n");
+
+            s.append("<H1>").append(message("ImageTools")).append("</H1>\n");
+            s.append("    <H3>").append(message("ImageViewer")).append("</H3>\n");
+            s.append("    <PRE>").append(message("ImageViewerTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("EditImage")).append("</H3>\n");
+            s.append("    <PRE>").append(message("ImageManufactureTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("ImageAnalyse")).append("</H3>\n");
+            s.append("    <PRE>").append(message("ImageAnalyseTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("ImageQuantization")).append("</H3>\n");
+            s.append("    <PRE>").append(message("ImageQuantizationComments")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("Dithering")).append("</H3>\n");
+            s.append("    <PRE>").append(message("DitherComments")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("ColorMatching")).append("</H3>\n");
+            s.append("    <PRE>").append(message("ColorMatchComments")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("PremultipliedAlpha")).append("</H3>\n");
+            s.append("    <PRE>").append(message("PremultipliedAlphaTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("Thresholding")).append("</H3>\n");
+            s.append("    <PRE>").append(message("ImageThresholdingComments")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("ImageRepeatTile")).append("</H3>\n");
+            s.append("    <PRE>").append(message("ImageRepeatTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("ImageSample")).append("</H3>\n");
+            s.append("    <PRE>").append(message("ImageSampleTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("ImageSplit")).append("</H3>\n");
+            s.append("    <PRE>").append(message("ImageSplitTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("ImagesBrowser")).append("</H3>\n");
+            s.append("    <PRE>").append(message("ImagesBrowserTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("ImagesEditor")).append("</H3>\n");
+            s.append("    <PRE>").append(message("ImagesEditorTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("ImagesPlay")).append("</H3>\n");
+            s.append("    <PRE>").append(message("ImagesPlayTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("ImageOCR")).append("</H3>\n");
+            s.append("    <PRE>").append(message("ImageOCRComments")).append("</PRE></BR>\n");
+            s.append("    <PRE>").append(message("OCRPreprocessComment")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("ImageAlphaExtract")).append("</H3>\n");
+            s.append("    <PRE>").append(message("ImageAlphaExtractTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("ImagesInSystemClipboard")).append("</H3>\n");
+            s.append("    <PRE>").append(message("RecordImagesTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("ManageColors")).append("</H3>\n");
+            s.append("    <PRE>").append(message("ColorsManageTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("DrawChromaticityDiagram")).append("</H3>\n");
+            s.append("    <PRE>").append(message("ChromaticityDiagramTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("IccProfileEditor")).append("</H3>\n");
+            s.append("    <PRE>").append(message("IccProfileTips")).append("</PRE>\n");
+
+            s.append("\n");
+
+            s.append("<H1>").append(message("NetworkTools")).append("</H1>\n");
+            s.append("    <H3>").append(message("DownloadHtmls")).append("</H3>\n");
+            s.append("    <PRE>").append(message("DownloadFirstLevelLinksComments")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("ConvertUrl")).append("</H3>\n");
+            s.append("    <PRE>").append(message("ConvertUrlTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("QueryDNSBatch")).append("</H3>\n");
+            s.append("    <PRE>").append(message("QueryDNSBatchTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("WeiboSnap")).append("</H3>\n");
+            s.append("    <PRE>").append(message("WeiboAddressComments")).append("</PRE>\n");
+
+            s.append("\n");
+
+            s.append("<H1>").append(message("DataTools")).append("</H1>\n");
+            s.append("    <H3>").append(message("Column")).append("</H3>\n");
+            s.append("    <PRE>").append(message("ColumnComments")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("ManageData")).append("</H3>\n");
+            s.append("    <PRE>").append(message("DataManageTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("EditCSV")).append("</H3>\n");
+            s.append("    <PRE>").append(message("DataFileCSVTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("EditExcel")).append("</H3>\n");
+            s.append("    <PRE>").append(message("DataFileExcelTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("EditTextDataFile")).append("</H3>\n");
+            s.append("    <PRE>").append(message("DataFileTextTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("DatabaseTable")).append("</H3>\n");
+            s.append("    <PRE>").append(message("DataTableTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("SqlIdentifier")).append("</H3>\n");
+            s.append("    <PRE>").append(message("SqlIdentifierComments")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("XYChart")).append("</H3>\n");
+            s.append("    <PRE>").append(message("DataChartXYTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("PieChart")).append("</H3>\n");
+            s.append("    <PRE>").append(message("DataChartPieTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("BoxWhiskerChart")).append("</H3>\n");
+            s.append("    <PRE>").append(message("BoxWhiskerChartTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("ComparisonBarsChart")).append("</H3>\n");
+            s.append("    <PRE>").append(message("ComparisonBarsChartTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("SelfComparisonBarsChart")).append("</H3>\n");
+            s.append("    <PRE>").append(message("SelfComparisonBarsChartTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("XYZChart")).append("</H3>\n");
+            s.append("    <PRE>").append(message("WebglComments")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("SetStyles")).append("</H3>\n");
+            s.append("    <PRE>").append(message("SetStylesTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("SimpleLinearRegression")).append("</H3>\n");
+            s.append("    <PRE>").append(message("SimpleLinearRegressionTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("SimpleLinearRegressionCombination")).append("</H3>\n");
+            s.append("    <PRE>").append(message("SimpleLinearRegressionCombinationTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("MultipleLinearRegression")).append("</H3>\n");
+            s.append("    <PRE>").append(message("MultipleLinearRegressionTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("MultipleLinearRegressionCombination")).append("</H3>\n");
+            s.append("    <PRE>").append(message("MultipleLinearRegressionCombinationTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("Matrix")).append("</H3>\n");
+
+            s.append("    <H4>").append(message("Plus")).append("</H4>\n");
+            s.append("    <PRE>").append(message("MatricesPlusComments")).append("</PRE>\n");
+
+            s.append("    <H4>").append(message("Minus")).append("</H4>\n");
+            s.append("    <PRE>").append(message("MatricesMinusComments")).append("</PRE>\n");
+
+            s.append("    <H4>").append(message("Multiply")).append("</H4>\n");
+            s.append("    <PRE>").append(message("MatricesMultiplyComments")).append("</PRE>\n");
+
+            s.append("    <H4>").append(message("HadamardProduct")).append("</H4>\n");
+            s.append("    <PRE>").append(message("HadamardProductComments")).append("</PRE>\n");
+
+            s.append("    <H4>").append(message("KroneckerProduct")).append("</H4>\n");
+            s.append("    <PRE>").append(message("KroneckerProductComments")).append("</PRE>\n");
+
+            s.append("    <H4>").append(message("VerticalMerge")).append("</H4>\n");
+            s.append("    <PRE>").append(message("VerticalMergeComments")).append("</PRE>\n");
+
+            s.append("    <H4>").append(message("HorizontalMerge")).append("</H4>\n");
+            s.append("    <PRE>").append(message("HorizontalMergeComments")).append("</PRE>\n");
+
+            s.append("\n");
+
+            s.append("    <H3>").append(message("JavaScript")).append("</H3>\n");
+            s.append("    <PRE>").append(message("JavaScriptTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("JShell")).append("</H3>\n");
+            s.append("    <PRE>").append(message("JShellTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("JEXL")).append("</H3>\n");
+            s.append("    <PRE>").append(message("JEXLTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("MathFunction")).append("</H3>\n");
+            s.append("    <PRE>").append(message("MathFunctionTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("GeographyCode")).append("</H3>\n");
+            s.append("    <PRE>").append(message("GeographyCodeEditComments")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("MapOptions")).append("</H3>\n");
+            s.append("    <PRE>").append(message("MapComments")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("ConvertCoordinate")).append("</H3>\n");
+            s.append("    <PRE>").append(message("ConvertCoordinateTips")).append("</PRE>\n");
+
+            s.append("\n");
+
+            s.append("<H1>").append(message("MediaTools")).append("</H1>\n");
+            s.append("    <H3>").append(message("MediaPlayer")).append("</H3>\n");
+            s.append("    <PRE>").append(message("MediaPlayerSupports")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("FFmpeg")).append("</H3>\n");
+            s.append("    <PRE>").append(message("FFmpegExeComments")).append("</PRE>\n");
+
+            s.append("    <H4>").append(message("FFmpegOptions")).append("</H4>\n");
+            s.append("    <PRE>").append(message("FFmpegOptionsTips")).append("</PRE></BR>\n");
+            s.append("    <PRE>").append(message("FFmpegArgumentsTips")).append("</PRE>\n");
+
+            s.append("    <H4>").append(message("FFmpegScreenRecorder")).append("</H4>\n");
+            s.append("    <PRE>").append(message("FFmpegScreenRecorderComments")).append("</PRE>\n");
+
+            s.append("    <H4>").append(message("CRF")).append("</H4>\n");
+            s.append("    <PRE>").append(message("CRFComments")).append("</PRE>\n");
+
+            s.append("    <H4>").append(message("X264")).append("</H4>\n");
+            s.append("    <PRE>").append(message("X264PresetComments")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("GameElimniation")).append("</H3>\n");
+            s.append("    <PRE>").append(message("GameEliminationComments")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("GameMine")).append("</H3>\n");
+            s.append("    <PRE>").append(message("GameMineTips")).append("</PRE>\n");
+
+            s.append("\n");
+
+            s.append("<H1>").append(message("Others")).append("</H1>\n");
+            s.append("    <H3>").append(message("Table")).append("</H3>\n");
+            s.append("    <PRE>").append(message("TableTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("Play")).append("</H3>\n");
+            s.append("    <PRE>").append(message("PlayerComments")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("ManageLanguages")).append("</H3>\n");
+            s.append("    <PRE>").append(message("MyBoxLanguagesTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("Shortcuts")).append("</H3>\n");
+            s.append("    <PRE>").append(message("ShortcutsTips")).append("</PRE>\n");
+
+            s.append("\n");
+
+            s.append("</BODY>\n");
+
+            String html = HtmlWriteTools.html(message("InterfaceTips"), HtmlStyles.DefaultStyle, s.toString());
+
+            File file = new File(FileTmpTools.generatePath("html")
+                    + "/mybox_interface_tips_" + Languages.getLangName() + ".html");
+
+            return TextFileTools.writeFile(file, html);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;

@@ -218,6 +218,8 @@ public class JShellEditor extends TreeNodeEditor {
             MenuController controller = MenuController.open(jShellController, valueInput, event);
             controller.setTitleLabel(message("Syntax"));
 
+            String menuName = interfaceName + "Syntax";
+
             List<Node> topButtons = new ArrayList<>();
             Button newLineButton = new Button();
             newLineButton.setGraphic(StyleTools.getIconImageView("iconTurnOver.png"));
@@ -242,14 +244,26 @@ public class JShellEditor extends TreeNodeEditor {
             });
             topButtons.add(clearInputButton);
 
+            CheckBox closeCheck = new CheckBox();
+            closeCheck.setGraphic(StyleTools.getIconImageView("iconClose.png"));
+            NodeStyleTools.setTooltip(closeCheck, new Tooltip(message("CloseAfterPaste")));
+            closeCheck.setSelected(UserConfig.getBoolean(menuName + "ValuesCloseAfterPaste", true));
+            closeCheck.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent aevent) {
+                    UserConfig.setBoolean(menuName + "ValuesCloseAfterPaste", closeCheck.isSelected());
+                }
+            });
+            topButtons.add(closeCheck);
+
             CheckBox popCheck = new CheckBox();
             popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
             NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
-            popCheck.setSelected(UserConfig.getBoolean(interfaceName + "SyntaxPopWhenMouseHovering", false));
+            popCheck.setSelected(UserConfig.getBoolean(menuName + "PopWhenMouseHovering", false));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(interfaceName + "SyntaxPopWhenMouseHovering", popCheck.isSelected());
+                    UserConfig.setBoolean(menuName + "PopWhenMouseHovering", popCheck.isSelected());
                 }
             });
             topButtons.add(popCheck);
@@ -264,13 +278,13 @@ public class JShellEditor extends TreeNodeEditor {
                     "short maxShort = Short.MAX_VALUE, minShort = Short.MIN_VALUE;",
                     "String s1 =\"Hello\";",
                     "String[] sArray = new String[3]; "
-            ));
+            ), menuName);
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
                     ";", " , ", "( )", " = ", " { } ", "[ ]", "\"", " + ", " - ", " * ", " / "
-            ));
+            ), menuName);
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
                     " == ", " != ", " >= ", " > ", " <= ", " < ", " && ", " || ", " ! "
-            ));
+            ), menuName);
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
                     "if (3 > 2) {\n"
                     + "   int a = 1;\n"
@@ -282,7 +296,7 @@ public class JShellEditor extends TreeNodeEditor {
                     + "    double d = Math.PI;\n"
                     + "    if ( d > 3 ) break;\n"
                     + "}"
-            ));
+            ), menuName);
 
             Hyperlink alink = new Hyperlink("Learning the Java Language");
             alink.setOnAction(new EventHandler<ActionEvent>() {

@@ -65,7 +65,6 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
 
     public Data2DGroupStatisticController() {
         baseTitle = message("GroupStatistic");
-        TipsLabelKey = "GroupStatisticTips";
     }
 
     @Override

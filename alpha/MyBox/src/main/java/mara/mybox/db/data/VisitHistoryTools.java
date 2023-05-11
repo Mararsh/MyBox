@@ -67,7 +67,7 @@ public class VisitHistoryTools {
             return FileFilters.PdfExtensionFilter;
         } else if (fileType == FileType.Text) {
             return FileFilters.TextExtensionFilter;
-        } else if (fileType == FileType.Bytes) {
+        } else if (fileType == FileType.All) {
             return FileFilters.AllExtensionFilter;
         } else if (fileType == FileType.Markdown) {
             return FileFilters.MarkdownExtensionFilter;

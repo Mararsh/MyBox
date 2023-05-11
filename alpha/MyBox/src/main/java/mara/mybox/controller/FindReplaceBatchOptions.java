@@ -18,7 +18,7 @@ import mara.mybox.value.Languages;
  * @CreateDate 2020-11-16
  * @License Apache License Version 2.0
  */
-public class TextReplaceBatchOptions extends ControlFindReplace {
+public class FindReplaceBatchOptions extends ControlFindReplace {
 
     protected Charset charset;
     protected boolean autoDetermine;
@@ -28,7 +28,7 @@ public class TextReplaceBatchOptions extends ControlFindReplace {
     @FXML
     protected ComboBox<String> encodeBox;
 
-    public TextReplaceBatchOptions() {
+    public FindReplaceBatchOptions() {
         TipsLabelKey = "TextReplaceBatchTips";
     }
 
@@ -37,24 +37,26 @@ public class TextReplaceBatchOptions extends ControlFindReplace {
         try {
             super.setControls();
 
-            charsetGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue<? extends Toggle> ov,
-                        Toggle old_toggle, Toggle new_toggle) {
-                    checkCharset();
-                }
-            });
-
-            List<String> setNames = TextTools.getCharsetNames();
-            encodeBox.getItems().addAll(setNames);
-            encodeBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    checkCharset();
-                }
-            });
-            encodeBox.getSelectionModel().select(Charset.defaultCharset().name());
-
+            if (charsetGroup != null) {
+                charsetGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Toggle> ov,
+                            Toggle old_toggle, Toggle new_toggle) {
+                        checkCharset();
+                    }
+                });
+            }
+            if (encodeBox != null) {
+                List<String> setNames = TextTools.getCharsetNames();
+                encodeBox.getItems().addAll(setNames);
+                encodeBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue ov, String oldValue, String newValue) {
+                        checkCharset();
+                    }
+                });
+                encodeBox.getSelectionModel().select(Charset.defaultCharset().name());
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

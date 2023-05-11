@@ -238,6 +238,11 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
     }
 
     @FXML
+    protected void BytesFindBatch(ActionEvent event) {
+        loadScene(Fxmls.BytesFindBatchFxml);
+    }
+
+    @FXML
     protected void extractTextsFromMS(ActionEvent event) {
         loadScene(Fxmls.ExtractTextsFromMSFxml);
     }

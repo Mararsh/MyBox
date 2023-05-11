@@ -85,6 +85,7 @@ public class Fxmls {
     public static final String TextPopFxml = "/fxml/TextPop.fxml";
 
     public static final String BytesEditorFxml = "/fxml/BytesEditor.fxml";
+    public static final String BytesFindBatchFxml = "/fxml/BytesFindBatch.fxml";
     public static final String BytesPopFxml = "/fxml/BytesPop.fxml";
 
     public static final String WordViewFxml = "/fxml/WordView.fxml";

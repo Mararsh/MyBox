@@ -119,13 +119,13 @@ public class ControlJavaScriptRefer extends BaseInfoTreeController {
         try {
             MenuController controller
                     = PopTools.popJavaScriptExamples(this, event, scriptInput, interfaceName + "Examples");
-            moreExampleButtons(controller);
+            moreExampleButtons(controller, interfaceName + "Examples");
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    protected void moreExampleButtons(MenuController controller) {
+    protected void moreExampleButtons(MenuController controller, String menuName) {
 
     }
 

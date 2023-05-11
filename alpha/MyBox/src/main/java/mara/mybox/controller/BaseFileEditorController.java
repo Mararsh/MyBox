@@ -59,7 +59,7 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
         editType = Edit_Type.Bytes;
         defaultPageSize = 50000;
 
-        setFileType(VisitHistory.FileType.Bytes);
+        setFileType(VisitHistory.FileType.All);
     }
 
     public final void setMarkdownType() {

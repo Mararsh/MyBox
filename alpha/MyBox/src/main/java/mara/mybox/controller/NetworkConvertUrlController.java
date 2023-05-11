@@ -13,7 +13,6 @@ import javafx.scene.control.TextField;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.TextTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 
@@ -34,7 +33,7 @@ public class NetworkConvertUrlController extends BaseController {
     protected Button equalButton;
 
     public NetworkConvertUrlController() {
-        baseTitle = Languages.message("NetworkConvertUrl");
+        baseTitle = Languages.message("ConvertUrl");
         TipsLabelKey = "ConvertUrlTips";
     }
 

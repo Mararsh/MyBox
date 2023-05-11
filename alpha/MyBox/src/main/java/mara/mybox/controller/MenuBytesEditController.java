@@ -36,7 +36,7 @@ public class MenuBytesEditController extends MenuTextEditController {
 
     @Override
     public void setFileType() {
-        setFileType(VisitHistory.FileType.Bytes);
+        setFileType(VisitHistory.FileType.All);
     }
 
     @Override

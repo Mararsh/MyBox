@@ -21,8 +21,8 @@ public class MathFunctionController extends TreeManageController {
 
     public MathFunctionController() {
         baseTitle = message("MathFunction");
-        category = InfoNode.MathFunction;
         TipsLabelKey = "MathFunctionTips";
+        category = InfoNode.MathFunction;
         nameMsg = message("Title");
         valueMsg = message("MathFunction");
         moreMsg = message("FunctionDomain");

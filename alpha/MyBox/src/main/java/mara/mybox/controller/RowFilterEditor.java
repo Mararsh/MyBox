@@ -152,7 +152,7 @@ public class RowFilterEditor extends TreeNodeEditor {
     protected void scriptExamples(Event event) {
         try {
             MenuController controller = PopTools.popJavaScriptExamples(this, event, valueInput, interfaceName + "Examples");
-            PopTools.rowExpressionButtons(controller, valueInput, message("Column") + "1");
+            PopTools.rowExpressionButtons(controller, valueInput, message("Column") + "1", interfaceName + "Examples");
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

@@ -47,6 +47,11 @@ public abstract class MainMenuController_Help extends MainMenuController_Develop
     }
 
     @FXML
+    protected void InterfaceTips(ActionEvent event) {
+        openHtml(HelpTools.interfaceTips());
+    }
+
+    @FXML
     protected void AboutData2D(ActionEvent event) {
         openHtml(HelpTools.aboutData2D());
     }

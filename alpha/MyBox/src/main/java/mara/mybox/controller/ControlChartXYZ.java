@@ -47,7 +47,6 @@ public class ControlChartXYZ extends BaseController {
 
     public ControlChartXYZ() {
         baseTitle = message("XYZChart");
-        TipsLabelKey = "ChartXYZTips";
     }
 
     @Override
