@@ -16,7 +16,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
-import mara.mybox.data.JsonDomNode;
+import mara.mybox.data.JsonTreeNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
@@ -46,7 +46,7 @@ public class JsonEditorController extends BaseController {
     @FXML
     protected Label textsLabel;
     @FXML
-    protected ControlJsonDom domController;
+    protected ControlJsonTree domController;
     @FXML
     protected ControlFileBackup backupController;
     @FXML
@@ -54,6 +54,7 @@ public class JsonEditorController extends BaseController {
 
     public JsonEditorController() {
         baseTitle = message("JsonEditor");
+        TipsLabelKey = "JsonEditorTips";
         loadNotify = new SimpleBooleanProperty(false);
     }
 
@@ -300,7 +301,7 @@ public class JsonEditorController extends BaseController {
     }
 
     public String jsonByDom() {
-        return domController.jsonString();
+        return domController.jsonFormatString();
     }
 
     public void domChanged(boolean changed) {
@@ -311,7 +312,7 @@ public class JsonEditorController extends BaseController {
         }
     }
 
-    public void updateNode(TreeItem<JsonDomNode> item) {
+    public void updateNode(TreeItem<JsonTreeNode> item) {
         domChanged(true);
     }
 

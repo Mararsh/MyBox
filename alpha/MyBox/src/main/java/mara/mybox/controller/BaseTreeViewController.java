@@ -23,7 +23,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.TextClipboardTools;
-import mara.mybox.fxml.cell.TreeTableHierachyCell;
 import mara.mybox.fxml.cell.TreeTableTextTrimCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -75,7 +74,25 @@ public abstract class BaseTreeViewController<NodeP> extends BaseController {
     public void initTree() {
         try {
             hierarchyColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("title"));
-            hierarchyColumn.setCellFactory(new TreeTableHierachyCell());
+            hierarchyColumn.setCellFactory(new Callback<TreeTableColumn<NodeP, String>, TreeTableCell<NodeP, String>>() {
+                @Override
+                public TreeTableCell<NodeP, String> call(TreeTableColumn<NodeP, String> param) {
+
+                    TreeTableCell<NodeP, String> cell = new TreeTableCell<NodeP, String>() {
+                        @Override
+                        public void updateItem(String item, boolean empty) {
+                            super.updateItem(item, empty);
+                            setGraphic(null);
+                            if (empty || item == null) {
+                                setText(null);
+                                return;
+                            }
+                            setText(hierarchyNumber(getTreeTableView().getTreeItem(getIndex())));
+                        }
+                    };
+                    return cell;
+                }
+            });
 
             titleColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("title"));
             titleColumn.setCellFactory(new Callback<TreeTableColumn<NodeP, String>, TreeTableCell<NodeP, String>>() {
@@ -338,6 +355,14 @@ public abstract class BaseTreeViewController<NodeP> extends BaseController {
         }
     }
 
+    public String copyTitleMessage() {
+        return message("CopyTitle");
+    }
+
+    public String copyValueMessage() {
+        return message("CopyValue");
+    }
+
     /*
         actions
      */
@@ -415,14 +440,14 @@ public abstract class BaseTreeViewController<NodeP> extends BaseController {
         });
         items.add(menu);
 
-        menu = new MenuItem(message("CopyValue"), StyleTools.getIconImageView("iconCopySystem.png"));
+        menu = new MenuItem(copyValueMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             TextClipboardTools.copyToSystemClipboard(this, value(item.getValue()));
         });
         menu.setDisable(item == null);
         items.add(menu);
 
-        menu = new MenuItem(message("CopyTitle"), StyleTools.getIconImageView("iconCopySystem.png"));
+        menu = new MenuItem(copyTitleMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             TextClipboardTools.copyToSystemClipboard(this, title(item.getValue()));
         });

@@ -211,6 +211,16 @@ public class BaseHtmlTreeController extends BaseTreeViewController<HtmlNode> {
         return node == null ? null : node.getValue();
     }
 
+    @Override
+    public String copyTitleMessage() {
+        return message("CopyTag");
+    }
+
+    @Override
+    public String copyValueMessage() {
+        return message("CopyText");
+    }
+
     /*
         actions
      */

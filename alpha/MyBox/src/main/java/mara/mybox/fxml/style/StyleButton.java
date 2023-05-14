@@ -398,7 +398,7 @@ public class StyleButton {
             return new StyleData(id, message("SynchronizeChangesToOtherPanes"), "F10", "iconSynchronize.png");
         }
         if (id.startsWith("function")) {
-            return new StyleData(id, "", "", "iconFunction.png");
+            return new StyleData(id, message("Functions"), "", "iconFunction.png");
         }
         if (id.startsWith("style")) {
             return new StyleData(id, message("Style"), "", "iconStyle.png");
