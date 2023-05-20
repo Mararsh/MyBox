@@ -153,7 +153,7 @@ public class FilesRenameController extends BaseBatchFileController {
                         digit = Integer.parseInt(digitInput.getText());
                     } catch (Exception e) {
                         if (tableController.totalFilesNumber <= 0) {
-                            tableController.countSize();
+                            tableController.countSize(false);
                         }
                         digit = (tableController.totalFilesNumber + "").length();
                     }

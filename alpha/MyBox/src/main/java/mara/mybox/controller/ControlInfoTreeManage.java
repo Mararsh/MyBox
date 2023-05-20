@@ -220,29 +220,7 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
         Menu viewMenu = new Menu(message("View"), StyleTools.getIconImageView("iconView.png"));
         items.add(viewMenu);
 
-        menu = new MenuItem(message("UnfoldNode"), StyleTools.getIconImageView("iconPlus.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            unfoldNode();
-        });
-        viewMenu.getItems().add(menu);
-
-        menu = new MenuItem(message("UnfoldNodeAndDescendants"), StyleTools.getIconImageView("iconPlus.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            unfoldNodeAndDecendants();
-        });
-        viewMenu.getItems().add(menu);
-
-        menu = new MenuItem(message("FoldNode"), StyleTools.getIconImageView("iconMinus.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            foldNode();
-        });
-        viewMenu.getItems().add(menu);
-
-        menu = new MenuItem(message("FoldNodeAndDescendants"), StyleTools.getIconImageView("iconMinus.png"));
-        menu.setOnAction((ActionEvent menuItemEvent) -> {
-            foldNodeAndDecendants();
-        });
-        viewMenu.getItems().add(menu);
+        viewMenu.getItems().addAll(foldItems(treeItem));
 
         menu = new MenuItem(message("LoadChildren"), StyleTools.getIconImageView("iconList.png"));
         menu.setOnAction(new EventHandler<ActionEvent>() {

@@ -55,6 +55,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
 
     protected long totalFilesNumber, totalFilesSize, fileSelectorSize, fileSelectorTime, currentIndex;
     protected FileSelectorType fileSelectorType;
+    protected boolean countSubdir;
 
     @FXML
     protected Button addFilesButton, insertFilesButton, addDirectoryButton, insertDirectoryButton,
@@ -283,7 +284,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             return;
         }
         super.tableChanged();
-        countSize();
+        countSize(false);
     }
 
     @Override
@@ -292,7 +293,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             return;
         }
         checkButtons();
-        countSize();
+        countSize(false);
     }
 
     @Override
@@ -447,10 +448,10 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
     }
 
     public boolean countDirectories() {
-        return UserConfig.getBoolean("FilesTableCountSubDir", true);
+        return UserConfig.getBoolean("FilesTableCountSubdir", true);
     }
 
-    public void countSize() {
+    public void countSize(boolean reset) {
         if (backgroundTask != null) {
             backgroundTask.cancel();
         }
@@ -476,27 +477,14 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
                         continue;
                     }
                     if (info.getFile().isDirectory()) {
-                        boolean sub = UserConfig.getBoolean("FilesTableHandleSubDir", true);
-                        info.setDirectorySize(sub);
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                tableView.refresh();
-                            }
-                        });
-                        if (countDirectories()) {
-                            info.countDirectorySize(backgroundTask, sub);
-                            if (backgroundTask == null || isCancelled()) {
-                                canceled = true;
-                                return false;
-                            }
-                            totalFilesNumber += info.getFilesNumber();
-                            totalFilesSize += info.getFileSize();
+                        info.countDirectorySize(backgroundTask, countDirectories(), reset);
+                        if (backgroundTask == null || isCancelled()) {
+                            canceled = true;
+                            return false;
                         }
-                    } else {
-                        totalFilesNumber += info.getFilesNumber();
-                        totalFilesSize += info.getFileSize();
                     }
+                    totalFilesNumber += info.getFilesNumber();
+                    totalFilesSize += info.getFileSize();
                 }
                 return true;
             }
@@ -649,12 +637,10 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
         if (tableLabel != null) {
             String s = MessageFormat.format(message("TotalFilesNumberSize"),
                     totalFilesNumber, FileTools.showFileSize(totalFilesSize));
-            if (!UserConfig.getBoolean("FilesTableCountSubdir", true)) {
-                s += "    (" + message("NotIncludeFolders") + ")";
-            } else if (!UserConfig.getBoolean("FilesTableHandleSubdir", true)) {
-                s += "    (" + message("NotIncludeSubFolders") + ")";
-            } else {
+            if (UserConfig.getBoolean("FilesTableCountSubdir", true)) {
                 s += "    (" + message("IncludeFolders") + ")";
+            } else {
+                s += "    (" + message("NotIncludeSubFolders") + ")";
             }
             if (viewButton != null) {
                 s += "    " + message("DoubleClickToView");
@@ -1030,7 +1016,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             @Override
             public void handle(ActionEvent event) {
                 UserConfig.setBoolean("FilesTableHandleSubdir", handleSubdirMenu.isSelected());
-                countSize();
+                countSize(true);
             }
         });
         items.add(handleSubdirMenu);
@@ -1051,7 +1037,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             @Override
             public void handle(ActionEvent event) {
                 UserConfig.setBoolean("FilesTableCountSubdir", countSubdirMenu.isSelected());
-                countSize();
+                countSize(true);
             }
         });
         items.add(countSubdirMenu);

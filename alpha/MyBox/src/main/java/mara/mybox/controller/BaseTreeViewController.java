@@ -197,7 +197,7 @@ public abstract class BaseTreeViewController<NodeP> extends BaseController {
         treeView.getSelectionModel().select(nodeitem);
         isSettingValues = false;
         int index = treeView.getRow(nodeitem);
-        treeView.scrollTo(index > 3 ? index - 3 : index);
+        treeView.scrollTo(Math.max(0, index - 3));
     }
 
     public void focusNode(NodeP node) {
@@ -413,7 +413,7 @@ public abstract class BaseTreeViewController<NodeP> extends BaseController {
         return viewItems(item);
     }
 
-    public List<MenuItem> viewItems(TreeItem<NodeP> item) {
+    public List<MenuItem> foldItems(TreeItem<NodeP> item) {
         List<MenuItem> items = new ArrayList<>();
 
         MenuItem menu = new MenuItem(message("UnfoldNode"), StyleTools.getIconImageView("iconPlus.png"));
@@ -440,7 +440,13 @@ public abstract class BaseTreeViewController<NodeP> extends BaseController {
         });
         items.add(menu);
 
-        menu = new MenuItem(copyValueMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
+        return items;
+    }
+
+    public List<MenuItem> viewItems(TreeItem<NodeP> item) {
+        List<MenuItem> items = foldItems(item);
+
+        MenuItem menu = new MenuItem(copyValueMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             TextClipboardTools.copyToSystemClipboard(this, value(item.getValue()));
         });

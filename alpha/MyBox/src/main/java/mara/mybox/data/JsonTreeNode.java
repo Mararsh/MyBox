@@ -1,14 +1,20 @@
 package mara.mybox.data;
 
+import com.fasterxml.jackson.core.json.JsonReadFeature;
+import com.fasterxml.jackson.core.json.JsonWriteFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.sql.Connection;
 import java.util.Iterator;
 import java.util.Map;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -122,9 +128,106 @@ public class JsonTreeNode {
      */
     public static ObjectMapper jsonMapper() {
         if (jsonMapper == null) {
-            jsonMapper = new ObjectMapper();
+            try (Connection conn = DerbyBase.getConnection()) {
+                JsonMapper.Builder builder = JsonMapper.builder();
+
+                if (UserConfig.getBoolean(conn, "JacksonAllowJavaComments", false)) {
+                    builder.enable(JsonReadFeature.ALLOW_JAVA_COMMENTS);
+                } else {
+                    builder.disable(JsonReadFeature.ALLOW_JAVA_COMMENTS);
+                }
+                if (UserConfig.getBoolean(conn, "JacksonAllowYamlComments", false)) {
+                    builder.enable(JsonReadFeature.ALLOW_YAML_COMMENTS);
+                } else {
+                    builder.disable(JsonReadFeature.ALLOW_YAML_COMMENTS);
+                }
+                if (UserConfig.getBoolean(conn, "JacksonAllowSingleQuotes", false)) {
+                    builder.enable(JsonReadFeature.ALLOW_SINGLE_QUOTES);
+                } else {
+                    builder.disable(JsonReadFeature.ALLOW_SINGLE_QUOTES);
+                }
+                if (UserConfig.getBoolean(conn, "JacksonAllowUnquotedFieldNames", false)) {
+                    builder.enable(JsonReadFeature.ALLOW_UNQUOTED_FIELD_NAMES);
+                } else {
+                    builder.disable(JsonReadFeature.ALLOW_UNQUOTED_FIELD_NAMES);
+                }
+                if (UserConfig.getBoolean(conn, "JacksonAllowUnescapedControlChars", false)) {
+                    builder.enable(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS);
+                } else {
+                    builder.disable(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS);
+                }
+                if (UserConfig.getBoolean(conn, "JacksonAllowBackslashEscapingAny", false)) {
+                    builder.enable(JsonReadFeature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER);
+                } else {
+                    builder.disable(JsonReadFeature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER);
+                }
+                if (UserConfig.getBoolean(conn, "JacksonAllowLeadingZerosForNumbers", false)) {
+                    builder.enable(JsonReadFeature.ALLOW_LEADING_ZEROS_FOR_NUMBERS);
+                } else {
+                    builder.disable(JsonReadFeature.ALLOW_LEADING_ZEROS_FOR_NUMBERS);
+                }
+                if (UserConfig.getBoolean(conn, "JacksonAllowLeadingPlusSignForNumbers", false)) {
+                    builder.enable(JsonReadFeature.ALLOW_LEADING_PLUS_SIGN_FOR_NUMBERS);
+                } else {
+                    builder.disable(JsonReadFeature.ALLOW_LEADING_PLUS_SIGN_FOR_NUMBERS);
+                }
+                if (UserConfig.getBoolean(conn, "JacksonAllowLeadingDecimalPointForNumbers", false)) {
+                    builder.enable(JsonReadFeature.ALLOW_LEADING_DECIMAL_POINT_FOR_NUMBERS);
+                } else {
+                    builder.disable(JsonReadFeature.ALLOW_LEADING_DECIMAL_POINT_FOR_NUMBERS);
+                }
+                if (UserConfig.getBoolean(conn, "JacksonAllowTrailingDecimalPointForNumbers", false)) {
+                    builder.enable(JsonReadFeature.ALLOW_TRAILING_DECIMAL_POINT_FOR_NUMBERS);
+                } else {
+                    builder.disable(JsonReadFeature.ALLOW_TRAILING_DECIMAL_POINT_FOR_NUMBERS);
+                }
+                if (UserConfig.getBoolean(conn, "JacksonAllowNonNumericNumbers", false)) {
+                    builder.enable(JsonReadFeature.ALLOW_NON_NUMERIC_NUMBERS);
+                } else {
+                    builder.disable(JsonReadFeature.ALLOW_NON_NUMERIC_NUMBERS);
+                }
+                if (UserConfig.getBoolean(conn, "JacksonAllowMissingValues", false)) {
+                    builder.enable(JsonReadFeature.ALLOW_MISSING_VALUES);
+                } else {
+                    builder.disable(JsonReadFeature.ALLOW_MISSING_VALUES);
+                }
+                if (UserConfig.getBoolean(conn, "JacksonAllowTrailingComma", false)) {
+                    builder.enable(JsonReadFeature.ALLOW_TRAILING_COMMA);
+                } else {
+                    builder.disable(JsonReadFeature.ALLOW_TRAILING_COMMA);
+                }
+                if (UserConfig.getBoolean(conn, "JacksonQuoteFieldNames", true)) {
+                    builder.enable(JsonWriteFeature.QUOTE_FIELD_NAMES);
+                } else {
+                    builder.disable(JsonWriteFeature.QUOTE_FIELD_NAMES);
+                }
+                if (UserConfig.getBoolean(conn, "JacksonWriteNanAsStrings", true)) {
+                    builder.enable(JsonWriteFeature.WRITE_NAN_AS_STRINGS);
+                } else {
+                    builder.disable(JsonWriteFeature.WRITE_NAN_AS_STRINGS);
+                }
+                if (UserConfig.getBoolean(conn, "JacksonWriteNumbersAsStrings", false)) {
+                    builder.enable(JsonWriteFeature.WRITE_NUMBERS_AS_STRINGS);
+                } else {
+                    builder.disable(JsonWriteFeature.WRITE_NUMBERS_AS_STRINGS);
+                }
+                if (UserConfig.getBoolean(conn, "JacksonEscapeNonASCII", false)) {
+                    builder.enable(JsonWriteFeature.ESCAPE_NON_ASCII);
+                } else {
+                    builder.disable(JsonWriteFeature.ESCAPE_NON_ASCII);
+                }
+
+                jsonMapper = builder.build();
+            } catch (Exception e) {
+                MyBoxLog.error(e);
+                return null;
+            }
         }
         return jsonMapper;
+    }
+
+    public static void resetJsonMapper() {
+        jsonMapper = null;
     }
 
     public static String stringByJackson(JsonNode jsonNode) {

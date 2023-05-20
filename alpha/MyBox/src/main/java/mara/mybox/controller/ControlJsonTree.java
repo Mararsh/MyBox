@@ -1,22 +1,28 @@
 package mara.mybox.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
 import mara.mybox.data.JsonTreeNode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -27,20 +33,11 @@ import static mara.mybox.value.Languages.message;
 public class ControlJsonTree extends BaseTreeViewController<JsonTreeNode> {
 
     protected JsonEditorController jsonEditor;
-    protected TreeItem<JsonTreeNode> currentItem;
 
     @FXML
     protected TreeTableColumn<JsonTreeNode, String> typeColumn;
     @FXML
-    protected TextField nameInput;
-    @FXML
-    protected ToggleGroup valueGroup;
-    @FXML
-    protected RadioButton stringRadio, numberRadio, booleanRadio, nullRadio;
-    @FXML
-    protected TextArea textArea;
-    @FXML
-    protected VBox editBox, valueBox;
+    protected ControlJsonNodeEdit nodeController;
 
     @Override
     public void initControls() {
@@ -48,6 +45,10 @@ public class ControlJsonTree extends BaseTreeViewController<JsonTreeNode> {
             super.initControls();
 
             typeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("typename"));
+
+            nodeController.setParameters(this);
+
+            clearTree();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -154,7 +155,7 @@ public class ControlJsonTree extends BaseTreeViewController<JsonTreeNode> {
             }
             TreeItem<JsonTreeNode> parentItem = item.getParent();
             if (parentItem == null) {
-                return null;
+                return loadTree(jsonTreeNode.getJsonNode());
             }
             int index = parentItem.getChildren().indexOf(item);
             if (index < 0) {
@@ -175,7 +176,14 @@ public class ControlJsonTree extends BaseTreeViewController<JsonTreeNode> {
 
     @Override
     public void itemClicked(MouseEvent event, TreeItem<JsonTreeNode> item) {
-        editNode(item);
+        nodeController.editNode(item);
+    }
+
+    @FXML
+    @Override
+    public void clearTree() {
+        super.clearTree();
+        nodeController.clearNode();
     }
 
     /*
@@ -213,6 +221,159 @@ public class ControlJsonTree extends BaseTreeViewController<JsonTreeNode> {
     /*
         actions
      */
+    @Override
+    public List<MenuItem> functionItems(TreeItem<JsonTreeNode> treeItem) {
+        JsonTreeNode jsonTreeNode = treeItem.getValue();
+        List<MenuItem> items = new ArrayList<>();
+
+        Menu viewMenu = new Menu(message("View"), StyleTools.getIconImageView("iconView.png"));
+        items.add(viewMenu);
+
+        viewMenu.getItems().addAll(viewItems(treeItem));
+
+        items.add(new SeparatorMenuItem());
+
+        if (jsonTreeNode.isObject()) {
+            MenuItem menu = new MenuItem(message("AddField"), StyleTools.getIconImageView("iconAdd.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                JsonAddField.open(this, treeItem);
+            });
+            items.add(menu);
+
+        } else if (jsonTreeNode.isArray()) {
+            MenuItem menu = new MenuItem(message("AddElement"), StyleTools.getIconImageView("iconAdd.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                JsonAddElement.open(this, treeItem);
+            });
+            items.add(menu);
+
+        }
+
+        MenuItem menu = new MenuItem(message("DeleteNode"), StyleTools.getIconImageView("iconDelete.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            deleteNode(treeItem);
+        });
+        items.add(menu);
+
+        menu = new MenuItem(message("DuplicateAfterNode"), StyleTools.getIconImageView("iconCopy.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            duplicate(treeItem, true);
+        });
+        menu.setDisable(treeItem.getParent() == null);
+        items.add(menu);
+
+        menu = new MenuItem(message("DuplicateToParentEnd"), StyleTools.getIconImageView("iconCopy.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            duplicate(treeItem, false);
+        });
+        menu.setDisable(treeItem.getParent() == null);
+        items.add(menu);
+
+        return items;
+    }
+
+    public void deleteNode(TreeItem<JsonTreeNode> treeItem) {
+        try {
+            if (treeItem == null) {
+                return;
+            }
+            TreeItem<JsonTreeNode> parentItem = treeItem.getParent();
+            if (parentItem == null) {
+                if (PopTools.askSure(getTitle(), message("SureClear"))) {
+                    clearTree();
+                }
+                return;
+            }
+
+            String itemName = treeItem.getValue().getTitle();
+            JsonNode parentNode = parentItem.getValue().getJsonNode();
+
+            if (parentNode.isArray()) {
+                int index = Integer.parseInt(itemName) - 1;
+                ArrayNode arrayNode = (ArrayNode) parentNode;
+                arrayNode.remove(index);
+                parentItem.getValue().setJsonNode(arrayNode);
+
+            } else if (parentNode.isObject()) {
+                ObjectNode objectNode = (ObjectNode) parentNode;
+                objectNode.remove(itemName);
+                parentItem.getValue().setJsonNode(objectNode);
+            }
+
+            updateTreeItem(parentItem);
+            jsonEditor.domChanged(true);
+            jsonEditor.popInformation(message("DeletedSuccessfully"));
+
+            nodeController.clearNode();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void duplicate(TreeItem<JsonTreeNode> treeItem, boolean afterNode) {
+        try {
+            if (treeItem == null) {
+                return;
+            }
+            TreeItem<JsonTreeNode> parentItem = treeItem.getParent();
+            if (parentItem == null) {
+                return;
+            }
+            String itemName = treeItem.getValue().getTitle();
+            JsonNode parentNode = parentItem.getValue().getJsonNode();
+            JsonNode newNode = treeItem.getValue().getJsonNode().deepCopy();
+
+            if (parentNode.isArray()) {
+                ArrayNode arrayNode = (ArrayNode) parentNode;
+                if (afterNode) {
+                    arrayNode.insert(Integer.parseInt(itemName), newNode);
+                } else {
+                    arrayNode.add(newNode);
+                }
+                parentItem.getValue().setJsonNode(arrayNode);
+
+            } else if (parentNode.isObject()) {
+                ObjectNode objectNode = (ObjectNode) parentNode;
+                Iterator<Map.Entry<String, JsonNode>> fields = parentNode.fields();
+                List<String> names = new ArrayList<>();
+                while (fields.hasNext()) {
+                    names.add(fields.next().getKey());
+                }
+                String newName = itemName + "_Copy";
+                while (names.contains(newName)) {
+                    newName = itemName + "_Copy" + new Date().getTime();
+                }
+                if (afterNode) {
+                    fields = parentNode.fields();
+                    Map<String, JsonNode> newFields = new LinkedHashMap<>();
+                    while (fields.hasNext()) {
+                        Map.Entry<String, JsonNode> field = fields.next();
+                        String fieldName = field.getKey();
+                        JsonNode fieldValue = field.getValue();
+                        newFields.put(fieldName, fieldValue);
+                        if (itemName.equals(fieldName)) {
+                            newFields.put(newName, newNode);
+                        }
+                    }
+                    newFields.put(newName, newNode);
+                    objectNode.removeAll();
+                    objectNode.setAll(newFields);
+                } else {
+                    objectNode.set(newName, newNode);
+                }
+                parentItem.getValue().setJsonNode(objectNode);
+            }
+
+            updateTreeItem(parentItem);
+            jsonEditor.domChanged(true);
+            jsonEditor.popInformation(message("DeletedSuccessfully"));
+
+            nodeController.clearNode();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     @FXML
     @Override
     public void refreshAction() {
@@ -225,109 +386,6 @@ public class ControlJsonTree extends BaseTreeViewController<JsonTreeNode> {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    /*
-        edit
-     */
-    public void editNode(TreeItem<JsonTreeNode> item) {
-        currentItem = item;
-        if (currentItem == null) {
-            clearNode();
-            return;
-        }
-        JsonTreeNode currentTreeNode = currentItem.getValue();
-        if (currentTreeNode == null) {
-            clearNode();
-            return;
-        }
-        TreeItem<JsonTreeNode> parentItem = item.getParent();
-        JsonTreeNode parentNode = parentItem == null ? null : parentItem.getValue();
-        nameInput.setText(currentTreeNode.getTitle());
-        nameInput.setDisable(parentNode == null || !parentNode.isObject());
-        textArea.setText(currentTreeNode.getValue());
-        valueBox.setVisible(true);
-        switch (currentTreeNode.getType()) {
-            case String:
-                stringRadio.setSelected(true);
-                break;
-            case Number:
-                numberRadio.setSelected(true);
-                break;
-            case Boolean:
-                booleanRadio.setSelected(true);
-                break;
-            case Null:
-                nullRadio.setSelected(true);
-                break;
-            default:
-                valueBox.setVisible(false);
-        }
-        editBox.setDisable(nameInput.isDisable() && !valueBox.isVisible());
-    }
-
-    @FXML
-    public void recoverNode() {
-        editNode(currentItem);
-    }
-
-    @FXML
-    public void okNode() {
-        try {
-            if (currentItem == null) {
-                return;
-            }
-            String newName = nameInput.getText();
-            if (newName == null) {
-                popError(message("InvalidParameter") + ": " + message("Name"));
-                return;
-            }
-            JsonTreeNode currentTreeNode = currentItem.getValue();
-            if (currentTreeNode == null) {
-                return;
-            }
-            TreeItem<JsonTreeNode> parentItem = currentItem.getParent();
-            ObjectNode parentObjectNode = parentItem == null ? null
-                    : (ObjectNode) parentItem.getValue().getJsonNode();
-            String currentName = currentTreeNode.getTitle();
-
-            String newValue = textArea.getText();
-            if (nameInput.isEditable()) {
-                if (parentObjectNode == null) {
-                    return;
-                }
-                if (textArea.isEditable()) {
-                    if (!newName.equals(currentName)) {
-                        parentObjectNode.remove(currentName);
-                    }
-                    parentObjectNode.put(newValue, newValue);
-                } else {
-                    parentObjectNode.put(currentName, newValue);
-                }
-                updateTreeItem(parentItem);
-            } else {
-                if (!textArea.isEditable()) {
-                    return;
-                }
-                updateTreeItem(parentItem);
-                ObjectNode currentObjectNode = (ObjectNode) currentTreeNode.getJsonNode();
-//                currentObjectNode.
-//                        updateTreeItem(currentItem);
-            }
-
-            editNode(currentItem);
-            jsonEditor.domChanged(true);
-            jsonEditor.popInformation(message("UpdateSuccessfully"));
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    protected void clearNode() {
-        currentItem = null;
-        nameInput.clear();
-        textArea.clear();
-        editBox.setDisable(true);
     }
 
 }

@@ -71,6 +71,8 @@ public class Fxmls {
     public static final String MarkdownPopFxml = "/fxml/MarkdownPop.fxml";
 
     public static final String JsonEditorFxml = "/fxml/JsonEditor.fxml";
+    public static final String JsonAddFieldFxml = "/fxml/JsonAddField.fxml";
+    public static final String JsonAddElementFxml = "/fxml/JsonAddElement.fxml";
 
     public static final String TextEditorFxml = "/fxml/TextEditor.fxml";
     public static final String TextFilesConvertFxml = "/fxml/TextFilesConvert.fxml";

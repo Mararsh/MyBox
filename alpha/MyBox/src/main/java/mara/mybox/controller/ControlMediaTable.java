@@ -244,7 +244,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
     }
 
     @Override
-    public void countSize() {
+    public void countSize(boolean reset) {
         updateLabel();
     }
 

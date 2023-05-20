@@ -236,6 +236,7 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
     /*
         actions
      */
+    @Override
     public List<MenuItem> functionItems(TreeItem<InfoNode> inItem) {
         List<MenuItem> items = viewItems(inItem);
 
