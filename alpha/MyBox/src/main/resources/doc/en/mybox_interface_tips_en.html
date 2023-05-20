@@ -91,6 +91,25 @@ More shortcuts can be found in help.</PRE>
     Some page is renderred in lazy way that page contents are loaded while scroll the screen.
  -  Check whether the size of window and font is suitable. Bigger window and font means better snaps.
  -  It is better to close the pop windows. Or else they will be snapped repeatedly.</PRE>
+    <H3>Edit JSON</H3>
+    <PRE>This tool:
+  - Parse and handle JSON data, based on JACKSON.
+  - Load all data, so it is not suitable for JSON file which holds large amount of data.
+  - User can edit JSON in 2 modes:
+         - Tree. Json Nodes can be added, modified, and deleted.
+         - Texts. Json data can be changed and parsed in string.
+
+Composition of JSON:
+  - String: Set of unicode characters and enclosed by double quotes
+  - Constant: true/false/null
+  - Name: String
+  - Value: Number/String/Constant/Object/Array
+  - Field: 
+           Name: Value
+  - Object:
+           { Field1, Field2, ... }
+  - Array:
+           [ Value1, Value2, ... ]</PRE>
     <H3>Edit Text</H3>
     <PRE>This tool helps to edit text file:
 -  Charset and Line Break are determined automatically when file is opened. 

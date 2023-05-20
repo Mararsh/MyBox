@@ -313,6 +313,9 @@ public class HelpTools {
             s.append("    <H3>").append(message("HtmlSnap")).append("</H3>\n");
             s.append("    <PRE>").append(message("HtmlSnapComments")).append("</PRE>\n");
 
+            s.append("    <H3>").append(message("JsonEditor")).append("</H3>\n");
+            s.append("    <PRE>").append(message("JsonEditorTips")).append("</PRE>\n");
+
             s.append("    <H3>").append(message("TextEditer")).append("</H3>\n");
             s.append("    <PRE>").append(message("TextEditerTips")).append("</PRE>\n");
 
