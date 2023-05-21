@@ -25,7 +25,7 @@ public class JsonTreeNode {
 
     public static ObjectMapper jsonMapper;
 
-    protected String title, value;
+    protected String title;
     protected JsonNode jsonNode;
     protected NodeType type;
     protected boolean isArrayElement;
@@ -39,46 +39,48 @@ public class JsonTreeNode {
         title = null;
         jsonNode = null;
         type = null;
-        value = null;
         isArrayElement = false;
     }
 
     public JsonTreeNode(String name, JsonNode jsonNode) {
         this.title = name;
         this.jsonNode = jsonNode;
+
         if (jsonNode == null) {
             type = NodeType.Root;
 
         } else if (jsonNode.isNull()) {
             type = NodeType.Null;
-            value = null;
-
-        } else if (jsonNode.isBoolean()) {
-            type = NodeType.Boolean;
-            value = jsonNode.asText();
-
-        } else if (jsonNode.isNumber()) {
-            type = NodeType.Number;
-            value = jsonNode.asText();
-
-        } else if (jsonNode.isTextual() || jsonNode.isBinary()) {
-            type = NodeType.String;
-            value = jsonNode.asText();
-
-        } else if (jsonNode.isArray()) {
-            type = NodeType.Array;
-
-        } else if (jsonNode.isObject()) {
-            type = NodeType.Object;
 
         } else {
-            type = NodeType.Unknown;
+            if (jsonNode.isBoolean()) {
+                type = NodeType.Boolean;
 
+            } else if (jsonNode.isNumber()) {
+                type = NodeType.Number;
+
+            } else if (jsonNode.isTextual() || jsonNode.isBinary()) {
+                type = NodeType.String;
+
+            } else if (jsonNode.isArray()) {
+                type = NodeType.Array;
+
+            } else if (jsonNode.isObject()) {
+                type = NodeType.Object;
+
+            } else {
+                type = NodeType.Unknown;
+
+            }
         }
     }
 
     public String getTypename() {
         return type == null ? null : message(type.name());
+    }
+
+    public String getValue() {
+        return jsonNode == null || type == NodeType.Null ? null : formatByJackson(jsonNode);
     }
 
     public boolean isRoot() {
@@ -325,10 +327,6 @@ public class JsonTreeNode {
 
     public JsonNode getJsonNode() {
         return jsonNode;
-    }
-
-    public String getValue() {
-        return value;
     }
 
     public NodeType getType() {

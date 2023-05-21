@@ -115,7 +115,7 @@ public class UrlTools {
         try {
             URL baseUrl = UrlTools.url(baseAddress);
             if (baseUrl == null) {
-                return null;
+                return address;
             }
             URL url = fullUrl(baseUrl, address);
             return url.toString();

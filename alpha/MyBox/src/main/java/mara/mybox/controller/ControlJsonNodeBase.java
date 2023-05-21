@@ -55,33 +55,33 @@ public class ControlJsonNodeBase extends BaseController {
     }
 
     public void checkValue() {
-        if (stringRadio.isSelected() || numberRadio.isSelected() || jsonRadio.isSelected()) {
-            if (treeItem == null || treeItem.getValue() == null) {
-                textArea.clear();
-            } else {
-                textArea.setText(treeItem.getValue().getValue());
-            }
-            textArea.setDisable(false);
-        } else {
-            textArea.clear();
+        textArea.clear();
+
+        if (nullRadio.isSelected() || trueRadio.isSelected() || falseRadio.isSelected()) {
             textArea.setDisable(true);
+
+        } else {
+
+            if (stringRadio.isSelected()) {
+                textArea.setText("\"\"");
+
+            } else if (numberRadio.isSelected()) {
+                textArea.setText("0");
+
+            } else if (objectRadio.isSelected()) {
+                textArea.setText("{ }");
+
+            } else if (arrayRadio.isSelected()) {
+                textArea.setText("[ ]");
+
+            }
+
+            textArea.setDisable(false);
         }
     }
 
     public JsonNode pickValue() {
         try {
-            String newValue = textArea.getText();
-            if (numberRadio.isSelected()) {
-                try {
-                    Double.parseDouble(newValue);
-                } catch (Exception e) {
-                    popError(message("InvalidData"));
-                    return null;
-                }
-            }
-
-            JsonTreeNode currentTreeNode = treeItem != null ? treeItem.getValue() : null;
-
             if (trueRadio.isSelected()) {
                 return JsonTreeNode.parseByJackson("true");
 
@@ -91,38 +91,25 @@ public class ControlJsonNodeBase extends BaseController {
             } else if (nullRadio.isSelected()) {
                 return JsonTreeNode.parseByJackson("null");
 
-            } else if (numberRadio.isSelected()) {
-                return JsonTreeNode.parseByJackson(newValue);
-
-            } else if (stringRadio.isSelected()) {
-                return JsonTreeNode.parseByJackson("\"" + newValue + "\"");
-
-            } else if (objectRadio.isSelected()) {
-                if (currentTreeNode != null && currentTreeNode.isObject()) {
-                    return currentTreeNode.getJsonNode();
-                } else {
-                    return JsonTreeNode.parseByJackson("{}");
-                }
-
-            } else if (arrayRadio.isSelected()) {
-                if (currentTreeNode != null && currentTreeNode.isArray()) {
-                    return currentTreeNode.getJsonNode();
-                } else {
-                    return JsonTreeNode.parseByJackson("[]");
-                }
-
-            } else if (jsonRadio.isSelected()) {
-                return JsonTreeNode.parseByJackson(newValue);
-
             } else {
-                return null;
+                String newValue = textArea.getText();
+                if (numberRadio.isSelected()) {
+                    try {
+                        Double.parseDouble(newValue);
+                    } catch (Exception e) {
+                        popError(message("InvalidData"));
+                        return null;
+                    }
+
+                }
+                return JsonTreeNode.parseByJackson(newValue);
+
             }
 
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
         }
-
     }
 
     public void clearNode() {

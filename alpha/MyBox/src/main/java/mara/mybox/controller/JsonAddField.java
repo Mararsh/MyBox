@@ -41,7 +41,7 @@ public class JsonAddField extends ControlJsonNodeBase {
                 return;
             }
             String newName = nameInput.getText();
-            if (newName == null) {
+            if (newName == null || newName.isBlank()) {
                 popError(message("InvalidParameter") + ": " + message("Name"));
                 return;
             }

@@ -34,7 +34,7 @@ License:    Apache License Version 2.0
             <children>
                 <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                     <children>
-                  <Label text="%Address" />
+                        <Label text="%Address" />
                         <TextField fx:id="addressInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                         <Button fx:id="goButton" layoutX="924.0" layoutY="10.0" mnemonicParsing="false" onAction="#goAction">
                             <graphic>
@@ -69,36 +69,36 @@ License:    Apache License Version 2.0
                     <tabs>
                         <Tab text="%Information">
                             <content>
-                                <VBox fx:id="thisPane1" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                <VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <padding>
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                     </padding>
                                     <children>
-                              <fx:include fx:id="info" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlHtmlView.fxml" VBox.vgrow="ALWAYS" />
+                                        <fx:include fx:id="info" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlHtmlView.fxml" VBox.vgrow="ALWAYS" />
                                     </children>
                                 </VBox>
                             </content>
                         </Tab>
-                  <Tab text="ipaddress.com">
-                     <content>
-                        <VBox fx:id="thisPane12" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                           <padding>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </padding>
-                           <children>
-                              <fx:include fx:id="ipaddress" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlHtmlView.fxml" VBox.vgrow="ALWAYS" />
-                           </children>
-                        </VBox>
-                     </content>
-                  </Tab>
-                        <Tab text="%Header">
+                        <Tab text="ipaddress.com">
                             <content>
-                                <VBox fx:id="thisPane11" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                <VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <padding>
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                     </padding>
                                     <children>
-                              <fx:include fx:id="header" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlHtmlView.fxml" VBox.vgrow="ALWAYS" />
+                                        <fx:include fx:id="ipaddress" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlHtmlView.fxml" VBox.vgrow="ALWAYS" />
+                                    </children>
+                                </VBox>
+                            </content>
+                        </Tab>
+                        <Tab text="%Header">
+                            <content>
+                                <VBox  alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                    <padding>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                    </padding>
+                                    <children>
+                                        <fx:include fx:id="header" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlHtmlView.fxml" VBox.vgrow="ALWAYS" />
                                     </children>
                                 </VBox>
                             </content>

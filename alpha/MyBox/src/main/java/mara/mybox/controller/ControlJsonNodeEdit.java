@@ -23,6 +23,39 @@ public class ControlJsonNodeEdit extends ControlJsonNodeBase {
         this.treeController = treeController;
     }
 
+    @Override
+    public void checkValue() {
+        if (nullRadio.isSelected() || trueRadio.isSelected() || falseRadio.isSelected()) {
+            textArea.clear();
+            textArea.setDisable(true);
+
+        } else {
+            JsonTreeNode currentTreeNode = treeItem != null ? treeItem.getValue() : null;
+            String value = currentTreeNode != null ? currentTreeNode.getValue() : null;
+
+            if (stringRadio.isSelected() || numberRadio.isSelected() || jsonRadio.isSelected()) {
+                textArea.setText(value);
+
+            } else if (objectRadio.isSelected()) {
+                if (currentTreeNode != null && currentTreeNode.isObject()) {
+                    textArea.setText(value);
+                } else {
+                    textArea.setText("{ }");
+                }
+
+            } else if (arrayRadio.isSelected()) {
+                if (currentTreeNode != null && currentTreeNode.isArray()) {
+                    textArea.setText(value);
+                } else {
+                    textArea.setText("[ ]");
+                }
+
+            }
+
+            textArea.setDisable(false);
+        }
+    }
+
     public void editNode(TreeItem<JsonTreeNode> item) {
         treeItem = item;
         if (treeItem == null) {
@@ -75,7 +108,7 @@ public class ControlJsonNodeEdit extends ControlJsonNodeBase {
                 return;
             }
             String newName = nameInput.getText();
-            if (newName == null) {
+            if (newName == null || newName.isBlank()) {
                 popError(message("InvalidParameter") + ": " + message("Name"));
                 return;
             }

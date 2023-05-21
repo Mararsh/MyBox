@@ -44,11 +44,13 @@ public class HtmlElement {
                 name = element.getTextContent();
                 if (href == null) {
                     NamedNodeMap m = element.getAttributes();
-                    for (int k = 0; k < m.getLength(); k++) {
-                        if ("href".equalsIgnoreCase(m.item(k).getNodeName())) {
-                            href = m.item(k).getNodeValue();
-                        } else if ("title".equalsIgnoreCase(m.item(k).getNodeName())) {
-                            name = m.item(k).getNodeValue();
+                    if (m != null) {
+                        for (int k = 0; k < m.getLength(); k++) {
+                            if ("href".equalsIgnoreCase(m.item(k).getNodeName())) {
+                                href = m.item(k).getNodeValue();
+                            } else if ("title".equalsIgnoreCase(m.item(k).getNodeName())) {
+                                name = m.item(k).getNodeValue();
+                            }
                         }
                     }
                 }
@@ -58,11 +60,13 @@ public class HtmlElement {
                 name = element.getAttribute("alt");
                 if (href == null) {
                     NamedNodeMap m = element.getAttributes();
-                    for (int k = 0; k < m.getLength(); k++) {
-                        if ("src".equalsIgnoreCase(m.item(k).getNodeName())) {
-                            href = m.item(k).getNodeValue();
-                        } else if ("alt".equalsIgnoreCase(m.item(k).getNodeName())) {
-                            name = m.item(k).getNodeValue();
+                    if (m != null) {
+                        for (int k = 0; k < m.getLength(); k++) {
+                            if ("src".equalsIgnoreCase(m.item(k).getNodeName())) {
+                                href = m.item(k).getNodeValue();
+                            } else if ("alt".equalsIgnoreCase(m.item(k).getNodeName())) {
+                                name = m.item(k).getNodeValue();
+                            }
                         }
                     }
                 }
@@ -70,13 +74,15 @@ public class HtmlElement {
             if (href == null) {
                 return;
             }
-            decodedHref = URLDecoder.decode(href, charset);
             try {
                 address = UrlTools.fullAddress(element.getBaseURI(), href);
             } catch (Exception e) {
                 address = href;
             }
-            decodedAddress = URLDecoder.decode(address, charset);
+            if (charset != null) {
+                decodedHref = URLDecoder.decode(href, charset);
+                decodedAddress = URLDecoder.decode(address, charset);
+            }
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
