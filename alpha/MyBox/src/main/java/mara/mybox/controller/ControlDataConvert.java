@@ -678,7 +678,7 @@ public class ControlDataConvert extends BaseController {
     }
 
     public void closeWriters() {
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             if (csvPrinter != null && csvFile != null) {
                 csvPrinter.flush();
                 csvPrinter.close();
@@ -752,7 +752,7 @@ public class ControlDataConvert extends BaseController {
                 for (int i = 0; i < names.size(); i++) {
                     xssfSheet.autoSizeColumn(i);
                 }
-                try ( FileOutputStream fileOut = new FileOutputStream(xlsxFile)) {
+                try (FileOutputStream fileOut = new FileOutputStream(xlsxFile)) {
                     xssfBook.write(fileOut);
                 }
                 xssfBook.close();
@@ -821,7 +821,7 @@ public class ControlDataConvert extends BaseController {
             browse(xmlFile);
         }
         if (jsonFile != null && jsonFile.exists()) {
-            browse(jsonFile);
+            JsonEditorController.open(jsonFile);
         }
 
     }

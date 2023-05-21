@@ -8,6 +8,7 @@ import mara.mybox.controller.DataFileCSVController;
 import mara.mybox.controller.DataFileExcelController;
 import mara.mybox.controller.FileDecompressUnarchiveController;
 import mara.mybox.controller.ImageViewerController;
+import mara.mybox.controller.JsonEditorController;
 import mara.mybox.controller.MarkdownEditorController;
 import mara.mybox.controller.MediaPlayerController;
 import mara.mybox.controller.PdfViewController;
@@ -69,6 +70,8 @@ public class ControllerTools {
             controller = PptViewController.openFile(file);
         } else if ("doc".equals(suffix) || "docx".equals(suffix)) {
             controller = WordViewController.openFile(file);
+        } else if ("json".equals(suffix)) {
+            controller = JsonEditorController.open(file);
         } else if (Arrays.asList(FileExtensions.TextFileSuffix).contains(suffix)) {
             controller = TextEditorController.open(file);
         } else if (CompressTools.compressFormats().contains(suffix) || CompressTools.archiveFormats().contains(suffix)) {

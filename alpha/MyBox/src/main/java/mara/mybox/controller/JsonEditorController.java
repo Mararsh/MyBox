@@ -98,7 +98,39 @@ public class JsonEditorController extends BaseController {
         source
      */
     @Override
-    public void sourceFileChanged(final File file) {
+    public void sourceFileChanged(File file) {
+        if (file == null || !file.exists()) {
+            return;
+        }
+        if (file.length() > 10 * 1024 * 1024) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle(getMyStage().getTitle());
+            alert.setContentText(message("FileSize") + ": " + FileTools.showFileSize(file.length()));
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            ButtonType buttonJson = new ButtonType(message("JsonEditor"));
+            ButtonType buttonSystem = new ButtonType(message("SystemWebBrowser"));
+            ButtonType buttontext = new ButtonType(message("TextEditor"));
+            ButtonType buttonCancel = new ButtonType(message("Cancel"));
+            alert.getButtonTypes().setAll(buttonJson, buttonSystem, buttontext, buttonCancel);
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.setAlwaysOnTop(true);
+            stage.toFront();
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result == null || !result.isPresent() || result.get() == buttonCancel) {
+                return;
+            }
+            if (result.get() == buttonSystem) {
+                browse(file);
+                return;
+
+            } else if (result.get() == buttontext) {
+                TextEditorController.open(file);
+                return;
+
+            }
+        }
+
         sourceFile = file;
         writePanes(TextFileTools.readTexts(file));
     }
