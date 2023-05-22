@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
  <head>
-  <title>笔记本 &gt; 笔记示例 &gt; 编程 &gt; javafx &gt; 关于javafx一句话事项</title>
+  <title>关于javafx一句话事项</title>
   <style type="text/css">
              body { margin:0 auto; } 
  table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;} 
@@ -32,6 +32,7 @@
    <li>保持界面干净的同时，减少用户的输入或选择。</li>
    <li>只要有地方放单选钮/多选纽，就不用下拉框。</li>
    <li>选择的层级不应超过3。</li>
+   <li>尽可能拦截导致不良后果的输入。如：不提供非法选项、检查数据类型或值范围、提示操作后果等。</li>
    <li>界面控件较多时，考虑目前流行的布局：左右幕布式收放、上下风箱式开闭、页签堆叠。</li>
    <li>用户屏幕分辨率可能从1K到4K，所以MyBox多数界面的设计尺寸小于1100*720。</li>
    <li>善用“会折行”的容器，如FlowPane，以兼顾小屏和大屏。</li>
@@ -43,6 +44,7 @@
    <li>以下场景可能触发多次迭代调用：同时监听onMouseEntered和 onMouseExited，然后在事件处理中改变鼠标的焦点（如弹出上下文菜单）或改变控件本身尺寸。</li>
    <li>当双击鼠标时，总是先触发单击事件、然后继续触发双击事件，因此需要注意事件处理中可能重复或冲突的操作。</li>
    <li>对于多选表格，用getSelectedIndices()监听变化。若用selectedItemProperty()监听则可能遗漏状态变化。</li>
+   <li>对于树形，构造完毕再显示，而不要边构造边显示。</li>
   </ol>
  </body>
 </html>

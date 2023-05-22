@@ -37,6 +37,7 @@ import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -673,10 +674,42 @@ public class ControlData2D extends BaseController {
                 Menu examplesMenu = new Menu(message("Examples"), StyleTools.getIconImageView("iconExamples.png"));
                 examplesMenu.getItems().addAll(Data2DExampleTools.examplesMenu(this));
                 items.add(examplesMenu);
-                items.add(new SeparatorMenuItem());
+
             }
 
-            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            Menu helpMenu = new Menu(message("Help"), StyleTools.getIconImageView("iconClaw.png"));
+            helpMenu.getItems().addAll(Data2DMenuTools.helpMenus(tableController));
+            items.add(helpMenu);
+
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem focusMenu = new CheckMenuItem(message("CommitModificationWhenDataCellLoseFocus"),
+                    StyleTools.getIconImageView("iconInput.png"));
+            focusMenu.setSelected(AppVariables.commitModificationWhenDataCellLoseFocus);
+            focusMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    AppVariables.commitModificationWhenDataCellLoseFocus = focusMenu.isSelected();
+                    UserConfig.setBoolean("CommitModificationWhenDataCellLoseFocus", focusMenu.isSelected());
+                }
+            });
+            items.add(focusMenu);
+
+            CheckMenuItem verifyMenu = new CheckMenuItem(message("VerifyDataWhenSave"),
+                    StyleTools.getIconImageView("iconVerify.png"));
+            verifyMenu.setSelected(UserConfig.getBoolean("Data2DVerifyDataWhenSave", false));
+            verifyMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("Data2DVerifyDataWhenSave", verifyMenu.isSelected());
+                }
+            });
+            items.add(verifyMenu);
+
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"),
+                    StyleTools.getIconImageView("iconPop.png"));
             popItem.setSelected(UserConfig.getBoolean("Data2DFunctionsPopWhenMouseHovering", true));
             popItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override

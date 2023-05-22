@@ -18,10 +18,10 @@ import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileDeleteTools;
-import mara.mybox.tools.TmpFileTools;
-import mara.mybox.value.AppPaths;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
@@ -853,6 +853,15 @@ public class Data2DExampleTools {
             });
             regressionMenu.getItems().add(menu);
 
+            regressionMenu.getItems().add(new SeparatorMenuItem());
+
+            menu = new MenuItem(message("AboutDataAnalysis"));
+            menu.setStyle("-fx-text-fill: #2e598a;");
+            menu.setOnAction((ActionEvent event) -> {
+                controller.openHtml(HelpTools.aboutDataAnalysis());
+            });
+            regressionMenu.getItems().add(menu);
+
             return regressionMenu;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -1192,13 +1201,13 @@ public class Data2DExampleTools {
                 return false;
             }
             File srcFile = FxFileTools.getInternalFile("/data/examples/" + fileName + ".csv");
-            File targetFile = TmpFileTools.getPathTempFile(AppPaths.getGeneratedPath(), fileName, ".csv");
+            File targetFile = FileTmpTools.generateFile(fileName, "csv");
             if (targetFile.exists()) {
                 targetFile.delete();
             }
             Charset charset = Charset.forName("utf-8");
-            try ( BufferedReader reader = new BufferedReader(new FileReader(srcFile, charset));
-                     BufferedWriter writer = new BufferedWriter(new FileWriter(targetFile, charset, false))) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(srcFile, charset));
+                    BufferedWriter writer = new BufferedWriter(new FileWriter(targetFile, charset, false))) {
                 String line = null;
                 while ((line = reader.readLine()) != null && line.startsWith(DataFileText.CommentsMarker)) {
                     writer.write(line + System.lineSeparator());

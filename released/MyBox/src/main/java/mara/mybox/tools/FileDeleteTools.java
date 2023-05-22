@@ -109,7 +109,7 @@ public class FileDeleteTools {
                 return;
             }
             System.gc();
-            File targetTmpDir = TmpFileTools.getTempDirectory();
+            File targetTmpDir = FileTmpTools.getTempDirectory();
             deleteNestedDir(sourceDir, targetTmpDir);
             deleteDir(targetTmpDir);
             deleteDir(sourceDir);

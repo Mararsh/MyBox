@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
  <head>
-  <title>Notebook &gt; Notebook &gt; Notebook &gt; Note Examples &gt; Coding &gt; javafx &gt; Items in one sentence about javafx</title>
+  <title>Items in one sentence about javafx</title>
   <style type="text/css">
              body { margin:0 auto; } 
  table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;} 
@@ -33,6 +33,7 @@
    <li>Less inputs or selections meanwhile keep interfaces clean.</li>
    <li>Use radio or check buttons instead of drop-down list if there is enough place in interface.</li>
    <li>No more than 3 levels to select.</li>
+   <li>Try best to intercept inputs which may cause bad results. Examples: Do not support invalid options, check data type or value range, prompt operation's consequences, etc..</li>
    <li>When too many controls in interface, consider popular layout: Left-right areas like curtain, vertical accordion menus, tabs to switch targets</li>
    <li>User’ screen resolution may be from 1k to 4k, so the design size of most MyBox interfaces is smaller than 1100 * 720.</li>
    <li>Make use of auto-wrap container like FlowPane, to work for both small screen and large screen.</li>
@@ -44,6 +45,7 @@
    <li>Iterative calls may happen when listen both onMouseEntered and onMouseExited and change focus in handling of the events(like pop menu) or change control’s size.</li>
    <li>When double click mouse, single-click event is tiggerred at first and then double-click event is triggerred. So need avoid duplicated or conflicted handlings against same event.</li>
    <li>For table's multiple selections, use getSelectedIndices() to listen changes, Some changes may be missed if use selectedItemProperty().</li>
+   <li>For tree, display it after its generation, rather than display it while make the tree items.</li>
   </ol>
  </body>
 </html>

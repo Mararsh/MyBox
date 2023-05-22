@@ -85,25 +85,12 @@ public class FileInformation {
         this.modifyTime = file.lastModified();
     }
 
-    public void setDirectorySize(boolean countSubdir) {
+    public void countDirectorySize(Task task, boolean countSubdir, boolean reset) {
         if (file == null || !file.isDirectory()) {
             return;
         }
         if (countSubdir) {
-            fileSize = sizeWithSubdir;
-            filesNumber = filesWithSubdir;
-        } else {
-            fileSize = sizeWithoutSubdir;
-            filesNumber = filesWithoutSubdir;
-        }
-    }
-
-    public void countDirectorySize(Task task, boolean countSubdir) {
-        if (file == null || !file.isDirectory()) {
-            return;
-        }
-        if (countSubdir) {
-            if (sizeWithSubdir < 0 || filesWithSubdir < 0) {
+            if (reset || sizeWithSubdir < 0 || filesWithSubdir < 0) {
                 long[] size = FileTools.countDirectorySize(file, countSubdir);
                 if (task == null || task.isCancelled()) {
                     return;
@@ -114,7 +101,7 @@ public class FileInformation {
             fileSize = sizeWithSubdir;
             filesNumber = filesWithSubdir;
         } else {
-            if (sizeWithoutSubdir < 0 || filesWithoutSubdir < 0) {
+            if (reset || sizeWithoutSubdir < 0 || filesWithoutSubdir < 0) {
                 long[] size = FileTools.countDirectorySize(file, countSubdir);
                 if (task == null || task.isCancelled()) {
                     return;

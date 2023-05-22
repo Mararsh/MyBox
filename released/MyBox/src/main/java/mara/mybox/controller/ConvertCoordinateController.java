@@ -13,12 +13,14 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import mara.mybox.data.GeoCoordinateSystem;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.GeographyCode;
 import static mara.mybox.db.data.GeographyCodeTools.toGCJ02ByWebService;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.LocationTools;
 import static mara.mybox.tools.LocationTools.latitudeToDmsString;
@@ -32,10 +34,11 @@ import thridparty.CoordinateConverter;
  * @CreateDate 2020-8-4
  * @License Apache License Version 2.0
  */
-public class ConvertCoordinateController extends BaseMapController {
+public class ConvertCoordinateController extends BaseController {
 
     protected int degrees, minutes;
     protected double seconds, longitude, latitude, coordinate;
+    protected WebEngine webEngine;
 
     @FXML
     protected Button equalDButton, equalDmsButton, equalCsButton;
@@ -56,6 +59,7 @@ public class ConvertCoordinateController extends BaseMapController {
     public void initControls() {
         try {
             super.initControls();
+
             webEngine = csView.getEngine();
             degrees = minutes = 0;
             seconds = longitude = latitude = 0;
@@ -588,6 +592,11 @@ public class ConvertCoordinateController extends BaseMapController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @FXML
+    public void aboutCoordinateSystem() {
+        openHtml(HelpTools.aboutCoordinateSystem());
     }
 
 }

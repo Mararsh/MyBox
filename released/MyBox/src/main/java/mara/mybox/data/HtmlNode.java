@@ -27,6 +27,14 @@ public class HtmlNode {
         setElement(element);
     }
 
+    public boolean equal(HtmlNode node) {
+        Element nodeElement = node.getElement();
+        if (element == null || nodeElement == null) {
+            return false;
+        }
+        return element.equals(nodeElement);
+    }
+
 
     /*
         set
@@ -40,6 +48,14 @@ public class HtmlNode {
      */
     public Element getElement() {
         return element;
+    }
+
+    public String getTitle() {
+        return getTag();
+    }
+
+    public String getValue() {
+        return getWholeText();
     }
 
     public String getTag() {
@@ -66,7 +82,7 @@ public class HtmlNode {
         return element == null ? null : element.text();
     }
 
-    public String getValue() {
+    public String getElementValue() {
         return element == null ? null : element.val();
     }
 

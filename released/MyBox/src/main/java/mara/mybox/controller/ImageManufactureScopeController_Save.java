@@ -10,8 +10,8 @@ import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.data.IntPoint;
 import mara.mybox.db.table.TableImageScope;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -40,35 +40,35 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
         if (scope == null || scope.getFile() == null || saveScopeButton.isDisabled()) {
             return;
         }
-        synchronized (this) {
-            String name = scopeNameInput.getText().trim();
-            if (name.isEmpty()) {
-                popError(message("InvalidParameters"));
-                return;
-            }
-            scope.setName(name);
-            if (sourceFile != null) {
-                scope.setFile(sourceFile.getAbsolutePath());
-            } else {
-                scope.setFile("Unknown");
-            }
-            SingletonTask saveTask = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    TableImageScope.write(scope);
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    scopesSavedController.loadTableData();
-                    popSaved();
-                }
-            };
-            start(saveTask, false);
-
+        String name = scopeNameInput.getText().trim();
+        if (name.isEmpty()) {
+            popError(message("InvalidParameters"));
+            return;
         }
+        if (task != null) {
+            task.cancel();
+        }
+        scope.setName(name);
+        if (sourceFile != null) {
+            scope.setFile(sourceFile.getAbsolutePath());
+        } else {
+            scope.setFile("Unknown");
+        }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                TableImageScope.write(scope);
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                scopesSavedController.loadTableData();
+                popSaved();
+            }
+        };
+        start(task);
     }
 
     public void showScope(ImageScope scope) {

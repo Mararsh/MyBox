@@ -64,11 +64,13 @@ public abstract class ImagesBrowserController_Load extends ImageViewerController
     @FXML
     protected CheckBox saveRotationCheck;
     @FXML
-    protected Label totalLabel, filenameLabel;
+    protected Label totalLabel;
     @FXML
     protected ToggleGroup popGroup;
     @FXML
     protected Button zoomOutAllButton, zoomInAllButton, imageSizeAllButton, paneSizeAllButton;
+    @FXML
+    protected ImageViewerController imageController;
 
     @FXML
     @Override
@@ -260,5 +262,10 @@ public abstract class ImagesBrowserController_Load extends ImageViewerController
     }
 
     protected abstract void makeImagesNevigator(boolean makeCurrentList);
+
+    public void viewImage(File file) {
+        imageController.loadImageFile(file);
+        updateStageTitle(file);
+    }
 
 }

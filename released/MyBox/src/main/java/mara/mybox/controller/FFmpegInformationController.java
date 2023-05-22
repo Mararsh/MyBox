@@ -219,87 +219,85 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
         if (executable == null) {
             return;
         }
-        synchronized (this) {
-            if (formatsTask != null && !formatsTask.isQuit()) {
-                return;
-            }
-            formatsTask = new SingletonTask<Void>(this) {
-                private StringBuilder version;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        error = null;
-                        List<String> command = new ArrayList<>();
-                        command.add(executable.getAbsolutePath());
-                        command.add("-formats");
-                        ProcessBuilder pb = new ProcessBuilder(command)
-                                .redirectErrorStream(true);
-                        pb.redirectErrorStream(true);
-                        final Process process = pb.start();
-
-                        try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
-                            String line;
-                            int count = 0;
-                            boolean versionEnd = false;
-                            version = new StringBuilder();
-                            while ((line = inReader.readLine()) != null) {
-                                if (line.contains("File formats:")) {
-                                    versionEnd = true;
-                                }
-                                if (!versionEnd) {
-                                    version.append(line).append("\n");
-                                    continue;
-                                }
-                                count++;
-                                if (count < 5 || line.length() < 21) {
-                                    continue;
-                                }
-                                String type = line.substring(0, 4);
-                                boolean mux = type.contains("E");
-                                boolean demux = type.contains("D");
-                                String[] v = StringTools.separatedBySpace(line.substring(4));;
-                                String name = v[0];
-                                String desc = v[1];
-                                FFmpegFormat f = FFmpegFormat.create().
-                                        setMux(mux).setDemux(demux)
-                                        .setFormat(name).setDescription(desc);
-                                formatsData.add(f);
-                            }
-                        } catch (Exception e) {
-                            error = e.toString();
-                        }
-
-                        process.waitFor();
-
-                    } catch (Exception e) {
-                        error = e.toString();;
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (error != null) {
-                        popError(error);
-                    }
-                    if (version != null) {
-                        versionArea.setText(version.toString());
-                    }
-                    formatsView.setItems(formatsData);
-                    fromatsLabel.setText(message("Total") + ": " + formatsData.size());
-                    readCodecs();
-
-                }
-
-                @Override
-                protected void finalAction() {
-                    super.finalAction();
-                    formatsTask = null;
-                }
-            };
-            start(formatsTask);
+        if (formatsTask != null) {
+            formatsTask.cancel();
         }
+        formatsTask = new SingletonTask<Void>(this) {
+            private StringBuilder version;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    error = null;
+                    List<String> command = new ArrayList<>();
+                    command.add(executable.getAbsolutePath());
+                    command.add("-formats");
+                    ProcessBuilder pb = new ProcessBuilder(command)
+                            .redirectErrorStream(true);
+                    pb.redirectErrorStream(true);
+                    final Process process = pb.start();
+
+                    try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
+                        String line;
+                        int count = 0;
+                        boolean versionEnd = false;
+                        version = new StringBuilder();
+                        while ((line = inReader.readLine()) != null) {
+                            if (line.contains("File formats:")) {
+                                versionEnd = true;
+                            }
+                            if (!versionEnd) {
+                                version.append(line).append("\n");
+                                continue;
+                            }
+                            count++;
+                            if (count < 5 || line.length() < 21) {
+                                continue;
+                            }
+                            String type = line.substring(0, 4);
+                            boolean mux = type.contains("E");
+                            boolean demux = type.contains("D");
+                            String[] v = StringTools.separatedBySpace(line.substring(4));;
+                            String name = v[0];
+                            String desc = v[1];
+                            FFmpegFormat f = FFmpegFormat.create().
+                                    setMux(mux).setDemux(demux)
+                                    .setFormat(name).setDescription(desc);
+                            formatsData.add(f);
+                        }
+                    } catch (Exception e) {
+                        error = e.toString();
+                    }
+
+                    process.waitFor();
+
+                } catch (Exception e) {
+                    error = e.toString();;
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (error != null) {
+                    popError(error);
+                }
+                if (version != null) {
+                    versionArea.setText(version.toString());
+                }
+                formatsView.setItems(formatsData);
+                fromatsLabel.setText(message("Total") + ": " + formatsData.size());
+                readCodecs();
+
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                formatsTask = null;
+            }
+        };
+        start(formatsTask);
     }
 
     public void readCodecs() {
@@ -308,84 +306,82 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
         if (executable == null) {
             return;
         }
-        synchronized (this) {
-            if (codecsTask != null && !codecsTask.isQuit()) {
-                return;
-            }
-            codecsTask = new SingletonTask<Void>(this) {
+        if (codecsTask != null) {
+            codecsTask.cancel();
+        }
+        codecsTask = new SingletonTask<Void>(this) {
 
-                @Override
-                protected boolean handle() {
-                    try {
-                        error = null;
-                        List<String> command = new ArrayList<>();
-                        command.add(executable.getAbsolutePath());
-                        command.add("-hide_banner");
-                        command.add("-codecs");
-                        ProcessBuilder pb = new ProcessBuilder(command)
-                                .redirectErrorStream(true);
-                        final Process process = pb.start();
-                        try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
-                            String line;
-                            int count = 0;
-                            while ((line = inReader.readLine()) != null) {
-                                count++;
-                                if (count < 10 || line.length() < 30) {
-                                    continue;
-                                }
-                                String flags = line.substring(0, 8);
-                                boolean decode = flags.contains("D");
-                                boolean encode = flags.contains("E");
-                                boolean frame = flags.contains("I");
-                                boolean lossy = flags.contains("L");
-                                boolean lossless = flags.contains("S");
-                                String type = "";
-                                if (flags.contains("V")) {
-                                    type = message("Video");
-                                } else if (flags.contains("A")) {
-                                    type = message("Audio");
-                                } else if (flags.contains("S")) {
-                                    type = message("Subtitle");
-                                }
-                                String[] v = StringTools.separatedBySpace(line.substring(8));
-                                String codec = v[0];
-                                String desc = v[1];
-                                FFmpegCodec c = FFmpegCodec.create().
-                                        setCodec(codec).setType(type)
-                                        .setDecode(decode).setEncode(encode)
-                                        .setLossyCompress(lossy).setLosslessCompress(lossless)
-                                        .setFrame(frame).setDescription(desc);
-                                codecsData.add(c);
+            @Override
+            protected boolean handle() {
+                try {
+                    error = null;
+                    List<String> command = new ArrayList<>();
+                    command.add(executable.getAbsolutePath());
+                    command.add("-hide_banner");
+                    command.add("-codecs");
+                    ProcessBuilder pb = new ProcessBuilder(command)
+                            .redirectErrorStream(true);
+                    final Process process = pb.start();
+                    try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
+                        String line;
+                        int count = 0;
+                        while ((line = inReader.readLine()) != null) {
+                            count++;
+                            if (count < 10 || line.length() < 30) {
+                                continue;
                             }
-                        } catch (Exception e) {
-                            error = e.toString();
+                            String flags = line.substring(0, 8);
+                            boolean decode = flags.contains("D");
+                            boolean encode = flags.contains("E");
+                            boolean frame = flags.contains("I");
+                            boolean lossy = flags.contains("L");
+                            boolean lossless = flags.contains("S");
+                            String type = "";
+                            if (flags.contains("V")) {
+                                type = message("Video");
+                            } else if (flags.contains("A")) {
+                                type = message("Audio");
+                            } else if (flags.contains("S")) {
+                                type = message("Subtitle");
+                            }
+                            String[] v = StringTools.separatedBySpace(line.substring(8));
+                            String codec = v[0];
+                            String desc = v[1];
+                            FFmpegCodec c = FFmpegCodec.create().
+                                    setCodec(codec).setType(type)
+                                    .setDecode(decode).setEncode(encode)
+                                    .setLossyCompress(lossy).setLosslessCompress(lossless)
+                                    .setFrame(frame).setDescription(desc);
+                            codecsData.add(c);
                         }
-
-                        process.waitFor();
                     } catch (Exception e) {
                         error = e.toString();
                     }
-                    return true;
-                }
 
-                @Override
-                protected void whenSucceeded() {
-                    if (error != null) {
-                        popError(error);
-                    }
-                    codecsView.setItems(codecsData);
-                    codecLabel.setText(message("Total") + ": " + codecsData.size());
-
+                    process.waitFor();
+                } catch (Exception e) {
+                    error = e.toString();
                 }
+                return true;
+            }
 
-                @Override
-                protected void finalAction() {
-                    super.finalAction();
-                    codecsTask = null;
+            @Override
+            protected void whenSucceeded() {
+                if (error != null) {
+                    popError(error);
                 }
-            };
-            start(codecsTask);
-        }
+                codecsView.setItems(codecsData);
+                codecLabel.setText(message("Total") + ": " + codecsData.size());
+
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                codecsTask = null;
+            }
+        };
+        start(codecsTask);
     }
 
     public void readFilters() {
@@ -394,79 +390,77 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
         if (executable == null) {
             return;
         }
-        synchronized (this) {
-            if (filtersTask != null && !filtersTask.isQuit()) {
-                return;
-            }
-            filtersTask = new SingletonTask<Void>(this) {
+        if (filtersTask != null) {
+            filtersTask.cancel();
+        }
+        filtersTask = new SingletonTask<Void>(this) {
 
-                @Override
-                protected boolean handle() {
-                    try {
-                        error = null;
+            @Override
+            protected boolean handle() {
+                try {
+                    error = null;
 
-                        List<String> command = new ArrayList<>();
-                        command.add(executable.getAbsolutePath());
-                        command.add("-hide_banner");
-                        command.add("-filters");
-                        ProcessBuilder pb = new ProcessBuilder(command)
-                                .redirectErrorStream(true);
-                        pb.redirectErrorStream(true);
-                        final Process process = pb.start();
+                    List<String> command = new ArrayList<>();
+                    command.add(executable.getAbsolutePath());
+                    command.add("-hide_banner");
+                    command.add("-filters");
+                    ProcessBuilder pb = new ProcessBuilder(command)
+                            .redirectErrorStream(true);
+                    pb.redirectErrorStream(true);
+                    final Process process = pb.start();
 
-                        try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
-                            String line;
-                            int count = 0;
-                            while ((line = inReader.readLine()) != null) {
-                                count++;
-                                if (count < 8 || line.length() < 35) {
-                                    continue;
-                                }
-                                String flags = line.substring(0, 5);
-                                boolean timeline = flags.contains("T");
-                                boolean slice = flags.contains("S");
-                                boolean com = flags.contains("C");
-                                String[] v = StringTools.separatedBySpace(line.substring(5));
-                                String filter = v[0];
-                                String[] vv = StringTools.separatedBySpace(v[1]);
-                                String direction = vv[0];
-                                String desc = vv[1];
-                                FFmpegFilter f = FFmpegFilter.create().
-                                        setTimeline(timeline).setSlice(slice)
-                                        .setCommand(com).setFilter(filter)
-                                        .setDirection(direction)
-                                        .setDescription(desc);
-                                filtersData.add(f);
+                    try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
+                        String line;
+                        int count = 0;
+                        while ((line = inReader.readLine()) != null) {
+                            count++;
+                            if (count < 8 || line.length() < 35) {
+                                continue;
                             }
-                        } catch (Exception e) {
-                            error = e.toString();
+                            String flags = line.substring(0, 5);
+                            boolean timeline = flags.contains("T");
+                            boolean slice = flags.contains("S");
+                            boolean com = flags.contains("C");
+                            String[] v = StringTools.separatedBySpace(line.substring(5));
+                            String filter = v[0];
+                            String[] vv = StringTools.separatedBySpace(v[1]);
+                            String direction = vv[0];
+                            String desc = vv[1];
+                            FFmpegFilter f = FFmpegFilter.create().
+                                    setTimeline(timeline).setSlice(slice)
+                                    .setCommand(com).setFilter(filter)
+                                    .setDirection(direction)
+                                    .setDescription(desc);
+                            filtersData.add(f);
                         }
-                        process.waitFor();
-
                     } catch (Exception e) {
                         error = e.toString();
                     }
-                    return true;
-                }
+                    process.waitFor();
 
-                @Override
-                protected void whenSucceeded() {
-                    if (error != null) {
-                        popError(error);
-                    }
-                    filtersView.setItems(filtersData);
-                    filtersLabel.setText(message("Total") + ": " + filtersData.size()
-                            + "   " + message("ffmpegFilterComments"));
+                } catch (Exception e) {
+                    error = e.toString();
                 }
+                return true;
+            }
 
-                @Override
-                protected void finalAction() {
-                    super.finalAction();
-                    filtersTask = null;
+            @Override
+            protected void whenSucceeded() {
+                if (error != null) {
+                    popError(error);
                 }
-            };
-            start(filtersTask);
-        }
+                filtersView.setItems(filtersData);
+                filtersLabel.setText(message("Total") + ": " + filtersData.size()
+                        + "   " + message("ffmpegFilterComments"));
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                filtersTask = null;
+            }
+        };
+        start(filtersTask);
     }
 
     @FXML
@@ -480,42 +474,40 @@ public class FFmpegInformationController extends ControlFFmpegOptions {
         if (executable == null) {
             return;
         }
-        synchronized (this) {
-            if (queryTask != null && !queryTask.isQuit()) {
-                return;
-            }
-            queryTask = new SingletonTask<Void>(this) {
-                private String output;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        error = null;
-                        List<String> command = new ArrayList<>();
-                        command.add(executable.getAbsolutePath());
-                        command.add("-hide_banner");
-                        command.addAll(Arrays.asList(args));
-                        output = SystemTools.run(command);
-                        return output != null && !output.isBlank();
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    queryArea.setText(output);
-                }
-
-                @Override
-                protected void finalAction() {
-                    super.finalAction();
-                    queryTask = null;
-                }
-            };
-            start(queryTask);
+        if (queryTask != null) {
+            queryTask.cancel();
         }
+        queryTask = new SingletonTask<Void>(this) {
+            private String output;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    error = null;
+                    List<String> command = new ArrayList<>();
+                    command.add(executable.getAbsolutePath());
+                    command.add("-hide_banner");
+                    command.addAll(Arrays.asList(args));
+                    output = SystemTools.run(command);
+                    return output != null && !output.isBlank();
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                queryArea.setText(output);
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                queryTask = null;
+            }
+        };
+        start(queryTask);
     }
 
     @Override

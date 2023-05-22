@@ -6,6 +6,40 @@
  </head>
  <body contenteditable="false" style="width: 900px; margin:0 auto;">
   <h1>Development Logs</h1>
+  <p>2023-5-22 v6.7.3</p>
+  <ul>
+   <li>Added: 
+    <ul>
+     <li>JSON editor.</li>
+     <li>Match list of finding string.</li>
+     <li>Find string/bytes in files in batch.</li>
+    </ul></li>
+   <li>Improved: 
+    <ul>
+     <li>RYB complementary should refer to birghtness and saturation of original color.</li>
+     <li>Image Quantization: Pick first colors for palette to avoid new colors which are not in original image.</li>
+     <li>Image Quantization: Make cluster center by colors counting rather than create new color</li>
+     <li>Simplify interface of “Picking colors in image”.</li>
+     <li>Improve interfaces of “Repeat Image” and “Analyse Image”</li>
+     <li>Improve codes of “Image Edit Histories” and “File Backups”.</li>
+     <li>Option about whether commit modification when data cell loses focus.</li>
+    </ul></li>
+   <li>Upgrade java and javafx to version 20.</li>
+   <li>Solved problems: 
+    <ul>
+     <li>Fail to build due to download failure of image4j.</li>
+     <li>Location distribution: Fail to load map.</li>
+     <li>Row expression: Fail to evaluate when column value contains quotes.</li>
+     <li>Data editing should be canceled when click key ESC.</li>
+     <li>Fail to read request head of network address.</li>
+     <li>Can not delete file backups.</li>
+     <li>PDF Viewer: Fail to display outlines.</li>
+     <li>Recent target paths are read incorrectly.</li>
+     <li>Edit image: Histories are loaded too slowly when image size is large.</li>
+     <li>Lots of exceptions may happen when load html in webview.</li>
+    </ul></li>
+  </ul>
+  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.3">Closed requirements/bugs in this version</a></p>
   <p>2023-4-16 v6.7.2</p>
   <ul>
    <li>Added: 

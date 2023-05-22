@@ -18,7 +18,7 @@ import javafx.scene.layout.FlowPane;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -135,7 +135,7 @@ public class FilesCompressBatchController extends BaseBatchFileController {
                 return Languages.message("Skip");
             }
             Date startTime = new Date();
-            File tmpFile = TmpFileTools.getTempFile();
+            File tmpFile = FileTmpTools.getTempFile();
             if (compressor.equalsIgnoreCase(ArchiveStreamFactory.SEVEN_Z)) {
                 try ( SevenZOutputFile sevenZOutput = new SevenZOutputFile(tmpFile)) {
                     sevenZOutput.setContentCompression(sevenCompress);

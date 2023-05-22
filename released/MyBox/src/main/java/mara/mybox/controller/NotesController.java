@@ -5,7 +5,7 @@ import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Window;
-import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.InfoNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
@@ -26,7 +26,7 @@ public class NotesController extends TreeManageController {
     public NotesController() {
         baseTitle = Languages.message("Notes");
         TipsLabelKey = "NotesComments";
-        category = TreeNode.Notebook;
+        category = InfoNode.Notebook;
         nameMsg = message("Title");
         valueMsg = message("Html");
     }
@@ -49,7 +49,7 @@ public class NotesController extends TreeManageController {
     }
 
     @Override
-    public void editNode(TreeNode node) {
+    public void editNode(InfoNode node) {
         if (!checkBeforeNextAction()) {
             return;
         }

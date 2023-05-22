@@ -57,7 +57,7 @@ import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -121,7 +121,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
     };
 
     public IccProfileEditorController() {
-        baseTitle = Languages.message("IccProfileEditor");
+        baseTitle = message("IccProfileEditor");
         TipsLabelKey = "IccProfileTips";
     }
 
@@ -154,7 +154,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeStyleTools.setTooltip(maxDecodeInput, new Tooltip(Languages.message("MaxDecodeComments")));
+            NodeStyleTools.setTooltip(maxDecodeInput, new Tooltip(message("MaxDecodeComments")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -228,7 +228,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
 
             List<String> classList = new ArrayList<>();
             for (String[] item : IccHeader.ProfileDeviceClasses) {
-                classList.add(item[0] + AppValues.Indent + Languages.message(item[1]));
+                classList.add(item[0] + AppValues.Indent + message(item[1]));
             }
             deviceClassBox.getItems().addAll(classList);
             deviceClassBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -466,7 +466,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
 
             List<String> intents = new ArrayList<>();
             for (String item : IccHeader.RenderingIntents) {
-                intents.add(Languages.message(item));
+                intents.add(message(item));
             }
             intentBox.getItems().addAll(intents);
             intentBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -628,7 +628,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                     break;
                 case Embed:
                     if (embedICCName != null) {
-                        return Languages.message("JavaEmbeddedColorModel") + ": " + embedICCName;
+                        return message("JavaEmbeddedColorModel") + ": " + embedICCName;
                     }
                     break;
                 case External_Data:
@@ -696,133 +696,126 @@ public class IccProfileEditorController extends ChromaticityBaseController {
     }
 
     private void openProfile(final String name) {
-        try {
-            if (name == null || name.trim().isEmpty()) {
-                return;
-            }
-            final String inputName;
-            if (sourceType == SourceType.Embed) {
-                inputName = Languages.message("JavaEmbeddedColorModel") + ": " + name;
-            } else {
-                inputName = Languages.message("File") + ": " + name;
-            }
-            synchronized (this) {
-                if (task != null && !task.isQuit()) {
-                    return;
-                }
-                task = new SingletonTask<Void>(this) {
-
-                    private File file;
-                    private IccProfile p;
-
-                    @Override
-                    protected boolean handle() {
-                        try {
-                            switch (sourceType) {
-                                case Embed:
-                                    p = new IccProfile(name);
-                                    break;
-                                case Internal_File:
-                                    file = mara.mybox.fxml.FxFileTools.getInternalFile("/data/ICC/" + name, "ICC", name);
-                                    p = new IccProfile(file);
-                                    break;
-                                case External_File:
-                                    file = new File(name);
-                                    p = new IccProfile(file);
-                            }
-                        } catch (Exception e) {
-                            error = e.toString();
-                        }
-                        return p != null && p.getHeader() != null;
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        isIccFile = sourceType != SourceType.Embed;
-                        if (isIccFile) {
-                            sourceFile = file;
-                            isSettingValues = true;
-                            embedICCName = null;
-                            isSettingValues = false;
-                        } else {
-                            embedICCName = name;
-                            sourceFile = null;
-                        }
-                        if (sourceType == SourceType.External_File) {
-                            embedBox.getSelectionModel().clearSelection();
-                        }
-                        profile = p;
-                        displayProfileData();
-                        backupController.loadBackups(sourceFile);
-                    }
-
-                    @Override
-                    protected void whenFailed() {
-                        if (error == null) {
-                            if (p != null && p.getError() != null) {
-                                error = p.getError();
-                            } else {
-                                error = Languages.message("Invalid");
-                            }
-                        }
-                        popError(inputName + " " + error);
-                    }
-
-                };
-                start(task, inputName + " " + Languages.message("Loading..."));
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+        if (name == null || name.trim().isEmpty()) {
+            return;
         }
+
+        if (task != null) {
+            task.cancel();
+        }
+        final String inputName;
+        if (sourceType == SourceType.Embed) {
+            inputName = message("JavaEmbeddedColorModel") + ": " + name;
+        } else {
+            inputName = message("File") + ": " + name;
+        }
+        task = new SingletonTask<Void>(this) {
+
+            private File file;
+            private IccProfile p;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    switch (sourceType) {
+                        case Embed:
+                            p = new IccProfile(name);
+                            break;
+                        case Internal_File:
+                            file = mara.mybox.fxml.FxFileTools.getInternalFile("/data/ICC/" + name, "ICC", name);
+                            p = new IccProfile(file);
+                            break;
+                        case External_File:
+                            file = new File(name);
+                            p = new IccProfile(file);
+                    }
+                } catch (Exception e) {
+                    error = e.toString();
+                }
+                return p != null && p.getHeader() != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                isIccFile = sourceType != SourceType.Embed;
+                if (isIccFile) {
+                    sourceFile = file;
+                    isSettingValues = true;
+                    embedICCName = null;
+                    isSettingValues = false;
+                } else {
+                    embedICCName = name;
+                    sourceFile = null;
+                }
+                if (sourceType == SourceType.External_File) {
+                    embedBox.getSelectionModel().clearSelection();
+                }
+                profile = p;
+                displayProfileData();
+                backupController.loadBackups(sourceFile);
+            }
+
+            @Override
+            protected void whenFailed() {
+                if (error == null) {
+                    if (p != null && p.getError() != null) {
+                        error = p.getError();
+                    } else {
+                        error = message("Invalid");
+                    }
+                }
+                popError(inputName + " " + error);
+            }
+
+        };
+        start(task, inputName + " " + message("Loading..."));
     }
 
     private void displayProfileData() {
         if (profile == null || !profile.isIsValid()) {
-            popError(Languages.message("IccInvalid"));
+            popError(message("IccInvalid"));
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            profile.setNormalizeLut(lutNormalizeCheck.isSelected());
-            infoLabel.setText(getCurrentName());
-            if (myStage != null) {
-                myStage.setTitle(getBaseTitle() + "  " + getCurrentName());
-            }
-            resetMarkLabel(headerBox);
-            inputsValid = true;
-            task = new SingletonTask<Void>(this) {
-
-                private String xml;
-
-                @Override
-                protected boolean handle() {
-                    header = profile.getHeader();
-                    header.readFields();
-                    tags = profile.getTags();
-                    tags.readTags();
-                    xml = IccXML.iccXML(header, tags);
-                    if (xml == null) {
-                        error = Languages.message("IccInvalid");
-                        return false;
-                    } else {
-                        return true;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    displaySummary();
-                    initHeaderInputs();
-                    makeTagsInputs();
-                    displayTagsTable();
-                    displayXML(xml);
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        profile.setNormalizeLut(lutNormalizeCheck.isSelected());
+        infoLabel.setText(getCurrentName());
+        if (myStage != null) {
+            myStage.setTitle(getBaseTitle() + "  " + getCurrentName());
+        }
+        resetMarkLabel(headerBox);
+        inputsValid = true;
+        task = new SingletonTask<Void>(this) {
+
+            private String xml;
+
+            @Override
+            protected boolean handle() {
+                header = profile.getHeader();
+                header.readFields();
+                tags = profile.getTags();
+                tags.readTags();
+                xml = IccXML.iccXML(header, tags);
+                if (xml == null) {
+                    error = message("IccInvalid");
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                displaySummary();
+                initHeaderInputs();
+                makeTagsInputs();
+                displayTagsTable();
+                displayXML(xml);
+            }
+
+        };
+        start(task);
     }
 
     private void displaySummary() {
@@ -833,14 +826,14 @@ public class IccProfileEditorController extends ChromaticityBaseController {
 
         try {
             LinkedHashMap<String, IccTag> fields = header.getFields();
-            String s = Languages.message("ProfileSize") + ": " + header.value("ProfileSize");
+            String s = message("ProfileSize") + ": " + header.value("ProfileSize");
             List<IccTag> tagsList = tags.getTags();
             if (tagsList != null) {
-                s += "   " + Languages.message("TagsNumber") + ": " + tagsList.size();
+                s += "   " + message("TagsNumber") + ": " + tagsList.size();
             }
             String name = getCurrentName();
-            infoLabel.setText(name + "\n" + Languages.message("ProfileSize") + ": " + header.value("ProfileSize")
-                    + ((tagsList != null) ? "\n" + Languages.message("TagsNumber") + ": " + tagsList.size() : ""));
+            infoLabel.setText(name + "\n" + message("ProfileSize") + ": " + header.value("ProfileSize")
+                    + ((tagsList != null) ? "\n" + message("TagsNumber") + ": " + tagsList.size() : ""));
 
             s = name + "\n" + s + "\n\n";
             for (String key : fields.keySet()) {
@@ -859,33 +852,33 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                     case "PCCIlluminantZ":
                         continue;
                     case "ProfileFlagEmbedded":
-                        s += Languages.message("ProfileFlags") + ": ";
-                        s += ((boolean) header.value("ProfileFlagEmbedded") ? Languages.message("NotEmbedded") : Languages.message("NotEmbedded")) + "  ";
-                        s += ((boolean) header.value("ProfileFlagIndependently") ? Languages.message("Independent") : Languages.message("NotIndependent")) + "  ";
-                        s += ((boolean) header.value("ProfileFlagMCSSubset") ? Languages.message("MCSSubset") : Languages.message("MCSNotSubset"));
+                        s += message("ProfileFlags") + ": ";
+                        s += ((boolean) header.value("ProfileFlagEmbedded") ? message("NotEmbedded") : message("NotEmbedded")) + "  ";
+                        s += ((boolean) header.value("ProfileFlagIndependently") ? message("Independent") : message("NotIndependent")) + "  ";
+                        s += ((boolean) header.value("ProfileFlagMCSSubset") ? message("MCSSubset") : message("MCSNotSubset"));
                         s += " (" + header.hex(44, 4) + ")\n";
                         break;
                     case "DeviceAttributeTransparency":
-                        s += Languages.message("DeviceAttributes") + ": ";
-                        s += ((boolean) header.value("DeviceAttributeTransparency") ? Languages.message("Transparency") : Languages.message("Reflective")) + "  ";
-                        s += ((boolean) header.value("DeviceAttributeMatte") ? Languages.message("Matte") : Languages.message("Glossy")) + "  ";
-                        s += ((boolean) header.value("DeviceAttributeNegative") ? Languages.message("Negative2") : Languages.message("Positive2")) + "  ";
-                        s += ((boolean) header.value("DeviceAttributeBlackOrWhite") ? Languages.message("BlackOrWhite") : Languages.message("Colorful")) + "  ";
-                        s += ((boolean) header.value("DeviceAttributePaperBased") ? Languages.message("PaperBased") : Languages.message("NonPaperBased")) + "  ";
-                        s += ((boolean) header.value("DeviceAttributeTextured") ? Languages.message("Textured") : Languages.message("NonTextured")) + "  ";
-                        s += ((boolean) header.value("DeviceAttributeIsotropic") ? Languages.message("Isotropic") : Languages.message("NonIsotropic")) + "  ";
-                        s += ((boolean) header.value("DeviceAttributeSelfLuminous") ? Languages.message("SelfLuminous") : Languages.message("NonSelfLuminous"));
+                        s += message("DeviceAttributes") + ": ";
+                        s += ((boolean) header.value("DeviceAttributeTransparency") ? message("Transparency") : message("Reflective")) + "  ";
+                        s += ((boolean) header.value("DeviceAttributeMatte") ? message("Matte") : message("Glossy")) + "  ";
+                        s += ((boolean) header.value("DeviceAttributeNegative") ? message("Negative2") : message("Positive2")) + "  ";
+                        s += ((boolean) header.value("DeviceAttributeBlackOrWhite") ? message("BlackOrWhite") : message("Colorful")) + "  ";
+                        s += ((boolean) header.value("DeviceAttributePaperBased") ? message("PaperBased") : message("NonPaperBased")) + "  ";
+                        s += ((boolean) header.value("DeviceAttributeTextured") ? message("Textured") : message("NonTextured")) + "  ";
+                        s += ((boolean) header.value("DeviceAttributeIsotropic") ? message("Isotropic") : message("NonIsotropic")) + "  ";
+                        s += ((boolean) header.value("DeviceAttributeSelfLuminous") ? message("SelfLuminous") : message("NonSelfLuminous"));
                         s += " (" + header.hex(56, 8) + ")\n";
                         break;
                     case "PCCIlluminantX":
-                        s += Languages.message("ConnectionSpaceIlluminant") + ": ";
+                        s += message("ConnectionSpaceIlluminant") + ": ";
                         s += header.value("PCCIlluminantX") + "  ";
                         s += header.value("PCCIlluminantY") + "  ";
                         s += header.value("PCCIlluminantZ");
                         s += " (" + header.hex(68, 12) + ")\n";
                         break;
                     default:
-                        s += Languages.message(field.getTag()) + ": " + field.getValue();
+                        s += message(field.getTag()) + ": " + field.getValue();
                         if (field.getType() != IccTag.TagType.Bytes) {
                             s += " (" + bytesToHexFormat(field.getBytes()) + ")";
                         }
@@ -895,7 +888,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
 
             }
 
-            s += "\n\n" + Languages.message("HeaderBytes") + ": \n" + ByteTools.bytesToHexFormat(header.getHeader());
+            s += "\n\n" + message("HeaderBytes") + ": \n" + ByteTools.bytesToHexFormat(header.getHeader());
             summaryArea.setText(s);
 
         } catch (Exception e) {
@@ -969,7 +962,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             xmlArea.setText(xml);
         } else {
             xmlArea.clear();
-            popError(Languages.message("InvalidData"));
+            popError(message("InvalidData"));
         }
     }
 
@@ -992,7 +985,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                 VBox.setVgrow(tagBox, Priority.NEVER);
                 HBox.setHgrow(tagBox, Priority.ALWAYS);
 
-                Label label = new Label(Languages.message(tag.getName()));
+                Label label = new Label(message(tag.getName()));
                 label.setPrefWidth(Region.USE_COMPUTED_SIZE);
                 label.wrapTextProperty().setValue(true);
                 tagBox.getChildren().add(label);
@@ -1026,7 +1019,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                         break;
 
                     case LUT: {
-                        Label label2 = new Label(Languages.message("NotSupportEditCurrently"));
+                        Label label2 = new Label(message("NotSupportEditCurrently"));
                         label.setPrefWidth(Region.USE_COMPUTED_SIZE);
                         label.wrapTextProperty().setValue(true);
                         tagBox.getChildren().add(label2);
@@ -1056,48 +1049,46 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         if (isSettingValues || tag.getType() == null) {
             return true;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return true;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    return tag.update(key, value);
-                }
-
-                @Override
-                protected void succeeded() {
-                    super.succeeded();
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            String name;
-                            if (key != null) {
-                                name = tag.getTag() + key;
-                            } else {
-                                name = tag.getTag();
-                            }
-                            if (ok) {
-                                try {
-                                    Label label = (Label) NodeTools.findNode(thisPane, name + "MarkLabel");
-                                    label.setText("*");
-                                    label.setStyle("-fx-text-fill: blue; -fx-font-weight: bolder;");
-                                    profileChanged();
-                                } catch (Exception e) {
-                                }
-                                NodeStyleTools.setStyle(thisPane, name + "Input", null);
-                            } else {
-                                NodeStyleTools.setStyle(thisPane, name + "Input", UserConfig.badStyle());
-                            }
-                        }
-                    });
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                return tag.update(key, value);
+            }
+
+            @Override
+            protected void succeeded() {
+                super.succeeded();
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        String name;
+                        if (key != null) {
+                            name = tag.getTag() + key;
+                        } else {
+                            name = tag.getTag();
+                        }
+                        if (ok) {
+                            try {
+                                Label label = (Label) NodeTools.findNode(thisPane, name + "MarkLabel");
+                                label.setText("*");
+                                label.setStyle("-fx-text-fill: blue; -fx-font-weight: bolder;");
+                                profileChanged();
+                            } catch (Exception e) {
+                            }
+                            NodeStyleTools.setStyle(thisPane, name + "Input", null);
+                        } else {
+                            NodeStyleTools.setStyle(thisPane, name + "Input", UserConfig.badStyle());
+                        }
+                    }
+                });
+            }
+
+        };
+        start(task);
         return true;
     }
 
@@ -1302,7 +1293,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             VBox.setVgrow(illuminantBox, Priority.NEVER);
             illuminantBox.setSpacing(5);
             illuminantBox.setAlignment(Pos.CENTER_LEFT);
-            Label illuminantLabel = new Label(Languages.message("Illuminant"));
+            Label illuminantLabel = new Label(message("Illuminant"));
             illuminantLabel.setPrefWidth(Region.USE_COMPUTED_SIZE);
             illuminantLabel.wrapTextProperty().setValue(true);
             final TextField illuminantInput = new TextField();
@@ -1333,7 +1324,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             VBox.setVgrow(surroundBox, Priority.NEVER);
             surroundBox.setSpacing(5);
             surroundBox.setAlignment(Pos.CENTER_LEFT);
-            Label surroundLabel = new Label(Languages.message("Surround"));
+            Label surroundLabel = new Label(message("Surround"));
             surroundLabel.setPrefWidth(Region.USE_COMPUTED_SIZE);
             surroundLabel.wrapTextProperty().setValue(true);
             final TextField surroundInput = new TextField();
@@ -1364,7 +1355,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             VBox.setVgrow(typeBox, Priority.NEVER);
             typeBox.setSpacing(5);
             typeBox.setAlignment(Pos.CENTER_LEFT);
-            Label typeLabel = new Label(Languages.message("IlluminantType"));
+            Label typeLabel = new Label(message("IlluminantType"));
             typeLabel.setPrefWidth(Region.USE_COMPUTED_SIZE);
             typeLabel.wrapTextProperty().setValue(true);
             final ComboBox<String> typeListbox = new ComboBox<>();
@@ -1413,7 +1404,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             VBox.setVgrow(observerBox, Priority.NEVER);
             observerBox.setSpacing(5);
             observerBox.setAlignment(Pos.CENTER_LEFT);
-            Label observerLabel = new Label(Languages.message("StandardObserver"));
+            Label observerLabel = new Label(message("StandardObserver"));
             observerLabel.setPrefWidth(Region.USE_COMPUTED_SIZE);
             observerLabel.wrapTextProperty().setValue(true);
             final ComboBox<String> observerListbox = new ComboBox<>();
@@ -1443,7 +1434,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             VBox.setVgrow(tristimulusBox, Priority.NEVER);
             tristimulusBox.setSpacing(5);
             tristimulusBox.setAlignment(Pos.CENTER_LEFT);
-            Label tristimulusLabel = new Label(Languages.message("Tristimulus"));
+            Label tristimulusLabel = new Label(message("Tristimulus"));
             tristimulusLabel.setPrefWidth(Region.USE_COMPUTED_SIZE);
             tristimulusLabel.wrapTextProperty().setValue(true);
             final TextField tristimulusInput = new TextField();
@@ -1474,7 +1465,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             VBox.setVgrow(geometryBox, Priority.NEVER);
             geometryBox.setSpacing(5);
             geometryBox.setAlignment(Pos.CENTER_LEFT);
-            Label geometryLabel = new Label(Languages.message("Geometry"));
+            Label geometryLabel = new Label(message("Geometry"));
             geometryLabel.setPrefWidth(Region.USE_COMPUTED_SIZE);
             geometryLabel.wrapTextProperty().setValue(true);
             final ComboBox<String> geometryListbox = new ComboBox<>();
@@ -1504,7 +1495,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             VBox.setVgrow(flareBox, Priority.NEVER);
             flareBox.setSpacing(5);
             flareBox.setAlignment(Pos.CENTER_LEFT);
-            Label flareLabel = new Label(Languages.message("Flare"));
+            Label flareLabel = new Label(message("Flare"));
             flareLabel.setPrefWidth(Region.USE_COMPUTED_SIZE);
             flareLabel.wrapTextProperty().setValue(true);
             final TextField flareInput = new TextField();
@@ -1534,7 +1525,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             VBox.setVgrow(typeBox, Priority.NEVER);
             typeBox.setSpacing(5);
             typeBox.setAlignment(Pos.CENTER_LEFT);
-            Label typeLabel = new Label(Languages.message("IlluminantType"));
+            Label typeLabel = new Label(message("IlluminantType"));
             typeLabel.setPrefWidth(Region.USE_COMPUTED_SIZE);
             typeLabel.wrapTextProperty().setValue(true);
             final ComboBox<String> typeListbox = new ComboBox<>();
@@ -1649,45 +1640,43 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         tagSizeDisplay.setText(tag.getBytes().length + "");
         tagDescDisplay.setText(tag.getDescription());
 
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private String display, bytes;
-
-                @Override
-                protected boolean handle() {
-                    bytes = bytesToHexFormat(tag.getBytes());
-                    if (tag.getType() == null || tag.getValue() == null) {
-                        return false;
-                    }
-                    if (tag.getType() == IccTag.TagType.MultiLocalizedUnicode) {
-                        display = IccTagType.textDescriptionFullDisplay(tag);
-                    } else {
-                        display = tag.display();
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (tag.getType() == null) {
-                        tagTypeDisplay.setText(Languages.message("NotDecoded"));
-                        tagDataDisplay.setText(Languages.message("NotDecoded"));
-                    } else {
-                        tagTypeDisplay.setText(tag.getType() + "");
-                        if (display != null) {
-                            tagDataDisplay.setText(display);
-                        }
-                    }
-                    tagBytesDisplay.setText(bytes);
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private String display, bytes;
+
+            @Override
+            protected boolean handle() {
+                bytes = bytesToHexFormat(tag.getBytes());
+                if (tag.getType() == null || tag.getValue() == null) {
+                    return false;
+                }
+                if (tag.getType() == IccTag.TagType.MultiLocalizedUnicode) {
+                    display = IccTagType.textDescriptionFullDisplay(tag);
+                } else {
+                    display = tag.display();
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (tag.getType() == null) {
+                    tagTypeDisplay.setText(message("NotDecoded"));
+                    tagDataDisplay.setText(message("NotDecoded"));
+                } else {
+                    tagTypeDisplay.setText(tag.getType() + "");
+                    if (display != null) {
+                        tagDataDisplay.setText(display);
+                    }
+                }
+                tagBytesDisplay.setText(bytes);
+            }
+
+        };
+        start(task);
     }
 
     @FXML
@@ -1737,7 +1726,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         inputsValid = true;
         validateInputs(thisPane);
         if (!inputsValid) {
-            popError(Languages.message("InvalidData"));
+            popError(message("InvalidData"));
         }
 
 //        saveButton.setDisable(!inputsValid);
@@ -1764,6 +1753,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
     }
 
     @FXML
+    @Override
     public void refreshAction() {
         if (!validateInputs()) {
             return;
@@ -1771,30 +1761,27 @@ public class IccProfileEditorController extends ChromaticityBaseController {
 
         final byte[] newHeaderData = encodeHeaderUpdate();
         if (encodeHeaderUpdate() == null) {
-            popError(Languages.message("InvalidData"));
+            popError(message("InvalidData"));
             return;
         }
-
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    return profile.update(newHeaderData);
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    displayProfileData();
-                    popSuccessful();
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                return profile.update(newHeaderData);
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                displayProfileData();
+                popSuccessful();
+            }
+
+        };
+        start(task);
     }
 
     @FXML
@@ -1866,30 +1853,30 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         if (file == null) {
             return;
         }
-        recordFileWritten(file, VisitHistory.FileType.Xml);
-
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    return TextFileTools.writeFile(file, xmlArea.getText()) != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (openExportCheck.isSelected()) {
-                        browseURI(file.toURI());
-                    }
-                    popSuccessful();
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                if (TextFileTools.writeFile(file, xmlArea.getText()) == null) {
+                    return false;
+                }
+                recordFileWritten(file, VisitHistory.FileType.Xml);
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (openExportCheck.isSelected()) {
+                    browseURI(file.toURI());
+                }
+                popSuccessful();
+            }
+
+        };
+        start(task);
     }
 
     private byte[] encodeHeaderUpdate() {
@@ -1898,7 +1885,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                 || xInput.getStyle().equals(UserConfig.badStyle())
                 || yInput.getStyle().equals(UserConfig.badStyle())
                 || zInput.getStyle().equals(UserConfig.badStyle())) {
-            popError(Languages.message("InvalidData"));
+            popError(message("InvalidData"));
             return null;
         }
         try {
@@ -1979,36 +1966,33 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         }
         final byte[] newHeaderData = encodeHeaderUpdate();
         if (encodeHeaderUpdate() == null) {
-            popError(Languages.message("InvalidData"));
+            popError(message("InvalidData"));
             return;
         }
-
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    if (backupController.needBackup()) {
-                        backupController.addBackup(task, file);
-                    }
-                    return profile.write(file, newHeaderData);
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    sourceFile = file;
-                    sourceType = SourceType.External_File;
-                    openProfile(file.getAbsolutePath());
-                    popSuccessful();
-
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                if (backupController.needBackup()) {
+                    backupController.addBackup(task, file);
+                }
+                return profile.write(file, newHeaderData);
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                sourceFile = file;
+                sourceType = SourceType.External_File;
+                openProfile(file.getAbsolutePath());
+                popSuccessful();
+
+            }
+
+        };
+        start(task);
     }
 
     @FXML

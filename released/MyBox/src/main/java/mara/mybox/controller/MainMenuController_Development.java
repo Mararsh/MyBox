@@ -18,6 +18,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.SystemTools;
 import mara.mybox.value.AppVariables;
@@ -318,6 +319,11 @@ public abstract class MainMenuController_Development extends MainMenuController_
     @FXML
     public void makeIcons() {
         loadScene(Fxmls.MyBoxIconsFxml);
+    }
+
+    @FXML
+    public void makeInterfaceTips() {
+        openHtml(HelpTools.makeInterfaceTips());
     }
 
     @FXML

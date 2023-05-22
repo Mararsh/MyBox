@@ -513,7 +513,9 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    playController.setList(groupLabels);
+                    if (groupLabels != null) {
+                        playController.setList(groupLabels);
+                    }
                     drawFrame();
                 }
             });
@@ -527,7 +529,11 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             }
             outputData = group.groupData(conn, groupid, outputColumns);
             groupParameters = group.parameterValue(conn, groupid);
-            groupLabels = group.getParameterLabels(conn, playController.currentRange());
+            if (!playController.selectCurrentFrame()) {
+                groupLabels = group.getParameterLabels(conn, playController.currentRange());
+            } else {
+                groupLabels = null;
+            }
             return initFrame();
         } catch (Exception e) {
             MyBoxLog.console(e.toString());

@@ -21,8 +21,8 @@ import javafx.scene.control.TreeTableView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.TreeNode;
-import mara.mybox.db.data.TreeNodeTag;
+import mara.mybox.db.data.InfoNode;
+import mara.mybox.db.data.InfoNodeTag;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableTreeNodeTag;
@@ -49,8 +49,8 @@ public class TreeNodeExportController extends BaseTaskController {
     protected TreeManageController treeController;
     protected TableTreeNode tableTreeNode;
     protected TableTreeNodeTag tableTreeNodeTag;
-    protected TreeTableView<TreeNode> infoTree;
-    protected TreeItem<TreeNode> selectedNode;
+    protected TreeTableView<InfoNode> infoTree;
+    protected TreeItem<InfoNode> selectedNode;
     protected File textsFile, xmlFile, jsonFile, htmlFile, framesetFile, framesetNavFile;
     protected FileWriter textsWriter, htmlWriter, xmlWriter, jsonWriter, framesetNavWriter;
     protected final String indent = "    ";
@@ -59,7 +59,7 @@ public class TreeNodeExportController extends BaseTaskController {
     protected boolean firstRow;
 
     @FXML
-    protected ControlTreeInfoSelect nodesController;
+    protected ControlInfoTreeSelector nodesController;
     @FXML
     protected CheckBox timeCheck, tagsCheck, iconCheck,
             textsCheck, htmlCheck, xmlCheck, jsonCheck, framesetCheck;
@@ -76,7 +76,7 @@ public class TreeNodeExportController extends BaseTaskController {
     public void initControls() {
         try {
             super.initControls();
-            infoTree = nodesController.infoTree;
+            infoTree = nodesController.treeView;
 
             timeCheck.setSelected(UserConfig.getBoolean(baseName + "Time", false));
             timeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -170,7 +170,7 @@ public class TreeNodeExportController extends BaseTaskController {
         }
     }
 
-    public void setParamters(TreeManageController treeController, TreeItem<TreeNode> item) {
+    public void setParamters(TreeManageController treeController, TreeItem<InfoNode> item) {
         this.treeController = treeController;
         this.tableTreeNode = treeController.tableTreeNode;
         this.tableTreeNodeTag = treeController.tableTreeNodeTag;
@@ -280,7 +280,7 @@ public class TreeNodeExportController extends BaseTaskController {
         }
         try {
             String nodeName = nodesController.chainName(selectedNode);
-            String prefix = nodeName.replaceAll(TreeNode.NodeSeparater, "-") + "_" + DateTools.nowFileString();
+            String prefix = nodeName.replaceAll(InfoNode.NodeSeparater, "-") + "_" + DateTools.nowFileString();
 
             if (textsCheck.isSelected()) {
                 textsFile = makeTargetFile(prefix, ".txt", targetPath);
@@ -458,14 +458,14 @@ public class TreeNodeExportController extends BaseTaskController {
         return well;
     }
 
-    public void exportNode(Connection conn, TreeNode node, String parentChainName) {
+    public void exportNode(Connection conn, InfoNode node, String parentChainName) {
         level++;
         if (conn == null || node == null) {
             return;
         }
         try {
             count++;
-            List<TreeNodeTag> tags = null;
+            List<InfoNodeTag> tags = null;
             if (tagsCheck.isSelected()) {
                 tags = tableTreeNodeTag.nodeTags(conn, node.getNodeid());
             }
@@ -483,11 +483,11 @@ public class TreeNodeExportController extends BaseTaskController {
             }
             String nodeChainName;
             if (parentChainName != null && !parentChainName.isBlank()) {
-                nodeChainName = parentChainName + TreeNode.NodeSeparater + node.getTitle();
+                nodeChainName = parentChainName + InfoNode.NodeSeparater + node.getTitle();
             } else {
                 nodeChainName = node.getTitle();
             }
-            List<TreeNode> children = tableTreeNode.children(conn, node.getNodeid());
+            List<InfoNode> children = tableTreeNode.children(conn, node.getNodeid());
 
             if (framesetNavWriter != null) {
                 String nodeTitle = node.getTitle() + "_" + node.getNodeid();
@@ -517,7 +517,7 @@ public class TreeNodeExportController extends BaseTaskController {
                 }
 
                 if (children != null && !children.isEmpty()) {
-                    for (TreeNode child : children) {
+                    for (InfoNode child : children) {
                         File childFile = new File(framesetNavFile.getParent() + File.separator
                                 + FileNameTools.filter(child.getTitle() + "_" + child.getNodeid()) + ".html");
                         bookNavWriter.write("<A href=\"" + childFile.getName() + "\"  target=main>" + child.getTitle() + "</A><BR>\n");
@@ -535,7 +535,7 @@ public class TreeNodeExportController extends BaseTaskController {
             }
 
             if (children != null) {
-                for (TreeNode child : children) {
+                for (InfoNode child : children) {
                     exportNode(conn, child, nodeChainName);
                 }
             }
@@ -545,31 +545,31 @@ public class TreeNodeExportController extends BaseTaskController {
         level--;
     }
 
-    protected void writeTexts(Connection conn, String parentName, TreeNode node, List<TreeNodeTag> tags) {
+    protected void writeTexts(Connection conn, String parentName, InfoNode node, List<InfoNodeTag> tags) {
         try {
             if (!(treeController instanceof WebFavoritesController)) {
                 textsWriter.write(AppValues.MyBoxSeparator + "\n");
             }
-            textsWriter.write((parentName == null ? TreeNode.RootIdentify : parentName) + "\n");
+            textsWriter.write((parentName == null ? InfoNode.RootIdentify : parentName) + "\n");
             textsWriter.write(node.getTitle() + "\n");
             if (timeCheck.isSelected() && node.getUpdateTime() != null) {
-                textsWriter.write(TreeNode.TimePrefix + DateTools.datetimeToString(node.getUpdateTime()) + "\n");
+                textsWriter.write(InfoNode.TimePrefix + DateTools.datetimeToString(node.getUpdateTime()) + "\n");
             }
             if (tags != null && !tags.isEmpty()) {
                 String s = null;
-                for (TreeNodeTag tag : tags) {
+                for (InfoNodeTag tag : tags) {
                     Color color = tag.getTag().getColor();
                     if (color == null) {
                         color = FxColorTools.randomColor();
                     }
-                    String v = tag.getTag().getTag() + TreeNode.TagsSeparater + color.toString();
+                    String v = tag.getTag().getTag() + InfoNode.TagsSeparater + color.toString();
                     if (s == null) {
                         s = v;
                     } else {
-                        s += TreeNode.TagsSeparater + v;
+                        s += InfoNode.TagsSeparater + v;
                     }
                 }
-                textsWriter.write(TreeNode.TagsPrefix + s + "\n");
+                textsWriter.write(InfoNode.TagsPrefix + s + "\n");
             }
             if (node.getValue() != null) {
                 textsWriter.write(node.getValue() + "\n");
@@ -586,7 +586,7 @@ public class TreeNodeExportController extends BaseTaskController {
         }
     }
 
-    protected void writeHtml(Connection conn, String parentName, TreeNode node, FileWriter writer, List<TreeNodeTag> tags) {
+    protected void writeHtml(Connection conn, String parentName, InfoNode node, FileWriter writer, List<InfoNodeTag> tags) {
         try {
             writer.write(indent + indent + "<div id=\"" + node.getNodeid() + "\">\n");
             if (parentName != null) {
@@ -597,7 +597,7 @@ public class TreeNodeExportController extends BaseTaskController {
             }
             if (tags != null && !tags.isEmpty()) {
                 writer.write(indent + indent + indent + "<H4>");
-                for (TreeNodeTag nodeTag : tags) {
+                for (InfoNodeTag nodeTag : tags) {
                     Color color = nodeTag.getTag().getColor();
                     if (color == null) {
                         color = FxColorTools.randomColor();
@@ -638,7 +638,7 @@ public class TreeNodeExportController extends BaseTaskController {
         }
     }
 
-    protected void writeXml(Connection conn, String parentName, TreeNode node, List<TreeNodeTag> tags) {
+    protected void writeXml(Connection conn, String parentName, InfoNode node, List<InfoNodeTag> tags) {
         try {
             xmlWriter.write(indent + indent + "<" + treeController.category + ">\n");
             if (parentName != null) {
@@ -654,12 +654,12 @@ public class TreeNodeExportController extends BaseTaskController {
             }
             if (tags != null && !tags.isEmpty()) {
                 String s = null;
-                for (TreeNodeTag tag : tags) {
+                for (InfoNodeTag tag : tags) {
                     String v = tag.getTag().getTag();
                     if (s == null) {
                         s = v;
                     } else {
-                        s += TreeNode.TagsSeparater + v;
+                        s += InfoNode.TagsSeparater + v;
                     }
                 }
                 xmlWriter.write(indent + indent + indent + "<" + message("Tags")
@@ -684,7 +684,7 @@ public class TreeNodeExportController extends BaseTaskController {
         }
     }
 
-    protected void writeJson(Connection conn, String parentName, TreeNode node, List<TreeNodeTag> tags) {
+    protected void writeJson(Connection conn, String parentName, InfoNode node, List<InfoNodeTag> tags) {
         try {
             StringBuilder s = new StringBuilder();
             if (!firstRow) {
@@ -709,12 +709,12 @@ public class TreeNodeExportController extends BaseTaskController {
             }
             if (tags != null && !tags.isEmpty()) {
                 String t = null;
-                for (TreeNodeTag tag : tags) {
+                for (InfoNodeTag tag : tags) {
                     String v = tag.getTag().getTag();
                     if (t == null) {
                         t = v;
                     } else {
-                        t += TreeNode.TagsSeparater + v;
+                        t += InfoNode.TagsSeparater + v;
                     }
                 }
                 t = t.replaceAll("\\[|\\]", "");

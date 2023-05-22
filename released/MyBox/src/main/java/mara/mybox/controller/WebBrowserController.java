@@ -181,49 +181,47 @@ public class WebBrowserController extends BaseController {
         if (address == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            String dname;
-            if (name != null && !name.isBlank()) {
-                dname = name;
-                String nameSuffix = FileNameTools.suffix(name);
-                String addrSuffix = FileNameTools.suffix(address);
-                if (addrSuffix != null && !addrSuffix.isBlank()) {
-                    if (nameSuffix == null || nameSuffix.isBlank()
-                            || !addrSuffix.equalsIgnoreCase(nameSuffix)) {
-                        dname = name + "." + addrSuffix;
-                    }
+        String dname;
+        if (name != null && !name.isBlank()) {
+            dname = name;
+            String nameSuffix = FileNameTools.suffix(name);
+            String addrSuffix = FileNameTools.suffix(address);
+            if (addrSuffix != null && !addrSuffix.isBlank()) {
+                if (nameSuffix == null || nameSuffix.isBlank()
+                        || !addrSuffix.equalsIgnoreCase(nameSuffix)) {
+                    dname = name + "." + addrSuffix;
                 }
-            } else {
-                dname = address;
             }
-            int pos = dname.lastIndexOf("/");
-            if (pos >= 0) {
-                dname = (pos < dname.length() - 1) ? dname.substring(pos + 1) : "";
-            }
-            File dnFile = chooseSaveFile(VisitHistory.FileType.All, dname);
-            if (dnFile == null) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    File tmpFile = HtmlReadTools.download(address);
-                    return FileTools.rename(tmpFile, dnFile);
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSuccessful();
-                    browseURI(dnFile.toURI());
-                }
-
-            };
-            start(task);
+        } else {
+            dname = address;
         }
+        int pos = dname.lastIndexOf("/");
+        if (pos >= 0) {
+            dname = (pos < dname.length() - 1) ? dname.substring(pos + 1) : "";
+        }
+        File dnFile = chooseSaveFile(VisitHistory.FileType.All, dname);
+        if (dnFile == null) {
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                File tmpFile = HtmlReadTools.download(address);
+                return FileTools.rename(tmpFile, dnFile);
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popSuccessful();
+                browseURI(dnFile.toURI());
+            }
+
+        };
+        start(task);
     }
 
     @Override

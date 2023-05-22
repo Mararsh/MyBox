@@ -17,7 +17,6 @@ import mara.mybox.fxml.SingletonTask;
 import static mara.mybox.fxml.WindowTools.recordError;
 import static mara.mybox.fxml.WindowTools.recordInfo;
 import static mara.mybox.fxml.WindowTools.taskError;
-import static mara.mybox.fxml.WindowTools.taskInfo;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.AppPaths;
 import static mara.mybox.value.Languages.message;
@@ -56,6 +55,9 @@ public class TableFileBackup extends BaseTable<FileBackup> {
     public static final String Create_Index
             = "CREATE INDEX File_Backup_index on File_Backup (  file, backup, record_time )";
 
+    public static final String QueryPath
+            = "SELECT * FROM File_Backup  WHERE file=? ";
+
     public static final String FileQuery
             = "SELECT * FROM File_Backup  WHERE file=? ORDER BY record_time DESC";
 
@@ -65,50 +67,96 @@ public class TableFileBackup extends BaseTable<FileBackup> {
     public static final String DeleteBackup
             = "DELETE FROM File_Backup  WHERE file=? AND backup=?";
 
-    public List<FileBackup> read(String file) {
-        List<FileBackup> dataList = new ArrayList<>();
-        if (file == null || file.isBlank()) {
-            return dataList;
+    public File path(Connection conn, File srcFile) {
+        if (conn == null || srcFile == null || !srcFile.exists()) {
+            return null;
         }
-        try (Connection conn = DerbyBase.getConnection()) {
-            return read(conn, file);
+        try (PreparedStatement query = conn.prepareStatement(QueryPath)) {
+            query.setString(1, srcFile.getAbsolutePath());
+            FileBackup backup = query(conn, query);
+            if (backup != null) {
+                File backFile = backup.getBackup();
+                if (backFile != null && backFile.exists()) {
+                    return backFile.getParentFile();
+                }
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-        return dataList;
+        return null;
     }
 
-    public List<FileBackup> read(Connection conn, String filename) {
+    public List<FileBackup> read(File srcFile) {
         List<FileBackup> records = new ArrayList<>();
-        if (filename == null || filename.isBlank()) {
+        if (srcFile == null || !srcFile.exists()) {
             return records;
         }
-        int max = UserConfig.getInt(conn, "MaxFileBackups", FileBackup.Default_Max_Backups);
-        if (max <= 0) {
-            max = FileBackup.Default_Max_Backups;
-            UserConfig.setInt(conn, "MaxFileBackups", FileBackup.Default_Max_Backups);
+        try (Connection conn = DerbyBase.getConnection()) {
+            return read(conn, srcFile);
+        } catch (Exception e) {
+            MyBoxLog.debug(e, srcFile.getAbsolutePath());
+            return records;
+        }
+    }
+
+    public List<FileBackup> read(Connection conn, File srcFile) {
+        List<FileBackup> records = new ArrayList<>();
+        if (srcFile == null || !srcFile.exists()) {
+            return records;
         }
         try (PreparedStatement statement = conn.prepareStatement(FileQuery)) {
+            int max = UserConfig.getInt(conn, "MaxFileBackups", FileBackup.Default_Max_Backups);
+            if (max <= 0) {
+                max = FileBackup.Default_Max_Backups;
+                UserConfig.setInt(conn, "MaxFileBackups", FileBackup.Default_Max_Backups);
+            }
             conn.setAutoCommit(true);
-            statement.setString(1, filename);
-            try (ResultSet results = statement.executeQuery();
-                    PreparedStatement delete = conn.prepareStatement(deleteStatement())) {
+            statement.setString(1, srcFile.getAbsolutePath());
+            try (ResultSet results = statement.executeQuery()) {
                 while (results.next()) {
                     FileBackup data = readData(results);
-                    File backup = data.getBackup();
-                    if (backup == null || !backup.exists() || records.size() >= max) {
-                        if (setDeleteStatement(conn, delete, data)) {
-                            delete.executeUpdate();
-                        }
+                    if (data == null) {
+                        continue;
+                    }
+                    if (!data.valid() || records.size() >= max) {
+                        deleteData(conn, data);
                     } else {
                         records.add(data);
                     }
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e, filename);
+            MyBoxLog.debug(e, srcFile.getAbsolutePath());
         }
         return records;
+    }
+
+    public List<FileBackup> addBackups(Connection conn, FileBackup data) {
+        if (conn == null || data == null) {
+            return null;
+        }
+        try {
+            data = super.insertData(conn, data);
+            if (data == null) {
+                return null;
+            }
+            return read(conn, data.getFile());
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    @Override
+    public int deleteData(Connection conn, FileBackup data) {
+        if (data == null) {
+            return 0;
+        }
+        int count = super.deleteData(conn, data);
+        if (count > 0) {
+            FileDeleteTools.delete(data.getBackup());
+        }
+        return count;
     }
 
     public void clearBackups(SingletonTask task, String filename) {
@@ -128,22 +176,22 @@ public class TableFileBackup extends BaseTable<FileBackup> {
         if (conn == null || files == null || files.isEmpty()) {
             return;
         }
-        taskInfo(task, FileQuery);
-        try (PreparedStatement statement = conn.prepareStatement(FileQuery)) {
+//        taskInfo(task, FileQuery);
+        try (PreparedStatement query = conn.prepareStatement(FileQuery)) {
             conn.setAutoCommit(true);
             for (String file : files) {
                 if (task != null && task.isCancelled()) {
                     return;
                 }
-                taskInfo(task, message("Check") + ": " + file);
-                statement.setString(1, file);
-                try (ResultSet results = statement.executeQuery()) {
+//                taskInfo(task, message("Check") + ": " + file);
+                query.setString(1, file);
+                try (ResultSet results = query.executeQuery()) {
                     while (results.next()) {
                         if (task != null && task.isCancelled()) {
                             return;
                         }
                         FileBackup data = readData(results);
-                        taskInfo(task, message("Delete") + ": " + data.getBackup());
+//                        taskInfo(task, message("Delete") + ": " + data.getBackup());
                         FileDeleteTools.delete(data.getBackup());
                     }
                 } catch (Exception e) {
@@ -153,16 +201,17 @@ public class TableFileBackup extends BaseTable<FileBackup> {
         } catch (Exception e) {
             taskError(task, e.toString() + "\n" + tableName);
         }
-        taskInfo(task, DeleteFile);
+//        taskInfo(task, DeleteFile);
         if (task != null && task.isCancelled()) {
             return;
         }
         try (PreparedStatement statement = conn.prepareStatement(DeleteFile)) {
+            conn.setAutoCommit(true);
             for (String file : files) {
                 if (task != null && task.isCancelled()) {
                     return;
                 }
-                taskInfo(task, message("Clear") + ": " + file);
+//                taskInfo(task, message("Clear") + ": " + file);
                 statement.setString(1, file);
                 statement.executeUpdate();
             }
@@ -247,45 +296,84 @@ public class TableFileBackup extends BaseTable<FileBackup> {
             }
             try (PreparedStatement query = conn.prepareStatement(BackupQuery)) {
                 conn.setAutoCommit(true);
-                for (String pathname : fbPaths) {
+                for (String fbpath : fbPaths) {
                     if (taskController != null && taskController.getTask() != null
                             && taskController.getTask().isCancelled()) {
                         return invalidCount;
                     }
-                    String path = fbRootpath + File.separator + pathname;
-                    String[] names = new File(path).list();
-                    if (names == null || names.length == 0) {
+                    File level1path = new File(fbRootpath + File.separator + fbpath);
+                    String[] level1names = level1path.list();
+                    if (level1names == null || level1names.length == 0) {
                         try {
-                            new File(path).delete();
-                            recordInfo(taskController, message("Delete") + ": " + path);
+                            level1path.delete();
+                            recordInfo(taskController, message("Delete") + ": " + level1path);
                         } catch (Exception ex) {
                         }
                         continue;
                     }
-                    for (String name : names) {
+                    for (String level1name : level1names) {
                         rowCount++;
                         if (taskController != null && taskController.getTask() != null
                                 && taskController.getTask().isCancelled()) {
                             return invalidCount;
                         }
-                        String file = path + File.separator + name;
-                        query.setString(1, file);
-                        try (ResultSet results = query.executeQuery()) {
-                            if (!results.next()) {
-                                invalidCount++;
-                                if (FileDeleteTools.delete(file)) {
-                                    recordInfo(taskController, message("Delete") + ": " + file);
+                        File level2file = new File(level1path, level1name);
+                        if (level2file.isDirectory()) {
+                            String[] level2names = level2file.list();
+                            if (level2names == null || level2names.length == 0) {
+                                try {
+                                    level2file.delete();
+                                    recordInfo(taskController, message("Delete") + ": " + level2file);
+                                } catch (Exception ex) {
+                                }
+                            } else {
+                                for (String level2name : level2names) {
+                                    rowCount++;
+                                    if (taskController != null && taskController.getTask() != null
+                                            && taskController.getTask().isCancelled()) {
+                                        return invalidCount;
+                                    }
+                                    File level3file = new File(level2file, level2name);
+                                    query.setString(1, level3file.getAbsolutePath());
+                                    try (ResultSet results = query.executeQuery()) {
+                                        if (!results.next()) {
+                                            invalidCount++;
+                                            if (FileDeleteTools.delete(level3file)) {
+                                                recordInfo(taskController, message("Delete") + ": " + level3file);
+                                            }
+                                        }
+                                    } catch (Exception e) {
+                                        recordError(taskController, e.toString() + "\n" + level3file);
+                                    }
+                                }
+                                level2names = level2file.list();
+                                if (level2names == null || level2names.length == 0) {
+                                    try {
+                                        level2file.delete();
+                                        recordInfo(taskController, message("Delete") + ": " + level2file);
+                                    } catch (Exception ex) {
+                                    }
                                 }
                             }
-                        } catch (Exception e) {
-                            recordError(taskController, e.toString() + "\n" + file);
+                        } else {
+                            query.setString(1, level2file.getAbsolutePath());
+                            try (ResultSet results = query.executeQuery()) {
+                                if (!results.next()) {
+                                    invalidCount++;
+                                    if (FileDeleteTools.delete(level2file)) {
+                                        recordInfo(taskController, message("Delete") + ": " + level2file);
+                                    }
+                                }
+                            } catch (Exception e) {
+                                recordError(taskController, e.toString() + "\n" + level2file);
+                            }
                         }
                     }
-                    names = new File(path).list();
-                    if (names == null || names.length == 0) {
+                    level1names = level1path.list();
+                    if (level1names == null || level1names.length == 0) {
                         try {
-                            new File(path).delete();
-                            recordInfo(taskController, message("Delete") + ": " + path);
+                            level1path.delete();
+                            recordInfo(taskController, message("Delete") + ": " + level1path);
                         } catch (Exception ex) {
                         }
                     }

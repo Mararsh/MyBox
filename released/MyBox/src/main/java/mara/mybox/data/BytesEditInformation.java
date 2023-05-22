@@ -10,7 +10,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.ByteTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 
 /**
  * @Author Mara
@@ -223,7 +223,7 @@ public class BytesEditInformation extends FileEditInformation {
             if (!lbWidth && lineBreakValue == null) {
                 return null;
             }
-            File targetFile = TmpFileTools.getTempFile();
+            File targetFile = FileTmpTools.getTempFile();
             int lineEnd = 0, lineStart = 0;
             try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
                      BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile));
@@ -299,7 +299,7 @@ public class BytesEditInformation extends FileEditInformation {
             }
             File targetFile = file;
             if (sourceInfo.getFile().equals(file)) {
-                targetFile = TmpFileTools.getTempFile();
+                targetFile = FileTmpTools.getTempFile();
             }
             try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(sourceInfo.getFile()));
                      BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetFile))) {

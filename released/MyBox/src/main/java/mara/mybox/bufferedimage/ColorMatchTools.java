@@ -9,7 +9,7 @@ import java.awt.Color;
  */
 public class ColorMatchTools {
 
-    // distance2 = Math.pow(distance, 2)
+    // distanceSquare = Math.pow(distance, 2)
     public static boolean isColorMatchSquare(Color color1, Color color2, int distanceSquare) {
         if (color1 == null || color2 == null) {
             return false;

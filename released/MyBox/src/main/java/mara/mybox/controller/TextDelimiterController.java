@@ -4,6 +4,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -20,6 +21,8 @@ public class TextDelimiterController extends BaseController {
 
     @FXML
     protected ControlTextDelimiter delimiterController;
+    @FXML
+    protected Label label;
 
     public TextDelimiterController() {
         okNotify = new SimpleBooleanProperty();

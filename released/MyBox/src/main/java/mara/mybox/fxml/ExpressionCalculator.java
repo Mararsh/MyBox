@@ -105,9 +105,10 @@ public class ExpressionCalculator {
                 for (int i = 0; i < data2D.columnsNumber(); i++) {
                     Data2DColumn column = data2D.getColumns().get(i);
                     String name = column.getColumnName();
-                    filledScript = replace(filledScript, "#{" + name + "}", column.filterValue(dataRow.get(i)));
+                    String value = fixQuotes(column.filterValue(dataRow.get(i)));
+                    filledScript = replaceAll(filledScript, "#{" + name + "}", value);
                 }
-                filledScript = replace(filledScript, "#{" + message("DataRowNumber") + "}", dataRowNumber + "");
+                filledScript = replaceAll(filledScript, "#{" + message("DataRowNumber") + "}", dataRowNumber + "");
             }
             return filledScript;
         } catch (Exception e) {
@@ -132,16 +133,25 @@ public class ExpressionCalculator {
             for (int i = 0; i < data2D.columnsNumber(); i++) {
                 Data2DColumn column = data2D.getColumns().get(i);
                 String name = column.getColumnName();
-                filledScript = replace(filledScript, "#{" + name + "}", column.filterValue(tableRow.get(i + 1)));
+                String value = fixQuotes(column.filterValue(tableRow.get(i + 1)));
+                filledScript = replaceAll(filledScript, "#{" + name + "}", value);
             }
-            filledScript = replace(filledScript, "#{" + message("DataRowNumber") + "}", tableRow.get(0) + "");
-            filledScript = replace(filledScript, "#{" + message("TableRowNumber") + "}",
+            filledScript = replaceAll(filledScript, "#{" + message("DataRowNumber") + "}", tableRow.get(0) + "");
+            filledScript = replaceAll(filledScript, "#{" + message("TableRowNumber") + "}",
                     tableRowNumber >= 0 ? (tableRowNumber + 1) + "" : message("NoTableRowNumberWhenAllPages"));
             return filledScript;
         } catch (Exception e) {
             handleError(e.toString());
             return null;
         }
+    }
+
+    public String fixQuotes(String value) {
+        if (value != null) {
+            value = replaceAll(value, "'", "\\'");
+            value = replaceAll(value, "\"", "\\\"");
+        }
+        return value;
     }
 
     /*
@@ -201,7 +211,7 @@ public class ExpressionCalculator {
                 Data2DColumn column = data2D.columns.get(i);
                 String name = column.getColumnName();
                 for (StatisticType stype : StatisticType.values()) {
-                    filledScript = replace(filledScript, "#{" + name + "-" + message(stype.name()) + "}", "1");
+                    filledScript = replaceAll(filledScript, "#{" + name + "-" + message(stype.name()) + "}", "1");
                 }
             }
             return filledScript;
@@ -211,7 +221,7 @@ public class ExpressionCalculator {
         }
     }
 
-    public String replace(String script, String string, String replaced) {
+    public String replaceAll(String script, String string, String replaced) {
         return getFindReplace().replace(script, string, replaced);
     }
 

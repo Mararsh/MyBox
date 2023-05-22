@@ -10,6 +10,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -34,10 +36,10 @@ import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.LocationTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.value.AppPaths;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.FileFilters;
 import static mara.mybox.value.Languages.message;
@@ -53,7 +55,7 @@ public class ControlMap extends BaseController {
     protected WebEngine webEngine;
     protected boolean mapLoaded;
     protected MapOptions mapOptions;
-    protected SimpleBooleanProperty drawNotify, dataNotify;
+    protected SimpleBooleanProperty loadNotify, drawNotify;
     protected List<MapPoint> mapPoints;
     protected int interval;
 
@@ -74,13 +76,13 @@ public class ControlMap extends BaseController {
         targetExtensionFilter = FileFilters.HtmlExtensionFilter;
     }
 
-    @Override
-    public void initControls() {
+    /*
+        init map
+     */
+    public void initMap() {
         try {
-            super.initControls();
-
+            loadNotify = new SimpleBooleanProperty();
             drawNotify = new SimpleBooleanProperty();
-            dataNotify = new SimpleBooleanProperty();
             mapOptions = new MapOptions(this);
             interval = 1;
 
@@ -88,25 +90,42 @@ public class ControlMap extends BaseController {
 
             loadMap();
 
-            initOptionsControls();
-
+            if (mapOptionsController != null) {
+                mapOptionsController.setParameters(this);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    public void setMapTitle(String title) {
-        mapTitle = title;
-    }
+    public void initWebEngine() {
+        try {
+            if (mapView == null) {
+                return;
+            }
+            mapLoaded = false;
+            webEngine = mapView.getEngine();
+            webEngine.setJavaScriptEnabled(true);
 
-    public void initOptionsControls() {
-        if (mapOptionsController != null) {
-            mapOptionsController.setParameters(this);
+            webEngine.setOnAlert((WebEvent<String> ev) -> {
+                mapEvents(ev.getData());
+            });
+
+            loadNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                    mapLoaded();
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
+
     }
 
     public void loadMap() {
-        if (webEngine == null || isSettingValues) {
+        if (webEngine == null) {
             return;
         }
         if (timer != null) {
@@ -118,44 +137,113 @@ public class ControlMap extends BaseController {
         if (mapOptionsController != null) {
             mapOptionsController.optionsBox.setDisable(true);
         }
+        webEngine.getLoadWorker().cancel();
         if (mapOptions.isGaoDeMap()) {
             webEngine.loadContent(LocationTools.gaodeMap());
         } else {
             webEngine.load(LocationTools.tiandituFile(mapOptions.isIsGeodetic()).toURI().toString());
         }
-        timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Platform.runLater(() -> {
-                    if (!mapLoaded) {
-                        return;
-                    }
-                    if (timer != null) {
-                        timer.cancel();
-                        timer = null;
-                    }
-                    if (mapOptions.isGaoDeMap()) {
-                        setLanguage();
-                    } else {
-                        webEngine.executeScript("setControl('zoom'," + mapOptions.isZoom() + ");");
-                        webEngine.executeScript("setControl('scale'," + mapOptions.isScale() + ");");
-                        webEngine.executeScript("setControl('mapType'," + mapOptions.isType() + ");");
-                        webEngine.executeScript("setControl('symbols'," + mapOptions.isSymbols() + ");");
-                    }
-                    drawPoints();
-                    if (mapOptionsController != null) {
-                        mapOptionsController.optionsBox.setDisable(false);
-                    }
-                });
-            }
+    }
 
-        }, 0, 500);
+    public void mapEvents(String data) {
+        try {
+            if (bottomLabel != null) {
+                bottomLabel.setText(data);
+            }
+            if (data.equals("Loaded")) {
+                loadNotify.set(!loadNotify.get());
+                return;
+            } else if (data.startsWith("zoomSize:")) {
+                int v = Integer.parseInt(data.substring("zoomSize:".length()));
+                if (mapOptionsController != null) {
+                    mapOptionsController.setMapSize(v);
+                }
+                return;
+            }
+            boolean isClicked = true;
+            if (data.startsWith("click:")) {
+                data = data.substring(6);
+            } else if (data.startsWith("move:")) {
+                data = data.substring(5);
+                isClicked = false;
+            } else {
+                return;
+            }
+            String[] values = data.split(",");
+            double longitude = Double.parseDouble(values[0]);
+            double latitude = Double.parseDouble(values[1]);
+            if (isClicked) {
+                mapClicked(longitude, latitude);
+            } else {
+                mouseMoved(longitude, latitude);
+            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    public void mapLoaded() {
+        mapLoaded = true;
+        if (mapOptionsController != null) {
+            mapOptionsController.mapLoaded();
+        }
+        setMapSize();
+        if (mapOptions.isGaoDeMap()) {
+            setStandardLayer();
+            setSatelliteLayer();
+            setRoadLayer();
+            setTrafficLayer();
+            setFitView();
+            setLanguage();
+        } else {
+            setShowZoom();
+            setShowScale();
+            setShowType();
+            setShowSymbols();
+        }
+    }
+
+    protected void mapClicked(double longitude, double latitude) {
+
+    }
+
+    protected void mouseMoved(double longitude, double latitude) {
+
+    }
+
+    public void clearMap() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+        if (mapLoaded) {
+            if (webEngine != null) {
+                webEngine.getLoadWorker().cancel();
+                webEngine.executeScript("clearMap();");
+            }
+        }
+        if (topLabel != null) {
+            topLabel.setText("");
+        }
+        if (titleLabel != null) {
+            titleLabel.setText("");
+        }
+        if (bottomLabel != null) {
+            bottomLabel.setText("");
+        }
+    }
+
+    /*
+        options
+     */
+    public void setMapTitle(String title) {
+        mapTitle = title;
     }
 
     public void setLanguage() {
         try {
-            if (isSettingValues || mapOptions.getLanguage() == null) {
+            if (!mapLoaded || isSettingValues
+                    || !mapOptions.isGaoDeMap() || mapOptions.getLanguage() == null) {
                 return;
             }
             Platform.runLater(() -> {
@@ -168,7 +256,7 @@ public class ControlMap extends BaseController {
 
     public void setMapStyle() {
         try {
-            if (isSettingValues || mapOptions.getMapStyle() == null) {
+            if (!mapLoaded || isSettingValues || mapOptions.getMapStyle() == null) {
                 return;
             }
             Platform.runLater(() -> {
@@ -187,14 +275,12 @@ public class ControlMap extends BaseController {
         Platform.runLater(() -> {
             webEngine.executeScript("setZoom(" + mapOptions.getMapSize() + ");");
         });
-        if (mapOptionsController != null) {
-            mapOptionsController.setMapSize(mapOptions.getMapSize());
-        }
+
     }
 
     public void setStandardLayer() {
         try {
-            if (isSettingValues) {
+            if (!mapLoaded || isSettingValues || !mapOptions.isGaoDeMap()) {
                 return;
             }
             if (mapOptions.isStandardLayer()) {
@@ -212,7 +298,7 @@ public class ControlMap extends BaseController {
 
     public void setSatelliteLayer() {
         try {
-            if (isSettingValues) {
+            if (!mapLoaded || isSettingValues || !mapOptions.isGaoDeMap()) {
                 return;
             }
             if (mapOptions.isSatelliteLayer()) {
@@ -230,7 +316,7 @@ public class ControlMap extends BaseController {
 
     public void setRoadLayer() {
         try {
-            if (isSettingValues) {
+            if (!mapLoaded || isSettingValues || !mapOptions.isGaoDeMap()) {
                 return;
             }
             if (mapOptions.isRoadLayer()) {
@@ -248,7 +334,7 @@ public class ControlMap extends BaseController {
 
     public void setTrafficLayer() {
         try {
-            if (isSettingValues) {
+            if (!mapLoaded || isSettingValues || !mapOptions.isGaoDeMap()) {
                 return;
             }
             if (mapOptions.isTrafficLayer()) {
@@ -265,7 +351,7 @@ public class ControlMap extends BaseController {
     }
 
     public void setShowZoom() {
-        if (!mapLoaded || isSettingValues) {
+        if (!mapLoaded || isSettingValues || mapOptions.isGaoDeMap()) {
             return;
         }
         Platform.runLater(() -> {
@@ -274,7 +360,7 @@ public class ControlMap extends BaseController {
     }
 
     public void setShowScale() {
-        if (!mapLoaded || isSettingValues) {
+        if (!mapLoaded || isSettingValues || mapOptions.isGaoDeMap()) {
             return;
         }
         Platform.runLater(() -> {
@@ -283,7 +369,7 @@ public class ControlMap extends BaseController {
     }
 
     public void setShowType() {
-        if (!mapLoaded || isSettingValues) {
+        if (!mapLoaded || isSettingValues || mapOptions.isGaoDeMap()) {
             return;
         }
         Platform.runLater(() -> {
@@ -292,7 +378,7 @@ public class ControlMap extends BaseController {
     }
 
     public void setShowSymbols() {
-        if (!mapLoaded || isSettingValues) {
+        if (!mapLoaded || isSettingValues || mapOptions.isGaoDeMap()) {
             return;
         }
         Platform.runLater(() -> {
@@ -315,17 +401,14 @@ public class ControlMap extends BaseController {
         if (isSettingValues) {
             return;
         }
-        mapOptions.setMapSize(mapOptions.isGaoDeMap() ? 3 : 1);
+        if (mapOptionsController != null) {
+            mapOptionsController.setMapSize(mapOptions.isGaoDeMap() ? 3 : 1);
+        }
     }
 
-    protected void mapClicked(double longitude, double latitude) {
-
-    }
-
-    protected void mouseMoved(double longitude, double latitude) {
-
-    }
-
+    /*
+        data
+     */
     public void drawPoints() {
         drawNotify.set(!drawNotify.get());
     }
@@ -336,69 +419,6 @@ public class ControlMap extends BaseController {
 
     public void reloadData() {
 
-    }
-
-    public void initWebEngine() {
-        try {
-            if (mapView == null) {
-                return;
-            }
-            mapLoaded = false;
-            webEngine = mapView.getEngine();
-            webEngine.setJavaScriptEnabled(true);
-
-            webEngine.setOnAlert((WebEvent<String> ev) -> {
-                mapEvents(ev.getData());
-            });
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-
-    }
-
-    public void mapEvents(String data) {
-        try {
-//            MyBoxLog.debug(data);
-            if (data.equals("Loaded")) {
-                mapLoaded = true;
-                if (mapOptionsController != null) {
-                    mapOptionsController.mapLoaded();
-                    return;
-                }
-            } else if (data.startsWith("zoomSize:")) {
-                int v = Integer.parseInt(data.substring("zoomSize:".length()));
-                if (v != mapOptions.getMapSize()) {
-                    if (mapOptionsController != null) {
-                        mapOptionsController.setMapSize(v);
-                    }
-                    mapOptions.setMapSize(v);
-                }
-                return;
-            }
-            boolean isClicked = true;
-            if (data.startsWith("click:")) {
-                data = data.substring(6);
-            } else if (data.startsWith("move:")) {
-                data = data.substring(5);
-                isClicked = false;
-            } else {
-                return;
-            }
-            String[] values = data.split(",");
-            double longitude = Double.parseDouble(values[0]);
-            double latitude = Double.parseDouble(values[1]);
-            if (isClicked) {
-                mapClicked(longitude, latitude);
-            } else {
-                mouseMoved(longitude, latitude);
-            }
-            if (bottomLabel != null) {
-                bottomLabel.setText(data);
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
     }
 
     protected void drawPoint(MapPoint point) {
@@ -454,8 +474,11 @@ public class ControlMap extends BaseController {
     }
 
     public void initPoints(List<MapPoint> points) {
+        if (!mapLoaded || webEngine == null || points == null || points.isEmpty()) {
+            return;
+        }
         setPoints(points);
-        setMinLevel();
+//        setMinLevel();
         mapOptions.setFitView(false);
         mapPoints = points;
         if (mapPoints != null && !mapPoints.isEmpty()) {
@@ -532,35 +555,17 @@ public class ControlMap extends BaseController {
         }, 0, interval);
     }
 
+    /*
+        action
+     */
     @FXML
     @Override
     public void clearAction() {
         clearMap();
     }
 
-    public void clearMap() {
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
-        if (webEngine != null) {
-            webEngine.getLoadWorker().cancel();
-            if (mapLoaded) {
-                webEngine.executeScript("clearMap();");
-            }
-        }
-        if (topLabel != null) {
-            topLabel.setText("");
-        }
-        if (titleLabel != null) {
-            titleLabel.setText("");
-        }
-        if (bottomLabel != null) {
-            bottomLabel.setText("");
-        }
-    }
-
     @FXML
+    @Override
     public void refreshAction() {
         drawPoints();
     }
@@ -604,8 +609,7 @@ public class ControlMap extends BaseController {
                     s.append("<h1  class=\"center\">").append(title).append("</h1>\n");
                     s.append("<hr>\n");
 
-                    File imageFile = new File(AppPaths.getGeneratedPath() + File.separator
-                            + DateTools.nowFileString() + ".jpg");
+                    File imageFile = FileTmpTools.generateFile("jpg");
                     BufferedImage bufferedImage = SwingFXUtils.fromFXImage(mapSnap, null);
                     ImageFileWriters.writeImageFile(bufferedImage, "jpg", imageFile.getAbsolutePath());
                     s.append("<h2  class=\"center\">").append(message("Image")).append("</h2>\n");
@@ -699,12 +703,16 @@ public class ControlMap extends BaseController {
 
     @FXML
     public void aboutCoordinateSystem() {
-        openLink(HelpTools.aboutCoordinateSystem());
+        openHtml(HelpTools.aboutCoordinateSystem());
     }
 
     @Override
     public void cleanPane() {
         try {
+            if (timer != null) {
+                timer.cancel();
+                timer = null;
+            }
             clearAction();
             if (webEngine != null) {
                 webEngine = null;

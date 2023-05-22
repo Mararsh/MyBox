@@ -1,0 +1,1085 @@
+<!DOCTYPE html><HTML>
+    <HEAD>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <TITLE>Tips in Interfaces</TITLE>
+        <style type="text/css">
+             body { margin:0 auto; } 
+              table { max-width:95%; margin : 10px;  border-style: solid; border-width:2px; border-collapse: collapse;} 
+              th, td { border-style: solid; border-width:1px; padding: 8px; border-collapse: collapse;} 
+              th { font-weight:bold;  text-align:center;} 
+              tr { height: 1.2em;  } 
+              .center { text-align:center;  max-width:95%; } 
+              .valueBox { border-style: solid; border-width:1px; border-color:black; padding: 5px; border-radius:5px;} 
+              .boldText { font-weight:bold;  } 
+ body { width: 900px; } 
+              img { max-width: 900px; } 
+              .valueText { color:#2e598a;  } 
+
+        </style>
+    </HEAD>
+<BODY>
+<H1>Document Tools</H1>
+    <H3>Notes</H3>
+    <PRE>This tool helps to record information:
+- Note is a piece of information in html format:
+       - Note can be edited in 4 modes: "html code", "Rich text", "Markdown", "Texts":
+              - Each edit mode can change the html separately. 
+              - The mode in current tab is "current edit mode".
+              - Click button "Synchronize"(F10) to apply updates in current edit mode to other modes.
+              - Click button "Save"(F2) to save updates in current edit mode and synchronize automatically.
+              - Note' html code should be contents of "body" and have not tags "html", "head" and "body".
+       - Tags can be set for note.
+       - Style can be set for note. Style is only for displaying and not saved in note's codes.
+- A notebook is collection of some notes and some notebooks.
+       - Notebook's name should not include string " > "(Blank before and after ">").
+       - Notebooks are organized as a tree, that is notebooks can be children of other notebook.</PRE>
+    <H3>View PDF</H3>
+    <PRE>This tool helps to view pages of PDF:
+ - Each page is displayed as an image.
+ - Texts can be extracted from pages.
+    If PDF file only includes images, then no text can be extracted.
+ - Page can be converted as Html page.
+    If PDF file only includes images, then the html only includes images.
+ - OCR(Text Recognition) can be done against the converted image.
+
+Notice, there are 2 types of PDF files:
+ - "Editable PDF" is composed of images and texts which can be updated and extracted as elements.  
+ - "Scanned PDF" is composed of images, and only images can be updated and extracted. 
+Texts in images can not be changed and extracted, but can be recognized by OCR technique.</PRE>
+    <H3>Edit Markdown</H3>
+    <PRE>This tool helps to edit Markdown file(MD):
+-  Charset and Line Break are determined automatically when file is opened. 
+   If loaded contents are incorrent, change charset and click button "Refresh".
+-  Corresponding html is converted(Read only).
+-  When pages number is larger than 1, modification should be saved before filter strings or locate line/object.
+-  Click button "Pop"(CTRL/ALT+p) to display current contents in a new window.
+-  Click button "Menu" or right click edit area to pop buttons menu.
+-  Click button "MyBox Clipboard"(CTRL/ALT+m) to pop texts clipboard for pasting.
+
+
+Some shortcuts:
+F2                          Save
+F3                          Recover            
+F6                          Close popped menu
+F11                        Save as
+Alt-PageUp            Previous page
+Alt-PageDown        Next page
+Alt-Home               First page
+Alt-End                   Last page
+Ctrl-f                       Open find pane
+Ctrl-1                      Find previous
+Ctrl-2                      Find next
+Ctrl-h                      Replace
+Ctrl-w                      Replace all
+More shortcuts can be found in help.</PRE>
+    <H3>Edit Html</H3>
+    <PRE>This tool helps to edit html:
+- Html can be loaded by opening file, creating new file , or inputting address.
+- Html can be edited in 5 modes:
+       - The edit modes include "html code", "DOM", "Rich text", "Markdown", "Texts".
+       - Each edit mode can change the html separately. 
+       - The mode in current tab is called as "current edit mode".
+- Following buttons work for current edit mode:
+       - Click button "Synchronize"(F10) to apply updates in current edit mode to other modes.
+       - Click button "Save"(F2) to save updates in current edit mode and do "Synchronize" automatically.
+       - Click button "Pop"(CTRL/ALT+p) to display contents in current edit mode in a new window.
+       - Click button "Menu"(F12) or right click edit area to pop context menu.
+       - Click button "MyBox Clipboard"(CTRL/ALT+m) to pop texts clipboard for pasting.</PRE>
+    <H3>Snap Html</H3>
+    <PRE>To take the snapshot of page:
+ -  Set the value of "loading retry delay" according to your network speed. 
+    Some page is renderred in lazy way that page contents are loaded while scroll the screen.
+ -  Check whether the size of window and font is suitable. Bigger window and font means better snaps.
+ -  It is better to close the pop windows. Or else they will be snapped repeatedly.</PRE>
+    <H3>Edit JSON</H3>
+    <PRE>This tool:
+  - Parse and handle JSON data, based on JACKSON.
+  - Load all data, so it is not suitable for JSON file which holds large amount of data.
+  - User can edit JSON in 2 modes:
+         - Tree. Json Nodes can be added, modified, and deleted.
+         - Texts. Json data can be changed and parsed in string.
+
+Composition of JSON:
+  - String: Set of unicode characters and enclosed by double quotes
+  - Constant: true/false/null
+  - Name: String
+  - Value: Number/String/Constant/Object/Array
+  - Field: 
+           Name: Value
+  - Object:
+           { Field1, Field2, ... }
+  - Array:
+           [ Value1, Value2, ... ]</PRE>
+    <H3>Edit Text</H3>
+    <PRE>This tool helps to edit text file:
+-  Charset and Line Break are determined automatically when file is opened. 
+   If loaded contents are incorrent, change charset and click button "Refresh".
+-  Texts are encoded with current character set and display in right pane. (Read only)
+-  When pages number is larger than 1, modification should be saved before filter strings or locate line/object.
+-  Each line break is counted as 1 character.  
+-  Click button "Pop"(CTRL/ALT+p) to display current contents in a new window.
+-  Click button "Menu" or right click edit area to pop buttons menu.
+-  Click button "MyBox Clipboard"(CTRL/ALT+m) to pop texts clipboard for pasting.
+
+Some shortcuts:
+F2                          Save
+F3                          Recover            
+F4                          Show/Hide left pane
+F5                          Show/Hide right pane
+F6                          Close popped menu
+F11                        Save as
+Alt-PageUp            Previous page
+Alt-PageDown        Next page
+Alt-Home               First page
+Alt-End                   Last page
+Ctrl-f                       Open find pane
+Ctrl-1                      Find previous
+Ctrl-2                      Find next
+Ctrl-h                      Replace
+Ctrl-w                      Replace all
+More shortcuts can be found in help.</PRE>
+    <H3>Charset</H3>
+    <PRE>When BOM is detected in file, its charset is definiate</PRE>
+    <H3>BOM</H3>
+    <PRE>BOM(Byte Order Marks) is 2 or 3 bytes in head of the file for UTF-16 or UTF-32.
+Some UTF-8 files have BOM written by some Windows programs which can confuse other platforms.</PRE>
+    <H3>Find/Replace - Texts</H3>
+    <PRE>About find/replace:
+- "Find Next"/"Find Previous"/"Replace"  are from current cursor. 
+- "Count"/"Replace All" are for whole document and from the first character.
+- Find string and Replace string can be multiple lines.
+- Each line break is counted as one character.
+
+Due to limitation of algorithm, to find regular expression in pages，
+assume maximum length of matched string is less than 1/16 of current JVM available memory.</PRE>
+    <H3>Find/Replace - Bytes</H3>
+    <PRE>About find/replace:
+- "Find Next"/"Find Previous"/"Replace"  are from current cursor. 
+- "Count"/"Replace All" are for whole document and from the first character.
+- Find string and Replace string should be formatted hexadecimal characters, like the page.
+  That is, each byte is presented as 3 characters: 2 letters/numbers in upper case and 1 blank.
+
+Due to limitation of algorithm, to find regular expression in pages，
+assume maximum length of matched string is less than 1/16 of current JVM available memory.</PRE>
+    <H3>Filter lines</H3>
+    <PRE>Include One :                a | b | c
+Include All:                   a & b & c
+Not Include Any:          !( a | b | c) = !a & !b & !c
+Not Include All :           !(a & b & c) = !a | !b | !c</PRE>
+    <H3>Find string in text files</H3>
+    <PRE>Find string can be multiple lines.
+Link breaks in Find string are handled as definition of file's line break.
+
+Due to limitation of algorithm, to find regular expression in pages，
+assume maximum length of matched string is less than 1/16 of current JVM available memory.</PRE>
+    <H3>Replace string in text files</H3>
+    <PRE>Find string and replace string can be multiple lines.
+Link breaks in Find string and Replace string are handled as definition of file's line break.
+
+Due to limitation of algorithm, to find regular expression in pages，
+assume maximum length of matched string is less than 1/16 of current JVM available memory.</PRE>
+    <H3>Convert Text To Html</H3>
+    <PRE>Convert and paste texts in system clipboard:
+- Replace all "&" as "&amp;".
+- Replace all "\"" as "&quot;".
+- Replace all "<" as "&lt;".
+- Replace all ">" as "&gt;".
+- Replace all "©" as "&copy;".
+- Replace all "®" as "&reg;".
+- Replace all "™" as "&trade;".
+- Replace all blanks as "&nbsp;".
+- Append "<BR>" in end of each line.</PRE>
+    <H3>Find bytes in files</H3>
+    <PRE>
+The Find string should be formatted hexadecimal characters.
+That is, each byte is presented as 3 characters: 2 letters/numbers in upper case and 1 blank.
+
+Due to limitation of algorithm, to find regular expression in pages，
+assume maximum length of matched string is less than 1/16 of current JVM available memory.</PRE>
+    <H3>Text in MyBox Clipboard</H3>
+    <PRE>Double click item or click button "Paste" to paste into target</PRE></BR>
+    <PRE>If "No duplication" is checked:
+ - New arrived text is checked whether same as an existed item.
+   If existed, no new item is added. The existed item is updated as new time.
+ - All existed items are not checked whether dulpicated.</PRE>
+    <H3>View Word - Html/Text Mode</H3>
+    <PRE>This tool helps to view Word file:
+-  File ".doc"(Word 97) is converted as html(Most of formats kept).
+-  File ".docx"(Word 2007) is converted as text(Formats lost).</PRE>
+
+<H1>Image Tools</H1>
+    <H3>View Image</H3>
+    <PRE>This tool helps to view an image:
+-  To scale image size:
+       - Set "Load Width" to enlarge or shrink the image in memory.
+       - Use zooming buttons to enlarge or shrink the image on display screen.
+-  To handle image:
+      - Cropping and rotation will change the image. Click button "Save" to make updates take effect.
+      - To change size/color/shape, use function "Manufacture".
+- To selection part of the image:
+      - Check "Select Area"(CTRL/ALT+t) to enter "Selection Mode". 
+         A rectangle is displayed upon image to have user select the region to handle.
+      - Drag the anchors on rectangle line to adjust the area's margins.
+      - Double click mouse primary button to set the Left-Top of the area. 
+      - Double click mouse secondary button to set Right-Bottom of the area.
+      - Drag the rectangle area to move it. 
+- Some shortcuts:
+      - Check "Pick Color"(CTRL/ALT+k) to get colors in image.
+      - Click button "Pop"(CTRL/ALT+p) to display current image in popped window.
+      - Press key F12 or right click the image to pop buttons menu.
+      - When current focus is not in text input control, shortcuts can omit CTRL/ALT.
+        Example, press key "p" to pop image, press key "k" to pick color, press key "2" to zoom as pane size.</PRE>
+    <H3>Edit image</H3>
+    <PRE>This tool helps to handle an image:
+-  Image is handled in 24bit RGB or 32bit ARGB of Color Space "sRGB" even when it is changed as gray or black-white.
+   If need to  change color space or compress image file, please run "Save As" or use tool "Convert Image".
+- Some shortcuts:
+      - Check "Pick Color"(CTRL/ALT+k) to get colors in image.
+      - Click button "Pop"(CTRL/ALT+p) to display current image in popped window.
+      - Press key F12 or right click the image to pop buttons menu.
+      - When current focus is not in text input control, shortcuts can omit CTRL/ALT.
+        Example, press key "p" to pop image, press key "k" to pick color, press key "2" to zoom as pane size.
+- "Pop", "Menu", and zooming are against image in current tab.
+   Example, when current tab is "Scope", press key F12 to pop buttons menu for the scope image.
+   When current tab is "Histories" or "Backup", press key "p" to display the selected image in popped window.</PRE>
+    <H3>Analyse Image</H3>
+    <PRE>This tool helps to analyse pixels in image:
+-  Set scope of image to analyse part of it.
+-  Data can be saved as a html which includes all results.</PRE>
+    <H3>Image quantization</H3>
+    <PRE>Technique of reducing distinct colors in image is called "Color Quantization".
+Different algorithms can be selected for different purposes: 
+  - RGB Uniform is fastest and good enough for 256 colors quantization of most images.
+  - K-Means Clustering is good for calculating "most different" colors in image.
+  - Popularity is good for calculating "most occurred" colors in image.
+
+The basical principle：
+  - Map colors from RGB(256*256*256) or HSB(360*100*100) to colors set of defined size(target palette).
+  - For algorithms K-Means Clustering and Popularity, there are twice quantizations actually. 
+     Colors are preprocessed by algorithm RGB Uniform to produce smaller region, and then
+     calculation is run against this colors set.
+
+Options:
+  - Since color has 3 dimensions, channels' weights can be balanced to get better mapping.  
+  - "Dithering" is to optimize the result of Color Quantization. 
+  - The strategies to pick colors for target palette: 
+       - "center color" may adjust the quality of the result, but may generate new colors not in original image. 
+       - "first color" only take original colors in original image.</PRE>
+    <H3>Dithering</H3>
+    <PRE>Dithering is a technique to diffuse quantization error to avoid color banding.
+It may improve image quality after color quantization(Reduce colors in palette).</PRE>
+    <H3>Color matching</H3>
+    <PRE>How to match colors: 
+1) "Color Distance" indicates the difference between 2 colors.
+   "Color difference" can be referred in "https://en.wikipedia.org/wiki/Color_difference" 
+2) When the distance is less than the defined distance value, it means the 2 colors are "Matched".  
+3) When the distance is defined as zero, it means color must be matched accurately.
+4) When select multiple colors to compare with pixels in image, their relationship is "OR", 
+which means result is TRUE when pixel' color matches any of the selected color.</PRE>
+    <H3>Premultiplied alpha</H3>
+    <PRE>Some image formats like png/tiff save pixels opacity in separated Alpha channel, called "Straight Alpha".
+"Premultiplied Alpha" is that RGB channels are premultiplied by alpha value, 
+by which image formats like jpg/bmp without Alpha channel can make effect of pixels opacity too.
+Premultiplied Alpha will change values of RGB channels and image can not be recovered 
+if the alpha value is missed later. So do not use it if the image should not be changed.</PRE>
+    <H3>Thresholding</H3>
+    <PRE>The color components of the destination image will contain either the small value or the big value.
+For example, when the small value is 0 and the big value 255, after processed, 
+the red, green, and blue values of the pixels will be either 0 or 255. 
+Thus, the processed image can only contain the following colors:
+    black (red = 0, green = 0, blue = 0)
+    white (red = 255, green = 255, blue = 255)
+    red (red = 255, green = 0, blue = 0)
+    green (red = 0, green = 255, blue = 0)
+    blue (red = 0, green = 0, blue = 255)
+    yellow (red = 255, green = 255, blue = 0)
+    magenta (red = 255, green = 0, blue = 255)
+    cyan (red = 0, green = 255, blue = 255)</PRE>
+    <H3>Repeat/Tile Image</H3>
+    <PRE>This tool helps to make background/texture image:
+- Select an image, and set part or whole of it as source cell.
+- Set width and height to scale the source cell.
+- Make the target image:
+      - Repeat the cell with horizontal number and vertical number.
+      - Tile the cell into width and height of canvas.
+      - Set interval between cells. Negative value may make effect of interleave.
+      - Set margins of target image.</PRE>
+    <H3>Sample Image</H3>
+    <PRE>This function reduces the pixels of an image:
+  - Resize and move the rectangle to define the region to pick.
+  - Set the width scale and the height scale against the selected region.
+
+When an image file includes too many pixels and loaded as sampled image, 
+this function handles the original image in file instead of the loaded image in memory.</PRE>
+    <H3>Split Image</H3>
+    <PRE>This function separates an image as multiple parts.
+
+When an image file includes too many pixels and loaded as sampled image, 
+this function handles the original image in file instead of the loaded image in memory.</PRE>
+    <H3>Browse Images</H3>
+    <PRE>This tool is to view multiple images under same directory:
+- Number of opened files can be changed.
+- Grid mode, thumb list mode, and file list mode can be choiced.
+- Click an image to view it in right pane. Double click to view it in new  stage.
+- Press CTRL and click images to select multiple files.
+
+Notice: Rotation can not be saved for multi-frames image.</PRE>
+    <H3>Edit Images List</H3>
+    <PRE>This tool is to edit images list:
+- Add following:
+      - Animated gif file. All frames are  added into list. 
+      - Multiple-frames tif file. All frames are added into list. 
+      - PDF file. All pages are converted as images and added into list. 
+      - PPT file. All pages are converted as images and added into list. 
+      - Image in system clipboard. 
+      - Any supported image files. 
+- Move images to set their orders.
+- Set durations of images, which work for playing list and animated gif file.
+- Play the list. Select some images by CTRL/SELECT to play, or select none to play whole list.
+- Save the list:
+   - Select some images by CTRL/SELECT to save, or select none to save whole list.
+   - Save each item as a supported image file.
+   - Merge items as a multiple-frames tif file.
+   - Merge items as an animated gif  file.
+   - Merge items as a PDF file.
+   - Merge items as a PPT file.</PRE>
+    <H3>Play Images List</H3>
+    <PRE>This tool displays images frame by frame:
+- Following types of file can be played:
+    - Animated gif file
+    - Multiple-frames tif file 
+    - PPT 
+    - PDF
+- Each page of PPT/PDF is converted as an image frame to display. 
+- Set options:
+     - Frames range to display.
+     - Width of images to load.
+     - Dpi  for images in PDF.  </PRE>
+    <H3>Character Recognition in Image</H3>
+    <PRE>OCR engine:
+- For win, both embedded and installed tesseract can be selected.
+- For linux and mac, only installed tesseract can be used.
+
+OCR data files path:
+- Can be set as any path which can be read.
+- If tesseract is installed, suggest to set as its subdirectory "tessdata".
+- MyBox includes following data files and will copy them to this path if it has not them:
+        chi_sim.traineddata                     Simplified Chinese
+        chi_sim_vert.traineddata             Simplified Chinese - vertical
+        chi_tra.traineddata                      Traditional Chinese
+        chi_tra_vert.traineddata              Traditional Chinese - vertical
+        eng.traineddata                          English
+        equ.traineddata                          Math Equation
+        osd.traineddata                          Orientation and Script
+   Copying will fail if your account can not write the path. 
+   And these files only work with tesseract version 4.* and version 5.*.
+	
+Notice:  When use embedded engine, it is better that name of file/path is pure English to avoid failure.</PRE></BR>
+    <PRE>The based OCR library itself includes preprocesses like binarization.
+Sometime it is better to have orginal image recognized directly.</PRE>
+    <H3>Extract alpha channel from image</H3>
+    <PRE>Two files will be generated for each source file:
+  "xxxxx_alpha.png" which only holds alpha channel of original file in PNG format. 
+  "xxxxx_noAlpha.yyy" which only holds RGB channels of original file in selected format.</PRE>
+    <H3>Images in System Clipboard</H3>
+    <PRE>When "Start" is clicked, the tool will monitor images in system clipboard and save/display them.
+
+Images in system clipboard come from screenshots or pictures generated by softwares like operation "CTRL+c".
+
+On Windows, shortcuts to make screenshots:
+"PrintScreen"                            Make snapshot of full screen.
+"Alt+PrintScreen"                     Make snapshot of current active window.
+
+On Linux, shortcuts to make screenshots:
+"Ctrl+PrintScreen"                            Make snapshot of full screen.
+"Ctrl+Alt+PrintScreen"                     Make snapshot of current active window.
+"Shift+Ctrl+PrintScreen"                  Make snapshot of selected area.
+
+On Mac, shortcuts to make screenshots:
+"Command+Control+Shift+3"                             Make snapshot of full screen.
+"Command+Control+Shift+4"                             Make snapshot of selected area.
+"Command+Control+Shift+4+Spacebar"            Make snapshot of current active window.</PRE>
+    <H3>Manage Colors</H3>
+    <PRE>This tool is to manage colors and palettes:
+-  Same color can have different names and orders in different palettes.
+      - Name and order number of colors can be edited in the table.
+      - "Order number" is a float value and can have decimal.
+         Example, when assign 5.5 to a color, then it is inserted between the colors with numbers of 5 and 6.
+      - Drag-drop colors in palette can adjust their orders too.
+      - Click button "Trim order numbers in palette" to rewrite them in step "1.0f".
+-  Definitons of colors are saved in list of "All Colors" actually:
+      - When delete palette or delete colors from palette, the color definition is not deleted and is still in "All Colors".
+      - When delete a color in "All Colors", its definition is removed and it is deleted from all palettes.
+      - Same color can be in different palettes and can be duplicated in same palette.
+-  When import colors from a file:
+      - It should include column "rgba" or "rgb". 
+        That is, the file can have only one column which should be either "rgba" or "rgb".
+      - The file can include column "name". </PRE>
+    <H3>Draw Chromaticity Diagram</H3>
+    <PRE>User can input/paste values or open file to load spectrum data.
+User data will be validated, calculated and displayed in table automatically, as following rulers:
+   - File can include comments or be in some type of format. 
+   - Following characters among data are ignored and skipped: 
+               " ,  |  {  }  [  ]  \t '
+   - Each valid data item should be in same row and includes following 4 values in its front: 
+	Wave-Length     X      Y       Z
+      Other data in rows will be ignored. That is, only first 4 values in each row will be read)
+   - "Wave-Length" should be integer and unit is "nm". X/Y/Z are tristimulus values in double.
+     Example of a valid data row:
+               435	0.3285	0.01684	1.62296	
+   - The data should be already adapted to CIE Illuminant D50.
+
+Validated user data can be display in the Chromaticity Diagram, to compare with standard data.</PRE>
+    <H3>Edit ICC profile</H3>
+    <PRE>Decoding/encoding as ICC specification v4.3.
+Only part of tags are decoded and can be edited. 
+Tags which are not decoded or not editable will keep their original values when save.
+
+"Maximum items for each data to decode" can be set to avoid low performance when load many data.
+Items beyond this limitation will be truncated when display.</PRE>
+
+<H1>Network Tools</H1>
+    <H3>Download Htmls</H3>
+    <PRE>Following steps are suggested:
+1) Set options.
+2) Input or paste a web address.
+3) The first level links in the web address will be listed for you to select and download.
+4) Select useful links. Nonsense links can create unwanted files and disturb final path index.
+5) If path index and merged PDF is required, it is important to make files named in correct order.
+    For selected links, 
+       - Use function "Set subdirectory name" to make subdirectory's name reasonbale.
+       - Use functions "Set link name/title/address as file name" to make filenames meaningful.
+       - Use function "Add order number before filename" to help filenames ordered.
+    MyBox can order names like "xxx9", "xxx36", "xxx157" correctly.  
+6) Download the selected links. Monitor their status. Put failed links back in download queue.
+
+To order the table rows:
+1) Click column header for ascending order by this column. 
+2) Click column header again for descending order by this column.
+3) Click column header for thrid time to cancel ordering of this column.
+4) Press SHIFT and click more column headers to order by multiple columns.</PRE>
+    <H3>Encode/Decode URL</H3>
+    <PRE>This tool helps to convert a string from/to the application/x-www-form-urlencoded MIME format. 
+
+The following rules are applied for encoding:
+    - The alphanumeric characters "a" through "z", "A" through "Z" and "0" through "9" remain the same.
+    - The special characters ".", "-", "*", and "_" remain the same.
+    - The space character "   " is converted into a plus sign "+".
+    - All other characters are unsafe and are first converted into one or more bytes using some encoding scheme. 
+      Then each byte is represented by the 3-character string "%xy", where xy is the two-digit hexadecimal representation of the byte.
+
+Decoding does reverse conversion.</PRE>
+    <H3>Query DNS in batch</H3>
+    <PRE>Steps to change DNS configuration:
+-  Query mapping between IPs and hosts.
+-  Edit system hosts file. Need administrator privileges.
+-  Flush DNS cache:
+        - On windows, run command:
+                      ipconfig  /flushdns
+        - On linux, run one of following commands:
+                     /etc/init.d/nscd restart 
+                     systemctl restart nscd 
+        - On mac, run one of following commands:
+                     lookupd -flushcache
+                     type dscacheutil -flushcache 
+                     sudo killall -HUP mDNSResponder</PRE>
+    <H3>Snap Weibo</H3>
+    <PRE>This tool is to snap pictures and contents of any acount in weibo.com:
+  - Webview need be initialized for this website, which starts when the tool is run at first time.
+     If you miss this step or the tool does not work, click left buton "SSL" to do this.
+  - About the address of a weibo account:
+        - It is the string before "?" in the address of weibo main page.
+        - How to get the address of weibo main page?
+          In web browser, visit someone's weibo address and click "Main page" in the page.
+          The address will be shown in browser's address input. Copy it here and delete string after "?" and "?".
+        - Notice, nick address is NOT the true address. Example "博物杂志" has its nick address 
+                "https://weibo.com/bowu"
+          But its valid address is actual "https://weibo.com/p/1002061195054531".</PRE>
+
+<H1>Data Tools</H1>
+    <H3>Column</H3>
+    <PRE>   - "Format" only works for display.
+      Values will not be formated automatically when data are edited.
+   - "To invalid value" only works for display and calculation.
+      Invalid values will not be handled automatically when data are edited.</PRE>
+    <H3>Manage Data</H3>
+    <PRE>This tool manages following objects:
+- Data Files
+      - Record is created/updated when csv/excel/texts data file is opened by its editor.
+      - Data are saved in data file.
+      - Deleting record of data file will not delete data file itself.
+- Data Clipboards
+      - Record is created when data is copied into MyBox Clipboad.
+      - Data are saved in file under MyBox internal path.
+      - Deleting record of data clipboards will delete its internal file.
+- Matrices
+      - Records are maintained by Matrices Manager.
+      - Data are saved in MyBox database.
+      - Deleting record of matrix will delete data of this matrix.
+- Data Tables
+      - Records are maintained by Data Tables Manager.
+      - Data are saved in MyBox database tables.
+      - Deleting record of data table will delete data of this data table.</PRE>
+    <H3>Edit CSV File</H3>
+    <PRE>This tool helps to view and edit data in CSV file:
+- In the file:
+     - In general, the first line(header) defines column names, and each of followed lines defines a row of data.
+     - Values are separated by "delimiter" which can be string.
+     - If a value contains delimiter or line break, it should be surrounded by quotes.
+     - If delimiter is not "#", then lines started with "#" will be skipped(as comments).
+- When the file is opened for the first time, the tool guesses its delimiter and charset. 
+- If file is read abnormally, change options and click button "Refresh".
+- Data are paginated. When pages number is larger than 1, changes should be saved before run some functions.
+- To string values, multiple lines can be edited and saved:
+     - When the value is single line(not include line break):
+           - Text field is shown when click the data cell.
+           - Write "\n" as line break in the value  and commit the change(return or click other place).
+     - When the value includes line breaks:
+           - Text area is shown when click the data cell.
+           - Write the text in multiple lines directly.
+- Data can be saved as different charsets and delimiters.</PRE>
+    <H3>Edit Excel File</H3>
+    <PRE>This tool helps to view and edit data in Excel file:
+- Choose one worksheet to handle.
+- Worksheets can be added/renamed/deleted.
+- In general, the first line(header) defines column names, and each of followed lines defines a row of data.
+- If file is read abnormally, change options and click button "Refresh".
+- Data are paginated. When pages number is larger than 1, changes should be saved before run some functions.
+- To string values, multiple lines can be edited and saved:
+     - When the value is single line(not include line break):
+           - Text field is shown when click the data cell.
+           - Write "\n" as line break in the value  and commit the change(return or click other place).
+     - When the value includes line breaks:
+           - Text area is shown when click the data cell.
+           - Write the text in multiple lines directly.
+- Data can be saved with current sheet only or all worksheets.
+
+Notice: Tool can only handle base data in Excel file. 
+If file includes format, style, formula, or chart, suggest to save changes as new file to avoid data loss.</PRE>
+    <H3>Edit Text Data File</H3>
+    <PRE>This tool helps to view and edit data in text file:
+- In the file:
+     - In general, the first line(header) defines column names, and each of followed lines defines a row of data.
+     - Values are separated by "delimiter" which can be string. Regular expression is supported when parse the file.
+     - Values should not contain delimiter nor line break.
+     - If a line starts with "#", it will be skipped.
+- When the file is opened for the first time, the tool guesses its delimiter and charset. 
+- If file is read abnormally, change options and click button "Refresh".
+- Data are paginated. When pages number is larger than 1, changes should be saved before run some functions.
+- Not support multiple lines in values.
+- Data can be saved as different charsets and delimiters.</PRE>
+    <H3>Database Table</H3>
+    <PRE>This tool is to manage and edit data tables in database:
+- Names of tables and columns should satisfy "Limitations of SQL identifer".
+- After database table is created:
+     - Definition of primary keys can not be changed and deleted.
+     - Definition of other columns can be added and deleted but can not be changed..
+- Data are paginated. When pages number is larger than 1, changes should be saved before run some functions.
+- To string values, multiple lines can be edited and saved:
+     - When the value is single line(not include line break):
+           - Text field is shown when click the data cell.
+           - Write "\n" as line break in the value  and commit the change(return or click other place).
+     - When the value includes line breaks:
+           - Text area is shown when click the data cell.
+           - Write the text in multiple lines directly.
+- Data can be queried by SQL.</PRE>
+    <H3>SQL identifier</H3>
+    <PRE>Limitations of SQL identifier:
+- Maximum length is 128.
+- "Ordinary identifier":
+       - Not surrounded by double quotation marks.
+              - Must begin with a letter.
+              - Contains only letters, underscore characters (_), and digits.
+              - Permits Unicode letters and digits.
+              - Can not be reserved words.
+       - It is converted as uppercase when saved in database.
+       - It is case-insensitive when referred in SQL statement.
+         Example, AbC is same as abc and aBC.
+- "Delimited identifier":
+       - Surrounded by double quotation marks.
+       - Can contain any characters.
+       - It is saved as string inside the double quotations in database.
+       - It should be surrounded by double quotations when referred in SQL statement, 
+         except for following:  It only includes upper case letters and underscores.
+         Example, "AbC" is different from AbC or "ABC" while "ABC" is same as ABC and abc.
+
+When MyBox create name of table/column: The name will be quoted if it includes invalid character.</PRE>
+    <H3>XY chart</H3>
+    <PRE>Draw XY charts as selected data:
+- Select a column as "Category" to define data names.
+- Select several columns as "Value" to define data numbers.
+   Different value series are shown in different colors or shapes. 
+- Bar Chart:
+       - Represents data size with bars' heights.
+       - "Category" column is always counted as strings.
+- Line Chart:
+       - Represents data trend with lines connecting points.
+       - "Category" column can be counted as strings or numbers.
+- Bubble Chart:
+       - Represents data size with circles of different radius：
+       - "Category Column" and "Value Column" define coordinates of data.
+       - Select several columns as "Size Columns" to defines data size.
+       - All columns should be numbers. Size columns should be non-negative.
+- Scatter Chart:
+       - Represents data distribution with symbols.
+       - "Category" column can be counted as strings or numbers.
+- Area Chart:
+       - Represents data size with area size.
+       - "Category" column is always counted as strings.</PRE>
+    <H3>Pie chart</H3>
+    <PRE>Draw pie chart as selected data:
+- Select a column as "Category" to define data names.
+- Select a column as "Value" to define data numbers:
+- Data numbers are represented as percentages with a circle divided into segments.
+- Value column should be non-negative.</PRE>
+    <H3>Box-and-whisker chart</H3>
+    <PRE>Box-whisker chart represents data distribution:
+- Sort data according to column/row/all in ascending order.
+- Following items can show aggregation and discreteness of data:
+        Minimum           Q0 =  in 0%(start) of the data list
+        Lower quartile    Q1 =  in 25% of the data list
+        Median              Q2 =  in 50%(middle) of the data list
+        Upper quartile    Q3 =  in 75% of the data list
+        Maximum           Q4 =  in 100%(end) of the data list
+- Following values can be used to mark ourliers of data:
+        Lower extreme outlier line        E1 =  Q1 - 3 * ( Q3 - Q1 )
+        Lower mild outlier line              E2 =  Q1 - 1.5 * ( Q3 - Q1 )
+        Upper mild outlier line             E3 =  Q3 + 1.5 * ( Q3 - Q1 )
+        Upper extreme outlier line        E4 =  Q3 + 3 * ( Q3 - Q1 )
+- Following values can be referred for discreteness:
+        Mean = avarage of the data list
+- Values are calcuated by selected data.</PRE>
+    <H3>Comparison bars chart</H3>
+    <PRE>Comparison bars show difference between two series of data.
+Bars are calculated by following rulers:
+- If value is zero, no bar
+- When compare as absoluate values:
+      maximum_value = maximum_absolute_value_of_value_columns
+      precentage = absolute_value / maximum_value
+      width = maximum_width * precentage
+      color = If value is larger than zero, color_of_column. If value is less than zero, inverted_color_of_column 
+- When compare as range of minimum and maximum:
+      maximum_value = maximum_value_of_value_columns
+      minimum_value = minimum_value_of_value_columns
+      precentage = （value - minimum_value） / （maximum_value - minimum_value）
+      width = maximum_width * precentage
+      color = color_of_column </PRE>
+    <H3>Self comparison bars chart</H3>
+    <PRE>Self comparison bars show difference between data and reference values.
+Bars are calculated by following rulers:
+- If value is zero, no bar
+- When compare as absoluate values:
+      maximum_value = maximum_absolute_value_of_column/row/all
+      precentage = absolute_value / maximum_value
+      width = maximum_width * precentage
+      color = If value is larger than zero, color_of_column. If value is less than zero, inverted_color_of_column 
+- When compare as range of minimum and maximum:
+      maximum_value = maximum_value_of_column/row/all
+      minimum_value = minimum_value_of_column/row/all
+      precentage = （value - minimum_value） / （maximum_value - minimum_value）
+      width = maximum_width * precentage
+      color = color_of_column </PRE>
+    <H3>XYZ chart</H3>
+    <PRE>Notice: A html file will be generated to display the chart. 
+Pleas make sure your system web browser supports WebGL and does not limit local JavaScript files.</PRE>
+    <H3>Set Styles / Mark Abnormal Values</H3>
+    <PRE>Manage the list of data styles:
+- Add/Edit/Delete styles.
+- Define conditions to determine which data cells to apply the style:
+       - Range of data rows
+       - Column names
+       - Row filter
+         Notice, data of a row number may be changed when some rows are added or deleted. 
+         Example, when insert 2 rows before "row 6", original "row 12" becomes "row 14" while current "row 12" was "row 10". 
+         So "row number" is not right way to locate a specific data row while rows number is changing. 
+         A way to refer sepcial rows is the expression composed of column values.
+- Define values of the style:
+       - Font size, colors, bold, etc.
+       - More values in format of JavaFx CSS.
+- Define title and sequence number of the style.
+- Set whether the style marks abnormal values.
+- All styles are applied to the data one by one in order of their sequence number.</PRE>
+    <H3>Simple linear regression</H3>
+    <PRE>This tool helps to generate data of simple linear regression based on Apache Commons Math:
+- Select two column as independent variable and dependent variable.
+- The regression does not store data, so calculation itself has not memory limitation when handle lots of rows.
+- When handle all pages:
+       - If select "Display all data in chart", memory may be out when load many data for chart.
+       - Else, only data in current page will be displayed in chart while all pages are involved in regression, so there is no memory limitation. 
+- With the linear model, predicted value can be calculated.
+- Points and lines of fitted values can be shown/hidden in the chart.</PRE>
+    <H3>Simple linear regression - Combination</H3>
+    <PRE>This tool helps to generate data of simple linear regression:
+    - Select some columns as candidates of independent variables.
+    - Select some columns as candidates of dependent variables.
+    - Select options like decimal scale, alpha, whether include intercept.
+    - When click button "OK", the tool does following:
+          - Make pairs from candidates : one as independent variable and another as dependent variable.  
+          - Calculate the regression models.
+          - Sort the modes by their coefficient of determination(R-Square) in descending order.
+    - Select one model and click button "View" to view its regression data, fitting chart, and residual chart.</PRE>
+    <H3>Multiple linear regression</H3>
+    <PRE>This tool helps to generate data of multiple linear regression based on Apache Commons Math:
+    - Select some column as independent variables, whose data should be numbers.
+    - Select a column as dependent variable, whose data should be numbers.
+    - Select whether include intercept.
+    - Click button "OK":
+            - Tool normalizes involved data by Z-Score.
+            - Tool calculates multiple linear regression by Ordinary Least Squares(OLS).
+           - Results include intercept, coefficients, R-Square, adjusted R-Square.
+    - User can input values of independent variables and predict value of dependent variable.</PRE>
+    <H3>Multilpe linear regression - Combination</H3>
+    <PRE>This tool helps to generate data of multiple linear regression:
+    - Select some columns as candidates of independent variables.
+    - Select some columns as candidates of dependent variables.
+    - Select whether include intercept.
+    - When click button "OK", the tool does following:
+          - Make combination of candidates as independent variables and dependent variable .
+          - Calculate the regression models.
+          - Sort the modes by their adjusted coefficient of determination(R-Square) in descending order.
+    - Select one model and click button "View" to view its regression data.</PRE>
+    <H3>Matrix</H3>
+    <H4>Plus</H4>
+    <PRE>Example:
+A =  a11   a12
+        a21   a21
+
+B =  b11   b12
+        b21   b21
+
+Matrix Plus = 
+        a11+b11   a12+b12
+        a21+b21   a21+b21
+
+Requirement: A and B should have same rows number and columns number</PRE>
+    <H4>Minus</H4>
+    <PRE>Example:
+A =  a11   a12
+        a21   a21
+
+B =  b11   b12
+        b21   b21
+
+Matrix Plus = 
+        a11-b11   a12-b12
+        a21-b21   a21-b21
+
+Requirement: A and B should have same rows number and columns number</PRE>
+    <H4>Multiply</H4>
+    <PRE>Example:
+A =  a11   a12   a13
+        a21   a21   a23
+
+B =  b11   b12
+        b21   b21
+        b31   b31
+
+Matrix Multiply = 
+        a11*b11+a12*b21+a13*b31   a11*b12+a12*b22+a13*b32 
+        a21*b11+a22*b21+a23*b31   a21*b12+a22*b22+a23*b32 
+
+Requirement: columns number of A equals to rows number of B</PRE>
+    <H4>Hadamard product</H4>
+    <PRE>Example:
+A =  a11   a12
+        a21   a21
+
+B =  b11   b12
+        b21   b21
+
+Hadamard Product = 
+        a11*b11      a12*b12
+        a21*b21      a21*b21
+
+Requirement: A and B should have same rows number and columns number</PRE>
+    <H4>Kronecker product</H4>
+    <PRE>Example:
+A =  a11   a12
+        a21   a21
+
+B =  b11   b12
+        b21   b21
+
+Kronecker Product = 
+        a11*b11   a11*b12    a12*b11   a12*b12
+        a11*b21   a11*b21    a12*b21   a12*b21
+        a21*b11   a21*b12    a22*b11   a22*b12
+        a21*b21   a21*b21    a22*b21   a22*b21</PRE>
+    <H4>Vertical merge</H4>
+    <PRE>Example:
+A =  a11   a12
+        a21   a21
+
+B =  b11   b12
+        b21   b21
+
+Vertical Merge = 
+        a11   a12
+        a21   a21
+        b11   b12
+        b21   b21
+
+Requirement: A and B should have same columns number</PRE>
+    <H4>Horizontal merge</H4>
+    <PRE>Horizontal merge
+
+Example:
+A =  a11   a12
+        a21   a21
+
+B =  b11   b12
+        b21   b21
+
+Horizontal Merge = 
+        a11   a12    b11   b12
+        a21   a21    b21   b21      
+
+Requirement: A and B should have same rows number</PRE>
+
+    <H3>JavaScript</H3>
+    <PRE>This tool helps to manage and run codes in JavaScript:
+- Edit codes in JavaScript.
+  The script can include any valid elments which WebEngine can parse(ECMAScript 6).
+- Run the script. 
+  Its results are displayed in right pane. And it affects the web page in right pane too.
+- Save the script as a node in the codes tree of left pane.</PRE>
+    <H3>JShell(Java interactive coding tool)</H3>
+    <PRE>JShell is one of tools in JDK:
+   - JShell provides capability to interactively evaluate "snippets", as Read-Eval-Print Loop (REPL). 
+   - "Snippet" is a single expression, statement, or declaration of Java programming language code:
+           - Semicolons should be in the end of statement while expression need not it.
+           - Variables and methods can be defined and called later.
+   - Extrenal Java classes should be accessible: 
+           - JShell picks "CLASSPATH" of system environment.
+           - Other jar files or paths can be appended to "CLASSPATH".  
+           - Except for base classes, most of Java classes should be imported before call them.  
+   - JShell can be used for scientific computation and Java codes debug.
+
+This tool helps to run JShell in GUI:
+   - Input several snippets and click button "Start" to run them: 
+   - Snippets are evaluated one by one.
+   - Results of snippets will affect later snippets, like "an execution environment".  
+   - Attributes of all evaluated snippets will be shown in a table.
+   - Click button "Delete" or "Clear" to drop some or all snippets from current environment.
+   - Click button "Reset" to empty JShell and environment becomes blank.
+   - Press "CTRL+1" to pop list of code completion suggestions.
+   - If added MyBox class paths, all methods of MyBox can be referred.</PRE>
+    <H3>JEXL(Java Expression Language)</H3>
+    <PRE>JEXL(Java Expression Language) is a library to generate values dynamically with variables and scripts.
+   - JEXL has different syntax from Java. It is more like javascript. 
+   - Before run expression/script, all variables in it should have values held by JexlContext. 
+   - Refer to Java classes by creating their instances as local variables. Full package name is required.
+   - JEXL can be used for scientific computation and data manufacture.
+
+This tool helps to run JEXL in GUI:
+   - Input JEXL expression/script.
+     Notice: Use single quotes instead of double quotes to surround strings.
+   - Input Java codes of setting JexlContext like following:
+                 jexlContext.set("name", value);
+     Example, set following to use Math.PI in expression/script:
+                 jexlContext.set("Math", Math.class);
+   - Input parameters of JEXL script if any. Separate values by comma.
+   - Click button "Start" to evaluate the expression/script.
+   - MyBox does following in JShell enrionment automatically:
+             - Add MyBox library paths to CLASSPATH.
+             - Import necessary JEXL packages.
+             - Execute codes of JexlContext.
+             - Calculate expression/script with parameters(if any).
+   - If all variables and paramters have valid values, result is shown in right pane.</PRE>
+    <H3>Math Function</H3>
+    <PRE>This tool helps to manage and calculate math functions:
+- Define math function:
+      - List names of variables of the function, separated by English comma.
+        The names should satisfy rules of JavaScript:
+              - Can include letters, number, underline, and unicodes(like Chinese).
+              - Not start with number.
+      - Define function expression as a piece of codes in JavaScript:
+             - The script can include any valid elments which Nashorn can parse(ECMAScript 5.1).
+             - It should be a number finally.
+             - It can refer to the given variables, but should not declare them.
+      - Define domain of the function as a piece of codes in JavaScript:
+             - Blank means the domain is all of real numbers.
+             - The script can include any valid elments which Nashorn can parse(ECMAScript 5.1).
+             - It should be a boolean value(true or false) finally.
+             - It can refer to the given variables, but should not declare them.
+      - Give the name of calculation result.
+- When the tool calculates a script, 'var <variable_name>=<variable_value>;' are inserted in the head of it before the evaluation.
+- If script of domain is not blank, the given values of variables are inserted in it and check the result.
+   If true, continue to calculate the script of function expression. Else this set of values is skipped. 
+- With defined range, interval, and decimal scale, data set of the function can be generated.
+- To unary function, XY chart, including scatter chart and line chart, can be displayed.
+- To binary function, XYZ chart, including 3D scatter chart and surface chart, can be displayed.</PRE>
+    <H3>Geography Code</H3>
+    <PRE>Geography code should:
+1) Be subordinate to an existed geography code.
+2) Its level should be lower than its ancestors'.
+3) Has either Chinese name or English name.
+
+One of following can determine an address:
+1) dataid. This is accurate matching.
+2) level + ancestors + chinese_name/english_name/alias. This is accurate matching.
+3) level + chinese_name/english_name/alias. This is fuzzy matching. Duplaited names in same level can cause false matching.
+Matching of name or alias is case-insensitive. 
+
+"dataid" of new Geography Code is assigned by MyBox automatically.</PRE>
+    <H3>Map options</H3>
+    <PRE>Coordinates of GCJ-02 are  encrypted as offsets of real locations.
+Coordinates of CGCS2000 are real locations and approximate to WGS-84(GPS).
+
+Map of TianDiTu accepts coordinates of CGCS2000 and display them at correct locations without offsets.
+When display coordinates other than CGCS2000 in map of TianDiTu, MyBox converts them to CGCS2000 to show correct locations.
+
+Map of GaoDe accepts coordinates of GCJ-02 and display them at correct locations without offsets.
+When display coordinates  other than GCJ-02 in map of GaoDe, MyBox converts them to GCJ-02 to show correct locations.</PRE>
+    <H3>Convert coordinate</H3>
+    <PRE>Coordinates of CGCS2000 are real locations and approximate to WGS-84(GPS).
+Coordinates of GCJ-02 are  encrypted data with offsets of real locations.
+Coordinates of BD-09 and MapBar are encrypted data with offsets based on GCJ-02.</PRE>
+
+<H1>Media Tools</H1>
+    <H3>Play Video/Audio</H3>
+    <PRE>The media player is based on javafx:
+- Supported container types:               
+        AIFF, HLS, MP4, MP3, WAV
+- Supported encoding types:      
+        AAC, MP3, PCM, H.264/AVC, H.265/HEVC
+- Supported protocals:      
+        FILE, HTTP, HTTPS, JAR, HLS</PRE>
+    <H3>FFmpeg</H3>
+    <PRE>This function is avaliable when FFmpeg has been installed in your env.</PRE>
+    <H4>FFmpeg options</H4>
+    <PRE>This function is avaliable when FFmpeg has been installed in your env.
+Most of players support: muxer "mp4", video codec "H.264", audio codec "AAC".
+Notice: "CRF" and "Encoding Preset" only works for x264, x265 and libvpx. 
+
+When function fails, change options and try it again:
+- Select supported and better video encoder and audio encoder as your hardwares:
+      - When NVIDIA is available, chooce "h264_nvenc" as video encoder, to make use of hardware acceleartion. 
+      - Generally, "VideoToolBox" works as video encoder on mac.
+- Select options to get suitable settings of your computer, as following factors :
+      - The encoder should be fast enough to record without frames dropping.   
+      - Consume limited system resources, and leave enough CPU and memory for other applications.
+      - Quality and size of the generated file are tolerable.
+- Old versions of ffmpeg may be nicer to old computers. On my desktop:
+      - ffmpeg of 2019 works smoothly,
+      - ffmpeg of 2023 does not accept setting of 'h264_nvenc' and always makes system blocked or dead.</PRE></BR>
+    <PRE>-ss 0:1:30               set the start time offset
+-sseof 0:5:00          set the start time offset relative to EOF
+-to 0:10:15             record or transcode stop time
+-t  0:0:20                record or transcode "duration" seconds of audio/video
+-aq quality             set audio quality (codec-specific)
+-ac 2                      set audio channels: 1 for mono, 2 for stereo
+-title string            
+-author string 
+-copyright string</PRE>
+    <H4>FFmpeg: Screen Recorder</H4>
+    <PRE>- When have not NVIDIA and CPU is not so powerful,
+      - Choose "libx264rgb" as video encoder, to bypass conversion from RGB to yuv444p.
+      - Select quicker encoding preset. 
+      - After recording, use conversion tool to change generated video from RGB to yuv444p with encoder "libx264".
+- When no audio input device is detected, check whether it is disabled.(Windows does this by default)
+
+Delay: When button "Start" is clicked, recording will start after this time length.
+Duration: Recording will end when time length is reached since starting.  
+                User can interrupt recording at once by click button "Stop".
+
+When "Meow" is checked:
+MeBenBen will miaow to tell you recording is started.
+GuaiGuai will miaow to tell you recording is ended.</PRE>
+    <H4>Factor for constant quality mode(CRF)</H4>
+    <PRE>The Constant Rate Factor (CRF) is the default quality (and rate control) setting for the x264, x265, and  libvpx encoders.
+Lower values would result in better quality, at the expense of higher file sizes.  Zero means lossless and big file.
+Higher values mean more compression and quality degradation.
+
+For x264, sane values are between 18 and 28. The default is 23. 17 or 18 can be visually lossless or nearly so. 
+For x265, the default CRF is 28.
+For libvpx, 31 is recommended for 1080p HD video.</PRE>
+    <H4>X264</H4>
+    <PRE>A preset is a collection of options that will provide a certain encoding speed to compression ratio. 
+Slower preset provides better quality and occupies more CPU.
+Quicker preset means worse quality and less CPU occupation.</PRE>
+    <H3>Game: Elimniation</H3>
+    <PRE>If more than 3 same chesses are adjacented in vertival/horizantal line, then the line can be eliminated. 
+When a chess is eliminated, the chesses above it will move down, and top location will be filled with random chess.
+Click 2 adjacent chesses separately to try to exchange their location. If no elimination after exchange,  exchange fails.
+
+Button "Help me" will find a valid exchange for you if any.</PRE>
+    <H3>Game: Mine</H3>
+    <PRE>Target: Disclose all cells which are not mines. Game fails once a mine is opened.
+Rulers:
+1) When game is started, all cells are in status "closed".
+2) Start timing when click a cell at first time.
+3) Count: Opened cells number / Total number of cells which are not mines.
+4) When left-click a cell, nothing happens when it is "disclosed", or else:
+      - If it is a mine, then game fails.
+      - If it is not a mine, then it is opened and its status becomes "disclosed".
+      - If there are mines around this cell, then the number of mines around it is shown in the cell.
+      - If there is no mine around this cell, then it is shown as blank and all cells around it will be disclosed. Continue this process.
+5) When right-click a cell, nothing happens when it is "disclosed", or else:
+      - If this cell is not marked, then mark it as "Mine".
+      - If this cell is marked as "Mine", then change its mark as "Suspected".
+      - If this cell is marked as "Suspected", then remove its mark.
+      - Right-clicking only marks the cell, and will not trigger mine nor disclose the cell.
+6) When double-click a cell:
+      - If the cell is in status "closed", then disclose it.
+      - Disclose all cells which are not marked as "Mine" around this cell.
+      - Do this only when you are sure all mines are marked correctly around this cell.
+7)When you are unlucky to trigger a mine:
+     - Click button "Undo", to pretend that did not happen and continue the timing and counting.
+     - Click button "Replay", to restart the same game.
+     - Click button "New Game" to start a different game.
+8)Click button "Help me" to see all mines secretly, and click button "Undo" to continue playing.</PRE>
+
+<H1>Others</H1>
+    <H3>Table</H3>
+    <PRE>Select some to handle, or select none to handle all in table:
+-  To select rows:
+      - Press key SHIFT and click rows to select multiple rows of a range.
+      - Press key CTRL and click rows to select multiple rows one by one.
+      - Click the checkboxs in head of rows.
+-  To edit data:
+      - Header texts of editable columns are in blue (Editable primary keys are still in red).         
+      - Click the editable cell, then its input field will be shown.
+      - When editable cell loses focus, its value will be checked and invalid data will be rejected.
+-  To display/hide columns, click button "+" in right side of table header.
+    This operation does not affect data.
+-  To adjust order of columns, click and drag column headers.
+    This operation does not affect data.
+-  To order rows:
+      - Click column header for ascending order by this column. 
+      - Click column header again for descending order by this column.
+      - Click column header for thrid time to cancel ordering of this column.
+      - Press SHIFT and click more column headers to order by multiple columns.
+    This operation only affect current data in table.
+- Header texts of primary keys are in red and auto-increated keys are in orange.</PRE>
+    <H3>Play</H3>
+    <PRE>The frames can be displayed one by one:
+- If select "delay", after current frame is completed, wait for the defined time, then start next frame.
+- If select "interval", after current frame is started, wait for the defined time, then start next frame.
+- When frames are more than scroll size, they are displayed scrollingly in the selector.
+- Input frame number(need not input full label) to jump to it. </PRE>
+    <H3>Manage Languages</H3>
+    <PRE>This tool helps to manage customized languages of MyBox:
+- Click button "Add" to create a new language.
+- Edit translation of language items.
+      - Select a row in the tables.
+      - Click the cell in the row：
+               - If  its English contains line breaks, then pop text editor to help input multiple lines.
+               - If  its English is single line, then display a text field to help fill line directly.
+      - Keep item empty to use English as default.
+      - Right click the cell to select "Copy English" or "Copy Chinese".
+- Click button "Save" to save modification. </PRE>
+    <H3>MyBox Shortcuts</H3>
+    <PRE>Controls in interfaces, like buttons, checkboxs, images, may have their shortcuts:
+  - When focus is in "Text Input" control, following keys work for this control:
+             Delete/Home/End/PageUp/PageDown/Enter/Ctrl-(c/v/z/y/x)
+     Or else shortcuts work for the interface.
+  - Move mouse upon control, its tooltip(if has) including shortcut may be popped.
+  - When focus is not in "Text Input" control, Ctrl/Alt of combination keys can be omitted:
+     Example, if an image is currently foused, press "c" to copy and press "2" to set as pane size.
+  - Option to disable omission of Ctrl/Alt in shortcuts.(To avoid misoperations)        
+  - Always disable omission of Ctrl/Alt in shortcuts of following buttons: Save, Delete, Clear. (To avoid accidents)
+  - On mac, key "Ctrl" is replaced as key "Command".</PRE>
+
+</BODY>
+</HTML>

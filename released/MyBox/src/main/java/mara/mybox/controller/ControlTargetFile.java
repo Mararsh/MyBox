@@ -10,11 +10,9 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import mara.mybox.db.data.VisitHistoryTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.value.AppPaths;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -47,7 +45,7 @@ public class ControlTargetFile extends ControlFileSelecter {
         permitNull = false;
         mustExist = false;
         notify = new SimpleBooleanProperty(false);
-        defaultFile = new File(AppPaths.getGeneratedPath() + File.separator + DateTools.nowFileString());
+        defaultFile = null;
     }
 
     public void initTargetExistType() {
@@ -122,27 +120,6 @@ public class ControlTargetFile extends ControlFileSelecter {
             targetExistType = TargetExistType.Skip;
         }
         UserConfig.setString(baseName + "TargetExistType", targetExistType.name());
-    }
-
-    @Override
-    public ControlTargetFile init() {
-        String v = null;
-        if (savedName != null) {
-            v = UserConfig.getString(savedName, null);
-        }
-        if (v == null || v.isBlank()) {
-            v = defaultFile != null ? defaultFile.getAbsolutePath() : null;
-        }
-        if (v != null) {
-            try {
-                v = new File(v).getParent() + File.separator + DateTools.nowFileString()
-                        + "." + VisitHistoryTools.defaultExt(TargetFileType);
-            } catch (Exception s) {
-            }
-        }
-        fileInput.setText(v);
-        initTargetExistType();
-        return this;
     }
 
     @Override

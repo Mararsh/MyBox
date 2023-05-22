@@ -139,37 +139,35 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
         if (newName == null || newName.isBlank()) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                private Data2DDefinition def;
-
-                @Override
-                protected boolean handle() {
-                    selected.setDataName(newName);
-                    def = manageController.dataAMatrix.tableData2DDefinition.updateData(selected);
-                    return def != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSuccessful();
-                    tableData.set(index, def);
-                    if (def.getD2did() == manageController.dataAMatrix.getD2did()) {
-                        manageController.dataAMatrix.setDataName(newName);
-                        manageController.dataAController.attributesController.updateDataName();
-                    }
-                    if (def.getD2did() == manageController.dataBMatrix.getD2did()) {
-                        manageController.dataBMatrix.setDataName(newName);
-                        manageController.dataBController.attributesController.updateDataName();
-                    }
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+            private Data2DDefinition def;
+
+            @Override
+            protected boolean handle() {
+                selected.setDataName(newName);
+                def = manageController.dataAMatrix.tableData2DDefinition.updateData(selected);
+                return def != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popSuccessful();
+                tableData.set(index, def);
+                if (def.getD2did() == manageController.dataAMatrix.getD2did()) {
+                    manageController.dataAMatrix.setDataName(newName);
+                    manageController.dataAController.attributesController.updateDataName();
+                }
+                if (def.getD2did() == manageController.dataBMatrix.getD2did()) {
+                    manageController.dataBMatrix.setDataName(newName);
+                    manageController.dataBController.attributesController.updateDataName();
+                }
+            }
+
+        };
+        start(task);
     }
 
     @Override

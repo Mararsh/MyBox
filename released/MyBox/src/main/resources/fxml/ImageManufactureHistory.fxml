@@ -6,6 +6,7 @@ License:    Apache License Version 2.0
             http://www.apache.org/licenses/LICENSE-2.0
 -->
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
@@ -18,9 +19,18 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureHistory">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureHistory">
     <children>
-        <CheckBox fx:id="recordHistoriesCheck" mnemonicParsing="false" selected="true" text="%RecordEditHistories" VBox.vgrow="NEVER" />
+      <HBox spacing="2.0">
+         <children>
+              <CheckBox fx:id="recordHistoriesCheck" mnemonicParsing="false" selected="true" text="%RecordEditHistories" />
+            <CheckBox fx:id="loadCheck" mnemonicParsing="false" selected="true" text="%RecordWhenImageLoad" />
+            <Label fx:id="infoLabel" minHeight="-Infinity" underline="true">
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin></Label>
+         </children>
+      </HBox>
         <VBox fx:id="historiesListBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS">
             <children>
                 <HBox alignment="CENTER_LEFT" spacing="2.0" VBox.vgrow="NEVER">

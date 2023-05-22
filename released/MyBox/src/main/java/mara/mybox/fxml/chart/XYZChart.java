@@ -9,9 +9,8 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.FxFileTools;
 import mara.mybox.tools.DoubleTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.TextFileTools;
-import static mara.mybox.tools.TmpFileTools.getPathTempFile;
-import mara.mybox.value.AppPaths;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -322,7 +321,7 @@ public class XYZChart {
                     + "  </body>\n"
                     + "</html>";
 
-            chartFile = getPathTempFile(AppPaths.getGeneratedPath(), title, ".html");
+            chartFile = FileTmpTools.generateFile(title, "html");
             TextFileTools.writeFile(chartFile, html, Charset.forName("UTF-8"));
             return chartFile;
         } catch (Exception e) {

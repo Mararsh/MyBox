@@ -238,14 +238,25 @@ public class ColorConvertTools {
     }
 
     public static Color rybComplementary(ColorData data) {
-        if (data == null || data.getColor() == null) {
+        if (data == null) {
             return null;
         }
-        float ryb = data.getRyb();
-        if (ryb < 0) {
+        javafx.scene.paint.Color originalColor = data.getColor();
+        if (originalColor == null) {
             return null;
         }
-        return ryb2rgb(ryb + 180);
+        float colorRyb = data.getRyb();
+        if (colorRyb < 0) {
+            return null;
+        }
+        float complementaryRyb = colorRyb + 180;
+        float complementaryHue = ryb2hue(complementaryRyb) / 360;
+        float complementaryRybBrightness = ryb2brightness(complementaryRyb);
+        float colorRybBrightness = ryb2brightness(colorRyb);
+        float colorBrightness = (float) data.getColor().getBrightness();
+        float complementaryBrightness = Math.min(1f, complementaryRybBrightness * colorBrightness / colorRybBrightness);
+        Color c = Color.getHSBColor(complementaryHue, (float) originalColor.getSaturation(), complementaryBrightness);
+        return new Color(c.getRed(), c.getGreen(), c.getBlue(), (int) (originalColor.getOpacity() * 255));
     }
 
     public static float ryb2hue(float angle) {

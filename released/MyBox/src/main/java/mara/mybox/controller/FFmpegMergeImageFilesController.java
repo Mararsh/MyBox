@@ -20,9 +20,9 @@ import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import static mara.mybox.value.Languages.message;
-import net.sf.image4j.codec.ico.ICODecoder;
+import thridparty.image4j.ICODecoder;
 
 /**
  * @Author Mara
@@ -71,7 +71,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
                 return null;
             }
             imageFileString.append("file '").append(lastFile.getAbsolutePath()).append("'\n");
-            File imagesListFile = TmpFileTools.getTempFile(".txt");
+            File imagesListFile = FileTmpTools.getTempFile(".txt");
             TextFileTools.writeFile(imagesListFile, imageFileString.toString(), Charset.forName("utf-8"));
             return imagesListFile;
         } catch (Exception e) {
@@ -176,7 +176,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
         try {
             BufferedImage fitImage = ScaleTools.fitSize(image,
                     ffmpegOptionsController.width, ffmpegOptionsController.height);
-            File tmpFile = TmpFileTools.getTempFile(".png");
+            File tmpFile = FileTmpTools.getTempFile(".png");
             if (ImageFileWriters.writeImageFile(fitImage, tmpFile) && tmpFile.exists()) {
                 lastFile = tmpFile;
                 imageFileString.append("file '").append(lastFile.getAbsolutePath()).append("'\n");

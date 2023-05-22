@@ -662,179 +662,165 @@ public class BarcodeCreatorController extends ImageViewerController {
     @FXML
     @Override
     public void startAction() {
-        try {
-            synchronized (this) {
-                if (task != null && !task.isQuit()) {
-                    return;
-                }
-                task = new SingletonTask<Void>(this) {
-                    private BufferedImage bufferedImage;
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+            private BufferedImage bufferedImage;
 
-                    @Override
-                    protected boolean handle() {
-                        try {
-                            AbstractBarcodeBean bean = null;
-                            switch (codeType) {
-                                case QR_Code:
-                                    bufferedImage = BarcodeTools.QR(codeInput.getText(),
-                                            qrErrorCorrectionLevel, qrWidth, qrHeight, qrMargin,
-                                            sourceFile);
-                                    return bufferedImage != null;
-                                case PDF_417:
-                                    bufferedImage = BarcodeTools.PDF417(codeInput.getText(),
-                                            pdf417ErrorCorrectionLevel, pdf417Compact,
-                                            pdf417Width, pdf417Height, pdf417Margin);
-                                    return bufferedImage != null;
-                                case DataMatrix:
-                                    bufferedImage = BarcodeTools.DataMatrix(codeInput.getText(),
-                                            dmWidth, dmHeight);
-                                    return bufferedImage != null;
+            @Override
+            protected boolean handle() {
+                try {
+                    AbstractBarcodeBean bean = null;
+                    switch (codeType) {
+                        case QR_Code:
+                            bufferedImage = BarcodeTools.QR(codeInput.getText(),
+                                    qrErrorCorrectionLevel, qrWidth, qrHeight, qrMargin,
+                                    sourceFile);
+                            return bufferedImage != null;
+                        case PDF_417:
+                            bufferedImage = BarcodeTools.PDF417(codeInput.getText(),
+                                    pdf417ErrorCorrectionLevel, pdf417Compact,
+                                    pdf417Width, pdf417Height, pdf417Margin);
+                            return bufferedImage != null;
+                        case DataMatrix:
+                            bufferedImage = BarcodeTools.DataMatrix(codeInput.getText(),
+                                    dmWidth, dmHeight);
+                            return bufferedImage != null;
 //                                    DataMatrixBean dm = new DataMatrixBean();
 //                                    bean = dm;
 //                                    break;
-                                case Code39:
-                                    Code39Bean code39 = new Code39Bean();
-                                    code39.setWideFactor(barRatio);
-                                    code39.setExtendedCharSetEnabled(true);
-                                    code39.setChecksumMode(ChecksumMode.CP_AUTO);
-                                    bean = code39;
-                                    break;
-                                case Code128:
-                                    Code128Bean code128 = new Code128Bean();
-                                    bean = code128;
-                                    break;
-                                case Codabar:
-                                    CodabarBean codabar = new CodabarBean();
-                                    codabar.setWideFactor(barRatio);
-                                    bean = codabar;
-                                    break;
-                                case Interleaved2Of5:
-                                    Interleaved2Of5Bean interleaved2Of5 = new Interleaved2Of5Bean();
-                                    interleaved2Of5.setWideFactor(barRatio);
-                                    bean = interleaved2Of5;
-                                    break;
-                                case ITF_14:
-                                    ITF14Bean itf14 = new ITF14Bean();
-                                    itf14.setWideFactor(barRatio);
-                                    bean = itf14;
-                                    break;
-                                case POSTNET:
-                                    POSTNETBean postnet = new POSTNETBean();
-                                    bean = postnet;
-                                    break;
-                                case EAN13:
-                                    EAN13Bean ean13 = new EAN13Bean();
-                                    bean = ean13;
-                                    break;
-                                case EAN8:
-                                    EAN8Bean ean8 = new EAN8Bean();
-                                    bean = ean8;
-                                    break;
-                                case EAN_128:
-                                    EAN128Bean ean128 = new EAN128Bean();
-                                    bean = ean128;
-                                    break;
-                                case UPCA:
-                                    UPCABean upca = new UPCABean();
-                                    bean = upca;
-                                    break;
-                                case UPCE:
-                                    UPCEBean upce = new UPCEBean();
-                                    bean = upce;
-                                    break;
-                                case Royal_Mail_Customer_Barcode:
-                                    RoyalMailCBCBean rmail = new RoyalMailCBCBean();
-                                    bean = rmail;
-                                    break;
-                                case USPS_Intelligent_Mail:
-                                    USPSIntelligentMailBean usps = new USPSIntelligentMailBean();
-                                    bean = usps;
-                                    break;
-                            }
-                            if (bean == null) {
-                                return false;
-                            }
-                            bean.setFontName(fontName);
-                            bean.setFontSize(fontSize);
-                            bean.setModuleWidth(narrowWidth);
-                            bean.setHeight(height1);
-                            bean.setQuietZone(quietWidth);
-                            bean.setMsgPosition(textPostion);
-
-                            BitmapCanvasProvider canvas = new BitmapCanvasProvider(
-                                    dpi, BufferedImage.TYPE_BYTE_BINARY, false, orientation);
-                            bean.generateBarcode(canvas, codeInput.getText());
-                            canvas.finish();
-
-                            bufferedImage = canvas.getBufferedImage();
-                            return bufferedImage != null;
-
-                        } catch (Exception e) {
-                            error = e.toString();
-                            return false;
-                        }
+                        case Code39:
+                            Code39Bean code39 = new Code39Bean();
+                            code39.setWideFactor(barRatio);
+                            code39.setExtendedCharSetEnabled(true);
+                            code39.setChecksumMode(ChecksumMode.CP_AUTO);
+                            bean = code39;
+                            break;
+                        case Code128:
+                            Code128Bean code128 = new Code128Bean();
+                            bean = code128;
+                            break;
+                        case Codabar:
+                            CodabarBean codabar = new CodabarBean();
+                            codabar.setWideFactor(barRatio);
+                            bean = codabar;
+                            break;
+                        case Interleaved2Of5:
+                            Interleaved2Of5Bean interleaved2Of5 = new Interleaved2Of5Bean();
+                            interleaved2Of5.setWideFactor(barRatio);
+                            bean = interleaved2Of5;
+                            break;
+                        case ITF_14:
+                            ITF14Bean itf14 = new ITF14Bean();
+                            itf14.setWideFactor(barRatio);
+                            bean = itf14;
+                            break;
+                        case POSTNET:
+                            POSTNETBean postnet = new POSTNETBean();
+                            bean = postnet;
+                            break;
+                        case EAN13:
+                            EAN13Bean ean13 = new EAN13Bean();
+                            bean = ean13;
+                            break;
+                        case EAN8:
+                            EAN8Bean ean8 = new EAN8Bean();
+                            bean = ean8;
+                            break;
+                        case EAN_128:
+                            EAN128Bean ean128 = new EAN128Bean();
+                            bean = ean128;
+                            break;
+                        case UPCA:
+                            UPCABean upca = new UPCABean();
+                            bean = upca;
+                            break;
+                        case UPCE:
+                            UPCEBean upce = new UPCEBean();
+                            bean = upce;
+                            break;
+                        case Royal_Mail_Customer_Barcode:
+                            RoyalMailCBCBean rmail = new RoyalMailCBCBean();
+                            bean = rmail;
+                            break;
+                        case USPS_Intelligent_Mail:
+                            USPSIntelligentMailBean usps = new USPSIntelligentMailBean();
+                            bean = usps;
+                            break;
                     }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        imageView.setImage(SwingFXUtils.toFXImage(bufferedImage, null));
-                        bottomLabel.setText(Languages.message("Pixels") + ":"
-                                + (int) imageView.getImage().getWidth() + "x" + (int) imageView.getImage().getHeight()
-                        );
-                        loadedSize();
+                    if (bean == null) {
+                        return false;
                     }
+                    bean.setFontName(fontName);
+                    bean.setFontSize(fontSize);
+                    bean.setModuleWidth(narrowWidth);
+                    bean.setHeight(height1);
+                    bean.setQuietZone(quietWidth);
+                    bean.setMsgPosition(textPostion);
 
-                };
-                start(task);
+                    BitmapCanvasProvider canvas = new BitmapCanvasProvider(
+                            dpi, BufferedImage.TYPE_BYTE_BINARY, false, orientation);
+                    bean.generateBarcode(canvas, codeInput.getText());
+                    canvas.finish();
+
+                    bufferedImage = canvas.getBufferedImage();
+                    return bufferedImage != null;
+
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
             }
 
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+            @Override
+            protected void whenSucceeded() {
+                imageView.setImage(SwingFXUtils.toFXImage(bufferedImage, null));
+                bottomLabel.setText(Languages.message("Pixels") + ":"
+                        + (int) imageView.getImage().getWidth() + "x" + (int) imageView.getImage().getHeight()
+                );
+                loadedSize();
+            }
 
+        };
+        start(task);
     }
 
     @FXML
     @Override
     public void saveAsAction() {
-        try {
-            final File file = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
-                    null, FileFilters.ImageExtensionFilter);
-            if (file == null) {
-                return;
-            }
-            recordFileWritten(file);
-
-            synchronized (this) {
-                if (task != null && !task.isQuit()) {
-                    return;
-                }
-                task = new SingletonTask<Void>(this) {
-
-                    @Override
-                    protected boolean handle() {
-                        String format = FileNameTools.suffix(file.getName());
-                        final BufferedImage bufferedImage
-                                = FxImageTools.toBufferedImage(imageView.getImage());
-                        if (task == null || isCancelled()) {
-                            return false;
-                        }
-                        return bufferedImage != null
-                                && ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        popInformation(Languages.message("Saved"));
-                    }
-
-                };
-                start(task);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+        File file = chooseSaveFile(UserConfig.getPath(baseName + "TargetPath"),
+                null, FileFilters.ImageExtensionFilter);
+        if (file == null) {
+            return;
         }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
 
+            @Override
+            protected boolean handle() {
+                String format = FileNameTools.suffix(file.getName());
+                BufferedImage bufferedImage
+                        = FxImageTools.toBufferedImage(imageView.getImage());
+                if (bufferedImage == null || task == null || isCancelled()) {
+                    return false;
+                }
+                if (!ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath())) {
+                    return false;
+                }
+                recordFileWritten(file);
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popInformation(Languages.message("Saved"));
+            }
+
+        };
+        start(task);
     }
 
     @FXML

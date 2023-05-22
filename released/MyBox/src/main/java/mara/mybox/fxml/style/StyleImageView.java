@@ -36,8 +36,6 @@ public class StyleImageView {
         }
         if (id.toLowerCase().endsWith("tipsview")) {
             switch (id) {
-                case "refTipsView":
-                    return new StyleData(id, "", message("ImageRefTips"), "", "iconTips.png");
                 case "distanceTipsView":
                     return new StyleData(id, "", message("ColorMatchComments"), "", "iconTips.png");
                 case "pdfMemTipsView":

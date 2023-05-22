@@ -126,7 +126,7 @@ public class FileSplitTools {
             if (file == null || startIndex < 1 || startIndex > endIndex) {
                 return null;
             }
-            File tempFile = TmpFileTools.getTempFile();
+            File tempFile = FileTmpTools.getTempFile();
             String newFilename = filename + "-cut-b" + startIndex + "-b" + endIndex;
             try (final BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
                 if (startIndex > 1) {

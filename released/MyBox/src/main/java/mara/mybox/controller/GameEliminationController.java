@@ -214,79 +214,76 @@ public class GameEliminationController extends BaseController {
     public void afterSceneLoaded() {
         super.afterSceneLoaded();
 
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private List<ImageItem> items;
-                private String defaultSelected;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        items = new ArrayList<>();
-                        List<ImageItem> predefinedItems = ImageItem.predefined();
-                        List<String> saved = TableStringValues.read("GameEliminationImage");
-                        if (saved != null) {
-                            for (String address : saved) {
-                                boolean predefined = false;
-                                for (ImageItem item : predefinedItems) {
-                                    if (address.equals(item.getAddress())) {
-                                        predefined = true;
-                                        break;
-                                    }
-                                }
-                                if (!predefined) {
-                                    if (!address.startsWith("color:")) {
-                                        File file = new File(address);
-                                        if (!file.exists()) {
-                                            TableStringValues.delete("GameEliminationImage", address);
-                                            continue;
-                                        }
-                                    }
-                                    items.add(new ImageItem().setAddress(address));
-                                }
-                            }
-                        }
-                        items.addAll(predefinedItems);
-                        defaultSelected = items.get(0).getAddress();
-                        for (int i = 0; i < items.size(); ++i) {
-                            ImageItem item = items.get(i);
-                            item.getSelected().addListener(new ChangeListener<Boolean>() {
-                                @Override
-                                public void changed(ObservableValue ov, Boolean t, Boolean t1) {
-                                    if (!isSettingValues) {
-                                        setChessImagesLabel();
-                                    }
-                                }
-                            });
-                            item.setIndex(i);
-                            if (i > 0 && i < 8) {
-                                defaultSelected += "," + item.getAddress();
-                            }
-                        }
-                        return true;
-
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    initChessesTab(items, defaultSelected);
-                    initRulersTab();
-                    initSettingsTab();
-
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
 
+            private List<ImageItem> items;
+            private String defaultSelected;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    items = new ArrayList<>();
+                    List<ImageItem> predefinedItems = ImageItem.predefined();
+                    List<String> saved = TableStringValues.read("GameEliminationImage");
+                    if (saved != null) {
+                        for (String address : saved) {
+                            boolean predefined = false;
+                            for (ImageItem item : predefinedItems) {
+                                if (address.equals(item.getAddress())) {
+                                    predefined = true;
+                                    break;
+                                }
+                            }
+                            if (!predefined) {
+                                if (!address.startsWith("color:")) {
+                                    File file = new File(address);
+                                    if (!file.exists()) {
+                                        TableStringValues.delete("GameEliminationImage", address);
+                                        continue;
+                                    }
+                                }
+                                items.add(new ImageItem().setAddress(address));
+                            }
+                        }
+                    }
+                    items.addAll(predefinedItems);
+                    defaultSelected = items.get(0).getAddress();
+                    for (int i = 0; i < items.size(); ++i) {
+                        ImageItem item = items.get(i);
+                        item.getSelected().addListener(new ChangeListener<Boolean>() {
+                            @Override
+                            public void changed(ObservableValue ov, Boolean t, Boolean t1) {
+                                if (!isSettingValues) {
+                                    setChessImagesLabel();
+                                }
+                            }
+                        });
+                        item.setIndex(i);
+                        if (i > 0 && i < 8) {
+                            defaultSelected += "," + item.getAddress();
+                        }
+                    }
+                    return true;
+
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                initChessesTab(items, defaultSelected);
+                initRulersTab();
+                initSettingsTab();
+
+            }
+
+        };
+        start(task);
     }
 
     protected void initChessesTab(List<ImageItem> items, String defaultSelected) {
@@ -669,7 +666,7 @@ public class GameEliminationController extends BaseController {
         if (isSettingValues) {
             return;
         }
-        imageInfoController.loadContents("");
+        imageInfoController.clear();
         ImageItem selected = imagesListview.getSelectionModel().getSelectedItem();
         if (selected == null || selected.isColor()) {
             return;

@@ -23,8 +23,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.DoubleTools;
-import static mara.mybox.tools.TmpFileTools.getPathTempFile;
-import mara.mybox.value.AppPaths;
+import static mara.mybox.tools.FileTmpTools.generateFile;
 import static mara.mybox.value.Languages.message;
 import org.apache.commons.csv.CSVPrinter;
 
@@ -67,7 +66,7 @@ public class DataTableGroupStatistic {
             return false;
         }
         ok = false;
-        try ( Connection dconn = DerbyBase.getConnection()) {
+        try (Connection dconn = DerbyBase.getConnection()) {
             conn = dconn;
             init();
             String currentParameterValue;
@@ -78,8 +77,8 @@ public class DataTableGroupStatistic {
             if (task != null) {
                 task.setInfo(sql);
             }
-            try ( ResultSet query = conn.prepareStatement(sql).executeQuery();
-                     PreparedStatement insert = conn.prepareStatement(tableGroup.insertStatement());) {
+            try (ResultSet query = conn.prepareStatement(sql).executeQuery();
+                    PreparedStatement insert = conn.prepareStatement(tableGroup.insertStatement());) {
                 String sIdColName = DerbyBase.savedName(mappedIdColName);
                 String sParameterName = DerbyBase.savedName(mappedParameterName);
                 while (query.next()) {
@@ -169,7 +168,7 @@ public class DataTableGroupStatistic {
                     }
                 }
                 String chartname = dname + "_Chart";
-                chartFile = getPathTempFile(AppPaths.getGeneratedPath(), chartname, ".csv");
+                chartFile = generateFile(chartname, "csv");
                 chartData.setColumns(chartColumns).setDataName(chartname)
                         .setFile(chartFile).setCharset(Charset.forName("UTF-8"))
                         .setDelimiter(",").setHasHeader(true)
@@ -335,7 +334,7 @@ public class DataTableGroupStatistic {
         if (task != null) {
             task.setInfo(sql);
         }
-        try ( ResultSet query = qconn.prepareStatement(sql).executeQuery()) {
+        try (ResultSet query = qconn.prepareStatement(sql).executeQuery()) {
             while (query.next() && qconn != null && !qconn.isClosed()) {
                 List<String> vrow = new ArrayList<>();
                 for (int i = 3; i < statisticData.getColumns().size(); i++) {

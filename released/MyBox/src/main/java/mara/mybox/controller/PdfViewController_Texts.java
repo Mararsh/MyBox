@@ -39,41 +39,38 @@ public abstract class PdfViewController_Texts extends PdfViewController_OCR {
         if (imageView.getImage() == null) {
             return;
         }
-        synchronized (this) {
-            if (textsTask != null) {
-                textsTask.cancel();
-            }
-            textsTask = new SingletonTask<Void>(this) {
-
-                protected String texts;
-
-                @Override
-                protected boolean handle() {
-                    try ( PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
-                        if (stripper == null) {
-                            stripper = new PDFTextStripper();
-                        }
-                        stripper.setStartPage(frameIndex + 1);  // 1-based
-                        stripper.setEndPage(frameIndex + 1);
-                        texts = stripper.getText(doc);
-                        doc.close();
-                    } catch (Exception e) {
-                        MyBoxLog.error(e);
-                        return false;
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    textsArea.setText(texts);
-                    textsLabel.setText(message("CharactersNumber") + ": " + textsArea.getLength());
-                    textsPage = frameIndex;
-                }
-            };
-            start(textsTask, MessageFormat.format(message("LoadingPageNumber"), (frameIndex + 1) + ""));
+        if (textsTask != null) {
+            textsTask.cancel();
         }
+        textsTask = new SingletonTask<Void>(this) {
 
+            protected String texts;
+
+            @Override
+            protected boolean handle() {
+                try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
+                    if (stripper == null) {
+                        stripper = new PDFTextStripper();
+                    }
+                    stripper.setStartPage(frameIndex + 1);  // 1-based
+                    stripper.setEndPage(frameIndex + 1);
+                    texts = stripper.getText(doc);
+                    doc.close();
+                } catch (Exception e) {
+                    MyBoxLog.error(e);
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                textsArea.setText(texts);
+                textsLabel.setText(message("CharactersNumber") + ": " + textsArea.getLength());
+                textsPage = frameIndex;
+            }
+        };
+        start(textsTask, MessageFormat.format(message("LoadingPageNumber"), (frameIndex + 1) + ""));
     }
 
     @FXML

@@ -125,81 +125,79 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
     }
 
     protected void loadMediaInfo(MediaInformation info) {
-        synchronized (this) {
-            SingletonTask infoTask = new SingletonTask<Void>(this) {
+        SingletonTask infoTask = new SingletonTask<Void>(this) {
 
-                @Override
-                protected boolean handle() {
-                    try {
-                        Media media = new Media(info.getURI().toString());
-                        if (media.getError() == null) {
-                            media.setOnError(new Runnable() {
-                                @Override
-                                public void run() {
-                                    handleMediaError(info, media.getError());
-                                    cancel();
-                                }
-                            });
-                        } else {
-                            handleMediaError(info, media.getError());
-                            cancel();
-                            return false;
-                        }
-                        MediaPlayer player = new MediaPlayer(media);
-                        if (player.getError() == null) {
-                            player.setOnError(new Runnable() {
-                                @Override
-                                public void run() {
-                                    handleMediaError(info, player.getError());
-                                    cancel();
-                                }
-                            });
-                        } else {
-                            handleMediaError(info, player.getError());
-                            cancel();
-                            return false;
-                        }
-
-                        player.setOnReady(new Runnable() {
+            @Override
+            protected boolean handle() {
+                try {
+                    Media media = new Media(info.getURI().toString());
+                    if (media.getError() == null) {
+                        media.setOnError(new Runnable() {
                             @Override
                             public void run() {
-                                try {
-                                    info.readMediaInfo(media);
-                                    player.dispose();
-                                    Platform.runLater(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            tableView.refresh();
-                                            updateLabel();
-                                        }
-                                    });
-
-                                } catch (Exception e) {
-                                    popError(message("FailOpenMedia"));
-                                    MyBoxLog.debug(e.toString());
-                                }
+                                handleMediaError(info, media.getError());
+                                cancel();
                             }
                         });
-
-                        return true;
-
-                    } catch (Exception e) {
-                        error = e.toString();
+                    } else {
+                        handleMediaError(info, media.getError());
+                        cancel();
+                        return false;
+                    }
+                    MediaPlayer player = new MediaPlayer(media);
+                    if (player.getError() == null) {
+                        player.setOnError(new Runnable() {
+                            @Override
+                            public void run() {
+                                handleMediaError(info, player.getError());
+                                cancel();
+                            }
+                        });
+                    } else {
+                        handleMediaError(info, player.getError());
+                        cancel();
                         return false;
                     }
 
+                    player.setOnReady(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                info.readMediaInfo(media);
+                                player.dispose();
+                                Platform.runLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        tableView.refresh();
+                                        updateLabel();
+                                    }
+                                });
+
+                            } catch (Exception e) {
+                                popError(message("FailOpenMedia"));
+                                MyBoxLog.debug(e.toString());
+                            }
+                        }
+                    });
+
+                    return true;
+
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
                 }
 
-                @Override
-                protected void whenFailed() {
-                    popError(error);
-                    tableView.refresh();
-                    updateLabel();
-                }
+            }
 
-            };
-            start(infoTask, false);
-        }
+            @Override
+            protected void whenFailed() {
+                popError(error);
+                tableView.refresh();
+                updateLabel();
+            }
+
+        };
+        start(infoTask, false);
     }
 
     public void handleMediaError(MediaInformation info, MediaException exception) {
@@ -246,7 +244,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
     }
 
     @Override
-    public void countSize() {
+    public void countSize(boolean reset) {
         updateLabel();
     }
 
@@ -468,68 +466,59 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
     }
 
     public void loadMiaoSounds() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            tableData.clear();
-            try {
-                task = new SingletonTask<Void>(this) {
-
-                    List<File> miaos;
-
-                    @Override
-                    protected boolean handle() {
-                        miaos = new ArrayList();
-                        miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/guaiMiao1.mp3", "sound", "guaiMiao1.mp3"));
-                        miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/guaiMiao2.mp3", "sound", "guaiMiao2.mp3"));
-                        miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/guaiMiao3.mp3", "sound", "guaiMiao3.mp3"));
-                        miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/guaiMiao4.mp3", "sound", "guaiMiao4.mp3"));
-                        miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/guaiMiao5.mp3", "sound", "guaiMiao5.mp3"));
-                        miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/guaiMiao6.mp3", "sound", "guaiMiao6.mp3"));
-                        miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/guaiMiao7.mp3", "sound", "guaiMiao7.mp3"));
-                        miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/eat1.mp3", "sound", "eat1.mp3"));
-                        miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/eat2.mp3", "sound", "eat2.mp3"));
-                        miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/eat3.mp3", "sound", "eat3.mp3"));
-                        miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/eat5.mp3", "sound", "eat5.mp3"));
-                        miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/eat6.mp3", "sound", "eat6.mp3"));
-                        miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/eat7.mp3", "sound", "eat7.mp3"));
-                        miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/eat8.mp3", "sound", "eat8.mp3"));
-                        miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/eat9.mp3", "sound", "eat9.mp3"));
-                        miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/eat10.mp3", "sound", "eat10.mp3"));
-                        miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/guaiHulu.mp3", "sound", "guaiHulu.mp3"));
-                        miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/guaiHuluTian.mp3", "sound", "guaiHuluTian.mp3"));
-                        miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/benMiao11.mp3", "sound", "benMiao11.mp3"));
-                        miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/benMiao2.mp3", "sound", "benMiao2.mp3"));
-
-                        List<MediaInformation> miaosInfo = new ArrayList();
-                        for (File file : miaos) {
-                            miaosInfo.add(new MediaInformation(file));
-                        }
-                        TableMediaList.set(MiaoGuaiGuaiBenBen, miaosInfo);
-                        return true;
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        if (error != null) {
-                            popError(error);
-                        }
-                        if (miaos != null) {
-                            addFiles(0, miaos);
-                        }
-
-                    }
-
-                };
-                parentController.start(task);
-
-            } catch (Exception e) {
-                popError(message("FailOpenMedia"));
-                MyBoxLog.debug(e.toString());
-            }
+        if (task != null) {
+            task.cancel();
         }
+        tableData.clear();
+        task = new SingletonTask<Void>(this) {
 
+            List<File> miaos;
+
+            @Override
+            protected boolean handle() {
+                miaos = new ArrayList();
+                miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/guaiMiao1.mp3", "sound", "guaiMiao1.mp3"));
+                miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/guaiMiao2.mp3", "sound", "guaiMiao2.mp3"));
+                miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/guaiMiao3.mp3", "sound", "guaiMiao3.mp3"));
+                miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/guaiMiao4.mp3", "sound", "guaiMiao4.mp3"));
+                miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/guaiMiao5.mp3", "sound", "guaiMiao5.mp3"));
+                miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/guaiMiao6.mp3", "sound", "guaiMiao6.mp3"));
+                miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/guaiMiao7.mp3", "sound", "guaiMiao7.mp3"));
+                miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/eat1.mp3", "sound", "eat1.mp3"));
+                miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/eat2.mp3", "sound", "eat2.mp3"));
+                miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/eat3.mp3", "sound", "eat3.mp3"));
+                miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/eat5.mp3", "sound", "eat5.mp3"));
+                miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/eat6.mp3", "sound", "eat6.mp3"));
+                miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/eat7.mp3", "sound", "eat7.mp3"));
+                miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/eat8.mp3", "sound", "eat8.mp3"));
+                miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/eat9.mp3", "sound", "eat9.mp3"));
+                miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/eat10.mp3", "sound", "eat10.mp3"));
+                miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/guaiHulu.mp3", "sound", "guaiHulu.mp3"));
+                miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/guaiHuluTian.mp3", "sound", "guaiHuluTian.mp3"));
+                miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/benMiao11.mp3", "sound", "benMiao11.mp3"));
+                miaos.add(mara.mybox.fxml.FxFileTools.getInternalFile("/sound/benMiao2.mp3", "sound", "benMiao2.mp3"));
+
+                List<MediaInformation> miaosInfo = new ArrayList();
+                for (File file : miaos) {
+                    miaosInfo.add(new MediaInformation(file));
+                }
+                TableMediaList.set(MiaoGuaiGuaiBenBen, miaosInfo);
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (error != null) {
+                    popError(error);
+                }
+                if (miaos != null) {
+                    addFiles(0, miaos);
+                }
+
+            }
+
+        };
+        start(task);
     }
 
 }

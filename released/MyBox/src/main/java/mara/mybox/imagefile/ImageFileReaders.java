@@ -33,7 +33,7 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.FileNameTools;
 import static mara.mybox.value.AppVariables.imageRenderHints;
 import static mara.mybox.value.Languages.message;
-import net.sf.image4j.codec.ico.ICODecoder;
+import thridparty.image4j.ICODecoder;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 

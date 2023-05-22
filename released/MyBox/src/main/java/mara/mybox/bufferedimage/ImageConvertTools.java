@@ -30,11 +30,11 @@ import static mara.mybox.imagefile.ImageFileReaders.readBrokenImage;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.FileExtensions;
 import static mara.mybox.value.Languages.message;
-import net.sf.image4j.codec.ico.ICODecoder;
-import net.sf.image4j.codec.ico.ICOEncoder;
+import thridparty.image4j.ICODecoder;
+import thridparty.image4j.ICOEncoder;
 
 /**
  * @Author Mara
@@ -194,7 +194,7 @@ public class ImageConvertTools {
                 return false;
             }
             ImageWriteParam param = ImageFileWriters.getWriterParam(attributes, writer);
-            File tmpFile = TmpFileTools.getTempFile();
+            File tmpFile = FileTmpTools.getTempFile();
             try ( ImageInputStream iis = ImageIO.createImageInputStream(srcFile);
                      ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 ImageReader reader = ImageFileReaders.getReader(iis, sourceFormat);
@@ -360,7 +360,7 @@ public class ImageConvertTools {
             boolean supportMultiFrames = FileExtensions.MultiFramesImages.contains(targetFormat);
             ImageWriter writer = ImageFileWriters.getWriter(targetFormat);
             ImageWriteParam param = ImageFileWriters.getWriterParam(attributes, writer);
-            File tmpFile = TmpFileTools.getTempFile();
+            File tmpFile = FileTmpTools.getTempFile();
             try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);
                 int num;

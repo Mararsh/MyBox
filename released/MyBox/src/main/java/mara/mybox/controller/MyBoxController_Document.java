@@ -141,6 +141,11 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
             loadScene(Fxmls.TextFilesMergeFxml);
         });
 
+        MenuItem TextFindBatch = new MenuItem(message("TextFindBatch"));
+        TextFindBatch.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.TextFindBatchFxml);
+        });
+
         MenuItem TextReplaceBatch = new MenuItem(message("TextReplaceBatch"));
         TextReplaceBatch.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.TextReplaceBatchFxml);
@@ -162,13 +167,24 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
         });
 
         textsMenu.getItems().addAll(
-                textEditer, TextConvert, TextMerge, TextReplaceBatch, TextFilterBatch, TextToHtml, TextToPdf
+                textEditer, TextFindBatch, TextReplaceBatch, TextFilterBatch, TextConvert, TextMerge, TextToHtml, TextToPdf
         );
+
+        Menu bytesMenu = new Menu(message("Bytes"));
 
         MenuItem bytesEditer = new MenuItem(message("BytesEditer"));
         bytesEditer.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.BytesEditorFxml);
         });
+
+        MenuItem BytesFindBatch = new MenuItem(message("BytesFindBatch"));
+        BytesFindBatch.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.BytesFindBatchFxml);
+        });
+
+        bytesMenu.getItems().addAll(
+                bytesEditer, BytesFindBatch
+        );
 
         Menu htmlMenu = new Menu(message("Html"));
 
@@ -364,9 +380,14 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
                 ExtractTextsFromMS
         );
 
+        MenuItem jsonMenu = new MenuItem("JSON");
+        jsonMenu.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.JsonEditorFxml);
+        });
+
         List<MenuItem> items = new ArrayList<>();
         items.addAll(Arrays.asList(Notes, InformationInTree, new SeparatorMenuItem(),
-                pdfMenu, markdownMenu, htmlMenu, textsMenu, msMenu, bytesEditer, new SeparatorMenuItem(),
+                pdfMenu, markdownMenu, jsonMenu, htmlMenu, textsMenu, msMenu, bytesMenu, new SeparatorMenuItem(),
                 TextInMyBoxClipboard, TextInSystemClipboard));
 
         items.add(new SeparatorMenuItem());

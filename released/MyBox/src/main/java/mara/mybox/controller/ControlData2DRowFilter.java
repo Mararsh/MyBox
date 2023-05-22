@@ -8,7 +8,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.data2d.DataFilter;
-import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
@@ -30,7 +30,7 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
     protected TextField maxInput;
 
     public ControlData2DRowFilter() {
-        category = TreeNode.RowFilter;
+        category = InfoNode.RowFilter;
     }
 
     @Override
@@ -74,11 +74,11 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
     }
 
     @Override
-    protected void editNode(TreeItem<TreeNode> item) {
+    protected void editNode(TreeItem<InfoNode> item) {
         if (item == null) {
             return;
         }
-        TreeNode node = item.getValue();
+        InfoNode node = item.getValue();
         if (node == null) {
             return;
         }
@@ -88,9 +88,9 @@ public class ControlData2DRowFilter extends ControlData2DRowExpression {
         }
         trueRadio.setSelected(true);
         String more = node.getMore();
-        if (more != null && more.contains(TreeNode.TagsSeparater)) {
+        if (more != null && more.contains(InfoNode.TagsSeparater)) {
             try {
-                String[] v = more.strip().split(TreeNode.TagsSeparater);
+                String[] v = more.strip().split(InfoNode.TagsSeparater);
                 if (StringTools.isFalse(v[0])) {
                     othersRadio.setSelected(true);
                 } else {

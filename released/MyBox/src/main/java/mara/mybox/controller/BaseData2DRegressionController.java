@@ -120,7 +120,7 @@ public class BaseData2DRegressionController extends BaseData2DChartController {
 
     @FXML
     public void about() {
-        openLink(HelpTools.AboutDataAnalysisHtml());
+        openHtml(HelpTools.aboutDataAnalysis());
     }
 
 }

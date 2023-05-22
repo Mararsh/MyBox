@@ -252,21 +252,13 @@ public class PopTools {
     /*
         buttons
      */
-    public static void addButtonsPane(MenuController controller, TextInputControl input, List<String> values) {
-        addButtonsPane(controller, input, values, true, -1);
-    }
-
-    public static void addButtonsPane(int index, MenuController controller, TextInputControl input, List<String> values) {
-        addButtonsPane(controller, input, values, true, index);
+    public static void addButtonsPane(MenuController controller, TextInputControl input,
+            List<String> values, String menuName) {
+        addButtonsPane(controller, input, values, -1, menuName);
     }
 
     public static void addButtonsPane(MenuController controller, TextInputControl input,
-            List<String> values, boolean replace) {
-        addButtonsPane(controller, input, values, replace, -1);
-    }
-
-    public static void addButtonsPane(MenuController controller, TextInputControl input,
-            List<String> values, boolean replace, int index) {
+            List<String> values, int index, String menuName) {
         try {
             List<Node> buttons = new ArrayList<>();
             for (String value : values) {
@@ -277,18 +269,18 @@ public class PopTools {
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        if (replace) {
-                            input.replaceText(input.getSelection(), value);
+                        input.replaceText(input.getSelection(), value);
+                        if (UserConfig.getBoolean(menuName + "ValuesCloseAfterPaste", true)) {
+                            controller.close();
                         } else {
-                            input.setText(value);
+                            controller.getThisPane().requestFocus();
                         }
-                        controller.getThisPane().requestFocus();
                         input.requestFocus();
                     }
                 });
                 buttons.add(button);
             }
-            controller.addFlowPane(index, buttons);
+            controller.addFlowPane(buttons);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -488,11 +480,11 @@ public class PopTools {
     /*
         saved values
      */
-    public static void popStringValues(BaseController parent, TextInputControl input, Event pevent,
-            String name, boolean alwaysClear, boolean checkPop) {
+    public static void popStringValues(BaseController parent, TextInputControl input, Event event,
+            String menuName, boolean alwaysClear, boolean checkPop) {
         try {
-            int max = UserConfig.getInt(name + "MaxSaved", 20);
-            MenuController controller = MenuController.open(parent, input, pevent);
+            int max = UserConfig.getInt(menuName + "MaxSaved", 20);
+            MenuController controller = MenuController.open(parent, input, event);
 
             List<Node> setButtons = new ArrayList<>();
             Button clearInputButton = new Button(message("ClearInputArea"));
@@ -507,10 +499,10 @@ public class PopTools {
             Button clearValuesButton = new Button(message("ClearValues"));
             clearValuesButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
-                public void handle(ActionEvent event) {
-                    TableStringValues.clear(name);
+                public void handle(ActionEvent aevent) {
+                    TableStringValues.clear(menuName);
                     controller.close();
-                    popStringValues(parent, input, event, name, alwaysClear, checkPop);
+                    popStringValues(parent, input, aevent, menuName, alwaysClear, checkPop);
                 }
             });
             setButtons.add(clearValuesButton);
@@ -518,14 +510,14 @@ public class PopTools {
             Button maxButton = new Button(message("MaxSaved"));
             maxButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
-                public void handle(ActionEvent event) {
+                public void handle(ActionEvent aevent) {
                     String value = PopTools.askValue(parent.getTitle(), null, message("MaxSaved"), max + "");
                     if (value == null) {
                         return;
                     }
                     try {
                         int v = Integer.parseInt(value);
-                        UserConfig.setInt(name + "MaxSaved", v);
+                        UserConfig.setInt(menuName + "MaxSaved", v);
                     } catch (Exception e) {
                         MyBoxLog.error(e);
                     }
@@ -534,30 +526,42 @@ public class PopTools {
             setButtons.add(maxButton);
 
             if (alwaysClear) {
-                UserConfig.setBoolean(name + "ValuesClearAndSet", true);
+                UserConfig.setBoolean(menuName + "ValuesClearAndSet", true);
             } else {
                 CheckBox clearCheck = new CheckBox();
                 clearCheck.setGraphic(StyleTools.getIconImageView("iconClear.png"));
                 NodeStyleTools.setTooltip(clearCheck, new Tooltip(message("ClearAndPaste")));
-                clearCheck.setSelected(UserConfig.getBoolean(name + "ValuesClearAndSet", false));
+                clearCheck.setSelected(UserConfig.getBoolean(menuName + "ValuesClearAndSet", false));
                 clearCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(name + "ValuesClearAndSet", clearCheck.isSelected());
+                        UserConfig.setBoolean(menuName + "ValuesClearAndSet", clearCheck.isSelected());
                     }
                 });
                 setButtons.add(clearCheck);
             }
 
+            CheckBox closeCheck = new CheckBox();
+            closeCheck.setGraphic(StyleTools.getIconImageView("iconClose.png"));
+            NodeStyleTools.setTooltip(closeCheck, new Tooltip(message("CloseAfterPaste")));
+            closeCheck.setSelected(UserConfig.getBoolean(menuName + "ValuesCloseAfterPaste", true));
+            closeCheck.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent aevent) {
+                    UserConfig.setBoolean(menuName + "ValuesCloseAfterPaste", closeCheck.isSelected());
+                }
+            });
+            setButtons.add(closeCheck);
+
             if (checkPop) {
                 CheckBox popCheck = new CheckBox();
                 popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
                 NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
-                popCheck.setSelected(UserConfig.getBoolean(name + "PopWhenMouseHovering", false));
+                popCheck.setSelected(UserConfig.getBoolean(menuName + "PopWhenMouseHovering", false));
                 popCheck.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
-                    public void handle(ActionEvent event) {
-                        UserConfig.setBoolean(name + "PopWhenMouseHovering", popCheck.isSelected());
+                    public void handle(ActionEvent aevent) {
+                        UserConfig.setBoolean(menuName + "PopWhenMouseHovering", popCheck.isSelected());
                     }
                 });
                 setButtons.add(popCheck);
@@ -567,29 +571,33 @@ public class PopTools {
             controller.addNode(new Separator());
             controller.addNode(new Label(message("PopValuesComments")));
 
-            List<String> values = TableStringValues.max(name, max);
+            List<String> values = TableStringValues.max(menuName, max);
             List<Node> buttons = new ArrayList<>();
             for (String value : values) {
                 Button button = new Button(StringTools.start(value, 200));
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
-                    public void handle(ActionEvent event) {
-                        if (UserConfig.getBoolean(name + "ValuesClearAndSet", true)) {
+                    public void handle(ActionEvent aevent) {
+                        if (UserConfig.getBoolean(menuName + "ValuesClearAndSet", true)) {
                             input.setText(value);
                         } else {
                             input.replaceText(input.getSelection(), value);
                         }
-                        controller.getThisPane().requestFocus();
+                        if (UserConfig.getBoolean(menuName + "ValuesCloseAfterPaste", true)) {
+                            controller.close();
+                        } else {
+                            controller.getThisPane().requestFocus();
+                        }
                         input.requestFocus();
                     }
                 });
                 button.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
-                    public void handle(MouseEvent event) {
-                        if (event.getButton() == MouseButton.SECONDARY) {
-                            TableStringValues.delete(name, value);
+                    public void handle(MouseEvent aevent) {
+                        if (aevent.getButton() == MouseButton.SECONDARY) {
+                            TableStringValues.delete(menuName, value);
                             controller.close();
-                            popStringValues(parent, input, pevent, name, alwaysClear, checkPop);
+                            popStringValues(parent, input, event, menuName, alwaysClear, checkPop);
                         }
                     }
                 });
@@ -600,6 +608,10 @@ public class PopTools {
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
+    }
+
+    public static void popStringValues(BaseController parent, TextInputControl input, Event event, String menuName) {
+        popStringValues(parent, input, event, menuName, false, true);
     }
 
     /*
@@ -788,6 +800,18 @@ public class PopTools {
             });
             topButtons.add(clearButton);
 
+            CheckBox closeCheck = new CheckBox();
+            closeCheck.setGraphic(StyleTools.getIconImageView("iconClose.png"));
+            NodeStyleTools.setTooltip(closeCheck, new Tooltip(message("CloseAfterPaste")));
+            closeCheck.setSelected(UserConfig.getBoolean("RegexExamplesValuesCloseAfterPaste", true));
+            closeCheck.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent aevent) {
+                    UserConfig.setBoolean("RegexExamplesValuesCloseAfterPaste", closeCheck.isSelected());
+                }
+            });
+            topButtons.add(closeCheck);
+
             CheckBox popCheck = new CheckBox();
             popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
             NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
@@ -829,7 +853,8 @@ public class PopTools {
                     "(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\\d{8}      " + message("PhoneNumber"),
                     "[a-zA-z]+://[^\\s]*       " + message("URL"),
                     "^(\\s*)\\n       " + message("BlankLine"),
-                    "\\d+\\.\\d+\\.\\d+\\.\\d+      " + message("IP"));
+                    "\\d+\\.\\d+\\.\\d+\\.\\d+      " + message("IP"),
+                    "line1\\s*line2      " + message("MultipleLines"));
             List<Node> nodes = new ArrayList<>();
             for (String value : values) {
                 String[] vv = value.split("      ");
@@ -838,7 +863,11 @@ public class PopTools {
                     @Override
                     public void handle(ActionEvent event) {
                         input.replaceText(input.getSelection(), vv[0]);
-                        controller.getThisPane().requestFocus();
+                        if (UserConfig.getBoolean("RegexExamplesValuesCloseAfterPaste", true)) {
+                            controller.close();
+                        } else {
+                            controller.getThisPane().requestFocus();
+                        }
                         input.requestFocus();
                     }
                 });
@@ -879,6 +908,18 @@ public class PopTools {
             });
             topButtons.add(clearButton);
 
+            CheckBox closeCheck = new CheckBox();
+            closeCheck.setGraphic(StyleTools.getIconImageView("iconClose.png"));
+            NodeStyleTools.setTooltip(closeCheck, new Tooltip(message("CloseAfterPaste")));
+            closeCheck.setSelected(UserConfig.getBoolean("ColorExamplesValuesCloseAfterPaste", true));
+            closeCheck.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent aevent) {
+                    UserConfig.setBoolean("ColorExamplesValuesCloseAfterPaste", closeCheck.isSelected());
+                }
+            });
+            topButtons.add(closeCheck);
+
             CheckBox popCheck = new CheckBox();
             popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
             NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
@@ -914,7 +955,11 @@ public class PopTools {
                         } else {
                             input.setText(value);
                         }
-                        controller.getThisPane().requestFocus();
+                        if (UserConfig.getBoolean("ColorExamplesValuesCloseAfterPaste", true)) {
+                            controller.close();
+                        } else {
+                            controller.getThisPane().requestFocus();
+                        }
                         input.requestFocus();
                     }
                 });
@@ -930,7 +975,7 @@ public class PopTools {
             String tableName, boolean onlyQuery, Event event) {
         try {
             MenuController controller = MenuController.open(parent, input, event);
-
+            String menuName = "SqlExamples";
             boolean isTextArea = input instanceof TextArea;
 
             List<Node> topButtons = new ArrayList<>();
@@ -962,14 +1007,26 @@ public class PopTools {
             });
             topButtons.add(clearButton);
 
+            CheckBox closeCheck = new CheckBox();
+            closeCheck.setGraphic(StyleTools.getIconImageView("iconClose.png"));
+            NodeStyleTools.setTooltip(closeCheck, new Tooltip(message("CloseAfterPaste")));
+            closeCheck.setSelected(UserConfig.getBoolean(menuName + "ValuesCloseAfterPaste", true));
+            closeCheck.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent aevent) {
+                    UserConfig.setBoolean(menuName + "ValuesCloseAfterPaste", closeCheck.isSelected());
+                }
+            });
+            topButtons.add(closeCheck);
+
             CheckBox popCheck = new CheckBox();
             popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
             NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
-            popCheck.setSelected(UserConfig.getBoolean("SqlExamplesPopWhenMouseHovering", false));
+            popCheck.setSelected(UserConfig.getBoolean(menuName + "PopWhenMouseHovering", false));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("SqlExamplesPopWhenMouseHovering", popCheck.isSelected());
+                    UserConfig.setBoolean(menuName + "PopWhenMouseHovering", popCheck.isSelected());
                 }
             });
             topButtons.add(popCheck);
@@ -983,38 +1040,38 @@ public class PopTools {
                     " WHERE ", " ORDER BY ", " DESC ", " ASC ",
                     " FETCH FIRST ROW ONLY", " FETCH FIRST <size> ROWS ONLY",
                     " OFFSET <start> ROWS FETCH NEXT <size> ROWS ONLY"
-            ));
+            ), menuName);
             addButtonsPane(controller, input, Arrays.asList(
                     " , ", " (   ) ", " = ", " '' ", " >= ", " > ", " <= ", " < ", " != "
-            ));
+            ), menuName);
             addButtonsPane(controller, input, Arrays.asList(
                     " AND ", " OR ", " NOT ", " IS NULL ", " IS NOT NULL "
-            ));
+            ), menuName);
             addButtonsPane(controller, input, Arrays.asList(
                     " LIKE 'a%' ", " LIKE 'a_' ", " BETWEEN <value1> AND <value2>"
-            ));
+            ), menuName);
             addButtonsPane(controller, input, Arrays.asList(
                     " IN ( <value1>, <value2> ) ", " IN (SELECT FROM " + tname + " WHERE <condition>) "
-            ));
+            ), menuName);
             addButtonsPane(controller, input, Arrays.asList(
                     " EXISTS (SELECT FROM " + tname + " WHERE <condition>) "
-            ));
+            ), menuName);
             addButtonsPane(controller, input, Arrays.asList(
                     " DATE('1998-02-26') ", " TIMESTAMP('1962-09-23 03:23:34.234') "
-            ));
+            ), menuName);
             addButtonsPane(controller, input, Arrays.asList(
                     " COUNT(*) ", " AVG() ", " MAX() ", " MIN() ", " SUM() ", " GROUP BY ", " HAVING "
-            ));
+            ), menuName);
             addButtonsPane(controller, input, Arrays.asList(
                     " JOIN ", " INNER JOIN ", " LEFT OUTER JOIN ", " RIGHT OUTER JOIN ", " CROSS JOIN "
-            ));
+            ), menuName);
             if (!onlyQuery) {
                 addButtonsPane(controller, input, Arrays.asList(
                         "INSERT INTO " + tname + " (column1, column2) VALUES (value1, value2)",
                         "UPDATE " + tname + " SET <column1>=<value1>, <column2>=<value2> WHERE <condition>",
                         "DELETE FROM " + tname + " WHERE <condition>", "TRUNCATE TABLE <table>",
                         "ALTER TABLE " + tname + " ALTER COLUMN id RESTART WITH 100"
-                ));
+                ), menuName);
             }
 
             Hyperlink link = new Hyperlink("Derby Reference Manual");
@@ -1062,10 +1119,9 @@ public class PopTools {
     }
 
     public static MenuController popJavaScriptExamples(BaseController parent, Event event,
-            TextInputControl scriptInput, String name) {
+            TextInputControl scriptInput, String menuName) {
         try {
             MenuController controller = MenuController.open(parent, scriptInput, event);
-
             controller.setTitleLabel(message("Examples"));
 
             List<Node> topButtons = new ArrayList<>();
@@ -1092,14 +1148,26 @@ public class PopTools {
             });
             topButtons.add(clearInputButton);
 
+            CheckBox closeCheck = new CheckBox();
+            closeCheck.setGraphic(StyleTools.getIconImageView("iconClose.png"));
+            NodeStyleTools.setTooltip(closeCheck, new Tooltip(message("CloseAfterPaste")));
+            closeCheck.setSelected(UserConfig.getBoolean(menuName + "ValuesCloseAfterPaste", true));
+            closeCheck.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent aevent) {
+                    UserConfig.setBoolean(menuName + "ValuesCloseAfterPaste", closeCheck.isSelected());
+                }
+            });
+            topButtons.add(closeCheck);
+
             CheckBox popCheck = new CheckBox();
             popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
             NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
-            popCheck.setSelected(UserConfig.getBoolean(name + "PopWhenMouseHovering", false));
+            popCheck.setSelected(UserConfig.getBoolean(menuName + "PopWhenMouseHovering", false));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(name + "PopWhenMouseHovering", popCheck.isSelected());
+                    UserConfig.setBoolean(menuName + "PopWhenMouseHovering", popCheck.isSelected());
                 }
             });
             topButtons.add(popCheck);
@@ -1112,19 +1180,19 @@ public class PopTools {
                     "''", "( )", ";", " = ", " += ", " -= ", " *= ", " /= ", " %= ",
                     "++ ", "-- ", " , ", " { } ", "[ ]", "\" \"", ".",
                     " var ", " this"
-            ));
+            ), menuName);
 
             PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
                     " >= ", " > ", " <= ", " < ", " != ", " && ", " || ", " !",
                     " '' == ", " == ", " '' != ", " === ", " !== ",
                     " true ", " false ", " null ", " undefined "
-            ));
+            ), menuName);
 
             Hyperlink jlink = new Hyperlink("JavaScript language specification");
             jlink.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    parent.openLink("https://www.ecma-international.org/publications-and-standards/standards/ecma-262/");
+                    parent.openLink(HelpTools.javaScriptSpecification());
                 }
             });
             controller.addNode(jlink);
@@ -1133,7 +1201,7 @@ public class PopTools {
             mlink.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    parent.openLink("https://developer.mozilla.org/en-US/docs/Web/JavaScript");
+                    parent.openLink(HelpTools.javaScriptEnLink());
                 }
             });
             controller.addNode(mlink);
@@ -1142,12 +1210,12 @@ public class PopTools {
             alink.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    parent.openLink("https://www.w3school.com.cn/js/index.asp");
+                    parent.openLink(HelpTools.javaScriptZhLink());
                 }
             });
             controller.addNode(alink);
 
-            if (!"JavaScriptEditor".equals(name)) {
+            if (!"JavaScriptEditor".equals(menuName)) {
                 Hyperlink nlink = new Hyperlink("Nashorn User's Guide");
                 nlink.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
@@ -1167,7 +1235,7 @@ public class PopTools {
     }
 
     public static void rowExpressionButtons(MenuController controller,
-            TextInputControl scriptInput, String colName) {
+            TextInputControl scriptInput, String colName, String menuName) {
         try {
             if (controller == null) {
                 return;
@@ -1179,19 +1247,19 @@ public class PopTools {
                     "#{" + message("TableRowNumber") + "} % 2 == 0",
                     "#{" + message("TableRowNumber") + "} % 2 == 1",
                     "#{" + message("TableRowNumber") + "} == 1"
-            ), true, 2);
+            ), 2, menuName);
 
             PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
                     "#{" + colName + "} == 0",
                     "Math.abs(#{" + colName + "}) >= 3",
                     "#{" + colName + "} < 0 || #{" + colName + "} != -6 "
-            ), true, 3);
+            ), 3, menuName);
 
             PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
                     "new Date('#{" + message("Time") + "}'.replace(/-/g,'/')).getTime()  > new Date('2016/05/19 09:23:12').getTime()",
                     "'#{" + message("Time") + "}' == '2016-05-19 11:34:28'",
                     "'#{" + message("Time") + "}'.startsWith('2016-05-19 11')"
-            ), true, 4);
+            ), 4, menuName);
 
             PopTools.addButtonsPane(controller, scriptInput, Arrays.asList(
                     "'#{" + colName + "}' == ''",
@@ -1201,7 +1269,7 @@ public class PopTools {
                     "'#{" + colName + "}'.search(/Hello/ig) >= 0",
                     "var array = [ 'A', 'B', 'C', 'D' ];\n"
                     + "array.includes('#{" + colName + "})')"
-            ), true, 5);
+            ), 5, menuName);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

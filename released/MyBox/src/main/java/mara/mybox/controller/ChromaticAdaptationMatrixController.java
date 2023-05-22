@@ -136,31 +136,29 @@ public class ChromaticAdaptationMatrixController extends ChromaticityBaseControl
 
     @FXML
     public void calculateAllAction(ActionEvent event) {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                private StringTable table;
-                private String allTexts;
-
-                @Override
-                protected boolean handle() {
-                    table = ChromaticAdaptation.table(scale);
-                    allTexts = ChromaticAdaptation.allTexts(scale);
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    matrixController.loadTable(table);
-                    allArea.setText(allTexts);
-                    allArea.home();
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+            private StringTable table;
+            private String allTexts;
+
+            @Override
+            protected boolean handle() {
+                table = ChromaticAdaptation.table(scale);
+                allTexts = ChromaticAdaptation.allTexts(scale);
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                matrixController.loadTable(table);
+                allArea.setText(allTexts);
+                allArea.home();
+            }
+
+        };
+        start(task);
     }
 
     @Override

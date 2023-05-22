@@ -1,15 +1,20 @@
 package mara.mybox.controller;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.imagefile.ImageFileWriters;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -22,7 +27,7 @@ import mara.mybox.value.Languages;
 public class ImageManufactureController extends ImageManufactureController_Actions {
 
     public ImageManufactureController() {
-        baseTitle = Languages.message("EditImage");
+        baseTitle = message("EditImage");
         TipsLabelKey = "ImageManufactureTips";
     }
 
@@ -61,8 +66,8 @@ public class ImageManufactureController extends ImageManufactureController_Actio
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeStyleTools.setTooltip(popButton, Languages.message("PopTabImage"));
-            NodeStyleTools.setTooltip(viewImageButton, Languages.message("PopManufacturedImage"));
+            NodeStyleTools.setTooltip(popButton, message("PopTabImage"));
+            NodeStyleTools.setTooltip(viewImageButton, message("PopManufacturedImage"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -91,6 +96,10 @@ public class ImageManufactureController extends ImageManufactureController_Actio
             if (!super.afterImageLoaded() || image == null) {
                 return false;
             }
+            if (sourceFile == null) {
+                saveAsTmp();
+                return true;
+            }
             imageLoaded.set(true);
             imageChanged = false;
             resetImagePane();
@@ -102,15 +111,50 @@ public class ImageManufactureController extends ImageManufactureController_Actio
 //            autoSize();
             hisTab.setDisable(sourceFile == null);
             backupTab.setDisable(sourceFile == null);
-            hisController.recordImageHistory(ImageOperation.Load, image);
+            hisController.loadHistories();
             backupController.loadBackups(sourceFile);
-            updateLabelString(Languages.message("Loaded"));
+
+            updateLabelString(message("Loaded"));
 
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return false;
         }
+    }
+
+    public boolean saveAsTmp() {
+        if (image == null) {
+            return false;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        File tmpFile = FileTmpTools.generateFile("png");
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                BufferedImage bufferedImage = SwingFXUtils.fromFXImage((Image) image, null);
+                if (bufferedImage == null || task == null || isCancelled()) {
+                    return false;
+                }
+                return ImageFileWriters.writeImageFile(bufferedImage, "png", tmpFile.getAbsolutePath());
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                sourceFileChanged(tmpFile);
+            }
+        };
+        start(task);
+        return true;
+    }
+
+    @Override
+    public void setImageChanged(boolean imageChanged) {
+        super.setImageChanged(imageChanged);
+        recoverButton.setDisable(!imageChanged);
     }
 
     /*

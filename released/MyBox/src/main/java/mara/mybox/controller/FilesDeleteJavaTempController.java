@@ -45,25 +45,23 @@ public class FilesDeleteJavaTempController extends BaseController {
     // https://www.jb51.net/article/42298.htm
     // https://stackoverflow.com/questions/2149785/get-size-of-folder-or-file
     public void countSize() {
-        synchronized (this) {
-            SingletonTask countTask = new SingletonTask<Void>(this) {
+        SingletonTask countTask = new SingletonTask<Void>(this) {
 
-                private String size;
+            private String size;
 
-                @Override
-                protected boolean handle() {
-                    size = FileUtils.byteCountToDisplaySize(FileUtils.sizeOfDirectory(path));
-                    return true;
-                }
+            @Override
+            protected boolean handle() {
+                size = FileUtils.byteCountToDisplaySize(FileUtils.sizeOfDirectory(path));
+                return true;
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    resultsLabel.setText(size);
-                }
+            @Override
+            protected void whenSucceeded() {
+                resultsLabel.setText(size);
+            }
 
-            };
-            start(countTask, false);
-        }
+        };
+        start(countTask, false);
     }
 
     @Override
@@ -80,37 +78,35 @@ public class FilesDeleteJavaTempController extends BaseController {
     @FXML
     @Override
     public void startAction() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                private long before = 0, after = 0;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        System.gc();
-                        before = FileUtils.sizeOfDirectory(path);
-                        FileDeleteTools.clearJavaIOTmpPath();
-                        after = FileUtils.sizeOfDirectory(path);
-                    } catch (Exception e) {
-//                        MyBoxLog.debug(e.toString());
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    resultsLabel.setText(MessageFormat.format(Languages.message("DeleteResults"),
-                            FileUtils.byteCountToDisplaySize(before - after),
-                            FileUtils.byteCountToDisplaySize(before),
-                            FileUtils.byteCountToDisplaySize(after)));
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+            private long before = 0, after = 0;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    System.gc();
+                    before = FileUtils.sizeOfDirectory(path);
+                    FileDeleteTools.clearJavaIOTmpPath();
+                    after = FileUtils.sizeOfDirectory(path);
+                } catch (Exception e) {
+//                        MyBoxLog.debug(e.toString());
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                resultsLabel.setText(MessageFormat.format(Languages.message("DeleteResults"),
+                        FileUtils.byteCountToDisplaySize(before - after),
+                        FileUtils.byteCountToDisplaySize(before),
+                        FileUtils.byteCountToDisplaySize(after)));
+            }
+
+        };
+        start(task);
     }
 
 }

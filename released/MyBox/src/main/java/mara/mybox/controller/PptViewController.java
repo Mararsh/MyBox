@@ -129,50 +129,51 @@ public class PptViewController extends BaseFileImagesViewController {
     }
 
     public void loadInformation() {
+        if (task != null) {
+            task.cancel();
+        }
         if (sourceFile == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
+        task = new SingletonTask<Void>(this) {
+            @Override
+            protected boolean handle() {
+                setTotalPages(0);
+                try (SlideShow ppt = SlideShowFactory.create(sourceFile)) {
+                    setTotalPages(ppt.getSlides().size());
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return framesNumber > 0;
             }
-            task = new SingletonTask<Void>(this) {
-                @Override
-                protected boolean handle() {
-                    setTotalPages(0);
-                    try ( SlideShow ppt = SlideShowFactory.create(sourceFile)) {
-                        setTotalPages(ppt.getSlides().size());
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    return framesNumber > 0;
-                }
 
-                @Override
-                protected void whenSucceeded() {
-                    List<String> pages = new ArrayList<>();
-                    for (int i = 1; i <= framesNumber; i++) {
-                        pages.add(i + "");
-                    }
-                    isSettingValues = true;
-                    pageSelector.getItems().clear();
-                    pageSelector.getItems().setAll(pages);
-                    pageSelector.setValue("1");
-                    pageLabel.setText("/" + framesNumber);
-                    isSettingValues = false;
-                    initCurrentPage();
-                    loadPage();
-                    checkThumbs();
+            @Override
+            protected void whenSucceeded() {
+                List<String> pages = new ArrayList<>();
+                for (int i = 1; i <= framesNumber; i++) {
+                    pages.add(i + "");
                 }
+                isSettingValues = true;
+                pageSelector.getItems().clear();
+                pageSelector.getItems().setAll(pages);
+                pageSelector.setValue("1");
+                pageLabel.setText("/" + framesNumber);
+                isSettingValues = false;
+                initCurrentPage();
+                loadPage();
+                checkThumbs();
+            }
 
-            };
-            start(task, message("LoadingFileInfo"));
-        }
+        };
+        start(task, message("LoadingFileInfo"));
     }
 
     @Override
     protected void loadPage() {
+        if (task != null) {
+            task.cancel();
+        }
         notesArea.clear();
         notesLabel.setText("");
         slideArea.clear();
@@ -185,75 +186,70 @@ public class PptViewController extends BaseFileImagesViewController {
         if (sourceFile == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                task.cancel();
-            }
-            task = new SingletonTask<Void>(this) {
-                private String slideTexts, notes, master, comments;
+        task = new SingletonTask<Void>(this) {
+            private String slideTexts, notes, master, comments;
 
-                @Override
-                protected boolean handle() {
-                    image = null;
-                    slideTexts = "";
-                    notes = "";
-                    try ( SlideShow ppt = SlideShowFactory.create(sourceFile)) {
-                        Slide slide = (Slide) (ppt.getSlides().get(frameIndex));
-                        int width = ppt.getPageSize().width;
-                        int height = ppt.getPageSize().height;
-                        BufferedImage slideImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-                        Graphics2D g = slideImage.createGraphics();
-                        if (AppVariables.imageRenderHints != null) {
-                            g.addRenderingHints(AppVariables.imageRenderHints);
-                        }
-                        slide.draw(g);
-                        if (dpi != 72) {
-                            slideImage = ScaleTools.scaleImageByScale(slideImage, dpi / 72f);
-                        }
-                        image = SwingFXUtils.toFXImage(slideImage, null);
-
-                        SlideShowExtractor extractor = new SlideShowExtractor(ppt);
-                        extractor.setSlidesByDefault(true);
-                        extractor.setMasterByDefault(false);
-                        extractor.setNotesByDefault(false);
-                        extractor.setCommentsByDefault(false);
-                        slideTexts = extractor.getText(slide);
-                        extractor.setSlidesByDefault(false);
-                        extractor.setNotesByDefault(true);
-                        notes = extractor.getText(slide);
-                        extractor.setNotesByDefault(false);
-                        extractor.setMasterByDefault(true);
-                        master = extractor.getText(slide);
-                        extractor.setMasterByDefault(false);
-                        extractor.setCommentsByDefault(true);
-                        comments = extractor.getText(slide);
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
+            @Override
+            protected boolean handle() {
+                image = null;
+                slideTexts = "";
+                notes = "";
+                try (SlideShow ppt = SlideShowFactory.create(sourceFile)) {
+                    Slide slide = (Slide) (ppt.getSlides().get(frameIndex));
+                    int width = ppt.getPageSize().width;
+                    int height = ppt.getPageSize().height;
+                    BufferedImage slideImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+                    Graphics2D g = slideImage.createGraphics();
+                    if (AppVariables.imageRenderHints != null) {
+                        g.addRenderingHints(AppVariables.imageRenderHints);
                     }
-                    return image != null;
-                }
+                    slide.draw(g);
+                    if (dpi != 72) {
+                        slideImage = ScaleTools.scaleImageByScale(slideImage, dpi / 72f);
+                    }
+                    image = SwingFXUtils.toFXImage(slideImage, null);
 
-                @Override
-                protected void whenSucceeded() {
-                    setImage(image, percent);
-                    notesArea.setText(notes);
-                    notesLabel.setText(message("CharactersNumber") + ": " + notes.length());
-                    slideArea.setText(slideTexts);
-                    slideLabel.setText(message("CharactersNumber") + ": " + slideTexts.length());
-                    masterArea.setText(master);
-                    masterLabel.setText(message("CharactersNumber") + ": " + master.length());
-                    commentsArea.setText(comments);
-                    commentsLabel.setText(message("CharactersNumber") + ": " + comments.length());
+                    SlideShowExtractor extractor = new SlideShowExtractor(ppt);
+                    extractor.setSlidesByDefault(true);
+                    extractor.setMasterByDefault(false);
+                    extractor.setNotesByDefault(false);
+                    extractor.setCommentsByDefault(false);
+                    slideTexts = extractor.getText(slide);
+                    extractor.setSlidesByDefault(false);
+                    extractor.setNotesByDefault(true);
+                    notes = extractor.getText(slide);
+                    extractor.setNotesByDefault(false);
+                    extractor.setMasterByDefault(true);
+                    master = extractor.getText(slide);
+                    extractor.setMasterByDefault(false);
+                    extractor.setCommentsByDefault(true);
+                    comments = extractor.getText(slide);
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
                 }
-            };
-            start(task, MessageFormat.format(message("LoadingPageNumber"), (frameIndex + 1) + ""));
-        }
+                return image != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                setImage(image, percent);
+                notesArea.setText(notes);
+                notesLabel.setText(message("CharactersNumber") + ": " + notes.length());
+                slideArea.setText(slideTexts);
+                slideLabel.setText(message("CharactersNumber") + ": " + slideTexts.length());
+                masterArea.setText(master);
+                masterLabel.setText(message("CharactersNumber") + ": " + master.length());
+                commentsArea.setText(comments);
+                commentsLabel.setText(message("CharactersNumber") + ": " + comments.length());
+            }
+        };
+        start(task, MessageFormat.format(message("LoadingPageNumber"), (frameIndex + 1) + ""));
     }
 
     @Override
     protected boolean loadThumbs(List<Integer> missed) {
-        try ( SlideShow ppt = SlideShowFactory.create(sourceFile)) {
+        try (SlideShow ppt = SlideShowFactory.create(sourceFile)) {
             List<Slide> slides = ppt.getSlides();
             int width = ppt.getPageSize().width;
             int height = ppt.getPageSize().height;

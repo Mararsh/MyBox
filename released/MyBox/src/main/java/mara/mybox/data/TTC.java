@@ -14,7 +14,7 @@ import static mara.mybox.tools.ByteTools.bytesToUshort;
 import static mara.mybox.tools.ByteTools.subBytes;
 import static mara.mybox.tools.ByteTools.uIntToBytes;
 import mara.mybox.tools.FileNameTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.Languages;
 
 /**
@@ -239,7 +239,7 @@ public class TTC {
                 if (targetPath != null) {
                     ttfFile = new File(targetPath.getAbsoluteFile() + File.separator + namePrefix + "_" + i + ".ttf");
                 } else {
-                    ttfFile = TmpFileTools.getTempFile(".ttf");
+                    ttfFile = FileTmpTools.getTempFile(".ttf");
                 }
                 try ( BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(ttfFile))) {
                     int headerLen = 12 + ttfData.size() * 16;

@@ -11,7 +11,7 @@ import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -46,7 +46,7 @@ public class DataFileExcelWriter extends Data2DWriter {
         if (!FileTools.hasData(sourceFile)) {
             return;
         }
-        File tmpFile = TmpFileTools.getTempFile();
+        File tmpFile = FileTmpTools.getTempFile();
         rowIndex = 0;
         count = 0;
         try ( Workbook sourceBook = WorkbookFactory.create(sourceFile)) {
@@ -73,7 +73,7 @@ public class DataFileExcelWriter extends Data2DWriter {
                 targetBook = new XSSFWorkbook();
                 targetSheet = targetBook.createSheet(sheetName);
             } else {
-                tmpDataFile = TmpFileTools.getTempFile();
+                tmpDataFile = FileTmpTools.getTempFile();
                 FileCopyTools.copyFile(sourceFile, tmpDataFile);
                 targetBook = WorkbookFactory.create(tmpDataFile);
                 int index = targetBook.getSheetIndex(sheetName);

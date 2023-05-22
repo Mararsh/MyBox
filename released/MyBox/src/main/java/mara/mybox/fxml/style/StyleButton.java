@@ -349,12 +349,7 @@ public class StyleButton {
             return new StyleData(id, message("HelpMe"), "", "iconClaw.png");
         }
         if (id.startsWith("edit")) {
-            switch (id) {
-                case "editOkButton":
-                    return new StyleData(id, message("OK"), "", "iconOK.png");
-                default:
-                    return new StyleData(id, message("Edit"), "", "iconEdit.png");
-            }
+            return new StyleData(id, message("Edit"), "", "iconEdit.png");
         }
         if (id.startsWith("size")) {
             return new StyleData(id, message("Size"), "", "iconSplit.png");
@@ -403,7 +398,7 @@ public class StyleButton {
             return new StyleData(id, message("SynchronizeChangesToOtherPanes"), "F10", "iconSynchronize.png");
         }
         if (id.startsWith("function")) {
-            return new StyleData(id, "", "", "iconFunction.png");
+            return new StyleData(id, message("Functions"), "", "iconFunction.png");
         }
         if (id.startsWith("style")) {
             return new StyleData(id, message("Style"), "", "iconStyle.png");
@@ -654,7 +649,9 @@ public class StyleButton {
         if (id.startsWith("jar")) {
             return new StyleData(id, message("JarFile"), "", "iconJar.png");
         }
-
+        if (id.startsWith("options")) {
+            return new StyleData(id, message("Options"), "", "iconSetting.png");
+        }
         return null;
     }
 

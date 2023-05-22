@@ -3,7 +3,6 @@ package mara.mybox.bufferedimage;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
-import static mara.mybox.value.Languages.message;
 import mara.mybox.value.Languages;
 
 /**
@@ -37,29 +36,46 @@ public class ColorComponentTools {
         return ComponentColor.get(c);
     }
 
-    public static Color color(ColorComponent component, int index) {
+    public static Color color(ColorComponent component, int value) {
         switch (component) {
             case RedChannel:
-                return new Color(index, 0, 0, 255);
+                return new Color(value, 0, 0, 255);
             case GreenChannel:
-                return new Color(0, index, 0, 255);
+                return new Color(0, value, 0, 255);
             case BlueChannel:
-                return new Color(0, 0, index, 255);
+                return new Color(0, 0, value, 255);
             case AlphaChannel:
                 Color aColor = ColorComponentTools.color(component);
-                return new Color(aColor.getRed(), aColor.getGreen(), aColor.getBlue(), index);
+                return new Color(aColor.getRed(), aColor.getGreen(), aColor.getBlue(), value);
             case Gray:
-                return new Color(index, index, index, 255);
+                return new Color(value, value, value, 255);
             case Hue:
-                return ColorConvertTools.hsb2rgb(index / 360.0F, 1.0F, 1.0F);
+                return ColorConvertTools.hsb2rgb(value / 360.0F, 1.0F, 1.0F);
             case Saturation:
                 float h1 = ColorConvertTools.getHue(ColorComponentTools.color(component));
-                return ColorConvertTools.hsb2rgb(h1, index / 100.0F, 1.0F);
+                return ColorConvertTools.hsb2rgb(h1, value / 100.0F, 1.0F);
             case Brightness:
                 float h2 = ColorConvertTools.getHue(ColorComponentTools.color(component));
-                return ColorConvertTools.hsb2rgb(h2, 1.0F, index / 100.0F);
+                return ColorConvertTools.hsb2rgb(h2, 1.0F, value / 100.0F);
         }
         return null;
+    }
+
+    public static float percentage(ColorComponent component, int value) {
+        switch (component) {
+            case RedChannel:
+            case GreenChannel:
+            case BlueChannel:
+            case AlphaChannel:
+            case Gray:
+                return value / 255f;
+            case Hue:
+                return value / 360f;
+            case Saturation:
+            case Brightness:
+                return value / 100f;
+        }
+        return 0;
     }
 
     public static Color color(String name, int index) {

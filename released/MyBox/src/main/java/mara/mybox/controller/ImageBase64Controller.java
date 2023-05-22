@@ -135,67 +135,65 @@ public class ImageBase64Controller extends BaseController {
         if (label != null) {
             label.setText("");
         }
-        synchronized (controller) {
-            if (controller.task != null) {
-                controller.task.cancel();
-            }
-            controller.task = new SingletonTask<Void>(controller) {
-
-                private String imageBase64;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        imageBase64 = BufferedImageTools.base64(file, format);
-                        if (withTag) {
-                            imageBase64 = "<img src=\"data:image/" + format + ";base64," + imageBase64 + "\" >";
-                        }
-                        return true;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    long len = imageBase64.length();
-                    String lenString = StringTools.format(len);
-                    if (len > 50 * 1024) {
-                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                        alert.setTitle(controller.baseTitle);
-                        alert.setContentText(message("Length") + ": " + lenString);
-                        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-                        ButtonType buttonLoad = new ButtonType(message("Load"));
-                        ButtonType buttonSave = new ButtonType(message("Save"));
-                        ButtonType buttonCancel = new ButtonType(message("Cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
-                        alert.getButtonTypes().setAll(buttonLoad, buttonSave, buttonCancel);
-                        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                        stage.setAlwaysOnTop(true);
-                        stage.toFront();
-                        Optional<ButtonType> result = alert.showAndWait();
-                        if (result == null || !result.isPresent()) {
-                            imageBase64 = null;
-                            return;
-                        }
-                        if (result.get() == buttonSave) {
-                            saveAs(controller, imageBase64, format);
-                            return;
-                        }
-                    }
-                    if (controller instanceof MenuHtmlCodesController) {
-                        ((MenuHtmlCodesController) controller).insertText(imageBase64);
-                    } else {
-                        resultArea.setText(imageBase64);
-                    }
-                    if (label != null) {
-                        label.setText(lenString);
-                    }
-                }
-
-            };
-            controller.start(controller.task);
+        if (controller.task != null) {
+            controller.task.cancel();
         }
+        controller.task = new SingletonTask<Void>(controller) {
+
+            private String imageBase64;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    imageBase64 = BufferedImageTools.base64(file, format);
+                    if (withTag) {
+                        imageBase64 = "<img src=\"data:image/" + format + ";base64," + imageBase64 + "\" >";
+                    }
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                long len = imageBase64.length();
+                String lenString = StringTools.format(len);
+                if (len > 50 * 1024) {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle(controller.baseTitle);
+                    alert.setContentText(message("Length") + ": " + lenString);
+                    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+                    ButtonType buttonLoad = new ButtonType(message("Load"));
+                    ButtonType buttonSave = new ButtonType(message("Save"));
+                    ButtonType buttonCancel = new ButtonType(message("Cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
+                    alert.getButtonTypes().setAll(buttonLoad, buttonSave, buttonCancel);
+                    Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                    stage.setAlwaysOnTop(true);
+                    stage.toFront();
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result == null || !result.isPresent()) {
+                        imageBase64 = null;
+                        return;
+                    }
+                    if (result.get() == buttonSave) {
+                        saveAs(controller, imageBase64, format);
+                        return;
+                    }
+                }
+                if (controller instanceof MenuHtmlCodesController) {
+                    ((MenuHtmlCodesController) controller).insertText(imageBase64);
+                } else {
+                    resultArea.setText(imageBase64);
+                }
+                if (label != null) {
+                    label.setText(lenString);
+                }
+            }
+
+        };
+        controller.start(controller.task);
     }
 
     public static void saveAs(BaseController controller, String results, String format) {
@@ -209,26 +207,24 @@ public class ImageBase64Controller extends BaseController {
         if (file == null) {
             return;
         }
-        synchronized (controller) {
-            if (controller.task != null) {
-                controller.task.cancel();
-            }
-            controller.task = new SingletonTask<Void>(controller) {
-
-                @Override
-                protected boolean handle() {
-                    return TextFileTools.writeFile(file, results) != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    controller.recordFileWritten(file);
-                    controller.browse(file.getParentFile());
-                }
-
-            };
-            controller.start(controller.task);
+        if (controller.task != null) {
+            controller.task.cancel();
         }
+        controller.task = new SingletonTask<Void>(controller) {
+
+            @Override
+            protected boolean handle() {
+                return TextFileTools.writeFile(file, results) != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                controller.recordFileWritten(file);
+                controller.browse(file.getParentFile());
+            }
+
+        };
+        controller.start(controller.task);
     }
 
 }

@@ -6,6 +6,40 @@
  </head>
  <body contenteditable="false" style="width: 900px; margin:0 auto;">
   <h1>开发日志</h1>
+  <p>2023-5-22 版本6.7.3</p>
+  <ul>
+   <li>新增： 
+    <ul>
+     <li>JSON编辑器</li>
+     <li>查找字串的匹配列表</li>
+     <li>批量在文件中查找字串/字节。</li>
+    </ul></li>
+   <li>改进： 
+    <ul>
+     <li>RYB补色应参考原色的明亮度和饱和度。</li>
+     <li>图片量化时调色板可选首色，以免生成不属于原图的新颜色。</li>
+     <li>图片量化时聚类中心采用计数最多的颜色而非计算新颜色。</li>
+     <li>简化“图片取色”的界面。</li>
+     <li>使“重复图片”和“分析图片”的界面更合理。</li>
+     <li>优化“图片编辑历史”和“文件备份”的数据处理。</li>
+     <li>编辑数据时可选是否在数据单元失去焦点时提交修改。</li>
+    </ul></li>
+   <li>Java和JavaFx升级到v20。</li>
+   <li>解决问题： 
+    <ul>
+     <li>因无法下载image4j而打包失败。</li>
+     <li>数据的位置分布图加载失败。</li>
+     <li>当列值包含引号时，行表达式计算失败。</li>
+     <li>编辑数据单元时如点击ESC则应取消修改。</li>
+     <li>查询网址的头信息失败了。</li>
+     <li>文件备份无法被删除。</li>
+     <li>PDF的页签可能加载失败。</li>
+     <li>“最近访问的目标目录”读取错误。</li>
+     <li>编译大图片时修改历史加载得太慢了。</li>
+     <li>Webview加载网页时可能抛出大量异常。</li>
+    </ul></li>
+  </ul>
+  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.3">此版本关闭的需求/问题列表</a></p>
     <p>2023-4-16 版本6.7.2</p>
   <ul>
    <li>新增： 

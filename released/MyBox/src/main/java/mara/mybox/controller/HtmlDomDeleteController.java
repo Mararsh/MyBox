@@ -22,7 +22,7 @@ public class HtmlDomDeleteController extends BaseChildController {
 
     protected ControlHtmlEditor editor;
     protected TreeTableView<HtmlNode> sourceTree;
-    protected BaseHtmlDomTreeController manageController;
+    protected BaseHtmlTreeController manageController;
     protected int count;
 
     @FXML
@@ -39,10 +39,10 @@ public class HtmlDomDeleteController extends BaseChildController {
                 return;
             }
             manageController = editor.domController;
-            Element root = manageController.domTree.getRoot().getValue().getElement();
+            Element root = manageController.treeView.getRoot().getValue().getElement();
             sourceController.load(root, sourceItem);
             sourceController.setLabel(message("Select"));
-            sourceTree = sourceController.domTree;
+            sourceTree = sourceController.treeView;
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -99,7 +99,7 @@ public class HtmlDomDeleteController extends BaseChildController {
             List<TreeItem<HtmlNode>> manageItems = new ArrayList<>();
             for (TreeItem<HtmlNode> sourceItem : sourcesItems) {
                 String sourceNumber = sourceController.hierarchyNumber(sourceItem);
-                TreeItem<HtmlNode> manageItem = manageController.find(sourceNumber);
+                TreeItem<HtmlNode> manageItem = manageController.findSequenceNumber(sourceNumber);
                 manageItems.add(manageItem);
             }
             for (TreeItem<HtmlNode> manageItem : manageItems) {

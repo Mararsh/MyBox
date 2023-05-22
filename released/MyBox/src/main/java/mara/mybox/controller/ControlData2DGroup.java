@@ -542,7 +542,7 @@ public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
 
     @FXML
     public void aboutGroupingRows() {
-        openLink(HelpTools.aboutGroupingRows());
+        openHtml(HelpTools.aboutGroupingRows());
     }
 
     @Override

@@ -67,32 +67,30 @@ public class FileTTC2TTFController extends HtmlTableController {
         if (ttcController.file == null || !ttcController.file.exists() || !ttcController.file.isFile()) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        ttc = new TTC(ttcController.file);
-                        ttc.parseFile();
-                        return true;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    loadBody(ttc.html());
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    ttc = new TTC(ttcController.file);
+                    ttc.parseFile();
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                loadBody(ttc.html());
+            }
+
+        };
+        start(task);
     }
 
     @FXML
@@ -102,45 +100,42 @@ public class FileTTC2TTFController extends HtmlTableController {
         if (ttc == null || targetPath == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
 
-                private List<File> files;
+            private List<File> files;
 
-                @Override
-                protected boolean handle() {
-                    try {
-                        if (ttc.getTtfInfos() == null) {
-                            ttc.parseFile();
-                        }
-                        if (ttc.getTtfInfos() == null) {
-                            return false;
-                        }
-                        files = ttc.extract(targetPath);
-                        return files != null && !files.isEmpty();
-                    } catch (Exception e) {
-                        error = e.toString();
+            @Override
+            protected boolean handle() {
+                try {
+                    if (ttc.getTtfInfos() == null) {
+                        ttc.parseFile();
+                    }
+                    if (ttc.getTtfInfos() == null) {
                         return false;
                     }
+                    files = ttc.extract(targetPath);
+                    return files != null && !files.isEmpty();
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
                 }
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    browseURI(targetPath.toURI());
-                    String info = Languages.message("ExtractedFiles") + ":";
-                    for (File file : files) {
-                        info += "\n    " + file.getAbsolutePath();
-                    }
-                    popInformation(info, 6000);
+            @Override
+            protected void whenSucceeded() {
+                browseURI(targetPath.toURI());
+                String info = Languages.message("ExtractedFiles") + ":";
+                for (File file : files) {
+                    info += "\n    " + file.getAbsolutePath();
                 }
+                popInformation(info, 6000);
+            }
 
-            };
-            start(task);
-        }
-
+        };
+        start(task);
     }
 
 }

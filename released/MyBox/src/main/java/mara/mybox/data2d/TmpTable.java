@@ -87,7 +87,7 @@ public class TmpTable extends DataTable {
         if (targetName == null) {
             targetName = sourceData.getDataName();
         }
-        try ( Connection conn = DerbyBase.getConnection()) {
+        try (Connection conn = DerbyBase.getConnection()) {
             List<Data2DColumn> sourceColumns = sourceData.getColumns();
             if (sourceColumns == null || sourceColumns.isEmpty()) {
                 sourceData.readColumns(conn);
@@ -332,7 +332,7 @@ public class TmpTable extends DataTable {
         if (conn == null || importRows == null || importRows.isEmpty()) {
             return -1;
         }
-        try ( PreparedStatement insert = conn.prepareStatement(tableData2D.insertStatement())) {
+        try (PreparedStatement insert = conn.prepareStatement(tableData2D.insertStatement())) {
             int count = 0;
             conn.setAutoCommit(false);
             for (List<String> row : importRows) {
@@ -392,7 +392,7 @@ public class TmpTable extends DataTable {
             column.setD2cid(-1).setD2id(-1).setColumnName(name);
             targetColumns.add(column);
         }
-        File csvFile = tmpFile(targetName, "sort", ".csv");
+        File csvFile = tmpFile(targetName, "sort", "csv");
         String sql = "SELECT * FROM " + sheet
                 + (tmpOrderby != null && !tmpOrderby.isBlank() ? " ORDER BY " + tmpOrderby : "");
         if (maxSortResults > 0) {
@@ -401,8 +401,8 @@ public class TmpTable extends DataTable {
         if (task != null) {
             task.setInfo(sql);
         }
-        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile);
-                 ResultSet query = DerbyBase.getConnection().prepareStatement(sql).executeQuery()) {
+        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile);
+                ResultSet query = DerbyBase.getConnection().prepareStatement(sql).executeQuery()) {
             if (includeColName) {
                 csvPrinter.printRecord(names);
             }
@@ -443,9 +443,9 @@ public class TmpTable extends DataTable {
         if (sourceData == null) {
             return null;
         }
-        File csvFile = tmpFile(targetName, "transpose", ".csv");
-        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile);
-                 Connection conn = DerbyBase.getConnection()) {
+        File csvFile = tmpFile(targetName, "transpose", "csv");
+        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile);
+                Connection conn = DerbyBase.getConnection()) {
             String idName = columns.get(0).getColumnName();
             int rNumber = 0;
             List<Data2DColumn> targetColumns = new ArrayList<>();
@@ -473,8 +473,8 @@ public class TmpTable extends DataTable {
                 if (task != null) {
                     task.setInfo(sql);
                 }
-                try ( PreparedStatement statement = conn.prepareStatement(sql);
-                         ResultSet results = statement.executeQuery()) {
+                try (PreparedStatement statement = conn.prepareStatement(sql);
+                        ResultSet results = statement.executeQuery()) {
                     String sname = DerbyBase.savedName(columnName);
                     while (results.next() && task != null && !task.isCancelled()) {
                         rowValues.add(results.getString(sname));

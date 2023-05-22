@@ -1,5 +1,7 @@
 package mara.mybox.data;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javafx.scene.control.IndexRange;
@@ -18,9 +20,10 @@ public class FindReplaceString {
     protected int anchor, count, lastStart, lastEnd, lastReplacedLength, unit;
     protected IndexRange stringRange;  // location in string
     protected String lastMatch, error;
+    protected List<FindReplaceMatch> matches;
 
     public enum Operation {
-        ReplaceAll, ReplaceFirst, FindNext, FindPrevious, Count
+        ReplaceAll, ReplaceFirst, FindNext, FindPrevious, Count, FindAll
     }
 
     public FindReplaceString() {
@@ -36,10 +39,15 @@ public class FindReplaceString {
         outputString = inputString;
         error = null;
         lastStart = lastEnd = -1;
+        matches = operation == Operation.FindAll ? new ArrayList<>() : null;
         return this;
     }
 
-    public boolean run() {
+    public void initMatches() {
+        matches = operation == Operation.FindAll ? new ArrayList<>() : null;
+    }
+
+    public boolean handleString() {
         reset();
         if (operation == null) {
             return false;
@@ -54,10 +62,7 @@ public class FindReplaceString {
                 return false;
             }
             return false;
-        } else {
-
         }
-
         int start, end = inputString.length();
         switch (operation) {
             case FindNext:
@@ -82,7 +87,7 @@ public class FindReplaceString {
                 start = 0;
                 break;
         }
-        run(start, end);
+        handleString(start, end);
         if (lastMatch != null || !wrap) {
             return true;
         }
@@ -100,7 +105,7 @@ public class FindReplaceString {
                     end = start + findString.length();
                     start = 0;
                 }
-                return run(start, end);
+                return handleString(start, end);
             case FindPrevious:
                 if (end > inputString.length()) {
                     return true;
@@ -112,14 +117,14 @@ public class FindReplaceString {
                     start = Math.max(unit, end - findString.length() + unit);
                     end = inputString.length();
                 }
-                run(start, end);
+                handleString(start, end);
                 return true;
             default:
                 return true;
         }
     }
 
-    public boolean run(int start, int end) {
+    public boolean handleString(int start, int end) {
         try {
 //            MyBoxLog.debug(operation + " start:" + start + " end:" + end + " findString:>>" + findString + "<<  unit:" + unit);
 //            MyBoxLog.debug("findString.length()：" + findString.length());
@@ -132,7 +137,8 @@ public class FindReplaceString {
                     | (multiline ? Pattern.MULTILINE : 0x00);
             Pattern pattern = Pattern.compile(findString, mode);
             Matcher matcher = pattern.matcher(inputString);
-            matcher.region(Math.max(0, start), Math.min(inputString.length(), end));
+            int finalEnd = Math.min(inputString.length(), end);
+            matcher.region(Math.max(0, start), finalEnd);
             StringBuffer s = new StringBuffer();
             String finalReplace = replaceString == null ? "" : replaceString;
             if (!finalReplace.isBlank()) {
@@ -145,10 +151,10 @@ public class FindReplaceString {
                 lastStart = matcher.start();
                 lastEnd = matcher.end();
                 if (null == operation) {
-                    if (matcher.start() >= end) {
+                    if (matcher.start() >= finalEnd) {
                         break OUTER;
                     }
-                    matcher.region(lastStart + unit, end);
+                    matcher.region(lastStart + unit, finalEnd);
                 } else {
 //                    MyBoxLog.debug(count + " " + matcher.start() + " " + matcher.end() + " " + lastMatch);
 //                    MyBoxLog.debug(inputString.substring(0, matcher.start()) + "\n----------------");
@@ -162,12 +168,17 @@ public class FindReplaceString {
                             matcher.appendReplacement(s, finalReplace);
 //                            MyBoxLog.debug("\n---" + count + "---\n" + s.toString() + "\n-----");
                             break;
+                        case FindAll:
+                            FindReplaceMatch m = new FindReplaceMatch()
+                                    .setStart(lastStart).setEnd(lastEnd)
+                                    .setMatchedPrefix(lastMatch);
+                            matches.add(m);
                         default:
-                            if (matcher.start() >= end) {
+                            int newStart = lastStart + unit;
+                            if (newStart >= finalEnd) {
                                 break;
                             }
-                            matcher.region(lastStart + unit, end);
-                            break;
+                            matcher.region(newStart, finalEnd);
                     }
                 }
             }
@@ -197,7 +208,10 @@ public class FindReplaceString {
     }
 
     public String replace(String string, String find, String replace) {
-        setInputString(string).setFindString(find).setReplaceString(replace == null ? "" : replace).setAnchor(0).run();
+        setInputString(string).setFindString(find)
+                .setReplaceString(replace == null ? "" : replace)
+                .setAnchor(0)
+                .handleString();
         return outputString;
     }
 
@@ -228,7 +242,7 @@ public class FindReplaceString {
                 .setOperation(Operation.Count)
                 .setInputString(string).setFindString(find).setAnchor(from)
                 .setIsRegex(isRegex).setCaseInsensitive(caseInsensitive).setMultiline(multiline);
-        stringFind.run();
+        stringFind.handleString();
         return stringFind.getCount();
     }
 
@@ -238,7 +252,7 @@ public class FindReplaceString {
                 .setOperation(Operation.FindNext)
                 .setInputString(string).setFindString(find).setAnchor(from)
                 .setIsRegex(isRegex).setCaseInsensitive(caseInsensitive).setMultiline(multiline);
-        stringFind.run();
+        stringFind.handleString();
         return stringFind.getStringRange();
     }
 
@@ -248,7 +262,7 @@ public class FindReplaceString {
                 .setOperation(Operation.FindPrevious)
                 .setInputString(string).setFindString(find).setAnchor(from)
                 .setIsRegex(isRegex).setCaseInsensitive(caseInsensitive).setMultiline(multiline);
-        stringFind.run();
+        stringFind.handleString();
         return stringFind.getStringRange();
     }
 
@@ -262,12 +276,12 @@ public class FindReplaceString {
                 .setOperation(Operation.ReplaceAll)
                 .setInputString(string).setFindString(find).setReplaceString(replace).setAnchor(from)
                 .setIsRegex(isRegex).setCaseInsensitive(caseInsensitive).setMultiline(multiline);
-        stringFind.run();
+        stringFind.handleString();
         return stringFind.getOutputString();
     }
 
     public static String replaceAll(FindReplaceString findReplace, String string, String find, String replace) {
-        findReplace.setInputString(string).setFindString(find).setReplaceString(replace).setAnchor(0).run();
+        findReplace.setInputString(string).setFindString(find).setReplaceString(replace).setAnchor(0).handleString();
         return findReplace.getOutputString();
     }
 
@@ -281,7 +295,7 @@ public class FindReplaceString {
                 .setOperation(Operation.ReplaceFirst)
                 .setInputString(string).setFindString(find).setReplaceString(replace).setAnchor(from)
                 .setIsRegex(isRegex).setCaseInsensitive(caseInsensitive).setMultiline(multiline);
-        stringFind.run();
+        stringFind.handleString();
         return stringFind.getOutputString();
     }
 
@@ -465,6 +479,15 @@ public class FindReplaceString {
 
     public FindReplaceString setError(String error) {
         this.error = error;
+        return this;
+    }
+
+    public List<FindReplaceMatch> getMatches() {
+        return matches;
+    }
+
+    public FindReplaceString setMatches(List<FindReplaceMatch> matches) {
+        this.matches = matches;
         return this;
     }
 

@@ -269,9 +269,9 @@ public class ControlHtmlEditor extends BaseWebViewController {
                 NodeStyleTools.setTooltip(synchronizeViewButton, message("SynchronizeChangesToOtherPanes"));
                 NodeStyleTools.setTooltip(popViewButton, message("Pop"));
             } else {
-                NodeStyleTools.setTooltip(menuViewButton, message("ContextMenu") + "\nF12");
+                NodeStyleTools.setTooltip(menuViewButton, message("MenuButtonTips"));
             }
-            NodeStyleTools.setTooltip(menuButton, message("ContextMenu") + "\nF12");
+            NodeStyleTools.setTooltip(menuButton, message("MenuButtonTips"));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -497,14 +497,15 @@ public class ControlHtmlEditor extends BaseWebViewController {
     }
 
     @Override
-    protected void updateStageTitle() {
+    public void updateStageTitle() {
         if (getMyStage() == null) {
             return;
         }
-        super.updateStageTitle();
+        String title = title();
         if (fileChanged) {
-            myStage.setTitle(myStage.getTitle() + " *");
+            title += " *";
         }
+        myStage.setTitle(title);
     }
 
     protected void updateFileStatus(boolean changed) {
@@ -628,7 +629,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
     }
 
     public void clearDom() {
-        domController.clearDom();
+        domController.clearTree();
         domChanged(true);
     }
 
@@ -671,7 +672,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
 
     @FXML
     public void clearRichEditor() {
-        richEditorController.loadContents("");
+        richEditorController.loadContents(null);
         richEditorChanged(true);
     }
 
@@ -1028,7 +1029,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
                             return;
                         }
                         if (result.get() == buttonSynchronize) {
-                            synchronizeCodes();
+                            synchronizeDom();
                         } else if (result.get() != buttonClose) {
                             event.consume();
                             return;

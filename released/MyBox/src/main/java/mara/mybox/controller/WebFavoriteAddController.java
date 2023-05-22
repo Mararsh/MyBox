@@ -4,7 +4,7 @@ import java.io.File;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
-import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.InfoNode;
 import mara.mybox.db.table.TableTreeNode;
 import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
@@ -19,7 +19,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-3-29
  * @License Apache License Version 2.0
  */
-public class WebFavoriteAddController extends BaseTreeInfoController {
+public class WebFavoriteAddController extends BaseInfoTreeController {
 
     protected String title, address;
 
@@ -37,7 +37,7 @@ public class WebFavoriteAddController extends BaseTreeInfoController {
 
             tableTreeNode = new TableTreeNode();
             tableTreeNodeTag = new TableTreeNodeTag();
-            category = TreeNode.WebFavorite;
+            category = InfoNode.WebFavorite;
 
             loadTree();
 
@@ -66,20 +66,20 @@ public class WebFavoriteAddController extends BaseTreeInfoController {
         if (title == null || title.isBlank()) {
             title = address;
         }
-        TreeItem<TreeNode> selectedItem = selected();
+        TreeItem<InfoNode> selectedItem = selected();
         if (selectedItem == null) {
             alertError(message("SelectNodeAddInto"));
             return;
         }
-        TreeNode node = selectedItem.getValue();
+        InfoNode node = selectedItem.getValue();
         task = new SingletonTask<Void>(this) {
 
-            private TreeNode data;
+            private InfoNode data;
 
             @Override
             protected boolean handle() {
                 try {
-                    data = TreeNode.create()
+                    data = InfoNode.create()
                             .setParentid(node.getNodeid())
                             .setCategory(category)
                             .setTitle(title)

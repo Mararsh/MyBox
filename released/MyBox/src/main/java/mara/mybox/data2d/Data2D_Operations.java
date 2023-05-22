@@ -180,9 +180,9 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         if (names == null || names.isEmpty() || cols == null || cols.isEmpty()) {
             return null;
         }
-        File csvFile = tmpFile(dname, "statistic", ".csv");
+        File csvFile = tmpFile(dname, "statistic", "csv");
         Data2DOperator reader = null;
-        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
+        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             csvPrinter.printRecord(names);
             reader = Data2DStatistic.create(this)
                     .setStatisticCalculation(selections)
@@ -262,10 +262,10 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         if (cols == null || cols.isEmpty()) {
             return null;
         }
-        File csvFile = tmpFile(dname, "copy", ".csv");
+        File csvFile = tmpFile(dname, "copy", "csv");
         Data2DOperator reader;
         List<Data2DColumn> targetColumns = targetColumns(cols, null, includeRowNumber, null);
-        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
+        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             List<String> names = new ArrayList<>();
             for (Data2DColumn column : targetColumns) {
                 names.add(column.getColumnName());
@@ -339,8 +339,8 @@ public abstract class Data2D_Operations extends Data2D_Convert {
                 if (start > end) {
                     continue;
                 }
-                File csvfile = tmpFile(prefix + "_" + start + "-" + end, null, ".csv");
-                try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvfile)) {
+                File csvfile = tmpFile(prefix + "_" + start + "-" + end, null, "csv");
+                try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvfile)) {
                     csvPrinter.printRecord(names);
                     Data2DRange reader = Data2DRange.create(this).setStart(start).setEnd(end);
                     reader.setIncludeRowNumber(includeRowNumber).setCsvPrinter(csvPrinter)
@@ -382,11 +382,11 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         if (cols == null || cols.isEmpty()) {
             return null;
         }
-        File csvFile = tmpFile(dname, "RowExpression", ".csv");
+        File csvFile = tmpFile(dname, "RowExpression", "csv");
         Data2DOperator reader;
         List<Data2DColumn> targetColumns = targetColumns(cols, null, includeRowNumber, null);
         targetColumns.add(new Data2DColumn(name, ColumnDefinition.ColumnType.String));
-        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
+        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             List<String> names = new ArrayList<>();
             for (Data2DColumn column : targetColumns) {
                 names.add(column.getColumnName());
@@ -459,9 +459,9 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return null;
         }
         double[] colsSum = reader.getColValues();
-        File csvFile = tmpFile(dname, "percentage", ".csv");
+        File csvFile = tmpFile(dname, "percentage", "csv");
         List<Data2DColumn> targetColumns = makePercentageColumns(cols, otherCols, ObjectType.Columns);
-        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
+        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             List<String> names = new ArrayList<>();
             for (Data2DColumn column : targetColumns) {
                 names.add(column.getColumnName());
@@ -517,9 +517,9 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         if (reader.failed()) {
             return null;
         }
-        File csvFile = tmpFile(dname, "percentage", ".csv");
+        File csvFile = tmpFile(dname, "percentage", "csv");
         List<Data2DColumn> targetColumns = makePercentageColumns(cols, otherCols, ObjectType.All);
-        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
+        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             List<String> names = new ArrayList<>();
             for (Data2DColumn column : targetColumns) {
                 names.add(column.getColumnName());
@@ -568,10 +568,10 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         if (cols == null || cols.isEmpty()) {
             return null;
         }
-        File csvFile = tmpFile(dname, "percentage", ".csv");
+        File csvFile = tmpFile(dname, "percentage", "csv");
         Data2DOperator reader;
         List<Data2DColumn> targetColumns = makePercentageColumns(cols, otherCols, ObjectType.Rows);
-        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
+        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             List<String> names = new ArrayList<>();
             for (Data2DColumn column : targetColumns) {
                 names.add(column.getColumnName());
@@ -606,9 +606,9 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         if (frequency == null || colName == null || col < 0) {
             return null;
         }
-        File csvFile = tmpFile(dname, "frequency", ".csv");
+        File csvFile = tmpFile(dname, "frequency", "csv");
         Data2DFrequency operator;
-        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
+        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             List<String> row = new ArrayList<>();
             row.add(colName);
             row.add(colName + "_" + message("Count"));
@@ -666,10 +666,10 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             double d = sData[c].maximum - sData[c].minimum;
             sData[c].dTmp = (to - from) / (d == 0 ? AppValues.TinyDouble : d);
         }
-        File csvFile = tmpFile(dname, "normalizeMinMax", ".csv");
+        File csvFile = tmpFile(dname, "normalizeMinMax", "csv");
         operator = null;
         List<Data2DColumn> targetColumns = targetColumns(cols, otherCols, rowNumber, message("Normalize"));
-        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
+        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             List<String> names = new ArrayList<>();
             for (Data2DColumn column : targetColumns) {
                 names.add(column.getColumnName());
@@ -733,10 +733,10 @@ public abstract class Data2D_Operations extends Data2D_Convert {
                 colValues[c] = 1d / sData[c].sum;
             }
         }
-        File csvFile = tmpFile(dname, "normalizeSum", ".csv");
+        File csvFile = tmpFile(dname, "normalizeSum", "csv");
         operator = null;
         List<Data2DColumn> targetColumns = targetColumns(cols, otherCols, rowNumber, message("Normalize"));
-        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
+        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             List<String> names = new ArrayList<>();
             for (Data2DColumn column : targetColumns) {
                 names.add(column.getColumnName());
@@ -802,10 +802,10 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         if (operator == null) {
             return null;
         }
-        File csvFile = tmpFile(dname, "normalizeZscore", ".csv");
+        File csvFile = tmpFile(dname, "normalizeZscore", "csv");
         operator = null;
         List<Data2DColumn> targetColumns = targetColumns(cols, otherCols, rowNumber, message("Normalize"));
-        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
+        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             List<String> names = new ArrayList<>();
             for (Data2DColumn column : targetColumns) {
                 names.add(column.getColumnName());
@@ -863,10 +863,10 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         }
         double d = sData.maximum - sData.minimum;
         sData.dTmp = (to - from) / (d == 0 ? AppValues.TinyDouble : d);
-        File csvFile = tmpFile(dname, "normalizeMinMax", ".csv");
+        File csvFile = tmpFile(dname, "normalizeMinMax", "csv");
         operator = null;
         List<Data2DColumn> targetColumns = targetColumns(cols, otherCols, rowNumber, message("Normalize"));
-        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
+        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             List<String> names = new ArrayList<>();
             if (rowNumber) {
                 names.add(message("RowNumber"));
@@ -930,10 +930,10 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         } else {
             k = 1d / sData.sum;
         }
-        File csvFile = tmpFile(dname, "normalizeSum", ".csv");
+        File csvFile = tmpFile(dname, "normalizeSum", "csv");
         operator = null;
         List<Data2DColumn> targetColumns = targetColumns(cols, otherCols, rowNumber, message("Normalize"));
-        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
+        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             List<String> names = new ArrayList<>();
             for (Data2DColumn column : targetColumns) {
                 names.add(column.getColumnName());
@@ -996,10 +996,10 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         if (operator == null) {
             return null;
         }
-        File csvFile = tmpFile(dname, "normalizeZscore", ".csv");
+        File csvFile = tmpFile(dname, "normalizeZscore", "csv");
         operator = null;
         List<Data2DColumn> targetColumns = targetColumns(cols, otherCols, rowNumber, message("Normalize"));
-        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
+        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             List<String> names = new ArrayList<>();
             for (Data2DColumn column : targetColumns) {
                 names.add(column.getColumnName());
@@ -1041,10 +1041,10 @@ public abstract class Data2D_Operations extends Data2D_Convert {
         if (cols == null || cols.isEmpty()) {
             return null;
         }
-        File csvFile = tmpFile(dname, "normalizeSum", ".csv");
+        File csvFile = tmpFile(dname, "normalizeSum", "csv");
         Data2DOperator operator = null;
         List<Data2DColumn> targetColumns = targetColumns(cols, otherCols, rowNumber, message("Normalize"));
-        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
+        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
             List<String> names = new ArrayList<>();
             for (Data2DColumn column : targetColumns) {
                 names.add(column.getColumnName());
@@ -1085,10 +1085,10 @@ public abstract class Data2D_Operations extends Data2D_Convert {
             return null;
         }
         if (writeFile) {
-            File csvFile = tmpFile(dname, "simpleLinearRegression", ".csv");
+            File csvFile = tmpFile(dname, "simpleLinearRegression", "csv");
             int tcolsNumber = 0;
             Data2DOperator operator = null;
-            try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
+            try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile)) {
                 List<String> names = new ArrayList<>();
                 List<Data2DColumn> resultColumns = simpleRegression.getColumns();
                 for (Data2DColumn c : resultColumns) {

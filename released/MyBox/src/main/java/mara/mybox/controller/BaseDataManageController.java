@@ -695,40 +695,36 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
                 + "\n\n" + type + "\n" + title + "\n\n" + sql + "\n\n" + message("DataDeletedComments"))) {
             return;
         }
-
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private int deletedCount = 0;
-
-                @Override
-                protected boolean handle() {
-                    if (message("ClearSelectedDataInPage").equals(type)) {
-                        deletedCount = deleteSelectedData();
-
-                    } else if (message("ClearCurrentPage").equals(type)) {
-                        deletedCount = deleteData(tableData);
-
-                    } else if (message("ClearAsConditionTrees").equals(type)) {
-                        deletedCount = DerbyBase.update(clearSQL);
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popInformation(message("Deleted") + ":" + deletedCount);
-                    if (deletedCount > 0) {
-                        refreshAction();
-                    }
-                }
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
 
+            private int deletedCount = 0;
+
+            @Override
+            protected boolean handle() {
+                if (message("ClearSelectedDataInPage").equals(type)) {
+                    deletedCount = deleteSelectedData();
+
+                } else if (message("ClearCurrentPage").equals(type)) {
+                    deletedCount = deleteData(tableData);
+
+                } else if (message("ClearAsConditionTrees").equals(type)) {
+                    deletedCount = DerbyBase.update(clearSQL);
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popInformation(message("Deleted") + ":" + deletedCount);
+                if (deletedCount > 0) {
+                    refreshAction();
+                }
+            }
+        };
+        start(task);
     }
 
     public void clearAsConditions(QueryCondition condition) {
@@ -747,30 +743,27 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
                 + "\n\n" + clearSQL + "\n\n" + message("DataDeletedComments"))) {
             return;
         }
-
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                private int count = 0;
-
-                @Override
-                protected boolean handle() {
-                    count = DerbyBase.update(clearSQL);
-
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    alertInformation(message("Deleted") + ": " + count);
-                    refreshAction();
-                }
-
-            };
-            start(task);
+        if (task != null && !task.isQuit()) {
+            return;
         }
+        task = new SingletonTask<Void>(this) {
+            private int count = 0;
+
+            @Override
+            protected boolean handle() {
+                count = DerbyBase.update(clearSQL);
+
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                alertInformation(message("Deleted") + ": " + count);
+                refreshAction();
+            }
+
+        };
+        start(task);
     }
 
     @FXML

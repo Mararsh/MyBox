@@ -1,7 +1,7 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
-import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -21,8 +21,8 @@ public class MathFunctionController extends TreeManageController {
 
     public MathFunctionController() {
         baseTitle = message("MathFunction");
-        category = TreeNode.MathFunction;
         TipsLabelKey = "MathFunctionTips";
+        category = InfoNode.MathFunction;
         nameMsg = message("Title");
         valueMsg = message("MathFunction");
         moreMsg = message("FunctionDomain");

@@ -5,7 +5,6 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.Date;
 import mara.mybox.data.MediaInformation;
-import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.FileNameTools;
 import static mara.mybox.value.Languages.message;
@@ -24,77 +23,69 @@ public class FFmpegConvertMediaStreamsController extends FFmpegConvertMediaFiles
 
     @Override
     public void doCurrentProcess() {
-        try {
-            if (currentParameters == null || tableData.isEmpty()) {
-                return;
-            }
-            synchronized (this) {
-                if (task != null && !task.isQuit()) {
-                    return;
-                }
-                processStartTime = new Date();
-                totalFilesHandled = 0;
-                updateInterface("Started");
-                task = new SingletonTask<Void>(this) {
-
-                    @Override
-                    public Void call() {
-                        int len = tableData.size();
-                        updateTaskProgress(currentParameters.currentIndex, len);
-
-                        for (; currentParameters.currentIndex < len;
-                                currentParameters.currentIndex++) {
-                            if (task == null || isCancelled()) {
-                                break;
-                            }
-
-                            handleCurrentFile();
-
-                            updateTaskProgress(currentParameters.currentIndex + 1, len);
-
-                            if (task == null || isCancelled() || isPreview) {
-                                break;
-                            }
-                        }
-                        updateTaskProgress(currentParameters.currentIndex, len);
-                        ok = true;
-
-                        return null;
-                    }
-
-                    @Override
-                    public void succeeded() {
-                        super.succeeded();
-                        updateInterface("Done");
-                    }
-
-                    @Override
-                    public void cancelled() {
-                        super.cancelled();
-                        updateInterface("Canceled");
-                    }
-
-                    @Override
-                    public void failed() {
-                        super.failed();
-                        updateInterface("Failed");
-                    }
-
-                    @Override
-                    protected void finalAction() {
-                        super.finalAction();
-                        task = null;
-                        afterTask();
-                    }
-
-                };
-                start(task, false);
-            }
-
-        } catch (Exception e) {
-            updateInterface("Failed");
-            MyBoxLog.error(e.toString());
+        if (currentParameters == null || tableData.isEmpty()) {
+            return;
         }
+        if (task != null) {
+            task.cancel();
+        }
+        processStartTime = new Date();
+        totalFilesHandled = 0;
+        updateInterface("Started");
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            public Void call() {
+                int len = tableData.size();
+                updateTaskProgress(currentParameters.currentIndex, len);
+
+                for (; currentParameters.currentIndex < len;
+                        currentParameters.currentIndex++) {
+                    if (task == null || isCancelled()) {
+                        break;
+                    }
+
+                    handleCurrentFile();
+
+                    updateTaskProgress(currentParameters.currentIndex + 1, len);
+
+                    if (task == null || isCancelled() || isPreview) {
+                        break;
+                    }
+                }
+                updateTaskProgress(currentParameters.currentIndex, len);
+                ok = true;
+
+                return null;
+            }
+
+            @Override
+            public void succeeded() {
+                super.succeeded();
+                updateInterface("Done");
+            }
+
+            @Override
+            public void cancelled() {
+                super.cancelled();
+                updateInterface("Canceled");
+            }
+
+            @Override
+            public void failed() {
+                super.failed();
+                updateInterface("Failed");
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                task = null;
+                afterTask();
+            }
+
+        };
+        start(task, false);
     }
 
     @Override

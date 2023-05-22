@@ -13,8 +13,8 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -46,54 +46,52 @@ public class ImageMetaDataController extends BaseController {
         if (info == null || info.getFile() == null) {
             return;
         }
-        fileInput.setText(info.getFile().getAbsolutePath());
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                StringBuilder s;
-
-                @Override
-                protected boolean handle() {
-                    ImageFileInformation finfo = info.getImageFileInformation();
-                    s = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-                    s.append("<ImageMetadata file=\"").
-                            append(finfo.getFile().getAbsolutePath()).
-                            append("\"  numberOfImages=\"").
-                            append(finfo.getNumberOfImages()).
-                            append("\">\n");
-                    int index = 1;
-                    for (ImageInformation imageInfo : finfo.getImagesInformation()) {
-                        s.append("    <Image index=\"").append(index).append("\">\n");
-                        s.append(imageInfo.getMetaDataXml());
-                        s.append("    </Image>\n");
-                        index++;
-                    }
-                    s.append("</ImageMetadata>\n");
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    metaDataInput.setText(s.toString());
-                    timer = new Timer();
-                    timer.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            Platform.runLater(() -> {
-                                myStage.requestFocus();
-                                metaDataInput.home();
-                                metaDataInput.requestFocus();
-                            });
-                        }
-                    }, 1000);
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        fileInput.setText(info.getFile().getAbsolutePath());
+        task = new SingletonTask<Void>(this) {
+
+            StringBuilder s;
+
+            @Override
+            protected boolean handle() {
+                ImageFileInformation finfo = info.getImageFileInformation();
+                s = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+                s.append("<ImageMetadata file=\"").
+                        append(finfo.getFile().getAbsolutePath()).
+                        append("\"  numberOfImages=\"").
+                        append(finfo.getNumberOfImages()).
+                        append("\">\n");
+                int index = 1;
+                for (ImageInformation imageInfo : finfo.getImagesInformation()) {
+                    s.append("    <Image index=\"").append(index).append("\">\n");
+                    s.append(imageInfo.getMetaDataXml());
+                    s.append("    </Image>\n");
+                    index++;
+                }
+                s.append("</ImageMetadata>\n");
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                metaDataInput.setText(s.toString());
+                timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        Platform.runLater(() -> {
+                            myStage.requestFocus();
+                            metaDataInput.home();
+                            metaDataInput.requestFocus();
+                        });
+                    }
+                }, 1000);
+            }
+
+        };
+        start(task);
     }
 
     @FXML
@@ -117,36 +115,34 @@ public class ImageMetaDataController extends BaseController {
         if (file == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    ok = TextFileTools.writeFile(file, metaDataInput.getText()) != null;
-                    recordFileWritten(file);
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (isEdit) {
-                        TextEditorController.open(file);
-                    } else {
-                        popSuccessful();
-                    }
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                ok = TextFileTools.writeFile(file, metaDataInput.getText()) != null;
+                recordFileWritten(file);
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (isEdit) {
+                    TextEditorController.open(file);
+                } else {
+                    popSuccessful();
+                }
+            }
+
+        };
+        start(task);
     }
 
     @FXML
     public void editAction() {
-        File file = TmpFileTools.getTempFile(".txt");
+        File file = FileTmpTools.getTempFile(".txt");
         save(file, true);
     }
 

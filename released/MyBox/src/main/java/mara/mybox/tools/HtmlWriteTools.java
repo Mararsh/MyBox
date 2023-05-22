@@ -38,7 +38,7 @@ public class HtmlWriteTools {
      */
     public static File writeHtml(String html) {
         try {
-            File htmFile = TmpFileTools.getTempFile(".html");
+            File htmFile = FileTmpTools.getTempFile(".html");
             Charset charset = HtmlReadTools.charset(html);
             TextFileTools.writeFile(htmFile, html, charset);
             return htmFile;
@@ -61,9 +61,6 @@ public class HtmlWriteTools {
         editHtml(html(title, body));
     }
 
-    /*
-        build html
-     */
     public static String emptyHmtl(String title) {
         String body = title == null ? "<BODY>\n\n\n</BODY>\n" : "<BODY>\n<h2>" + title + "</h2>\n</BODY>\n";
         return html(title, "utf-8", null, body);
@@ -90,6 +87,9 @@ public class HtmlWriteTools {
         return s.toString();
     }
 
+    /*
+        build html
+     */
     public static String htmlPrefix() {
         return htmlPrefix(null, "utf-8", null);
     }
@@ -461,7 +461,7 @@ public class HtmlWriteTools {
         if (texts != null && !texts.isBlank()) {
             StringBuilder s = new StringBuilder();
             while (true) {
-                finder.setInputString(texts).setAnchor(0).run();
+                finder.setInputString(texts).setAnchor(0).handleString();
                 if (finder.getStringRange() == null) {
                     break;
                 }
@@ -521,7 +521,7 @@ public class HtmlWriteTools {
                 }
             }
             replaced += unchecked;
-            File tmpFile = TmpFileTools.getTempFile();
+            File tmpFile = FileTmpTools.getTempFile();
             TextFileTools.writeFile(tmpFile, replaced, TextFileTools.charset(httpFile));
             return FileTools.rename(tmpFile, httpFile);
         } catch (Exception e) {

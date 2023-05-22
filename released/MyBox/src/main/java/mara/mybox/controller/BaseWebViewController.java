@@ -12,10 +12,8 @@ import javafx.scene.web.WebView;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
-import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WebViewTools;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -179,44 +177,59 @@ public class BaseWebViewController extends BaseController {
     }
 
     public String title() {
-        String title = webViewController.title();
-        if (title == null) {
-            return getBaseTitle();
-        } else {
-            return getBaseTitle() + "  " + title;
+        String title = getBaseTitle();
+        String htmlTitle = webViewController.title();
+        if (htmlTitle != null) {
+            title += " - " + htmlTitle;
         }
+        return title;
     }
 
     public void initStyle(String style) {
         webViewController.initStyle(style);
     }
 
-    protected void updateStageTitle() {
+    public void updateStageTitle() {
         if (getMyStage() == null) {
             return;
         }
         myStage.setTitle(title());
     }
 
-    protected void setWebViewLabel(String string) {
+    public void setWebViewLabel(String string) {
         if (webViewController == null) {
             return;
         }
         webViewController.setWebViewLabel(string);
     }
 
-    protected Charset getCharset() {
+    public Charset getCharset() {
         if (webViewController == null) {
             return null;
         }
         return webViewController.charset;
     }
 
+    public String html() {
+        if (webViewController == null) {
+            return null;
+        }
+        return webViewController.currentHtml();
+    }
+
+    public void clear() {
+        if (webViewController == null) {
+            return;
+        }
+        webViewController.clear();
+    }
+
     @FXML
     public void popOperationsMenu(Event event) {
-        if (UserConfig.getBoolean("WebviewOperationsPopWhenMouseHovering", true)) {
-            showOperationsMenu(event);
+        if (webViewController == null) {
+            return;
         }
+        webViewController.popOperationsMenu(event);
     }
 
     @FXML
@@ -229,9 +242,10 @@ public class BaseWebViewController extends BaseController {
 
     @FXML
     public void popFunctionsMenu(Event event) {
-        if (UserConfig.getBoolean("WebviewFunctionsPopWhenMouseHovering", true)) {
-            showFunctionsMenu(event);
+        if (webViewController == null) {
+            return;
         }
+        webViewController.popFunctionsMenu(event);
     }
 
     @FXML
@@ -326,14 +340,18 @@ public class BaseWebViewController extends BaseController {
 
     @FXML
     protected void showHtmlStyle(Event event) {
-        PopTools.popHtmlStyle(event, webViewController);
+        if (webViewController == null) {
+            return;
+        }
+        webViewController.showHtmlStyle(event);
     }
 
     @FXML
     protected void popHtmlStyle(Event event) {
-        if (UserConfig.getBoolean("HtmlStylesPopWhenMouseHovering", false)) {
-            showHtmlStyle(event);
+        if (webViewController == null) {
+            return;
         }
+        webViewController.popHtmlStyle(event);
     }
 
     @FXML

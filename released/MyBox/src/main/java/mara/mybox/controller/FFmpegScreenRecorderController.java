@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.Date;
@@ -20,10 +19,9 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.SoundTools;
-import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.SystemTools;
-import mara.mybox.value.AppPaths;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -108,7 +106,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
         }
         String v = targetFileController.text();
         if (v == null || v.isBlank()) {
-            targetFileController.input(AppPaths.getGeneratedPath() + File.separator + DateTools.nowFileString() + "." + ext);
+            targetFileController.input(FileTmpTools.generateFile(ext).getAbsolutePath());
         } else if (!v.endsWith("." + ext)) {
             targetFileController.input(FileNameTools.replaceSuffix(v, ext));
         }

@@ -31,7 +31,7 @@ import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -249,7 +249,7 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
             if (targetFile == null) {
                 return false;
             }
-            archiveFile = TmpFileTools.getTempFile();
+            archiveFile = FileTmpTools.getTempFile();
             if (archiver.equalsIgnoreCase(ArchiveStreamFactory.SEVEN_Z)) {
                 sevenZOutput = new SevenZOutputFile(archiveFile);
                 sevenZOutput.setContentCompression(sevenCompress);
@@ -411,7 +411,7 @@ public class FilesArchiveCompressController extends BaseBatchFileController {
                 FileDeleteTools.delete(targetFile);
             }
             if (!message("None").equals(compressor)) {
-                File tmpFile = TmpFileTools.getTempFile();
+                File tmpFile = FileTmpTools.getTempFile();
                 try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(archiveFile));
                         BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(tmpFile));
                         CompressorOutputStream compressOut = new CompressorStreamFactory().

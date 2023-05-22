@@ -6,9 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.controller.BaseTaskController;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
@@ -16,11 +14,12 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.ColumnDefinition.ColumnType;
 import mara.mybox.db.data.ImageEditHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import static mara.mybox.fxml.WindowTools.recordError;
 import static mara.mybox.fxml.WindowTools.recordInfo;
-import mara.mybox.tools.DateTools;
+import static mara.mybox.fxml.WindowTools.taskError;
+import static mara.mybox.fxml.WindowTools.taskInfo;
 import mara.mybox.tools.FileDeleteTools;
-import mara.mybox.tools.FileNameTools;
 import mara.mybox.value.AppPaths;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -33,17 +32,6 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
-
-    public static final int Default_Max_Histories = 20;
-
-    public static final String FileQuery
-            = "SELECT * FROM Image_Edit_History  WHERE image_location=? ORDER BY operation_time DESC";
-
-    public static final String HistoryQuery
-            = "SELECT * FROM Image_Edit_History  WHERE history_location=?";
-
-    public static final String DeleteFile
-            = "DELETE FROM Image_Edit_History  WHERE image_location=?";
 
     public TableImageEditHistory() {
         tableName = "Image_Edit_History";
@@ -59,52 +47,88 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
 
     public final TableImageEditHistory defineColumns() {
         addColumn(new ColumnDefinition("iehid", ColumnType.Long, true, true).setAuto(true));
-        addColumn(new ColumnDefinition("image_location", ColumnType.String, true).setLength(FilenameMaxLength));
-        addColumn(new ColumnDefinition("history_location", ColumnType.String, true).setLength(FilenameMaxLength));
+        addColumn(new ColumnDefinition("image_location", ColumnType.File, true).setLength(FilenameMaxLength));
+        addColumn(new ColumnDefinition("history_location", ColumnType.File, true).setLength(FilenameMaxLength));
+        addColumn(new ColumnDefinition("thumbnail_file", ColumnType.File).setLength(FilenameMaxLength));
         addColumn(new ColumnDefinition("operation_time", ColumnType.Datetime, true));
         addColumn(new ColumnDefinition("update_type", ColumnType.String).setLength(128));
         addColumn(new ColumnDefinition("object_type", ColumnType.String).setLength(128));
         addColumn(new ColumnDefinition("op_type", ColumnType.String).setLength(128));
         addColumn(new ColumnDefinition("scope_type", ColumnType.String).setLength(128));
         addColumn(new ColumnDefinition("scope_name", ColumnType.String).setLength(StringMaxLength));
+        orderColumns = "operation_time DESC";
         return this;
     }
 
-    public static List<ImageEditHistory> read(String filename) {
+    public static final String QueryPath
+            = "SELECT * FROM Image_Edit_History  WHERE image_location=? ";
+
+    public static final String QueryHistories
+            = "SELECT * FROM Image_Edit_History  WHERE image_location=? ORDER BY operation_time DESC";
+
+    public static final String DeleteHistories
+            = "DELETE FROM Image_Edit_History  WHERE image_location=?";
+
+    public static final String QueryFile
+            = "SELECT * FROM Image_Edit_History  WHERE history_location=? OR thumbnail_file=?";
+
+    public File path(Connection conn, File srcFile) {
+        if (conn == null || srcFile == null || !srcFile.exists()) {
+            return null;
+        }
+        try (PreparedStatement query = conn.prepareStatement(QueryPath)) {
+            query.setString(1, srcFile.getAbsolutePath());
+            ImageEditHistory his = query(conn, query);
+            if (his != null) {
+                File hisFile = his.getHistoryFile();
+                if (hisFile != null && hisFile.exists()) {
+                    return hisFile.getParentFile();
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return null;
+    }
+
+    public List<ImageEditHistory> read(File srcFile) {
+        if (srcFile == null || !srcFile.exists()) {
+            return null;
+        }
+        try (Connection conn = DerbyBase.getConnection()) {
+            return read(conn, srcFile);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return null;
+    }
+
+    public List<ImageEditHistory> read(Connection conn, File srcFile) {
         List<ImageEditHistory> records = new ArrayList<>();
-        if (filename == null || filename.trim().isEmpty()) {
+        if (conn == null || srcFile == null || !srcFile.exists()) {
             return records;
         }
-        try (Connection conn = DerbyBase.getConnection();
-                Statement statement = conn.createStatement()) {
-            int max = UserConfig.getInt(conn, "MaxImageHistories", Default_Max_Histories);
+        try (PreparedStatement statement = conn.prepareStatement(QueryHistories)) {
+            int max = UserConfig.getInt(conn, "MaxImageHistories", ImageEditHistory.Default_Max_Histories);
             if (max <= 0) {
-                max = TableImageEditHistory.Default_Max_Histories;
-                UserConfig.setInt(conn, "MaxImageHistories", Default_Max_Histories);
+                max = ImageEditHistory.Default_Max_Histories;
+                UserConfig.setInt(conn, "MaxImageHistories", ImageEditHistory.Default_Max_Histories);
             }
-            List<ImageEditHistory> invalid = new ArrayList<>();
-            String sql = " SELECT * FROM Image_Edit_History WHERE image_location='" + filename + "' ORDER BY operation_time DESC";
-            try (ResultSet results = statement.executeQuery(sql)) {
+            conn.setAutoCommit(true);
+            statement.setMaxRows(max);
+            statement.setString(1, srcFile.getAbsolutePath());
+            try (ResultSet results = statement.executeQuery()) {
                 while (results.next()) {
-                    ImageEditHistory his = new ImageEditHistory();
-                    his.setImage(filename);
-                    his.setHistoryLocation(results.getString("history_location"));
-                    his.setUpdateType(results.getString("update_type"));
-                    his.setObjectType(results.getString("object_type"));
-                    his.setOpType(results.getString("op_type"));
-                    his.setScopeType(results.getString("scope_type"));
-                    his.setScopeName(results.getString("scope_name"));
-                    his.setOperationTime(results.getTimestamp("operation_time"));
-
-                    if (!new File(his.getHistoryLocation()).exists() || records.size() >= max) {
-                        invalid.add(his);
+                    ImageEditHistory his = readData(results);
+                    if (his == null) {
+                        continue;
+                    }
+                    if (!his.valid() || records.size() >= max) {
+                        deleteData(conn, his);
                     } else {
                         records.add(his);
                     }
                 }
-            }
-            for (ImageEditHistory h : invalid) {
-                deleteRecord(conn, h.getImage(), h.getHistoryLocation());
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -112,135 +136,114 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
         return records;
     }
 
-    public static void deleteRecord(Connection conn, String image, String hisname) {
-        if (conn == null || image == null || hisname == null) {
-            return;
-        }
-        String sql = "DELETE FROM Image_Edit_History WHERE image_location='" + image
-                + "' AND history_location='" + hisname + "'";
-        try (Statement statement = conn.createStatement()) {
-            statement.executeUpdate(sql);
-        } catch (Exception e) {
-            MyBoxLog.error(e, sql);
+    public List<ImageEditHistory> addHistory(Connection conn, ImageEditHistory his) {
+        if (conn == null || !ImageEditHistory.valid(his)) {
+            return null;
         }
         try {
-            File hisFile = new File(hisname);
-            FileDeleteTools.delete(hisFile);
-            File thumbFile = new File(FileNameTools.append(hisname, "_thumbnail"));
-            FileDeleteTools.delete(thumbFile);
+            his = super.insertData(conn, his);
+            if (his == null) {
+                return null;
+            }
+            return read(conn, his.getImageFile());
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.error(e);
+            return null;
         }
     }
 
-    public static List<ImageEditHistory> add(String image, String his_location, ImageScope scope) {
-        return add(image, his_location, null, null, null, scope);
-    }
-
-    public static List<ImageEditHistory> add(String image, String his_location,
-            String update_type, String object_type, String op_type, ImageScope scope) {
-        if (image == null || image.trim().isEmpty()
-                || his_location == null || his_location.trim().isEmpty()) {
-            return read(image);
+    @Override
+    public int deleteData(ImageEditHistory data) {
+        if (data == null) {
+            return 0;
         }
         try (Connection conn = DerbyBase.getConnection()) {
-            String fields = "image_location, history_location ,operation_time ";
-            String values = " '" + image + "', '" + his_location + "', '" + DateTools.datetimeToString(new Date()) + "' ";
-            if (update_type != null) {
-                fields += ", update_type";
-                values += ", '" + update_type + "' ";
-            }
-            if (object_type != null) {
-                fields += ", object_type";
-                values += ", '" + object_type + "' ";
-            }
-            if (op_type != null) {
-                fields += ", op_type";
-                values += ", '" + op_type + "' ";
-            }
-            if (scope != null) {
-                if (scope.getScopeType() != null) {
-                    fields += ", scope_type";
-                    values += ", '" + scope.getScopeType().name() + "' ";
+            return deleteData(conn, data);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return 0;
+        }
+    }
+
+    @Override
+    public int deleteData(Connection conn, ImageEditHistory data) {
+        if (data == null) {
+            return 0;
+        }
+        int count = super.deleteData(conn, data);
+        if (count > 0) {
+            FileDeleteTools.delete(data.getHistoryFile());
+            FileDeleteTools.delete(data.getThumbnailFile());
+        }
+        return count;
+    }
+
+    public void clearHistories(SingletonTask task, File srcFile) {
+        if (srcFile == null) {
+            return;
+        }
+        try (Connection conn = DerbyBase.getConnection()) {
+            List<String> files = new ArrayList<>();
+            files.add(srcFile.getAbsolutePath());
+            clearHistories(task, conn, files);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void clearHistories(SingletonTask task, Connection conn, List<String> files) {
+        if (conn == null || files == null || files.isEmpty()) {
+            return;
+        }
+        taskInfo(task, QueryHistories);
+        try (PreparedStatement statement = conn.prepareStatement(QueryHistories)) {
+            conn.setAutoCommit(true);
+            for (String file : files) {
+                if (task != null && task.isCancelled()) {
+                    return;
                 }
-                if (scope.getName() != null) {
-                    fields += ", scope_name";
-                    values += ", '" + scope.getName() + "' ";
+                taskInfo(task, message("Check") + ": " + file);
+                statement.setString(1, file);
+                try (ResultSet results = statement.executeQuery()) {
+                    while (results.next()) {
+                        if (task != null && task.isCancelled()) {
+                            return;
+                        }
+                        ImageEditHistory data = readData(results);
+                        File hisFile = data.getHistoryFile();
+                        if (hisFile != null) {
+                            taskInfo(task, message("Delete") + ": " + hisFile);
+                            FileDeleteTools.delete(hisFile);
+                        }
+                        File thumbFile = data.getThumbnailFile();
+                        if (thumbFile != null) {
+                            taskInfo(task, message("Delete") + ": " + thumbFile);
+                            FileDeleteTools.delete(thumbFile);
+                        }
+                    }
+                } catch (Exception e) {
+                    taskError(task, e.toString() + "\n" + tableName);
                 }
             }
-            String sql = "INSERT INTO Image_Edit_History(" + fields + ") VALUES(" + values + ")";
-//            MyBoxLog.debug(sql);
-            conn.createStatement().executeUpdate(sql);
-            return read(image);
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            return read(image);
+            taskError(task, e.toString() + "\n" + tableName);
         }
-    }
-
-    public static boolean add(ImageEditHistory his) {
-        if (his == null || his.getImage() == null) {
-            return false;
+        taskInfo(task, DeleteHistories);
+        if (task != null && task.isCancelled()) {
+            return;
         }
-        try (Connection conn = DerbyBase.getConnection()) {
-            String fields = "image_location, history_location ,operation_time ";
-            String values = " '" + his.getImage() + "', '" + his.getHistoryLocation()
-                    + "', '" + DateTools.datetimeToString(his.getOperationTime()) + "' ";
-            if (his.getUpdateType() != null) {
-                fields += ", update_type";
-                values += ", '" + his.getUpdateType() + "' ";
+        try (PreparedStatement statement = conn.prepareStatement(DeleteHistories)) {
+            conn.setAutoCommit(true);
+            for (String file : files) {
+                if (task != null && task.isCancelled()) {
+                    return;
+                }
+                taskInfo(task, message("Clear") + ": " + file);
+                statement.setString(1, file);
+                statement.executeUpdate();
             }
-            if (his.getObjectType() != null) {
-                fields += ", object_type";
-                values += ", '" + his.getObjectType() + "' ";
-            }
-            if (his.getOpType() != null) {
-                fields += ", op_type";
-                values += ", '" + his.getOpType() + "' ";
-            }
-            if (his.getScopeType() != null) {
-                fields += ", scope_type";
-                values += ", '" + his.getScopeType() + "' ";
-            }
-            if (his.getScopeName() != null) {
-                fields += ", scope_name";
-                values += ", '" + his.getScopeName() + "' ";
-            }
-            String sql = "INSERT INTO Image_Edit_History(" + fields + ") VALUES(" + values + ")";
-//            MyBoxLog.debug(sql);
-            conn.createStatement().executeUpdate(sql);
-            return true;
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    public static boolean clearImage(String image) {
-        if (image == null) {
-            return true;
-        }
-        List<ImageEditHistory> records = read(image);
-        try (Connection conn = DerbyBase.getConnection()) {
-            conn.setAutoCommit(false);
-            for (int i = 0; i < records.size(); ++i) {
-                deleteRecord(conn, image, records.get(i).getHistoryLocation());
-            }
-            conn.commit();
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
-    public static boolean deleteHistory(String image, String hisname) {
-        try (Connection conn = DerbyBase.getConnection()) {
-            deleteRecord(conn, image, hisname);
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
+            taskError(task, e.toString() + "\n" + tableName);
         }
     }
 
@@ -292,15 +295,16 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
                             return invalidCount;
                         }
                         ImageEditHistory data = readData(results);
-                        String image = data.getImage();
-                        String his = data.getHistoryLocation();
-                        if (his == null || !new File(his).exists() || !exist(image)) {
-                            if (FileDeleteTools.delete(his)) {
-                                recordInfo(taskController, message("Delete") + ": " + his);
+                        if (!ImageEditHistory.valid(data)) {
+                            File hisFile = data.getHistoryFile();
+                            if (hisFile != null) {
+                                recordInfo(taskController, message("Delete") + ": " + hisFile);
+                                FileDeleteTools.delete(hisFile);
                             }
-                            String hisThumb = FileNameTools.append(his, "_thumbnail");
-                            if (FileDeleteTools.delete(new File(hisThumb))) {
-                                recordInfo(taskController, message("Delete") + ": " + hisThumb);
+                            File thumbFile = data.getThumbnailFile();
+                            if (thumbFile != null) {
+                                recordInfo(taskController, message("Delete") + ": " + thumbFile);
+                                FileDeleteTools.delete(thumbFile);
                             }
                             if (setDeleteStatement(conn, delete, data)) {
                                 delete.addBatch();
@@ -348,7 +352,7 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
             if (ihPaths == null || ihPaths.length == 0) {
                 return invalidCount;
             }
-            try (PreparedStatement query = conn.prepareStatement(HistoryQuery)) {
+            try (PreparedStatement query = conn.prepareStatement(QueryFile)) {
                 conn.setAutoCommit(true);
                 for (String pathname : ihPaths) {
                     if (taskController != null && taskController.getTask() != null
@@ -373,6 +377,7 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
                         }
                         String file = path + File.separator + name;
                         query.setString(1, file);
+                        query.setString(2, file);
                         try (ResultSet results = query.executeQuery()) {
                             if (!results.next()) {
                                 invalidCount++;
@@ -402,22 +407,6 @@ public class TableImageEditHistory extends BaseTable<ImageEditHistory> {
         recordInfo(taskController, message("Checked") + ": " + rowCount + " "
                 + message("Expired") + ": " + invalidCount);
         return invalidCount;
-    }
-
-    public boolean exist(String imagename) {
-        if (imagename == null) {
-            return false;
-        }
-        String fname = imagename;
-        int pos = fname.lastIndexOf(".");
-        if (pos > 0) {
-            String suffix = fname.substring(pos);
-            int pos2 = suffix.lastIndexOf("-frame");
-            if (pos2 > 0) {
-                fname = fname.substring(0, pos) + suffix.substring(0, pos2);
-            }
-        }
-        return new File(fname).exists();
     }
 
 }

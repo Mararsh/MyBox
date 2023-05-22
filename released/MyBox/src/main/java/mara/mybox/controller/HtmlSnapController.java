@@ -25,7 +25,7 @@ import mara.mybox.fximage.CropTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.imagefile.ImageFileWriters;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -232,7 +232,7 @@ public class HtmlSnapController extends WebAddressController {
             }
             snapFileHeight += cropped.getHeight();
             snapHeight += snapStep;
-            File tmpfile = TmpFileTools.getTempFile(".png");
+            File tmpfile = FileTmpTools.getTempFile(".png");
             ImageFileWriters.writeImageFile(SwingFXUtils.fromFXImage(cropped, null), "png", tmpfile.getAbsolutePath());
             snaps.add(tmpfile);
             if (isCanceled()) {

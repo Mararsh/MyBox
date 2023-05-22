@@ -314,52 +314,44 @@ public class FilesCompareController extends BaseController {
             resultArea.setText(s);
             return;
         }
-        try {
-            synchronized (this) {
-                if (task != null && !task.isQuit()) {
-                    return;
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+
+            private byte[] digest1, digest2;
+            private boolean same;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    digest1 = MessageDigestTools.messageDigest(file1, algorithm);
+                    digest2 = MessageDigestTools.messageDigest(file2, algorithm);
+                    same = Arrays.equals(digest1, digest2);
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
                 }
-                task = new SingletonTask<Void>(this) {
-
-                    private byte[] digest1, digest2;
-                    private boolean same;
-
-                    @Override
-                    protected boolean handle() {
-                        try {
-                            digest1 = MessageDigestTools.messageDigest(file1, algorithm);
-                            digest2 = MessageDigestTools.messageDigest(file2, algorithm);
-                            same = Arrays.equals(digest1, digest2);
-                            return true;
-                        } catch (Exception e) {
-                            error = e.toString();
-                            return false;
-                        }
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        String s = (same ? message("Same") : message("Different")) + "\n"
-                                + message("Cost") + ":" + DateTools.datetimeMsDuration(cost) + "\n\n"
-                                + message("File") + " 1: \n"
-                                + MessageFormat.format(message("DigestResult"),
-                                        file1.length(), digest1.length) + "\n"
-                                + ByteTools.bytesToHexFormat(digest1) + "\n\n"
-                                + message("File") + " 2: \n"
-                                + MessageFormat.format(message("DigestResult"),
-                                        file2.length(), digest2.length) + "\n"
-                                + ByteTools.bytesToHexFormat(digest2);
-                        resultArea.setText(s);
-                    }
-
-                };
-                start(task);
             }
 
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+            @Override
+            protected void whenSucceeded() {
+                String s = (same ? message("Same") : message("Different")) + "\n"
+                        + message("Cost") + ":" + DateTools.datetimeMsDuration(cost) + "\n\n"
+                        + message("File") + " 1: \n"
+                        + MessageFormat.format(message("DigestResult"),
+                                file1.length(), digest1.length) + "\n"
+                        + ByteTools.bytesToHexFormat(digest1) + "\n\n"
+                        + message("File") + " 2: \n"
+                        + MessageFormat.format(message("DigestResult"),
+                                file2.length(), digest2.length) + "\n"
+                        + ByteTools.bytesToHexFormat(digest2);
+                resultArea.setText(s);
+            }
 
+        };
+        start(task);
     }
 
 }

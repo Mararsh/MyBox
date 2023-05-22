@@ -538,50 +538,47 @@ public class ChromaticityDiagramController extends ImageViewerController {
     }
 
     private void initCIEData() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                private StringTable degree2nm1Table, degree10nm1Table, degree2nm5Table, degree10nm5Table;
-
-                @Override
-                protected boolean handle() {
-                    ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
-
-                    degree2nm1Data = FXCollections.observableArrayList();
-                    degree2nm1Data.addAll(CIEDataTools.cie1931Observer2Degree1nmData(cs));
-                    degree2nm1Table = CIEDataTools.cieTable(degree2nm1Data, cs, Languages.message("CIE1931Observer2DegreeAndSRGB"));
-
-                    degree2nm5Data = FXCollections.observableArrayList();
-                    degree2nm5Data.addAll(CIEDataTools.cie1931Observer2Degree5nmData(cs));
-                    degree2nm5Table = CIEDataTools.cieTable(degree2nm5Data, cs, Languages.message("CIE1931Observer2DegreeAndSRGB"));
-
-                    degree10nm1Data = FXCollections.observableArrayList();
-                    degree10nm1Data.addAll(CIEDataTools.cie1964Observer10Degree1nmData(cs));
-                    degree10nm1Table = CIEDataTools.cieTable(degree10nm1Data, cs, Languages.message("CIE1964Observer10DegreeAndSRGB"));
-
-                    degree10nm5Data = FXCollections.observableArrayList();
-                    degree10nm5Data.addAll(CIEDataTools.cie1964Observer10Degree5nmData(cs));
-                    degree10nm5Table = CIEDataTools.cieTable(degree10nm5Data, cs, Languages.message("CIE1964Observer10DegreeAndSRGB"));
-
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    d2n1Controller.loadTable(degree2nm1Table);
-                    d2n5Controller.loadTable(degree2nm5Table);
-                    d10n1Controller.loadTable(degree10nm1Table);
-                    d10n5Controller.loadTable(degree10nm5Table);
-
-                    afterInitCIEData();
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+            private StringTable degree2nm1Table, degree10nm1Table, degree2nm5Table, degree10nm5Table;
 
+            @Override
+            protected boolean handle() {
+                ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
+
+                degree2nm1Data = FXCollections.observableArrayList();
+                degree2nm1Data.addAll(CIEDataTools.cie1931Observer2Degree1nmData(cs));
+                degree2nm1Table = CIEDataTools.cieTable(degree2nm1Data, cs, Languages.message("CIE1931Observer2DegreeAndSRGB"));
+
+                degree2nm5Data = FXCollections.observableArrayList();
+                degree2nm5Data.addAll(CIEDataTools.cie1931Observer2Degree5nmData(cs));
+                degree2nm5Table = CIEDataTools.cieTable(degree2nm5Data, cs, Languages.message("CIE1931Observer2DegreeAndSRGB"));
+
+                degree10nm1Data = FXCollections.observableArrayList();
+                degree10nm1Data.addAll(CIEDataTools.cie1964Observer10Degree1nmData(cs));
+                degree10nm1Table = CIEDataTools.cieTable(degree10nm1Data, cs, Languages.message("CIE1964Observer10DegreeAndSRGB"));
+
+                degree10nm5Data = FXCollections.observableArrayList();
+                degree10nm5Data.addAll(CIEDataTools.cie1964Observer10Degree5nmData(cs));
+                degree10nm5Table = CIEDataTools.cieTable(degree10nm5Data, cs, Languages.message("CIE1964Observer10DegreeAndSRGB"));
+
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                d2n1Controller.loadTable(degree2nm1Table);
+                d2n5Controller.loadTable(degree2nm5Table);
+                d10n1Controller.loadTable(degree10nm1Table);
+                d10n5Controller.loadTable(degree10nm5Table);
+
+                afterInitCIEData();
+            }
+
+        };
+        start(task);
     }
 
     private void afterInitCIEData() {
@@ -593,40 +590,38 @@ public class ChromaticityDiagramController extends ImageViewerController {
         if (file == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                private String texts;
-
-                @Override
-                protected boolean handle() {
-                    texts = TextFileTools.readTexts(file);
-                    return texts != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    sourceInputArea.setStyle(null);
-                    inputInit = false;
-//                            bottomLabel.setText(file.getAbsolutePath() + "\t" + AppVariables.getMessage("ChromaticityDiagramComments"));
-                    isSettingValues = true;
-                    sourceInputArea.setText(texts);
-                    sourceInputArea.home();
-                    isSettingValues = false;
-                    checkInputs();
-                }
-
-                @Override
-                protected void whenFailed() {
-                    popError(Languages.message("NoData"));
-                    sourceDataArea.clear();
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+            private String texts;
+
+            @Override
+            protected boolean handle() {
+                texts = TextFileTools.readTexts(file);
+                return texts != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                sourceInputArea.setStyle(null);
+                inputInit = false;
+//                            bottomLabel.setText(file.getAbsolutePath() + "\t" + AppVariables.getMessage("ChromaticityDiagramComments"));
+                isSettingValues = true;
+                sourceInputArea.setText(texts);
+                sourceInputArea.home();
+                isSettingValues = false;
+                checkInputs();
+            }
+
+            @Override
+            protected void whenFailed() {
+                popError(Languages.message("NoData"));
+                sourceDataArea.clear();
+            }
+
+        };
+        start(task);
     }
 
     @FXML
@@ -864,63 +859,60 @@ public class ChromaticityDiagramController extends ImageViewerController {
         if (isSettingValues) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                private Image image;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        LinkedHashMap<ChromaticityDiagram.DataType, Boolean> selections = new LinkedHashMap();
-                        selections.put(DataType.CIE2Degree, degree2Check.isSelected());
-                        selections.put(DataType.CIE10Degree, degree10Check.isSelected());
-                        selections.put(DataType.CIEDataSource, inputCheck.isSelected());
-                        selections.put(DataType.Calculate, calculateCheck.isSelected());
-                        selections.put(DataType.Wave, waveCheck.isSelected());
-                        selections.put(DataType.WhitePoints, whitePointsCheck.isSelected());
-                        selections.put(DataType.Grid, cdGridCheck.isSelected());
-                        selections.put(DataType.CIELines, cdCIECheck.isSelected());
-                        selections.put(DataType.ECILines, cdECICheck.isSelected());
-                        selections.put(DataType.sRGBLines, cdSRGBCheck.isSelected());
-                        selections.put(DataType.AdobeLines, cdAdobeCheck.isSelected());
-                        selections.put(DataType.AppleLines, cdAppleCheck.isSelected());
-                        selections.put(DataType.PALLines, cdPALCheck.isSelected());
-                        selections.put(DataType.NTSCLines, cdNTSCCheck.isSelected());
-                        selections.put(DataType.ColorMatchLines, cdColorMatchCheck.isSelected());
-                        selections.put(DataType.ProPhotoLines, cdProPhotoCheck.isSelected());
-                        selections.put(DataType.SMPTECLines, cdSMPTECCheck.isSelected());
-
-                        ChromaticityDiagram cd = ChromaticityDiagram.create()
-                                //                                .setWidth(width).setHeight(height)
-                                .setIsLine(isLine).setDotSize(dotSize)
-                                .setBgColor(bgColor).setFontSize(fontSize)
-                                .setDataSourceTexts(sourceDataArea.getText());
-                        if (x >= 0 && x <= 1 && y > 0 && y <= 1) {
-                            cd.setCalculateX(x).setCalculateY(y)
-                                    .setCalculateColor(calculateColor);
-                        }
-                        image = SwingFXUtils.toFXImage(cd.drawData(selections), null);
-
-                    } catch (Exception e) {
-                        error = e.toString();
-                        MyBoxLog.debug(e.toString());
-                    }
-                    return image != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    imageView.setImage(image);
-                    ImageViewTools.paneSize(scrollPane, imageView);
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+            private Image image;
 
+            @Override
+            protected boolean handle() {
+                try {
+                    LinkedHashMap<ChromaticityDiagram.DataType, Boolean> selections = new LinkedHashMap();
+                    selections.put(DataType.CIE2Degree, degree2Check.isSelected());
+                    selections.put(DataType.CIE10Degree, degree10Check.isSelected());
+                    selections.put(DataType.CIEDataSource, inputCheck.isSelected());
+                    selections.put(DataType.Calculate, calculateCheck.isSelected());
+                    selections.put(DataType.Wave, waveCheck.isSelected());
+                    selections.put(DataType.WhitePoints, whitePointsCheck.isSelected());
+                    selections.put(DataType.Grid, cdGridCheck.isSelected());
+                    selections.put(DataType.CIELines, cdCIECheck.isSelected());
+                    selections.put(DataType.ECILines, cdECICheck.isSelected());
+                    selections.put(DataType.sRGBLines, cdSRGBCheck.isSelected());
+                    selections.put(DataType.AdobeLines, cdAdobeCheck.isSelected());
+                    selections.put(DataType.AppleLines, cdAppleCheck.isSelected());
+                    selections.put(DataType.PALLines, cdPALCheck.isSelected());
+                    selections.put(DataType.NTSCLines, cdNTSCCheck.isSelected());
+                    selections.put(DataType.ColorMatchLines, cdColorMatchCheck.isSelected());
+                    selections.put(DataType.ProPhotoLines, cdProPhotoCheck.isSelected());
+                    selections.put(DataType.SMPTECLines, cdSMPTECCheck.isSelected());
+
+                    ChromaticityDiagram cd = ChromaticityDiagram.create()
+                            //                                .setWidth(width).setHeight(height)
+                            .setIsLine(isLine).setDotSize(dotSize)
+                            .setBgColor(bgColor).setFontSize(fontSize)
+                            .setDataSourceTexts(sourceDataArea.getText());
+                    if (x >= 0 && x <= 1 && y > 0 && y <= 1) {
+                        cd.setCalculateX(x).setCalculateY(y)
+                                .setCalculateColor(calculateColor);
+                    }
+                    image = SwingFXUtils.toFXImage(cd.drawData(selections), null);
+
+                } catch (Exception e) {
+                    error = e.toString();
+                    MyBoxLog.debug(e.toString());
+                }
+                return image != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                imageView.setImage(image);
+                ImageViewTools.paneSize(scrollPane, imageView);
+            }
+
+        };
+        start(task);
     }
 
     @FXML
@@ -938,38 +930,35 @@ public class ChromaticityDiagramController extends ImageViewerController {
         if (file == null) {
             return;
         }
-
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    String format = FileNameTools.suffix(file.getName());
-                    final BufferedImage bufferedImage = FxImageTools.toBufferedImage(imageView.getImage());
-                    if (this == null || this.isCancelled()) {
-                        return false;
-                    }
-                    ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    recordFileWritten(file, VisitHistory.FileType.Image);
-                    ImageViewerController.openFile(file);
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                String format = FileNameTools.suffix(file.getName());
+                final BufferedImage bufferedImage = FxImageTools.toBufferedImage(imageView.getImage());
+                if (this == null || this.isCancelled()) {
+                    return false;
+                }
+                ImageFileWriters.writeImageFile(bufferedImage, format, file.getAbsolutePath());
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                recordFileWritten(file, VisitHistory.FileType.Image);
+                ImageViewerController.openFile(file);
+            }
+
+        };
+        start(task);
     }
 
     @FXML
     public void aboutColor() {
-        openLink(HelpTools.aboutColorHtml());
+        openHtml(HelpTools.aboutColor());
     }
 
     @FXML

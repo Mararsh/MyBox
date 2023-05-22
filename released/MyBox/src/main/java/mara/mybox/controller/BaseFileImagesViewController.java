@@ -262,6 +262,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
                     mainPane.setDividerPosition(1, 0.5);
                     break;
             }
+            mainPane.applyCss();
             mainPane.layout();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -337,7 +338,6 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
                 thumbTask.cancel();
                 thumbTask = null;
             }
-
             if (file == null) {
                 getMyStage().setTitle(getBaseTitle());
                 return;
@@ -373,27 +373,25 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
         if (sourceFile == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                task.cancel();
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private Image image;
-
-                @Override
-                protected boolean handle() {
-                    image = readPageImage();
-                    return image != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    setImage(image, percent);
-                }
-            };
-            start(task, MessageFormat.format(message("LoadingPageNumber"), (frameIndex + 1) + ""));
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private Image image;
+
+            @Override
+            protected boolean handle() {
+                image = readPageImage();
+                return image != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                setImage(image, percent);
+            }
+        };
+        start(task, MessageFormat.format(message("LoadingPageNumber"), (frameIndex + 1) + ""));
     }
 
     // return error
@@ -402,61 +400,59 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
     }
 
     protected void loadThumbs() {
-        synchronized (this) {
-            if (thumbTask != null && !thumbTask.isQuit()) {
-                return;
-            }
-            if (thumbBox.getChildren().isEmpty()) {
-                for (int i = 0; i < framesNumber; ++i) {
-                    ImageView view = new ImageView();
-                    view.setFitHeight(50);
-                    view.setPreserveRatio(true);
-                    final int p = i;
-                    view.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                        @Override
-                        public void handle(MouseEvent event) {
-                            loadPage(p);
-                        }
-                    });
-                    thumbBox.getChildren().add(view);
-                    Label label = new Label((i + 1) + "");
-                    label.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                        @Override
-                        public void handle(MouseEvent event) {
-                            loadPage(p);
-                        }
-                    });
-                    thumbBox.getChildren().add(label);
-                }
-            }
-            int pos = Math.max(0, (int) (framesNumber * thumbScrollPane.getVvalue() / thumbScrollPane.getVmax()) - 1);
-            int end = Math.min(pos + 20, framesNumber);
-            List<Integer> missed = new ArrayList<>();
-            for (int i = pos; i < end; ++i) {
-                ImageView view = (ImageView) thumbBox.getChildren().get(2 * i);
-                if (view.getImage() == null) {
-                    missed.add(i);
-                }
-            }
-            if (missed.isEmpty()) {
-                return;
-            }
-            thumbTask = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    return loadThumbs(missed);
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    thumbBox.layout();
-                    adjustSplitPane();
-                }
-
-            };
-            start(thumbTask, false);
+        if (thumbTask != null) {
+            thumbTask.cancel();
         }
+        if (thumbBox.getChildren().isEmpty()) {
+            for (int i = 0; i < framesNumber; ++i) {
+                ImageView view = new ImageView();
+                view.setFitHeight(50);
+                view.setPreserveRatio(true);
+                final int p = i;
+                view.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        loadPage(p);
+                    }
+                });
+                thumbBox.getChildren().add(view);
+                Label label = new Label((i + 1) + "");
+                label.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        loadPage(p);
+                    }
+                });
+                thumbBox.getChildren().add(label);
+            }
+        }
+        int pos = Math.max(0, (int) (framesNumber * thumbScrollPane.getVvalue() / thumbScrollPane.getVmax()) - 1);
+        int end = Math.min(pos + 20, framesNumber);
+        List<Integer> missed = new ArrayList<>();
+        for (int i = pos; i < end; ++i) {
+            ImageView view = (ImageView) thumbBox.getChildren().get(2 * i);
+            if (view.getImage() == null) {
+                missed.add(i);
+            }
+        }
+        if (missed.isEmpty()) {
+            return;
+        }
+        thumbTask = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                return loadThumbs(missed);
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                thumbBox.layout();
+                adjustSplitPane();
+            }
+
+        };
+        start(thumbTask, false);
     }
 
     protected boolean loadThumbs(List<Integer> missed) {

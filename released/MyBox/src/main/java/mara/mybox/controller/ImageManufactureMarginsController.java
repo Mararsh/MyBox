@@ -239,75 +239,73 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
                 return;
             }
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private Image newImage;
-                private String value = null;
-
-                @Override
-                protected boolean handle() {
-                    switch (opType) {
-                        case SetMarginsByDragging:
-                            newImage = MarginTools.dragMarginsFx(imageView.getImage(),
-                                    (Color) colorSetController.rect.getFill(), imageController.maskRectangleData);
-                            break;
-                        case CutMarginsByWidth:
-                            newImage = MarginTools.cutMarginsByWidth(imageView.getImage(), addedWidth,
-                                    marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
-                                    marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
-                            value = addedWidth + "";
-                            break;
-                        case CutMarginsByColor:
-                            newImage = MarginTools.cutMarginsByColor(imageView.getImage(),
-                                    (Color) colorSetController.rect.getFill(), distance,
-                                    marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
-                                    marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
-                            value = distance + "";
-                            break;
-                        case AddMargins:
-                            newImage = MarginTools.addMarginsFx(imageView.getImage(),
-                                    (Color) colorSetController.rect.getFill(), addedWidth,
-                                    marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
-                                    marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
-                            value = addedWidth + "";
-                            break;
-                        case BlurMargins:
-                            newImage = MarginTools.blurMarginsAlpha(imageView.getImage(), addedWidth,
-                                    marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
-                                    marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
-                            value = addedWidth + "";
-                            break;
-                        default:
-                            return false;
-                    }
-                    if (task == null || isCancelled()) {
-                        return false;
-                    }
-                    return newImage != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    imageController.popSuccessful();
-                    imageController.updateImage(ImageOperation.Margins, opType.name(), value, newImage, cost);
-                    String info = Languages.message("OriginalSize") + ": " + (int) Math.round(imageController.image.getWidth())
-                            + "x" + (int) Math.round(imageController.image.getHeight()) + "\n"
-                            + Languages.message("CurrentSize") + ": " + Math.round(newImage.getWidth())
-                            + "x" + Math.round(newImage.getHeight());
-                    commentsLabel.setText(info);
-
-                    if (opType == OperationType.SetMarginsByDragging) {
-                        initDragging();
-                    }
-
-                }
-            };
-            imageController.start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private Image newImage;
+            private String value = null;
+
+            @Override
+            protected boolean handle() {
+                switch (opType) {
+                    case SetMarginsByDragging:
+                        newImage = MarginTools.dragMarginsFx(imageView.getImage(),
+                                (Color) colorSetController.rect.getFill(), imageController.maskRectangleData);
+                        break;
+                    case CutMarginsByWidth:
+                        newImage = MarginTools.cutMarginsByWidth(imageView.getImage(), addedWidth,
+                                marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
+                                marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
+                        value = addedWidth + "";
+                        break;
+                    case CutMarginsByColor:
+                        newImage = MarginTools.cutMarginsByColor(imageView.getImage(),
+                                (Color) colorSetController.rect.getFill(), distance,
+                                marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
+                                marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
+                        value = distance + "";
+                        break;
+                    case AddMargins:
+                        newImage = MarginTools.addMarginsFx(imageView.getImage(),
+                                (Color) colorSetController.rect.getFill(), addedWidth,
+                                marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
+                                marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
+                        value = addedWidth + "";
+                        break;
+                    case BlurMargins:
+                        newImage = MarginTools.blurMarginsAlpha(imageView.getImage(), addedWidth,
+                                marginsTopCheck.isSelected(), marginsBottomCheck.isSelected(),
+                                marginsLeftCheck.isSelected(), marginsRightCheck.isSelected());
+                        value = addedWidth + "";
+                        break;
+                    default:
+                        return false;
+                }
+                if (task == null || isCancelled()) {
+                    return false;
+                }
+                return newImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                imageController.popSuccessful();
+                imageController.updateImage(ImageOperation.Margins, opType.name(), value, newImage, cost);
+                String info = Languages.message("OriginalSize") + ": " + (int) Math.round(imageController.image.getWidth())
+                        + "x" + (int) Math.round(imageController.image.getHeight()) + "\n"
+                        + Languages.message("CurrentSize") + ": " + Math.round(newImage.getWidth())
+                        + "x" + Math.round(newImage.getHeight());
+                commentsLabel.setText(info);
+
+                if (opType == OperationType.SetMarginsByDragging) {
+                    initDragging();
+                }
+
+            }
+        };
+        start(task);
     }
 
     @Override

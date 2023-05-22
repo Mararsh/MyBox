@@ -417,7 +417,7 @@ public class ControlMapOptions extends BaseController {
             } else {
                 tiandituRadio.setSelected(true);
             }
-            mapSizeSelector.setValue(mapOptions.getMapSize() + "");
+            mapSizeSelector.getSelectionModel().select(mapOptions.getMapSize() + "");
             if (standardOpacitySelector != null) {
                 standardOpacitySelector.setValue(mapOptions.getStandardOpacity() + "");
                 roadOpacitySelector.setValue(mapOptions.getRoadOpacity() + "");
@@ -542,6 +542,7 @@ public class ControlMapOptions extends BaseController {
                 ));
 
             }
+            mapSizeSelector.getSelectionModel().select(mapOptions.getMapSize() + "");
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -563,12 +564,10 @@ public class ControlMapOptions extends BaseController {
     }
 
     public void setMapSize(int size) {
-        if (!mapController.mapLoaded || isSettingValues) {
+        if (mapController != null && !mapController.mapLoaded || isSettingValues) {
             return;
         }
-        isSettingValues = true;
         mapSizeSelector.getSelectionModel().select(size + "");
-        isSettingValues = false;
     }
 
     public void setStandardLayer() {

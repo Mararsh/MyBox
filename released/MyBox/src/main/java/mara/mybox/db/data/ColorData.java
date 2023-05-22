@@ -32,7 +32,7 @@ public class ColorData extends BaseData {
     protected int colorValue;
     protected javafx.scene.paint.Color color, invertColor, complementaryColor;
     protected String rgba, rgb, colorName, colorDisplay, colorSimpleDisplay, vSeparator;
-    protected String srgb, hsb, hue, rybAngle, saturation, brightness, invertRGB, complementaryRGB,
+    protected String srgb, hsb, hue, rybAngle, saturation, brightness, opacity, invertRGB, complementaryRGB,
             adobeRGB, appleRGB, eciRGB, SRGBLinear, adobeRGBLinear,
             appleRGBLinear, calculatedCMYK, eciCMYK, adobeCMYK, xyz, cieLab,
             lchab, cieLuv, lchuv;
@@ -251,19 +251,30 @@ public class ColorData extends BaseData {
         long h = Math.round(color.getHue());
         long s = Math.round(color.getSaturation() * 100);
         long b = Math.round(color.getBrightness() * 100);
-        hsb = h + vSeparator + s + "%" + vSeparator + b + "%";
+        long a = Math.round(color.getOpacity() * 100);
+        hsb = h + vSeparator + s + "%" + vSeparator + b + "%" + vSeparator + a + "%";
         hue = StringTools.fillLeftZero(h, 3);
         saturation = StringTools.fillLeftZero(s, 3);
         brightness = StringTools.fillLeftZero(b, 3);
+        opacity = StringTools.fillLeftZero(a, 3);
 
         ryb = ColorConvertTools.hue2ryb(h);
         rybAngle = StringTools.fillLeftZero(FloatTools.toInt(ryb), 3);
 
         invertColor = color.invert();
+        invertRGB = hsba(invertColor);
+
         complementaryColor = ColorConvertTools.converColor(ColorConvertTools.rybComplementary(this));
-        invertRGB = invertColor.toString().toUpperCase();
-        complementaryRGB = complementaryColor.toString().toUpperCase();
+        complementaryRGB = hsba(complementaryColor);
         return this;
+    }
+
+    public String hsba(Color c) {
+        long h = Math.round(c.getHue());
+        long s = Math.round(c.getSaturation() * 100);
+        long b = Math.round(c.getBrightness() * 100);
+        long a = Math.round(c.getOpacity() * 100);
+        return h + vSeparator + s + "%" + vSeparator + b + "%" + vSeparator + a + "%";
     }
 
     public String display() {
@@ -278,8 +289,9 @@ public class ColorData extends BaseData {
             }
             colorDisplay += rgba + "\n" + rgb + "\n" + colorValue + "\n"
                     + "sRGB: " + srgb + "\n"
-                    + "HSB: " + hsb + "\n"
+                    + "HSBA: " + hsb + "\n"
                     + message("RYBAngle") + ": " + rybAngle + "°\n"
+                    + message("Opacity") + ": " + opacity + "\n"
                     + message("CalculatedCMYK") + ": " + calculatedCMYK + "\n"
                     + "Adobe RGB: " + adobeRGB + "\n"
                     + "Apple RGB: " + appleRGB + "\n"
@@ -311,7 +323,7 @@ public class ColorData extends BaseData {
             }
             colorSimpleDisplay += colorValue + "\n" + rgba + "\n" + rgb + "\n"
                     + "sRGB: " + srgb + "\n"
-                    + "HSB: " + hsb + "\n"
+                    + "HSBA: " + hsb + "\n"
                     + message("RYBAngle") + ": " + rybAngle + "°\n"
                     + message("CalculatedCMYK") + ": " + calculatedCMYK + "\n";
         }
@@ -347,7 +359,7 @@ public class ColorData extends BaseData {
         row.addAll(Arrays.asList("sRGB", getSrgb(), invertData.getSrgb(), complementaryData.getSrgb()));
         table.add(row);
         row = new ArrayList<>();
-        row.addAll(Arrays.asList("HSB", getHsb(), invertData.getHsb(), complementaryData.getHsb()));
+        row.addAll(Arrays.asList("HSBA", getHsb(), invertData.getHsb(), complementaryData.getHsb()));
         table.add(row);
         row = new ArrayList<>();
         row.addAll(Arrays.asList(message("Hue"), getHue(), invertData.getHue(), complementaryData.getHue()));
@@ -360,6 +372,9 @@ public class ColorData extends BaseData {
         table.add(row);
         row = new ArrayList<>();
         row.addAll(Arrays.asList(message("RYBAngle"), getRybAngle(), invertData.getRybAngle(), complementaryData.getRybAngle()));
+        table.add(row);
+        row = new ArrayList<>();
+        row.addAll(Arrays.asList(message("Opacity"), getOpacity(), invertData.getOpacity(), complementaryData.getOpacity()));
         table.add(row);
         row = new ArrayList<>();
         row.addAll(Arrays.asList(message("CalculatedCMYK"), getCalculatedCMYK(), invertData.getCalculatedCMYK(), complementaryData.getCalculatedCMYK()));
@@ -938,6 +953,14 @@ public class ColorData extends BaseData {
 
     public float getRyb() {
         return ryb;
+    }
+
+    public String getOpacity() {
+        return opacity;
+    }
+
+    public void setOpacity(String opacity) {
+        this.opacity = opacity;
     }
 
     public String getvSeparator() {

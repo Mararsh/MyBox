@@ -15,6 +15,24 @@ import mara.mybox.dev.MyBoxLog;
  */
 public class UrlTools {
 
+    public static URL url(String address) {
+        try {
+            // some address may pop syntax error when run new URI(address).toURL() 
+            // So still use the deprecated api
+            return new URL(address);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static URL url(URL base, String address) {
+        try {
+            return new URL(base, address);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public static String checkURL(String value, Charset charset) {
         try {
             if (value == null || value.isBlank()) {
@@ -33,7 +51,7 @@ public class UrlTools {
                 if (file.exists()) {
                     address = file.toURI().toString();
                 } else {
-                    address = "http://" + value;
+                    address = "https://" + value;
                 }
             }
             address = decodeURL(address, charset);
@@ -95,13 +113,24 @@ public class UrlTools {
 
     public static String fullAddress(String baseAddress, String address) {
         try {
-            URL baseURL = new URL(baseAddress);
-            URL url = new URL(baseURL, address);
+            URL baseUrl = UrlTools.url(baseAddress);
+            if (baseUrl == null) {
+                return address;
+            }
+            URL url = fullUrl(baseUrl, address);
             return url.toString();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e.toString());
             return address;
         }
+    }
+
+    public static URL fullUrl(URL baseURL, String address) {
+        URL url = UrlTools.url(baseURL, address);
+        if (url != null) {
+            return url;
+        }
+        return UrlTools.url(address);
     }
 
     public static String filePrefix(URL url) {
@@ -154,7 +183,11 @@ public class UrlTools {
 
     public static String fullPath(String address) {
         try {
-            String path = fullPath(new URL(address));
+            URL url = UrlTools.url(address);
+            if (url == null) {
+                return address;
+            }
+            String path = fullPath(url);
             return path == null ? address : path;
         } catch (Exception e) {
             return address;

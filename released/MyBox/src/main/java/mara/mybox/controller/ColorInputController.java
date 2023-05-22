@@ -90,70 +90,68 @@ public class ColorInputController extends BaseController {
     @FXML
     @Override
     public void okAction() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
 
-                @Override
-                protected boolean handle() {
-                    String[] values = valuesArea.getText().split("\n");
-                    if (values == null || values.length == 0) {
-                        return true;
-                    }
-                    try (Connection conn = DerbyBase.getConnection();) {
-                        TableColor tableColor = null;
-                        TableColorPalette tableColorPalette = null;
-                        long paletteid = -1;
-                        if (colorsManager != null) {
-                            tableColor = colorsManager.colorsController.tableColor;
-                            if (!colorsManager.colorsController.isAllColors()) {
-                                paletteid = colorsManager.colorsController.currentPalette.getCpnid();
-                            }
-                            tableColorPalette = colorsManager.colorsController.tableColorPalette;
-                        }
-                        if (tableColor == null) {
-                            tableColor = new TableColor();
-                        }
-                        if (tableColorPalette == null) {
-                            tableColorPalette = new TableColorPalette();
-                        }
-                        conn.setAutoCommit(false);
-                        for (String value : values) {
-                            value = value.trim();
-                            ColorData color = new ColorData(value).calculate();
-                            if (color.getSrgb() == null) {
-                                continue;
-                            }
-                            tableColor.write(conn, color, true);
-                            if (paletteid >= 0) {
-                                color.setPaletteid(paletteid);
-                                tableColorPalette.findAndCreate(conn, color, false, false);
-                            }
-                            TableStringValues.add(conn, "ColorInputHistories", value);
-                        }
-                        conn.commit();
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
+            @Override
+            protected boolean handle() {
+                String[] values = valuesArea.getText().split("\n");
+                if (values == null || values.length == 0) {
                     return true;
                 }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (colorsManager == null || !colorsManager.getMyStage().isShowing()) {
-                        colorsManager = ColorsManageController.oneOpen();
-                    } else {
-                        colorsManager.colorsController.refreshPalette();
+                try (Connection conn = DerbyBase.getConnection();) {
+                    TableColor tableColor = null;
+                    TableColorPalette tableColorPalette = null;
+                    long paletteid = -1;
+                    if (colorsManager != null) {
+                        tableColor = colorsManager.tableColor;
+                        if (!colorsManager.palettesController.isAllColors()) {
+                            paletteid = colorsManager.palettesController.currentPaletteId();
+                        }
+                        tableColorPalette = colorsManager.tableColorPalette;
                     }
-                    closeStage();
+                    if (tableColor == null) {
+                        tableColor = new TableColor();
+                    }
+                    if (tableColorPalette == null) {
+                        tableColorPalette = new TableColorPalette();
+                    }
+                    conn.setAutoCommit(false);
+                    for (String value : values) {
+                        value = value.trim();
+                        ColorData color = new ColorData(value).calculate();
+                        if (color.getSrgb() == null) {
+                            continue;
+                        }
+                        tableColor.write(conn, color, true);
+                        if (paletteid >= 0) {
+                            color.setPaletteid(paletteid);
+                            tableColorPalette.findAndCreate(conn, color, false, false);
+                        }
+                        TableStringValues.add(conn, "ColorInputHistories", value);
+                    }
+                    conn.commit();
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
                 }
+                return true;
+            }
 
-            };
-            start(task);
-        }
+            @Override
+            protected void whenSucceeded() {
+                if (colorsManager == null || !colorsManager.getMyStage().isShowing()) {
+                    colorsManager = ColorsManageController.oneOpen();
+                } else {
+                    colorsManager.refreshPalette();
+                }
+                closeStage();
+            }
+
+        };
+        start(task);
     }
 
     @FXML

@@ -5,6 +5,7 @@ import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.data2d.Data2D;
@@ -103,13 +104,13 @@ public class ControlData2DRowExpression extends ControlJavaScriptRefer {
     }
 
     @Override
-    protected void moreExampleButtons(MenuController controller) {
+    protected void moreExampleButtons(MenuController controller, String menuName) {
         try {
             if (data2D == null || !data2D.isValid()) {
                 return;
             }
             String col1 = data2D.columnNames().get(0);
-            PopTools.rowExpressionButtons(controller, scriptInput, col1);
+            PopTools.rowExpressionButtons(controller, scriptInput, col1, menuName);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -136,8 +137,15 @@ public class ControlData2DRowExpression extends ControlJavaScriptRefer {
     }
 
     @FXML
-    public void aboutRowExpression() {
-        openLink(HelpTools.aboutRowExpression());
+    public void showRowExpressionHelps(Event event) {
+        popEventMenu(event, HelpTools.rowExpressionHelps(this));
+    }
+
+    @FXML
+    public void popRowExpressionHelps(Event event) {
+        if (UserConfig.getBoolean("RowExpressionsHelpsPopWhenMouseHovering", false)) {
+            showRowExpressionHelps(event);
+        }
     }
 
 }

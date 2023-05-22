@@ -33,7 +33,7 @@ import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.OCRTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import net.sourceforge.tess4j.ITessAPI.TessPageIteratorLevel;
@@ -238,7 +238,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                     ocrOptionsController.dataPathController.fileInput.setStyle(UserConfig.badStyle());
                     return false;
                 }
-                configFile = TmpFileTools.getTempFile();
+                configFile = FileTmpTools.getTempFile();
                 String s = "tessedit_create_txt 1\n";
                 if (ocrOptionsController.htmlCheck.isSelected()) {
                     s += "tessedit_create_hocr 1\n";
@@ -427,7 +427,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
             // Looks OCR engine does not support non-English file name
             String actualPrefix = targetFile.getParent() + File.separator
                     + FileNameTools.prefix(targetFile.getName());
-            String tmpPrefix = TmpFileTools.getTempFile().getAbsolutePath();
+            String tmpPrefix = FileTmpTools.getTempFile().getAbsolutePath();
 
             OCRinstance.createDocumentsWithResults​(lastImage, tmpPrefix,
                     tmpPrefix, formats, TessPageIteratorLevel.RIL_SYMBOL);
@@ -526,7 +526,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
             // Looks OCR engine does not support non-English file name
             String actualPrefix = targetFile.getParent() + File.separator
                     + FileNameTools.prefix(targetFile.getName());
-            String tmpPrefix = TmpFileTools.getTempFile().getAbsolutePath();
+            String tmpPrefix = FileTmpTools.getTempFile().getAbsolutePath();
 
             List<String> parameters = new ArrayList<>();
             parameters.addAll(Arrays.asList(

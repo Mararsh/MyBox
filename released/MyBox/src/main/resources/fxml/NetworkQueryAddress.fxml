@@ -8,21 +8,18 @@ License:    Apache License Version 2.0
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.NetworkQueryAddressController">
+<BorderPane fx:id="thisPane" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.NetworkQueryAddressController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -37,36 +34,13 @@ License:    Apache License Version 2.0
             <children>
                 <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                     <children>
-                        <RadioButton fx:id="urlRadio" mnemonicParsing="false" selected="true" text="URL">
-                            <toggleGroup>
-                                <ToggleGroup fx:id="typeGroup" />
-                            </toggleGroup>
-                        </RadioButton>
-                        <RadioButton fx:id="hostRadio" mnemonicParsing="false" text="%Host" toggleGroup="$typeGroup" />
-                        <RadioButton fx:id="ipRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="IP" toggleGroup="$typeGroup" />
-                        <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                        <CheckBox fx:id="localCheck" mnemonicParsing="false" selected="true" text="Local" />
-                        <CheckBox fx:id="iptaobaoCheck" mnemonicParsing="false" selected="true" text="ip.taobao.com" />
-                        <CheckBox fx:id="ipaddressCheck" layoutX="814.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="ipaddress.com" />
-                    </children>
-                </HBox>
-                <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                    <children>
-                        <Button fx:id="historyButton" mnemonicParsing="false"  onAction="#showAddressHistories" onMouseEntered="#popAddressHistories">
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/Red/iconHistory.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
+                        <Label text="%Address" />
                         <TextField fx:id="addressInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                        <Button fx:id="queryButton" layoutX="924.0" layoutY="10.0" mnemonicParsing="false" onAction="#queryAction">
+                        <Button fx:id="goButton" layoutX="924.0" layoutY="10.0" mnemonicParsing="false" onAction="#goAction">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/Red/iconQuery.png" />
+                                        <Image url="@../buttons/Red/iconGo.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -80,62 +54,51 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
+                        <Button fx:id="historyButton" mnemonicParsing="false" onAction="#showAddressHistories" onMouseEntered="#popAddressHistories">
+                            <graphic>
+                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconHistory.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
                     </children>
                 </HBox>
                 <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                     <tabs>
                         <Tab text="%Information">
                             <content>
-                                <VBox fx:id="thisPane1" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                <VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <padding>
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                     </padding>
                                     <children>
-                                        <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                                            <children>
-                                                <Button fx:id="styleLinksButton" mnemonicParsing="false"  onAction="#showHtmlStyle"     onMouseEntered="#popHtmlStyle">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconStyle.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Label maxWidth="1.7976931348623157E308" visible="false" HBox.hgrow="ALWAYS" />
-                                                <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction" onMouseEntered="#popSaveAs">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconSave.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                                <Button fx:id="editButton" mnemonicParsing="false" onAction="#editAction">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconEdit.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
-                                            </children>
-                                        </HBox>
-                                        <fx:include fx:id="webView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlWebView.fxml" VBox.vgrow="ALWAYS" />
+                                        <fx:include fx:id="info" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlHtmlView.fxml" VBox.vgrow="ALWAYS" />
+                                    </children>
+                                </VBox>
+                            </content>
+                        </Tab>
+                        <Tab text="ipaddress.com">
+                            <content>
+                                <VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                    <padding>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                    </padding>
+                                    <children>
+                                        <fx:include fx:id="ipaddress" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlHtmlView.fxml" VBox.vgrow="ALWAYS" />
                                     </children>
                                 </VBox>
                             </content>
                         </Tab>
                         <Tab text="%Header">
                             <content>
-                                <VBox fx:id="thisPane11" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                <VBox  alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                                     <padding>
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                     </padding>
                                     <children>
-                                        <fx:include fx:id="header" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlWebView.fxml" VBox.vgrow="ALWAYS" />
+                                        <fx:include fx:id="header" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlHtmlView.fxml" VBox.vgrow="ALWAYS" />
                                     </children>
                                 </VBox>
                             </content>

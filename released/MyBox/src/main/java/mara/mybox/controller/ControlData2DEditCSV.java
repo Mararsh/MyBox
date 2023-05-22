@@ -281,6 +281,9 @@ public class ControlData2DEditCSV extends BaseController {
                 popDone();
             }
         });
+        if (data2D.isCSV() || data2D.isTexts()) {
+            controller.label.setText(message("DelimiterNotAffectSource"));
+        }
     }
 
     @FXML

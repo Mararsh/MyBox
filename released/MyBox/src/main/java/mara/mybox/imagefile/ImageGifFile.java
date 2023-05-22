@@ -25,7 +25,7 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import thridparty.GifDecoder;
 import thridparty.GifDecoder.GifImage;
 
@@ -189,7 +189,7 @@ public class ImageGifFile {
             ImageWriteParam param = gifWriter.getDefaultWriteParam();
             GIFImageMetadata metaData = (GIFImageMetadata) gifWriter.getDefaultImageMetadata(
                     ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB), param);
-            File tmpFile = TmpFileTools.getTempFile();
+            File tmpFile = FileTmpTools.getTempFile();
             try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 gifWriter.setOutput(out);
                 gifWriter.prepareWriteSequence(null);
@@ -227,7 +227,7 @@ public class ImageGifFile {
             ImageWriteParam param = gifWriter.getDefaultWriteParam();
             GIFImageMetadata metaData = (GIFImageMetadata) gifWriter.getDefaultImageMetadata(
                     ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB), param);
-            File tmpFile = TmpFileTools.getTempFile();
+            File tmpFile = FileTmpTools.getTempFile();
             try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 gifWriter.setOutput(out);
 
@@ -269,7 +269,7 @@ public class ImageGifFile {
             ImageWriteParam param = gifWriter.getDefaultWriteParam();
             GIFImageMetadata metaData = (GIFImageMetadata) gifWriter.getDefaultImageMetadata(
                     ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_RGB), param);
-            File tmpFile = TmpFileTools.getTempFile();
+            File tmpFile = FileTmpTools.getTempFile();
             try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 gifWriter.setOutput(out);
                 gifWriter.prepareWriteSequence(null);

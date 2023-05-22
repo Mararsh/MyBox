@@ -50,34 +50,32 @@ public class ImageInMyBoxClipboardController extends ImageViewerController {
         if (clipsController.tableData.isEmpty()) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        ImageClipboard clip = clipsController.selectedItem();
-                        if (clip == null) {
-                            clip = clipsController.tableData.get(0);
-                        }
-                        image = ImageClipboard.loadImage(clip);
-                        return image != null;
-                    } catch (Exception e) {
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    afterImageLoaded();
-                    setImageChanged(false);
-                }
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    ImageClipboard clip = clipsController.selectedItem();
+                    if (clip == null) {
+                        clip = clipsController.tableData.get(0);
+                    }
+                    image = ImageClipboard.loadImage(clip);
+                    return image != null;
+                } catch (Exception e) {
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                afterImageLoaded();
+                setImageChanged(false);
+            }
+        };
+        start(task);
     }
 
     /*

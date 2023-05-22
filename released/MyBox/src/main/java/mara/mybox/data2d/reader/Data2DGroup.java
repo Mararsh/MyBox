@@ -10,8 +10,8 @@ import mara.mybox.db.data.ColumnDefinition;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.CsvTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.TmpFileTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -79,7 +79,7 @@ public class Data2DGroup extends Data2DOperator {
                 return;
             }
             if (currentFile == null) {
-                currentFile = TmpFileTools.getTempFile(".csv");
+                currentFile = FileTmpTools.getTempFile(".csv");
                 csvPrinter = CsvTools.csvPrinter(currentFile);
                 csvPrinter.printRecord(names);
                 startIndex = rowIndex;
@@ -109,7 +109,7 @@ public class Data2DGroup extends Data2DOperator {
             csvPrinter.flush();
             csvPrinter.close();
             csvPrinter = null;
-            File file = data2D.tmpFile(prefix + "_" + startIndex + "-" + rowIndex, null, ".csv");
+            File file = data2D.tmpFile(prefix + "_" + startIndex + "-" + rowIndex, null, "csv");
             if (FileTools.rename(currentFile, file) && file.exists()) {
                 DataFileCSV dataFileCSV = new DataFileCSV();
                 dataFileCSV.setTask(task);

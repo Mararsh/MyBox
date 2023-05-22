@@ -628,7 +628,7 @@ public class DataTable extends Data2D {
         if (needFilter()) {
             return super.frequency(dname, frequency, colName, col, scale);
         }
-        File csvFile = tmpFile(dname, "frequency", ".csv");
+        File csvFile = tmpFile(dname, "frequency", "csv");
         int total = 0, dNumber = 0;
         try (CSVPrinter csvPrinter = CsvTools.csvPrinter(csvFile);
                 Connection conn = DerbyBase.getConnection()) {

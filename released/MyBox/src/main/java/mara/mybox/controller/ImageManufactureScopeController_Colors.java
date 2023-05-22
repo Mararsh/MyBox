@@ -1,19 +1,14 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.Callback;
@@ -22,7 +17,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.ListColorCell;
 import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -45,7 +39,7 @@ public abstract class ImageManufactureScopeController_Colors extends ImageManufa
                 @Override
                 public void onChanged(ListChangeListener.Change<? extends Color> c) {
                     int size = colorsList.getItems().size();
-                    colorsSizeLabel.setText(Languages.message("Count") + ": " + size);
+                    colorsSizeLabel.setText(message("Count") + ": " + size);
                     if (size > 100) {
                         colorsSizeLabel.setStyle(NodeStyleTools.redTextStyle());
                     } else {
@@ -167,72 +161,22 @@ public abstract class ImageManufactureScopeController_Colors extends ImageManufa
     }
 
     @FXML
-    public void popSaveColorsMenu(MouseEvent mouseEvent) {
-        try {
-            List<MenuItem> items = new ArrayList<>();
-
-            MenuItem menu = new MenuItem(Languages.message("SaveInPalette"));
-            menu.setOnAction((ActionEvent event) -> {
-                saveColorsInPalette();
-            });
-            items.add(menu);
-            items.add(new SeparatorMenuItem());
-
-            menu = new MenuItem(Languages.message("SaveInColorsLibrary"));
-            menu.setOnAction((ActionEvent event) -> {
-                saveColorsInTable();
-            });
-            items.add(menu);
-
-            items.add(new SeparatorMenuItem());
-
-            popEventMenu(mouseEvent, items);
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void saveColorsInPalette() {
+    public void saveColors() {
         List<Color> colors = colorsList.getSelectionModel().getSelectedItems();
         if (colors == null || colors.isEmpty()) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+            @Override
+            protected boolean handle() {
+                return tableColor.writeColors(colors, false) != null;
             }
-            task = new SingletonTask<Void>(this) {
-                @Override
-                protected boolean handle() {
-//                    TableColor.addColorsInPalette(colors);
-                    return true;
-                }
 
-            };
-            parentController.start(task);
-        }
-    }
-
-    public void saveColorsInTable() {
-        List<Color> colors = colorsList.getSelectionModel().getSelectedItems();
-        if (colors == null || colors.isEmpty()) {
-            return;
-        }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                @Override
-                protected boolean handle() {
-                    tableColor.writeColors(colors, false);
-                    return true;
-                }
-
-            };
-            parentController.start(task);
-        }
+        };
+        start(task);
     }
 
 }

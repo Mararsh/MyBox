@@ -23,9 +23,9 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileCopyTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.PdfTools;
-import mara.mybox.tools.TmpFileTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
@@ -252,72 +252,70 @@ public class PdfAttributesController extends BaseController {
     }
 
     public void loadPdfInformation(final String password) {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            infoButton.setDisable(true);
-            pdfInfo = null;
-            version = -1;
-            createTime = null;
-            modifyTime = null;
-            if (sourceFile == null) {
-                return;
-            }
-            pdfInfo = new PdfInformation(sourceFile);
-            task = new SingletonTask<Void>(this) {
-
-                private boolean pop;
-
-                @Override
-                protected boolean handle() {
-                    ok = false;
-                    pop = false;
-                    try ( PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
-                        pdfInfo.setUserPassword(password);
-                        pdfInfo.readInfo(doc);
-                        doc.close();
-                        ok = true;
-                    } catch (InvalidPasswordException e) {
-                        pop = true;
-                        return false;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    sourceFileInput.setStyle(null);
-                    infoButton.setDisable(false);
-                    resetAction();
-                }
-
-                @Override
-                protected void whenFailed() {
-                    if (pop) {
-                        TextInputDialog dialog = new TextInputDialog();
-                        dialog.setContentText(Languages.message("UserPassword"));
-                        Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-                        stage.setAlwaysOnTop(true);
-                        stage.toFront();
-                        Optional<String> result = dialog.showAndWait();
-                        if (result.isPresent()) {
-                            loadPdfInformation(result.get());
-                        }
-                        return;
-                    }
-                    if (error != null) {
-                        popError(Languages.message(error));
-                    } else {
-                        popFailed();
-                    }
-                }
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        infoButton.setDisable(true);
+        pdfInfo = null;
+        version = -1;
+        createTime = null;
+        modifyTime = null;
+        if (sourceFile == null) {
+            return;
+        }
+        pdfInfo = new PdfInformation(sourceFile);
+        task = new SingletonTask<Void>(this) {
+
+            private boolean pop;
+
+            @Override
+            protected boolean handle() {
+                ok = false;
+                pop = false;
+                try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
+                    pdfInfo.setUserPassword(password);
+                    pdfInfo.readInfo(doc);
+                    doc.close();
+                    ok = true;
+                } catch (InvalidPasswordException e) {
+                    pop = true;
+                    return false;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                sourceFileInput.setStyle(null);
+                infoButton.setDisable(false);
+                resetAction();
+            }
+
+            @Override
+            protected void whenFailed() {
+                if (pop) {
+                    TextInputDialog dialog = new TextInputDialog();
+                    dialog.setContentText(Languages.message("UserPassword"));
+                    Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+                    stage.setAlwaysOnTop(true);
+                    stage.toFront();
+                    Optional<String> result = dialog.showAndWait();
+                    if (result.isPresent()) {
+                        loadPdfInformation(result.get());
+                    }
+                    return;
+                }
+                if (error != null) {
+                    popError(Languages.message(error));
+                } else {
+                    popFailed();
+                }
+            }
+        };
+        start(task);
     }
 
     @FXML
@@ -441,26 +439,24 @@ public class PdfAttributesController extends BaseController {
         acc.setCanPrintDegraded(printCheck.isSelected());
         modify.setAccess(acc);
 
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    return setAttributes(sourceFile, pdfInfo.getUserPassword(), modify);
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    loadPdfInformation(modify.getUserPassword());
-                    popSuccessful();
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                return setAttributes(sourceFile, pdfInfo.getUserPassword(), modify);
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                loadPdfInformation(modify.getUserPassword());
+                popSuccessful();
+            }
+
+        };
+        start(task);
     }
 
     private boolean setAttributes(File file, String password, PdfInformation info) {
@@ -468,9 +464,9 @@ public class PdfAttributesController extends BaseController {
             if (file == null || info == null) {
                 return false;
             }
-            File tmpFile = TmpFileTools.getTempFile();
+            File tmpFile = FileTmpTools.getTempFile();
             FileCopyTools.copyFile(file, tmpFile);
-            try ( PDDocument doc = PDDocument.load(tmpFile, password, AppVariables.pdfMemUsage)) {
+            try (PDDocument doc = PDDocument.load(tmpFile, password, AppVariables.pdfMemUsage)) {
                 PDDocumentInformation docInfo = doc.getDocumentInformation();
                 docInfo.setAuthor(info.getAuthor());
                 docInfo.setTitle(info.getTitle());

@@ -79,29 +79,26 @@ public class ControlNamedValues extends BaseSysTableController<NamedValues> {
     }
 
     public void save(String name, String value) {
-        if (task != null && !task.isQuit()) {
-            return;
+        if (task != null) {
+            task.cancel();
         }
-        synchronized (this) {
-            task = new SingletonTask<Void>(this) {
-                NamedValues updated;
+        task = new SingletonTask<Void>(this) {
 
-                @Override
+            @Override
 
-                protected boolean handle() {
-                    NamedValues data = new NamedValues(key, name, value, new Date());
-                    return tableNamedValues.writeData(data) != null;
-                }
+            protected boolean handle() {
+                NamedValues data = new NamedValues(key, name, value, new Date());
+                return tableNamedValues.writeData(data) != null;
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    popSuccessful();
-                    refreshAction();
-                }
+            @Override
+            protected void whenSucceeded() {
+                popSuccessful();
+                refreshAction();
+            }
 
-            };
-            start(task);
-        }
+        };
+        start(task);
     }
 
     @Override
@@ -138,33 +135,31 @@ public class ControlNamedValues extends BaseSysTableController<NamedValues> {
         if (index < 0) {
             return;
         }
-        if (task != null && !task.isQuit()) {
-            return;
+        if (task != null) {
+            task.cancel();
         }
         NamedValues selected = tableData.get(index);
         String newName = PopTools.askValue(getTitle(), message("CurrentName") + ":" + selected.getName(),
                 message("NewName"), selected.getName() + "m");
-        synchronized (this) {
-            task = new SingletonTask<Void>(this) {
-                NamedValues updated;
+        task = new SingletonTask<Void>(this) {
+            NamedValues updated;
 
-                @Override
+            @Override
 
-                protected boolean handle() {
-                    selected.setName(newName);
-                    updated = tableNamedValues.updateData(selected);
-                    return updated != null;
-                }
+            protected boolean handle() {
+                selected.setName(newName);
+                updated = tableNamedValues.updateData(selected);
+                return updated != null;
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    popSuccessful();
-                    tableData.set(index, updated);
-                }
+            @Override
+            protected void whenSucceeded() {
+                popSuccessful();
+                tableData.set(index, updated);
+            }
 
-            };
-            start(task);
-        }
+        };
+        start(task);
     }
 
     @FXML

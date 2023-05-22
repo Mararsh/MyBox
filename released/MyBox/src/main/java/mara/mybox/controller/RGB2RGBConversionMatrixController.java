@@ -217,32 +217,30 @@ public class RGB2RGBConversionMatrixController extends ChromaticityBaseControlle
 
     @FXML
     public void calculateAllAction(ActionEvent event) {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private StringTable table;
-                private String allTexts;
-
-                @Override
-                protected boolean handle() {
-                    table = RGB2RGBConversionMatrix.allTable(scale);
-                    allTexts = RGB2RGBConversionMatrix.allTexts(scale);
-                    return table != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    matrixController.loadTable(table);
-                    textsArea.setText(allTexts);
-                    textsArea.home();
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private StringTable table;
+            private String allTexts;
+
+            @Override
+            protected boolean handle() {
+                table = RGB2RGBConversionMatrix.allTable(scale);
+                allTexts = RGB2RGBConversionMatrix.allTexts(scale);
+                return table != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                matrixController.loadTable(table);
+                textsArea.setText(allTexts);
+                textsArea.home();
+            }
+
+        };
+        start(task);
     }
 
     @Override

@@ -99,156 +99,147 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
     @FXML
     @Override
     public void rotateRight() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private Image newImage;
-
-                @Override
-                protected boolean handle() {
-                    newImage = TransformTools.rotateImage(imageView.getImage(), rotateAngle);
-                    if (task == null || isCancelled()) {
-                        return false;
-                    }
-                    return newImage != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    imageController.popSuccessful();
-                    imageController.updateImage(ImageOperation.Transform, "rotateRight", rotateAngle + "",
-                            newImage, cost);
-                }
-            };
-            imageController.start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private Image newImage;
+
+            @Override
+            protected boolean handle() {
+                newImage = TransformTools.rotateImage(imageView.getImage(), rotateAngle);
+                if (task == null || isCancelled()) {
+                    return false;
+                }
+                return newImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                imageController.popSuccessful();
+                imageController.updateImage(ImageOperation.Transform, "rotateRight", rotateAngle + "",
+                        newImage, cost);
+            }
+        };
+        start(task);
     }
 
     @FXML
     @Override
     public void rotateLeft() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private Image newImage;
-
-                @Override
-                protected boolean handle() {
-                    newImage = TransformTools.rotateImage(imageView.getImage(), 360 - rotateAngle);
-                    if (task == null || isCancelled()) {
-                        return false;
-                    }
-                    return newImage != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    imageController.popSuccessful();
-                    imageController.updateImage(ImageOperation.Transform, "rotateLeft", (360 - rotateAngle) + "",
-                            newImage, cost);
-                }
-
-            };
-            imageController.start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private Image newImage;
+
+            @Override
+            protected boolean handle() {
+                newImage = TransformTools.rotateImage(imageView.getImage(), 360 - rotateAngle);
+                if (task == null || isCancelled()) {
+                    return false;
+                }
+                return newImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                imageController.popSuccessful();
+                imageController.updateImage(ImageOperation.Transform, "rotateLeft", (360 - rotateAngle) + "",
+                        newImage, cost);
+            }
+
+        };
+        start(task);
     }
 
     @FXML
     public void horizontalAction() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private Image newImage;
-
-                @Override
-                protected boolean handle() {
-                    newImage = TransformTools.horizontalImage(imageView.getImage());
-                    if (task == null || isCancelled()) {
-                        return false;
-                    }
-                    return newImage != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    imageController.popSuccessful();
-                    imageController.updateImage(ImageOperation.Transform, "horizontal", null, newImage, cost);
-                }
-
-            };
-            imageController.start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private Image newImage;
+
+            @Override
+            protected boolean handle() {
+                newImage = TransformTools.horizontalImage(imageView.getImage());
+                if (task == null || isCancelled()) {
+                    return false;
+                }
+                return newImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                imageController.popSuccessful();
+                imageController.updateImage(ImageOperation.Transform, "horizontal", null, newImage, cost);
+            }
+
+        };
+        start(task);
     }
 
     @FXML
     public void verticalAction() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private Image newImage;
-
-                @Override
-                protected boolean handle() {
-                    newImage = TransformTools.verticalImage(imageView.getImage());
-                    if (task == null || isCancelled()) {
-                        return false;
-                    }
-                    return newImage != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    imageController.popSuccessful();
-                    imageController.updateImage(ImageOperation.Transform, "vertical", null, newImage, cost);
-                }
-
-            };
-            imageController.start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private Image newImage;
+
+            @Override
+            protected boolean handle() {
+                newImage = TransformTools.verticalImage(imageView.getImage());
+                if (task == null || isCancelled()) {
+                    return false;
+                }
+                return newImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                imageController.popSuccessful();
+                imageController.updateImage(ImageOperation.Transform, "vertical", null, newImage, cost);
+            }
+
+        };
+        start(task);
     }
 
     @FXML
     public void shearAction() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private Image newImage;
-
-                @Override
-                protected boolean handle() {
-                    newImage = TransformTools.shearImage(imageView.getImage(), shearX, 0);
-                    if (task == null || isCancelled()) {
-                        return false;
-                    }
-                    return newImage != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    imageController.popSuccessful();
-                    imageController.updateImage(ImageOperation.Transform, "shear", shearX + "", newImage, cost);
-                }
-
-            };
-            imageController.start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private Image newImage;
+
+            @Override
+            protected boolean handle() {
+                newImage = TransformTools.shearImage(imageView.getImage(), shearX, 0);
+                if (task == null || isCancelled()) {
+                    return false;
+                }
+                return newImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                imageController.popSuccessful();
+                imageController.updateImage(ImageOperation.Transform, "shear", shearX + "", newImage, cost);
+            }
+
+        };
+        start(task);
     }
 
+    @Override
     public void rotate(int angle) {
         imageView.setRotate(angle);
     }
@@ -256,33 +247,31 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
     @FXML
     @Override
     public void okAction() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private int angle;
-                private Image newImage;
-
-                @Override
-                protected boolean handle() {
-                    angle = (int) angleSlider.getValue();
-                    newImage = TransformTools.rotateImage(imageView.getImage(), angle);
-                    if (task == null || isCancelled()) {
-                        return false;
-                    }
-                    return newImage != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    imageController.popSuccessful();
-                    imageController.updateImage(ImageOperation.Transform, "rotate", angle + "", newImage, cost);
-                }
-            };
-            imageController.start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private int angle;
+            private Image newImage;
+
+            @Override
+            protected boolean handle() {
+                angle = (int) angleSlider.getValue();
+                newImage = TransformTools.rotateImage(imageView.getImage(), angle);
+                if (task == null || isCancelled()) {
+                    return false;
+                }
+                return newImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                imageController.popSuccessful();
+                imageController.updateImage(ImageOperation.Transform, "rotate", angle + "", newImage, cost);
+            }
+        };
+        start(task);
     }
 
 }

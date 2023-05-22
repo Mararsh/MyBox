@@ -1,7 +1,7 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
-import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -19,7 +19,7 @@ public class DatabaseSqlController extends TreeManageController {
 
     public DatabaseSqlController() {
         baseTitle = message("DatabaseSQL");
-        category = TreeNode.SQL;
+        category = InfoNode.SQL;
         nameMsg = message("Title");
         valueMsg = "SQL";
     }

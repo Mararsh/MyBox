@@ -3,7 +3,7 @@ package mara.mybox.controller;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -24,7 +24,7 @@ public class DataTableQueryController extends TreeManageController {
 
     public DataTableQueryController() {
         baseTitle = message("DataQuery");
-        category = TreeNode.SQL;
+        category = InfoNode.SQL;
         nameMsg = message("Title");
         valueMsg = "SQL";
     }

@@ -129,6 +129,7 @@ public class ControlData2DView extends BaseController {
     }
 
     @FXML
+    @Override
     public void refreshAction() {
         if (htmlTab.isSelected()) {
             updateHtml();
@@ -179,6 +180,9 @@ public class ControlData2DView extends BaseController {
                 }
             }
         });
+        if (data2D.isCSV() || data2D.isTexts()) {
+            controller.label.setText(message("DelimiterNotAffectSource"));
+        }
     }
 
     /*
@@ -197,7 +201,7 @@ public class ControlData2DView extends BaseController {
             int rNumber = data2D.tableRowsNumber();
             int cNumber = data2D.tableColsNumber();
             if (rNumber <= 0 || cNumber <= 0) {
-                htmlController.loadContents("");
+                htmlController.clear();
                 return;
             }
             List<String> names;
@@ -255,7 +259,7 @@ public class ControlData2DView extends BaseController {
             int rNumber = data2D.tableRowsNumber();
             int cNumber = data2D.tableColsNumber();
             if (rNumber <= 0 || cNumber <= 0) {
-                htmlController.loadContents("");
+                htmlController.clear();
                 return;
             }
             StringBuilder s = new StringBuilder();

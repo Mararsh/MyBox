@@ -12,6 +12,7 @@ import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
+import static mara.mybox.fxml.WindowTools.recordInfo;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
@@ -104,10 +105,10 @@ public class ClearExpiredDataController extends BaseTaskController {
     @Override
     public boolean doTask() {
         try {
-            showLogs(message("ClearExpiredData") + "...");
+            recordInfo(this, message("ClearExpiredData") + "...");
 
             if (tmpFilesCheck.isSelected()) {
-                showLogs(message("Clear") + ": " + AppVariables.MyBoxTempPath);
+                recordInfo(this, message("Clear") + ": " + AppVariables.MyBoxTempPath);
                 FileDeleteTools.clearDir(AppVariables.MyBoxTempPath);
             }
             if (task != null && task.isCancelled()) {

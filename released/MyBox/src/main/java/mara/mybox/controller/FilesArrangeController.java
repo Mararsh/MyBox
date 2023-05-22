@@ -283,56 +283,48 @@ public class FilesArrangeController extends BaseBatchFileController {
     @FXML
     @Override
     public void startAction() {
-        try {
-            if (!initAttributes()) {
-                return;
-            }
-            targetFilesCount = 0;
-            targetFiles = new LinkedHashMap<>();
-            updateInterface("Started");
-            synchronized (this) {
-                if (task != null && !task.isQuit()) {
-                    return;
-                }
-                task = new SingletonTask<Void>(this) {
-
-                    @Override
-                    protected boolean handle() {
-                        return arrangeFiles(sourcePath);
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        updateInterface("Done");
-                    }
-
-                    @Override
-                    protected void cancelled() {
-                        super.cancelled();
-                        updateInterface("Canceled");
-                    }
-
-                    @Override
-                    protected void failed() {
-                        super.failed();
-                        updateInterface("Failed");
-                    }
-
-                    @Override
-                    protected void finalAction() {
-                        super.finalAction();
-                        task = null;
-                        afterTask();
-                    }
-
-                };
-                start(task, false);
-            }
-        } catch (Exception e) {
-            updateInterface("Failed");
-            MyBoxLog.error(e.toString());
+        if (task != null) {
+            task.cancel();
         }
+        if (!initAttributes()) {
+            return;
+        }
+        targetFilesCount = 0;
+        targetFiles = new LinkedHashMap<>();
+        updateInterface("Started");
+        task = new SingletonTask<Void>(this) {
 
+            @Override
+            protected boolean handle() {
+                return arrangeFiles(sourcePath);
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                updateInterface("Done");
+            }
+
+            @Override
+            protected void cancelled() {
+                super.cancelled();
+                updateInterface("Canceled");
+            }
+
+            @Override
+            protected void failed() {
+                super.failed();
+                updateInterface("Failed");
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                task = null;
+                afterTask();
+            }
+
+        };
+        start(task, false);
     }
 
     @Override

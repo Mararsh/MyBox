@@ -55,6 +55,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
 
     protected long totalFilesNumber, totalFilesSize, fileSelectorSize, fileSelectorTime, currentIndex;
     protected FileSelectorType fileSelectorType;
+    protected boolean countSubdir;
 
     @FXML
     protected Button addFilesButton, insertFilesButton, addDirectoryButton, insertDirectoryButton,
@@ -283,7 +284,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             return;
         }
         super.tableChanged();
-        countSize();
+        countSize(false);
     }
 
     @Override
@@ -292,7 +293,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             return;
         }
         checkButtons();
-        countSize();
+        countSize(false);
     }
 
     @Override
@@ -328,67 +329,65 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
         if (tableData == null || tableData.isEmpty()) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                private List<File> valids;
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        valids = new ArrayList<>();
-                        for (int i = 0; i < tableData.size(); i++) {
-                            if (task == null || task.isCancelled()) {
-                                return false;
-                            }
-                            File file = file(i);
-                            if (file.isDirectory()) {
-                                handleDir(file);
-                            } else {
-                                if (isValidFile(file)) {
-                                    valids.add(file);
-                                }
-                            }
-                        }
-                        return task != null && !task.isCancelled();
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                }
-
-                private void handleDir(File dir) {
-                    if (task == null || task.isCancelled() || dir == null) {
-                        return;
-                    }
-                    File[] list = dir.listFiles();
-                    if (list != null) {
-                        for (File file : list) {
-                            if (task == null || task.isCancelled()) {
-                                return;
-                            }
-                            if (file.isDirectory()) {
-                                handleDir(file);
-                            } else {
-                                if (isValidFile(file)) {
-                                    valids.add(file);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    tableData.clear();
-                    addFiles(0, valids);
-                }
-
-            };
-            super.start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+            private List<File> valids;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    valids = new ArrayList<>();
+                    for (int i = 0; i < tableData.size(); i++) {
+                        if (task == null || task.isCancelled()) {
+                            return false;
+                        }
+                        File file = file(i);
+                        if (file.isDirectory()) {
+                            handleDir(file);
+                        } else {
+                            if (isValidFile(file)) {
+                                valids.add(file);
+                            }
+                        }
+                    }
+                    return task != null && !task.isCancelled();
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            private void handleDir(File dir) {
+                if (task == null || task.isCancelled() || dir == null) {
+                    return;
+                }
+                File[] list = dir.listFiles();
+                if (list != null) {
+                    for (File file : list) {
+                        if (task == null || task.isCancelled()) {
+                            return;
+                        }
+                        if (file.isDirectory()) {
+                            handleDir(file);
+                        } else {
+                            if (isValidFile(file)) {
+                                valids.add(file);
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                tableData.clear();
+                addFiles(0, valids);
+            }
+
+        };
+        start(task);
     }
 
     protected boolean isValidFile(File file) {
@@ -449,84 +448,68 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
     }
 
     public boolean countDirectories() {
-        return UserConfig.getBoolean("FilesTableCountSubDir", true);
+        return UserConfig.getBoolean("FilesTableCountSubdir", true);
     }
 
-    public void countSize() {
+    public void countSize(boolean reset) {
         if (backgroundTask != null) {
             backgroundTask.cancel();
-            backgroundTask = null;
         }
-        synchronized (this) {
-            tableLabel.setText(message("CountingFilesSize"));
-            totalFilesNumber = totalFilesSize = 0;
-            if (tableData == null || tableData.isEmpty()) {
-                updateLabel();
-                return;
-            }
-            backgroundTask = new SingletonTask<Void>(this) {
+        tableLabel.setText(message("CountingFilesSize"));
+        totalFilesNumber = totalFilesSize = 0;
+        if (tableData == null || tableData.isEmpty()) {
+            updateLabel();
+            return;
+        }
+        backgroundTask = new SingletonTask<Void>(this) {
 
-                private boolean canceled;
+            private boolean canceled;
 
-                @Override
-                protected boolean handle() {
-                    for (int i = 0; i < tableData.size(); ++i) {
+            @Override
+            protected boolean handle() {
+                for (int i = 0; i < tableData.size(); ++i) {
+                    if (backgroundTask == null || isCancelled()) {
+                        canceled = true;
+                        return false;
+                    }
+                    FileInformation info = fileInformation(i);
+                    if (info == null || info.getFile() == null) {
+                        continue;
+                    }
+                    if (info.getFile().isDirectory()) {
+                        info.countDirectorySize(backgroundTask, countDirectories(), reset);
                         if (backgroundTask == null || isCancelled()) {
                             canceled = true;
                             return false;
                         }
-                        FileInformation info = fileInformation(i);
-                        if (info == null || info.getFile() == null) {
-                            continue;
-                        }
-                        if (info.getFile().isDirectory()) {
-                            boolean sub = UserConfig.getBoolean("FilesTableHandleSubDir", true);
-                            info.setDirectorySize(sub);
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    tableView.refresh();
-                                }
-                            });
-                            if (countDirectories()) {
-                                info.countDirectorySize(backgroundTask, sub);
-                                if (backgroundTask == null || isCancelled()) {
-                                    canceled = true;
-                                    return false;
-                                }
-                                totalFilesNumber += info.getFilesNumber();
-                                totalFilesSize += info.getFileSize();
-                            }
-                        } else {
-                            totalFilesNumber += info.getFilesNumber();
-                            totalFilesSize += info.getFileSize();
-                        }
                     }
-                    return true;
+                    totalFilesNumber += info.getFilesNumber();
+                    totalFilesSize += info.getFileSize();
                 }
+                return true;
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    tableView.refresh();
-                    if (tableLabel != null) {
-                        if (canceled) {
-                            tableLabel.setText("");
-                        } else {
-                            updateLabel();
-                        }
-                    }
-                }
-
-                @Override
-                protected void whenFailed() {
-                    if (tableLabel != null) {
+            @Override
+            protected void whenSucceeded() {
+                tableView.refresh();
+                if (tableLabel != null) {
+                    if (canceled) {
                         tableLabel.setText("");
+                    } else {
+                        updateLabel();
                     }
                 }
+            }
 
-            };
-            start(backgroundTask, false, null);
-        }
+            @Override
+            protected void whenFailed() {
+                if (tableLabel != null) {
+                    tableLabel.setText("");
+                }
+            }
+
+        };
+        start(backgroundTask, false, null);
     }
 
 
@@ -654,12 +637,10 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
         if (tableLabel != null) {
             String s = MessageFormat.format(message("TotalFilesNumberSize"),
                     totalFilesNumber, FileTools.showFileSize(totalFilesSize));
-            if (!UserConfig.getBoolean("FilesTableCountSubdir", true)) {
-                s += "    (" + message("NotIncludeFolders") + ")";
-            } else if (!UserConfig.getBoolean("FilesTableHandleSubdir", true)) {
-                s += "    (" + message("NotIncludeSubFolders") + ")";
-            } else {
+            if (UserConfig.getBoolean("FilesTableCountSubdir", true)) {
                 s += "    (" + message("IncludeFolders") + ")";
+            } else {
+                s += "    (" + message("NotIncludeSubFolders") + ")";
             }
             if (viewButton != null) {
                 s += "    " + message("DoubleClickToView");
@@ -748,43 +729,41 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
         if (files == null || files.isEmpty()) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private List<P> infos;
-
-                @Override
-                protected boolean handle() {
-                    infos = createFiles(files);
-                    if (infos == null) {
-                        return false;
-                    }
-                    recordFileAdded(files.get(0));
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (infos == null || infos.isEmpty()) {
-                        return;
-                    }
-                    isSettingValues = true;
-                    if (index < 0 || index >= tableData.size()) {
-                        tableData.addAll(infos);
-                    } else {
-                        tableData.addAll(index, infos);
-                    }
-                    isSettingValues = false;
-                    tableChanged();
-                    tableView.refresh();
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private List<P> infos;
+
+            @Override
+            protected boolean handle() {
+                infos = createFiles(files);
+                if (infos == null) {
+                    return false;
+                }
+                recordFileAdded(files.get(0));
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (infos == null || infos.isEmpty()) {
+                    return;
+                }
+                isSettingValues = true;
+                if (index < 0 || index >= tableData.size()) {
+                    tableData.addAll(infos);
+                } else {
+                    tableData.addAll(index, infos);
+                }
+                isSettingValues = false;
+                tableChanged();
+                tableView.refresh();
+            }
+
+        };
+        start(task);
     }
 
     public List<P> createFiles(List<File> files) {
@@ -1028,7 +1007,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
     }
 
     @FXML
-    protected void showSettingsMenu(Event event) {
+    protected void showOptionsMenu(Event event) {
         List<MenuItem> items = new ArrayList<>();
 
         CheckMenuItem handleSubdirMenu = new CheckMenuItem(message("HandleSubDirectories"));
@@ -1037,7 +1016,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             @Override
             public void handle(ActionEvent event) {
                 UserConfig.setBoolean("FilesTableHandleSubdir", handleSubdirMenu.isSelected());
-                countSize();
+                countSize(true);
             }
         });
         items.add(handleSubdirMenu);
@@ -1058,7 +1037,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             @Override
             public void handle(ActionEvent event) {
                 UserConfig.setBoolean("FilesTableCountSubdir", countSubdirMenu.isSelected());
-                countSize();
+                countSize(true);
             }
         });
         items.add(countSubdirMenu);
@@ -1092,9 +1071,9 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
     }
 
     @FXML
-    protected void popSettingsMenu(Event event) {
+    protected void popOptionsMenu(Event event) {
         if (UserConfig.getBoolean("FilesTablePopWhenMouseHovering", true)) {
-            showSettingsMenu(event);
+            showOptionsMenu(event);
         }
     }
 

@@ -8,7 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
@@ -103,15 +103,15 @@ public class RowFilterEditor extends TreeNodeEditor {
     }
 
     @Override
-    protected synchronized void editNode(TreeNode node) {
+    protected synchronized void editNode(InfoNode node) {
         super.editNode(node);
         isSettingValues = true;
         if (node != null) {
             String script = node.getValue();
             String more = node.getMore();
-            if (more != null && more.contains(TreeNode.TagsSeparater)) {
+            if (more != null && more.contains(InfoNode.TagsSeparater)) {
                 try {
-                    String[] v = more.strip().split(TreeNode.TagsSeparater);
+                    String[] v = more.strip().split(InfoNode.TagsSeparater);
                     load(script, StringTools.isTrue(v[0]), Long.parseLong(v[1]));
                 } catch (Exception e) {
                     load(script, true, -1);
@@ -126,11 +126,11 @@ public class RowFilterEditor extends TreeNodeEditor {
     }
 
     @Override
-    public TreeNode pickNodeData() {
-        TreeNode node = super.pickNodeData();
+    public InfoNode pickNodeData() {
+        InfoNode node = super.pickNodeData();
         if (node != null) {
             String more = trueRadio.isSelected() ? "true" : "false";
-            more += TreeNode.TagsSeparater;
+            more += InfoNode.TagsSeparater;
             more += maxData > 0 ? maxData + "" : "";
             node.setMore(more);
         }
@@ -152,7 +152,7 @@ public class RowFilterEditor extends TreeNodeEditor {
     protected void scriptExamples(Event event) {
         try {
             MenuController controller = PopTools.popJavaScriptExamples(this, event, valueInput, interfaceName + "Examples");
-            PopTools.rowExpressionButtons(controller, valueInput, message("Column") + "1");
+            PopTools.rowExpressionButtons(controller, valueInput, message("Column") + "1", interfaceName + "Examples");
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -171,8 +171,15 @@ public class RowFilterEditor extends TreeNodeEditor {
     }
 
     @FXML
-    public void aboutRowExpression() {
-        openLink(HelpTools.aboutRowExpression());
+    public void showRowExpressionHelps(Event event) {
+        popEventMenu(event, HelpTools.rowExpressionHelps(this));
+    }
+
+    @FXML
+    public void popRowExpressionHelps(Event event) {
+        if (UserConfig.getBoolean("RowExpressionsHelpsPopWhenMouseHovering", false)) {
+            showRowExpressionHelps(event);
+        }
     }
 
 }

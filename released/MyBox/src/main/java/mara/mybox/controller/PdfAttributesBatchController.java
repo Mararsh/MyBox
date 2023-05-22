@@ -20,7 +20,7 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -364,7 +364,7 @@ public class PdfAttributesBatchController extends BaseBatchPdfController {
         try {
             PdfInformation rowInfo = tableData.get(currentParameters.currentIndex);
             String filePassword = rowInfo.getUserPassword();
-            File tmpFile = TmpFileTools.getTempFile();
+            File tmpFile = FileTmpTools.getTempFile();
             FileCopyTools.copyFile(srcFile, tmpFile);
             try (PDDocument pd = PDDocument.load(tmpFile, filePassword, AppVariables.pdfMemUsage)) {
                 PDDocumentInformation docInfo = pd.getDocumentInformation();

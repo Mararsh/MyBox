@@ -397,55 +397,48 @@ public class MyBoxLanguagesController extends BaseController {
     @FXML
     @Override
     public void saveAction() {
-        try {
-            if (langName == null) {
-                return;
-            }
-            synchronized (this) {
-                if (task != null && !task.isQuit()) {
-                    return;
-                }
-                task = new SingletonTask<Void>(this) {
-
-                    @Override
-                    protected boolean handle() {
-                        try {
-                            error = null;
-                            Map<String, String> interfaceItems = new HashMap();
-                            File interfaceFile = Languages.interfaceLanguageFile(langName);
-                            for (LanguageItem item : tableView.getItems()) {
-                                String value = item.getValue();
-                                if (value != null && !value.isBlank()) {
-                                    interfaceItems.put(item.getKey(), value);
-                                }
-                            }
-                            ConfigTools.writeValues(interfaceFile, interfaceItems);
-
-                        } catch (Exception e) {
-                            error = e.toString();
-                        }
-                        return true;
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        if (error == null) {
-                            if (!listView.getItems().contains(langName)) {
-                                listView.getItems().add(0, langName);
-                            }
-                            tableChanged(false);
-                            popSuccessful();
-                        } else {
-                            popError(error);
-                        }
-                    }
-                };
-                start(task);
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+        if (langName == null) {
+            return;
         }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    error = null;
+                    Map<String, String> interfaceItems = new HashMap();
+                    File interfaceFile = Languages.interfaceLanguageFile(langName);
+                    for (LanguageItem item : tableView.getItems()) {
+                        String value = item.getValue();
+                        if (value != null && !value.isBlank()) {
+                            interfaceItems.put(item.getKey(), value);
+                        }
+                    }
+                    ConfigTools.writeValues(interfaceFile, interfaceItems);
+
+                } catch (Exception e) {
+                    error = e.toString();
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (error == null) {
+                    if (!listView.getItems().contains(langName)) {
+                        listView.getItems().add(0, langName);
+                    }
+                    tableChanged(false);
+                    popSuccessful();
+                } else {
+                    popError(error);
+                }
+            }
+        };
+        start(task);
     }
 
     @FXML

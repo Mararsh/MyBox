@@ -201,57 +201,55 @@ public class MatricesBinaryCalculationController extends BaseController {
         if (!checkMatrices()) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            resultLabel.setText("");
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        if (plusRadio.isSelected()) {
-                            result = DoubleMatrixTools.add(dataAMatrix.toMatrix(), dataBMatrix.toMatrix());
-
-                        } else if (minusRadio.isSelected()) {
-                            result = DoubleMatrixTools.subtract(dataAMatrix.toMatrix(), dataBMatrix.toMatrix());
-
-                        } else if (multiplyRadio.isSelected()) {
-                            result = DoubleMatrixTools.multiply(dataAMatrix.toMatrix(), dataBMatrix.toMatrix());
-
-                        } else if (hadamardProductRadio.isSelected()) {
-                            result = DoubleMatrixTools.hadamardProduct(dataAMatrix.toMatrix(), dataBMatrix.toMatrix());
-
-                        } else if (kroneckerProductRadio.isSelected()) {
-                            result = DoubleMatrixTools.kroneckerProduct(dataAMatrix.toMatrix(), dataBMatrix.toMatrix());
-
-                        } else if (verticalMergeRadio.isSelected()) {
-                            result = DoubleMatrixTools.vertivalMerge(dataAMatrix.toMatrix(), dataBMatrix.toMatrix());
-
-                        } else if (horizontalMergeRadio.isSelected()) {
-                            result = DoubleMatrixTools.horizontalMerge(dataAMatrix.toMatrix(), dataBMatrix.toMatrix());
-
-                        }
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    return result != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    cost = new Date().getTime() - startTime.getTime();
-                    String op = ((RadioButton) opGroup.getSelectedToggle()).getText();
-                    resultLabel.setText(op + "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(cost));
-                    resultController.loadMatrix(result);
-                    tabPane.getSelectionModel().select(resultTab);
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        resultLabel.setText("");
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    if (plusRadio.isSelected()) {
+                        result = DoubleMatrixTools.add(dataAMatrix.toMatrix(), dataBMatrix.toMatrix());
+
+                    } else if (minusRadio.isSelected()) {
+                        result = DoubleMatrixTools.subtract(dataAMatrix.toMatrix(), dataBMatrix.toMatrix());
+
+                    } else if (multiplyRadio.isSelected()) {
+                        result = DoubleMatrixTools.multiply(dataAMatrix.toMatrix(), dataBMatrix.toMatrix());
+
+                    } else if (hadamardProductRadio.isSelected()) {
+                        result = DoubleMatrixTools.hadamardProduct(dataAMatrix.toMatrix(), dataBMatrix.toMatrix());
+
+                    } else if (kroneckerProductRadio.isSelected()) {
+                        result = DoubleMatrixTools.kroneckerProduct(dataAMatrix.toMatrix(), dataBMatrix.toMatrix());
+
+                    } else if (verticalMergeRadio.isSelected()) {
+                        result = DoubleMatrixTools.vertivalMerge(dataAMatrix.toMatrix(), dataBMatrix.toMatrix());
+
+                    } else if (horizontalMergeRadio.isSelected()) {
+                        result = DoubleMatrixTools.horizontalMerge(dataAMatrix.toMatrix(), dataBMatrix.toMatrix());
+
+                    }
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return result != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                cost = new Date().getTime() - startTime.getTime();
+                String op = ((RadioButton) opGroup.getSelectedToggle()).getText();
+                resultLabel.setText(op + "  " + message("Cost") + ":" + DateTools.datetimeMsDuration(cost));
+                resultController.loadMatrix(result);
+                tabPane.getSelectionModel().select(resultTab);
+            }
+
+        };
+        start(task);
     }
 
     /*

@@ -145,30 +145,28 @@ public class MenuTextBaseController extends MenuController {
             popError(Languages.message("DoData"));
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            final File file = chooseSaveFile(TargetFileType);
-            if (file == null) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    return TextFileTools.writeFile(file, text) != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popSaved();
-                    recordFileWritten(file);
-                }
-
-            };
-            start(task);
+        final File file = chooseSaveFile(TargetFileType);
+        if (file == null) {
+            return;
         }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                return TextFileTools.writeFile(file, text) != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popSaved();
+                recordFileWritten(file);
+            }
+
+        };
+        start(task);
     }
 
 }

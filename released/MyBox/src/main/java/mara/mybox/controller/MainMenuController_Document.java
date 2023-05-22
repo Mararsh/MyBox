@@ -188,6 +188,11 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
     }
 
     @FXML
+    protected void JsonEditor(ActionEvent event) {
+        loadScene(Fxmls.JsonEditorFxml);
+    }
+
+    @FXML
     protected void openTextEditer(ActionEvent event) {
         loadScene(Fxmls.TextEditorFxml);
     }
@@ -200,6 +205,11 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
     @FXML
     protected void openTextMerge(ActionEvent event) {
         loadScene(Fxmls.TextFilesMergeFxml);
+    }
+
+    @FXML
+    protected void openTextFindBatch(ActionEvent event) {
+        loadScene(Fxmls.TextFindBatchFxml);
     }
 
     @FXML
@@ -225,6 +235,11 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
     @FXML
     protected void openBytesEditer(ActionEvent event) {
         loadScene(Fxmls.BytesEditorFxml);
+    }
+
+    @FXML
+    protected void BytesFindBatch(ActionEvent event) {
+        loadScene(Fxmls.BytesFindBatchFxml);
     }
 
     @FXML

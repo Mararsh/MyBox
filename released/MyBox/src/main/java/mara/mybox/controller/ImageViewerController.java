@@ -63,7 +63,7 @@ public class ImageViewerController extends BaseImageController {
     @FXML
     protected VBox panesBox, contentBox, fileBox, saveAsBox;
     @FXML
-    protected FlowPane saveFramesPane;
+    protected FlowPane saveFramesPane, opPane;
     @FXML
     protected ToggleGroup sortGroup, framesSaveGroup;
     @FXML
@@ -277,6 +277,10 @@ public class ImageViewerController extends BaseImageController {
                     UserConfig.setBoolean(baseName + "EditPane", editPane.isExpanded());
                 });
                 editPane.setExpanded(UserConfig.getBoolean(baseName + "EditPane", false));
+            }
+
+            if (opPane != null) {
+                opPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
             }
 
         } catch (Exception e) {
@@ -503,35 +507,28 @@ public class ImageViewerController extends BaseImageController {
         if (imageView == null || imageView.getImage() == null) {
             return;
         }
-        try {
-            synchronized (this) {
-                if (task != null && !task.isQuit()) {
-                    return;
-                }
-                task = new SingletonTask<Void>(this) {
-
-                    private Image areaImage;
-
-                    @Override
-                    protected boolean handle() {
-                        areaImage = imageToHandle();
-                        return areaImage != null;
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        imageView.setImage(areaImage);
-                        setImageChanged(true);
-                        resetMaskControls();
-                    }
-
-                };
-                start(task);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
 
+            private Image areaImage;
+
+            @Override
+            protected boolean handle() {
+                areaImage = imageToHandle();
+                return areaImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                imageView.setImage(areaImage);
+                setImageChanged(true);
+                resetMaskControls();
+            }
+
+        };
+        start(task);
     }
 
     @FXML
@@ -557,6 +554,9 @@ public class ImageViewerController extends BaseImageController {
                 || (saveButton != null && saveButton.isDisabled())) {
             return;
         }
+        if (task != null) {
+            task.cancel();
+        }
         File srcFile = imageFile();
         if (srcFile == null) {
             targetFile = chooseSaveFile();
@@ -566,88 +566,80 @@ public class ImageViewerController extends BaseImageController {
         } else {
             targetFile = srcFile;
         }
-        try {
-            if (imageInformation != null && imageInformation.isIsScaled()) {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle(getMyStage().getTitle());
-                alert.setContentText(message("SureSaveScaled"));
-                alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-                ButtonType buttonSave = new ButtonType(message("Save"));
-                ButtonType buttonSaveAs = new ButtonType(message("SaveAs"));
-                ButtonType buttonCancel = new ButtonType(message("Cancel"));
-                alert.getButtonTypes().setAll(buttonSave, buttonSaveAs, buttonCancel);
-                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                stage.setAlwaysOnTop(true);
-                stage.toFront();
+        if (imageInformation != null && imageInformation.isIsScaled()) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle(getMyStage().getTitle());
+            alert.setContentText(message("SureSaveScaled"));
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            ButtonType buttonSave = new ButtonType(message("Save"));
+            ButtonType buttonSaveAs = new ButtonType(message("SaveAs"));
+            ButtonType buttonCancel = new ButtonType(message("Cancel"));
+            alert.getButtonTypes().setAll(buttonSave, buttonSaveAs, buttonCancel);
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.setAlwaysOnTop(true);
+            stage.toFront();
 
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result == null || result.get() == buttonCancel) {
-                    return;
-                } else if (result.get() == buttonSaveAs) {
-                    saveAsAction();
-                    return;
-                }
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result == null || result.get() == buttonCancel) {
+                return;
+            } else if (result.get() == buttonSaveAs) {
+                saveAsAction();
+                return;
             }
-            synchronized (this) {
-                if (task != null && !task.isQuit()) {
-                    return;
-                }
-                task = new SingletonTask<Void>(this) {
-
-                    private Image savedImage;
-
-                    @Override
-                    protected boolean handle() {
-                        savedImage = imageToHandle();
-                        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(savedImage, null);
-                        if (bufferedImage == null || task == null || isCancelled()) {
-                            return false;
-                        }
-                        if (backupController != null && backupController.needBackup() && srcFile != null) {
-                            backupController.addBackup(task, srcFile);
-                        }
-                        String format = FileNameTools.suffix(targetFile.getName());
-                        if (framesNumber > 1) {
-                            error = ImageFileWriters.writeFrame(targetFile, frameIndex, bufferedImage, targetFile, null);
-                            ok = error == null;
-                        } else {
-                            ok = ImageFileWriters.writeImageFile(bufferedImage, format, targetFile.getAbsolutePath());
-                        }
-                        if (!ok || task == null || isCancelled()) {
-                            return false;
-                        }
-                        ImageFileInformation finfo = ImageFileInformation.create(targetFile);
-                        if (finfo == null || finfo.getImageInformation() == null) {
-                            return false;
-                        }
-                        imageInformation = finfo.getImageInformation();
-                        return true;
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        sourceFile = targetFile;
-                        recordFileWritten(sourceFile);
-                        if (srcFile == null) {
-                            if (savedImage != imageView.getImage()) {
-                                openFile(sourceFile);
-                            } else {
-                                sourceFileChanged(sourceFile);
-                            }
-                        } else {
-                            image = savedImage;
-                            imageView.setImage(image);
-                            popInformation(sourceFile + "   " + message("Saved"));
-                            setImageChanged(false);
-                        }
-                    }
-
-                };
-                start(task);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
         }
+
+        task = new SingletonTask<Void>(this) {
+
+            private Image savedImage;
+
+            @Override
+            protected boolean handle() {
+                savedImage = imageToHandle();
+                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(savedImage, null);
+                if (bufferedImage == null || task == null || isCancelled()) {
+                    return false;
+                }
+                if (backupController != null && backupController.needBackup() && srcFile != null) {
+                    backupController.addBackup(task, srcFile);
+                }
+                String format = FileNameTools.suffix(targetFile.getName());
+                if (framesNumber > 1) {
+                    error = ImageFileWriters.writeFrame(targetFile, frameIndex, bufferedImage, targetFile, null);
+                    ok = error == null;
+                } else {
+                    ok = ImageFileWriters.writeImageFile(bufferedImage, format, targetFile.getAbsolutePath());
+                }
+                if (!ok || task == null || isCancelled()) {
+                    return false;
+                }
+                ImageFileInformation finfo = ImageFileInformation.create(targetFile);
+                if (finfo == null || finfo.getImageInformation() == null) {
+                    return false;
+                }
+                imageInformation = finfo.getImageInformation();
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                sourceFile = targetFile;
+                recordFileWritten(sourceFile);
+                if (srcFile == null) {
+                    if (savedImage != imageView.getImage()) {
+                        openFile(sourceFile);
+                    } else {
+                        sourceFileChanged(sourceFile);
+                    }
+                } else {
+                    image = savedImage;
+                    imageView.setImage(image);
+                    popInformation(sourceFile + "   " + message("Saved"));
+                    setImageChanged(false);
+                }
+            }
+
+        };
+        start(task);
     }
 
     @FXML
@@ -679,67 +671,65 @@ public class ImageViewerController extends BaseImageController {
         if (targetFile == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    Object imageToSave = imageToSaveAs();
-                    if (imageToSave == null) {
-                        return false;
-                    }
-                    BufferedImage bufferedImage;
-                    if (imageToSave instanceof Image) {
-                        bufferedImage = SwingFXUtils.fromFXImage((Image) imageToSave, null);
-                    } else if (imageToSave instanceof BufferedImage) {
-                        bufferedImage = (BufferedImage) imageToSave;
-                    } else {
-                        return false;
-                    }
-                    if (bufferedImage == null || task == null || isCancelled()) {
-                        return false;
-                    }
-                    boolean multipleFrames = srcFile != null && framesNumber > 1 && saveAllFramesRadio != null && saveAllFramesRadio.isSelected();
-                    if (formatController != null) {
-                        if (multipleFrames) {
-                            error = ImageFileWriters.writeFrame(srcFile, frameIndex, bufferedImage, targetFile, formatController.attributes);
-                            return error == null;
-                        } else {
-                            BufferedImage converted = ImageConvertTools.convertColorSpace(bufferedImage, formatController.attributes);
-                            return ImageFileWriters.writeImageFile(converted, formatController.attributes, targetFile.getAbsolutePath());
-                        }
-                    } else {
-                        if (multipleFrames) {
-                            error = ImageFileWriters.writeFrame(srcFile, frameIndex, bufferedImage, targetFile, null);
-                            return error == null;
-                        } else {
-                            return ImageFileWriters.writeImageFile(bufferedImage, targetFile);
-                        }
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popInformation(message("Saved"));
-                    recordFileWritten(targetFile);
-
-                    if (saveAsType == SaveAsType.Load) {
-                        sourceFileChanged(targetFile);
-
-                    } else if (saveAsType == SaveAsType.Open) {
-                        openFile(targetFile);
-
-                    } else if (saveAsType == SaveAsType.Edit) {
-                        ImageManufactureController.openFile(targetFile);
-
-                    }
-                }
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                Object imageToSave = imageToSaveAs();
+                if (imageToSave == null) {
+                    return false;
+                }
+                BufferedImage bufferedImage;
+                if (imageToSave instanceof Image) {
+                    bufferedImage = SwingFXUtils.fromFXImage((Image) imageToSave, null);
+                } else if (imageToSave instanceof BufferedImage) {
+                    bufferedImage = (BufferedImage) imageToSave;
+                } else {
+                    return false;
+                }
+                if (bufferedImage == null || task == null || isCancelled()) {
+                    return false;
+                }
+                boolean multipleFrames = srcFile != null && framesNumber > 1 && saveAllFramesRadio != null && saveAllFramesRadio.isSelected();
+                if (formatController != null) {
+                    if (multipleFrames) {
+                        error = ImageFileWriters.writeFrame(srcFile, frameIndex, bufferedImage, targetFile, formatController.attributes);
+                        return error == null;
+                    } else {
+                        BufferedImage converted = ImageConvertTools.convertColorSpace(bufferedImage, formatController.attributes);
+                        return ImageFileWriters.writeImageFile(converted, formatController.attributes, targetFile.getAbsolutePath());
+                    }
+                } else {
+                    if (multipleFrames) {
+                        error = ImageFileWriters.writeFrame(srcFile, frameIndex, bufferedImage, targetFile, null);
+                        return error == null;
+                    } else {
+                        return ImageFileWriters.writeImageFile(bufferedImage, targetFile);
+                    }
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popInformation(message("Saved"));
+                recordFileWritten(targetFile);
+
+                if (saveAsType == SaveAsType.Load) {
+                    sourceFileChanged(targetFile);
+
+                } else if (saveAsType == SaveAsType.Open) {
+                    openFile(targetFile);
+
+                } else if (saveAsType == SaveAsType.Edit) {
+                    ImageManufactureController.openFile(targetFile);
+
+                }
+            }
+        };
+        start(task);
     }
 
     @FXML

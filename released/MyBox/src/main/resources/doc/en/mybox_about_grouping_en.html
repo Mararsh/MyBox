@@ -1,0 +1,238 @@
+<html>
+ <head>
+  <title>Grouping Rows</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="UTF-8">
+  <meta http-equiv="cache-control" content="no-cache">
+ </head>
+ <body style="width: 900px; margin:0 auto;">
+  <h1 align="center">Grouping Rows</h1>
+  <h2>1 Before and after Grouping</h2>
+  <ol>
+   <li><p>Before grouping, rows can be filtered. That is, objects of grouping are filtered rows.</p></li>
+   <li><p>In order to implement sorting and statistic with database system, data are converted as temporary database table automatically before grouping.</p></li>
+   <li><p>Sorting condition and maximum data number of each group can be set for grouped data.</p></li>
+  </ol>
+  <h2>2 Usages of grouping</h2>
+  <p>With grouped data, following can be handled:</p>
+  <ol>
+   <li><p>Add grouping information in source data, which are 2 new columns: Group Number and Group Parameter.</p></li>
+   <li><p>Split data into multiple files of groups.</p></li>
+   <li><p>Calculate descriptive statistic of groups.</p></li>
+   <li><p>Display following types of charts in sequence of groups dynamically: XY chart, pie chart, comparison bars chart, self comparison bars chart, box-and-whisker chart.</p></li>
+  </ol>
+  <h2>3 Ways of Data Grouping</h2>
+  <p>MyBox supports six ways to group data:</p>
+  <table border="1" cellpadding="4" cellspacing="0">
+   <thead>
+    <tr>
+     <th>Way</th>
+     <th>Parameters</th>
+     <th>complete</th>
+     <th>Non-intersect</th>
+    </tr>
+   </thead>
+   <tbody>
+    <tr>
+     <td>Equal values</td>
+     <td>Several column names</td>
+     <td>Yes</td>
+     <td>Yes</td>
+    </tr>
+    <tr>
+     <td>Value Ranges</td>
+     <td>Column name + Size of split</td>
+     <td>Yes</td>
+     <td>Yes</td>
+    </tr>
+    <tr>
+     <td></td>
+     <td>Column name + Number of split</td>
+     <td>Yes</td>
+     <td>Yes</td>
+    </tr>
+    <tr>
+     <td></td>
+     <td>Column name + List of “start-end”</td>
+     <td>Possible</td>
+     <td>Possible</td>
+    </tr>
+    <tr>
+     <td>Time values</td>
+     <td>Column of date/time + Time unit</td>
+     <td>Yes</td>
+     <td>Yes</td>
+    </tr>
+    <tr>
+     <td>Expression</td>
+     <td>Row expression</td>
+     <td>Yes</td>
+     <td>Yes</td>
+    </tr>
+    <tr>
+     <td>Conditions</td>
+     <td>Several row filters</td>
+     <td>Possible</td>
+     <td>Possible</td>
+    </tr>
+    <tr>
+     <td>Row numbers</td>
+     <td>Size of split</td>
+     <td>Yes</td>
+     <td>Yes</td>
+    </tr>
+    <tr>
+     <td></td>
+     <td>Number of split</td>
+     <td>Yes</td>
+     <td>Yes</td>
+    </tr>
+    <tr>
+     <td></td>
+     <td>List of “Start-end”</td>
+     <td>Possible</td>
+     <td>Possible</td>
+    </tr>
+   </tbody>
+  </table>
+  <p>Following are their descriptions.</p>
+  <h2>4 Group by Equal Values</h2>
+  <h3>4.1 Way of Grouping</h3>
+  <p>Select several columns and put rows into same group when they have same values of these columns.</p>
+  <h3>4.2 Implementation of Grouping</h3>
+  <ol>
+   <li><p>Convert data as a temporary database table</p></li>
+   <li><p>Read each row and group them by equal values of selected columns. The results like executing SQL of “group by”.</p></li>
+  </ol>
+  <h3>4.3 Results of Grouping</h3>
+  <ul>
+   <li><p>Complete: Each row belongs to a group.</p></li>
+   <li><p>Non-intersect: Each row only belongs to one group.</p></li>
+  </ul>
+  <h2>5 Group by Value Ranges</h2>
+  <h3>5.1 Way of Grouping</h3>
+  <p>Select one column and divide data by value ranges of this column.</p>
+  <p>Following 3 selections can be for the split:</p>
+  <ul>
+   <li><p>Interval of values</p></li>
+   <li><p>Number of split</p></li>
+   <li><p>List of “StartValue-EndValue”</p></li>
+  </ul>
+  <h3>5.2 Split Date/Era</h3>
+  <p>When split rows of date/era:</p>
+  <ol>
+   <li><p>Values of the column are converted as milliseconds.</p></li>
+   <li><p>Time unit can be set.</p></li>
+   <li><p>For items of “Start-End”, ranges should be in valid formats of date/era.</p></li>
+  </ol>
+  <h3>5.3 Edit List of “Start-End”</h3>
+  <ol>
+   <li><p>Add/Delete/Update start-end items in table.</p></li>
+   <li><p>Set whether includes “start”/“end” for “start-end” items.</p></li>
+  </ol>
+  <h3>5.4 Implementation of Grouping</h3>
+  <ul>
+   <li><p>Convert data as a temporary database table.</p></li>
+   <li><p>Ignore type of selected column, and parse its values as double.</p></li>
+   <li><p>Calcuate maximu value and minimum value of this column.</p></li>
+   <li><p>Count ranges of each group.</p></li>
+   <li><p>Compose query statements for each group. The conditions are like “column-name &gt;= start-value-of-range AND column-name &lt; end-value-of-range”.</p></li>
+  </ul>
+  <h3>5.5 Results of Grouping</h3>
+  <ul>
+   <li><p>If split as size or number, then:</p>
+    <ul>
+     <li><p>Complete: Each row belongs to a group.</p></li>
+     <li><p>Non-intersect: Each row only belongs to one group.</p></li>
+    </ul></li>
+   <li><p>If split as start-end list, then:</p>
+    <ul>
+     <li><p>Possible incomplete: Some rows may not belong to any group.</p></li>
+     <li><p>Possible intersect: Some rows may belongs to several groups.</p></li>
+    </ul></li>
+  </ul>
+  <h2>6 Group by Time</h2>
+  <h3>6.1 Way of Grouping</h3>
+  <p>Only when data include date/time columns, this way can be taken:</p>
+  <ol>
+   <li><p>Select a column of date/time type.</p></li>
+   <li><p>Select time unit: century/year/month/day/hour/minute/second.</p></li>
+  </ol>
+  <p>Examples:</p>
+  <ul>
+   <li><p>When time unit is “century”, data are calculated to get century values and grouped by them.</p></li>
+   <li><p>When time unit is “month”, data are divided as same groups when they have same values of year and month.</p></li>
+   <li><p>When time unit is “hour”, data are divided as same groups when they have same values of year, month, day, and hour.</p></li>
+   <li><p>When time unit is “second”, data are divided as same groups when they have same values of year, month, day, hour, minute, and second.</p></li>
+  </ul>
+  <h3>6.2 Implementation of Grouping</h3>
+  <ol>
+   <li><p>Convert data as a temporary database table.</p></li>
+   <li><p>As time unit, save values are in same groups.</p></li>
+  </ol>
+  <h3>6.3 Results of Grouping</h3>
+  <ul>
+   <li><p>Complete: Each row belongs to a group.</p></li>
+   <li><p>Non-intersect: Each row only belongs to one group.</p></li>
+  </ul>
+  <h2>7 Group by Expression</h2>
+  <h3>7.1 Way of Grouping</h3>
+  <p>Define a row expresion, and rows are in same groups when they have same values of this expression.</p>
+  <p>Examples:</p>
+  <ul>
+   <li><p>Expression “new Date(‘#{StartTime}’).getDay()”, group as the week values of column “StartTime”.</p></li>
+   <li><p>Expression “#{description}’.charAt(2)”, group as the 2th character of column “description”.</p></li>
+   <li><p>Expression “‘#{StartTime}’.substring(0, 7)”, group as the first 7 characters of column “StartTime”.</p></li>
+  </ul>
+  <h3>7.2 Implementation of Grouping</h3>
+  <ol>
+   <li><p>Convert data as a temporary database table.</p></li>
+   <li><p>Calculate the expression against each row, save values are in same groups.</p></li>
+  </ol>
+  <h3>7.3 Results of Grouping</h3>
+  <ul>
+   <li><p>Complete: Each row belongs to a group.</p></li>
+   <li><p>Non-intersect: Each row only belongs to one group.</p></li>
+  </ul>
+  <h2>8 Group by Conditions</h2>
+  <h3>8.1 Way of Grouping</h3>
+  <p>Define some row filters and data rows are divided in groups by these row filters.</p>
+  <h3>8.2 Implementation of Grouping</h3>
+  <ol>
+   <li><p>Convert data as a temporary database table.</p></li>
+   <li><p>For each row filter, scan data rows to pick out group members which satisfy condition.</p></li>
+  </ol>
+  <h3>8.3 Results of Grouping</h3>
+  <ul>
+   <li><p>Possible incomplete: Some rows may not belong to any group.</p></li>
+   <li><p>Possible intersect: Some rows may belongs to several groups.</p></li>
+  </ul>
+  <h2>9 Group by Row Number</h2>
+  <h3>9.1 Way of Grouping</h3>
+  <p>Divide data rows by their row numbers. Following 3 selections can be for the split:</p>
+  <ul>
+   <li><p>Size of split(interval of row numbers)</p></li>
+   <li><p>Number of split</p></li>
+   <li><p>List of “StartNumber-EndNumber”</p></li>
+  </ul>
+  <h3>9.2 Implementation of Grouping</h3>
+  <ol>
+   <li><p>Convert data as a temporary database table.</p></li>
+   <li><p>Count range of row numbers for each group.</p></li>
+   <li><p>Scan data rows, and set groups as row numbers.</p></li>
+  </ol>
+  <h3>9.3 Results of Grouping</h3>
+  <ul>
+   <li><p>If split as size or number, then:</p>
+    <ul>
+     <li><p>Complete: Each row belongs to a group.</p></li>
+     <li><p>Non-intersect: Each row only belongs to one group.</p></li>
+    </ul></li>
+   <li><p>If split as start-end list, then:</p>
+    <ul>
+     <li><p>Possible incomplete: Some rows may not belong to any group.</p></li>
+     <li><p>Possible intersect: Some rows may belongs to several groups.</p></li>
+    </ul></li>
+  </ul>
+ </body>
+</html>

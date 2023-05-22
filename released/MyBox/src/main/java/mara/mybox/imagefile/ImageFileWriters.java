@@ -29,9 +29,9 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.FileExtensions;
-import net.sf.image4j.codec.ico.ICOEncoder;
+import thridparty.image4j.ICOEncoder;
 
 /**
  * @Author Mara
@@ -160,7 +160,7 @@ public class ImageFileWriters {
             ImageWriter writer = getWriter(targetFormat);
             ImageWriteParam param = getWriterParam(attributes, writer);
             IIOMetadata metaData = ImageFileWriters.getWriterMetaData(targetFormat, attributes, targetImage, writer, param);
-            File tmpFile = TmpFileTools.getTempFile();
+            File tmpFile = FileTmpTools.getTempFile();
             try ( ImageOutputStream out = ImageIO.createImageOutputStream(tmpFile)) {
                 writer.setOutput(out);
                 writer.write(metaData, new IIOImage(targetImage, null, metaData), param);
@@ -227,7 +227,7 @@ public class ImageFileWriters {
                 }
                 gifInfos = imageFileInformation.getImagesInformation();
             }
-            File tmpFile = TmpFileTools.getTempFile();
+            File tmpFile = FileTmpTools.getTempFile();
             try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(sourcefile)))) {
                 ImageReader reader = ImageFileReaders.getReader(iis, FileNameTools.suffix(sourcefile.getName()));
                 if (reader == null) {

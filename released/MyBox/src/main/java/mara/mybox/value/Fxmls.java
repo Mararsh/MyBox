@@ -70,9 +70,14 @@ public class Fxmls {
     public static final String MarkdownToPdfFxml = "/fxml/MarkdownToPdf.fxml";
     public static final String MarkdownPopFxml = "/fxml/MarkdownPop.fxml";
 
+    public static final String JsonEditorFxml = "/fxml/JsonEditor.fxml";
+    public static final String JsonAddFieldFxml = "/fxml/JsonAddField.fxml";
+    public static final String JsonAddElementFxml = "/fxml/JsonAddElement.fxml";
+
     public static final String TextEditorFxml = "/fxml/TextEditor.fxml";
     public static final String TextFilesConvertFxml = "/fxml/TextFilesConvert.fxml";
     public static final String TextFilesMergeFxml = "/fxml/TextFilesMerge.fxml";
+    public static final String TextFindBatchFxml = "/fxml/TextFindBatch.fxml";
     public static final String TextReplaceBatchFxml = "/fxml/TextReplaceBatch.fxml";
     public static final String TextFilterBatchFxml = "/fxml/TextFilterBatch.fxml";
     public static final String TextToHtmlFxml = "/fxml/TextToHtml.fxml";
@@ -82,6 +87,7 @@ public class Fxmls {
     public static final String TextPopFxml = "/fxml/TextPop.fxml";
 
     public static final String BytesEditorFxml = "/fxml/BytesEditor.fxml";
+    public static final String BytesFindBatchFxml = "/fxml/BytesFindBatch.fxml";
     public static final String BytesPopFxml = "/fxml/BytesPop.fxml";
 
     public static final String WordViewFxml = "/fxml/WordView.fxml";

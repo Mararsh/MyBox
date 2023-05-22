@@ -128,6 +128,7 @@ public class ColorQueryController extends BaseController {
     }
 
     @FXML
+    @Override
     public void refreshAction() {
         queryAction();
     }
@@ -137,7 +138,7 @@ public class ColorQueryController extends BaseController {
         if (color == null) {
             return;
         }
-        ColorsManageController.addColor(color.getColor());
+        ColorsManageController.addOneColor(color.getColor());
     }
 
     @Override

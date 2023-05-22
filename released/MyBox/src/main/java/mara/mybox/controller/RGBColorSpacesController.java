@@ -94,28 +94,26 @@ public class RGBColorSpacesController extends ChromaticityBaseController {
     }
 
     private void initData() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private StringTable table;
-
-                @Override
-                protected boolean handle() {
-                    table = RGBColorSpace.allTable();
-                    return table != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    primariesController.loadTable(table);
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private StringTable table;
+
+            @Override
+            protected boolean handle() {
+                table = RGBColorSpace.allTable();
+                return table != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                primariesController.loadTable(table);
+            }
+
+        };
+        start(task);
     }
 
     @FXML

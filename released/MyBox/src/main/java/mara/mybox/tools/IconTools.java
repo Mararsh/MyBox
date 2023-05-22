@@ -23,10 +23,8 @@ public class IconTools {
             if (address == null) {
                 return null;
             }
-            URL url;
-            try {
-                url = new URL(address);
-            } catch (Exception e) {
+            URL url = UrlTools.url(address);
+            if (url == null) {
                 return null;
             }
             String host = url.getHost();
@@ -83,10 +81,8 @@ public class IconTools {
             if (address == null || targetFile == null) {
                 return null;
             }
-            URL url;
-            try {
-                url = new URL(address);
-            } catch (Exception e) {
+            URL url = UrlTools.url(address);
+            if (url == null) {
                 return null;
             }
             String iconUrl = "https://" + url.getHost() + "/favicon.ico";
@@ -157,7 +153,10 @@ public class IconTools {
                         return iconUrl;
                     }
                     if (iconUrl.charAt(0) == '/') {
-                        URL url = new URL(address);
+                        URL url = UrlTools.url(address);
+                        if (url == null) {
+                            return null;
+                        }
                         iconUrl = url.getProtocol() + "://" + url.getHost() + iconUrl;
                     } else {
                         iconUrl = address + "/" + iconUrl;

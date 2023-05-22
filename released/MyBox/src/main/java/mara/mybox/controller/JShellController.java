@@ -2,7 +2,7 @@ package mara.mybox.controller;
 
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
@@ -29,7 +29,7 @@ public class JShellController extends TreeManageController {
     public JShellController() {
         baseTitle = message("JShell");
         TipsLabelKey = "JShellTips";
-        category = TreeNode.JShellCode;
+        category = InfoNode.JShellCode;
         nameMsg = message("Title");
         valueMsg = message("Codes");
     }
@@ -83,7 +83,7 @@ public class JShellController extends TreeManageController {
     @FXML
     public void clearResults() {
         editorController.outputs = "";
-        webViewController.loadContents("");
+        webViewController.clear();
     }
 
     public void edit(String script) {

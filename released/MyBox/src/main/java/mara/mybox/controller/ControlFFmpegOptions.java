@@ -213,103 +213,101 @@ public class ControlFFmpegOptions extends BaseController {
             return;
         }
 //        ffmpegController.tabPane.getSelectionModel().select(ffmpegController.logsTab);
-        synchronized (this) {
-            if (muxerTask != null && !muxerTask.isQuit()) {
-                return;
-            }
-            try {
-                List<String> command = new ArrayList<>();
-                command.add(executable.getAbsolutePath());
-                command.add("-muxers");
-                showCmd(command);
-                ProcessBuilder pb = new ProcessBuilder(command).redirectErrorStream(true);
-                final Process process = pb.start();
+        if (muxerTask != null) {
+            muxerTask.cancel();
+        }
+        try {
+            List<String> command = new ArrayList<>();
+            command.add(executable.getAbsolutePath());
+            command.add("-muxers");
+            showCmd(command);
+            ProcessBuilder pb = new ProcessBuilder(command).redirectErrorStream(true);
+            final Process process = pb.start();
 
-                muxerTask = new SingletonTask<Void>(this) {
-                    private List<String> muxers, commons;
+            muxerTask = new SingletonTask<Void>(this) {
+                private List<String> muxers, commons;
 
-                    @Override
-                    protected boolean handle() {
-                        error = null;
-                        muxers = new ArrayList();
-                        commons = new ArrayList();
-                        List<String> commonNames = new ArrayList();
-                        commonNames.addAll(Arrays.asList("mp4", "mp3", "aiff", "au", "avi", "flv", "mov", "wav", "m4v", "hls", "rtsp"));
-                        try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
-                            String line;
-                            int count = 0;
-                            while ((line = inReader.readLine()) != null) {
-                                ffmpegController.showLogs(line);
-                                count++;
-                                if (count < 4 || line.length() < 5) {
-                                    continue;
-                                }
-                                String muxer = line.substring(4);
-                                for (String common : commonNames) {
-                                    if (muxer.startsWith(common + " ")) {
-                                        commons.add(muxer);
-                                        break;
-                                    }
-                                }
-                                muxers.add(muxer);
+                @Override
+                protected boolean handle() {
+                    error = null;
+                    muxers = new ArrayList();
+                    commons = new ArrayList();
+                    List<String> commonNames = new ArrayList();
+                    commonNames.addAll(Arrays.asList("mp4", "mp3", "aiff", "au", "avi", "flv", "mov", "wav", "m4v", "hls", "rtsp"));
+                    try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
+                        String line;
+                        int count = 0;
+                        while ((line = inReader.readLine()) != null) {
+                            ffmpegController.showLogs(line);
+                            count++;
+                            if (count < 4 || line.length() < 5) {
+                                continue;
                             }
-                        } catch (Exception e) {
-                            error = e.toString();
+                            String muxer = line.substring(4);
+                            for (String common : commonNames) {
+                                if (muxer.startsWith(common + " ")) {
+                                    commons.add(muxer);
+                                    break;
+                                }
+                            }
+                            muxers.add(muxer);
                         }
-                        return true;
+                    } catch (Exception e) {
+                        error = e.toString();
                     }
+                    return true;
+                }
 
-                    @Override
-                    protected void whenSucceeded() {
-                        if (error != null) {
-                            popError(error);
-                        }
-                        muxerSelector.getItems().addAll(commons);
-                        muxerSelector.getItems().addAll(muxers);
-                        muxerSelector.getItems().add(0, message("OriginalFormat"));
-                        muxerSelector.getSelectionModel().selectedItemProperty().addListener(
-                                (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
-                                    if (newValue != null && !newValue.isEmpty()) {
-                                        UserConfig.setString("ffmpegDefaultMuter", newValue);
-                                    }
-                                    if (newValue == null || newValue.isEmpty()
-                                    || message("OriginalFormat").equals(newValue)
-                                    || message("NotSet").equals(newValue)) {
-                                        extensionInput.setText(message("OriginalFormat"));
-                                        muxer = null;
-                                        return;
-                                    }
-                                    int pos = newValue.indexOf(' ');
-                                    if (pos < 0) {
-                                        muxer = newValue;
-                                    } else {
-                                        muxer = newValue.substring(0, pos);
-                                    }
-                                    if (muxer.equals("hls")) {
-                                        extensionInput.setText("m3u8");
-                                    } else {
-                                        extensionInput.setText(muxer);
-                                    }
-                                });
-                        muxerSelector.getSelectionModel().select(UserConfig.getString("ffmpegDefaultMuter", "mp4"));
+                @Override
+                protected void whenSucceeded() {
+                    if (error != null) {
+                        popError(error);
                     }
+                    muxerSelector.getItems().addAll(commons);
+                    muxerSelector.getItems().addAll(muxers);
+                    muxerSelector.getItems().add(0, message("OriginalFormat"));
+                    muxerSelector.getSelectionModel().selectedItemProperty().addListener(
+                            (ObservableValue<? extends String> ov, String oldValue, String newValue) -> {
+                                if (newValue != null && !newValue.isEmpty()) {
+                                    UserConfig.setString("ffmpegDefaultMuter", newValue);
+                                }
+                                if (newValue == null || newValue.isEmpty()
+                                || message("OriginalFormat").equals(newValue)
+                                || message("NotSet").equals(newValue)) {
+                                    extensionInput.setText(message("OriginalFormat"));
+                                    muxer = null;
+                                    return;
+                                }
+                                int pos = newValue.indexOf(' ');
+                                if (pos < 0) {
+                                    muxer = newValue;
+                                } else {
+                                    muxer = newValue.substring(0, pos);
+                                }
+                                if (muxer.equals("hls")) {
+                                    extensionInput.setText("m3u8");
+                                } else {
+                                    extensionInput.setText(muxer);
+                                }
+                            });
+                    muxerSelector.getSelectionModel().select(UserConfig.getString("ffmpegDefaultMuter", "mp4"));
+                }
 
-                    @Override
-                    protected void finalAction() {
-                        super.finalAction();
-                        muxerTask = null;
-                    }
-                };
-                start(muxerTask);
+                @Override
+                protected void finalAction() {
+                    super.finalAction();
+                    muxerTask = null;
+                }
+            };
+            start(muxerTask);
 
-                process.waitFor();
+            process.waitFor();
 
-            } catch (Exception e) {
-                MyBoxLog.debug(e.toString());
-                popError(e.toString());
-            } finally {
-                muxerTask = null;
-            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            popError(e.toString());
+        } finally {
+            muxerTask = null;
         }
     }
 
@@ -326,108 +324,105 @@ public class ControlFFmpegOptions extends BaseController {
         if (subtitleEncoderSelector != null) {
             subtitleEncoderSelector.getItems().clear();
         }
-
-        synchronized (this) {
-            if (encoderTask != null && !encoderTask.isQuit()) {
-                return;
-            }
+        if (encoderTask != null) {
+            encoderTask.cancel();
+        }
 //            ffmpegController.tabPane.getSelectionModel().select(ffmpegController.logsTab);
-            try {
-                List<String> command = new ArrayList<>();
-                command.add(executable.getAbsolutePath());
-                command.add("-hide_banner");
-                command.add("-encoders");
-                showCmd(command);
-                ProcessBuilder pb = new ProcessBuilder(command).redirectErrorStream(true);
-                final Process process = pb.start();
+        try {
+            List<String> command = new ArrayList<>();
+            command.add(executable.getAbsolutePath());
+            command.add("-hide_banner");
+            command.add("-encoders");
+            showCmd(command);
+            ProcessBuilder pb = new ProcessBuilder(command).redirectErrorStream(true);
+            final Process process = pb.start();
 
-                encoderTask = new SingletonTask<Void>(this) {
-                    private List<String> aEncoders, vEncoders, sEncoders, videoCommons;
+            encoderTask = new SingletonTask<Void>(this) {
+                private List<String> aEncoders, vEncoders, sEncoders, videoCommons;
 
-                    @Override
-                    protected boolean handle() {
-                        error = null;
-                        aEncoders = new ArrayList();
-                        vEncoders = new ArrayList();
-                        sEncoders = new ArrayList();
-                        videoCommons = new ArrayList();
-                        List<String> commonVideoNames = new ArrayList();
-                        commonVideoNames.addAll(Arrays.asList("flv", "x264", "x265", "libvpx", "h264"));
-                        try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
-                            String line;
-                            int count = 0;
-                            while ((line = inReader.readLine()) != null) {
-                                ffmpegController.showLogs(line);
-                                count++;
-                                if (count < 10 || line.length() < 9) {
-                                    continue;
-                                }
-                                String type = line.substring(0, 8);
-                                String encoder = line.substring(8);
-                                if (type.contains("V")) {
-                                    for (String common : commonVideoNames) {
-                                        if (encoder.contains(common)) {
-                                            videoCommons.add(encoder);
-                                            break;
-                                        }
-                                    }
-                                    vEncoders.add(encoder);
-                                } else if (type.contains("A")) {
-                                    aEncoders.add(encoder);
-                                } else if (type.contains("S")) {
-                                    sEncoders.add(encoder);
-                                }
+                @Override
+                protected boolean handle() {
+                    error = null;
+                    aEncoders = new ArrayList();
+                    vEncoders = new ArrayList();
+                    sEncoders = new ArrayList();
+                    videoCommons = new ArrayList();
+                    List<String> commonVideoNames = new ArrayList();
+                    commonVideoNames.addAll(Arrays.asList("flv", "x264", "x265", "libvpx", "h264"));
+                    try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
+                        String line;
+                        int count = 0;
+                        while ((line = inReader.readLine()) != null) {
+                            ffmpegController.showLogs(line);
+                            count++;
+                            if (count < 10 || line.length() < 9) {
+                                continue;
                             }
-                            return true;
-                        } catch (Exception e) {
-                            error = e.toString();
-                            return false;
+                            String type = line.substring(0, 8);
+                            String encoder = line.substring(8);
+                            if (type.contains("V")) {
+                                for (String common : commonVideoNames) {
+                                    if (encoder.contains(common)) {
+                                        videoCommons.add(encoder);
+                                        break;
+                                    }
+                                }
+                                vEncoders.add(encoder);
+                            } else if (type.contains("A")) {
+                                aEncoders.add(encoder);
+                            } else if (type.contains("S")) {
+                                sEncoders.add(encoder);
+                            }
                         }
+                        return true;
+                    } catch (Exception e) {
+                        error = e.toString();
+                        return false;
+                    }
+                }
+
+                @Override
+                protected void whenSucceeded() {
+                    if (audioEncoderSelector != null) {
+                        audioEncoderSelector.getItems().addAll(aEncoders);
+                        audioEncoderSelector.getItems().add(0, message("DisableAudio"));
+                        audioEncoderSelector.getItems().add(0, message("CopyAudio"));
+                        audioEncoderSelector.getItems().add(0, message("NotSet"));
+                        initAudioControls();
+                    }
+                    if (videoEncoderSelector != null) {
+                        videoEncoderSelector.getItems().addAll(videoCommons);
+                        videoEncoderSelector.getItems().addAll(vEncoders);
+                        videoEncoderSelector.getItems().add(0, message("DisableVideo"));
+                        videoEncoderSelector.getItems().add(0, message("CopyVideo"));
+                        videoEncoderSelector.getItems().add(0, message("NotSet"));
+                        initVideoControls();
+                    }
+                    if (subtitleEncoderSelector != null) {
+                        subtitleEncoderSelector.getItems().addAll(sEncoders);
+                        subtitleEncoderSelector.getItems().add(0, message("DisableSubtitle"));
+                        subtitleEncoderSelector.getItems().add(0, message("CopySubtitle"));
+                        subtitleEncoderSelector.getItems().add(0, message("NotSet"));
+                        initSubtitleControls();
                     }
 
-                    @Override
-                    protected void whenSucceeded() {
-                        if (audioEncoderSelector != null) {
-                            audioEncoderSelector.getItems().addAll(aEncoders);
-                            audioEncoderSelector.getItems().add(0, message("DisableAudio"));
-                            audioEncoderSelector.getItems().add(0, message("CopyAudio"));
-                            audioEncoderSelector.getItems().add(0, message("NotSet"));
-                            initAudioControls();
-                        }
-                        if (videoEncoderSelector != null) {
-                            videoEncoderSelector.getItems().addAll(videoCommons);
-                            videoEncoderSelector.getItems().addAll(vEncoders);
-                            videoEncoderSelector.getItems().add(0, message("DisableVideo"));
-                            videoEncoderSelector.getItems().add(0, message("CopyVideo"));
-                            videoEncoderSelector.getItems().add(0, message("NotSet"));
-                            initVideoControls();
-                        }
-                        if (subtitleEncoderSelector != null) {
-                            subtitleEncoderSelector.getItems().addAll(sEncoders);
-                            subtitleEncoderSelector.getItems().add(0, message("DisableSubtitle"));
-                            subtitleEncoderSelector.getItems().add(0, message("CopySubtitle"));
-                            subtitleEncoderSelector.getItems().add(0, message("NotSet"));
-                            initSubtitleControls();
-                        }
+                }
 
-                    }
+                @Override
+                protected void finalAction() {
+                    super.finalAction();
+                    encoderTask = null;
+                }
+            };
+            start(encoderTask);
 
-                    @Override
-                    protected void finalAction() {
-                        super.finalAction();
-                        encoderTask = null;
-                    }
-                };
-                start(encoderTask);
+            process.waitFor();
 
-                process.waitFor();
-
-            } catch (Exception e) {
-                MyBoxLog.debug(e.toString());
-                popError(e.toString());
-            } finally {
-                encoderTask = null;
-            }
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            popError(e.toString());
+        } finally {
+            encoderTask = null;
         }
     }
 
@@ -985,7 +980,7 @@ public class ControlFFmpegOptions extends BaseController {
 
     @FXML
     public void aboutMedia() {
-        openLink(HelpTools.aboutMedia());
+        openHtml(HelpTools.aboutMedia());
     }
 
     @FXML

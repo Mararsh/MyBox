@@ -47,6 +47,7 @@ public class AppVariables {
     public static int sceneFontSize, fileRecentNumber, iconSize, thumbnailWidth;
     public static boolean isChinese, isTesting, handlingExit, ShortcutsCanNotOmitCtrlAlt, icons40px,
             closeCurrentWhenOpenTool, recordWindowsSizeLocation, controlDisplayText,
+            commitModificationWhenDataCellLoseFocus,
             ignoreDbUnavailable, popErrorLogs, saveDebugLogs, detailedDebugLogs;
     public static TextClipboardMonitor textClipboardMonitor;
     public static ImageClipboardMonitor imageClipboardMonitor;
@@ -71,6 +72,7 @@ public class AppVariables {
             controlDisplayText = UserConfig.getBoolean("ControlDisplayText", false);
             icons40px = UserConfig.getBoolean("Icons40px", Toolkit.getDefaultToolkit().getScreenResolution() <= 120);
             ShortcutsCanNotOmitCtrlAlt = UserConfig.getBoolean("ShortcutsCanNotOmitCtrlAlt", false);
+            commitModificationWhenDataCellLoseFocus = UserConfig.getBoolean("CommitModificationWhenDataCellLoseFocus", true);
             saveDebugLogs = UserConfig.getBoolean("SaveDebugLogs", false);
             detailedDebugLogs = UserConfig.getBoolean("DetailedDebugLogs", false);
             ignoreDbUnavailable = false;

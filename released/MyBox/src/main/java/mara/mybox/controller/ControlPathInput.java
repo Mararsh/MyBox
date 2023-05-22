@@ -1,7 +1,5 @@
 package mara.mybox.controller;
 
-import java.io.File;
-import mara.mybox.value.AppPaths;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -17,7 +15,7 @@ public class ControlPathInput extends ControlFileSelecter {
         checkQuit = false;
         permitNull = false;
         mustExist = false;
-        defaultFile = new File(AppPaths.getGeneratedPath());
+        defaultFile = null;
     }
 
     @Override

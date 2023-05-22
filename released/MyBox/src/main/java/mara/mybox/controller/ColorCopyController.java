@@ -37,9 +37,10 @@ public class ColorCopyController extends BaseChildController {
 
     public void setParameters(ColorsManageController colorsManager) {
         try {
-            palettesController.setManager(colorsManager);
-            if (!colorsManager.colorsController.isAllColors()) {
-                palettesController.ignore = colorsManager.colorsController.currentPalette.getName();
+            palettesController.setParameter(colorsManager, false);
+
+            if (!colorsManager.palettesController.isAllColors()) {
+                palettesController.ignore = colorsManager.palettesController.currentPaletteName();
             }
             loadPalettes();
         } catch (Exception e) {
@@ -54,7 +55,7 @@ public class ColorCopyController extends BaseChildController {
                 return;
             }
             this.colors = colors;
-            palettesController.setManager(colorsManager);
+            palettesController.setParameter(colorsManager, false);
             loadPalettes();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -94,8 +95,8 @@ public class ColorCopyController extends BaseChildController {
     protected ColorsManageController checkManage() {
         try {
             ColorsManageController colorsManager = palettesController.colorsManager();
-            tableColor = colorsManager.colorsController.tableColor;
-            tableColorPalette = colorsManager.colorsController.tableColorPalette;
+            tableColor = colorsManager.tableColor;
+            tableColorPalette = colorsManager.tableColorPalette;
             return colorsManager;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -105,7 +106,7 @@ public class ColorCopyController extends BaseChildController {
 
     protected void copyColors(ColorPaletteName palette) {
         ColorsManageController colorsManager = checkManage();
-        List<ColorData> selectedColors = colorsManager.colorsController.selectedItems();
+        List<ColorData> selectedColors = colorsManager.selectedItems();
         if (selectedColors == null || selectedColors.isEmpty()) {
             popError(message("SelectColorsCopy"));
             return;
@@ -177,7 +178,7 @@ public class ColorCopyController extends BaseChildController {
 
     protected void afterCopied(ColorPaletteName palette, int count) {
         ColorsManageController colorsManager = checkManage();
-        colorsManager.colorsController.loadPaletteLast(palette);
+        colorsManager.loadPaletteLast(palette);
         colorsManager.requestMouse();
         closeStage();
         colorsManager.popInformation(message("Copied") + ": " + count);

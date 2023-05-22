@@ -35,13 +35,14 @@ public class ListKMeans<T> {
     public void initCenters() {
         try {
             centers = new ArrayList<>();
-            if (data.size() < k) {
+            int dataSize = data.size();
+            if (dataSize < k) {
                 centers.addAll(data);
                 return;
             }
             Random random = new Random();
             while (centers.size() < k) {
-                int index = random.nextInt(data.size());
+                int index = random.nextInt(dataSize);
                 T d = data.get(index);
                 if (!centers.contains(d)) {
                     centers.add(d);
@@ -81,9 +82,10 @@ public class ListKMeans<T> {
                 return false;
             }
         }
-        if (data.size() < k) {
-            clusters = new ArrayList[data.size()];
-            for (int i = 0; i < data.size(); ++i) {
+        int dataSize = data.size();
+        if (dataSize < k) {
+            clusters = new ArrayList[dataSize];
+            for (int i = 0; i < dataSize; ++i) {
                 clusters[i] = new ArrayList<>();
                 clusters[i].add(i);
             }
@@ -96,15 +98,15 @@ public class ListKMeans<T> {
                 for (int i = 0; i < k; ++i) {
                     clusters[i] = new ArrayList<>();
                 }
-                for (int i = 0; i < data.size(); ++i) {
+                for (int i = 0; i < dataSize; ++i) {
                     T p = data.get(i);
                     double min = Double.MAX_VALUE;
                     int index = 0;
                     for (int j = 0; j < centers.size(); ++j) {
                         T center = centers.get(j);
-                        double dist = distance(center, p);
-                        if (dist < min) {
-                            min = dist;
+                        double distance = distance(center, p);
+                        if (distance < min) {
+                            min = distance;
                             index = j;
                         }
                     }
@@ -138,15 +140,6 @@ public class ListKMeans<T> {
             return false;
         }
         dataMap = new HashMap<>();
-//        for (int i = 0; i < data.size(); ++i) {
-//            for (int j = 0; j < clusters.length; ++j) {
-//                List<Integer> cluster = clusters[j];
-//                if (cluster.contains(i)) {
-//                    dataMap.put(data.get(i), centers.get(j));
-//                    break;
-//                }
-//            }
-//        }
         for (int i = 0; i < clusters.length; ++i) {
             List<Integer> cluster = clusters[i];
             T centerData = centers.get(i);

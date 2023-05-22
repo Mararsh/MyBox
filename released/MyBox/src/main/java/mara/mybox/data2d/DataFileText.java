@@ -10,11 +10,11 @@ import java.util.HashMap;
 import java.util.List;
 import mara.mybox.data.FindReplaceString;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.tools.TextTools.validLine;
-import mara.mybox.tools.TmpFileTools;
 
 /**
  * @Author Mara
@@ -97,7 +97,7 @@ public class DataFileText extends DataFile {
             charset = Charset.forName("UTF-8");
         }
         File validFile = FileTools.removeBOM(file);
-        try ( BufferedReader reader = new BufferedReader(new FileReader(validFile, charset))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(validFile, charset))) {
             String line1 = reader.readLine();
             while (line1 != null && !validLine(line1)) {
                 line1 = reader.readLine();
@@ -188,7 +188,7 @@ public class DataFileText extends DataFile {
             return false;
         }
         DataFileText targetTextFile = (DataFileText) targetData;
-        File tmpFile = TmpFileTools.getTempFile();
+        File tmpFile = FileTmpTools.getTempFile();
         File tFile = targetTextFile.getFile();
         if (tFile == null) {
             return false;
@@ -200,8 +200,8 @@ public class DataFileText extends DataFile {
         boolean tHasHeader = targetTextFile.isHasHeader();
         if (file != null && file.exists() && file.length() > 0) {
             File validFile = FileTools.removeBOM(file);
-            try ( BufferedReader reader = new BufferedReader(new FileReader(validFile, charset));
-                     BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, tCharset, false))) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(validFile, charset));
+                    BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, tCharset, false))) {
                 List<String> colsNames = columnNames();
                 if (hasHeader) {
                     readValidLine(reader);
@@ -236,7 +236,7 @@ public class DataFileText extends DataFile {
                 return false;
             }
         } else {
-            try ( BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, tCharset, false))) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, tCharset, false))) {
                 List<String> colsNames = columnNames();
                 if (tHasHeader && colsNames != null) {
                     TextFileTools.writeLine(writer, colsNames, tDelimiter);
@@ -286,9 +286,9 @@ public class DataFileText extends DataFile {
                     return null;
                 }
             }
-            File tmpFile = tmpFile(dname, "tmp", ".txt");
+            File tmpFile = tmpFile(dname, "tmp", "txt");
             String fDelimiter = ",";
-            try ( BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, Charset.forName("UTF-8"), false))) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile, Charset.forName("UTF-8"), false))) {
                 if (cols != null && !cols.isEmpty()) {
                     TextFileTools.writeLine(writer, cols, fDelimiter);
                 }

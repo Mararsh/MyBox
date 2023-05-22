@@ -1,6 +1,6 @@
 package mara.mybox.controller;
 
-import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
@@ -18,7 +18,7 @@ public class JexlController extends JShellController {
     public JexlController() {
         baseTitle = message("JEXL");
         TipsLabelKey = "JEXLTips";
-        category = TreeNode.JEXLCode;
+        category = InfoNode.JEXLCode;
         nameMsg = message("Title");
         valueMsg = message("Codes");
     }

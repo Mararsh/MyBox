@@ -19,8 +19,8 @@ public class FileFilters {
 
     public static List<FileChooser.ExtensionFilter> TextExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
-            add(new FileChooser.ExtensionFilter("txt", "*.txt", "*.csv", "*.log", "*.ini", "*.cfg", "*.conf", "*.sh", "*.del"));
             add(new FileChooser.ExtensionFilter("*", "*.*", "*"));
+            add(new FileChooser.ExtensionFilter("txt", "*.txt", "*.csv", "*.log", "*.ini", "*.cfg", "*.conf", "*.sh", "*.del", "*.pom", "*.env", "*.properties"));
             add(new FileChooser.ExtensionFilter("codes", "*.java", "*.c", "*.h", "*.py", "*.php", "*.fxml", "*.cpp", "*.cc", "*.js", "*.css", "*.bat"));
             add(new FileChooser.ExtensionFilter("html", "*.html", "*.htm"));
             add(new FileChooser.ExtensionFilter("xml", "*.xml"));
@@ -243,6 +243,12 @@ public class FileFilters {
         }
     };
 
+    public static List<FileChooser.ExtensionFilter> CertExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("X.509", "*.crt"));
+        }
+    };
+
     public static List<FileChooser.ExtensionFilter> TTCExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
             add(new FileChooser.ExtensionFilter("ttc", "*.ttc"));
@@ -285,12 +291,6 @@ public class FileFilters {
         }
     };
 
-    public static List<FileChooser.ExtensionFilter> CertExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
-        {
-            add(new FileChooser.ExtensionFilter("X.509", "*.crt"));
-        }
-    };
-
     public static List<FileChooser.ExtensionFilter> WordExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
             add(new FileChooser.ExtensionFilter("word", "*.doc"));
@@ -330,6 +330,12 @@ public class FileFilters {
     public static List<FileChooser.ExtensionFilter> JarExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
             add(new FileChooser.ExtensionFilter("jar", "*.jar"));
+        }
+    };
+
+    public static List<FileChooser.ExtensionFilter> JSONExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("json", "*.json"));
         }
     };
 

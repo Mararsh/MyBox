@@ -10,8 +10,9 @@ import java.util.Map;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -29,10 +30,11 @@ public class ImageQuantization extends PixelsOperation {
 
     protected QuantizationAlgorithm algorithm;
     protected int quantizationSize, regionSize, weight1, weight2, weight3, intValue;
-    protected boolean recordCount, ceil;
+    protected boolean recordCount, firstColor;
     protected Map<Color, Long> counts;
     protected List<ColorCount> sortedCounts;
     protected long totalCount;
+    protected Color[][][] palette;
 
     public ImageQuantization build() throws Exception {
         return this;
@@ -92,12 +94,12 @@ public class ImageQuantization extends PixelsOperation {
                 return null;
             }
             List<String> names = new ArrayList<>();
-            names.addAll(Arrays.asList(Languages.message("ID"), Languages.message("PixelsNumber"),
-                    Languages.message("Percentage"), Languages.message("Color"),
-                    Languages.message("Red"), Languages.message("Green"), Languages.message("Blue"), Languages.message("Opacity"),
-                    Languages.message("Hue"), Languages.message("Brightness"), Languages.message("Saturation")
+            names.addAll(Arrays.asList(message("ID"), message("PixelsNumber"),
+                    message("Percentage"), message("Color"),
+                    message("Red"), message("Green"), message("Blue"), message("Opacity"),
+                    message("Hue"), message("Brightness"), message("Saturation")
             ));
-            String title = Languages.message(algorithm.name());
+            String title = message(algorithm.name());
             if (name != null) {
                 title += "_" + name;
             }
@@ -110,7 +112,7 @@ public class ImageQuantization extends PixelsOperation {
                 int green = (int) Math.round(color.getGreen() * 255);
                 int blue = (int) Math.round(color.getBlue() * 255);
                 row.addAll(Arrays.asList((id++) + "", StringTools.format(count.count),
-                        (int) (count.count * 100 / totalCount) + "%",
+                        FloatTools.percentage(count.count, totalCount) + "%",
                         FxColorTools.color2rgba(color), red + " ", green + " ", blue + " ",
                         (int) Math.round(color.getOpacity() * 100) + "%",
                         Math.round(color.getHue()) + " ",
@@ -239,12 +241,21 @@ public class ImageQuantization extends PixelsOperation {
         return this;
     }
 
-    public boolean isCeil() {
-        return ceil;
+    public boolean isFirstColor() {
+        return firstColor;
     }
 
-    public ImageQuantization setCeil(boolean ceil) {
-        this.ceil = ceil;
+    public ImageQuantization setFirstColor(boolean firstColor) {
+        this.firstColor = firstColor;
+        return this;
+    }
+
+    public Color[][][] getPalette() {
+        return palette;
+    }
+
+    public ImageQuantization setPalette(Color[][][] palette) {
+        this.palette = palette;
         return this;
     }
 

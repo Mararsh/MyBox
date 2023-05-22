@@ -378,61 +378,58 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
     @FXML
     @Override
     public void okAction() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private Image newImage;
-
-                @Override
-                protected boolean handle() {
-
-                    switch (scaleType) {
-                        case Scale:
-                            if (scale <= 0) {
-                                return false;
-                            }
-                            newImage = mara.mybox.fximage.ScaleTools.scaleImage(imageView.getImage(), scale);
-                            break;
-                        case Dragging:
-                        case Pixels:
-                            if (width <= 0 || height <= 0) {
-                                return false;
-                            }
-                            newImage = mara.mybox.fximage.ScaleTools.scaleImage(imageView.getImage(), (int) width, (int) height);
-                            break;
-                        default:
-                            return false;
-                    }
-                    return newImage != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    imageController.popSuccessful();
-                    String newSize = (int) Math.round(newImage.getWidth()) + "x" + (int) Math.round(newImage.getHeight());
-                    if (scaleType == ScaleType.Scale) {
-                        imageController.updateImage(ImageOperation.Scale2, scale + "", newSize, newImage, cost);
-                    } else if (scaleType == ScaleType.Dragging || scaleType == ScaleType.Pixels) {
-                        imageController.updateImage(ImageOperation.Scale2, "Pixels", newSize, newImage, cost);
-                    }
-
-                    String info = Languages.message("OriginalSize") + ": " + (int) Math.round(imageController.image.getWidth())
-                            + "x" + (int) Math.round(imageController.image.getHeight()) + "\n"
-                            + Languages.message("CurrentSize") + ": " + Math.round(newImage.getWidth())
-                            + "x" + Math.round(newImage.getHeight());
-                    commentsLabel.setText(info);
-
-                    if (scaleType == ScaleType.Dragging) {
-                        initDrag();
-                    }
-                }
-            };
-            imageController.start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
 
+            private Image newImage;
+
+            @Override
+            protected boolean handle() {
+
+                switch (scaleType) {
+                    case Scale:
+                        if (scale <= 0) {
+                            return false;
+                        }
+                        newImage = mara.mybox.fximage.ScaleTools.scaleImage(imageView.getImage(), scale);
+                        break;
+                    case Dragging:
+                    case Pixels:
+                        if (width <= 0 || height <= 0) {
+                            return false;
+                        }
+                        newImage = mara.mybox.fximage.ScaleTools.scaleImage(imageView.getImage(), (int) width, (int) height);
+                        break;
+                    default:
+                        return false;
+                }
+                return newImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                imageController.popSuccessful();
+                String newSize = (int) Math.round(newImage.getWidth()) + "x" + (int) Math.round(newImage.getHeight());
+                if (scaleType == ScaleType.Scale) {
+                    imageController.updateImage(ImageOperation.Scale2, scale + "", newSize, newImage, cost);
+                } else if (scaleType == ScaleType.Dragging || scaleType == ScaleType.Pixels) {
+                    imageController.updateImage(ImageOperation.Scale2, "Pixels", newSize, newImage, cost);
+                }
+
+                String info = Languages.message("OriginalSize") + ": " + (int) Math.round(imageController.image.getWidth())
+                        + "x" + (int) Math.round(imageController.image.getHeight()) + "\n"
+                        + Languages.message("CurrentSize") + ": " + Math.round(newImage.getWidth())
+                        + "x" + Math.round(newImage.getHeight());
+                commentsLabel.setText(info);
+
+                if (scaleType == ScaleType.Dragging) {
+                    initDrag();
+                }
+            }
+        };
+        start(task);
     }
 
     @Override

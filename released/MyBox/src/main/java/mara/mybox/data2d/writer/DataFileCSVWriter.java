@@ -9,7 +9,7 @@ import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.TmpFileTools;
+import mara.mybox.tools.FileTmpTools;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -37,7 +37,7 @@ public class DataFileCSVWriter extends Data2DWriter {
         if (!FileTools.hasData(sourceFile)) {
             return;
         }
-        File tmpFile = TmpFileTools.getTempFile();
+        File tmpFile = FileTmpTools.getTempFile();
         Charset charset = sourceCSV.getCharset();
         CSVFormat format = sourceCSV.cvsFormat();
         File validFile = FileTools.removeBOM(sourceFile);

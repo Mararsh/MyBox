@@ -83,28 +83,35 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     }
 
     public Image scopeImage() {
-        Image inImage = imageView.getImage();
+        try {
+            Image inImage = imageView.getImage();
+            if (inImage == null) {
+                return null;
+            }
+            if (maskRectangleLine != null && maskRectangleLine.isVisible()) {
+                if (maskRectangleData.getSmallX() == 0
+                        && maskRectangleData.getSmallY() == 0
+                        && maskRectangleData.getBigX() == (int) inImage.getWidth() - 1
+                        && maskRectangleData.getBigY() == (int) inImage.getHeight() - 1) {
+                    return inImage;
+                }
+                return CropTools.cropOutsideFx(inImage, maskRectangleData, bgColor);
 
-        if (maskRectangleLine != null && maskRectangleLine.isVisible()) {
-            if (maskRectangleData.getSmallX() == 0
-                    && maskRectangleData.getSmallY() == 0
-                    && maskRectangleData.getBigX() == (int) inImage.getWidth() - 1
-                    && maskRectangleData.getBigY() == (int) inImage.getHeight() - 1) {
+            } else if (maskCircleLine != null && maskCircleLine.isVisible()) {
+                return CropTools.cropOutsideFx(inImage, maskCircleData, bgColor);
+
+            } else if (maskEllipseLine != null && maskEllipseLine.isVisible()) {
+                return CropTools.cropOutsideFx(inImage, maskEllipseData, bgColor);
+
+            } else if (maskPolygonLine != null && maskPolygonLine.isVisible()) {
+                return CropTools.cropOutsideFx(inImage, maskPolygonData, bgColor);
+
+            } else {
                 return inImage;
             }
-            return CropTools.cropOutsideFx(inImage, maskRectangleData, bgColor);
-
-        } else if (maskCircleLine != null && maskCircleLine.isVisible()) {
-            return CropTools.cropOutsideFx(inImage, maskCircleData, bgColor);
-
-        } else if (maskEllipseLine != null && maskEllipseLine.isVisible()) {
-            return CropTools.cropOutsideFx(inImage, maskEllipseData, bgColor);
-
-        } else if (maskPolygonLine != null && maskPolygonLine.isVisible()) {
-            return CropTools.cropOutsideFx(inImage, maskPolygonData, bgColor);
-
-        } else {
-            return inImage;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return image;
         }
     }
 
@@ -168,7 +175,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     @FXML
     public void statisticAction() {
         ImageAnalyseController controller = (ImageAnalyseController) openStage(Fxmls.ImageAnalyseFxml);
-        checkImage(controller);
+        checkImage(controller.sourceController);
     }
 
     @FXML
@@ -222,28 +229,26 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         if (imageView == null || imageView.getImage() == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private Image areaImage;
-
-                @Override
-                protected boolean handle() {
-                    areaImage = imageToHandle();
-                    return areaImage != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    ImageClipboardTools.copyToSystemClipboard(myController, areaImage);
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private Image areaImage;
+
+            @Override
+            protected boolean handle() {
+                areaImage = imageToHandle();
+                return areaImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                ImageClipboardTools.copyToSystemClipboard(myController, areaImage);
+            }
+
+        };
+        start(task);
     }
 
     @Override
@@ -251,28 +256,26 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         if (imageView == null || imageView.getImage() == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private Image areaImage;
-
-                @Override
-                protected boolean handle() {
-                    areaImage = imageToHandle();
-                    return ImageClipboard.add(areaImage, ImageClipboard.ImageSource.Copy) != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popInformation(message("CopiedInMyBoxClipBoard"));
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private Image areaImage;
+
+            @Override
+            protected boolean handle() {
+                areaImage = imageToHandle();
+                return ImageClipboard.add(areaImage, ImageClipboard.ImageSource.Copy) != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popInformation(message("CopiedInMyBoxClipBoard"));
+            }
+
+        };
+        start(task);
     }
 
     @FXML
@@ -324,27 +327,25 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             }
             return;
         }
-        synchronized (this) {
-            if (task != null) {
-                task.cancel();
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private Image targetImage;
-
-                @Override
-                protected boolean handle() {
-                    targetImage = imageToHandle();
-                    return targetImage != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    imageController.loadImage(targetImage);
-                }
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private Image targetImage;
+
+            @Override
+            protected boolean handle() {
+                targetImage = imageToHandle();
+                return targetImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                imageController.loadImage(targetImage);
+            }
+        };
+        start(task);
     }
 
     @FXML
@@ -541,32 +542,30 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         if (imageView.getImage() == null) {
             return;
         }
-        currentAngle = rotateAngle;
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private Image newImage;
-
-                @Override
-                protected boolean handle() {
-                    newImage = TransformTools.rotateImage(imageView.getImage(), rotateAngle);
-                    return newImage != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    imageView.setImage(newImage);
-                    checkSelect();
-                    setImageChanged(true);
-                    refinePane();
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        currentAngle = rotateAngle;
+        task = new SingletonTask<Void>(this) {
+
+            private Image newImage;
+
+            @Override
+            protected boolean handle() {
+                newImage = TransformTools.rotateImage(imageView.getImage(), rotateAngle);
+                return newImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                imageView.setImage(newImage);
+                checkSelect();
+                setImageChanged(true);
+                refinePane();
+            }
+
+        };
+        start(task);
     }
 
     @FXML
@@ -597,49 +596,47 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         if (newfile == null || imageToSave == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    BufferedImage bufferedImage;
-                    if (imageToSave instanceof Image) {
-                        bufferedImage = SwingFXUtils.fromFXImage((Image) imageToSave, null);
-                    } else if (imageToSave instanceof BufferedImage) {
-                        bufferedImage = (BufferedImage) imageToSave;
-                    } else {
-                        return false;
-                    }
-                    if (bufferedImage == null || task == null || isCancelled()) {
-                        return false;
-                    }
-                    if (srcFile != null && framesNumber > 1) {
-                        error = ImageFileWriters.writeFrame(srcFile, frameIndex, bufferedImage, newfile, null);
-                        return error == null;
-                    } else {
-                        return ImageFileWriters.writeImageFile(bufferedImage, newfile);
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    popInformation(message("Saved"));
-                    recordFileWritten(newfile);
-
-                    if (saveAsType == SaveAsType.Load) {
-                        sourceFileChanged(newfile);
-
-                    } else if (saveAsType == SaveAsType.Open) {
-                        ImageViewerController.openFile(newfile);
-
-                    }
-                }
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                BufferedImage bufferedImage;
+                if (imageToSave instanceof Image) {
+                    bufferedImage = SwingFXUtils.fromFXImage((Image) imageToSave, null);
+                } else if (imageToSave instanceof BufferedImage) {
+                    bufferedImage = (BufferedImage) imageToSave;
+                } else {
+                    return false;
+                }
+                if (bufferedImage == null || task == null || isCancelled()) {
+                    return false;
+                }
+                if (srcFile != null && framesNumber > 1) {
+                    error = ImageFileWriters.writeFrame(srcFile, frameIndex, bufferedImage, newfile, null);
+                    return error == null;
+                } else {
+                    return ImageFileWriters.writeImageFile(bufferedImage, newfile);
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                popInformation(message("Saved"));
+                recordFileWritten(newfile);
+
+                if (saveAsType == SaveAsType.Load) {
+                    sourceFileChanged(newfile);
+
+                } else if (saveAsType == SaveAsType.Open) {
+                    ImageViewerController.openFile(newfile);
+
+                }
+            }
+        };
+        start(task);
     }
 
 }

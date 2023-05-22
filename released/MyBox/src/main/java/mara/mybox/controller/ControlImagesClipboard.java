@@ -131,22 +131,21 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
     @FXML
     @Override
     public void loadContentInSystemClipboard() {
-        synchronized (this) {
-            if (task != null) {
-                task.cancel();
-            }
-            Image clip = ImageClipboardTools.fetchImageInClipboard(false);
-            if (clip == null) {
-                popInformation(message("NoImageInClipboard"));
-                return;
-            }
-            lastSystemClip = clip;
-            task = new SingletonTask<Void>(this) {
+        Image clip = ImageClipboardTools.fetchImageInClipboard(false);
+        if (clip == null) {
+            popInformation(message("NoImageInClipboard"));
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        lastSystemClip = clip;
+        task = new SingletonTask<Void>(this) {
 
-                private ImageClipboard clipData;
+            private ImageClipboard clipData;
 
-                @Override
-                protected boolean handle() {
+            @Override
+            protected boolean handle() {
 //                    if (lastSystemClip != null && FxImageTools.sameImage(lastSystemClip, clip)) {
 //                        Platform.runLater(new Runnable() {
 //                            @Override
@@ -156,17 +155,16 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
 //                        });
 //                        return false;
 //                    }
-                    clipData = ImageClipboard.add(lastSystemClip, ImageClipboard.ImageSource.SystemClipBoard);
-                    return clipData != null;
-                }
+                clipData = ImageClipboard.add(lastSystemClip, ImageClipboard.ImageSource.SystemClipBoard);
+                return clipData != null;
+            }
 
-                @Override
-                protected void whenFailed() {
-                }
+            @Override
+            protected void whenFailed() {
+            }
 
-            };
-            start(task);
-        }
+        };
+        start(task);
     }
 
     @FXML
@@ -181,23 +179,21 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
         if (file == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null) {
-                task.cancel();
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private ImageClipboard clip;
-
-                @Override
-                protected boolean handle() {
-                    clip = ImageClipboard.add(file);
-                    return clip != null;
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private ImageClipboard clip;
+
+            @Override
+            protected boolean handle() {
+                clip = ImageClipboard.add(file);
+                return clip != null;
+            }
+
+        };
+        start(task);
     }
 
     @Override
@@ -252,29 +248,27 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
         if (clip == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private Image selectedImage;
-
-                @Override
-                protected boolean handle() {
-                    selectedImage = ImageClipboard.loadImage(clip);
-                    return selectedImage != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    final ImageManufactureController controller
-                            = (ImageManufactureController) WindowTools.openStage(Fxmls.ImageManufactureFxml);
-                    controller.loadImage(selectedImage);
-                }
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private Image selectedImage;
+
+            @Override
+            protected boolean handle() {
+                selectedImage = ImageClipboard.loadImage(clip);
+                return selectedImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                final ImageManufactureController controller
+                        = (ImageManufactureController) WindowTools.openStage(Fxmls.ImageManufactureFxml);
+                controller.loadImage(selectedImage);
+            }
+        };
+        start(task);
     }
 
     @FXML
@@ -284,27 +278,25 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
         if (clip == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-
-                private Image selectedImage;
-
-                @Override
-                protected boolean handle() {
-                    selectedImage = ImageClipboard.loadImage(clip);
-                    return selectedImage != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    ImageClipboardTools.copyToSystemClipboard(parentController, selectedImage);
-                }
-            };
-            parentController.start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+
+            private Image selectedImage;
+
+            @Override
+            protected boolean handle() {
+                selectedImage = ImageClipboard.loadImage(clip);
+                return selectedImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                ImageClipboardTools.copyToSystemClipboard(parentController, selectedImage);
+            }
+        };
+        parentController.start(task);
     }
 
     @FXML

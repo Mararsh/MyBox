@@ -28,35 +28,32 @@ public abstract class BaseBatchImageController extends BaseBatchFileController {
     }
 
     public void loadImageInformation(final File file) {
+        if (task != null) {
+            task.cancel();
+        }
         sourceFile = file;
         imageInformation = null;
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
+        task = new SingletonTask<Void>(this) {
 
-                @Override
-                public Void call() {
-                    ImageFileInformation imageFileInformation = ImageFileInformation.create(file);
-                    if (imageFileInformation == null
-                            || imageFileInformation.getImageInformation() == null) {
-                        return null;
-                    }
-                    imageInformation = imageFileInformation.getImageInformation();
-
-                    ok = true;
+            @Override
+            public Void call() {
+                ImageFileInformation imageFileInformation = ImageFileInformation.create(file);
+                if (imageFileInformation == null
+                        || imageFileInformation.getImageInformation() == null) {
                     return null;
                 }
+                imageInformation = imageFileInformation.getImageInformation();
+                ok = true;
+                return null;
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    afterImageInfoLoaded();
-                }
+            @Override
+            protected void whenSucceeded() {
+                afterImageInfoLoaded();
+            }
 
-            };
-            start(task);
-        }
+        };
+        start(task);
     }
 
     public void afterImageInfoLoaded() {

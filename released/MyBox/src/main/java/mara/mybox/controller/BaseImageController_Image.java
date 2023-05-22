@@ -53,57 +53,55 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         if (file == null || !file.exists() || !file.isFile()) {
             return;
         }
-        synchronized (this) {
-            if (loadTask != null && !loadTask.isQuit()) {
-                return;
-            }
-            loadTask = new SingletonTask<Void>(this) {
-                private ImageInformation loadedInfo;
-
-                @Override
-                protected boolean handle() {
-                    if (framesNumber <= 0) {
-                        framesNumber = 1;
-                    }
-                    int frame = index;
-                    if (frame < 0) {
-                        frame = framesNumber - 1;
-                    }
-                    if (frame >= framesNumber) {
-                        frame = 0;
-                    }
-                    loadedInfo = new ImageInformation(file);
-                    loadedInfo.setIndex(frame);
-                    loadedInfo.setRequiredWidth(width);
-                    loadedInfo.setTask(loadTask);
-                    loadedInfo = ImageFileReaders.makeInfo(loadedInfo, onlyInformation);
-                    if (loadedInfo == null) {
-                        return false;
-                    }
-                    error = loadedInfo.getError();
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    recordFileOpened(file);
-                    if (loadedInfo.isNeedSample()) {
-                        askSample(loadedInfo);
-                    } else {
-                        sourceFile = file;
-                        imageInformation = loadedInfo;
-                        image = loadedInfo.getThumbnail();
-                        afterInfoLoaded();
-                        afterImageLoaded();
-                    }
-                    if (error != null && !error.isBlank()) {
-                        popError(error);
-                    }
-                }
-
-            };
-            start(loadTask);
+        if (loadTask != null) {
+            loadTask.cancel();
         }
+        loadTask = new SingletonTask<Void>(this) {
+            private ImageInformation loadedInfo;
+
+            @Override
+            protected boolean handle() {
+                if (framesNumber <= 0) {
+                    framesNumber = 1;
+                }
+                int frame = index;
+                if (frame < 0) {
+                    frame = framesNumber - 1;
+                }
+                if (frame >= framesNumber) {
+                    frame = 0;
+                }
+                loadedInfo = new ImageInformation(file);
+                loadedInfo.setIndex(frame);
+                loadedInfo.setRequiredWidth(width);
+                loadedInfo.setTask(loadTask);
+                loadedInfo = ImageFileReaders.makeInfo(loadedInfo, onlyInformation);
+                if (loadedInfo == null) {
+                    return false;
+                }
+                error = loadedInfo.getError();
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                recordFileOpened(file);
+                if (loadedInfo.isNeedSample()) {
+                    askSample(loadedInfo);
+                } else {
+                    sourceFile = file;
+                    imageInformation = loadedInfo;
+                    image = loadedInfo.getThumbnail();
+                    afterInfoLoaded();
+                    afterImageLoaded();
+                }
+                if (error != null && !error.isBlank()) {
+                    popError(error);
+                }
+            }
+
+        };
+        start(loadTask);
     }
 
     public void askSample(ImageInformation imageInfo) {
@@ -116,33 +114,31 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             loadImageFile(file);
             return;
         }
-        boolean exist = (info.getRegion() == null) && (sourceFile != null || image != null);
-        synchronized (this) {
-            if (loadTask != null && !loadTask.isQuit()) {
-                return;
-            }
-            loadTask = new SingletonTask<Void>(this) {
-
-                private Image thumbLoaded;
-
-                @Override
-                protected boolean handle() {
-                    thumbLoaded = info.loadThumbnail(loadWidth);
-                    return thumbLoaded != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    image = thumbLoaded;
-                    sourceFile = file;
-                    imageInformation = info;
-                    afterImageLoaded();
-                    setImageChanged(exist);
-                }
-
-            };
-            loadingController = start(loadTask);
+        if (loadTask != null) {
+            loadTask.cancel();
         }
+        boolean exist = (info.getRegion() == null) && (sourceFile != null || image != null);
+        loadTask = new SingletonTask<Void>(this) {
+
+            private Image thumbLoaded;
+
+            @Override
+            protected boolean handle() {
+                thumbLoaded = info.loadThumbnail(loadWidth);
+                return thumbLoaded != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                image = thumbLoaded;
+                sourceFile = file;
+                imageInformation = info;
+                afterImageLoaded();
+                setImageChanged(exist);
+            }
+
+        };
+        loadingController = start(loadTask);
     }
 
     public void loadImageInfo(ImageInformation info) {
@@ -166,26 +162,24 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             loadImageInfo(info);
             return;
         }
-        synchronized (this) {
-            if (loadTask != null && !loadTask.isQuit()) {
-                return;
-            }
-            loadTask = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    image = info.loadThumbnail(loadWidth);
-                    return image != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    loadImage(image);
-                }
-
-            };
-            loadingController = start(loadTask);
+        if (loadTask != null) {
+            loadTask.cancel();
         }
+        loadTask = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                image = info.loadThumbnail(loadWidth);
+                return image != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                loadImage(image);
+            }
+
+        };
+        loadingController = start(loadTask);
     }
 
     public void loadImage(Image inImage) {

@@ -5,23 +5,27 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.Clipboard;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import mara.mybox.data.StringTable;
-import mara.mybox.data2d.Data2D;
+import mara.mybox.data2d.Data2DMenuTools;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -35,12 +39,9 @@ public class ControlData2DEditTable extends ControlData2DLoad {
     protected SimpleBooleanProperty columnChangedNotify;
 
     @FXML
-    protected Button headerButton, verifyButton;
-    @FXML
-    protected CheckBox verifyCheck;
+    protected Button verifyButton;
 
     public ControlData2DEditTable() {
-        TipsLabelKey = "Data2DTips";
         readOnly = false;
         columnChangedNotify = new SimpleBooleanProperty(false);
     }
@@ -49,9 +50,7 @@ public class ControlData2DEditTable extends ControlData2DLoad {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeStyleTools.setTooltip(headerButton, new Tooltip(message("FirstLineDefineNames")));
             NodeStyleTools.setTooltip(verifyButton, new Tooltip(message("VerifyPageData")));
-            NodeStyleTools.setTooltip(verifyCheck, new Tooltip(message("VerifyDataWhenSave")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -77,26 +76,6 @@ public class ControlData2DEditTable extends ControlData2DLoad {
 
             initPagination();
 
-            verifyCheck.setSelected(UserConfig.getBoolean("Data2DVerifyBeforeSave", false));
-            verifyCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> o, Boolean ov, Boolean nv) {
-                    UserConfig.setBoolean("Data2DVerifyBeforeSave", verifyCheck.isSelected());
-                }
-            });
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void setData(Data2D data) {
-        try {
-            super.setData(data);
-
-            headerButton.setDisable(!data2D.isTmpData() && !data2D.isDataFile() && !data.isClipboard());
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -116,32 +95,6 @@ public class ControlData2DEditTable extends ControlData2DLoad {
             readDefinition();
         } catch (Exception e) {
             MyBoxLog.error(e);
-        }
-    }
-
-    @FXML
-    public void headerAction() {
-        try {
-            if (data2D == null || tableData.isEmpty()) {
-                popError(message("NoData"));
-                return;
-            }
-            List<String> row = tableData.get(0);
-            if (row == null || row.size() < 2) {
-                popError(message("InvalidData"));
-                return;
-            }
-            List<String> names = new ArrayList<>();
-            for (int i = 1; i < row.size(); i++) {
-                String name = row.get(i);
-                if (name == null || name.isBlank()) {
-                    name = message("Column") + i;
-                }
-                DerbyBase.checkIdentifier(names, name, true);
-            }
-            dataController.columnsController.setNames(names);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
         }
     }
 
@@ -306,7 +259,7 @@ public class ControlData2DEditTable extends ControlData2DLoad {
     }
 
     public boolean verifyData() {
-        if (!verifyCheck.isSelected()) {
+        if (!UserConfig.getBoolean("Data2DVerifyDataWhenSave", false)) {
             return true;
         }
         StringTable results = verifyResults();
@@ -329,6 +282,57 @@ public class ControlData2DEditTable extends ControlData2DLoad {
 
         Optional<ButtonType> result = alert.showAndWait();
         return result != null && result.isPresent() && result.get() == buttonSave;
+    }
+
+    public void headerAction() {
+        try {
+            if (data2D == null || tableData.isEmpty()) {
+                popError(message("NoData"));
+                return;
+            }
+            List<String> row = tableData.get(0);
+            if (row == null || row.size() < 2) {
+                popError(message("InvalidData"));
+                return;
+            }
+            List<String> names = new ArrayList<>();
+            for (int i = 1; i < row.size(); i++) {
+                String name = row.get(i);
+                if (name == null || name.isBlank()) {
+                    name = message("Column") + i;
+                }
+                DerbyBase.checkIdentifier(names, name, true);
+            }
+            dataController.columnsController.setNames(names);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void showHelps(Event event) {
+        List<MenuItem> items = Data2DMenuTools.helpMenus(this);
+
+        items.add(new SeparatorMenuItem());
+
+        CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+        hoverMenu.setSelected(UserConfig.getBoolean("Data2DHelpsPopWhenMouseHovering", false));
+        hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                UserConfig.setBoolean("Data2DHelpsPopWhenMouseHovering", hoverMenu.isSelected());
+            }
+        });
+        items.add(hoverMenu);
+
+        popEventMenu(event, items);
+    }
+
+    @FXML
+    public void popHelps(Event event) {
+        if (UserConfig.getBoolean("Data2DHelpsPopWhenMouseHovering", false)) {
+            showHelps(event);
+        }
     }
 
     @Override

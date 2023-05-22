@@ -49,7 +49,7 @@ public class JsonTools {
                 return null;
             }
             String data = json.substring(startPos + flag.length());
-            endFind.setInputString(data).run();
+            endFind.setInputString(data).handleString();
             IndexRange end = endFind.getStringRange();
             if (end == null) {
                 return null;

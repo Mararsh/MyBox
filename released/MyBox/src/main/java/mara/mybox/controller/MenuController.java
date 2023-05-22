@@ -131,8 +131,8 @@ public class MenuController extends BaseChildController {
 
     public void setWidth(double w) {
         thisPane.setPrefWidth(w);
-        thisPane.layout();
         thisPane.applyCss();
+        thisPane.layout();
     }
 
     public void setTitleid(String id) {

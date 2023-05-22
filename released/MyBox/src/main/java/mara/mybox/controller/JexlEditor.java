@@ -133,6 +133,8 @@ public class JexlEditor extends JShellEditor {
             MenuController controller = MenuController.open(this, valueInput, event);
             controller.setTitleLabel(message("Syntax"));
 
+            String menuName = interfaceName + "ScriptExamples";
+
             List<Node> topButtons = new ArrayList<>();
             Button newLineButton = new Button();
             newLineButton.setGraphic(StyleTools.getIconImageView("iconTurnOver.png"));
@@ -157,14 +159,26 @@ public class JexlEditor extends JShellEditor {
             });
             topButtons.add(clearInputButton);
 
+            CheckBox closeCheck = new CheckBox();
+            closeCheck.setGraphic(StyleTools.getIconImageView("iconClose.png"));
+            NodeStyleTools.setTooltip(closeCheck, new Tooltip(message("CloseAfterPaste")));
+            closeCheck.setSelected(UserConfig.getBoolean(menuName + "ValuesCloseAfterPaste", true));
+            closeCheck.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent aevent) {
+                    UserConfig.setBoolean(menuName + "ValuesCloseAfterPaste", closeCheck.isSelected());
+                }
+            });
+            topButtons.add(closeCheck);
+
             CheckBox popCheck = new CheckBox();
             popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
             NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
-            popCheck.setSelected(UserConfig.getBoolean(interfaceName + "ScriptExamplesPopWhenMouseHovering", false));
+            popCheck.setSelected(UserConfig.getBoolean(menuName + "PopWhenMouseHovering", false));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(interfaceName + "ScriptExamplesPopWhenMouseHovering", popCheck.isSelected());
+                    UserConfig.setBoolean(menuName + "PopWhenMouseHovering", popCheck.isSelected());
                 }
             });
             topButtons.add(popCheck);
@@ -176,22 +190,22 @@ public class JexlEditor extends JShellEditor {
                     " new('java.math.BigDecimal', 9) ", " new('java.lang.Double', 10d) ",
                     " new('java.lang.Long', 10) ", " new('java.lang.Integer', 10) ",
                     " new('java.lang.String', 'Hello') ", "  new('java.util.Date') "
-            ));
+            ), menuName);
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
                     " true ", " false ", " null ", " empty(x) ", " size(x) ",
                     " 3 =~ [1,'2',3, 'hello'] ", " 2 !~ {1,'2',3, 'hello'} ",
                     " 'hello'.startsWith('hell') ", " 'hello'.endsWith('ll') ",
                     " not 'hello'.startsWith('hell') "
-            ));
+            ), menuName);
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
                     " = ", " + ", " - ", " * ", " / ", ";", " , ",
                     "( )", " { } ", "[ ]", "\"\"", "''", " : ", " .. "
-            ));
+            ), menuName);
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
                     " == ", " != ", " >= ", " > ", " <= ", " < ",
                     " && ", " and ", " || ", " or ", " !", " not ",
                     " =~ ", " !~ "
-            ));
+            ), menuName);
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
                     "var list = [ 'A', 'B', 'C', 'D' ];\n"
                     + "return list.size();",
@@ -199,7 +213,7 @@ public class JexlEditor extends JShellEditor {
                     + "return set.toString();",
                     "var map = { 'A': 1,'B': 2,'C': 3,'D': 4 };\n"
                     + "return map.toString();"
-            ), false);
+            ), menuName);
 
             List<Node> buttons = new ArrayList<>();
             Button includeButton = new Button("StringTools.include('abc1233hello','3{2}',caseInsensitive)");
@@ -415,6 +429,8 @@ public class JexlEditor extends JShellEditor {
             MenuController controller = MenuController.open(this, moreInput, event);
             controller.setTitleLabel(message("Syntax"));
 
+            String menuName = interfaceName + "ContextExamples";
+
             List<Node> topButtons = new ArrayList<>();
             Button newLineButton = new Button();
             newLineButton.setGraphic(StyleTools.getIconImageView("iconTurnOver.png"));
@@ -439,14 +455,26 @@ public class JexlEditor extends JShellEditor {
             });
             topButtons.add(clearInputButton);
 
+            CheckBox closeCheck = new CheckBox();
+            closeCheck.setGraphic(StyleTools.getIconImageView("iconClose.png"));
+            NodeStyleTools.setTooltip(closeCheck, new Tooltip(message("CloseAfterPaste")));
+            closeCheck.setSelected(UserConfig.getBoolean(menuName + "ValuesCloseAfterPaste", true));
+            closeCheck.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent aevent) {
+                    UserConfig.setBoolean(menuName + "ValuesCloseAfterPaste", closeCheck.isSelected());
+                }
+            });
+            topButtons.add(closeCheck);
+
             CheckBox popCheck = new CheckBox();
             popCheck.setGraphic(StyleTools.getIconImageView("iconPop.png"));
             NodeStyleTools.setTooltip(popCheck, new Tooltip(message("PopWindowWhenMouseHovering")));
-            popCheck.setSelected(UserConfig.getBoolean(interfaceName + "ContextExamplesPopWhenMouseHovering", false));
+            popCheck.setSelected(UserConfig.getBoolean(menuName + "PopWhenMouseHovering", false));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean(interfaceName + "ContextExamplesPopWhenMouseHovering", popCheck.isSelected());
+                    UserConfig.setBoolean(menuName + "PopWhenMouseHovering", popCheck.isSelected());
                 }
             });
             topButtons.add(popCheck);
@@ -465,7 +493,7 @@ public class JexlEditor extends JShellEditor {
                     "jexlContext.set(\"x\", 5);\n",
                     "jexlContext.set(\"x\", 5);\n",
                     "jexlContext.set(\"s\", \"hello\");\n"
-            ));
+            ), menuName);
 
             Hyperlink elink = new Hyperlink("JEXL Overview");
             elink.setOnAction(new EventHandler<ActionEvent>() {

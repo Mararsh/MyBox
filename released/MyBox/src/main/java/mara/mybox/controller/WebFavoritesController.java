@@ -5,7 +5,7 @@ import java.util.List;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.stage.Window;
-import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableImageFileCell;
@@ -21,7 +21,7 @@ public class WebFavoritesController extends TreeManageController {
 
     public WebFavoritesController() {
         baseTitle = message("WebFavorites");
-        category = TreeNode.WebFavorite;
+        category = InfoNode.WebFavorite;
         nameMsg = message("Title");
         valueMsg = message("Address");
         moreMsg = message("Icon");
@@ -38,17 +38,6 @@ public class WebFavoritesController extends TreeManageController {
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-        }
-    }
-
-    @Override
-    public void afterSceneLoaded() {
-        try {
-            super.afterSceneLoaded();
-
-            hideRightPane();
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -100,10 +89,10 @@ public class WebFavoritesController extends TreeManageController {
         return controller;
     }
 
-    public static WebFavoritesController oneOpen(TreeNode node) {
+    public static WebFavoritesController oneOpen(InfoNode node) {
         WebFavoritesController controller = oneOpen();
         if (controller != null) {
-            controller.loadTree(node);
+            controller.nodesController.focusNodeAfterLoaded(node);
         }
         return controller;
     }

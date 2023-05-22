@@ -40,54 +40,52 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
         if (file == null) {
             return;
         }
-        initPage(file);
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            bottomLabel.setText(message("CheckingEncoding"));
-            task = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    if (sourceInformation == null || sourceFile == null) {
-                        return false;
-                    }
-                    if (!sourceInformation.isCharsetDetermined()) {
-                        sourceInformation.setLineBreak(TextTools.checkLineBreak(sourceFile));
-                        sourceInformation.setLineBreakValue(TextTools.lineBreakValue(sourceInformation.getLineBreak()));
-                        return sourceInformation.checkCharset();
-                    } else {
-                        return true;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    bottomLabel.setText("");
-                    isSettingValues = true;
-                    sourceInformation.setCharsetDetermined(true);
-                    if (charsetSelector != null) {
-                        charsetSelector.getSelectionModel().select(sourceInformation.getCharset().name());
-                        if (sourceInformation.isWithBom()) {
-                            bomLabel.setText(message("WithBom"));
-                        } else {
-                            bomLabel.setText("");
-                        }
-                    }
-                    isSettingValues = false;
-                    loadPage();
-                }
-
-                @Override
-                protected void whenFailed() {
-                    bottomLabel.setText("");
-                    super.whenFailed();
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        initPage(file);
+        bottomLabel.setText(message("CheckingEncoding"));
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                if (sourceInformation == null || sourceFile == null) {
+                    return false;
+                }
+                if (!sourceInformation.isCharsetDetermined()) {
+                    sourceInformation.setLineBreak(TextTools.checkLineBreak(sourceFile));
+                    sourceInformation.setLineBreakValue(TextTools.lineBreakValue(sourceInformation.getLineBreak()));
+                    return sourceInformation.checkCharset();
+                } else {
+                    return true;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                bottomLabel.setText("");
+                isSettingValues = true;
+                sourceInformation.setCharsetDetermined(true);
+                if (charsetSelector != null) {
+                    charsetSelector.getSelectionModel().select(sourceInformation.getCharset().name());
+                    if (sourceInformation.isWithBom()) {
+                        bomLabel.setText(message("WithBom"));
+                    } else {
+                        bomLabel.setText("");
+                    }
+                }
+                isSettingValues = false;
+                loadPage();
+            }
+
+            @Override
+            protected void whenFailed() {
+                bottomLabel.setText("");
+                super.whenFailed();
+            }
+
+        };
+        start(task);
     }
 
     private void openBytesFile(File file) {
@@ -214,70 +212,65 @@ public abstract class BaseFileEditorController_File extends BaseFileEditorContro
         if (sourceInformation == null || sourceFile == null || sourceInformation.isTotalNumberRead()) {
             return;
         }
-        synchronized (this) {
-            if (backgroundTask != null) {
-                backgroundTask.cancel();
-                backgroundTask = null;
-            }
-            backgroundTask = new SingletonTask<Void>(this) {
-
-                @Override
-                protected boolean handle() {
-                    ok = sourceInformation.readTotalNumbers();
-                    return ok;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    updateNumbers(false);
-                }
-
-            };
-            start(backgroundTask, false);
+        if (backgroundTask != null) {
+            backgroundTask.cancel();
         }
+        backgroundTask = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                ok = sourceInformation.readTotalNumbers();
+                return ok;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                updateNumbers(false);
+            }
+
+        };
+        start(backgroundTask, false);
     }
 
     protected void loadPage() {
         if (sourceInformation == null || sourceFile == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            bottomLabel.setText(message("ReadingFile"));
-            task = new SingletonTask<Void>(this) {
-
-                private String text;
-
-                @Override
-                protected boolean handle() {
-                    text = sourceInformation.readPage();
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    bottomLabel.setText("");
-                    if (text != null) {
-                        loadText(text, false);
-                        if (!sourceInformation.isTotalNumberRead()) {
-                            loadTotalNumbers();
-                        }
-                    } else {
-                        popFailed();
-                    }
-                }
-
-                @Override
-                protected void cancelled() {
-                    super.cancelled();
-                    taskCanceled();
-                }
-
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        bottomLabel.setText(message("ReadingFile"));
+        task = new SingletonTask<Void>(this) {
+
+            private String text;
+
+            @Override
+            protected boolean handle() {
+                text = sourceInformation.readPage();
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                bottomLabel.setText("");
+                if (text != null) {
+                    loadText(text, false);
+                    if (!sourceInformation.isTotalNumberRead()) {
+                        loadTotalNumbers();
+                    }
+                } else {
+                    popFailed();
+                }
+            }
+
+            @Override
+            protected void cancelled() {
+                super.cancelled();
+                taskCanceled();
+            }
+
+        };
+        start(task);
     }
 
     protected void loadText(String text, boolean changed) {

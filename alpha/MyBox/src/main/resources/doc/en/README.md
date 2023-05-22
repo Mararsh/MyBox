@@ -177,67 +177,68 @@ MyBox is based on following open sources:
 
 | Name | Role | Link |
 | --- | --- | --- |
-| JDK | Java | http://jdk.java.net/   |
-|   |   | https://www.oracle.com/technetwork/java/javase/downloads/index.html  |
-|   |   | https://docs.oracle.com/en/java/javase/20/docs/api/index.html  |
-|  JavaFx | GUI |  https://gluonhq.com/products/javafx/ |
-|   |   |  https://docs.oracle.com/javafx/2/  |
-|   |   |  https://gluonhq.com/products/scene-builder/  |
-|   |   |  https://openjfx.io/javadoc/20/ |
-| Derby | Database | http://db.apache.org/derby/ |
-| NetBeans | IDE| https://netbeans.org/ |
-| jpackage | pack | https://docs.oracle.com/en/java/javase/20/docs/specs/man/jpackage.html |
-| maven | build | https://maven.apache.org/ |
-| jai-imageio | Image manufacture | https://github.com/jai-imageio/jai-imageio-core |
-| PDFBox | PDF manufacture | https://pdfbox.apache.org/ |
-| PDF2DOM | PDF to html | http://cssbox.sourceforge.net/pdf2dom/ |
-| GifDecoder | Decode broken gif  | https://github.com/DhyanB/Open-Imaging/ |
-| EncodingDetect | Determine encoding of text file | https://www.cnblogs.com/ChurchYim/p/8427373.html |
-| Lindbloom | Color theory| http://brucelindbloom.com/index.html |
-| Free Icons | Icon | https://icons8.com/icons/set/home |
-| tess4j | OCR | https://github.com/nguyenq/tess4j |
-| tesseract | OCR | https://github.com/tesseract-ocr/tesseract |
-| barcode4j | Create barcodes | http://barcode4j.sourceforge.net |
-| zxing | Create/Decode barcodes | https://github.com/zxing/zxing |
-| flexmark-java | Convert Markdown | https://github.com/vsch/flexmark-java |
-| commons-compress | archive/compress | https://commons.apache.org/proper/commons-compress |
-| XZ for Java | archive/compress | https://tukaani.org/xz/java.html |
-| ffmpeg| convert/create medias | http://ffmpeg.org |
-| image4j | ico format | https://github.com/imcdonagh/image4j |
-| AutoCommitCell | Submit updates | https://stackoverflow.com/questions/24694616 （Ogmios） |
-| GaoDe | Map | https://lbs.amap.com/api/javascript-api/summary |
-| GaoDe | Coordinate | https://lbs.amap.com/api/webservice/guide/api/georegeo |
-| WeiBo | Image materials| https://weibo.com/3876734080/InmB1aPiL?type=comment#_rnd1582211299665 |
-| poi | Microsoft Documents | https://poi.apache.org |
-| LabeledBarChart | Javafx charts | https://stackoverflow.com/questions/34286062/how-to-clear-text-added-in-a-javafx-barchart/41494789#41494789 (Roland) |
-| commons-csv | CSV | https://commons.apache.org/proper/commons-csv/ |
-| geonames | Location data | https://www.geonames.org/countries/ |
-| world-area | Location data | https://github.com/wizardcode/world-area |
-| China National Bureau of Statistics | Data | http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/ |
-| JHU | COVID-19 data | https://github.com/CSSEGISandData/COVID-19 |
-| Website | Color data | https://tool.lanrentuku.com/color/china.html |
-| Book | Materials | https://book.douban.com/subject/3894923/ |
-| National Geomatics Center of China | Map | http://lbs.tianditu.gov.cn/api/js4.0/guide.html |
-| movebank | Location data | https://www.datarepository.movebank.org |
-| CoordinateConverter | convert coordinates | https://www.jianshu.com/p/c39a2c72dc65?from=singlemessage |
-| JavaMail | email | https://javaee.github.io/javamail/ |
-| Commons IO | File IO | https://commons.apache.org/proper/commons-io/ |
-| colorhexa | Color data | https://www.colorhexa.com/color-names |
-| WQY | Font file | http://wenq.org/wqy2/ |
-| ttc2ttf | Extract ttf | https://github.com/fermi1981/TTC_TTF |
-| sfds | Handwriting | http://www.sfds.cn/725B/ |
-| Book | Materials | https://book.douban.com/subject/10465940/ |
-| PaginatedPdfTable | PDF | https://github.com/eduardohl/Paginated-PDFBox-Table-Sample |
-| jsoup | DOM | https://jsoup.org/ |        
-| ZhiHu | Materials | https://www.zhihu.com/question/41580677/answer/1300242801 |             
-| commons-math | Calculation | https://commons.apache.org/proper/commons-math/index.html |
-| JEXL | Calculation | https://commons.apache.org/proper/commons-jexl |
-| OpenOffice | Document | [http://www.openoffice.org/](http://www.openoffice.org/) |
-| nashorn | JavaScript | [https://openjdk.org/projects/nashorn/](https://openjdk.org/projects/nashorn/) |
-| echarts-gl | WebGL | [https://github.com/ecomfe/echarts-gl](https://github.com/ecomfe/echarts-gl) |
-| RYB hues | art colors | [https://blog.csdn.net/weixin_44938037/article/details/90599711](https://blog.csdn.net/weixin_44938037/article/details/90599711) |
-| jsch | sftp | [http://www.jcraft.com/jsch/](http://www.jcraft.com/jsch/) |
-| jackson | json | [https://github.com/FasterXML/jackson](https://github.com/FasterXML/jackson) |
+| JDK                                 | Java                            | <http://jdk.java.net/>                                                                                                                                                                                                              |
+|                                     |                                 | <https://www.oracle.com/technetwork/java/javase/downloads/index.html>                                                                                                                                                               |
+|                                     |                                 | <https://docs.oracle.com/en/java/javase/20/docs/api/index.html>                                                                                                                                                                     |
+| JavaFx                              | GUI                             | <https://gluonhq.com/products/javafx/>                                                                                                                                                                                              |
+|                                     |                                 | <https://docs.oracle.com/javafx/2/>                                                                                                                                                                                                 |
+|                                     |                                 | <https://gluonhq.com/products/scene-builder/>                                                                                                                                                                                       |
+|                                     |                                 | <https://openjfx.io/javadoc/20/>                                                                                                                                                                                                    |
+| Derby                               | Database                        | <http://db.apache.org/derby/>                                                                                                                                                                                                       |
+| NetBeans                            | IDE                             | <https://netbeans.org/>                                                                                                                                                                                                             |
+| jpackage                            | pack                            | <https://docs.oracle.com/en/java/javase/20/docs/specs/man/jpackage.html>                                                                                                                                                            |
+| maven                               | build                           | <https://maven.apache.org/>                                                                                                                                                                                                         |
+| jai-imageio                         | Image manufacture               | <https://github.com/jai-imageio/jai-imageio-core>                                                                                                                                                                                   |
+| PDFBox                              | PDF manufacture                 | <https://pdfbox.apache.org/>                                                                                                                                                                                                        |
+| PDF2DOM                             | PDF to html                     | <http://cssbox.sourceforge.net/pdf2dom/>                                                                                                                                                                                            |
+| GifDecoder                          | Decode broken gif               | <https://github.com/DhyanB/Open-Imaging/>                                                                                                                                                                                           |
+| EncodingDetect                      | Determine encoding of text file | <https://www.cnblogs.com/ChurchYim/p/8427373.html>                                                                                                                                                                                  |
+| Lindbloom                           | Color theory                    | <https://icons8.com/icons/set/home>                                                                                                                                                                                                 |
+| Free Icons                          | Icon                            | <http://brucelindbloom.com/index.html>                                                                                                                                                                                              |
+| tess4j                              | OCR                             | <https://github.com/nguyenq/tess4j>                                                                                                                                                                                                 |
+| tesseract                           | OCR                             | <https://github.com/tesseract-ocr/tesseract>                                                                                                                                                                                        |
+| barcode4j                           | Create barcodes                 | [http://barcode4j.sourceforge.net](http://barcode4j.sourceforge.net/)                                                                                                                                                               |
+| zxing                               | Create/Decode barcodes          | <https://github.com/zxing/zxing>                                                                                                                                                                                                    |
+| flexmark-java                       | Convert Markdown                | <https://github.com/vsch/flexmark-java>                                                                                                                                                                                             |
+| commons-compress                    | archive/compress                | <https://commons.apache.org/proper/commons-compress>                                                                                                                                                                                |
+| XZ for Java                         | archive/compress                | <https://tukaani.org/xz/java.html>                                                                                                                                                                                                  |
+| ffmpeg                              | convert/create medias           | [http://ffmpeg.org](http://ffmpeg.org/)                                                                                                                                                                                             |
+| image4j                             | ico format                      | <https://github.com/imcdonagh/image4j>                                                                                                                                                                                              |
+| AutoCommitCell                      | Submit updates                  | <https://stackoverflow.com/questions/24694616>[（Ogmios](https://stackoverflow.com/questions/24694616)[）](https://stackoverflow.com/questions/24694616)                                                                              |
+| GaoDe                               | Map                             | <https://lbs.amap.com/api/javascript-api/summary>                                                                                                                                                                                   |
+| GaoDe                               | Coordinate                      | <https://lbs.amap.com/api/webservice/guide/api/georegeo>                                                                                                                                                                            |
+| WeiBo                               | Image materials                 | <https://weibo.com/3876734080/InmB1aPiL?type=comment#_rnd1582211299665>                                                                                                                                                             |
+| poi                                 | Microsoft Documents             | [https://poi.apache.org](https://poi.apache.org/)                                                                                                                                                                                   |
+| LabeledBarChart                     | Javafx charts                   | [https://stackoverflow.com/questions/34286062/how-to-clear-text-added-in-a-javafx-barchart/41494789#41494789 (Roland)](https://stackoverflow.com/questions/34286062/how-to-clear-text-added-in-a-javafx-barchart/41494789#41494789) |
+| commons-csv                         | CSV                             | <https://commons.apache.org/proper/commons-csv/>                                                                                                                                                                                    |
+| geonames                            | Location data                   | <https://www.geonames.org/countries/>                                                                                                                                                                                               |
+| world-area                          | Location data                   | <https://github.com/wizardcode/world-area>                                                                                                                                                                                          |
+| China National Bureau of Statistics | Data                            | <http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/>                                                                                                                                                                                 |
+| JHU                                 | COVID-19 data                   | <https://github.com/CSSEGISandData/COVID-19>                                                                                                                                                                                        |
+| Website                             | Color data                      | <https://tool.lanrentuku.com/color/china.html>                                                                                                                                                                                      |
+| Book                                | Materials                       | <https://book.douban.com/subject/3894923/>                                                                                                                                                                                          |
+| National Geomatics Center of China  | Map                             | <http://lbs.tianditu.gov.cn/api/js4.0/guide.html>                                                                                                                                                                                   |
+| movebank                            | Location data                   | [https://www.datarepository.movebank.org](https://www.datarepository.movebank.org/)                                                                                                                                                 |
+| CoordinateConverter                 | convert coordinates             | <https://www.jianshu.com/p/c39a2c72dc65?from=singlemessage>                                                                                                                                                                         |
+| JavaMail                            | email                           | <https://javaee.github.io/javamail/>                                                                                                                                                                                                |
+| Commons IO                          | File IO                         | <https://commons.apache.org/proper/commons-io/>                                                                                                                                                                                     |
+| colorhexa                           | Color data                      | <https://www.colorhexa.com/color-names>                                                                                                                                                                                             |
+| WQY                                 | Font file                       | <http://wenq.org/wqy2/>                                                                                                                                                                                                             |
+| ttc2ttf                             | Extract ttf                     | <https://github.com/fermi1981/TTC_TTF>                                                                                                                                                                                              |
+| sfds                                | Handwriting                     | <https://book.douban.com/subject/10465940/>                                                                                                                                                                                         |
+| Book                                | Materials                       | <http://www.sfds.cn/725B/>                                                                                                                                                                                                          |
+| PaginatedPdfTable                   | PDF                             | <https://github.com/eduardohl/Paginated-PDFBox-Table-Sample>                                                                                                                                                                        |
+| jsoup                               | DOM                             | <https://jsoup.org/>                                                                                                                                                                                                                |
+| ZhiHu                               | Materials                       | <https://www.zhihu.com/question/41580677/answer/1300242801>                                                                                                                                                                         |
+| commons-math                        | Calculation                     | <https://commons.apache.org/proper/commons-math/index.html>                                                                                                                                                                         |
+| JEXL                                | Calculation                     | <https://commons.apache.org/proper/commons-jexl>                                                                                                                                                                                    |
+| OpenOffice                          | Document                        | <http://www.openoffice.org/>                                                                                                                                                                                                        |
+| nashorn                             | JavaScript                      | <https://openjdk.org/projects/nashorn/>                                                                                                                                                                                             |
+| echarts-gl                          | WebGL                           | <https://github.com/ecomfe/echarts-gl>                                                                                                                                                                                              |
+| RYB hues                            | art colors                      | <https://blog.csdn.net/weixin_44938037/article/details/90599711>                                                                                                                                                                    |
+| jsch                                | sftp                            | <http://www.jcraft.com/jsch/>                                                                                                                                                                                                       |
+| jackson                             | json                            | <https://github.com/FasterXML/jackson>              
+
 
 # Features        
 ## Cross Platforms        

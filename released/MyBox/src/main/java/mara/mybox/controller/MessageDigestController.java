@@ -202,50 +202,42 @@ public class MessageDigestController extends BaseController {
                 return;
             }
         }
-        try {
-            synchronized (this) {
-                if (task != null && !task.isQuit()) {
-                    return;
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+
+            private long datalen;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    if (inputType == InputType.File) {
+                        digest = MessageDigestTools.messageDigest(sourceFile, algorithm);
+                        datalen = sourceFile.length();
+                    } else {
+                        byte[] data = inputArea.getText().getBytes(charset);
+                        digest = MessageDigestTools.messageDigest(data, algorithm);
+                        datalen = data.length;
+                    }
+                    return digest != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
                 }
-                task = new SingletonTask<Void>(this) {
-
-                    private long datalen;
-
-                    @Override
-                    protected boolean handle() {
-                        try {
-                            if (inputType == InputType.File) {
-                                digest = MessageDigestTools.messageDigest(sourceFile, algorithm);
-                                datalen = sourceFile.length();
-                            } else {
-                                byte[] data = inputArea.getText().getBytes(charset);
-                                digest = MessageDigestTools.messageDigest(data, algorithm);
-                                datalen = data.length;
-                            }
-                            return digest != null;
-                        } catch (Exception e) {
-                            error = e.toString();
-                            return false;
-                        }
-                    }
-
-                    @Override
-                    protected void whenSucceeded() {
-                        display();
-                        String s = MessageFormat.format(Languages.message("DigestResult"),
-                                datalen, digest.length);
-                        s += "  " + Languages.message("Cost") + ":" + DateTools.datetimeMsDuration(cost);
-                        bottomLabel.setText(s);
-                    }
-
-                };
-                start(task);
             }
 
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
+            @Override
+            protected void whenSucceeded() {
+                display();
+                String s = MessageFormat.format(Languages.message("DigestResult"),
+                        datalen, digest.length);
+                s += "  " + Languages.message("Cost") + ":" + DateTools.datetimeMsDuration(cost);
+                bottomLabel.setText(s);
+            }
 
+        };
+        start(task);
     }
 
     @FXML

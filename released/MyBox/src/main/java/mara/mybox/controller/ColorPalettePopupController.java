@@ -3,10 +3,9 @@ package mara.mybox.controller;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -15,16 +14,11 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColorData;
@@ -37,7 +31,6 @@ import mara.mybox.fximage.PaletteTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
-import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -55,17 +48,12 @@ public class ColorPalettePopupController extends BaseChildController {
     protected TableColor tableColor;
     protected List<ColorPaletteName> palettes;
     protected ColorPaletteName currentPalette;
-    protected Rectangle clickedRect, enteredRect;
-    protected DropShadow shadowEffect;
-    protected double rectSize;
     protected SimpleBooleanProperty setNotify;
 
     @FXML
     protected HBox barBox;
     @FXML
-    protected ScrollPane scrollPane;
-    @FXML
-    protected FlowPane colorsPane;
+    protected ControlColorsPane colorsController;
     @FXML
     protected Label label;
     @FXML
@@ -99,7 +87,6 @@ public class ColorPalettePopupController extends BaseChildController {
             tableColorPalette = new TableColorPalette();
             tableColor = new TableColor();
             tableColorPalette.setTableColor(tableColor);
-            rectSize = AppVariables.iconSize * 0.8;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -121,11 +108,20 @@ public class ColorPalettePopupController extends BaseChildController {
         try {
             super.initControls();
 
+            colorsController.setParameter(null, false);
+
             popCheck.setSelected(UserConfig.getBoolean("PopColorSetWhenMouseHovering", true));
             popCheck.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
                     UserConfig.setBoolean("PopColorSetWhenMouseHovering", popCheck.isSelected());
+                }
+            });
+
+            colorsController.clickNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    takeColor(colorsController.clickedColor());
                 }
             });
 
@@ -141,141 +137,76 @@ public class ColorPalettePopupController extends BaseChildController {
 
             this.parentController = parent;
             parentRect = rect;
-            shadowEffect = new DropShadow();
             loadColors();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    public void loadColors() {
-        synchronized (this) {
-            if (task != null) {
-                task.cancel();
-            }
-            thisPane.setDisable(true);
-            task = new SingletonTask<Void>(this) {
+    public synchronized void loadColors() {
+        if (task != null) {
+            task.cancel();
+        }
+        thisPane.setDisable(true);
+        task = new SingletonTask<Void>(this) {
 
-                protected List<ColorData> colors;
+            protected List<ColorData> colors;
 
-                @Override
-                protected boolean handle() {
-                    try (Connection conn = DerbyBase.getConnection()) {
-                        ColorPaletteName defaultPalette = PaletteTools.defaultPalette(conn);
-                        if (defaultPalette == null) {
-                            return false;
-                        }
-                        String paletteName = UserConfig.getString("ColorPalettePopupPalette", defaultPalette.getName());
-                        currentPalette = tableColorPaletteName.find(conn, paletteName);
-                        if (currentPalette == null) {
-                            currentPalette = defaultPalette;
-                        }
-                        if (currentPalette == null) {
-                            return false;
-                        }
-                        paletteName = currentPalette.getName();
-                        UserConfig.setString("ColorPalettePopupPalette", paletteName);
-                        colors = tableColorPalette.colors(conn, currentPalette.getCpnid());
-                        palettes = tableColorPaletteName.recentVisited(conn);
-                    } catch (Exception e) {
-                        error = e.toString();
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    ColorPaletteName defaultPalette = PaletteTools.defaultPalette(conn);
+                    if (defaultPalette == null) {
                         return false;
                     }
-                    return colors != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    isSettingValues = true;
-                    colorsPane.getChildren().clear();
-                    for (ColorData data : colors) {
-                        Rectangle rect = makeColorRect(data);
-                        if (rect != null) {
-                            colorsPane.getChildren().add(rect);
-                        }
+                    String paletteName = UserConfig.getString("ColorPalettePopupPalette", defaultPalette.getName());
+                    currentPalette = tableColorPaletteName.find(conn, paletteName);
+                    if (currentPalette == null) {
+                        currentPalette = defaultPalette;
                     }
-                    label.setText(currentPalette.getName() + ": " + colorsPane.getChildren().size());
-                    isSettingValues = false;
-                    new Timer().schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            Platform.runLater(() -> {
-                                colorsPane.applyCss();
-                                colorsPane.layout();
-                            });
-                        }
-                    }, 600);
+                    if (currentPalette == null) {
+                        return false;
+                    }
+                    paletteName = currentPalette.getName();
+                    UserConfig.setString("ColorPalettePopupPalette", paletteName);
+                    colors = tableColorPalette.colors(conn, currentPalette.getCpnid());
+                    palettes = tableColorPaletteName.recentVisited(conn);
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
                 }
-
-                @Override
-                protected void whenFailed() {
-                }
-
-                @Override
-                protected void finalAction() {
-                    task = null;
-                    thisPane.setDisable(false);
-                }
-
-            };
-            start(task, false);
-        }
-    }
-
-    public Rectangle makeColorRect(ColorData data) {
-        try {
-            if (data == null) {
-                return null;
+                return colors != null;
             }
-            Rectangle rect = new Rectangle(rectSize, rectSize);
-            rect.setUserData(data);
-            NodeStyleTools.setTooltip(rect, new Tooltip(data.display()));
-            Color color = data.getColor();
-            rect.setFill(color);
-            rect.setStroke(Color.BLACK);
-            rect.setOnMouseClicked((MouseEvent event) -> {
-                Platform.runLater(() -> {
-                    takeColor(data);
-                });
-            });
-            rect.setOnMouseEntered((MouseEvent event) -> {
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        Rectangle rect = (Rectangle) event.getSource();
-                        if (isSettingValues || rect.equals(enteredRect) || rect.equals(clickedRect)) {
-                            return;
-                        }
-                        isSettingValues = true;
-                        if (enteredRect != null && !enteredRect.equals(clickedRect)) {
-                            enteredRect.setEffect(null);
-                            enteredRect.setWidth(rectSize);
-                            enteredRect.setHeight(rectSize);
-                        }
-                        rect.setEffect(shadowEffect);
-                        rect.setWidth(rectSize * 1.4);
-                        rect.setHeight(rectSize * 1.4);
-                        enteredRect = rect;
-                        isSettingValues = false;
-                    }
-                });
-            });
-            return rect;
-        } catch (Exception e) {
-            return null;
-        }
+
+            @Override
+            protected void whenSucceeded() {
+                colorsController.loadColors(currentPalette, colors);
+                label.setText(currentPalette.getName() + ": " + colors.size());
+            }
+
+            @Override
+            protected void whenFailed() {
+            }
+
+            @Override
+            protected void finalAction() {
+                task = null;
+                thisPane.setDisable(false);
+            }
+
+        };
+        start(task, false);
     }
 
-    public void takeColor(ColorData data) {
-        if (isSettingValues || data == null
+    public void takeColor(ColorData colorData) {
+        if (isSettingValues || colorData == null
                 || parentController == null || parentRect == null) {
             return;
         }
         try {
-            Color color = data.getColor();
-            parentRect.setFill(color);
-            parentRect.setUserData(data);
-            NodeStyleTools.setTooltip(parentRect, data.display());
+            parentRect.setFill(colorData.getColor());
+            parentRect.setUserData(colorData);
+            NodeStyleTools.setTooltip(parentRect, colorData.display());
             parentController.closePopup();
             setNotify.set(!setNotify.get());
         } catch (Exception e) {
@@ -373,16 +304,6 @@ public class ColorPalettePopupController extends BaseChildController {
             return;
         }
         PaletteTools.afterPaletteChanged(parentController, palette);
-    }
-
-    @FXML
-    public void exitPane() {
-        if (enteredRect != null && !enteredRect.equals(clickedRect)) {
-            enteredRect.setEffect(null);
-            enteredRect.setWidth(rectSize);
-            enteredRect.setHeight(rectSize);
-            enteredRect = null;
-        }
     }
 
     public SimpleBooleanProperty getSetNotify() {

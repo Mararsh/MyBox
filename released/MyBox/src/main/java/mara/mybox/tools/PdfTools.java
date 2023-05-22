@@ -432,7 +432,7 @@ public class PdfTools {
                     || cols == null || cols.isEmpty() || targetFile == null) {
                 return false;
             }
-            File tmpFile = TmpFileTools.getTempFile();
+            File tmpFile = FileTmpTools.getTempFile();
             try (PDDocument document = new PDDocument(AppVariables.pdfMemUsage)) {
                 int x1, y1, x2, y2;
                 BufferedImage wholeSource = null;
@@ -571,7 +571,7 @@ public class PdfTools {
             if (html == null || html.isBlank()) {
                 return null;
             }
-            File pdfFile = TmpFileTools.pdfFile();
+            File pdfFile = FileTmpTools.generateFile("pdf");
             File wqy_microhei = FxFileTools.getInternalFile("/data/wqy-microhei.ttf", "data", "wqy-microhei.ttf");
             String css = "@font-face {\n"
                     + "  font-family: 'myFont';\n"

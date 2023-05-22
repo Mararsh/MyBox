@@ -14,8 +14,8 @@ import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.Tag;
-import mara.mybox.db.data.TreeNode;
-import mara.mybox.db.data.TreeNodeTag;
+import mara.mybox.db.data.InfoNode;
+import mara.mybox.db.data.InfoNodeTag;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.db.table.TableTag;
 import mara.mybox.db.table.TableTreeNode;
@@ -40,7 +40,7 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
     protected TableTag tableTag;
     protected TableTreeNodeTag tableTreeNodeTag;
     protected String category;
-    protected TreeNode currentNode;
+    protected InfoNode currentNode;
 
     @FXML
     protected TableColumn<Tag, String> tagColumn;
@@ -175,56 +175,57 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
     }
 
     public void addTag(boolean forCurrentNode) {
-        synchronized (this) {
-            String name = PopTools.askValue(getBaseTitle(),
-                    message("Add"), message("Tag"), message("Tag") + new Date().getTime());
-            if (name == null || name.isBlank()) {
+        if (task != null) {
+            task.cancel();
+        }
+        String name = PopTools.askValue(getBaseTitle(),
+                message("Add"), message("Tag"), message("Tag") + new Date().getTime());
+        if (name == null || name.isBlank()) {
+            return;
+        }
+        for (Tag tag : tableData) {
+            if (name.equals(tag.getTag())) {
+                popError(message("AlreadyExisted"));
                 return;
             }
-            for (Tag tag : tableData) {
-                if (name.equals(tag.getTag())) {
-                    popError(message("AlreadyExisted"));
-                    return;
-                }
-            }
-            thisPane.setDisable(true);
-            SingletonTask tagTask = new SingletonTask<Void>(this) {
-                private Tag tag = null;
-
-                @Override
-                protected boolean handle() {
-                    try (Connection conn = DerbyBase.getConnection()) {
-                        tag = tableTag.insertData(conn, new Tag(category, name));
-                        if (forCurrentNode && tag != null && currentNode != null) {
-                            tableTreeNodeTag.insertData(conn,
-                                    new TreeNodeTag(currentNode.getNodeid(), tag.getTgid()));
-                        }
-                    } catch (Exception e) {
-                        error = e.toString();
-                        return false;
-                    }
-                    return tag != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    tableData.add(0, tag);
-                    treeController.nodeController.tableData.add(0, tag);
-                    if (forCurrentNode) {
-                        treeController.nodeController.tableView.getSelectionModel().select(tag);
-                    }
-                    treeController.nodeController.nodeChanged(true);
-                    popSuccessful();
-                }
-
-                @Override
-                protected void finalAction() {
-                    thisPane.setDisable(false);
-                }
-
-            };
-            start(tagTask, false);
         }
+        thisPane.setDisable(true);
+        SingletonTask tagTask = new SingletonTask<Void>(this) {
+            private Tag tag = null;
+
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    tag = tableTag.insertData(conn, new Tag(category, name));
+                    if (forCurrentNode && tag != null && currentNode != null) {
+                        tableTreeNodeTag.insertData(conn,
+                                new InfoNodeTag(currentNode.getNodeid(), tag.getTgid()));
+                    }
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return tag != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                tableData.add(0, tag);
+                treeController.nodeController.tableData.add(0, tag);
+                if (forCurrentNode) {
+                    treeController.nodeController.tableView.getSelectionModel().select(tag);
+                }
+                treeController.nodeController.nodeChanged(true);
+                popSuccessful();
+            }
+
+            @Override
+            protected void finalAction() {
+                thisPane.setDisable(false);
+            }
+
+        };
+        start(tagTask, thisPane);
     }
 
     public void saveTag(Tag tag) {

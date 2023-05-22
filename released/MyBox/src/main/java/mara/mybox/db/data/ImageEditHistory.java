@@ -1,9 +1,12 @@
 package mara.mybox.db.data;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Date;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.imagefile.ImageFileReaders;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -15,13 +18,17 @@ import static mara.mybox.value.Languages.message;
  */
 public class ImageEditHistory extends BaseData {
 
+    public static final int Default_Max_Histories = 20;
+
     protected long iehid;
-    protected String image, historyLocation, updateType, objectType, opType, scopeType, scopeName;
+    protected File imageFile, historyFile, thumbnailFile;
+    protected String updateType, objectType, opType, scopeType, scopeName;
     protected Date operationTime;
     protected Image thumbnail;
 
     private void init() {
         iehid = -1;
+        operationTime = new Date();
     }
 
     public ImageEditHistory() {
@@ -60,14 +67,32 @@ public class ImageEditHistory extends BaseData {
     }
 
     public long getSize() {
-        File file = new File(historyLocation);
-        return file.exists() ? file.length() : 0;
+        return historyFile != null && historyFile.exists() ? historyFile.length() : 0;
     }
 
     public String getFileName() {
-        File file = new File(historyLocation);
-        return file.exists() ? file.getName() : null;
+        return historyFile != null && historyFile.exists() ? historyFile.getName() : null;
     }
+
+    public Image historyImage() {
+        try {
+            if (!historyFile.exists()) {
+                return null;
+            }
+            BufferedImage bufferedImage = ImageFileReaders.readImage(historyFile);
+            if (bufferedImage != null) {
+                return SwingFXUtils.toFXImage(bufferedImage, null);
+            }
+            return null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public boolean valid() {
+        return valid(this);
+    }
+
 
     /*
         static methods
@@ -78,7 +103,8 @@ public class ImageEditHistory extends BaseData {
 
     public static boolean valid(ImageEditHistory data) {
         return data != null
-                && data.getImage() != null && data.getHistoryLocation() != null
+                && data.getImageFile() != null && data.getHistoryFile() != null
+                && data.getImageFile().exists() && data.getHistoryFile().exists()
                 && data.getOperationTime() != null;
     }
 
@@ -90,9 +116,14 @@ public class ImageEditHistory extends BaseData {
             case "iehid":
                 return data.getIehid();
             case "image_location":
-                return data.getImage();
+                File imageFile = data.getImageFile();
+                return imageFile == null ? null : imageFile.getAbsolutePath();
             case "history_location":
-                return data.getHistoryLocation();
+                File hisFile = data.getHistoryFile();
+                return hisFile == null ? null : hisFile.getAbsolutePath();
+            case "thumbnail_file":
+                File thumbFile = data.getThumbnailFile();
+                return thumbFile == null ? null : thumbFile.getAbsolutePath();
             case "operation_time":
                 return data.getOperationTime();
             case "update_type":
@@ -119,10 +150,31 @@ public class ImageEditHistory extends BaseData {
                     data.setIehid(value == null ? -1 : (long) value);
                     return true;
                 case "image_location":
-                    data.setImage(value == null ? null : (String) value);
+                    data.setImageFile(null);
+                    if (value != null) {
+                        File f = new File((String) value);
+                        if (f.exists()) {
+                            data.setImageFile(f);
+                        }
+                    }
                     return true;
                 case "history_location":
-                    data.setHistoryLocation(value == null ? null : (String) value);
+                    data.setHistoryFile(null);
+                    if (value != null) {
+                        File f = new File((String) value);
+                        if (f.exists()) {
+                            data.setHistoryFile(f);
+                        }
+                    }
+                    return true;
+                case "thumbnail_file":
+                    data.setThumbnailFile(null);
+                    if (value != null) {
+                        File f = new File((String) value);
+                        if (f.exists()) {
+                            data.setThumbnailFile(f);
+                        }
+                    }
                     return true;
                 case "operation_time":
                     data.setOperationTime(value == null ? null : (Date) value);
@@ -156,80 +208,99 @@ public class ImageEditHistory extends BaseData {
         return iehid;
     }
 
-    public void setIehid(long iehid) {
+    public ImageEditHistory setIehid(long iehid) {
         this.iehid = iehid;
+        return this;
     }
 
-    public String getImage() {
-        return image;
+    public File getImageFile() {
+        return imageFile;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public ImageEditHistory setImageFile(File imageFile) {
+        this.imageFile = imageFile;
+        return this;
     }
 
-    public String getHistoryLocation() {
-        return historyLocation;
+    public File getHistoryFile() {
+        return historyFile;
     }
 
-    public void setHistoryLocation(String historyLocation) {
-        this.historyLocation = historyLocation;
+    public ImageEditHistory setHistoryFile(File historyFile) {
+        this.historyFile = historyFile;
+        return this;
     }
 
-    public String getUpdateType() {
-        return updateType;
+    public File getThumbnailFile() {
+        return thumbnailFile;
     }
 
-    public void setUpdateType(String updateType) {
-        this.updateType = updateType;
-    }
-
-    public Date getOperationTime() {
-        return operationTime;
-    }
-
-    public void setOperationTime(Date operationTime) {
-        this.operationTime = operationTime;
+    public ImageEditHistory setThumbnailFile(File thumbnailFile) {
+        this.thumbnailFile = thumbnailFile;
+        return this;
     }
 
     public Image getThumbnail() {
         return thumbnail;
     }
 
-    public void setThumbnail(Image thumbnail) {
+    public ImageEditHistory setThumbnail(Image thumbnail) {
         this.thumbnail = thumbnail;
+        return this;
+    }
+
+    public String getUpdateType() {
+        return updateType;
+    }
+
+    public ImageEditHistory setUpdateType(String updateType) {
+        this.updateType = updateType;
+        return this;
+    }
+
+    public Date getOperationTime() {
+        return operationTime;
+    }
+
+    public ImageEditHistory setOperationTime(Date operationTime) {
+        this.operationTime = operationTime;
+        return this;
     }
 
     public String getObjectType() {
         return objectType;
     }
 
-    public void setObjectType(String objectType) {
+    public ImageEditHistory setObjectType(String objectType) {
         this.objectType = objectType;
+        return this;
     }
 
     public String getOpType() {
         return opType;
     }
 
-    public void setOpType(String opType) {
+    public ImageEditHistory setOpType(String opType) {
         this.opType = opType;
+        return this;
     }
 
     public String getScopeType() {
         return scopeType;
     }
 
-    public void setScopeType(String scopeType) {
+    public ImageEditHistory setScopeType(String scopeType) {
         this.scopeType = scopeType;
+        return this;
     }
 
     public String getScopeName() {
         return scopeName;
     }
 
-    public void setScopeName(String scopeName) {
+    public ImageEditHistory setScopeName(String scopeName) {
         this.scopeName = scopeName;
+        return this;
     }
 
 }

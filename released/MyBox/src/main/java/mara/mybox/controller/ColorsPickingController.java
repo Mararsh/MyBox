@@ -1,16 +1,25 @@
 package mara.mybox.controller;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.paint.Color;
 import javafx.stage.Window;
+import mara.mybox.db.DerbyBase;
+import mara.mybox.db.data.ColorData;
+import mara.mybox.db.data.ColorPaletteName;
+import mara.mybox.db.table.TableColor;
+import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
 /**
@@ -18,13 +27,23 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-7-22
  * @License Apache License Version 2.0
  */
-public class ColorsPickingController extends ColorsManageController {
+public class ColorsPickingController extends BaseChildController {
+
+    protected TableColorPalette tableColorPalette;
+    protected TableColor tableColor;
+    protected ColorPaletteName currentPalette;
 
     @FXML
+    protected ControlColorPaletteSelector palettesController;
+    @FXML
+    protected ControlColorsPane colorsController;
+    @FXML
     protected CheckBox onlyNewCheck;
+    @FXML
+    protected Label paletteLabel;
 
     public ColorsPickingController() {
-        baseTitle = Languages.message("PickingColorsNow");
+        baseTitle = message("PickingColorsNow");
     }
 
     @Override
@@ -32,37 +51,90 @@ public class ColorsPickingController extends ColorsManageController {
         try {
             super.initControls();
 
-            colorsController.paletteTabPane.getSelectionModel().select(colorsController.colorsTab);
+            palettesController.setParameter(null, false);
+            colorsController.setParameter(null, true);
 
             onlyNewCheck.setSelected(UserConfig.getBoolean("ColorsOnlyPickNew", true));
             onlyNewCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     UserConfig.setBoolean("ColorsOnlyPickNew", nv);
-                    colorsController.onlyPickNew = nv;
                 }
             });
-            colorsController.onlyPickNew = onlyNewCheck.isSelected();
+
+            tableColorPalette = new TableColorPalette();
+            tableColor = new TableColor();
+            tableColorPalette.setTableColor(tableColor);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    @Override
-    public void setStageStatus() {
-        setAsPop(baseName);
-    }
-
     public void setParameters(BaseController parent) {
         try {
             this.parentController = parent;
 
-            popInformation(Languages.message("PickingColorsNow"));
+            palettesController.palettesList.getSelectionModel().selectedItemProperty().addListener(
+                    (ObservableValue<? extends ColorPaletteName> ov, ColorPaletteName t, ColorPaletteName t1) -> {
+                        paletteSelected();
+                    });
+
+            popInformation(message("PickingColorsNow"));
+            palettesController.loadPalettes();
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
+    }
+
+    public void paletteSelected() {
+        currentPalette = palettesController.selected();
+        if (currentPalette == null) {
+            setTitle(baseTitle);
+            paletteLabel.setText("");
+            colorsController.loadColors(null, null);
+            return;
+        }
+        String name = currentPalette.getName();
+        UserConfig.setString(baseName + "Palette", name);
+        setTitle(baseTitle + " - " + name);
+        paletteLabel.setText(name);
+        colorsController.loadPalette(currentPalette, false);
+    }
+
+    protected void pickColor(Color color) {
+        if (color == null) {
+            return;
+        }
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+
+            @Override
+            protected boolean handle() {
+                try (Connection conn = DerbyBase.getConnection()) {
+                    ColorData colorData = tableColor.write(conn, new ColorData(color), false);
+                    if (colorData == null) {
+                        return false;
+                    }
+                    colorData.setPaletteid(currentPalette.getCpnid());
+                    tableColorPalette.findAndCreate(conn, colorData, false, onlyNewCheck.isSelected());
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                colorsController.loadPalette(currentPalette, true);
+            }
+
+        };
+        start(task);
     }
 
     @Override

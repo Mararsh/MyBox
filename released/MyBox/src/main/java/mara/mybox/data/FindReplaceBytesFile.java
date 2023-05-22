@@ -5,12 +5,18 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javafx.scene.control.IndexRange;
+import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.ByteTools;
+import mara.mybox.tools.CsvTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
-import mara.mybox.tools.TmpFileTools;
 import static mara.mybox.value.Languages.message;
+import org.apache.commons.csv.CSVPrinter;
 
 /**
  * @Author Mara
@@ -31,7 +37,7 @@ public class FindReplaceBytesFile {
         findReplaceFile.setFileInfo(sourceInfo);
         int count = 0;
         File sourceFile = sourceInfo.getFile();
-        try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(sourceFile))) {
+        try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(sourceFile))) {
             int pageSize = FileTools.bufSize(sourceFile, 48);
             byte[] pageBytes = new byte[pageSize];
             String findString = findReplaceFile.getFindString();
@@ -47,7 +53,7 @@ public class FindReplaceBytesFile {
                 pageHex = ByteTools.bytesToHexFormat(pageBytes);
                 hexLen = pageHex.length();
                 checkedString = backString + pageHex;
-                findReplaceString.setInputString(checkedString).run();
+                findReplaceString.setInputString(checkedString).handleString();
                 IndexRange lastRange = findReplaceString.getStringRange();
                 if (lastRange != null) {
                     count += findReplaceString.getCount();
@@ -162,7 +168,7 @@ public class FindReplaceBytesFile {
         }
         findReplaceString.setError(null);
         findReplaceString.setStringRange(null);
-        try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
+        try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
             if (hexStartPosition > 0) {
                 inputStream.skip(hexStartPosition / 3);
             }
@@ -185,7 +191,7 @@ public class FindReplaceBytesFile {
                     bufHex = bufHex.substring(0, hexLen - keepLen);
                     hexLen = bufHex.length();
                 }
-                findReplaceString.setInputString(backString.concat(bufHex)).setAnchor(0).run();
+                findReplaceString.setInputString(backString.concat(bufHex)).setAnchor(0).handleString();
                 range = findReplaceString.getStringRange();
                 if (range != null) {
                     found = new LongRange();
@@ -299,7 +305,7 @@ public class FindReplaceBytesFile {
         }
         findReplaceString.setError(null);
         findReplaceString.setStringRange(null);
-        try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
+        try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
             if (hexStartPosition > 0) {
                 inputStream.skip(hexStartPosition / 3);
             }
@@ -324,7 +330,7 @@ public class FindReplaceBytesFile {
                 }
                 checkString = backString.concat(bufHex);
                 checkLen = checkString.length();
-                findReplaceString.setInputString(checkString).setAnchor(checkLen).run();
+                findReplaceString.setInputString(checkString).setAnchor(checkLen).handleString();
                 range = findReplaceString.getStringRange();
                 if (range != null) {
                     found = new LongRange();
@@ -408,9 +414,9 @@ public class FindReplaceBytesFile {
         sourceInfo.setFindReplace(findReplaceFile);
         findReplaceFile.setFileInfo(sourceInfo);
         File sourceFile = sourceInfo.getFile();
-        File tmpFile = TmpFileTools.getTempFile();
-        try ( BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(sourceFile));
-                 BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
+        File tmpFile = FileTmpTools.getTempFile();
+        try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(sourceFile));
+                BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
             int pageSize = FileTools.bufSize(sourceFile, 48);
             String findString = findReplaceFile.getFindString();
             String replaceString = findReplaceFile.getReplaceString();
@@ -429,7 +435,7 @@ public class FindReplaceBytesFile {
                 pageHex = ByteTools.bytesToHexFormat(pageBytes);
                 pageLen = pageHex.length();
                 checkedString = backString + pageHex;
-                findReplaceString.setInputString(checkedString).setAnchor(0).run();
+                findReplaceString.setInputString(checkedString).setAnchor(0).handleString();
                 range = findReplaceString.getStringRange();
                 if (range != null) {
                     replacedString = findReplaceString.getOutputString();
@@ -468,6 +474,98 @@ public class FindReplaceBytesFile {
             }
         }
         return false;
+    }
+
+    public static boolean findAllBytes(FileEditInformation sourceInfo, FindReplaceFile findReplaceFile) {
+        if (sourceInfo == null || sourceInfo.getFile() == null
+                || findReplaceFile.getFindString() == null || findReplaceFile.getFindString().isEmpty()) {
+            if (findReplaceFile != null) {
+                findReplaceFile.setError(message("InvalidParameters"));
+            }
+            return false;
+        }
+        findReplaceFile.setError(null);
+        findReplaceFile.setFileRange(null);
+        findReplaceFile.setStringRange(null);
+        findReplaceFile.setCount(0);
+        findReplaceFile.setMatches(null);
+        findReplaceFile.setMatchesData(null);
+        sourceInfo.setFindReplace(findReplaceFile);
+        findReplaceFile.setFileInfo(sourceInfo);
+        File sourceFile = sourceInfo.getFile();
+        int count = 0;
+        File tmpFile = FileTmpTools.getTempFile();
+        try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(sourceFile));
+                CSVPrinter csvPrinter = CsvTools.csvPrinter(tmpFile)) {
+            int pageSize = FileTools.bufSize(sourceFile, 48);
+            String findString = findReplaceFile.getFindString();
+            String replaceString = findReplaceFile.getReplaceString();
+            FindReplaceString findReplaceString = findReplaceFile.findReplaceString()
+                    .setFindString(findString).setReplaceString(replaceString)
+                    .setAnchor(0).setWrap(false);
+            int findLen = findReplaceFile.isIsRegex() ? pageSize * 3 : findString.length();
+            byte[] pageBytes = new byte[pageSize];
+            IndexRange range;
+            String pageHex, backString = "", checkedString;
+            int pageLen, backFrom;
+            long bytesStart = 0;
+            List<String> names = new ArrayList<>();
+            names.addAll(Arrays.asList(message("Start"), message("End"), message("String")));
+            csvPrinter.printRecord(names);
+            List<String> row = new ArrayList<>();
+            while ((pageLen = inputStream.read(pageBytes)) > 0) {
+                if (pageLen < pageSize) {
+                    pageBytes = ByteTools.subBytes(pageBytes, 0, pageLen);
+                }
+                pageHex = ByteTools.bytesToHexFormat(pageBytes);
+                pageLen = pageHex.length();
+                checkedString = backString + pageHex;
+                findReplaceString.setInputString(checkedString)
+                        .setAnchor(0)
+                        .handleString();
+                range = findReplaceString.getStringRange();
+                if (range != null) {
+                    long offset = bytesStart - backString.length();
+                    List<FindReplaceMatch> sMatches = findReplaceString.getMatches();
+                    if (sMatches != null && !sMatches.isEmpty()) {
+                        for (FindReplaceMatch m : sMatches) {
+                            row.clear();
+                            row.add(((offset + m.getStart()) / 3 + 1) + "");
+                            row.add((offset + m.getEnd()) / 3 + "");
+                            row.add(m.getMatchedPrefix());
+                            csvPrinter.printRecord(row);
+                            count++;
+                        }
+                    }
+                    backString = checkedString.length() == range.getEnd() ? ""
+                            : checkedString.substring(range.getEnd());
+                } else {
+                    backFrom = Math.max(3, pageLen - findLen + 3);
+                    backString = pageHex.substring(backFrom, pageLen);
+                }
+                bytesStart += pageLen;
+            }
+            csvPrinter.flush();
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            findReplaceFile.setError(e.toString());
+            return false;
+        }
+        if (tmpFile == null || !tmpFile.exists()) {
+            return false;
+        }
+        if (count == 0) {
+            return true;
+        }
+        DataFileCSV matchesData = findReplaceFile.initMatchesData(sourceFile);
+        File matchesFile = matchesData.getFile();
+        if (!FileTools.rename(tmpFile, matchesFile)) {
+            return false;
+        }
+        matchesData.setRowsNumber(count);
+        findReplaceFile.setCount(count);
+        findReplaceFile.setMatchesData(matchesData);
+        return true;
     }
 
 }

@@ -252,117 +252,114 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
         if (!saveRotationCheck.isSelected()) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
+        if (task != null) {
+            task.cancel();
+        }
+        task = new SingletonTask<Void>(this) {
+
+            private int handled = 0;
+            private boolean hasMultipleFrames = false;
+
+            @Override
+            protected boolean handle() {
+                if (indexs == null || indexs.isEmpty()) {
+                    for (int i = 0; i < tableData.size(); ++i) {
+                        ImageInformation info = tableData.get(i);
+                        if (info.isIsMultipleFrames()) {
+                            hasMultipleFrames = true;
+                            continue;
+                        }
+                        ImageInformation newInfo = saveRotation(info, rotateAngle);
+                        if (newInfo == null) {
+                            continue;
+                        }
+                        if (displayMode == DisplayMode.ImagesGrid) {
+                            newInfo.loadThumbnail(thumbWidth);
+                        } else if (displayMode == DisplayMode.ThumbnailsList) {
+                            newInfo.loadThumbnail();
+                        }
+                        tableData.set(i, newInfo);
+                        handled++;
+                    }
+                } else {
+                    for (int i = 0; i < indexs.size(); ++i) {
+                        int index = indexs.get(i);
+                        ImageInformation info = tableData.get(index);
+                        if (info.isIsMultipleFrames()) {
+                            hasMultipleFrames = true;
+                            continue;
+                        }
+                        ImageInformation newInfo = saveRotation(info, rotateAngle);
+                        if (newInfo == null) {
+                            continue;
+                        }
+                        if (displayMode == DisplayMode.ImagesGrid) {
+                            newInfo.loadThumbnail(thumbWidth);
+                        } else if (displayMode == DisplayMode.ThumbnailsList) {
+                            newInfo.loadThumbnail();
+                        }
+                        tableData.set(index, newInfo);
+                        handled++;
+                    }
+                }
+                return true;
             }
-            task = new SingletonTask<Void>(this) {
 
-                private int handled = 0;
-                private boolean hasMultipleFrames = false;
+            private ImageInformation saveRotation(ImageInformation info, int rotateAngle) {
+                if (info == null || info.getImageFileInformation() == null || info.isIsMultipleFrames()) {
+                    return null;
+                }
+                try {
+                    File file = info.getImageFileInformation().getFile();
+                    BufferedImage bufferedImage = ImageInformation.readBufferedImage(info);
+                    bufferedImage = TransformTools.rotateImage(bufferedImage, rotateAngle);
+                    ImageFileWriters.writeImageFile(bufferedImage, file);
+                    ImageInformation newInfo = loadInfo(file);
+                    return newInfo;
+                } catch (Exception e) {
+                    MyBoxLog.debug(e.toString());
+                    return null;
+                }
+            }
 
-                @Override
-                protected boolean handle() {
+            @Override
+            protected void whenSucceeded() {
+                if (hasMultipleFrames) {
+                    popError(Languages.message("CanNotHandleMultipleFrames"));
+                }
+                if (handled == 0) {
+                    return;
+                }
+                if (displayMode == DisplayMode.ImagesGrid) {
                     if (indexs == null || indexs.isEmpty()) {
                         for (int i = 0; i < tableData.size(); ++i) {
-                            ImageInformation info = tableData.get(i);
-                            if (info.isIsMultipleFrames()) {
-                                hasMultipleFrames = true;
-                                continue;
-                            }
-                            ImageInformation newInfo = saveRotation(info, rotateAngle);
-                            if (newInfo == null) {
-                                continue;
-                            }
-                            if (displayMode == DisplayMode.ImagesGrid) {
-                                newInfo.loadThumbnail(thumbWidth);
-                            } else if (displayMode == DisplayMode.ThumbnailsList) {
-                                newInfo.loadThumbnail();
-                            }
-                            tableData.set(i, newInfo);
-                            handled++;
+                            ImageView iView = imageViewList.get(i);
+                            iView.setImage(tableData.get(i).getThumbnail());
                         }
                     } else {
                         for (int i = 0; i < indexs.size(); ++i) {
                             int index = indexs.get(i);
-                            ImageInformation info = tableData.get(index);
-                            if (info.isIsMultipleFrames()) {
-                                hasMultipleFrames = true;
-                                continue;
-                            }
-                            ImageInformation newInfo = saveRotation(info, rotateAngle);
-                            if (newInfo == null) {
-                                continue;
-                            }
-                            if (displayMode == DisplayMode.ImagesGrid) {
-                                newInfo.loadThumbnail(thumbWidth);
-                            } else if (displayMode == DisplayMode.ThumbnailsList) {
-                                newInfo.loadThumbnail();
-                            }
-                            tableData.set(index, newInfo);
-                            handled++;
+                            ImageView iView = imageViewList.get(index);
+                            iView.setImage(tableData.get(index).getThumbnail());
+                        }
+
+                    }
+                } else {
+                    tableView.refresh();
+                    if (indexs != null) {
+                        for (int i = 0; i < indexs.size(); ++i) {
+                            tableView.getSelectionModel().select(indexs.get(i));
                         }
                     }
-                    return true;
                 }
-
-                private ImageInformation saveRotation(ImageInformation info, int rotateAngle) {
-                    if (info == null || info.getImageFileInformation() == null || info.isIsMultipleFrames()) {
-                        return null;
-                    }
-                    try {
-                        File file = info.getImageFileInformation().getFile();
-                        BufferedImage bufferedImage = ImageInformation.readBufferedImage(info);
-                        bufferedImage = TransformTools.rotateImage(bufferedImage, rotateAngle);
-                        ImageFileWriters.writeImageFile(bufferedImage, file);
-                        ImageInformation newInfo = loadInfo(file);
-                        return newInfo;
-                    } catch (Exception e) {
-                        MyBoxLog.debug(e.toString());
-                        return null;
-                    }
+                popSaved();
+                if (indexs == null || indexs.isEmpty() || indexs.contains(currentIndex)) {
+                    viewImage(imageController.sourceFile);
                 }
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    if (hasMultipleFrames) {
-                        popError(Languages.message("CanNotHandleMultipleFrames"));
-                    }
-                    if (handled == 0) {
-                        return;
-                    }
-                    if (displayMode == DisplayMode.ImagesGrid) {
-                        if (indexs == null || indexs.isEmpty()) {
-                            for (int i = 0; i < tableData.size(); ++i) {
-                                ImageView iView = imageViewList.get(i);
-                                iView.setImage(tableData.get(i).getThumbnail());
-                            }
-                        } else {
-                            for (int i = 0; i < indexs.size(); ++i) {
-                                int index = indexs.get(i);
-                                ImageView iView = imageViewList.get(index);
-                                iView.setImage(tableData.get(index).getThumbnail());
-                            }
-
-                        }
-                    } else {
-                        tableView.refresh();
-                        if (indexs != null) {
-                            for (int i = 0; i < indexs.size(); ++i) {
-                                tableView.getSelectionModel().select(indexs.get(i));
-                            }
-                        }
-                    }
-                    popSaved();
-                    if (indexs == null || indexs.isEmpty() || indexs.contains(currentIndex)) {
-                        imageInformation.setThumbnail(null);
-                        loadImageFile(imageInformation.getFile(), loadWidth, 0);
-                    }
-                }
-
-            };
-            start(task);
-        }
+        };
+        start(task);
     }
 
     @FXML
@@ -425,7 +422,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                 return;
             }
             File file = info.getImageFileInformation().getFile();
-            changeFile(info, newFile);
+            imageController.changeFile(info, newFile);
             tableData.set(index, info);
             imageFileList.set(index, newFile);
             if (displayMode == DisplayMode.ImagesGrid) {
@@ -435,7 +432,6 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
             }
             if (index == currentIndex) {
                 super.fileRenamed(newFile);
-                filenameLabel.setText(newFile.getAbsolutePath());
             } else {
                 recordFileOpened(newFile);
                 popInformation(MessageFormat.format(Languages.message("FileRenamed"), file.getAbsolutePath(), newFile.getAbsolutePath()));

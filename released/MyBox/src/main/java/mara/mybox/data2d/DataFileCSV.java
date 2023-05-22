@@ -14,11 +14,9 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.CsvTools;
 import mara.mybox.tools.FileNameTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.TextTools;
-import mara.mybox.tools.TmpFileTools;
-import static mara.mybox.tools.TmpFileTools.getPathTempFile;
-import mara.mybox.value.AppPaths;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -61,7 +59,7 @@ public class DataFileCSV extends DataFileText {
             return false;
         }
         DataFileCSV targetCSVFile = (DataFileCSV) targetData;
-        File tmpFile = TmpFileTools.getTempFile();
+        File tmpFile = FileTmpTools.getTempFile();
         File tFile = targetCSVFile.getFile();
         if (tFile == null) {
             return false;
@@ -73,8 +71,8 @@ public class DataFileCSV extends DataFileText {
         checkForLoad();
         if (file != null && file.exists() && file.length() > 0) {
             File validFile = FileTools.removeBOM(file);
-            try ( CSVParser parser = CSVParser.parse(validFile, charset, cvsFormat());
-                     CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, tCharset), tFormat)) {
+            try (CSVParser parser = CSVParser.parse(validFile, charset, cvsFormat());
+                    CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, tCharset), tFormat)) {
                 if (tHasHeader) {
                     writeHeader(csvPrinter);
                 }
@@ -111,7 +109,7 @@ public class DataFileCSV extends DataFileText {
                 return false;
             }
         } else {
-            try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, tCharset), tFormat)) {
+            try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(tmpFile, tCharset), tFormat)) {
                 if (tHasHeader) {
                     writeHeader(csvPrinter);
                 }
@@ -190,7 +188,7 @@ public class DataFileCSV extends DataFileText {
     public DataFileCSV savePageAs(String dname) {
         try {
             DataFileCSV targetData = (DataFileCSV) this.cloneAll();
-            File csvFile = tmpFile(dname, "save", ".csv");
+            File csvFile = tmpFile(dname, "save", "csv");
             targetData.setFile(csvFile).setDataName(dname);
             savePageData(targetData);
             return targetData;
@@ -206,7 +204,7 @@ public class DataFileCSV extends DataFileText {
     public static DataFileCSV tmpCSV(String dname) {
         try {
             DataFileCSV dataFileCSV = new DataFileCSV();
-            File csvFile = dataFileCSV.tmpFile(dname, "tmp", ".csv");
+            File csvFile = dataFileCSV.tmpFile(dname, "tmp", "csv");
             dataFileCSV.setFile(csvFile).setDataName(dname)
                     .setCharset(Charset.forName("UTF-8"))
                     .setDelimiter(",")
@@ -232,7 +230,7 @@ public class DataFileCSV extends DataFileText {
             delimeter = ",";
         }
         boolean hasHeader = cols != null && !cols.isEmpty();
-        try ( CSVPrinter csvPrinter = CsvTools.csvPrinter(tmpFile, delimeter, hasHeader)) {
+        try (CSVPrinter csvPrinter = CsvTools.csvPrinter(tmpFile, delimeter, hasHeader)) {
             if (hasHeader) {
                 csvPrinter.printRecord(cols);
             }
@@ -274,7 +272,7 @@ public class DataFileCSV extends DataFileText {
             }
             DataFileCSV dataFileCSV = new DataFileCSV();
             dataFileCSV.setTask(task);
-            File tmpFile = getPathTempFile(AppPaths.getGeneratedPath(), dname, ".csv");
+            File tmpFile = dataFileCSV.tmpFile(dname, null, "csv");
             tmpFile = csvFile(task, tmpFile, delimeter, names, data);
             if (tmpFile == null) {
                 return null;
@@ -323,7 +321,7 @@ public class DataFileCSV extends DataFileText {
                         + FileNameTools.filter((filePrefix == null || filePrefix.isBlank() ? "" : filePrefix + "_")
                                 + (title == null || title.isBlank() ? "_" + count : title))
                         + ".csv");
-                try ( CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), csvFormat)) {
+                try (CSVPrinter csvPrinter = new CSVPrinter(new FileWriter(csvFile, Charset.forName("UTF-8")), csvFormat)) {
                     if (withName) {
                         csvPrinter.printRecord(names);
                     }

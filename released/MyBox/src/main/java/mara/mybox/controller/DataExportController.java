@@ -199,150 +199,148 @@ public class DataExportController extends BaseTaskController {
 
     @Override
     public void runTask() {
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            cancelled = false;
-            tabPane.getSelectionModel().select(logsTab);
-            startTime = new Date().getTime();
-            beforeTask();
-            task = new SingletonTask<Void>(this) {
+        if (task != null) {
+            task.cancel();
+        }
+        cancelled = false;
+        tabPane.getSelectionModel().select(logsTab);
+        startTime = new Date().getTime();
+        beforeTask();
+        task = new SingletonTask<Void>(this) {
 
-                private final boolean skip = targetPathController.isSkip();
+            private final boolean skip = targetPathController.isSkip();
 
-                @Override
-                protected boolean handle() {
-                    try {
-                        String filePrefix = targetNameInput.getText().trim();
+            @Override
+            protected boolean handle() {
+                try {
+                    String filePrefix = targetNameInput.getText().trim();
 
-                        if (currentPage) {
-                            currentSQL = dataController.pageQuerySQL;
-                            dataSize = dataController.tableData.size();
-                            writeFiles(filePrefix);
-                            return true;
-                        }
-                        String where = queryController.savedCondition.getWhere();
-                        String order = queryController.savedCondition.getOrder();
-                        String fetch = queryController.savedCondition.getFetch();
-                        if (fetch == null || fetch.isBlank()) {
-                            String sizeSql = dataController.sizePrefix
-                                    + (where == null || where.isBlank() ? "" : " WHERE " + where);
-                            updateLogs(Languages.message("CountingDataSize") + ": " + sizeSql);
-                            dataSize = DerbyBase.size(sizeSql);
-                            updateLogs(Languages.message("DataSize") + ": " + dataSize);
-                        } else {
-                            dataSize = -1;
-                        }
-                        currentSQL = queryController.savedCondition.getPrefix() + " "
-                                + (where == null || where.isBlank() ? "" : " WHERE " + where)
-                                + (order == null || order.isBlank() ? "" : " ORDER BY " + order)
-                                + (fetch == null || fetch.isBlank() ? "" : " " + fetch);
-                        if (cancelled) {
-                            updateLogs(Languages.message("Cancelled"));
-                            return false;
-                        }
-                        if (dataSize <= 0 || convertController.maxLines <= 0) {
-                            writeFiles(filePrefix);
-                            return true;
-                        }
-                        int offset = 0, index = 1;
-                        String baseSQL = currentSQL;
-                        while (true) {
-                            if (task == null || isCancelled()) {
-                                return false;
-                            }
-                            currentSQL = baseSQL + " OFFSET " + offset + " ROWS FETCH NEXT " + convertController.maxLines + " ROWS ONLY";
-                            writeFiles(filePrefix + "_" + (index++));
-                            offset += convertController.maxLines;
-                            if (offset >= dataSize) {
-                                break;
-                            }
-                        }
+                    if (currentPage) {
+                        currentSQL = dataController.pageQuerySQL;
+                        dataSize = dataController.tableData.size();
+                        writeFiles(filePrefix);
                         return true;
-                    } catch (Exception e) {
-                        error = e.toString();
-                        updateLogs(error);
+                    }
+                    String where = queryController.savedCondition.getWhere();
+                    String order = queryController.savedCondition.getOrder();
+                    String fetch = queryController.savedCondition.getFetch();
+                    if (fetch == null || fetch.isBlank()) {
+                        String sizeSql = dataController.sizePrefix
+                                + (where == null || where.isBlank() ? "" : " WHERE " + where);
+                        updateLogs(Languages.message("CountingDataSize") + ": " + sizeSql);
+                        dataSize = DerbyBase.size(sizeSql);
+                        updateLogs(Languages.message("DataSize") + ": " + dataSize);
+                    } else {
+                        dataSize = -1;
+                    }
+                    currentSQL = queryController.savedCondition.getPrefix() + " "
+                            + (where == null || where.isBlank() ? "" : " WHERE " + where)
+                            + (order == null || order.isBlank() ? "" : " ORDER BY " + order)
+                            + (fetch == null || fetch.isBlank() ? "" : " " + fetch);
+                    if (cancelled) {
+                        updateLogs(Languages.message("Cancelled"));
                         return false;
                     }
-                }
-
-                private boolean writeFiles(String filePrefix) {
-                    updateLogs(currentSQL);
-                    try (Connection conn = DerbyBase.getConnection()) {
-                        conn.setReadOnly(true);
-                        int count = 0;
-                        if (!convertController.setParameters(filePrefix, skip)) {
+                    if (dataSize <= 0 || convertController.maxLines <= 0) {
+                        writeFiles(filePrefix);
+                        return true;
+                    }
+                    int offset = 0, index = 1;
+                    String baseSQL = currentSQL;
+                    while (true) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
-                        try (ResultSet results = conn.createStatement().executeQuery(currentSQL)) {
-                            while (results.next()) {
-                                if (cancelled) {
-                                    updateLogs(Languages.message("Cancelled") + " " + filePrefix);
-                                    return false;
-                                }
-                                BaseData data;
-                                if (table instanceof TableGeographyCode) {
-                                    GeographyCode code = TableGeographyCode.readResults(results);
-                                    TableGeographyCode.decodeAncestors(conn, code);
-                                    data = code;
-                                } else {
-                                    data = (BaseData) (table.readData(results));
-                                }
-                                writeRow(data);
-                                count++;
-                                if (verboseCheck.isSelected() && (count % 50 == 0)) {
-                                    updateLogs(Languages.message("Exported") + " " + count + ": " + filePrefix);
-                                }
-                            }
+                        currentSQL = baseSQL + " OFFSET " + offset + " ROWS FETCH NEXT " + convertController.maxLines + " ROWS ONLY";
+                        writeFiles(filePrefix + "_" + (index++));
+                        offset += convertController.maxLines;
+                        if (offset >= dataSize) {
+                            break;
                         }
-                        convertController.closeWriters();
-                    } catch (Exception e) {
-                        updateLogs(e.toString());
-                        return false;
                     }
                     return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    updateLogs(error);
+                    return false;
                 }
+            }
 
-                private boolean writeRow(BaseData data) {
-                    try {
-                        if (data == null) {
-                            return false;
-                        }
-                        List<String> row = new ArrayList<>();
-                        for (ColumnDefinition column : columns) {
-                            Object value = BaseDataAdaptor.getColumnValue(data, column.getColumnName());
-                            String display = BaseDataAdaptor.displayColumn(data, column, value);
-                            if (display == null || display.isBlank()) {
-                                display = "";
-                            }
-                            row.add(display);
-                        }
-                        convertController.writeRow(row);
-                        return true;
-                    } catch (Exception e) {
-                        updateLogs(e.toString());
+            private boolean writeFiles(String filePrefix) {
+                updateLogs(currentSQL);
+                try (Connection conn = DerbyBase.getConnection()) {
+                    conn.setReadOnly(true);
+                    int count = 0;
+                    if (!convertController.setParameters(filePrefix, skip)) {
                         return false;
                     }
+                    try (ResultSet results = conn.createStatement().executeQuery(currentSQL)) {
+                        while (results.next()) {
+                            if (cancelled) {
+                                updateLogs(Languages.message("Cancelled") + " " + filePrefix);
+                                return false;
+                            }
+                            BaseData data;
+                            if (table instanceof TableGeographyCode) {
+                                GeographyCode code = TableGeographyCode.readResults(results);
+                                TableGeographyCode.decodeAncestors(conn, code);
+                                data = code;
+                            } else {
+                                data = (BaseData) (table.readData(results));
+                            }
+                            writeRow(data);
+                            count++;
+                            if (verboseCheck.isSelected() && (count % 50 == 0)) {
+                                updateLogs(Languages.message("Exported") + " " + count + ": " + filePrefix);
+                            }
+                        }
+                    }
+                    convertController.closeWriters();
+                } catch (Exception e) {
+                    updateLogs(e.toString());
+                    return false;
                 }
+                return true;
+            }
 
-                @Override
-                protected void whenSucceeded() {
-                    browseURI(targetPath.toURI());
-                    updateLogs(Languages.message("Completed"));
+            private boolean writeRow(BaseData data) {
+                try {
+                    if (data == null) {
+                        return false;
+                    }
+                    List<String> row = new ArrayList<>();
+                    for (ColumnDefinition column : columns) {
+                        Object value = BaseDataAdaptor.getColumnValue(data, column.getColumnName());
+                        String display = BaseDataAdaptor.displayColumn(data, column, value);
+                        if (display == null || display.isBlank()) {
+                            display = "";
+                        }
+                        row.add(display);
+                    }
+                    convertController.writeRow(row);
+                    return true;
+                } catch (Exception e) {
+                    updateLogs(e.toString());
+                    return false;
                 }
+            }
 
-                @Override
-                protected void finalAction() {
-                    super.finalAction();
-                    StyleTools.setNameIcon(startButton, Languages.message("Start"), "iconStart.png");
-                    startButton.applyCss();
-                    startButton.setUserData(null);
-                    afterTask();
-                }
-            };
-            start(task, false);
-        }
+            @Override
+            protected void whenSucceeded() {
+                browseURI(targetPath.toURI());
+                updateLogs(Languages.message("Completed"));
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                StyleTools.setNameIcon(startButton, Languages.message("Start"), "iconStart.png");
+                startButton.applyCss();
+                startButton.setUserData(null);
+                afterTask();
+            }
+        };
+        start(task, false);
     }
 
     @FXML

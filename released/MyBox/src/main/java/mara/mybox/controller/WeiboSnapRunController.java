@@ -58,6 +58,7 @@ import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.FloatTools;
 import mara.mybox.tools.PdfTools;
+import mara.mybox.tools.UrlTools;
 import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
@@ -1086,7 +1087,7 @@ public class WeiboSnapRunController extends BaseController {
             @Override
             protected boolean handle() {
                 try {
-                    try ( BufferedWriter out = new BufferedWriter(new FileWriter(filename, Charset.forName("utf-8"), false))) {
+                    try (BufferedWriter out = new BufferedWriter(new FileWriter(filename, Charset.forName("utf-8"), false))) {
                         out.write(contents);
                         out.flush();
                         savedHtmlCount++;
@@ -1133,14 +1134,17 @@ public class WeiboSnapRunController extends BaseController {
                             fname += "." + suffix;
                         }
                         try {
-                            URL url = new URL("http:" + fname);
+                            URL url = UrlTools.url("http:" + fname);
+                            if (url == null) {
+                                return false;
+                            }
                             URLConnection con = url.openConnection();
                             con.setConnectTimeout(30000);
-                            try ( InputStream is = con.getInputStream()) {
+                            try (InputStream is = con.getInputStream()) {
                                 byte[] bs = new byte[AppValues.IOBufferLength];
                                 int len;
                                 saveName = prefix + (i + 1) + "." + suffix;
-                                try ( BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(saveName))) {
+                                try (BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(saveName))) {
                                     while ((len = is.read(bs)) > 0) {
                                         os.write(bs, 0, len);
                                     }
@@ -1417,7 +1421,7 @@ public class WeiboSnapRunController extends BaseController {
                     mergePdf.setDestinationFileName(monthFileName);
                     mergePdf.mergeDocuments(memSettings);
 
-                    try ( PDDocument doc = PDDocument.load(monthFile, memSettings)) {
+                    try (PDDocument doc = PDDocument.load(monthFile, memSettings)) {
                         PDDocumentInformation info = new PDDocumentInformation();
                         info.setCreationDate(Calendar.getInstance());
                         info.setModificationDate(Calendar.getInstance());

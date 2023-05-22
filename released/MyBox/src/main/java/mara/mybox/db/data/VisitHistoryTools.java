@@ -49,7 +49,15 @@ public class VisitHistoryTools {
         if (filters == null || filters.isEmpty()) {
             return null;
         }
-        return FileNameTools.suffix(filters.get(0).getExtensions().get(0));
+        String ext = filters.get(0).getExtensions().get(0);
+        if (ext.endsWith("*")) {
+            if (filters.size() > 1) {
+                ext = filters.get(1).getExtensions().get(0);
+            } else {
+                return null;
+            }
+        }
+        return FileNameTools.suffix(ext);
     }
 
     public static List<FileChooser.ExtensionFilter> getExtensionFilter(int fileType) {
@@ -59,7 +67,7 @@ public class VisitHistoryTools {
             return FileFilters.PdfExtensionFilter;
         } else if (fileType == FileType.Text) {
             return FileFilters.TextExtensionFilter;
-        } else if (fileType == FileType.Bytes) {
+        } else if (fileType == FileType.All) {
             return FileFilters.AllExtensionFilter;
         } else if (fileType == FileType.Markdown) {
             return FileFilters.MarkdownExtensionFilter;
@@ -109,6 +117,8 @@ public class VisitHistoryTools {
             return FileFilters.JarExtensionFilter;
         } else if (fileType == VisitHistory.FileType.DataFile) {
             return FileFilters.DataFileExtensionFilter;
+        } else if (fileType == VisitHistory.FileType.JSON) {
+            return FileFilters.JSONExtensionFilter;
         } else {
             return FileFilters.AllExtensionFilter;
         }
@@ -314,7 +324,7 @@ public class VisitHistoryTools {
         if (number <= 0) {
             return null;
         }
-        List<VisitHistory> records = VisitHistories.read(ResourceType.Path, fileType, OperationType.Read, number);
+        List<VisitHistory> records = VisitHistories.read(ResourceType.Path, fileType, OperationType.Write, number);
         return records;
     }
 

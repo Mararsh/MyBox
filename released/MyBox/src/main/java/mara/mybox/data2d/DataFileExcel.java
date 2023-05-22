@@ -13,9 +13,9 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileDeleteTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
-import mara.mybox.tools.TmpFileTools;
 import static mara.mybox.value.Languages.message;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -131,7 +131,7 @@ public class DataFileExcel extends DataFile {
             return false;
         }
         DataFileExcel targetExcelFile = (DataFileExcel) targetData;
-        File tmpFile = TmpFileTools.getTempFile();
+        File tmpFile = FileTmpTools.getTempFile();
         File tFile = targetExcelFile.getFile();
         if (tFile == null) {
             return false;
@@ -141,7 +141,7 @@ public class DataFileExcel extends DataFile {
         String targetSheetName = targetExcelFile.getSheet();
         checkForLoad();
         if (file != null && file.exists() && file.length() > 0) {
-            try ( Workbook sourceBook = WorkbookFactory.create(file)) {
+            try (Workbook sourceBook = WorkbookFactory.create(file)) {
                 Sheet sourceSheet;
                 if (sheet != null) {
                     sourceSheet = sourceBook.getSheet(sheet);
@@ -161,7 +161,7 @@ public class DataFileExcel extends DataFile {
                     targetBook = new XSSFWorkbook();
                     targetSheet = targetBook.createSheet(targetSheetName);
                 } else {
-                    tmpDataFile = TmpFileTools.getTempFile();
+                    tmpDataFile = FileTmpTools.getTempFile();
                     FileCopyTools.copyFile(file, tmpDataFile);
                     targetBook = WorkbookFactory.create(tmpDataFile);
                     int index = targetBook.getSheetIndex(sheet);
@@ -195,7 +195,7 @@ public class DataFileExcel extends DataFile {
                 } else {
                     writePageData(targetSheet, targetRowIndex);
                 }
-                try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
+                try (FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
                     targetBook.write(fileOut);
                 }
                 targetBook.close();
@@ -209,7 +209,7 @@ public class DataFileExcel extends DataFile {
             }
 
         } else {
-            try ( Workbook targetBook = new XSSFWorkbook()) {
+            try (Workbook targetBook = new XSSFWorkbook()) {
                 if (targetSheetName == null) {
                     targetSheetName = message("Sheet") + "1";
                 }
@@ -219,7 +219,7 @@ public class DataFileExcel extends DataFile {
                     targetRowIndex = writeHeader(targetSheet, targetRowIndex);
                 }
                 writePageData(targetSheet, targetRowIndex);
-                try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
+                try (FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
                     targetBook.write(fileOut);
                 }
                 targetBook.close();
@@ -297,7 +297,7 @@ public class DataFileExcel extends DataFile {
                     return null;
                 }
             }
-            File tmpFile = TmpFileTools.excelFile();
+            File tmpFile = FileTmpTools.generateFile("xlsx");
             Workbook targetBook = new XSSFWorkbook();
             Sheet targetSheet = targetBook.createSheet(message("Sheet") + "1");
             int targetRowIndex = 0;
@@ -321,7 +321,7 @@ public class DataFileExcel extends DataFile {
                     }
                 }
             }
-            try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
+            try (FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
                 targetBook.write(fileOut);
             }
             return tmpFile;
@@ -338,12 +338,12 @@ public class DataFileExcel extends DataFile {
         if (file == null || !file.exists() || file.length() == 0) {
             return false;
         }
-        File tmpFile = TmpFileTools.getTempFile();
-        File tmpDataFile = TmpFileTools.getTempFile();
+        File tmpFile = FileTmpTools.getTempFile();
+        File tmpDataFile = FileTmpTools.getTempFile();
         if (file.length() > 0) {
             FileCopyTools.copyFile(file, tmpDataFile);
         }
-        try ( Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
+        try (Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
             Sheet targetSheet = targetBook.createSheet(sheetName);
             List<List<String>> data = tmpData(3, 3);
             for (int r = 0; r < data.size(); r++) {
@@ -357,7 +357,7 @@ public class DataFileExcel extends DataFile {
                     targetCell.setCellValue(values.get(col));
                 }
             }
-            try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
+            try (FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
                 targetBook.write(fileOut);
             }
         } catch (Exception e) {
@@ -389,12 +389,12 @@ public class DataFileExcel extends DataFile {
             return false;
         }
         String oldName = sheet;
-        File tmpFile = TmpFileTools.getTempFile();
-        File tmpDataFile = TmpFileTools.getTempFile();
+        File tmpFile = FileTmpTools.getTempFile();
+        File tmpDataFile = FileTmpTools.getTempFile();
         FileCopyTools.copyFile(file, tmpDataFile);
-        try ( Workbook book = WorkbookFactory.create(tmpDataFile)) {
+        try (Workbook book = WorkbookFactory.create(tmpDataFile)) {
             book.setSheetName(book.getSheetIndex(sheet), newName);
-            try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
+            try (FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
                 book.write(fileOut);
             }
         } catch (Exception e) {
@@ -424,15 +424,15 @@ public class DataFileExcel extends DataFile {
         if (file == null || !file.exists()) {
             return -1;
         }
-        File tmpFile = TmpFileTools.getTempFile();
-        File tmpDataFile = TmpFileTools.getTempFile();
+        File tmpFile = FileTmpTools.getTempFile();
+        File tmpDataFile = FileTmpTools.getTempFile();
         FileCopyTools.copyFile(file, tmpDataFile);
         int index = -1;
-        try ( Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
+        try (Workbook targetBook = WorkbookFactory.create(tmpDataFile)) {
             index = targetBook.getSheetIndex(name);
             if (index >= 0) {
                 targetBook.removeSheetAt(index);
-                try ( FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
+                try (FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
                     targetBook.write(fileOut);
                 }
             }

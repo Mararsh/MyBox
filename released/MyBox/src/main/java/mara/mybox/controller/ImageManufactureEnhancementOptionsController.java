@@ -27,10 +27,10 @@ import mara.mybox.bufferedimage.PixelsOperation.OperationType;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.db.table.TableConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -316,70 +316,68 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
     protected void makeConvolutionBox() {
         stringLabel.setText(Languages.message("ConvolutionKernel"));
         kernel = null;
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                @Override
-                protected boolean handle() {
-                    if (kernels == null) {
-                        kernels = TableConvolutionKernel.read();
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    try {
-                        loadKernelsList(kernels);
-                        numberBoxListener = new ChangeListener<Number>() {
-                            @Override
-                            public void changed(ObservableValue ov, Number oldValue, Number newValue) {
-                                int index = newValue.intValue();
-                                if (index < 0 || index >= kernels.size()) {
-                                    kernel = null;
-                                    ValidationTools.setEditorBadStyle(stringSelector);
-                                    return;
-                                }
-                                kernel = kernels.get(index);
-                                ValidationTools.setEditorNormal(stringSelector);
-                            }
-                        };
-                        stringSelector.getSelectionModel().selectedIndexProperty().addListener(numberBoxListener);
-
-                        manageView = StyleTools.getIconImageView("iconSetting.png");
-                        button.setGraphic(manageView);
-                        button.setText("");
-                        NodeStyleTools.setTooltip(button, new Tooltip(Languages.message("ManageDot")));
-                        button.setOnAction(new EventHandler<ActionEvent>() {
-                            @Override
-                            public void handle(ActionEvent event) {
-                                BaseController c = openStage(Fxmls.ConvolutionKernelManagerFxml);
-                                c.setParentController(myController);
-                                c.setParentFxml(myFxml);
-                            }
-                        });
-
-                        setBox.getChildren().addAll(stringSelectorPane, button);
-                        if (okButton != null) {
-                            okButton.disableProperty().bind(stringSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()));
-                        }
-
-                        if (loadedKernel != null) {
-                            kernel = loadedKernel;
-                            stringSelector.getSelectionModel().select(kernel.getName());
-                            if (okButton != null) {
-                                parentController.okAction();
-                            }
-                        }
-                    } catch (Exception e) {
-                        MyBoxLog.error(e.toString());
-                    }
-                }
-            };
-            parentController.start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+            @Override
+            protected boolean handle() {
+                if (kernels == null) {
+                    kernels = TableConvolutionKernel.read();
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                try {
+                    loadKernelsList(kernels);
+                    numberBoxListener = new ChangeListener<Number>() {
+                        @Override
+                        public void changed(ObservableValue ov, Number oldValue, Number newValue) {
+                            int index = newValue.intValue();
+                            if (index < 0 || index >= kernels.size()) {
+                                kernel = null;
+                                ValidationTools.setEditorBadStyle(stringSelector);
+                                return;
+                            }
+                            kernel = kernels.get(index);
+                            ValidationTools.setEditorNormal(stringSelector);
+                        }
+                    };
+                    stringSelector.getSelectionModel().selectedIndexProperty().addListener(numberBoxListener);
+
+                    manageView = StyleTools.getIconImageView("iconSetting.png");
+                    button.setGraphic(manageView);
+                    button.setText("");
+                    NodeStyleTools.setTooltip(button, new Tooltip(Languages.message("ManageDot")));
+                    button.setOnAction(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent event) {
+                            BaseController c = openStage(Fxmls.ConvolutionKernelManagerFxml);
+                            c.setParentController(myController);
+                            c.setParentFxml(myFxml);
+                        }
+                    });
+
+                    setBox.getChildren().addAll(stringSelectorPane, button);
+                    if (okButton != null) {
+                        okButton.disableProperty().bind(stringSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle()));
+                    }
+
+                    if (loadedKernel != null) {
+                        kernel = loadedKernel;
+                        stringSelector.getSelectionModel().select(kernel.getName());
+                        if (okButton != null) {
+                            parentController.okAction();
+                        }
+                    }
+                } catch (Exception e) {
+                    MyBoxLog.error(e.toString());
+                }
+            }
+        };
+        start(task);
     }
 
     protected void checkSmoothAlgorithm() {

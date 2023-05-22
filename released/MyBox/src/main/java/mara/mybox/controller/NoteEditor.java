@@ -2,7 +2,7 @@ package mara.mybox.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
-import mara.mybox.db.data.TreeNode;
+import mara.mybox.db.data.InfoNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.style.HtmlStyles;
@@ -59,7 +59,7 @@ public class NoteEditor extends ControlHtmlEditor {
         attributesTab.setText(message("Attributes") + (attributesController.nodeChanged ? " *" : ""));
     }
 
-    protected void editNote(TreeNode note) {
+    protected void editNote(InfoNode note) {
         updateFileStatus(false);
         attributesController.editNode(note);
         if (note != null) {
@@ -83,7 +83,7 @@ public class NoteEditor extends ControlHtmlEditor {
     }
 
     @Override
-    protected void updateStageTitle() {
+    public void updateStageTitle() {
     }
 
     @FXML

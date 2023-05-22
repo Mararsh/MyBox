@@ -389,31 +389,29 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 || imageController.maskRectangleData == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                private Image newImage;
-
-                @Override
-                protected boolean handle() {
-                    newImage = PenTools.drawRectangle(imageView.getImage(),
-                            imageController.maskRectangleData, (Color) strokeColorSetController.rect.getFill(), strokeWidth,
-                            arcWidth, dottedCheck.isSelected(), fillCheck.isSelected(), (Color) fillColorSetController.rect.getFill(),
-                            blendController.opacity, blendController.blender());
-                    return newImage != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    maskView.setImage(newImage);
-                    imageController.drawMaskRectangleLineAsData();
-                }
-
-            };
-            imageController.start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+            private Image newImage;
+
+            @Override
+            protected boolean handle() {
+                newImage = PenTools.drawRectangle(imageView.getImage(),
+                        imageController.maskRectangleData, (Color) strokeColorSetController.rect.getFill(), strokeWidth,
+                        arcWidth, dottedCheck.isSelected(), fillCheck.isSelected(), (Color) fillColorSetController.rect.getFill(),
+                        blendController.opacity, blendController.blender());
+                return newImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                maskView.setImage(newImage);
+                imageController.drawMaskRectangleLineAsData();
+            }
+
+        };
+        start(task);
     }
 
     public void drawCircle() {
@@ -422,31 +420,29 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 || imageController.maskCircleData == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                private Image newImage;
-
-                @Override
-                protected boolean handle() {
-                    newImage = PenTools.drawCircle(imageView.getImage(),
-                            imageController.maskCircleData, (Color) strokeColorSetController.rect.getFill(), strokeWidth,
-                            dottedCheck.isSelected(), fillCheck.isSelected(), (Color) fillColorSetController.rect.getFill(),
-                            blendController.opacity, blendController.blender());
-                    return newImage != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    maskView.setImage(newImage);
-                    imageController.drawMaskCircleLineAsData();
-                }
-
-            };
-            imageController.start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+            private Image newImage;
+
+            @Override
+            protected boolean handle() {
+                newImage = PenTools.drawCircle(imageView.getImage(),
+                        imageController.maskCircleData, (Color) strokeColorSetController.rect.getFill(), strokeWidth,
+                        dottedCheck.isSelected(), fillCheck.isSelected(), (Color) fillColorSetController.rect.getFill(),
+                        blendController.opacity, blendController.blender());
+                return newImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                maskView.setImage(newImage);
+                imageController.drawMaskCircleLineAsData();
+            }
+
+        };
+        start(task);
     }
 
     public void drawEllipse() {
@@ -455,31 +451,29 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 || imageController.maskEllipseData == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                private Image newImage;
-
-                @Override
-                protected boolean handle() {
-                    newImage = PenTools.drawEllipse(imageView.getImage(),
-                            imageController.maskEllipseData, (Color) strokeColorSetController.rect.getFill(), strokeWidth,
-                            dottedCheck.isSelected(), fillCheck.isSelected(), (Color) fillColorSetController.rect.getFill(),
-                            blendController.opacity, blendController.blender());
-                    return newImage != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    maskView.setImage(newImage);
-                    imageController.drawMaskEllipseLineAsData();
-                }
-
-            };
-            imageController.start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+            private Image newImage;
+
+            @Override
+            protected boolean handle() {
+                newImage = PenTools.drawEllipse(imageView.getImage(),
+                        imageController.maskEllipseData, (Color) strokeColorSetController.rect.getFill(), strokeWidth,
+                        dottedCheck.isSelected(), fillCheck.isSelected(), (Color) fillColorSetController.rect.getFill(),
+                        blendController.opacity, blendController.blender());
+                return newImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                maskView.setImage(newImage);
+                imageController.drawMaskEllipseLineAsData();
+            }
+
+        };
+        start(task);
     }
 
     public void drawPolygon() {
@@ -491,33 +485,31 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             imageController.drawMaskPolygonLineAsData();
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                private Image newImage;
-
-                @Override
-                protected boolean handle() {
-                    newImage = PenTools.drawPolygon(imageView.getImage(),
-                            imageController.maskPolygonData, (Color) strokeColorSetController.rect.getFill(), strokeWidth,
-                            dottedCheck.isSelected(), fillCheck.isSelected(), (Color) fillColorSetController.rect.getFill(),
-                            blendController.opacity, blendController.blender());
-                    return newImage != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    maskView.setImage(newImage);
-                    imageController.maskPolygonLine.setOpacity(0);
-                    imageController.polygonP1.setOpacity(0);
-                    imageController.polygonP2.setOpacity(0);
-                }
-
-            };
-            imageController.start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+            private Image newImage;
+
+            @Override
+            protected boolean handle() {
+                newImage = PenTools.drawPolygon(imageView.getImage(),
+                        imageController.maskPolygonData, (Color) strokeColorSetController.rect.getFill(), strokeWidth,
+                        dottedCheck.isSelected(), fillCheck.isSelected(), (Color) fillColorSetController.rect.getFill(),
+                        blendController.opacity, blendController.blender());
+                return newImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                maskView.setImage(newImage);
+                imageController.maskPolygonLine.setOpacity(0);
+                imageController.polygonP1.setOpacity(0);
+                imageController.polygonP2.setOpacity(0);
+            }
+
+        };
+        start(task);
     }
 
     public void mosaic(MosaicType mosaicType, int x, int y) {
@@ -525,94 +517,89 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
                 || imageView == null || imageView.getImage() == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(this) {
-                private Image newImage;
-
-                @Override
-                protected boolean handle() {
-                    DoubleShape shape;
-                    if (shapeCircleRadio.isSelected()) {
-                        shape = new DoubleCircle(x, y, strokeWidth);
-                    } else {
-                        int w = strokeWidth / 2 + ((strokeWidth % 2 == 0) ? 0 : 1);
-                        shape = new DoubleRectangle(x - w, y - w, x + w, y + w);
-                    }
-                    Image image;
-                    if (maskView.getImage() == null) {
-                        image = imageView.getImage();
-                    } else {
-                        image = maskView.getImage();
-                    }
-                    newImage = FxImageTools.makeMosaic(image,
-                            shape, intensity, mosaicType == MosaicType.Mosaic, false);
-                    return newImage != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    maskView.setImage(newImage);
-                }
-
-            };
-            imageController.start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+            private Image newImage;
+
+            @Override
+            protected boolean handle() {
+                DoubleShape shape;
+                if (shapeCircleRadio.isSelected()) {
+                    shape = new DoubleCircle(x, y, strokeWidth);
+                } else {
+                    int w = strokeWidth / 2 + ((strokeWidth % 2 == 0) ? 0 : 1);
+                    shape = new DoubleRectangle(x - w, y - w, x + w, y + w);
+                }
+                Image image;
+                if (maskView.getImage() == null) {
+                    image = imageView.getImage();
+                } else {
+                    image = maskView.getImage();
+                }
+                newImage = FxImageTools.makeMosaic(image,
+                        shape, intensity, mosaicType == MosaicType.Mosaic, false);
+                return newImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                maskView.setImage(newImage);
+            }
+
+        };
+        start(task);
     }
 
     public void drawLines() {
         if (isSettingValues || imageView == null || imageView.getImage() == null) {
             return;
         }
-        synchronized (this) {
-            if (task != null) {
-                task.cancel();
-            }
-            task = new SingletonTask<Void>(this) {
-                private Image newImage;
-
-                @Override
-                protected boolean handle() {
-                    newImage = imageView.getImage();
-                    switch (opType) {
-                        case Polyline:
-                            newImage = PenTools.drawLines(imageView.getImage(),
-                                    imageController.maskPolylineLineData,
-                                    (Color) strokeColorSetController.rect.getFill(), strokeWidth, dottedCheck.isSelected(),
-                                    blendController.opacity, blendController.blender());
-                            break;
-                        case Erase:
-                            newImage = PenTools.drawErase(imageView.getImage(), imageController.maskPenData, strokeWidth);
-                            break;
-                        case DrawLines:
-                            newImage = PenTools.drawLines(imageView.getImage(),
-                                    imageController.maskPenData,
-                                    (Color) strokeColorSetController.rect.getFill(), strokeWidth, dottedCheck.isSelected(),
-                                    blendController.opacity, blendController.blender());
-                            break;
-                    }
-                    return newImage != null;
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    if (isCancelled()) {
-                        return;
-                    }
-                    maskView.setImage(newImage);
-                    maskView.setOpacity(1);
-                    maskView.setVisible(true);
-                    imageView.setVisible(false);
-                    imageView.toBack();
-                    clearPenLines();
-                }
-
-            };
-
-            imageController.start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(this) {
+            private Image newImage;
+
+            @Override
+            protected boolean handle() {
+                newImage = imageView.getImage();
+                switch (opType) {
+                    case Polyline:
+                        newImage = PenTools.drawLines(imageView.getImage(),
+                                imageController.maskPolylineLineData,
+                                (Color) strokeColorSetController.rect.getFill(), strokeWidth, dottedCheck.isSelected(),
+                                blendController.opacity, blendController.blender());
+                        break;
+                    case Erase:
+                        newImage = PenTools.drawErase(imageView.getImage(), imageController.maskPenData, strokeWidth);
+                        break;
+                    case DrawLines:
+                        newImage = PenTools.drawLines(imageView.getImage(),
+                                imageController.maskPenData,
+                                (Color) strokeColorSetController.rect.getFill(), strokeWidth, dottedCheck.isSelected(),
+                                blendController.opacity, blendController.blender());
+                        break;
+                }
+                return newImage != null;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (isCancelled()) {
+                    return;
+                }
+                maskView.setImage(newImage);
+                maskView.setOpacity(1);
+                maskView.setVisible(true);
+                imageView.setVisible(false);
+                imageView.toBack();
+                clearPenLines();
+            }
+
+        };
+        start(task);
     }
 
     public void drawLine(DoublePoint lastPoint, DoublePoint thisPoint) {

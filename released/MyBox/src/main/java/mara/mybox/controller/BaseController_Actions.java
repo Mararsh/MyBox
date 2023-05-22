@@ -58,7 +58,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         WebBrowserController.openAddress(address, true);
     }
 
-    public void openLink(File file) {
+    public void openHtml(File file) {
         if (file == null || !file.exists()) {
             return;
         }
@@ -344,31 +344,29 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         if (!PopTools.askSure(getTitle(), message("ClearPersonalSettings"), message("SureClear"))) {
             return;
         }
-        synchronized (this) {
-            if (task != null && !task.isQuit()) {
-                return;
-            }
-            task = new SingletonTask<Void>(myController) {
-
-                @Override
-                protected boolean handle() {
-                    try {
-                        UserConfig.clear();
-                        return true;
-                    } catch (Exception e) {
-                        MyBoxLog.debug(e.toString());
-                        return false;
-                    }
-                }
-
-                @Override
-                protected void whenSucceeded() {
-                    reload();
-                    popSuccessful();
-                }
-            };
-            start(task);
+        if (task != null) {
+            task.cancel();
         }
+        task = new SingletonTask<Void>(myController) {
+
+            @Override
+            protected boolean handle() {
+                try {
+                    UserConfig.clear();
+                    return true;
+                } catch (Exception e) {
+                    MyBoxLog.debug(e.toString());
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                reload();
+                popSuccessful();
+            }
+        };
+        start(task);
     }
 
     @FXML
