@@ -1,8 +1,8 @@
 package mara.mybox.controller;
 
-import com.jcraft.jsch.ChannelSftp;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -170,26 +170,23 @@ public class RemotePathManageController extends FilesTreeController {
             if (remoteFile == null || !checkConnection()) {
                 return null;
             }
-            String path = remoteFile.fullName();
-            Iterator<ChannelSftp.LsEntry> iterator = remoteController.ls(path);
-            if (iterator == null) {
-                return children;
-            }
-            while (iterator.hasNext()) {
-                if (task == null || task.isCancelled()) {
-                    return children;
+            List<FileNode> fileNodes = remoteController.children(remoteFile);
+            Collections.sort(fileNodes, new Comparator<FileNode>() {
+                @Override
+                public int compare(FileNode v1, FileNode v2) {
+                    if (v1.isDirectory()) {
+                        if (!v2.isDirectory()) {
+                            return -1;
+                        }
+                    } else {
+                        if (v2.isDirectory()) {
+                            return 1;
+                        }
+                    }
+                    return v1.getFileName().compareTo(v2.getFileName());
                 }
-                ChannelSftp.LsEntry entry = iterator.next();
-                String name = entry.getFilename();
-                if (name == null || name.isBlank() || ".".equals(name) || "..".equals(name)) {
-                    continue;
-                }
-                FileNode fileInfo = new FileNode()
-                        .setNodename(name)
-                        .setParentFile(remoteFile)
-                        .setIsRemote(true)
-                        .attrs(entry.getAttrs());
-
+            });
+            for (FileNode fileInfo : fileNodes) {
                 TreeItem<FileNode> fileItem = new TreeItem<>(fileInfo);
                 fileItem.setExpanded(true);
                 children.add(fileItem);

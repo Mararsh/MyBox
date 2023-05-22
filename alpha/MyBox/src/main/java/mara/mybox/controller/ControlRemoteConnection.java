@@ -178,7 +178,6 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
             popError(message("InvalidParameter") + ": " + message("Host"));
             return false;
         }
-        String path = pathInput.getText();
         currentConnection.setPort(port);
         currentConnection.setTimeout(timeout);
         currentConnection.setRetry(retry);
@@ -186,7 +185,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
         currentConnection.setHost(host.trim());
         currentConnection.setUsername(userInput.getText());
         currentConnection.setPassword(passwordInput.getText());
-        currentConnection.setPath(fixFilename(path));
+        currentConnection.setPath(fixFilename(pathInput.getText()));
         currentConnection.setType(PathConnection.Type.SFTP);
         currentConnection.setPort(22);
         currentConnection.setHostKeyCheck(hostKeyCheck.isSelected());
@@ -410,26 +409,6 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
 
     public boolean fileExist(String filename) {
         return stat(filename) != null;
-    }
-
-    public List<String> fileChildren(String filename) {
-        List<String> list = new ArrayList<>();
-        try {
-            filename = fixFilename(filename);
-            Iterator<LsEntry> iterator = ls(filename);
-            while (iterator.hasNext()) {
-                LsEntry entry = iterator.next();
-                String name = entry.getFilename();
-                if (name == null || name.isBlank()
-                        || ".".equals(name) || "..".equals(name)) {
-                    continue;
-                }
-                list.add(filename + "/" + name);
-            }
-        } catch (Exception e) {
-//            showLogs(e.toString());
-        }
-        return list;
     }
 
     public boolean isDirectory(String filename) {
