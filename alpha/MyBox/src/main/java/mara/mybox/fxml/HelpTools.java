@@ -233,7 +233,7 @@ public class HelpTools {
                                 comments);
                     }
                     String html = HtmlWriteTools.html(table.getTitle(), "utf-8",
-                            HtmlStyles.styleValue("TableStyle"), table.body());
+                            HtmlStyles.styleValue("Table"), table.body());
                     htmFile = HtmlWriteTools.writeHtml(html);
                 } catch (Exception e) {
                     MyBoxLog.error(e.toString());
