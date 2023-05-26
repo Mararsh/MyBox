@@ -23,23 +23,23 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class Data2DTargetExportController extends BaseTaskController {
-    
+
     protected DataFileCSV csvFile;
     protected List<List<String>> dataRows;
     protected List<Data2DColumn> columns;
     protected String filePrefix, format;
-    
+
     @FXML
     protected VBox formatVBox, targetVBox;
     @FXML
     protected ControlDataConvert convertController;
     @FXML
     protected Tab targetTab;
-    
+
     public Data2DTargetExportController() {
         baseTitle = message("Export");
     }
-    
+
     @Override
     public void initControls() {
         try {
@@ -47,12 +47,12 @@ public class Data2DTargetExportController extends BaseTaskController {
             formatVBox.setDisable(true);
             targetVBox.setDisable(true);
             okButton = startButton;
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public void setParameters(DataFileCSV data, String format) {
         try {
             if (data == null || !data.isValid()
@@ -64,16 +64,16 @@ public class Data2DTargetExportController extends BaseTaskController {
             columns = csvFile.getColumns();
             dataRows = null;
             this.format = format;
-            targetPath = data.getFile().getParentFile();
+            targetPath = new File(FileTmpTools.generatePath(format));
             filePrefix = data.getDataName();
-            
+
             startAction();
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public void setParameters(List<Data2DColumn> outputColumns, List<List<String>> outputData,
             String format, String name) {
         try {
@@ -89,14 +89,14 @@ public class Data2DTargetExportController extends BaseTaskController {
             this.format = format;
             targetPath = new File(FileTmpTools.generatePath("data2d"));
             filePrefix = name;
-            
+
             startAction();
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     @Override
     public void beforeTask() {
         super.beforeTask();
@@ -107,7 +107,7 @@ public class Data2DTargetExportController extends BaseTaskController {
         convertController.setControls(this, format);
         convertController.initParameters();
     }
-    
+
     @Override
     public boolean doTask() {
         try {
@@ -128,12 +128,12 @@ public class Data2DTargetExportController extends BaseTaskController {
             return false;
         }
     }
-    
+
     @Override
     public void afterSuccess() {
         try {
             new Timer().schedule(new TimerTask() {
-                
+
                 @Override
                 public void run() {
                     Platform.runLater(() -> {
@@ -141,14 +141,14 @@ public class Data2DTargetExportController extends BaseTaskController {
                         close();
                     });
                 }
-                
+
             }, 1000);
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     @Override
     public void afterTask() {
         super.afterTask();
@@ -171,7 +171,7 @@ public class Data2DTargetExportController extends BaseTaskController {
             return null;
         }
     }
-    
+
     public static Data2DTargetExportController open(List<Data2DColumn> outputColumns,
             List<List<String>> outputData, String format, String name) {
         try {
@@ -184,5 +184,5 @@ public class Data2DTargetExportController extends BaseTaskController {
             return null;
         }
     }
-    
+
 }

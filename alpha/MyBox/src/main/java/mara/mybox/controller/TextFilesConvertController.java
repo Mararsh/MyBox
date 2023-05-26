@@ -4,7 +4,6 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -18,8 +17,8 @@ import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.TextEditInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.TextTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -27,7 +26,6 @@ import mara.mybox.value.UserConfig;
 /**
  * @Author Mara
  * @CreateDate 2018-9-21
- * @Description
  * @License Apache License Version 2.0
  */
 public class TextFilesConvertController extends BaseBatchFileController {
@@ -43,22 +41,13 @@ public class TextFilesConvertController extends BaseBatchFileController {
     @FXML
     protected CheckBox targetBomCheck;
 
-    @Override
-    public void setFileType() {
-        setFileType(VisitHistory.FileType.Text);
+    public TextFilesConvertController() {
+        baseTitle = message("TextConvertSplit");
     }
 
     @Override
-    public void initControls() {
-        try {
-            super.initControls();
-
-            startButton.disableProperty().bind(targetPathController.valid.not()
-                    .or(Bindings.isEmpty(tableView.getItems()))
-            );
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Text);
     }
 
     @Override

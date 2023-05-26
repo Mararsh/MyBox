@@ -158,6 +158,11 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
     }
 
     @FXML
+    protected void HtmlTypesetting(ActionEvent event) {
+        loadScene(Fxmls.HtmlTypesettingFxml);
+    }
+
+    @FXML
     protected void htmlExtractTables(ActionEvent event) {
         loadScene(Fxmls.HtmlExtractTablesFxml);
     }
@@ -190,6 +195,11 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
     @FXML
     protected void JsonEditor(ActionEvent event) {
         loadScene(Fxmls.JsonEditorFxml);
+    }
+
+    @FXML
+    protected void JsonTypesetting(ActionEvent event) {
+        loadScene(Fxmls.JsonTypesettingFxml);
     }
 
     @FXML

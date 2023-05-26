@@ -197,7 +197,7 @@ public abstract class BaseTreeViewController<NodeP> extends BaseController {
         treeView.getSelectionModel().select(nodeitem);
         isSettingValues = false;
         int index = treeView.getRow(nodeitem);
-        treeView.scrollTo(Math.max(0, index - 3));
+        treeView.scrollTo(Math.max(0, index - 5));
     }
 
     public void focusNode(NodeP node) {

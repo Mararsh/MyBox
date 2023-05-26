@@ -48,6 +48,13 @@ public class ControlTargetFile extends ControlFileSelecter {
         defaultFile = null;
     }
 
+    @Override
+    public ControlFileSelecter init() {
+        super.init();
+        initTargetExistType();
+        return this;
+    }
+
     public void initTargetExistType() {
         try {
             try {
@@ -125,6 +132,9 @@ public class ControlTargetFile extends ControlFileSelecter {
     @Override
     public File makeTargetFile(String namePrefix, String nameSuffix, File targetPath) {
         try {
+            if (targetExistType == null) {
+                initTargetExistType();
+            }
             String targetPrefix = targetPath.getAbsolutePath() + File.separator
                     + FileNameTools.filter(namePrefix);
             if (appendTimestampCheck == null || appendTimestampCheck.isSelected()) {
@@ -160,6 +170,9 @@ public class ControlTargetFile extends ControlFileSelecter {
     }
 
     public boolean isSkip() {
+        if (targetExistType == null) {
+            initTargetExistType();
+        }
         return targetExistType == TargetExistType.Skip;
     }
 

@@ -1188,44 +1188,6 @@ public class PopTools {
                     " true ", " false ", " null ", " undefined "
             ), menuName);
 
-            Hyperlink jlink = new Hyperlink("JavaScript language specification");
-            jlink.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    parent.openLink(HelpTools.javaScriptSpecification());
-                }
-            });
-            controller.addNode(jlink);
-
-            Hyperlink mlink = new Hyperlink(message("JavaScriptTutorial") + " - " + message("English"));
-            mlink.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    parent.openLink(HelpTools.javaScriptEnLink());
-                }
-            });
-            controller.addNode(mlink);
-
-            Hyperlink alink = new Hyperlink(message("JavaScriptTutorial") + " - " + message("Chinese"));
-            alink.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    parent.openLink(HelpTools.javaScriptZhLink());
-                }
-            });
-            controller.addNode(alink);
-
-            if (!"JavaScriptEditor".equals(menuName)) {
-                Hyperlink nlink = new Hyperlink("Nashorn User's Guide");
-                nlink.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        parent.openLink(HelpTools.nashornLink());
-                    }
-                });
-                controller.addNode(nlink);
-            }
-
             return controller;
 
         } catch (Exception e) {

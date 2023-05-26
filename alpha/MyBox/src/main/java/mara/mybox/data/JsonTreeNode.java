@@ -5,10 +5,7 @@ import com.fasterxml.jackson.core.json.JsonWriteFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.sql.Connection;
-import java.util.Iterator;
-import java.util.Map;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import mara.mybox.db.DerbyBase;
@@ -28,18 +25,16 @@ public class JsonTreeNode {
     protected String title;
     protected JsonNode jsonNode;
     protected NodeType type;
-    protected boolean isArrayElement;
     protected final BooleanProperty selected = new SimpleBooleanProperty(false);
 
     public static enum NodeType {
-        Root, Array, Object, String, Number, Boolean, Null, Unknown
+        Array, Object, String, Number, Boolean, Null, Unknown
     }
 
     public JsonTreeNode() {
         title = null;
         jsonNode = null;
         type = null;
-        isArrayElement = false;
     }
 
     public JsonTreeNode(String name, JsonNode jsonNode) {
@@ -47,7 +42,7 @@ public class JsonTreeNode {
         this.jsonNode = jsonNode;
 
         if (jsonNode == null) {
-            type = NodeType.Root;
+            type = NodeType.Unknown;
 
         } else if (jsonNode.isNull()) {
             type = NodeType.Null;
@@ -81,10 +76,6 @@ public class JsonTreeNode {
 
     public String getValue() {
         return jsonNode == null || type == NodeType.Null ? null : formatByJackson(jsonNode);
-    }
-
-    public boolean isRoot() {
-        return jsonNode == null || type == NodeType.Root;
     }
 
     public boolean isValue() {
@@ -269,37 +260,6 @@ public class JsonTreeNode {
         }
     }
 
-    public static boolean replaceName(JsonTreeNode jsonTreeNode, String oldName, String newName) {
-        try {
-            if (jsonTreeNode == null) {
-                return false;
-            }
-            if (oldName == null || newName == null || !jsonTreeNode.isObject()) {
-                return false;
-
-            }
-            JsonNode jsonNode = jsonTreeNode.getJsonNode();
-            Iterator<Map.Entry<String, JsonNode>> fields = jsonNode.fields();
-            if (fields == null) {
-                return false;
-            }
-            ObjectNode objectNode = (ObjectNode) jsonNode;
-            while (fields.hasNext()) {
-                Map.Entry<String, JsonNode> field = fields.next();
-                String name = field.getKey();
-                if (oldName.equals(name)) {
-                    objectNode.set(newName, field.getValue());
-                    objectNode.remove(oldName);
-                    return true;
-                }
-            }
-            return false;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
-        }
-    }
-
     /*
         set
      */
@@ -313,10 +273,6 @@ public class JsonTreeNode {
         return this;
     }
 
-    public JsonTreeNode setIsArrayElement(boolean isArrayElement) {
-        this.isArrayElement = isArrayElement;
-        return this;
-    }
 
     /*
         get
@@ -331,10 +287,6 @@ public class JsonTreeNode {
 
     public NodeType getType() {
         return type;
-    }
-
-    public boolean isIsArrayElement() {
-        return isArrayElement;
     }
 
     public BooleanProperty getSelected() {

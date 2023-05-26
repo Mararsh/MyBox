@@ -174,30 +174,9 @@ License:    Apache License Version 2.0
                                     <content>
                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0">
                                             <children>
-                                    <Label layoutX="20.0" layoutY="20.0" text="%TakeEffectNextReadWrite" />
-                                                <Separator prefWidth="200.0" />
-                                                <Label text="%Read" />
-                                                <CheckBox fx:id="AllowJavaCommentsCheck" mnemonicParsing="false" text="%AllowJavaComments" />
-                                                <CheckBox fx:id="AllowYamlCommentsCheck" layoutX="20.0" layoutY="40.0" mnemonicParsing="false" text="%AllowYamlComments" />
-                                                <CheckBox fx:id="AllowSingleQuotesCheck" layoutX="20.0" layoutY="40.0" mnemonicParsing="false" text="%AllowSingleQuotes" />
-                                                <CheckBox fx:id="AllowUnquotedFieldNamesCheck" layoutX="20.0" layoutY="62.0" mnemonicParsing="false" text="%AllowUnquotedFieldNames" />
-                                                <CheckBox fx:id="AllowUnescapedControlCharsCheck" layoutX="20.0" layoutY="40.0" mnemonicParsing="false" text="%AllowUnescapedControlChars" />
-                                                <CheckBox fx:id="AllowBackslashEscapingAnyCheck" layoutX="20.0" layoutY="126.0" mnemonicParsing="false" text="%AllowBackslashEscapingAny" />
-                                                <CheckBox fx:id="AllowLeadingZerosForNumbersCheck" layoutX="20.0" layoutY="62.0" mnemonicParsing="false" text="%AllowLeadingZerosForNumbers" />
-                                                <CheckBox fx:id="AllowLeadingPlusSignForNumbersCheck" layoutX="20.0" layoutY="83.0" mnemonicParsing="false" text="%AllowLeadingPlusSignForNumbers" />
-                                                <CheckBox fx:id="AllowLeadingDecimalPointForNumbersCheck" layoutX="20.0" layoutY="104.0" mnemonicParsing="false" text="%AllowLeadingDecimalPointForNumbers" />
-                                                <CheckBox fx:id="AllowTrailingDecimalPointForNumbersCheck" layoutX="20.0" layoutY="190.0" mnemonicParsing="false" text="%AllowTrailingDecimalPointForNumbers" />
-                                                <CheckBox fx:id="AllowNonNumericNumbersCheck" layoutX="20.0" layoutY="324.0" mnemonicParsing="false" text="%AllowNonNumericNumbers" />
-                                                <CheckBox fx:id="AllowMissingValuesCheck" layoutX="20.0" layoutY="324.0" mnemonicParsing="false" text="%AllowMissingValues" />
-                                                <CheckBox fx:id="AllowTrailingCommaCheck" layoutX="20.0" layoutY="346.0" mnemonicParsing="false" text="%AllowTrailingComma" />
-                                                <Label text="%Write">
-                                       <VBox.margin>
-                                          <Insets top="10.0" />
-                                       </VBox.margin></Label>
-                                                <CheckBox fx:id="quoteFieldNamesCheck" mnemonicParsing="false" selected="true" text="%QuoteFieldNames" />
-                                                <CheckBox fx:id="writeNanAsStringsCheck" layoutX="20.0" layoutY="90.0" mnemonicParsing="false" selected="true" text="%WriteNanAsStrings" />
-                                                <CheckBox fx:id="writeNumbersAsStringsCheck" layoutX="20.0" layoutY="111.0" mnemonicParsing="false" text="%WriteNumbersAsStrings" />
-                                                <CheckBox fx:id="escapeNonASCIICheck" layoutX="20.0" layoutY="132.0" mnemonicParsing="false" text="%EscapeNonASCII" />
+                                    <Label text="%TakeEffectNextReadWrite" />
+                                    <Separator prefWidth="200.0" />
+                                    <fx:include fx:id="options" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlJsonOptions.fxml" VBox.vgrow="ALWAYS" />
                                             </children>
                                             <padding>
                                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

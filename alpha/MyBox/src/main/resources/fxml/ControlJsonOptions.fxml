@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlJsonOptions">
+   <children>
+      <Label text="%Read" />
+      <CheckBox fx:id="AllowJavaCommentsCheck" mnemonicParsing="false" text="%AllowJavaComments" />
+      <CheckBox fx:id="AllowYamlCommentsCheck" mnemonicParsing="false" text="%AllowYamlComments" />
+      <CheckBox fx:id="AllowSingleQuotesCheck" mnemonicParsing="false" text="%AllowSingleQuotes" />
+      <CheckBox fx:id="AllowUnquotedFieldNamesCheck" mnemonicParsing="false" text="%AllowUnquotedFieldNames" />
+      <CheckBox fx:id="AllowUnescapedControlCharsCheck" mnemonicParsing="false" text="%AllowUnescapedControlChars" />
+      <CheckBox fx:id="AllowBackslashEscapingAnyCheck" mnemonicParsing="false" text="%AllowBackslashEscapingAny" />
+      <CheckBox fx:id="AllowLeadingZerosForNumbersCheck" mnemonicParsing="false" text="%AllowLeadingZerosForNumbers" />
+      <CheckBox fx:id="AllowLeadingPlusSignForNumbersCheck" mnemonicParsing="false" text="%AllowLeadingPlusSignForNumbers" />
+      <CheckBox fx:id="AllowLeadingDecimalPointForNumbersCheck" mnemonicParsing="false" text="%AllowLeadingDecimalPointForNumbers" />
+      <CheckBox fx:id="AllowTrailingDecimalPointForNumbersCheck" mnemonicParsing="false" text="%AllowTrailingDecimalPointForNumbers" />
+      <CheckBox fx:id="AllowNonNumericNumbersCheck" mnemonicParsing="false" text="%AllowNonNumericNumbers" />
+      <CheckBox fx:id="AllowMissingValuesCheck" mnemonicParsing="false" text="%AllowMissingValues" />
+      <CheckBox fx:id="AllowTrailingCommaCheck" mnemonicParsing="false" text="%AllowTrailingComma" />
+      <Label text="%Write">
+         <VBox.margin>
+            <Insets top="10.0" />
+         </VBox.margin>
+      </Label>
+      <CheckBox fx:id="quoteFieldNamesCheck" mnemonicParsing="false" selected="true" text="%QuoteFieldNames" />
+      <CheckBox fx:id="writeNanAsStringsCheck" mnemonicParsing="false" selected="true" text="%WriteNanAsStrings" />
+      <CheckBox fx:id="writeNumbersAsStringsCheck" mnemonicParsing="false" text="%WriteNumbersAsStrings" />
+      <CheckBox fx:id="escapeNonASCIICheck" mnemonicParsing="false" text="%EscapeNonASCII" />
+   </children>
+</VBox>

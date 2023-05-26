@@ -228,6 +228,11 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
             loadScene(Fxmls.HtmlSnapFxml);
         });
 
+        MenuItem HtmlTypesetting = new MenuItem(message("HtmlTypesetting"));
+        HtmlTypesetting.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.HtmlTypesettingFxml);
+        });
+
         MenuItem WebFind = new MenuItem(message("WebFind"));
         WebFind.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.HtmlFindFxml);
@@ -269,7 +274,7 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
         });
 
         htmlMenu.getItems().addAll(
-                htmlEditor, WebFind, WebElements, HtmlSnap, HtmlExtractTables, new SeparatorMenuItem(),
+                htmlEditor, WebFind, WebElements, HtmlTypesetting, HtmlSnap, HtmlExtractTables, new SeparatorMenuItem(),
                 htmlToMarkdown, HtmlToText, HtmlToPdf, HtmlSetCharset, HtmlSetStyle, HtmlSetEquiv, new SeparatorMenuItem(),
                 HtmlMergeAsHtml, HtmlMergeAsMarkdown, HtmlMergeAsPDF, HtmlMergeAsText, HtmlFrameset
         );
@@ -299,6 +304,22 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
         markdownMenu.getItems().addAll(
                 markdownEditor, new SeparatorMenuItem(),
                 markdownToHtml, MarkdownToText, MarkdownToPdf
+        );
+
+        Menu jsonMenu = new Menu("JSON");
+
+        MenuItem jsonEditorMenu = new MenuItem(message("JsonEditor"));
+        jsonEditorMenu.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.JsonEditorFxml);
+        });
+
+        MenuItem jsonTypesettingMenu = new MenuItem(message("JsonTypesetting"));
+        jsonTypesettingMenu.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.JsonTypesettingFxml);
+        });
+
+        jsonMenu.getItems().addAll(
+                jsonEditorMenu, jsonTypesettingMenu
         );
 
         Menu msMenu = new Menu(message("MicrosoftDocumentFormats"));
@@ -379,11 +400,6 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
                 PptView, PptToImages, PptToPdf, PptExtract, PptSplit, PptxMerge, imagesCombinePPT, PptPlay, new SeparatorMenuItem(),
                 ExtractTextsFromMS
         );
-
-        MenuItem jsonMenu = new MenuItem("JSON");
-        jsonMenu.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.JsonEditorFxml);
-        });
 
         List<MenuItem> items = new ArrayList<>();
         items.addAll(Arrays.asList(Notes, InformationInTree, new SeparatorMenuItem(),

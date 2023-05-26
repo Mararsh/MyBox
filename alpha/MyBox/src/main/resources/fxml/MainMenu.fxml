@@ -75,12 +75,18 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#openMarkdownToPdf" text="%MarkdownToPdf" />
                                     </items>
                                 </Menu>
-                                <MenuItem mnemonicParsing="false" onAction="#JsonEditor" text="JSON" />
+                                <Menu mnemonicParsing="false" text="JSON">
+                                    <items>
+                                        <MenuItem mnemonicParsing="false" onAction="#JsonEditor" text="%JsonEditor" />
+                                        <MenuItem mnemonicParsing="false" onAction="#JsonTypesetting" text="%JsonTypesetting" />
+                                    </items>
+                                </Menu>                                 
                                 <Menu mnemonicParsing="false" text="%Html">
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#openHtmlEditor" text="%HtmlEditor" />
                                         <MenuItem mnemonicParsing="false" onAction="#htmlFind" text="%WebFind" />
                                         <MenuItem mnemonicParsing="false" onAction="#htmlElements" text="%WebElements" />
+                                        <MenuItem mnemonicParsing="false" onAction="#HtmlTypesetting" text="%HtmlTypesetting" />
                                         <MenuItem mnemonicParsing="false" onAction="#openHtmlSnap" text="%HtmlSnap" />
                                         <MenuItem mnemonicParsing="false" onAction="#htmlExtractTables" text="%HtmlExtractTables" />
                                         <SeparatorMenuItem mnemonicParsing="false" />

@@ -105,8 +105,7 @@ public class ControlJsonTree extends BaseTreeViewController<JsonTreeNode> {
                 if (fields != null) {
                     int count = 1;
                     while (fields.hasNext()) {
-                        addTreeItem(item, -1,
-                                new JsonTreeNode(count++ + "", fields.next()).setIsArrayElement(true));
+                        addTreeItem(item, -1, new JsonTreeNode(count++ + "", fields.next()));
                     }
                 }
             }
