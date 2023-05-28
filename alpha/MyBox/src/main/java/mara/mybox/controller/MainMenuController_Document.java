@@ -203,6 +203,11 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
     }
 
     @FXML
+    protected void XmlEditor(ActionEvent event) {
+        loadScene(Fxmls.XmlEditorFxml);
+    }
+
+    @FXML
     protected void openTextEditer(ActionEvent event) {
         loadScene(Fxmls.TextEditorFxml);
     }

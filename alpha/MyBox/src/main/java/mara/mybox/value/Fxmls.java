@@ -76,6 +76,8 @@ public class Fxmls {
     public static final String JsonAddElementFxml = "/fxml/JsonAddElement.fxml";
     public static final String JsonTypesettingFxml = "/fxml/JsonTypesetting.fxml";
 
+    public static final String XmlEditorFxml = "/fxml/XmlEditor.fxml";
+
     public static final String TextEditorFxml = "/fxml/TextEditor.fxml";
     public static final String TextFilesConvertFxml = "/fxml/TextFilesConvert.fxml";
     public static final String TextFilesMergeFxml = "/fxml/TextFilesMerge.fxml";

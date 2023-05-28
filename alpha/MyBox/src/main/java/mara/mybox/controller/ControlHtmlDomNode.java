@@ -151,16 +151,4 @@ public class ControlHtmlDomNode extends BaseChildController {
         PopTools.popHtmlTagExamples(this, tagInput, event);
     }
 
-    /*
-        pane
-     */
-    @Override
-    public void cleanPane() {
-        try {
-
-        } catch (Exception e) {
-        }
-        super.cleanPane();
-    }
-
 }

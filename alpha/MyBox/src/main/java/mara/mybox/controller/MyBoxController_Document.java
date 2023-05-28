@@ -322,6 +322,22 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
                 jsonEditorMenu, jsonTypesettingMenu
         );
 
+        Menu xmlMenu = new Menu("XML");
+
+        MenuItem xmlEditorMenu = new MenuItem(message("XmlEditor"));
+        xmlEditorMenu.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.XmlEditorFxml);
+        });
+
+        MenuItem xmlTypesettingMenu = new MenuItem(message("JsonTypesetting"));
+        xmlTypesettingMenu.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.JsonTypesettingFxml);
+        });
+
+        xmlMenu.getItems().addAll(
+                xmlEditorMenu, xmlTypesettingMenu
+        );
+
         Menu msMenu = new Menu(message("MicrosoftDocumentFormats"));
 
         MenuItem ExtractTextsFromMS = new MenuItem(message("ExtractTextsFromMS"));
@@ -403,7 +419,7 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
 
         List<MenuItem> items = new ArrayList<>();
         items.addAll(Arrays.asList(Notes, InformationInTree, new SeparatorMenuItem(),
-                pdfMenu, markdownMenu, jsonMenu, htmlMenu, textsMenu, msMenu, bytesMenu, new SeparatorMenuItem(),
+                pdfMenu, markdownMenu, jsonMenu, xmlMenu, htmlMenu, textsMenu, msMenu, bytesMenu, new SeparatorMenuItem(),
                 TextInMyBoxClipboard, TextInSystemClipboard));
 
         items.add(new SeparatorMenuItem());

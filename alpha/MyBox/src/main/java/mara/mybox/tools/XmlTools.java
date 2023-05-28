@@ -1,22 +1,25 @@
 package mara.mybox.tools;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.LinkedHashMap;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
+import mara.mybox.dev.MyBoxLog;
+import org.w3c.dom.Document;
 import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * @Author Mara
  * @CreateDate 2019-5-9 10:31:34
- * @Version 1.0
- * @Description
  * @License Apache License Version 2.0
  */
 public class XmlTools {
@@ -62,6 +65,27 @@ public class XmlTools {
 
         }
 
+    }
+
+    public static String toText(Document doc, boolean indent) {
+        if (doc == null) {
+            return null;
+        }
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream();) {
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
+//            transformer.setOutputProperty(OutputKeys.ENCODING, "utf-8");
+            transformer.setOutputProperty(OutputKeys.INDENT, indent ? "yes" : "no");
+            StreamResult streamResult = new StreamResult();
+            streamResult.setOutputStream(os);
+            transformer.transform(new DOMSource(doc), streamResult);
+            os.flush();
+            os.close();
+            return os.toString();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
 }
