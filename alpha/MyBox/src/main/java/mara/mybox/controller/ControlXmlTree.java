@@ -58,7 +58,7 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
                 clearTree();
                 return null;
             }
-            doc = XmlTreeNode.doc(xml);
+            doc = XmlTreeNode.doc(this, xml);
             return loadTree(doc);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -182,7 +182,8 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
     }
 
     public String toText() {
-        return XmlTools.toText(doc, UserConfig.getBoolean("XmlTransformerIndent", false));
+        return XmlTools.transform(doc, "xml",
+                UserConfig.getBoolean("XmlTransformerIndent", false));
     }
 
     /*

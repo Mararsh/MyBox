@@ -155,7 +155,7 @@ public class VisitHistoryTools {
             if (!suffix.equalsIgnoreCase("html") && !suffix.equalsIgnoreCase("htm")) {
                 return false;
             }
-        } else if (fileType == FileType.Xml) {
+        } else if (fileType == FileType.XML) {
             if (!suffix.equalsIgnoreCase("xml")) {
                 return false;
             }

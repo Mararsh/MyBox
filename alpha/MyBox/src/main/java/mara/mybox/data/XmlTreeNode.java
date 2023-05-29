@@ -1,14 +1,19 @@
 package mara.mybox.data;
 
 import java.io.StringReader;
+import java.sql.Connection;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import mara.mybox.controller.BaseController;
+import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.value.UserConfig;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXParseException;
 
 /**
  * @Author Mara
@@ -48,81 +53,49 @@ public class XmlTreeNode {
     /*
         static
      */
-    public static DocumentBuilder builder() {
-        try {
-            if (builder == null) {
-                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                factory.setValidating(false);
+    public static DocumentBuilder builder(BaseController controller) {
+        try (Connection conn = DerbyBase.getConnection()) {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setValidating(UserConfig.getBoolean(conn, "XmlDTDValidation", false));
+            factory.setCoalescing(UserConfig.getBoolean(conn, "XmlConvertCDATA", false));
+            factory.setIgnoringComments(UserConfig.getBoolean(conn, "XmlIgnoreComments", false));
+            factory.setIgnoringElementContentWhitespace(UserConfig.getBoolean(conn, "XmlIgnoreElementContentWhitespace", false));
+            factory.setNamespaceAware(UserConfig.getBoolean(conn, "XmlSupportNamespaces", false));
 
-                builder = factory.newDocumentBuilder();
-            }
-            return builder;
+            builder = factory.newDocumentBuilder();
+
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
         }
+        builder.setErrorHandler(new ErrorHandler() {
+            @Override
+            public void error(SAXParseException arg0) {
+                controller.alertError(arg0.toString());
+            }
+
+            @Override
+            public void fatalError(SAXParseException arg0) {
+                controller.alertError(arg0.toString());
+            }
+
+            @Override
+            public void warning(SAXParseException arg0) {
+                controller.alertWarning(arg0.toString());
+            }
+        });
+        return builder;
     }
 
-    public static Document doc(String xml) {
+    public static Document doc(BaseController controller, String xml) {
         try {
-
-            InputSource is = new InputSource();
-            is.setCharacterStream(new StringReader(xml));
-
-            return builder().parse(is);
+            return builder(controller).parse(new InputSource(new StringReader(xml)));
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            controller.alertError(e.toString());
             return null;
         }
     }
 
-    public static void read(String xmlFile) {
-        try {
-            Document doc = doc(xmlFile);
-            Element root = doc.getDocumentElement();
-            if (root == null) {
-                return;
-            }
-            System.err.println(root.getAttribute("name"));
-            NodeList collegeNodes = root.getChildNodes();
-            if (collegeNodes == null) {
-                return;
-            }
-            for (int i = 0; i < collegeNodes.getLength(); i++) {
-                Node college = collegeNodes.item(i);
-                if (college != null && college.getNodeType() == Node.ELEMENT_NODE) {
-                    System.err.println("\t" + college.getAttributes().getNamedItem("name").getNodeValue());
-                    // all class node
-                    NodeList classNodes = college.getChildNodes();
-                    if (classNodes == null) {
-                        continue;
-                    }
-                    for (int j = 0; j < classNodes.getLength(); j++) {
-                        Node clazz = classNodes.item(j);
-                        if (clazz != null && clazz.getNodeType() == Node.ELEMENT_NODE) {
-                            System.err.println("\t\t" + clazz.getAttributes().getNamedItem("name").getNodeValue());
-                            // all student node
-                            NodeList studentNodes = clazz.getChildNodes();
-                            if (studentNodes == null) {
-                                continue;
-                            }
-                            for (int k = 0; k < studentNodes.getLength(); k++) {
-                                Node student = studentNodes.item(k);
-                                if (student != null && student.getNodeType() == Node.ELEMENT_NODE) {
-                                    System.err.print("\t\t\t" + student.getAttributes().getNamedItem("name").getNodeValue());
-                                    System.err.print(" " + student.getAttributes().getNamedItem("sex").getNodeValue());
-                                    System.err.println(" " + student.getAttributes().getNamedItem("age").getNodeValue());
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-
-    }
 
     /*
         set

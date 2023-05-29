@@ -67,21 +67,26 @@ public class XmlTools {
 
     }
 
-    public static String toText(Document doc, boolean indent) {
+    public static String transform(Document doc, String format, boolean indent) {
         if (doc == null) {
             return null;
         }
+        String encoding = doc.getXmlEncoding();
+        if (encoding == null) {
+            encoding = "utf-8";
+        }
         try (ByteArrayOutputStream os = new ByteArrayOutputStream();) {
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            transformer.setOutputProperty(OutputKeys.METHOD, format);
             transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
-//            transformer.setOutputProperty(OutputKeys.ENCODING, "utf-8");
+            transformer.setOutputProperty(OutputKeys.ENCODING, encoding);
             transformer.setOutputProperty(OutputKeys.INDENT, indent ? "yes" : "no");
             StreamResult streamResult = new StreamResult();
             streamResult.setOutputStream(os);
             transformer.transform(new DOMSource(doc), streamResult);
             os.flush();
             os.close();
-            return os.toString();
+            return os.toString(encoding);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;

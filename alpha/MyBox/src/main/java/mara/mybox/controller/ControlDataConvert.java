@@ -726,7 +726,7 @@ public class ControlDataConvert extends BaseController {
                 xmlWriter.write("</Data>\n");
                 xmlWriter.flush();
                 xmlWriter.close();
-                parent.targetFileGenerated(xmlFile, VisitHistory.FileType.Xml);
+                parent.targetFileGenerated(xmlFile, VisitHistory.FileType.XML);
                 xmlWriter = null;
             }
 
@@ -734,7 +734,7 @@ public class ControlDataConvert extends BaseController {
                 jsonWriter.write("\n]}\n");
                 jsonWriter.flush();
                 jsonWriter.close();
-                parent.targetFileGenerated(jsonFile, VisitHistory.FileType.Text);
+                parent.targetFileGenerated(jsonFile, VisitHistory.FileType.JSON);
                 jsonWriter = null;
             }
 
@@ -818,7 +818,7 @@ public class ControlDataConvert extends BaseController {
             DataInMyBoxClipboardController.oneOpen();
         }
         if (xmlFile != null && xmlFile.exists()) {
-            browse(xmlFile);
+            XmlEditorController.open(xmlFile);
         }
         if (jsonFile != null && jsonFile.exists()) {
             JsonEditorController.open(jsonFile);

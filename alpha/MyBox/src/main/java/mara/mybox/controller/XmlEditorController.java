@@ -48,11 +48,11 @@ public class XmlEditorController extends BaseController {
     @FXML
     protected ControlXmlTree domController;
     @FXML
-    protected ControlJsonOptions optionsController;
+    protected ControlXmlOptions optionsController;
     @FXML
     protected ControlFileBackup backupController;
     @FXML
-    protected CheckBox wrapTextsCheck, indentCheck;
+    protected CheckBox wrapTextsCheck;
 
     public XmlEditorController() {
         baseTitle = message("XmlEditor");
@@ -62,7 +62,7 @@ public class XmlEditorController extends BaseController {
 
     @Override
     public void setFileType() {
-        setFileType(VisitHistory.FileType.Xml);
+        setFileType(VisitHistory.FileType.XML);
     }
 
     @Override
@@ -84,14 +84,6 @@ public class XmlEditorController extends BaseController {
             backupController.setParameters(this, baseName);
 
             tabChanged();
-
-            indentCheck.setSelected(UserConfig.getBoolean("XmlTransformerIndent", false));
-            indentCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean("XmlTransformerIndent", indentCheck.isSelected());
-                }
-            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
