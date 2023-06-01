@@ -5,6 +5,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import mara.mybox.data.XmlTreeNode;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.UserConfig;
@@ -17,8 +18,8 @@ import mara.mybox.value.UserConfig;
 public class ControlXmlOptions extends BaseController {
 
     @FXML
-    protected CheckBox dtdValidationCheck, cDATACheck, ignoreCommentsCheck,
-            ignoreElementContentWhitespaceCheck, supportNamespacesCheck, indentCheck;
+    protected CheckBox dtdValidationCheck, ignoreCommentsCheck,
+            ignoreBlankStringCheck, supportNamespacesCheck, indentCheck;
 
     @Override
     public void initControls() {
@@ -32,14 +33,6 @@ public class ControlXmlOptions extends BaseController {
                 }
             });
 
-            cDATACheck.setSelected(UserConfig.getBoolean(conn, "XmlConvertCDATA", false));
-            cDATACheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean("XmlConvertCDATA", cDATACheck.isSelected());
-                }
-            });
-
             ignoreCommentsCheck.setSelected(UserConfig.getBoolean(conn, "XmlIgnoreComments", false));
             ignoreCommentsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
@@ -48,11 +41,13 @@ public class ControlXmlOptions extends BaseController {
                 }
             });
 
-            ignoreElementContentWhitespaceCheck.setSelected(UserConfig.getBoolean(conn, "XmlIgnoreElementContentWhitespace", false));
-            ignoreElementContentWhitespaceCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            XmlTreeNode.ignoreWhite = UserConfig.getBoolean(conn, "XmlIgnoreBlankString", true);
+            ignoreBlankStringCheck.setSelected(XmlTreeNode.ignoreWhite);
+            ignoreBlankStringCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean("XmlIgnoreElementContentWhitespace", ignoreElementContentWhitespaceCheck.isSelected());
+                    UserConfig.setBoolean("XmlIgnoreBlankString", ignoreBlankStringCheck.isSelected());
+                    XmlTreeNode.ignoreWhite = ignoreBlankStringCheck.isSelected();
                 }
             });
 

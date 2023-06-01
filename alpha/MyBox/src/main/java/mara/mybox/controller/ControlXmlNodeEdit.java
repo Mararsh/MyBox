@@ -40,7 +40,7 @@ public class ControlXmlNodeEdit extends ControlXmlNodeBase {
         thisPane.setDisable(false);
         infoLabel.setText(treeController.hierarchyNumber(item));
 
-        load(treeController.doc, currentTreeNode.getNode());
+        load(currentTreeNode.getNode());
     }
 
     @FXML
@@ -59,8 +59,8 @@ public class ControlXmlNodeEdit extends ControlXmlNodeBase {
             }
             XmlTreeNode updatedTreeNode = new XmlTreeNode()
                     .setNode(updatedNode)
-                    .setTitle(tagInput.getText())
-                    .setValue(textArea.getText());
+                    .setTitle(nameInput.getText())
+                    .setValue(valueArea.getText());
             treeItem.setValue(updatedTreeNode);
             treeController.xmlEditor.domChanged(true);
             treeController.xmlEditor.popInformation(message("UpdateSuccessfully"));
@@ -82,8 +82,11 @@ public class ControlXmlNodeEdit extends ControlXmlNodeBase {
 
     @FXML
     public void addAttribute() {
-        Attr attr = doc.createAttribute("attr");
-        attr.setValue("v");
+        if (node == null) {
+            return;
+        }
+        Attr attr = node.getOwnerDocument().createAttribute("attr");
+        attr.setValue("value");
         attributesData.add(attr);
     }
 

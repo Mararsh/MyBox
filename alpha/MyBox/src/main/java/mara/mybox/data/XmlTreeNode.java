@@ -10,7 +10,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.UserConfig;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
@@ -23,31 +22,42 @@ import org.xml.sax.SAXParseException;
 public class XmlTreeNode {
 
     public static DocumentBuilder builder;
+    public static boolean ignoreWhite;
 
     protected String title, value;
+    protected NodeType type;
     protected Node node;
+
+    public static enum NodeType {
+        Element, Attribute, Text, CDATA, EntityRefrence, Entity, ProcessingInstruction,
+        Comment, Document, DocumentType, DocumentFragment, Notation, Unknown
+    }
 
     public XmlTreeNode() {
         node = null;
         title = null;
         value = null;
+        type = NodeType.Unknown;
     }
 
-    public XmlTreeNode(String title, Node node) {
-        this.title = title;
+    public XmlTreeNode(Node node) {
         this.node = node;
-        if (node != null) {
-            NodeList children = node.getChildNodes();
-            if (children != null) {
-                for (int i = 0; i < children.getLength(); i++) {
-                    Node child = children.item(i);
-                    if (child.getNodeType() == Node.TEXT_NODE) {
-                        value = child.getNodeValue();
-                        break;
-                    }
-                }
-            }
-        }
+        type = type(node);
+    }
+
+    /*
+       custimized get
+     */
+    public String getTitle() {
+        return name(node);
+    }
+
+    public String getValue() {
+        return value(node);
+    }
+
+    public String getTypename() {
+        return type == null ? null : type.name();
     }
 
     /*
@@ -57,9 +67,10 @@ public class XmlTreeNode {
         try (Connection conn = DerbyBase.getConnection()) {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setValidating(UserConfig.getBoolean(conn, "XmlDTDValidation", false));
-            factory.setCoalescing(UserConfig.getBoolean(conn, "XmlConvertCDATA", false));
+            factory.setCoalescing(false);
             factory.setIgnoringComments(UserConfig.getBoolean(conn, "XmlIgnoreComments", false));
-            factory.setIgnoringElementContentWhitespace(UserConfig.getBoolean(conn, "XmlIgnoreElementContentWhitespace", false));
+            ignoreWhite = UserConfig.getBoolean(conn, "XmlIgnoreBlankString", true);
+            factory.setIgnoringElementContentWhitespace(ignoreWhite);
             factory.setNamespaceAware(UserConfig.getBoolean(conn, "XmlSupportNamespaces", false));
 
             builder = factory.newDocumentBuilder();
@@ -96,6 +107,83 @@ public class XmlTreeNode {
         }
     }
 
+    public static NodeType type(Node node) {
+        if (node == null) {
+            return null;
+        }
+        switch (node.getNodeType()) {
+            case Node.ELEMENT_NODE:
+                return NodeType.Element;
+            case Node.ATTRIBUTE_NODE:
+                return NodeType.Attribute;
+            case Node.TEXT_NODE:
+                return NodeType.Text;
+            case Node.CDATA_SECTION_NODE:
+                return NodeType.CDATA;
+            case Node.ENTITY_REFERENCE_NODE:
+                return NodeType.EntityRefrence;
+            case Node.ENTITY_NODE:
+                return NodeType.Entity;
+            case Node.PROCESSING_INSTRUCTION_NODE:
+                return NodeType.ProcessingInstruction;
+            case Node.COMMENT_NODE:
+                return NodeType.Comment;
+            case Node.DOCUMENT_NODE:
+                return NodeType.Document;
+            case Node.DOCUMENT_TYPE_NODE:
+                return NodeType.DocumentType;
+            case Node.DOCUMENT_FRAGMENT_NODE:
+                return NodeType.DocumentFragment;
+            case Node.NOTATION_NODE:
+                return NodeType.Notation;
+            default:
+                return NodeType.Unknown;
+        }
+    }
+
+    public static String name(Node node) {
+        return node == null ? null : node.getNodeName();
+    }
+
+    public static String value(Node node) {
+        if (node == null) {
+            return null;
+        }
+        switch (node.getNodeType()) {
+            case Node.TEXT_NODE:
+            case Node.CDATA_SECTION_NODE:
+            case Node.COMMENT_NODE:
+            case Node.ATTRIBUTE_NODE:
+            case Node.PROCESSING_INSTRUCTION_NODE:
+                String value = node.getNodeValue();
+                if (value != null && ignoreWhite && value.isBlank()) {
+                    value = null;
+                }
+                return value;
+            default:
+                return null;
+        }
+    }
+
+    public static boolean canIgnore(Node node) {
+        if (node == null) {
+            return true;
+        }
+        if (!ignoreWhite) {
+            return false;
+        }
+        switch (node.getNodeType()) {
+            case Node.TEXT_NODE:
+            case Node.CDATA_SECTION_NODE:
+            case Node.COMMENT_NODE:
+            case Node.ATTRIBUTE_NODE:
+            case Node.PROCESSING_INSTRUCTION_NODE:
+                String value = node.getNodeValue();
+                return value == null || value.isBlank();
+            default:
+                return false;
+        }
+    }
 
     /*
         set
@@ -115,6 +203,11 @@ public class XmlTreeNode {
         return this;
     }
 
+    public XmlTreeNode setType(NodeType type) {
+        this.type = type;
+        return this;
+    }
+
     /*
         get
      */
@@ -122,12 +215,8 @@ public class XmlTreeNode {
         return node;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public String getValue() {
-        return value;
+    public NodeType getType() {
+        return type;
     }
 
 }

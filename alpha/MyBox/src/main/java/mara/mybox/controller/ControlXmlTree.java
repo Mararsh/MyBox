@@ -9,6 +9,8 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.XmlTreeNode;
 import mara.mybox.dev.MyBoxLog;
@@ -33,12 +35,16 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
     protected Document doc;
 
     @FXML
+    protected TreeTableColumn<XmlTreeNode, String> typeColumn;
+    @FXML
     protected ControlXmlNodeEdit nodeController;
 
     @Override
     public void initControls() {
         try {
             super.initControls();
+
+            typeColumn.setCellValueFactory(new TreeItemPropertyValueFactory<>("typename"));
 
             nodeController.setParameters(this);
 
@@ -69,7 +75,7 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
     public TreeItem<XmlTreeNode> loadTree(Node doc) {
         try {
             clearTree();
-            TreeItem<XmlTreeNode> xml = makeTreeItem(new XmlTreeNode("XML", doc));
+            TreeItem<XmlTreeNode> xml = makeTreeItem(new XmlTreeNode(doc));
             treeView.setRoot(xml);
             return xml;
         } catch (Exception e) {
@@ -90,9 +96,10 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
             if (children != null) {
                 for (int i = 0; i < children.getLength(); i++) {
                     Node child = children.item(i);
-                    if (child.getNodeType() == Node.ELEMENT_NODE) {
-                        addTreeItem(item, -1, new XmlTreeNode(child.getNodeName(), child));
+                    if (XmlTreeNode.canIgnore(child)) {
+                        continue;
                     }
+                    addTreeItem(item, -1, new XmlTreeNode(child));
                 }
             }
             return item;
