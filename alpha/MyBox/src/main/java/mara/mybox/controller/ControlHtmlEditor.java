@@ -618,7 +618,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
 
     public void domChanged(boolean changed) {
         domChanged = changed;
-        domTab.setText("dom" + (changed ? " *" : ""));
+        domTab.setText(message("Tree") + (changed ? " *" : ""));
         if (changed) {
             updateFileStatus(true);
         }
@@ -1159,7 +1159,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
     public void showPanesMenu(Event event) {
         List<MenuItem> items = new ArrayList<>();
 
-        CheckMenuItem domMenu = new CheckMenuItem("DOM");
+        CheckMenuItem domMenu = new CheckMenuItem(message("Tree"));
         domMenu.setSelected(tabPane.getTabs().contains(domTab));
         domMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override

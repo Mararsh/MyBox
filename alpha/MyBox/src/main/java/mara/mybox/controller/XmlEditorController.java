@@ -19,6 +19,7 @@ import javafx.stage.Stage;
 import mara.mybox.data.XmlTreeNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileTools;
@@ -153,13 +154,18 @@ public class XmlEditorController extends BaseController {
             if (!checkBeforeNextAction()) {
                 return;
             }
+            String name = PopTools.askValue(getBaseTitle(), message("Create"), message("Root"), "data");
+            if (name == null || name.isBlank()) {
+                return;
+            }
             sourceFile = null;
             getMyStage().setTitle(getBaseTitle());
             fileChanged = false;
             if (backupController != null) {
                 backupController.loadBackups(null);
             }
-            writePanes("{}");
+            writePanes("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+                    + "<" + name + "></" + name + ">");
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -305,12 +311,12 @@ public class XmlEditorController extends BaseController {
     }
 
     public String xmlByDom() {
-        return domController.toText();
+        return domController.xml(domController.doc);
     }
 
     public void domChanged(boolean changed) {
         domChanged = changed;
-        domTab.setText("dom" + (changed ? " *" : ""));
+        domTab.setText(message("Tree") + (changed ? " *" : ""));
         if (changed) {
             fileChanged();
         }

@@ -271,6 +271,12 @@ public class HelpTools {
             table.newLinkRow(message("DerbyReferenceManual"), derbyLink());
             table.newLinkRow(message("SqlIdentifier"), sqlLink());
             table.newLinkRow("RenderingHints", renderingHintsLink());
+            table.newLinkRow(message("JsonTutorial") + " - " + message("Chinese"), jsonZhLink());
+            table.newLinkRow(message("JsonTutorial") + " - " + message("English"), jsonEnLink());
+            table.newLinkRow(message("JsonSpecification"), jsonSpecification());
+            table.newLinkRow(message("XmlTutorial") + " - " + message("Chinese"), xmlZhLink());
+            table.newLinkRow(message("XmlTutorial") + " - " + message("English"), xmlEnLink());
+            table.newLinkRow(message("DomSpecification"), domSpecification());
 
             File htmFile = HtmlWriteTools.writeHtml(table.html());
             return htmFile;
@@ -315,6 +321,9 @@ public class HelpTools {
 
             s.append("    <H3>").append(message("JsonEditor")).append("</H3>\n");
             s.append("    <PRE>").append(message("JsonEditorTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("XmlEditor")).append("</H3>\n");
+            s.append("    <PRE>").append(message("XmlEditorTips")).append("</PRE>\n");
 
             s.append("    <H3>").append(message("TextEditer")).append("</H3>\n");
             s.append("    <PRE>").append(message("TextEditerTips")).append("</PRE>\n");
@@ -578,6 +587,9 @@ public class HelpTools {
             s.append("    <H3>").append(message("Shortcuts")).append("</H3>\n");
             s.append("    <PRE>").append(message("ShortcutsTips")).append("</PRE>\n");
 
+            s.append("    <H3>").append(message("ClearExpiredData")).append("</H3>\n");
+            s.append("    <PRE>").append(message("ClearExpiredDataComments")).append("</PRE>\n");
+
             s.append("\n");
 
             s.append("</BODY>\n");
@@ -664,6 +676,30 @@ public class HelpTools {
 
     public static String javaScriptSpecification() {
         return "https://www.ecma-international.org/publications-and-standards/standards/ecma-262/";
+    }
+
+    public static String jsonEnLink() {
+        return "https://www.w3schools.com/js/js_json_intro.asp";
+    }
+
+    public static String jsonZhLink() {
+        return "https://www.w3school.com.cn/js/js_json_intro.asp";
+    }
+
+    public static String jsonSpecification() {
+        return "https://www.ecma-international.org/publications-and-standards/standards/ecma-404/";
+    }
+
+    public static String xmlEnLink() {
+        return "https://www.w3schools.com/xml/default.asp";
+    }
+
+    public static String xmlZhLink() {
+        return "https://www.w3school.com.cn/xmldom/index.asp";
+    }
+
+    public static String domSpecification() {
+        return "https://www.w3.org/TR/DOM-Level-3-Core/";
     }
 
     public static List<MenuItem> htmlHelps(BaseController controller) {

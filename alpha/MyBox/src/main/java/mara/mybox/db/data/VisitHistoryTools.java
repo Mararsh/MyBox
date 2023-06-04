@@ -119,6 +119,8 @@ public class VisitHistoryTools {
             return FileFilters.DataFileExtensionFilter;
         } else if (fileType == VisitHistory.FileType.JSON) {
             return FileFilters.JSONExtensionFilter;
+        } else if (fileType == VisitHistory.FileType.XML) {
+            return FileFilters.XmlExtensionFilter;
         } else {
             return FileFilters.AllExtensionFilter;
         }

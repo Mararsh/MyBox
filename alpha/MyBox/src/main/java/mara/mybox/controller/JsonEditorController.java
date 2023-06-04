@@ -310,7 +310,7 @@ public class JsonEditorController extends BaseController {
 
     public void domChanged(boolean changed) {
         domChanged = changed;
-        domTab.setText("dom" + (changed ? " *" : ""));
+        domTab.setText(message("Tree") + (changed ? " *" : ""));
         if (changed) {
             fileChanged();
         }
