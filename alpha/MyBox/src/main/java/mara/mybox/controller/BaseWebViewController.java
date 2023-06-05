@@ -113,7 +113,10 @@ public class BaseWebViewController extends BaseController {
     }
 
     public boolean loadFile(File file) {
-        if (!checkBeforeNextAction() || file == null || !file.exists()) {
+        if (!checkBeforeNextAction()) {
+            return false;
+        }
+        if (file == null || !file.exists()) {
             popError(message("InvalidData"));
             return false;
         }

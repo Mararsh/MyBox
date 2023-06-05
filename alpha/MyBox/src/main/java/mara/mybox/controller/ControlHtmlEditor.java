@@ -1304,8 +1304,11 @@ public class ControlHtmlEditor extends BaseWebViewController {
             if (result.get() == buttonSave) {
                 saveAction();
                 return false;
+            } else if (result.get() == buttonNotSave) {
+                fileChanged = false;
+                return true;
             } else {
-                return result.get() == buttonNotSave;
+                return false;
             }
         }
     }

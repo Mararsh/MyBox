@@ -92,7 +92,11 @@ public class JsonEditorController extends BaseController {
      */
     @Override
     public void sourceFileChanged(File file) {
+        if (!checkBeforeNextAction()) {
+            return;
+        }
         if (file == null || !file.exists()) {
+            popError(message("InvalidData"));
             return;
         }
         if (file.length() > 10 * 1024 * 1024) {
@@ -551,8 +555,11 @@ public class JsonEditorController extends BaseController {
             if (result.get() == buttonSave) {
                 saveAction();
                 return false;
+            } else if (result.get() == buttonNotSave) {
+                fileChanged = false;
+                return true;
             } else {
-                return result.get() == buttonNotSave;
+                return false;
             }
         }
     }

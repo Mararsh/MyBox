@@ -21,7 +21,7 @@ public class JsonAddField extends ControlJsonNodeBase {
         try {
             this.treeController = treeController;
             this.treeItem = item;
-
+            checkValue();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

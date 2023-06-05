@@ -376,6 +376,9 @@ public abstract class BaseTreeViewController<NodeP> extends BaseController {
     @FXML
     public void showFunctionsMenu(Event event) {
         TreeItem<NodeP> treeItem = selected();
+        if (treeItem == null) {
+            return;
+        }
         List<MenuItem> items = makeFunctionsMenu(treeItem);
         if (items == null) {
             return;
@@ -450,14 +453,12 @@ public abstract class BaseTreeViewController<NodeP> extends BaseController {
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             TextClipboardTools.copyToSystemClipboard(this, value(item.getValue()));
         });
-        menu.setDisable(item == null);
         items.add(menu);
 
         menu = new MenuItem(copyTitleMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             TextClipboardTools.copyToSystemClipboard(this, title(item.getValue()));
         });
-        menu.setDisable(item == null);
         items.add(menu);
 
         menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
@@ -537,6 +538,9 @@ public abstract class BaseTreeViewController<NodeP> extends BaseController {
     @FXML
     public void showOperationsMenu(Event event) {
         TreeItem<NodeP> item = selected();
+        if (item == null) {
+            return;
+        }
         List<MenuItem> items = new ArrayList<>();
 
         MenuItem menu = new MenuItem(StringTools.menuPrefix(label(item)));

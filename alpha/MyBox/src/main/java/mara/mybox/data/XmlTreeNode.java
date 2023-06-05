@@ -242,7 +242,7 @@ public class XmlTreeNode {
         if (attributes != null) {
             for (int i = 0; i < attributes.getLength(); i++) {
                 Node attr = attributes.item(i);
-                info += attr.getNodeName() + "=" + attr.getNodeValue() + "\n";
+                info += attr.getNodeName() + "=\"" + attr.getNodeValue() + "\"\n";
             }
         }
         return info;
@@ -255,15 +255,15 @@ public class XmlTreeNode {
         String info = "";
         String v = document.getXmlVersion();
         if (v != null && !v.isBlank()) {
-            info += "version=" + v + "\n";
+            info += "version=\"" + v + "\"\n";
         }
         v = document.getXmlEncoding();
         if (v != null && !v.isBlank()) {
-            info += "encoding=" + v + "\n";
+            info += "encoding=\"" + v + "\"\n";
         }
         v = document.getDocumentURI();
         if (v != null && !v.isBlank()) {
-            info += "uri=" + v + "\n";
+            info += "uri=\"" + v + "\"\n";
         }
         return info;
     }
@@ -275,19 +275,19 @@ public class XmlTreeNode {
         String info = "";
         String v = documentType.getName();
         if (v != null && !v.isBlank()) {
-            info += "name=" + v + "\n";
+            info += "name=\"" + v + "\"\n";
         }
         v = documentType.getPublicId();
         if (v != null && !v.isBlank()) {
-            info += "Public Id=" + v + "\n";
+            info += "Public Id=\"" + v + "\"\n";
         }
         v = documentType.getSystemId();
         if (v != null && !v.isBlank()) {
-            info += "System Id=" + v + "\n";
+            info += "System Id=\"" + v + "\"\n";
         }
         v = documentType.getInternalSubset();
         if (v != null && !v.isBlank()) {
-            info += "Internal subset=" + v + "\n";
+            info += "Internal subset=\"" + v + "\"\n";
         }
         NamedNodeMap entities = documentType.getEntities();
         if (entities != null && entities.getLength() > 0) {
@@ -313,23 +313,23 @@ public class XmlTreeNode {
         String info = indent + entity.getNodeName() + "=" + entity.getNodeValue();
         String v = entity.getNotationName();
         if (v != null && !v.isBlank()) {
-            info += indent + "\t" + "Notation name=" + v + "\n";
+            info += indent + "\t" + "Notation name=\"" + v + "\"\n";
         }
         v = entity.getXmlVersion();
         if (v != null && !v.isBlank()) {
-            info += indent + "\t" + "version=" + v + "\n";
+            info += indent + "\t" + "version=\"" + v + "\"\n";
         }
         v = entity.getXmlEncoding();
         if (v != null && !v.isBlank()) {
-            info += indent + "\t" + "encoding=" + v + "\n";
+            info += indent + "\t" + "encoding=\"" + v + "\"\n";
         }
         v = entity.getPublicId();
         if (v != null && !v.isBlank()) {
-            info += indent + "\t" + "Public Id=" + v + "\n";
+            info += indent + "\t" + "Public Id=\"" + v + "\"\n";
         }
         v = entity.getSystemId();
         if (v != null && !v.isBlank()) {
-            info += indent + "\t" + "System Id=" + v + "\n";
+            info += indent + "\t" + "System Id=\"" + v + "\"\n";
         }
         return info;
     }
@@ -338,7 +338,7 @@ public class XmlTreeNode {
         if (ref == null) {
             return null;
         }
-        String info = "\t" + ref.getNodeName() + "=" + ref.getNodeValue();
+        String info = "\t" + ref.getNodeName() + "=\"" + ref.getNodeValue() + "\"";
         return info;
     }
 

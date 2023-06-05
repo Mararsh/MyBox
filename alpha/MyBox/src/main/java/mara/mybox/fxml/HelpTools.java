@@ -651,7 +651,7 @@ public class HelpTools {
     }
 
     public static String cssZhLink() {
-        return "https://www.w3school.com.cn/cssref/index.asp";
+        return "https://developer.mozilla.org/zh-CN/docs/web/css/reference";
     }
 
     public static String nashornLink() {
@@ -659,7 +659,7 @@ public class HelpTools {
     }
 
     public static String htmlZhLink() {
-        return "https://www.w3school.com.cn/html/index.asp";
+        return "https://developer.mozilla.org/zh-CN/docs/Web/JavaScript";
     }
 
     public static String htmlEnLink() {
@@ -667,7 +667,7 @@ public class HelpTools {
     }
 
     public static String javaScriptZhLink() {
-        return "https://www.w3school.com.cn/js/index.asp";
+        return "https://developer.mozilla.org/zh-CN/docs/Web/JavaScript";
     }
 
     public static String javaScriptEnLink() {
@@ -683,7 +683,7 @@ public class HelpTools {
     }
 
     public static String jsonZhLink() {
-        return "https://www.w3school.com.cn/js/js_json_intro.asp";
+        return "http://www.vue5.com/json/json_quick_guide.html";
     }
 
     public static String jsonSpecification() {
@@ -695,7 +695,7 @@ public class HelpTools {
     }
 
     public static String xmlZhLink() {
-        return "https://www.w3school.com.cn/xmldom/index.asp";
+        return "http://www.vue5.com/xml/dom.html";
     }
 
     public static String domSpecification() {

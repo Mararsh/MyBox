@@ -217,18 +217,21 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
 
         viewMenu.getItems().addAll(foldItems(treeItem));
 
-        MenuItem menu = new MenuItem("XML", StyleTools.getIconImageView("iconXml.png"));
+        viewMenu.getItems().add(new SeparatorMenuItem());
+
+        MenuItem menu = new MenuItem(message("NodeXML"), StyleTools.getIconImageView("iconXml.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             xml(treeItem);
         });
         viewMenu.getItems().add(menu);
 
-        menu = new MenuItem(message("Texts"), StyleTools.getIconImageView("iconTxt.png"));
+        menu = new MenuItem(message("NodeTexts"), StyleTools.getIconImageView("iconTxt.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             text(treeItem);
         });
         viewMenu.getItems().add(menu);
 
+        viewMenu.getItems().add(new SeparatorMenuItem());
         menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             refreshAction();
@@ -280,6 +283,15 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
         menu.setDisable(treeItem.getValue() == null);
         items.add(menu);
 
+        if (xmlEditor != null && xmlEditor.sourceFile != null && xmlEditor.sourceFile.exists()) {
+            items.add(new SeparatorMenuItem());
+            menu = new MenuItem(message("Recover"), StyleTools.getIconImageView("iconRecover.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                recoverAction();
+            });
+            items.add(menu);
+        }
+
         return items;
     }
 
@@ -288,7 +300,12 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
             if (treeItem == null) {
                 return;
             }
-            TextPopController.loadText(this, xml(treeItem.getValue().getNode()));
+            String xml = xml(treeItem.getValue().getNode());
+            if (xml == null || xml.isBlank()) {
+                popInformation(message("NoData"));
+            } else {
+                TextPopController.loadText(this, xml);
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -376,14 +393,15 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
     @FXML
     @Override
     public void refreshAction() {
-        try {
-            if (xmlEditor.sourceFile != null) {
-                xmlEditor.sourceFileChanged(xmlEditor.sourceFile);
-            } else {
-                loadTree(doc);
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
+        loadTree(doc);
+    }
+
+    @FXML
+    @Override
+    public void recoverAction() {
+        if (xmlEditor != null && xmlEditor.sourceFile != null && xmlEditor.sourceFile.exists()) {
+            xmlEditor.fileChanged = false;
+            xmlEditor.sourceFileChanged(xmlEditor.sourceFile);
         }
     }
 

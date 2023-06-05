@@ -297,6 +297,15 @@ public class ControlJsonTree extends BaseTreeViewController<JsonTreeNode> {
         });
         items.add(menu);
 
+        if (jsonEditor != null && jsonEditor.sourceFile != null && jsonEditor.sourceFile.exists()) {
+            items.add(new SeparatorMenuItem());
+            menu = new MenuItem(message("Recover"), StyleTools.getIconImageView("iconRecover.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                recoverAction();
+            });
+            items.add(menu);
+        }
+
         return items;
     }
 
@@ -406,10 +415,6 @@ public class ControlJsonTree extends BaseTreeViewController<JsonTreeNode> {
     @Override
     public void refreshAction() {
         try {
-            if (jsonEditor.sourceFile != null) {
-                jsonEditor.sourceFileChanged(jsonEditor.sourceFile);
-                return;
-            }
             TreeItem<JsonTreeNode> root = treeView.getRoot();
             if (root == null || root.isLeaf()) {
                 return;
@@ -417,6 +422,15 @@ public class ControlJsonTree extends BaseTreeViewController<JsonTreeNode> {
             updateTreeItem(root.getChildren().get(0));
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    @FXML
+    @Override
+    public void recoverAction() {
+        if (jsonEditor != null && jsonEditor.sourceFile != null && jsonEditor.sourceFile.exists()) {
+            jsonEditor.fileChanged = false;
+            jsonEditor.sourceFileChanged(jsonEditor.sourceFile);
         }
     }
 

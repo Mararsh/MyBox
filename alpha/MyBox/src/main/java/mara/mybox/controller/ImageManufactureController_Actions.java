@@ -367,6 +367,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
             saveAction();
             return true;
         } else if (result.get() == buttonNotSave) {
+            imageChanged = false;
             return true;
         } else if (result.get() == buttonSaveAs) {
             saveAsAction();

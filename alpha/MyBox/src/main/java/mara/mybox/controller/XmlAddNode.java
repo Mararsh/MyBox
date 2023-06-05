@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -116,7 +117,7 @@ public class XmlAddNode extends ControlXmlNodeBase {
 
             parentLabel.setText(message("AddInto") + ": "
                     + treeController.hierarchyNumber(treeItem));
-            indexInput.setText((treeItem.getValue().childrenSize() + 1) + "");
+            indexInput.setText((treeItem.getChildren().size() + 1) + "");
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -136,8 +137,8 @@ public class XmlAddNode extends ControlXmlNodeBase {
                 close();
                 return;
             }
-            Node parentNode = treeNode.getNode();
-            if (parentNode == null) {
+            Node node = treeNode.getNode();
+            if (node == null) {
                 close();
                 return;
             }
@@ -150,10 +151,10 @@ public class XmlAddNode extends ControlXmlNodeBase {
             }
 
             Document doc;
-            if (parentNode instanceof Document) {
-                doc = (Document) parentNode;
+            if (node instanceof Document) {
+                doc = (Document) node;
             } else {
-                doc = parentNode.getOwnerDocument();
+                doc = node.getOwnerDocument();
             }
             String value = valueArea.getText();
             Node newNode;
@@ -180,9 +181,18 @@ public class XmlAddNode extends ControlXmlNodeBase {
             } else {
                 return;
             }
+            TreeItem<XmlTreeNode> newItem = new TreeItem(new XmlTreeNode(newNode));
+            ObservableList<TreeItem<XmlTreeNode>> children = treeItem.getChildren();
+            int tindex = index - 1;
+            if (tindex >= 0 && index < children.size()) {
+                Node tnode = children.get(tindex).getValue().getNode();
+                node.insertBefore(newNode, tnode);
+                children.add(tindex, newItem);
 
-            parentNode.appendChild(newNode);
-            treeController.addTreeItem(treeItem, index - 1, new XmlTreeNode(newNode));
+            } else {
+                node.appendChild(newNode);
+                children.add(newItem);
+            }
 
             treeController.xmlEditor.domChanged(true);
             treeController.xmlEditor.popInformation(message("CreatedSuccessfully"));
