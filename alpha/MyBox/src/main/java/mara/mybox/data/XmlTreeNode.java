@@ -1,16 +1,11 @@
 package mara.mybox.data;
 
-import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 import java.sql.Connection;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import mara.mybox.controller.BaseController;
+import mara.mybox.controller.BaseLogs;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.UserConfig;
@@ -137,17 +132,29 @@ public class XmlTreeNode {
         builder.setErrorHandler(new ErrorHandler() {
             @Override
             public void error(SAXParseException arg0) {
-                controller.alertError(arg0.toString());
+                if (controller instanceof BaseLogs) {
+                    ((BaseLogs) controller).updateLogs(arg0.toString(), true, true);
+                } else {
+                    controller.alertError(arg0.toString());
+                }
             }
 
             @Override
             public void fatalError(SAXParseException arg0) {
-                controller.alertError(arg0.toString());
+                if (controller instanceof BaseLogs) {
+                    ((BaseLogs) controller).updateLogs(arg0.toString(), true, true);
+                } else {
+                    controller.alertError(arg0.toString());
+                }
             }
 
             @Override
             public void warning(SAXParseException arg0) {
-                controller.alertWarning(arg0.toString());
+                if (controller instanceof BaseLogs) {
+                    ((BaseLogs) controller).updateLogs(arg0.toString(), true, true);
+                } else {
+                    controller.alertWarning(arg0.toString());
+                }
             }
         });
         return builder;
@@ -375,36 +382,6 @@ public class XmlTreeNode {
                 return value == null || value.isBlank();
             default:
                 return false;
-        }
-    }
-
-    public static String transform(Node node, String format, boolean indent) {
-        if (node == null) {
-            return null;
-        }
-        String encoding = node instanceof Document
-                ? ((Document) node).getXmlEncoding()
-                : node.getOwnerDocument().getXmlEncoding();
-        if (encoding == null) {
-            encoding = "utf-8";
-        }
-        try (ByteArrayOutputStream os = new ByteArrayOutputStream();) {
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.setOutputProperty(OutputKeys.METHOD, format);
-            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
-                    node instanceof Document ? "no" : "yes");
-            transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
-            transformer.setOutputProperty(OutputKeys.ENCODING, encoding);
-            transformer.setOutputProperty(OutputKeys.INDENT, indent ? "yes" : "no");
-            StreamResult streamResult = new StreamResult();
-            streamResult.setOutputStream(os);
-            transformer.transform(new DOMSource(node), streamResult);
-            os.flush();
-            os.close();
-            return os.toString(encoding);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
         }
     }
 

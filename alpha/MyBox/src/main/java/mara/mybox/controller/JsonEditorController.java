@@ -210,6 +210,7 @@ public class JsonEditorController extends BaseController {
             protected void whenSucceeded() {
                 popSaved();
                 recordFileWritten(targetFile);
+                fileChanged = false;
                 sourceFileChanged(targetFile);
             }
 

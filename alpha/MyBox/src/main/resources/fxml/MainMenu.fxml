@@ -84,7 +84,7 @@ License:    Apache License Version 2.0
                                 <Menu mnemonicParsing="false" text="XML">
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#XmlEditor" text="%XmlEditor" />
-                                        <MenuItem mnemonicParsing="false" onAction="#JsonTypesetting" text="%JsonTypesetting" />
+                                        <MenuItem mnemonicParsing="false" onAction="#XmlTypesetting" text="%XmlTypesetting" />
                                     </items>
                                 </Menu>                                 
                                 <Menu mnemonicParsing="false" text="%Html">

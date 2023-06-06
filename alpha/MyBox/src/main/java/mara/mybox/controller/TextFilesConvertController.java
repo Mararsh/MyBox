@@ -232,7 +232,7 @@ public class TextFilesConvertController extends BaseBatchFileController {
                 return message("Failed");
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            updateLogs(e.toString());
             return message("Failed");
         }
     }

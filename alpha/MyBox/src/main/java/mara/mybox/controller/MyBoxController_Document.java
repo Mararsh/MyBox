@@ -329,9 +329,9 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
             loadScene(Fxmls.XmlEditorFxml);
         });
 
-        MenuItem xmlTypesettingMenu = new MenuItem(message("JsonTypesetting"));
+        MenuItem xmlTypesettingMenu = new MenuItem(message("XmlTypesetting"));
         xmlTypesettingMenu.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.JsonTypesettingFxml);
+            loadScene(Fxmls.XmlTypesettingFxml);
         });
 
         xmlMenu.getItems().addAll(

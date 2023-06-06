@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.util.Optional;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -22,6 +23,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextFileTools;
@@ -201,7 +203,12 @@ public class XmlEditorController extends BaseController {
             @Override
             protected boolean handle() {
                 try {
-                    File tmpFile = TextFileTools.writeFile(xml);
+                    String encoding = domController.doc.getXmlEncoding();
+                    if (encoding == null) {
+                        encoding = "utf-8";
+                    }
+                    File tmpFile = TextFileTools.writeFile(FileTmpTools.getTempFile(),
+                            xml, Charset.forName(encoding));
                     if (tmpFile == null || !tmpFile.exists()) {
                         return false;
                     }
@@ -219,6 +226,7 @@ public class XmlEditorController extends BaseController {
             protected void whenSucceeded() {
                 popSaved();
                 recordFileWritten(targetFile);
+                fileChanged = false;
                 sourceFileChanged(targetFile);
             }
 
@@ -288,7 +296,12 @@ public class XmlEditorController extends BaseController {
         task = new SingletonTask<Void>(this) {
             @Override
             protected boolean handle() {
-                File tmpFile = TextFileTools.writeFile(xml);
+                String encoding = domController.doc.getXmlEncoding();
+                if (encoding == null) {
+                    encoding = "utf-8";
+                }
+                File tmpFile = TextFileTools.writeFile(FileTmpTools.getTempFile(),
+                        xml, Charset.forName(encoding));
                 if (tmpFile == null || !tmpFile.exists()) {
                     return false;
                 }
@@ -301,6 +314,7 @@ public class XmlEditorController extends BaseController {
                 recordFileWritten(file);
                 XmlEditorController.open(file);
             }
+
         };
         start(task);
     }

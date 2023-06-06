@@ -208,6 +208,11 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
     }
 
     @FXML
+    protected void XmlTypesetting(ActionEvent event) {
+        loadScene(Fxmls.XmlTypesettingFxml);
+    }
+
+    @FXML
     protected void openTextEditer(ActionEvent event) {
         loadScene(Fxmls.TextEditorFxml);
     }
