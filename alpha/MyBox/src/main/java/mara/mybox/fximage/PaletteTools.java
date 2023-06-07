@@ -11,7 +11,7 @@ import javafx.stage.Window;
 import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.ColorPalettePopupController;
-import mara.mybox.controller.ColorSet;
+import mara.mybox.controller.ColorSetController;
 import mara.mybox.controller.ControlColorPaletteSelector;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColorData;
@@ -396,8 +396,8 @@ public class PaletteTools {
             UserConfig.setString(controller.getBaseName() + "Palette", paletteName);
             controller.loadPalettes();
             parent.popSuccessful();
-        } else if (parent instanceof ColorSet) {
-            ColorSet controller = (ColorSet) parent;
+        } else if (parent instanceof ColorSetController) {
+            ColorSetController controller = (ColorSetController) parent;
             controller.showColorPalette();
         }
 

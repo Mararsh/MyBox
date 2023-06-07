@@ -44,7 +44,7 @@ public class ImageManufactureBatchMarginsController extends BaseImageManufacture
     @FXML
     protected HBox colorBox, distanceBox, widthBox;
     @FXML
-    protected ColorSet colorSetController;
+    protected ColorSetController colorSetController;
     @FXML
     protected TextField distanceInput;
     @FXML

@@ -41,6 +41,15 @@ License:    Apache License Version 2.0
         </HBox>
       <HBox fx:id="manageOpBox" alignment="CENTER_RIGHT" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" spacing="5.0">
          <children>
+            <Button fx:id="customizeButton" layoutX="181.0" layoutY="10.0" mnemonicParsing="false" onAction="#customizePalette">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/iconColorWheel.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
             <Button fx:id="examplesButton" mnemonicParsing="false" onMouseEntered="#popExamplesMenu">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

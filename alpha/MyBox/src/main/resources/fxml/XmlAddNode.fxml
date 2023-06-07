@@ -24,101 +24,103 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" prefHeight="400.0" prefWidth="500.0" spacing="10.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.XmlAddNode">
+<VBox fx:id="thisPane" prefHeight="400.0" prefWidth="500.0" spacing="10.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.XmlAddNodeController">
     <children>
-      <Label fx:id="parentLabel" text="%AddInto" />
-      <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="372.0" spacing="2.0">
-         <children>
-            <Label fx:id="indexLabel" text="%Index" />
-            <TextField fx:id="indexInput" />
-         </children>
-      </HBox>
-      <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
-         <children>
-            <Label minWidth="-Infinity" text="%Type" textOverrun="WORD_ELLIPSIS" />
-            <RadioButton fx:id="elementRadio" mnemonicParsing="false" selected="true" text="Element">
-               <toggleGroup>
-                  <ToggleGroup fx:id="typeGroup" />
-               </toggleGroup></RadioButton>
-            <RadioButton fx:id="textRadio" mnemonicParsing="false" text="Text" toggleGroup="$typeGroup" />
-            <RadioButton fx:id="cdataRadio" mnemonicParsing="false" text="CDATA" toggleGroup="$typeGroup" />
-            <RadioButton fx:id="commentRadio" mnemonicParsing="false" text="Comment" toggleGroup="$typeGroup" />
-         </children>
-      </FlowPane>
-      <VBox fx:id="setBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" />
-      <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE">
-         <tabs>
-            <Tab text="name">
-               <content>
-                  <VBox fx:id="nameBox" spacing="2.0">
-                     <children>
-                        <HBox alignment="CENTER_LEFT" spacing="2.0">
-                           <children>
-                              <Label minWidth="-Infinity" text="%Name" textOverrun="WORD_ELLIPSIS" />
-                              <TextField fx:id="nameInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                           </children>
-                        </HBox>
-                     </children>
-                  </VBox>
-               </content>
-            </Tab>
-            <Tab text="value">
-               <content>
-                  <VBox fx:id="valueBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                     <children>
-                        <Label text="%Value" />
-                        <TextArea fx:id="valueArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
-                     </children>
-                  </VBox>
-               </content>
-            </Tab>
-            <Tab text="attr">
-               <content>
-                  <VBox fx:id="attrBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                     <children>
-                        <HBox alignment="CENTER_LEFT" spacing="5.0">
-                           <children>
-                              <Button fx:id="clearAttributesButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#clearAttributes">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconClear.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                              <Button fx:id="deleteAttributesButton" mnemonicParsing="false" onAction="#deleteAttributes">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconDelete.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                              <Button fx:id="addAttributeButton" mnemonicParsing="false" onAction="#addAttribute">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconAdd.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                           </children>
-                        </HBox>
-                        <TableView fx:id="attributesTable" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                           <columns>
-                              <TableColumn fx:id="attrColumn" prefWidth="120.0" text="%Attribute" />
-                              <TableColumn fx:id="valueColumn" prefWidth="200.0" text="%Value" />
-                           </columns>
-                        </TableView>
-                     </children>
-                  </VBox>
-               </content>
-            </Tab>
-         </tabs>
-      </TabPane>
+        <Label fx:id="parentLabel" text="%AddInto" />
+        <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="372.0" spacing="5.0">
+            <children>
+                <Label fx:id="indexLabel" text="%Index" />
+                <TextField fx:id="indexInput" />
+                <Label text="%RowEndComments" />
+            </children>
+        </HBox>
+        <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
+            <children>
+                <Label minWidth="-Infinity" text="%Type" textOverrun="WORD_ELLIPSIS" />
+                <RadioButton fx:id="elementRadio" mnemonicParsing="false" selected="true" text="Element">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="typeGroup" />
+                    </toggleGroup>
+                </RadioButton>
+                <RadioButton fx:id="textRadio" mnemonicParsing="false" text="Text" toggleGroup="$typeGroup" />
+                <RadioButton fx:id="cdataRadio" mnemonicParsing="false" text="CDATA" toggleGroup="$typeGroup" />
+                <RadioButton fx:id="commentRadio" mnemonicParsing="false" text="Comment" toggleGroup="$typeGroup" />
+            </children>
+        </FlowPane>
+        <VBox fx:id="setBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" />
+        <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE">
+            <tabs>
+                <Tab text="name">
+                    <content>
+                        <VBox fx:id="nameBox" spacing="2.0">
+                            <children>
+                                <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                    <children>
+                                        <Label minWidth="-Infinity" text="%Name" textOverrun="WORD_ELLIPSIS" />
+                                        <TextField fx:id="nameInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+                <Tab text="value">
+                    <content>
+                        <VBox fx:id="valueBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                            <children>
+                                <Label text="%Value" />
+                                <TextArea fx:id="valueArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+                <Tab text="attr">
+                    <content>
+                        <VBox fx:id="attrBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                            <children>
+                                <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                    <children>
+                                        <Button fx:id="clearAttributesButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#clearAttributes">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconClear.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="deleteAttributesButton" mnemonicParsing="false" onAction="#deleteAttributes">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconDelete.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="addAttributeButton" mnemonicParsing="false" onAction="#addAttribute">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconAdd.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                                <TableView fx:id="attributesTable" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                                    <columns>
+                                        <TableColumn fx:id="attrColumn" prefWidth="120.0" text="%Attribute" />
+                                        <TableColumn fx:id="valueColumn" prefWidth="200.0" text="%Value" />
+                                    </columns>
+                                </TableView>
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
         <HBox alignment="CENTER_RIGHT" spacing="5.0">
             <children>
                 <CheckBox fx:id="wrapCheck" mnemonicParsing="false">

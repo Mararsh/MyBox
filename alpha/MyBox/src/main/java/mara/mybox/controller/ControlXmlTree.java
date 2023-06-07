@@ -112,9 +112,6 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
             if (children != null) {
                 for (int i = 0; i < children.getLength(); i++) {
                     Node child = children.item(i);
-                    if (XmlTreeNode.canIgnore(child)) {
-                        continue;
-                    }
                     addTreeItem(item, -1, new XmlTreeNode(child));
                 }
             }
@@ -224,7 +221,7 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
                     node instanceof Document ? "no" : "yes");
             transformer.setOutputProperty(OutputKeys.ENCODING, encoding);
             transformer.setOutputProperty(OutputKeys.INDENT,
-                    UserConfig.getBoolean("XmlTransformerIndent", false) ? "yes" : "no");
+                    UserConfig.getBoolean("XmlTransformerIndent", true) ? "yes" : "no");
             StreamResult streamResult = new StreamResult();
             streamResult.setOutputStream(os);
             transformer.transform(new DOMSource(node), streamResult);
@@ -277,7 +274,7 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
 
         menu = new MenuItem(message("AddNode"), StyleTools.getIconImageView("iconAdd.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            XmlAddNode.open(this, treeItem);
+            XmlAddNodeController.open(this, treeItem);
         });
         menu.setDisable(treeItem.getValue() == null || !treeItem.getValue().canAddNode());
         items.add(menu);
@@ -352,7 +349,7 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
                 return;
             }
             String texts = treeItem.getValue().getNode().getTextContent();
-            if (texts == null || XmlTreeNode.ignoreWhite && texts.isBlank()) {
+            if (texts == null || texts.isEmpty()) {
                 popInformation(message("NoData"));
             } else {
                 TextPopController.loadText(this, texts);

@@ -2,6 +2,8 @@ package mara.mybox.data;
 
 import java.io.StringReader;
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import mara.mybox.controller.BaseController;
@@ -30,7 +32,8 @@ import org.xml.sax.SAXParseException;
 public class XmlTreeNode {
 
     public static DocumentBuilder builder;
-    public static boolean ignoreWhite;
+    public static boolean ignoreComment, ignoreBlankComment,
+            ignoreBlankText, ignoreBlankCDATA, ignoreBlankInstrution;
 
     protected String title, value;
     protected NodeType type;
@@ -50,6 +53,7 @@ public class XmlTreeNode {
 
     public XmlTreeNode(Node node) {
         this.node = node;
+        type = type(node);
     }
 
     public int childrenSize() {
@@ -103,7 +107,7 @@ public class XmlTreeNode {
     }
 
     public NodeType getType() {
-        return type(node);
+        return type;
     }
 
     public String getTypename() {
@@ -115,13 +119,18 @@ public class XmlTreeNode {
      */
     public static DocumentBuilder builder(BaseController controller) {
         try (Connection conn = DerbyBase.getConnection()) {
+            ignoreComment = UserConfig.getBoolean(conn, "XmlIgnoreComments", false);
+            ignoreBlankComment = UserConfig.getBoolean(conn, "XmlIgnoreBlankComment", false);
+            ignoreBlankText = UserConfig.getBoolean(conn, "XmlIgnoreBlankText", false);
+            ignoreBlankCDATA = UserConfig.getBoolean(conn, "XmlIgnoreBlankCDATA", false);
+            ignoreBlankInstrution = UserConfig.getBoolean(conn, "XmlIgnoreBlankInstruction", false);
+
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setValidating(UserConfig.getBoolean(conn, "XmlDTDValidation", false));
-            factory.setCoalescing(false);
-            factory.setIgnoringComments(UserConfig.getBoolean(conn, "XmlIgnoreComments", false));
-            ignoreWhite = UserConfig.getBoolean(conn, "XmlIgnoreBlankString", true);
-            factory.setIgnoringElementContentWhitespace(ignoreWhite);
             factory.setNamespaceAware(UserConfig.getBoolean(conn, "XmlSupportNamespaces", false));
+            factory.setCoalescing(false);
+            factory.setIgnoringElementContentWhitespace(false);
+            factory.setIgnoringComments(ignoreComment);
 
             builder = factory.newDocumentBuilder();
 
@@ -162,11 +171,70 @@ public class XmlTreeNode {
 
     public static Document doc(BaseController controller, String xml) {
         try {
-            return builder(controller).parse(new InputSource(new StringReader(xml)));
+            Document doc = builder(controller).parse(new InputSource(new StringReader(xml)));
+            Strip(controller, doc);
+            return doc;
         } catch (Exception e) {
             controller.alertError(e.toString());
             return null;
         }
+    }
+
+    public static Node Strip(BaseController controller, Node node) {
+        try {
+            if (node == null) {
+                return node;
+            }
+            NodeList nodeList = node.getChildNodes();
+            if (nodeList == null) {
+                return node;
+            }
+            List<Node> children = new ArrayList<>();
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                children.add(nodeList.item(i));
+            }
+            for (Node child : children) {
+                NodeType t = type(child);
+                if (ignoreComment && t == NodeType.Comment) {
+                    node.removeChild(child);
+                    continue;
+                }
+                String value = child.getNodeValue();
+                if (value == null || value.isBlank()) {
+                    switch (t) {
+                        case Comment:
+                            if (ignoreBlankComment) {
+                                node.removeChild(child);
+                            }
+                            continue;
+                        case Text:
+                            if (ignoreBlankText) {
+                                node.removeChild(child);
+                            }
+                            continue;
+                        case CDATA:
+                            if (ignoreBlankCDATA) {
+                                node.removeChild(child);
+                            }
+                            continue;
+                        case ProcessingInstruction:
+                            if (ignoreBlankInstrution) {
+                                node.removeChild(child);
+                                continue;
+                            }
+                            break;
+                    }
+                }
+                Strip(controller, child);
+            }
+        } catch (Exception e) {
+            if (controller instanceof BaseLogs) {
+                ((BaseLogs) controller).updateLogs(e.toString(), true, true);
+            } else {
+                controller.alertError(e.toString());
+            }
+        }
+        return node;
     }
 
     public static NodeType type(Node node) {
@@ -218,11 +286,7 @@ public class XmlTreeNode {
             case Node.ATTRIBUTE_NODE:
             case Node.PROCESSING_INSTRUCTION_NODE:
             case Node.DOCUMENT_FRAGMENT_NODE:
-                String value = node.getNodeValue();
-                if (value != null && ignoreWhite && value.isBlank()) {
-                    value = null;
-                }
-                return value;
+                return node.getNodeValue();
             case Node.ELEMENT_NODE:
                 return elementInfo((Element) node);
             case Node.DOCUMENT_NODE:
@@ -363,26 +427,6 @@ public class XmlTreeNode {
             info += indent + "\t" + "System Id=" + v + "\n";
         }
         return info;
-    }
-
-    public static boolean canIgnore(Node node) {
-        if (node == null) {
-            return true;
-        }
-        if (!ignoreWhite) {
-            return false;
-        }
-        switch (node.getNodeType()) {
-            case Node.TEXT_NODE:
-            case Node.CDATA_SECTION_NODE:
-            case Node.COMMENT_NODE:
-            case Node.ATTRIBUTE_NODE:
-            case Node.PROCESSING_INSTRUCTION_NODE:
-                String value = node.getNodeValue();
-                return value == null || value.isBlank();
-            default:
-                return false;
-        }
     }
 
     /*

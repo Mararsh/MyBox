@@ -49,7 +49,7 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     @FXML
     protected ListView<Image> outlinesList;
     @FXML
-    protected ColorSet colorSetController;
+    protected ColorSetController colorSetController;
     @FXML
     protected ListView<Color> colorsList;
     @FXML

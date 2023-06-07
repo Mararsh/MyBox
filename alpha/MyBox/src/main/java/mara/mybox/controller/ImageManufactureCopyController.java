@@ -28,7 +28,7 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
     @FXML
     protected RadioButton includeRadio, excludeRadio, wholeRadio;
     @FXML
-    protected ColorSet colorSetController;
+    protected ColorSetController colorSetController;
     @FXML
     protected CheckBox clipboardCheck, marginsCheck;
 

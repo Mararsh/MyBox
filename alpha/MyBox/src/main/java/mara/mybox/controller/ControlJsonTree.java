@@ -250,14 +250,14 @@ public class ControlJsonTree extends BaseTreeViewController<JsonTreeNode> {
         if (jsonTreeNode.isObject()) {
             menu = new MenuItem(message("AddField"), StyleTools.getIconImageView("iconAdd.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
-                JsonAddField.open(this, treeItem);
+                JsonAddFieldController.open(this, treeItem);
             });
             items.add(menu);
 
         } else if (jsonTreeNode.isArray()) {
             menu = new MenuItem(message("AddElement"), StyleTools.getIconImageView("iconAdd.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
-                JsonAddElement.open(this, treeItem);
+                JsonAddElementController.open(this, treeItem);
             });
             items.add(menu);
 

@@ -32,12 +32,12 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-5-17
  * @License Apache License Version 2.0
  */
-public class JexlEditor extends JShellEditor {
+public class JexlEditorController extends JShellEditorController {
 
     @FXML
     protected TextField parametersInput;
 
-    public JexlEditor() {
+    public JexlEditorController() {
         defaultExt = "txt";
     }
 

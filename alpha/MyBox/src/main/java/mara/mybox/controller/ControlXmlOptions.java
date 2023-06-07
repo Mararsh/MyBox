@@ -19,7 +19,8 @@ public class ControlXmlOptions extends BaseController {
 
     @FXML
     protected CheckBox dtdValidationCheck, ignoreCommentsCheck,
-            ignoreBlankStringCheck, supportNamespacesCheck, indentCheck;
+            ignoreBlankTextCheck, ignoreBlankCDATACheck, ignoreBlankCommentCheck,
+            ignoreBlankInstructionCheck, supportNamespacesCheck, indentCheck;
 
     @Override
     public void initControls() {
@@ -38,16 +39,43 @@ public class ControlXmlOptions extends BaseController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean("XmlIgnoreComments", ignoreCommentsCheck.isSelected());
+                    XmlTreeNode.ignoreComment = ignoreCommentsCheck.isSelected();
                 }
             });
 
-            XmlTreeNode.ignoreWhite = UserConfig.getBoolean(conn, "XmlIgnoreBlankString", true);
-            ignoreBlankStringCheck.setSelected(XmlTreeNode.ignoreWhite);
-            ignoreBlankStringCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            ignoreBlankTextCheck.setSelected(UserConfig.getBoolean(conn, "XmlIgnoreBlankText", true));
+            ignoreBlankTextCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean("XmlIgnoreBlankString", ignoreBlankStringCheck.isSelected());
-                    XmlTreeNode.ignoreWhite = ignoreBlankStringCheck.isSelected();
+                    UserConfig.setBoolean("XmlIgnoreBlankText", ignoreBlankTextCheck.isSelected());
+                    XmlTreeNode.ignoreBlankText = ignoreBlankTextCheck.isSelected();
+                }
+            });
+
+            ignoreBlankCDATACheck.setSelected(UserConfig.getBoolean(conn, "XmlIgnoreBlankCDATA", true));
+            ignoreBlankCDATACheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean("XmlIgnoreBlankCDATA", ignoreBlankCDATACheck.isSelected());
+                    XmlTreeNode.ignoreBlankCDATA = ignoreBlankCDATACheck.isSelected();
+                }
+            });
+
+            ignoreBlankCommentCheck.setSelected(UserConfig.getBoolean(conn, "XmlIgnoreBlankComment", true));
+            ignoreBlankCommentCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean("XmlIgnoreBlankComment", ignoreBlankCommentCheck.isSelected());
+                    XmlTreeNode.ignoreBlankComment = ignoreBlankCommentCheck.isSelected();
+                }
+            });
+
+            ignoreBlankInstructionCheck.setSelected(UserConfig.getBoolean(conn, "XmlIgnoreBlankInstruction", true));
+            ignoreBlankInstructionCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean("XmlIgnoreBlankInstruction", ignoreBlankInstructionCheck.isSelected());
+                    XmlTreeNode.ignoreBlankInstrution = ignoreBlankInstructionCheck.isSelected();
                 }
             });
 
@@ -59,7 +87,7 @@ public class ControlXmlOptions extends BaseController {
                 }
             });
 
-            indentCheck.setSelected(UserConfig.getBoolean(conn, "XmlTransformerIndent", false));
+            indentCheck.setSelected(UserConfig.getBoolean(conn, "XmlTransformerIndent", true));
             indentCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {

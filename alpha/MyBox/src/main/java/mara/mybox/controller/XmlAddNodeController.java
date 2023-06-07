@@ -28,7 +28,7 @@ import org.w3c.dom.Node;
  * @CreateDate 2023-6-4
  * @License Apache License Version 2.0
  */
-public class XmlAddNode extends ControlXmlNodeBase {
+public class XmlAddNodeController extends ControlXmlNodeBase {
 
     protected TreeItem<XmlTreeNode> treeItem;
 
@@ -144,7 +144,12 @@ public class XmlAddNode extends ControlXmlNodeBase {
             }
             int index;
             try {
-                index = Integer.parseInt(indexInput.getText());
+                String v = indexInput.getText();
+                if (v == null || v.isBlank()) {
+                    index = -1;
+                } else {
+                    index = Integer.parseInt(v);
+                }
             } catch (Exception e) {
                 popError(message("InvalidParameter") + ": " + message("Index"));
                 return;
@@ -224,8 +229,8 @@ public class XmlAddNode extends ControlXmlNodeBase {
     /*
         static methods
      */
-    public static XmlAddNode open(ControlXmlTree treeController, TreeItem<XmlTreeNode> item) {
-        XmlAddNode controller = (XmlAddNode) WindowTools.openChildStage(
+    public static XmlAddNodeController open(ControlXmlTree treeController, TreeItem<XmlTreeNode> item) {
+        XmlAddNodeController controller = (XmlAddNodeController) WindowTools.openChildStage(
                 treeController.getMyWindow(), Fxmls.XmlAddNodeFxml);
         if (controller != null) {
             controller.setParameters(treeController, item);

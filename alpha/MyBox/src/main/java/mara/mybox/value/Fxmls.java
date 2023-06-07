@@ -166,6 +166,7 @@ public class Fxmls {
     public static final String ColorQueryFxml = "/fxml/ColorQuery.fxml";
     public static final String ColorPaletteInputFxml = "/fxml/ColorPaletteInput.fxml";
     public static final String ColorPaletteSelectorFxml = "/fxml/ColorPaletteSelector.fxml";
+    public static final String ColorPaletteCustomizeFxml = "/fxml/ColorPaletteCustomize.fxml";
 
     public static final String IccProfileEditorFxml = "/fxml/IccProfileEditor.fxml";
     public static final String ChromaticityDiagramFxml = "/fxml/ChromaticityDiagram.fxml";

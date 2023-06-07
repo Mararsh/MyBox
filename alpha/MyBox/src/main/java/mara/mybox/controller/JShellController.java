@@ -18,13 +18,13 @@ import mara.mybox.value.UserConfig;
 public class JShellController extends TreeManageController {
 
     @FXML
-    protected JShellEditor editorController;
+    protected JShellEditorController editorController;
     @FXML
     protected ControlWebView webViewController;
     @FXML
     protected JShellSnippets snippetsController;
     @FXML
-    protected JShellPaths pathsController;
+    protected JShellPathsController pathsController;
 
     public JShellController() {
         baseTitle = message("JShell");

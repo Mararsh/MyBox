@@ -43,7 +43,7 @@ public class ImageRepeatController extends ImageViewerController {
     @FXML
     protected ComboBox<String> intervalSelector, marginSelector;
     @FXML
-    protected ColorSet colorSetController;
+    protected ColorSetController colorSetController;
     @FXML
     protected VBox mainBox, optionsBox;
     @FXML

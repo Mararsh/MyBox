@@ -30,7 +30,7 @@ public class SettingCustomColorsController extends BaseChildController {
     protected Color darkColor, lightColor;
 
     @FXML
-    protected ColorSet darkColorSetController, lightColorSetController;
+    protected ColorSetController darkColorSetController, lightColorSetController;
     @FXML
     protected ImageView exampleView;
     @FXML

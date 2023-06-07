@@ -15,7 +15,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2023-5-20
  * @License Apache License Version 2.0
  */
-public class JsonAddElement extends ControlJsonNodeBase {
+public class JsonAddElementController extends ControlJsonNodeBase {
 
     public void setParameters(ControlJsonTree treeController, TreeItem<JsonTreeNode> item) {
         try {
@@ -80,8 +80,8 @@ public class JsonAddElement extends ControlJsonNodeBase {
     /*
         static methods
      */
-    public static JsonAddElement open(ControlJsonTree treeController, TreeItem<JsonTreeNode> item) {
-        JsonAddElement controller = (JsonAddElement) WindowTools.openChildStage(
+    public static JsonAddElementController open(ControlJsonTree treeController, TreeItem<JsonTreeNode> item) {
+        JsonAddElementController controller = (JsonAddElementController) WindowTools.openChildStage(
                 treeController.getMyWindow(), Fxmls.JsonAddElementFxml);
         if (controller != null) {
             controller.setParameters(treeController, item);

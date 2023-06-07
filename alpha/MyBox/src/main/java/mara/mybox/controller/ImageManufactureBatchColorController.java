@@ -50,7 +50,7 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
     @FXML
     protected CheckBox ignoreTransparentCheck, hueCheck, saturationCheck, brightnessCheck;
     @FXML
-    protected ColorSet colorSetController;
+    protected ColorSetController colorSetController;
     @FXML
     protected HBox colorBox;
     @FXML

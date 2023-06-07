@@ -98,6 +98,7 @@ public class XmlTypesettingController extends BaseBatchFileController {
             if (doc == null) {
                 return message("Failed");
             }
+            XmlTreeNode.Strip(this, doc);
             String sourceEncoding = doc.getXmlEncoding();
             if (sourceEncoding == null) {
                 sourceEncoding = "utf-8";

@@ -58,7 +58,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
     @FXML
     protected CheckBox notNullCheck, editableCheck, fixYearCheck;
     @FXML
-    protected ColorSet colorController;
+    protected ColorSetController colorController;
     @FXML
     protected TextArea enumInput, descInput;
     @FXML
