@@ -51,6 +51,7 @@ public class Fxmls {
     public static final String HtmlSetStyleFxml = "/fxml/HtmlSetStyle.fxml";
     public static final String HtmlSetEquivFxml = "/fxml/HtmlSetEquiv.fxml";
     public static final String HtmlSnapFxml = "/fxml/HtmlSnap.fxml";
+    public static final String HtmlTypesettingFxml = "/fxml/HtmlTypesetting.fxml";
     public static final String HtmlExtractTablesFxml = "/fxml/HtmlExtractTables.fxml";
     public static final String HtmlMergeAsHtmlFxml = "/fxml/HtmlMergeAsHtml.fxml";
     public static final String HtmlMergeAsMarkdownFxml = "/fxml/HtmlMergeAsMarkdown.fxml";
@@ -69,10 +70,16 @@ public class Fxmls {
     public static final String MarkdownToTextFxml = "/fxml/MarkdownToText.fxml";
     public static final String MarkdownToPdfFxml = "/fxml/MarkdownToPdf.fxml";
     public static final String MarkdownPopFxml = "/fxml/MarkdownPop.fxml";
+    public static final String MarkdownTypesettingFxml = "/fxml/MarkdownTypesetting.fxml";
 
     public static final String JsonEditorFxml = "/fxml/JsonEditor.fxml";
     public static final String JsonAddFieldFxml = "/fxml/JsonAddField.fxml";
     public static final String JsonAddElementFxml = "/fxml/JsonAddElement.fxml";
+    public static final String JsonTypesettingFxml = "/fxml/JsonTypesetting.fxml";
+
+    public static final String XmlEditorFxml = "/fxml/XmlEditor.fxml";
+    public static final String XmlAddNodeFxml = "/fxml/XmlAddNode.fxml";
+    public static final String XmlTypesettingFxml = "/fxml/XmlTypesetting.fxml";
 
     public static final String TextEditorFxml = "/fxml/TextEditor.fxml";
     public static final String TextFilesConvertFxml = "/fxml/TextFilesConvert.fxml";
@@ -160,6 +167,7 @@ public class Fxmls {
     public static final String ColorQueryFxml = "/fxml/ColorQuery.fxml";
     public static final String ColorPaletteInputFxml = "/fxml/ColorPaletteInput.fxml";
     public static final String ColorPaletteSelectorFxml = "/fxml/ColorPaletteSelector.fxml";
+    public static final String ColorPaletteCustomizeFxml = "/fxml/ColorPaletteCustomize.fxml";
 
     public static final String IccProfileEditorFxml = "/fxml/IccProfileEditor.fxml";
     public static final String ChromaticityDiagramFxml = "/fxml/ChromaticityDiagram.fxml";

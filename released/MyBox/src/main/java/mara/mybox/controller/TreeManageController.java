@@ -888,8 +888,11 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
             if (result.get() == buttonSave) {
                 saveAction();
                 return false;
+            } else if (result.get() == buttonNotSave) {
+                nodeController.nodeChanged = false;
+                return true;
             } else {
-                return result.get() == buttonNotSave;
+                return false;
             }
         }
     }

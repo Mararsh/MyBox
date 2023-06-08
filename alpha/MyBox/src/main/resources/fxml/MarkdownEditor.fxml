@@ -29,7 +29,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MarkdownEditorController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.MarkdownEditorController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -307,7 +307,7 @@ License:    Apache License Version 2.0
                                         <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                         <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
                                             <graphic>
-                                                <ImageView  fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
                                                         <Image url="@../buttons/Red/iconDoubleLeft.png" />
                                                     </image>
@@ -503,29 +503,13 @@ License:    Apache License Version 2.0
                                                             <content>
                                                                 <VBox spacing="5.0">
                                                                     <children>
-                                                                        <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="182.0" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                                            <children>
-                                                                                <Label minWidth="-Infinity" text="%Emulation" />
-                                                                                <ComboBox fx:id="emulationSelector" prefWidth="160.0" />
-                                                                            </children>
-                                                                        </HBox>
-                                                                        <HBox alignment="CENTER_LEFT" layoutX="15.0" layoutY="238.0" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                                            <children>
-                                                                                <Label minWidth="-Infinity" text="%IndentSize" />
-                                                                                <ComboBox fx:id="indentSelector" editable="true" prefWidth="100.0" />
-                                                                            </children>
-                                                                        </HBox>
-                                                                        <Label text="%Table" />
-                                                                        <CheckBox fx:id="trimCheck" mnemonicParsing="false" text="%TrimCellWhiteSpace" />
-                                                                        <CheckBox fx:id="appendCheck" mnemonicParsing="false" text="%AppendMissingColumns" />
-                                                                        <CheckBox fx:id="discardCheck" mnemonicParsing="false" text="%DiscardExtraColumns" />
-                                                                        <CheckBox fx:id="linesCheck" mnemonicParsing="false" text="%MultiLineRows" />
-                                                                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                                            <children>
-                                                                                <Label text="%Title" />
-                                                                                <TextField fx:id="titleInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                                            </children>
-                                                                        </HBox>
+                                                      <fx:include fx:id="options" source="ControlMarkdownOptions.fxml" />
+                                                      <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                         <children>
+                                                            <Label text="%Title" />
+                                                            <TextField fx:id="titleInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                         </children>
+                                                      </HBox>
                                                                     </children>
                                                                     <padding>
                                                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

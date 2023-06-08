@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlMarkdownOptions">
+   <children>
+      <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+         <children>
+            <Label minWidth="-Infinity" text="%Emulation" />
+            <ComboBox fx:id="emulationSelector" prefWidth="160.0" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+         <children>
+            <Label minWidth="-Infinity" text="%IndentSize" />
+            <ComboBox fx:id="indentSelector" editable="true" prefWidth="100.0" />
+         </children>
+      </HBox>
+      <Label text="%Table" />
+      <CheckBox fx:id="trimCheck" mnemonicParsing="false" text="%TrimCellWhiteSpace" />
+      <CheckBox fx:id="appendCheck" mnemonicParsing="false" text="%AppendMissingColumns" />
+      <CheckBox fx:id="discardCheck" mnemonicParsing="false" text="%DiscardExtraColumns" />
+   </children>
+</VBox>

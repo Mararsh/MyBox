@@ -66,6 +66,9 @@ License:    Apache License Version 2.0
                                     </font>
                                 </Label>
                             </children>
+                            <cursor>
+                                <Cursor fx:constant="OPEN_HAND" />
+                            </cursor>
                         </VBox>
                         <VBox fx:id="imageBox" alignment="CENTER" onMouseClicked="#showImageMenu" onMouseEntered="#popImageMenu" prefHeight="150.0" prefWidth="250.0">
                             <children>
@@ -84,6 +87,9 @@ License:    Apache License Version 2.0
                                     </font>
                                 </Label>
                             </children>
+                            <cursor>
+                                <Cursor fx:constant="OPEN_HAND" />
+                            </cursor>
                         </VBox>
                         <VBox fx:id="fileBox" alignment="CENTER" onMouseClicked="#showFileMenu" onMouseEntered="#popFileMenu" prefHeight="150.0" prefWidth="250.0">
                             <children>
@@ -104,6 +110,9 @@ License:    Apache License Version 2.0
                             </children>
                         </VBox>
                     </children>
+                    <cursor>
+                        <Cursor fx:constant="OPEN_HAND" />
+                    </cursor>
                 </HBox>
                 <HBox alignment="CENTER" spacing="10.0">
                     <children>
@@ -120,6 +129,9 @@ License:    Apache License Version 2.0
                                     </font>
                                 </Label>
                             </children>
+                            <cursor>
+                                <Cursor fx:constant="OPEN_HAND" />
+                            </cursor>
                         </VBox>
                         <VBox fx:id="dataBox" alignment="CENTER" onMouseClicked="#showDataMenu" onMouseEntered="#popDataMenu" prefHeight="150.0" prefWidth="250.0">
                             <children>
@@ -138,6 +150,9 @@ License:    Apache License Version 2.0
                                     </font>
                                 </Label>
                             </children>
+                            <cursor>
+                                <Cursor fx:constant="OPEN_HAND" />
+                            </cursor>
                         </VBox>
                         <VBox fx:id="mediaBox" alignment="CENTER" onMouseClicked="#showMediaMenu" onMouseEntered="#popMediaMenu" prefHeight="150.0" prefWidth="250.0">
                             <children>
@@ -156,6 +171,9 @@ License:    Apache License Version 2.0
                                     </font>
                                 </Label>
                             </children>
+                            <cursor>
+                                <Cursor fx:constant="OPEN_HAND" />
+                            </cursor>
                         </VBox>
                     </children>
                 </HBox>
@@ -174,6 +192,9 @@ License:    Apache License Version 2.0
                                     </font>
                                 </Label>
                             </children>
+                            <cursor>
+                                <Cursor fx:constant="OPEN_HAND" />
+                            </cursor>
                         </VBox>
                         <VBox fx:id="settingsBox" alignment="CENTER" onMouseClicked="#showSettingsMenu" onMouseEntered="#popSettingsMenu" prefHeight="150.0" prefWidth="250.0">
                             <children>
@@ -188,6 +209,9 @@ License:    Apache License Version 2.0
                                     </font>
                                 </Label>
                             </children>
+                            <cursor>
+                                <Cursor fx:constant="OPEN_HAND" />
+                            </cursor>
                         </VBox>
                         <VBox fx:id="aboutBox" alignment="CENTER" layoutX="384.0" layoutY="10.0" onMouseClicked="#showAboutMenu" onMouseEntered="#popAboutMenu" prefHeight="150.0" prefWidth="250.0">
                             <children>

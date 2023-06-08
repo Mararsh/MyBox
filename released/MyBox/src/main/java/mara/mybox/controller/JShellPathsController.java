@@ -32,7 +32,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-5-26
  * @License Apache License Version 2.0
  */
-public class JShellPaths extends BaseController {
+public class JShellPathsController extends BaseController {
 
     protected JShell jShell;
 

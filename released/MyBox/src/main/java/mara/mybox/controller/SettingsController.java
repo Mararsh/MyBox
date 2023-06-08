@@ -98,7 +98,7 @@ public class SettingsController extends BaseController {
     @FXML
     protected Rectangle colorCustomizeRect;
     @FXML
-    protected ColorSet strokeColorSetController, anchorColorSetController, gridColorSetController, alphaColorSetController,
+    protected ColorSetController strokeColorSetController, anchorColorSetController, gridColorSetController, alphaColorSetController,
             popBgColorController, popInfoColorController, popErrorColorController, popWarnColorController;
     @FXML
     protected ListView languageList;

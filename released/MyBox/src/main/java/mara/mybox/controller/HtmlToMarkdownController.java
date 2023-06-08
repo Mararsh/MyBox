@@ -9,6 +9,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -62,8 +63,12 @@ public class HtmlToMarkdownController extends BaseBatchFileController {
             String html = TextFileTools.readTexts(srcFile);
             String md = mdConverter.convert(html);
             TextFileTools.writeFile(target, md, Charset.forName("utf-8"));
-            targetFileGenerated(target);
-            return Languages.message("Successful");
+            if (target.exists() && target.length() > 0) {
+                targetFileGenerated(target);
+                return message("Successful");
+            } else {
+                return message("Failed");
+            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return Languages.message("Failed");

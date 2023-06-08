@@ -11,7 +11,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="500.0" minHeight="30.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlColorsPane">
+<VBox fx:id="thisPane" minHeight="30.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlColorsPane">
     <children>
       <Label fx:id="colorsPaneLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%ColorPaletteComments" wrapText="true" />
         <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseExited="#exitPane" pannable="true" VBox.vgrow="ALWAYS">

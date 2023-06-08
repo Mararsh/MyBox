@@ -35,7 +35,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2022-3-11
  * @License Apache License Version 2.0
  */
-public class JShellEditor extends TreeNodeEditor {
+public class JShellEditorController extends TreeNodeEditor {
 
     protected JShellController jShellController;
     protected String outputs = "";
@@ -45,7 +45,7 @@ public class JShellEditor extends TreeNodeEditor {
     @FXML
     protected Button clearCodesButton, suggestionsButton;
 
-    public JShellEditor() {
+    public JShellEditorController() {
         defaultExt = "java";
     }
 

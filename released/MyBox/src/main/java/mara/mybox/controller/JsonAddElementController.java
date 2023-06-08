@@ -1,7 +1,7 @@
 package mara.mybox.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
 import mara.mybox.data.JsonTreeNode;
@@ -15,13 +15,13 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2023-5-20
  * @License Apache License Version 2.0
  */
-public class JsonAddField extends ControlJsonNodeBase {
+public class JsonAddElementController extends ControlJsonNodeBase {
 
     public void setParameters(ControlJsonTree treeController, TreeItem<JsonTreeNode> item) {
         try {
             this.treeController = treeController;
             this.treeItem = item;
-
+            checkValue();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -36,13 +36,8 @@ public class JsonAddField extends ControlJsonNodeBase {
                 return;
             }
             JsonTreeNode treeNode = treeItem.getValue();
-            if (treeNode == null || !treeNode.isObject()) {
+            if (treeNode == null || !treeNode.isArray()) {
                 close();
-                return;
-            }
-            String newName = nameInput.getText();
-            if (newName == null || newName.isBlank()) {
-                popError(message("InvalidParameter") + ": " + message("Name"));
                 return;
             }
             JsonNode newNode = pickValue();
@@ -50,9 +45,9 @@ public class JsonAddField extends ControlJsonNodeBase {
                 popError(message("InvalidParameter") + ": " + message("Value"));
                 return;
             }
-            ObjectNode objectNode = (ObjectNode) treeNode.getJsonNode();
-            objectNode.set(newName, newNode);
-            treeItem.getValue().setJsonNode(objectNode);
+            ArrayNode arrayNode = (ArrayNode) treeNode.getJsonNode();
+            arrayNode.add(newNode);
+            treeItem.getValue().setJsonNode(arrayNode);
 
             treeController.updateTreeItem(treeItem);
             treeController.jsonEditor.domChanged(true);
@@ -85,9 +80,9 @@ public class JsonAddField extends ControlJsonNodeBase {
     /*
         static methods
      */
-    public static JsonAddField open(ControlJsonTree treeController, TreeItem<JsonTreeNode> item) {
-        JsonAddField controller = (JsonAddField) WindowTools.openChildStage(
-                treeController.getMyWindow(), Fxmls.JsonAddFieldFxml);
+    public static JsonAddElementController open(ControlJsonTree treeController, TreeItem<JsonTreeNode> item) {
+        JsonAddElementController controller = (JsonAddElementController) WindowTools.openChildStage(
+                treeController.getMyWindow(), Fxmls.JsonAddElementFxml);
         if (controller != null) {
             controller.setParameters(treeController, item);
             controller.requestMouse();

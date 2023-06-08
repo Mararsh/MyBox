@@ -32,6 +32,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.PaletteTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.StringTools;
 import static mara.mybox.value.Languages.message;
@@ -57,7 +58,7 @@ public class ControlColorPaletteSelector extends BaseController {
     @FXML
     protected HBox selectOpBox, manageOpBox;
     @FXML
-    protected Button examplesButton, functionsButton;
+    protected Button customizeButton, examplesButton, functionsButton;
 
     public ControlColorPaletteSelector() {
         baseTitle = message("ColorPalettes");
@@ -78,6 +79,16 @@ public class ControlColorPaletteSelector extends BaseController {
             ignore = null;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
+    public void setControlsStyle() {
+        try {
+            super.setControlsStyle();
+            NodeStyleTools.setTooltip(customizeButton, message("CustomizeColorPalette"));
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
         }
     }
 
@@ -217,7 +228,7 @@ public class ControlColorPaletteSelector extends BaseController {
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
                     if (tableColorPaletteName.find(conn, name) != null) {
-                        error = "AlreadyExisted";
+                        error = message("AlreadyExisted");
                         return false;
                     }
                     newPalatte = new ColorPaletteName(name);
@@ -438,7 +449,7 @@ public class ControlColorPaletteSelector extends BaseController {
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
                     if (tableColorPaletteName.find(conn, name) != null) {
-                        error = "AlreadyExisted";
+                        error = message("AlreadyExisted");
                         return false;
                     }
                     selected.setName(name);
@@ -482,7 +493,7 @@ public class ControlColorPaletteSelector extends BaseController {
                 try (Connection conn = DerbyBase.getConnection();
                         PreparedStatement query = conn.prepareStatement(TableColorPalette.QueryPalette)) {
                     if (tableColorPaletteName.find(conn, name) != null) {
-                        error = "AlreadyExisted";
+                        error = message("AlreadyExisted");
                         return false;
                     }
                     newPalatte = new ColorPaletteName(name);
@@ -545,6 +556,11 @@ public class ControlColorPaletteSelector extends BaseController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @FXML
+    public void customizePalette() {
+        ColorPaletteCustomizeController.open(this);
     }
 
 }

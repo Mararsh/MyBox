@@ -339,6 +339,12 @@ public class FileFilters {
         }
     };
 
+    public static List<FileChooser.ExtensionFilter> XMLExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("xml", "*.xml"));
+        }
+    };
+
     public static List<FileChooser.ExtensionFilter> ImagesListExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
             add(new FileChooser.ExtensionFilter("*", "*.png", "*.jpg", "*.jpeg", "*.bmp",

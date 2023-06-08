@@ -119,6 +119,8 @@ public class VisitHistoryTools {
             return FileFilters.DataFileExtensionFilter;
         } else if (fileType == VisitHistory.FileType.JSON) {
             return FileFilters.JSONExtensionFilter;
+        } else if (fileType == VisitHistory.FileType.XML) {
+            return FileFilters.XmlExtensionFilter;
         } else {
             return FileFilters.AllExtensionFilter;
         }
@@ -155,7 +157,7 @@ public class VisitHistoryTools {
             if (!suffix.equalsIgnoreCase("html") && !suffix.equalsIgnoreCase("htm")) {
                 return false;
             }
-        } else if (fileType == FileType.Xml) {
+        } else if (fileType == FileType.XML) {
             if (!suffix.equalsIgnoreCase("xml")) {
                 return false;
             }

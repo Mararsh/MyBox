@@ -11,7 +11,10 @@ import java.util.List;
 import java.util.Map;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -21,10 +24,12 @@ import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.JsonTreeNode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -105,8 +110,7 @@ public class ControlJsonTree extends BaseTreeViewController<JsonTreeNode> {
                 if (fields != null) {
                     int count = 1;
                     while (fields.hasNext()) {
-                        addTreeItem(item, -1,
-                                new JsonTreeNode(count++ + "", fields.next()).setIsArrayElement(true));
+                        addTreeItem(item, -1, new JsonTreeNode(count++ + "", fields.next()));
                     }
                 }
             }
@@ -224,6 +228,9 @@ public class ControlJsonTree extends BaseTreeViewController<JsonTreeNode> {
      */
     @Override
     public List<MenuItem> functionItems(TreeItem<JsonTreeNode> treeItem) {
+        if (treeItem == null) {
+            return null;
+        }
         JsonTreeNode jsonTreeNode = treeItem.getValue();
         List<MenuItem> items = new ArrayList<>();
 
@@ -243,14 +250,14 @@ public class ControlJsonTree extends BaseTreeViewController<JsonTreeNode> {
         if (jsonTreeNode.isObject()) {
             menu = new MenuItem(message("AddField"), StyleTools.getIconImageView("iconAdd.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
-                JsonAddField.open(this, treeItem);
+                JsonAddFieldController.open(this, treeItem);
             });
             items.add(menu);
 
         } else if (jsonTreeNode.isArray()) {
             menu = new MenuItem(message("AddElement"), StyleTools.getIconImageView("iconAdd.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
-                JsonAddElement.open(this, treeItem);
+                JsonAddElementController.open(this, treeItem);
             });
             items.add(menu);
 
@@ -289,6 +296,15 @@ public class ControlJsonTree extends BaseTreeViewController<JsonTreeNode> {
             TextClipboardTools.copyToSystemClipboard(this, title(treeItem.getValue()));
         });
         items.add(menu);
+
+        if (jsonEditor != null && jsonEditor.sourceFile != null && jsonEditor.sourceFile.exists()) {
+            items.add(new SeparatorMenuItem());
+            menu = new MenuItem(message("Recover"), StyleTools.getIconImageView("iconRecover.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                recoverAction();
+            });
+            items.add(menu);
+        }
 
         return items;
     }
@@ -406,6 +422,74 @@ public class ControlJsonTree extends BaseTreeViewController<JsonTreeNode> {
             updateTreeItem(root.getChildren().get(0));
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    @FXML
+    @Override
+    public void recoverAction() {
+        if (jsonEditor != null && jsonEditor.sourceFile != null && jsonEditor.sourceFile.exists()) {
+            jsonEditor.fileChanged = false;
+            jsonEditor.sourceFileChanged(jsonEditor.sourceFile);
+        }
+    }
+
+    @FXML
+    protected void popHelps(Event event) {
+        if (UserConfig.getBoolean("JsonHelpsPopWhenMouseHovering", false)) {
+            showHelps(event);
+        }
+    }
+
+    @FXML
+    protected void showHelps(Event event) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+
+            MenuItem menuItem = new MenuItem(message("JsonTutorial") + " - " + message("English"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.jsonEnLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("JsonTutorial") + " - " + message("Chinese"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.jsonZhLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            items.add(new SeparatorMenuItem());
+
+            menuItem = new MenuItem(message("JsonSpecification"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.jsonSpecification(), true);
+                }
+            });
+            items.add(menuItem);
+
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            hoverMenu.setSelected(UserConfig.getBoolean("JsonHelpsPopWhenMouseHovering", false));
+            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("JsonHelpsPopWhenMouseHovering", hoverMenu.isSelected());
+                }
+            });
+            items.add(hoverMenu);
+
+            popEventMenu(event, items);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
     }
 

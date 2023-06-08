@@ -93,6 +93,11 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
     }
 
     @FXML
+    protected void MarkdownTypesetting(ActionEvent event) {
+        loadScene(Fxmls.MarkdownTypesettingFxml);
+    }
+
+    @FXML
     protected void openMarkdownToHtml(ActionEvent event) {
         loadScene(Fxmls.MarkdownToHtmlFxml);
     }
@@ -158,6 +163,11 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
     }
 
     @FXML
+    protected void HtmlTypesetting(ActionEvent event) {
+        loadScene(Fxmls.HtmlTypesettingFxml);
+    }
+
+    @FXML
     protected void htmlExtractTables(ActionEvent event) {
         loadScene(Fxmls.HtmlExtractTablesFxml);
     }
@@ -190,6 +200,21 @@ public abstract class MainMenuController_Document extends MainMenuController_Win
     @FXML
     protected void JsonEditor(ActionEvent event) {
         loadScene(Fxmls.JsonEditorFxml);
+    }
+
+    @FXML
+    protected void JsonTypesetting(ActionEvent event) {
+        loadScene(Fxmls.JsonTypesettingFxml);
+    }
+
+    @FXML
+    protected void XmlEditor(ActionEvent event) {
+        loadScene(Fxmls.XmlEditorFxml);
+    }
+
+    @FXML
+    protected void XmlTypesetting(ActionEvent event) {
+        loadScene(Fxmls.XmlTypesettingFxml);
     }
 
     @FXML

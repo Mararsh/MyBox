@@ -71,7 +71,7 @@ public class ControlPlay extends BaseController {
     @FXML
     protected VBox snapBox;
     @FXML
-    protected ColorSet colorController;
+    protected ColorSetController colorController;
 
     public ControlPlay() {
         stopped = new SimpleBooleanProperty();

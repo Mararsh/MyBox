@@ -421,7 +421,7 @@ public class ColorData extends BaseData {
         row = new ArrayList<>();
         row.addAll(Arrays.asList(message("Value"), getColorValue() + "", invertData.getColorValue() + "", complementaryData.getColorValue() + ""));
         table.add(row);
-        return HtmlWriteTools.html(message("Color"), HtmlStyles.styleValue("TableStyle"), table.body());
+        return HtmlWriteTools.html(message("Color"), HtmlStyles.styleValue("Table"), table.body());
     }
 
     /*

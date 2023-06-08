@@ -96,17 +96,18 @@ public class ControlColorsPane extends BaseController {
 
             @Override
             protected void whenSucceeded() {
-                loadColors(palette, colors);
-                if (scrollEnd) {
-                    scrollPane.setVvalue(1.0);
-                }
+                loadColors(palette, colors, scrollEnd);
             }
 
         };
         start(task);
     }
 
-    public synchronized void loadColors(ColorPaletteName palette, List<ColorData> colors) {
+    public void loadColors(ColorPaletteName palette, List<ColorData> colors) {
+        loadColors(palette, colors, false);
+    }
+
+    public synchronized void loadColors(ColorPaletteName palette, List<ColorData> colors, boolean scrollEnd) {
         this.palette = palette;
         if (canDragDrop()) {
             if (!thisPane.getChildren().contains(colorsPaneLabel)) {
@@ -117,18 +118,57 @@ public class ControlColorsPane extends BaseController {
                 thisPane.getChildren().remove(colorsPaneLabel);
             }
         }
+        colorsPane.getChildren().clear();
         if (colors == null || colors.isEmpty()) {
-            colorsPane.getChildren().clear();
             return;
         }
-        List<Rectangle> rects = new ArrayList<>();
-        for (ColorData data : colors) {
-            Rectangle rect = makeColorRect(data);
-            if (rect != null) {
-                rects.add(rect);
-            }
+        if (backgroundTask != null) {
+            backgroundTask.cancel();
         }
-        colorsPane.getChildren().setAll(rects);
+        backgroundTask = new SingletonTask<Void>(this) {
+            List<Rectangle> rects = new ArrayList<>();
+
+            @Override
+            protected boolean handle() {
+                for (ColorData data : colors) {
+                    if (isCancelled()) {
+                        return true;
+                    }
+                    Rectangle rect = makeColorRect(data);
+                    if (rect == null) {
+                        continue;
+                    }
+                    rects.add(rect);
+                    if (rects.size() >= 50) {
+                        List<Rectangle> display = new ArrayList<>();
+                        display.addAll(rects);
+                        rects.clear();
+                        Platform.runLater(() -> {
+                            if (isCancelled()) {
+                                return;
+                            }
+                            colorsPane.getChildren().addAll(display);
+                        });
+                    }
+                }
+                return true;
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                if (isCancelled()) {
+                    return;
+                }
+                if (!rects.isEmpty()) {
+                    colorsPane.getChildren().addAll(rects);
+                }
+                if (scrollEnd) {
+                    scrollPane.setVvalue(1.0);
+                }
+            }
+
+        };
+        start(backgroundTask, false);
     }
 
     public Rectangle makeColorRect(ColorData data) {

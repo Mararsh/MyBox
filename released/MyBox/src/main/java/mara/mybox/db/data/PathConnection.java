@@ -30,6 +30,7 @@ public class PathConnection extends BaseData {
         pcnid = -1;
         title = null;
         host = null;
+        rootpath = null;
         path = null;
         username = null;
         password = null;
@@ -81,6 +82,9 @@ public class PathConnection extends BaseData {
                 case "password":
                     data.setPassword(value == null ? null : AESTools.decrypt((String) value));
                     return true;
+                case "rootpath":
+                    data.setRootpath(value == null ? null : (String) value);
+                    return true;
                 case "path":
                     data.setPath(value == null ? null : (String) value);
                     return true;
@@ -124,6 +128,8 @@ public class PathConnection extends BaseData {
                 return data.getUsername();
             case "password":
                 return AESTools.encrypt(data.getPassword());
+            case "rootpath":
+                return data.getRootpath();
             case "path":
                 return data.getPath();
             case "port":
@@ -141,7 +147,7 @@ public class PathConnection extends BaseData {
     }
 
     public static boolean valid(PathConnection data) {
-        return data != null && data.getPath() != null;
+        return data != null;
     }
 
     /*

@@ -43,7 +43,7 @@ public class StringTools {
         if (string == null) {
             return string;
         }
-        return start(replaceLineBreak(string, " ").trim(), maxLen);
+        return start(replaceLineBreak(string, " ").strip(), maxLen);
     }
 
     // https://github.com/Mararsh/MyBox/issues/1266
@@ -52,14 +52,14 @@ public class StringTools {
         if (name == null) {
             return null;
         }
-        return end(name.replaceAll("_|\r\n|\r|\n", " ").trim(), MenuMaxLen);
+        return end(name.replaceAll("_|\r\n|\r|\n", " ").strip(), MenuMaxLen);
     }
 
     public static String menuPrefix(String name) {
         if (name == null) {
             return null;
         }
-        return start(name.replaceAll("_|\r\n|\r|\n", " ").trim(), MenuMaxLen);
+        return start(name.replaceAll("_|\r\n|\r|\n", " ").strip(), MenuMaxLen);
     }
 
     public static String replaceLineBreak(String string) {

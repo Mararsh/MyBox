@@ -22,7 +22,7 @@
     <H3>Notes</H3>
     <PRE>This tool helps to record information:
 - Note is a piece of information in html format:
-       - Note can be edited in 4 modes: "html code", "Rich text", "Markdown", "Texts":
+       - Note can be edited in 5 modes: "html code", "Tree", "Rich text", "Markdown", "Texts":
               - Each edit mode can change the html separately. 
               - The mode in current tab is "current edit mode".
               - Click button "Synchronize"(F10) to apply updates in current edit mode to other modes.
@@ -76,7 +76,7 @@ More shortcuts can be found in help.</PRE>
     <PRE>This tool helps to edit html:
 - Html can be loaded by opening file, creating new file , or inputting address.
 - Html can be edited in 5 modes:
-       - The edit modes include "html code", "DOM", "Rich text", "Markdown", "Texts".
+       - The edit modes include "html code", "Tree", "Rich text", "Markdown", "Texts".
        - Each edit mode can change the html separately. 
        - The mode in current tab is called as "current edit mode".
 - Following buttons work for current edit mode:
@@ -96,8 +96,13 @@ More shortcuts can be found in help.</PRE>
   - Parse and handle JSON data, based on JACKSON.
   - Load all data, so it is not suitable for JSON file which holds large amount of data.
   - User can edit JSON in 2 modes:
-         - Tree. Json Nodes can be added, modified, and deleted.
-         - Texts. Json data can be changed and parsed in string.
+         - "Tree". Json Nodes can be added, modified, and deleted.
+         - "Texts"Json data can be changed and parsed in string.
+  - The mode in current tab is called as "current edit mode".
+  - Following buttons work for current edit mode:
+       - Click button "Synchronize"(F10) to apply updates in current edit mode to other modes.
+       - Click button "Save"(F2) to save updates in current edit mode and do "Synchronize" automatically.
+       - Click button "Menu"(F12) or right click edit area to pop context menu.
 
 Composition of JSON:
   - String: Set of unicode characters and enclosed by double quotes
@@ -110,6 +115,18 @@ Composition of JSON:
            { Field1, Field2, ... }
   - Array:
            [ Value1, Value2, ... ]</PRE>
+    <H3>Edit XML</H3>
+    <PRE>This tool helps to edit XML
+  - Parse and handle XML data, based on DOM model of JDK.
+  - Load all data, so it is not suitable for XML file which holds large amount of data.
+  - User can edit XML in 2 modes:
+         - "Tree". XML Nodes can be added, modified, and deleted.
+         - "Texts". XML data can be changed and parsed in string.
+  - The mode in current tab is called as "current edit mode".
+  - Following buttons work for current edit mode:
+       - Click button "Synchronize"(F10) to apply updates in current edit mode to other modes.
+       - Click button "Save"(F2) to save updates in current edit mode and do "Synchronize" automatically.
+       - Click button "Menu"(F12) or right click edit area to pop context menu.</PRE>
     <H3>Edit Text</H3>
     <PRE>This tool helps to edit text file:
 -  Charset and Line Break are determined automatically when file is opened. 
@@ -1080,6 +1097,16 @@ Rulers:
   - Option to disable omission of Ctrl/Alt in shortcuts.(To avoid misoperations)        
   - Always disable omission of Ctrl/Alt in shortcuts of following buttons: Save, Delete, Clear. (To avoid accidents)
   - On mac, key "Ctrl" is replaced as key "Command".</PRE>
+    <H3>Clear Expired Data</H3>
+    <PRE>Expired data are following:
+    - Unuseful temporary files
+    - Internal data refer to some files, but the files are not existed.
+       Then the internal data should be deleted.
+    - Internal data refer to some internal files, but the data are not existed.
+       Then the internal files should be deleted.
+    - Unuseful temporary database tables
+
+While clearing the expired data, do not read/write files/data by MyBox functions.</PRE>
 
 </BODY>
 </HTML>

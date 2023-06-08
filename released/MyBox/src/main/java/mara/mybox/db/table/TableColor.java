@@ -156,6 +156,8 @@ public class TableColor extends BaseTable<ColorData> {
             } else if (name != null && !name.equals(data.getColorName())) {
                 data.setColorName(name);
                 updateData(conn, data.calculate());
+            } else if (data.needCalculate()) {
+                updateData(conn, data.calculate());
             }
             conn.setAutoCommit(ac);
             return data;

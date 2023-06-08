@@ -330,4 +330,5 @@ public class BaseHtmlTreeController extends BaseTreeViewController<HtmlNode> {
     public void refreshAction() {
         updateTreeItem(treeView.getRoot());
     }
+
 }

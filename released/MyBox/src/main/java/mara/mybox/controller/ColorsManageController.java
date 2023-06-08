@@ -155,7 +155,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
 
             refreshPalettes();
 
-            infoController.initStyle(HtmlStyles.styleValue("TableStyle") + "\n body { width: 400px; } \n");
+            infoController.initStyle(HtmlStyles.styleValue("Table") + "\n body { width: 400px; } \n");
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -643,8 +643,8 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
                 }
                 table.add(row);
             }
-            String html = HtmlWriteTools.html(title, HtmlStyles.styleValue("TableStyle"), table.body());
-            WebBrowserController.openHtml(html, HtmlStyles.styleValue("TableStyle"), true);
+            String html = HtmlWriteTools.html(title, HtmlStyles.styleValue("Table"), table.body());
+            WebBrowserController.openHtml(html, HtmlStyles.styleValue("Table"), true);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

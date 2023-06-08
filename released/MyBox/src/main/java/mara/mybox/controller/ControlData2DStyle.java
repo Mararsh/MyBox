@@ -33,7 +33,7 @@ public class ControlData2DStyle extends BaseController {
     @FXML
     protected ToggleGroup colorGroup, bgGroup;
     @FXML
-    protected ColorSet fontColorController, bgColorController;
+    protected ColorSetController fontColorController, bgColorController;
     @FXML
     protected ComboBox<String> fontSizeSelector;
     @FXML

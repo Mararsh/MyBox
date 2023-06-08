@@ -170,8 +170,13 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
             if (result.get() == buttonSave) {
                 saveAction();
                 return false;
+            } else if (result.get() == buttonNotSave) {
+                if (fileChanged != null) {
+                    fileChanged.set(false);
+                }
+                return true;
             } else {
-                return result.get() == buttonNotSave;
+                return false;
             }
         }
     }

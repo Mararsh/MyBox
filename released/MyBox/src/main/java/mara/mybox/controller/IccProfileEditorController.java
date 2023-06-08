@@ -1793,13 +1793,13 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             @Override
             public List<VisitHistory> recentFiles() {
                 int fileNumber = AppVariables.fileRecentNumber * 3 / 4;
-                return VisitHistoryTools.getRecentFileRead(VisitHistory.FileType.Xml, fileNumber);
+                return VisitHistoryTools.getRecentFileRead(VisitHistory.FileType.XML, fileNumber);
             }
 
             @Override
             public List<VisitHistory> recentPaths() {
                 int pathNumber = AppVariables.fileRecentNumber / 4 + 1;
-                return VisitHistoryTools.getRecentPathWrite(VisitHistory.FileType.Xml, pathNumber);
+                return VisitHistoryTools.getRecentPathWrite(VisitHistory.FileType.XML, pathNumber);
             }
 
             @Override
@@ -1848,7 +1848,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
         } else {
             name = embedICCName;
         }
-        final File file = chooseSaveFile(UserConfig.getPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.Xml)),
+        final File file = chooseSaveFile(UserConfig.getPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.XML)),
                 name, FileFilters.XmlExtensionFilter);
         if (file == null) {
             return;
@@ -1863,7 +1863,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                 if (TextFileTools.writeFile(file, xmlArea.getText()) == null) {
                     return false;
                 }
-                recordFileWritten(file, VisitHistory.FileType.Xml);
+                recordFileWritten(file, VisitHistory.FileType.XML);
                 return true;
             }
 

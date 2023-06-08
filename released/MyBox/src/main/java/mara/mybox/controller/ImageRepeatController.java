@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.RepeatTools;
 import mara.mybox.dev.MyBoxLog;
@@ -42,7 +43,7 @@ public class ImageRepeatController extends ImageViewerController {
     @FXML
     protected ComboBox<String> intervalSelector, marginSelector;
     @FXML
-    protected ColorSet colorSetController;
+    protected ColorSetController colorSetController;
     @FXML
     protected VBox mainBox, optionsBox;
     @FXML
@@ -334,6 +335,16 @@ public class ImageRepeatController extends ImageViewerController {
 
         };
         start(task);
+    }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (sourceController.thisPane.isFocusWithin()) {
+            if (sourceController.keyEventsFilter(event)) {
+                return true;
+            }
+        }
+        return super.keyEventsFilter(event);
     }
 
 }

@@ -58,6 +58,88 @@ public class ControlHtmlDomManage extends BaseHtmlTreeController {
         editNode(item);
     }
 
+    @Override
+    public List<MenuItem> moreMenu(TreeItem<HtmlNode> item) {
+        List<MenuItem> items = new ArrayList<>();
+        if (item == null) {
+            return items;
+        }
+        MenuItem menuItem = new MenuItem(message("AddNode"), StyleTools.getIconImageView("iconAdd.png"));
+        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
+            add(item);
+        });
+        items.add(menuItem);
+
+        menuItem = new MenuItem(message("DeleteNode"), StyleTools.getIconImageView("iconDelete.png"));
+        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
+            delete(item);
+        });
+        items.add(menuItem);
+
+        menuItem = new MenuItem(message("DeleteNodes"), StyleTools.getIconImageView("iconDelete.png"));
+        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
+            deleteNodes(item);
+        });
+        items.add(menuItem);
+
+        if (treeView.getTreeItemLevel(item) > 1) {
+            menuItem = new MenuItem(message("CopyNodes"), StyleTools.getIconImageView("iconCopy.png"));
+            menuItem.setOnAction((ActionEvent menuItemEvent) -> {
+                copy(item);
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("DuplicateAfterNode"), StyleTools.getIconImageView("iconCopy.png"));
+            menuItem.setOnAction((ActionEvent menuItemEvent) -> {
+                duplicate(item, true);
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("DuplicateToParentEnd"), StyleTools.getIconImageView("iconCopy.png"));
+            menuItem.setOnAction((ActionEvent menuItemEvent) -> {
+                duplicate(item, false);
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("MoveUp"), StyleTools.getIconImageView("iconUp.png"));
+            menuItem.setOnAction((ActionEvent menuItemEvent) -> {
+                up(item);
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("MoveDown"), StyleTools.getIconImageView("iconDown.png"));
+            menuItem.setOnAction((ActionEvent menuItemEvent) -> {
+                down(item);
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("MoveNodes"), StyleTools.getIconImageView("iconRef.png"));
+            menuItem.setOnAction((ActionEvent menuItemEvent) -> {
+                move(item);
+            });
+            items.add(menuItem);
+
+            items.add(new SeparatorMenuItem());
+        }
+
+        menuItem = new MenuItem(message("EditNode"), StyleTools.getIconImageView("iconEdit.png"));
+        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
+            editNode(item);
+        });
+        items.add(menuItem);
+
+        if (htmlEditor != null && htmlEditor.sourceFile != null && htmlEditor.sourceFile.exists()) {
+            items.add(new SeparatorMenuItem());
+            menuItem = new MenuItem(message("Recover"), StyleTools.getIconImageView("iconRecover.png"));
+            menuItem.setOnAction((ActionEvent menuItemEvent) -> {
+                recoverAction();
+            });
+            items.add(menuItem);
+        }
+
+        return items;
+    }
+
     public void add(TreeItem<HtmlNode> item) {
         HtmlDomAddController.open(htmlEditor, item);
     }
@@ -86,7 +168,7 @@ public class ControlHtmlDomManage extends BaseHtmlTreeController {
         HtmlDomCopyController.open(htmlEditor, item);
     }
 
-    public void duplicate(TreeItem<HtmlNode> inItem) {
+    public void duplicate(TreeItem<HtmlNode> inItem, boolean after) {
         TreeItem<HtmlNode> item = validItem(inItem);
         if (item == null) {
             popError(message("NoData"));
@@ -98,7 +180,12 @@ public class ControlHtmlDomManage extends BaseHtmlTreeController {
             return;
         }
         Element element = item.getValue().getElement();
-        element.after(element.outerHtml());
+        String newCodes = element.outerHtml();
+        if (after) {
+            element.after(newCodes);
+        } else {
+            parent.getValue().getElement().append(newCodes);
+        }
         updateTreeItem(parent);
         htmlEditor.domChanged(true);
     }
@@ -168,71 +255,13 @@ public class ControlHtmlDomManage extends BaseHtmlTreeController {
         HtmlDomMoveController.open(htmlEditor, item);
     }
 
+    @FXML
     @Override
-    public List<MenuItem> moreMenu(TreeItem<HtmlNode> item) {
-        List<MenuItem> items = new ArrayList<>();
-        if (item == null) {
-            return items;
+    public void recoverAction() {
+        if (htmlEditor != null && htmlEditor.sourceFile != null && htmlEditor.sourceFile.exists()) {
+            htmlEditor.fileChanged = false;
+            htmlEditor.sourceFileChanged(htmlEditor.sourceFile);
         }
-        MenuItem menuItem = new MenuItem(message("AddNode"), StyleTools.getIconImageView("iconAdd.png"));
-        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
-            add(item);
-        });
-        items.add(menuItem);
-
-        menuItem = new MenuItem(message("DeleteNode"), StyleTools.getIconImageView("iconDelete.png"));
-        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
-            delete(item);
-        });
-        items.add(menuItem);
-
-        menuItem = new MenuItem(message("DeleteNodes"), StyleTools.getIconImageView("iconDelete.png"));
-        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
-            deleteNodes(item);
-        });
-        items.add(menuItem);
-
-        if (treeView.getTreeItemLevel(item) > 1) {
-            menuItem = new MenuItem(message("CopyNodes"), StyleTools.getIconImageView("iconCopy.png"));
-            menuItem.setOnAction((ActionEvent menuItemEvent) -> {
-                copy(item);
-            });
-            items.add(menuItem);
-
-            menuItem = new MenuItem(message("DuplicateNode"), StyleTools.getIconImageView("iconCopy.png"));
-            menuItem.setOnAction((ActionEvent menuItemEvent) -> {
-                duplicate(item);
-            });
-            items.add(menuItem);
-
-            menuItem = new MenuItem(message("MoveUp"), StyleTools.getIconImageView("iconUp.png"));
-            menuItem.setOnAction((ActionEvent menuItemEvent) -> {
-                up(item);
-            });
-            items.add(menuItem);
-
-            menuItem = new MenuItem(message("MoveDown"), StyleTools.getIconImageView("iconDown.png"));
-            menuItem.setOnAction((ActionEvent menuItemEvent) -> {
-                down(item);
-            });
-            items.add(menuItem);
-
-            menuItem = new MenuItem(message("MoveNodes"), StyleTools.getIconImageView("iconRef.png"));
-            menuItem.setOnAction((ActionEvent menuItemEvent) -> {
-                move(item);
-            });
-            items.add(menuItem);
-
-            items.add(new SeparatorMenuItem());
-        }
-
-        menuItem = new MenuItem(message("EditNode"), StyleTools.getIconImageView("iconEdit.png"));
-        menuItem.setOnAction((ActionEvent menuItemEvent) -> {
-            editNode(item);
-        });
-        items.add(menuItem);
-
-        return items;
     }
 
     @FXML

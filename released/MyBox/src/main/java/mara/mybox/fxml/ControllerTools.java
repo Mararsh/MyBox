@@ -16,6 +16,7 @@ import mara.mybox.controller.PptViewController;
 import mara.mybox.controller.TextEditorController;
 import mara.mybox.controller.WebBrowserController;
 import mara.mybox.controller.WordViewController;
+import mara.mybox.controller.XmlEditorController;
 import static mara.mybox.fxml.WindowTools.openScene;
 import mara.mybox.tools.CompressTools;
 import mara.mybox.tools.FileNameTools;
@@ -72,6 +73,8 @@ public class ControllerTools {
             controller = WordViewController.openFile(file);
         } else if ("json".equals(suffix)) {
             controller = JsonEditorController.open(file);
+        } else if ("xml".equals(suffix)) {
+            controller = XmlEditorController.open(file);
         } else if (Arrays.asList(FileExtensions.TextFileSuffix).contains(suffix)) {
             controller = TextEditorController.open(file);
         } else if (CompressTools.compressFormats().contains(suffix) || CompressTools.archiveFormats().contains(suffix)) {

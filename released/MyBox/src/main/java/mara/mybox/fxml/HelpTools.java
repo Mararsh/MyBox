@@ -233,7 +233,7 @@ public class HelpTools {
                                 comments);
                     }
                     String html = HtmlWriteTools.html(table.getTitle(), "utf-8",
-                            HtmlStyles.styleValue("TableStyle"), table.body());
+                            HtmlStyles.styleValue("Table"), table.body());
                     htmFile = HtmlWriteTools.writeHtml(html);
                 } catch (Exception e) {
                     MyBoxLog.error(e.toString());
@@ -271,6 +271,12 @@ public class HelpTools {
             table.newLinkRow(message("DerbyReferenceManual"), derbyLink());
             table.newLinkRow(message("SqlIdentifier"), sqlLink());
             table.newLinkRow("RenderingHints", renderingHintsLink());
+            table.newLinkRow(message("JsonTutorial") + " - " + message("Chinese"), jsonZhLink());
+            table.newLinkRow(message("JsonTutorial") + " - " + message("English"), jsonEnLink());
+            table.newLinkRow(message("JsonSpecification"), jsonSpecification());
+            table.newLinkRow(message("XmlTutorial") + " - " + message("Chinese"), xmlZhLink());
+            table.newLinkRow(message("XmlTutorial") + " - " + message("English"), xmlEnLink());
+            table.newLinkRow(message("DomSpecification"), domSpecification());
 
             File htmFile = HtmlWriteTools.writeHtml(table.html());
             return htmFile;
@@ -315,6 +321,9 @@ public class HelpTools {
 
             s.append("    <H3>").append(message("JsonEditor")).append("</H3>\n");
             s.append("    <PRE>").append(message("JsonEditorTips")).append("</PRE>\n");
+
+            s.append("    <H3>").append(message("XmlEditor")).append("</H3>\n");
+            s.append("    <PRE>").append(message("XmlEditorTips")).append("</PRE>\n");
 
             s.append("    <H3>").append(message("TextEditer")).append("</H3>\n");
             s.append("    <PRE>").append(message("TextEditerTips")).append("</PRE>\n");
@@ -578,6 +587,9 @@ public class HelpTools {
             s.append("    <H3>").append(message("Shortcuts")).append("</H3>\n");
             s.append("    <PRE>").append(message("ShortcutsTips")).append("</PRE>\n");
 
+            s.append("    <H3>").append(message("ClearExpiredData")).append("</H3>\n");
+            s.append("    <PRE>").append(message("ClearExpiredDataComments")).append("</PRE>\n");
+
             s.append("\n");
 
             s.append("</BODY>\n");
@@ -639,7 +651,7 @@ public class HelpTools {
     }
 
     public static String cssZhLink() {
-        return "https://www.w3school.com.cn/cssref/index.asp";
+        return "https://developer.mozilla.org/zh-CN/docs/web/css/reference";
     }
 
     public static String nashornLink() {
@@ -647,7 +659,7 @@ public class HelpTools {
     }
 
     public static String htmlZhLink() {
-        return "https://www.w3school.com.cn/html/index.asp";
+        return "https://developer.mozilla.org/zh-CN/docs/Web/JavaScript";
     }
 
     public static String htmlEnLink() {
@@ -655,7 +667,7 @@ public class HelpTools {
     }
 
     public static String javaScriptZhLink() {
-        return "https://www.w3school.com.cn/js/index.asp";
+        return "https://developer.mozilla.org/zh-CN/docs/Web/JavaScript";
     }
 
     public static String javaScriptEnLink() {
@@ -664,6 +676,30 @@ public class HelpTools {
 
     public static String javaScriptSpecification() {
         return "https://www.ecma-international.org/publications-and-standards/standards/ecma-262/";
+    }
+
+    public static String jsonEnLink() {
+        return "https://www.w3schools.com/js/js_json_intro.asp";
+    }
+
+    public static String jsonZhLink() {
+        return "http://www.vue5.com/json/json_quick_guide.html";
+    }
+
+    public static String jsonSpecification() {
+        return "https://www.ecma-international.org/publications-and-standards/standards/ecma-404/";
+    }
+
+    public static String xmlEnLink() {
+        return "https://www.w3schools.com/xml/default.asp";
+    }
+
+    public static String xmlZhLink() {
+        return "http://www.vue5.com/xml/dom.html";
+    }
+
+    public static String domSpecification() {
+        return "https://www.w3.org/TR/DOM-Level-3-Core/";
     }
 
     public static List<MenuItem> htmlHelps(BaseController controller) {

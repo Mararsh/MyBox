@@ -274,8 +274,8 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
         });
 
         htmlMenu.getItems().addAll(
-                htmlEditor, WebFind, WebElements, HtmlTypesetting, HtmlSnap, HtmlExtractTables, new SeparatorMenuItem(),
-                htmlToMarkdown, HtmlToText, HtmlToPdf, HtmlSetCharset, HtmlSetStyle, HtmlSetEquiv, new SeparatorMenuItem(),
+                htmlEditor, WebFind, WebElements, HtmlSnap, HtmlExtractTables, new SeparatorMenuItem(),
+                HtmlTypesetting, htmlToMarkdown, HtmlToText, HtmlToPdf, HtmlSetCharset, HtmlSetStyle, HtmlSetEquiv, new SeparatorMenuItem(),
                 HtmlMergeAsHtml, HtmlMergeAsMarkdown, HtmlMergeAsPDF, HtmlMergeAsText, HtmlFrameset
         );
 
@@ -284,6 +284,11 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
         MenuItem markdownEditor = new MenuItem(message("MarkdownEditer"));
         markdownEditor.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.MarkdownEditorFxml);
+        });
+
+        MenuItem MarkdownTypesetting = new MenuItem(message("MarkdownTypesetting"));
+        MarkdownTypesetting.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.MarkdownTypesettingFxml);
         });
 
         MenuItem markdownToHtml = new MenuItem(message("MarkdownToHtml"));
@@ -303,7 +308,7 @@ public abstract class MyBoxController_Document extends MyBoxController_Base {
 
         markdownMenu.getItems().addAll(
                 markdownEditor, new SeparatorMenuItem(),
-                markdownToHtml, MarkdownToText, MarkdownToPdf
+                MarkdownTypesetting, markdownToHtml, MarkdownToText, MarkdownToPdf
         );
 
         Menu jsonMenu = new Menu("JSON");

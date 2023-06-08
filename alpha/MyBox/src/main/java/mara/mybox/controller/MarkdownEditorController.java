@@ -5,7 +5,6 @@ import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataHolder;
 import java.io.File;
-import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
@@ -16,7 +15,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.ContextMenuEvent;
@@ -24,7 +22,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.HtmlWriteTools;
-import mara.mybox.tools.MarkdownTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -39,19 +36,18 @@ public class MarkdownEditorController extends TextEditorController {
     protected MutableDataHolder htmlOptions;
     protected Parser htmlParser;
     protected HtmlRenderer htmlRenderer;
-    protected int indentSize = 4;
     protected long htmlPage, codesPage;
     protected double htmlScrollLeft, htmlScrollTop;
 
     @FXML
     protected TextArea codesArea;
     @FXML
-    protected ComboBox<String> emulationSelector, indentSelector;
-    @FXML
-    protected CheckBox trimCheck, appendCheck, discardCheck, linesCheck, wrapCodesCheck,
-            refreshChangeHtmlCheck, refreshChangeCodesCheck;
+    protected ControlMarkdownOptions optionsController;
     @FXML
     protected TextField titleInput;
+    @FXML
+    protected CheckBox wrapCodesCheck, refreshChangeHtmlCheck, refreshChangeCodesCheck;
+
     @FXML
     protected ControlWebView webViewController;
 
@@ -126,79 +122,9 @@ public class MarkdownEditorController extends TextEditorController {
                 }
             });
 
-            initConversionOptionsPane();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    protected void initConversionOptionsPane() {
-        try {
-            emulationSelector.getItems().addAll(Arrays.asList(
-                    "GITHUB", "MARKDOWN", "GITHUB_DOC", "COMMONMARK", "KRAMDOWN", "PEGDOWN",
-                    "FIXED_INDENT", "MULTI_MARKDOWN", "PEGDOWN_STRICT"
-            ));
-            emulationSelector.getSelectionModel().select(UserConfig.getString(baseName + "Emulation", "GITHUB"));
-            emulationSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    UserConfig.setString(baseName + "Emulation", newValue);
-                    updateHtmlConverter();
-                }
-            });
-
-            indentSelector.getItems().addAll(Arrays.asList(
-                    "4", "2", "0", "6", "8"
-            ));
-            indentSelector.getSelectionModel().select(UserConfig.getString(baseName + "Indent", "4"));
-            indentSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        int v = Integer.parseInt(newValue);
-                        if (v >= 0) {
-                            indentSize = v;
-                            UserConfig.setString(baseName + "Indent", newValue);
-                            updateHtmlConverter();
-                        }
-                    } catch (Exception e) {
-                    }
-                }
-            });
-
-            trimCheck.setSelected(UserConfig.getBoolean(baseName + "Trim", false));
-            trimCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            optionsController.changedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "Indent", trimCheck.isSelected());
-                    updateHtmlConverter();
-                }
-            });
-
-            appendCheck.setSelected(UserConfig.getBoolean(baseName + "Append", false));
-            appendCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "Append", appendCheck.isSelected());
-                    updateHtmlConverter();
-                }
-            });
-
-            discardCheck.setSelected(UserConfig.getBoolean(baseName + "Discard", false));
-            discardCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "Discard", discardCheck.isSelected());
-                    updateHtmlConverter();
-                }
-            });
-
-            linesCheck.setSelected(UserConfig.getBoolean(baseName + "Trim", false));
-            linesCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "Trim", linesCheck.isSelected());
                     updateHtmlConverter();
                 }
             });
@@ -244,8 +170,7 @@ public class MarkdownEditorController extends TextEditorController {
     // https://github.com/vsch/flexmark-java/wiki/Usage
     protected void makeHtmlConverter() {
         try {
-            htmlOptions = MarkdownTools.htmlOptions(emulationSelector.getValue(), indentSize,
-                    trimCheck.isSelected(), discardCheck.isSelected(), appendCheck.isSelected());
+            htmlOptions = optionsController.options();
             htmlParser = Parser.builder(htmlOptions).build();
             htmlRenderer = HtmlRenderer.builder(htmlOptions).build();
 

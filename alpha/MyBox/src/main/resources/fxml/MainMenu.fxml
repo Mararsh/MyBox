@@ -70,6 +70,7 @@ License:    Apache License Version 2.0
                                     <items>
                                         <MenuItem mnemonicParsing="false" onAction="#openMarkdownEditer" text="%MarkdownEditer" />
                                         <SeparatorMenuItem mnemonicParsing="false" />
+                                        <MenuItem mnemonicParsing="false" onAction="#MarkdownTypesetting" text="%MarkdownTypesetting" />
                                         <MenuItem mnemonicParsing="false" onAction="#openMarkdownToHtml" text="%MarkdownToHtml" />
                                         <MenuItem mnemonicParsing="false" onAction="#openMarkdownToText" text="%MarkdownToText" />
                                         <MenuItem mnemonicParsing="false" onAction="#openMarkdownToPdf" text="%MarkdownToPdf" />
@@ -92,10 +93,10 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#openHtmlEditor" text="%HtmlEditor" />
                                         <MenuItem mnemonicParsing="false" onAction="#htmlFind" text="%WebFind" />
                                         <MenuItem mnemonicParsing="false" onAction="#htmlElements" text="%WebElements" />
-                                        <MenuItem mnemonicParsing="false" onAction="#HtmlTypesetting" text="%HtmlTypesetting" />
                                         <MenuItem mnemonicParsing="false" onAction="#openHtmlSnap" text="%HtmlSnap" />
                                         <MenuItem mnemonicParsing="false" onAction="#htmlExtractTables" text="%HtmlExtractTables" />
                                         <SeparatorMenuItem mnemonicParsing="false" />
+                                        <MenuItem mnemonicParsing="false" onAction="#HtmlTypesetting" text="%HtmlTypesetting" />
                                         <MenuItem mnemonicParsing="false" onAction="#openHtmlToMarkdown" text="%HtmlToMarkdown" />
                                         <MenuItem mnemonicParsing="false" onAction="#openHtmlToText" text="%HtmlToText" />
                                         <MenuItem mnemonicParsing="false" onAction="#openHtmlToPdf" text="%HtmlToPdf" />

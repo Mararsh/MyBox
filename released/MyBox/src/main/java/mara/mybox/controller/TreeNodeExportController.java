@@ -35,7 +35,6 @@ import mara.mybox.tools.JsonTools;
 import mara.mybox.tools.TextTools;
 import mara.mybox.value.AppValues;
 import static mara.mybox.value.AppValues.Indent;
-import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -437,7 +436,7 @@ public class TreeNodeExportController extends BaseTaskController {
                 xmlWriter.flush();
                 xmlWriter.close();
                 xmlWriter = null;
-                targetFileGenerated(xmlFile, VisitHistory.FileType.Xml);
+                targetFileGenerated(xmlFile, VisitHistory.FileType.XML);
             } catch (Exception e) {
                 updateLogs(e.toString());
                 well = false;
@@ -759,16 +758,16 @@ public class TreeNodeExportController extends BaseTaskController {
                 return;
             }
             if (xmlFile != null && xmlFile.exists()) {
-                browseURI(xmlFile.toURI());
+                XmlEditorController.open(xmlFile);
                 return;
             }
             if (jsonFile != null && jsonFile.exists()) {
-                browseURI(jsonFile.toURI());
+                JsonEditorController.open(jsonFile);
                 return;
             }
             if (textsFile != null && textsFile.exists()) {
-                TextEditorController controller = (TextEditorController) openStage(Fxmls.TextEditorFxml);
-                controller.sourceFileChanged(textsFile);
+                TextEditorController.open(textsFile);
+                return;
             }
             popInformation(message("Count") + ": " + count);
         } catch (Exception e) {

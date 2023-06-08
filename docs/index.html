@@ -9,40 +9,22 @@
   <h1>MyBox：简易工具集</h1>
   <p>这是利用JavaFx开发的图形化桌面应用，目标是提供简单易用的功能。免费开源。</p>
   <h2>新内容</h2>
-  <p>2023-5-22 版本6.7.3</p>
+  <p>2023-6-8 版本6.7.4</p>
   <ul>
    <li>新增： 
     <ul>
-     <li>JSON编辑器</li>
-     <li>查找字串的匹配列表</li>
-     <li>批量在文件中查找字串/字节。</li>
+     <li>XML编辑器</li>
+     <li>批量排版html/markdown/xml/json文件</li>
+     <li>定制调色盘</li>
     </ul></li>
-   <li>改进： 
-    <ul>
-     <li>RYB补色应参考原色的明亮度和饱和度。</li>
-     <li>图片量化时调色板可选首色，以免生成不属于原图的新颜色。</li>
-     <li>图片量化时聚类中心采用计数最多的颜色而非计算新颜色。</li>
-     <li>简化“图片取色”的界面。</li>
-     <li>使“重复图片”和“分析图片”的界面更合理。</li>
-     <li>优化“图片编辑历史”和“文件备份”的数据处理。</li>
-     <li>编辑数据时可选是否在数据单元失去焦点时提交修改。</li>
-    </ul></li>
-   <li>Java和JavaFx升级到v20。</li>
+   <li>改进：远程目录按文件名排序、目录总是在前面。</li>
    <li>解决问题： 
     <ul>
-     <li>因无法下载image4j而打包失败。</li>
-     <li>数据的位置分布图加载失败。</li>
-     <li>当列值包含引号时，行表达式计算失败。</li>
-     <li>编辑数据单元时如点击ESC则应取消修改。</li>
-     <li>查询网址的头信息失败了。</li>
-     <li>文件备份无法被删除。</li>
-     <li>PDF的页签可能加载失败。</li>
-     <li>“最近访问的目标目录”读取错误。</li>
-     <li>编译大图片时修改历史加载得太慢了。</li>
-     <li>Webview加载网页时可能抛出大量异常。</li>
+     <li>目标文件/目录：“文件已存在”的选项未生效。</li>
+     <li>目录为空时远程目录的配置保存失败。</li>
     </ul></li>
   </ul>
-  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.3">此版本关闭的需求/问题列表</a></p>
+  <p><a target=_blank href="http://github.com/Mararsh/MyBox/issues?q=is%3Aissue+is%3Aclosed+milestone%3Av6.7.4">此版本关闭的需求/问题列表</a></p>
   <h2>注意</h2>
   <p>MyBox未经足够测试，可靠性低、稳定性差。使用MyBox，可能出现以下情况：</p>
   <ul>
@@ -53,7 +35,6 @@
   </ul>
   <p>欢迎<a target=_blank href="https://github.com/Mararsh/MyBox/issues">提交问题和需求</a> 。你的帮助可以使MyBox更好。</p>
   <h1>下载与运行</h1>
-  <p>每个版本编译好的包已发布在<a target=_blank href="https://github.com/Mararsh/MyBox/releases">Releases</a>目录下。</p>
   <h2>源码</h2>
   <table>
    <thead>
@@ -94,7 +75,7 @@
     <tr>
      <td>CentOS 7 x64</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-CentOS7-x64.tar.gz">MyBox-CentOS7-x64.tar.gz</a></td>
-     <td>280MB-</td>
+     <td>300MB-</td>
      <td>MyBox</td>
     </tr>
     <tr>
@@ -121,13 +102,13 @@
     <tr>
      <td>win</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-win-jar.zip">MyBox-win-jar.zip</a></td>
-     <td>190MB-</td>
+     <td>200MB-</td>
      <td>Java 20或更高版本</td>
     </tr>
     <tr>
      <td>linux</td>
      <td><a target=_blank href="https://sourceforge.net/projects/mara-mybox/files/latests/MyBox-linux.jar.gz">MyBox-linux.jar.gz</a></td>
-     <td>200MB-</td>
+     <td>220MB-</td>
      <td>Java 20或更高版本</td>
     </tr>
     <tr>
@@ -255,8 +236,8 @@
    <tbody>
     <tr>
      <td>开发日志</td>
-     <td>6.7.3</td>
-     <td>2023-5-22</td>
+     <td>6.7.4</td>
+     <td>2023-6-8</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_devLogs.html">html</a></td>
     </tr>
@@ -269,8 +250,8 @@
     </tr>
     <tr>
      <td>功能列表</td>
-     <td>6.7.3</td>
-     <td>2023-5-22</td>
+     <td>6.7.4</td>
+     <td>2023-6-8</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_functions_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_functions.html">html</a></td>
     </tr>
@@ -290,8 +271,8 @@
     </tr>
     <tr>
      <td>用户手册-综述</td>
-     <td>6.7.3</td>
-     <td>2023-5-22</td>
+     <td>6.7.4</td>
+     <td>2023-6-8</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/en/MyBox-Overview-en/MyBox-Overview-en.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-en.odt">odt</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/guide/zh/MyBox-Overview-zh/MyBox-Overview-zh.html">html</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.pdf">PDF</a> <a target=_blank href="https://mara-mybox.sourceforge.io/guide/MyBox-Overview-zh.odt">odt</a></td>
     </tr>
@@ -346,8 +327,8 @@
     </tr>
     <tr>
      <td>界面中的提示信息</td>
-     <td>6.7.3</td>
-     <td>2023-5-22</td>
+     <td>6.7.4</td>
+     <td>2023-6-8</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_interface_tips_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_interface_tips_zh.html">html</a></td>
     </tr>
@@ -577,8 +558,8 @@
     </tr>
     <tr>
      <td>有用的链接</td>
-     <td>6.7.3</td>
-     <td>2023-5-22</td>
+     <td>6.7.4</td>
+     <td>2023-6-8</td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_useful_link_en.html">html</a></td>
      <td><a target=_blank href="https://mara-mybox.sourceforge.io/mybox_useful_link.html">html</a></td>
     </tr>

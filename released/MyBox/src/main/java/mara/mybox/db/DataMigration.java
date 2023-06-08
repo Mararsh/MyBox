@@ -77,7 +77,8 @@ public class DataMigration {
         try (Connection conn = DerbyBase.getConnection()) {
             int lastVersion = DevTools.lastVersion(conn);
             int currentVersion = DevTools.myboxVersion(AppValues.AppVersion);
-            if (SystemConfig.getBoolean("IsAlpha", false) && !AppValues.Alpha) {
+            if (lastVersion != currentVersion
+                    || SystemConfig.getBoolean("IsAlpha", false) && !AppValues.Alpha) {
                 reloadInternalResources();
             }
             SystemConfig.setBoolean("IsAlpha", AppValues.Alpha);
@@ -85,7 +86,6 @@ public class DataMigration {
                 return true;
             }
             MyBoxLog.info("Last version: " + lastVersion + " " + "Current version: " + currentVersion);
-            reloadInternalResources();
             if (lastVersion > 0) {
 
                 if (lastVersion < 6002001) {
@@ -1570,9 +1570,8 @@ public class DataMigration {
                             if (file.isDirectory()) {
                                 continue;
                             }
-                            String name = file.getName();
-                            if (name.contains("MyBox")
-                                    || name.contains("readme") || name.contains("README")) {
+                            String name = file.getName().toLowerCase();
+                            if (name.contains("mybox") || name.contains("readme")) {
                                 file.delete();
                             }
                         }

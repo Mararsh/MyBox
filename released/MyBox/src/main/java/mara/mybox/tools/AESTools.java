@@ -77,7 +77,7 @@ public class AESTools {
 
     public static String encrypt(String plainText, String key) {
         try {
-            if (key == null || key.length() != 16) {
+            if (plainText == null || key == null || key.length() != 16) {
                 return null;
             }
             SecretKey secretKey = new SecretKeySpec(key.getBytes(ENCODING), ALGORITHM);
@@ -93,6 +93,9 @@ public class AESTools {
 
     public static String decrypt(String plainText, String key) {
         try {
+            if (plainText == null || key == null) {
+                return null;
+            }
             SecretKey secretKey = new SecretKeySpec(key.getBytes(ENCODING), ALGORITHM);
             Cipher cipher = Cipher.getInstance(PATTERN);
             cipher.init(Cipher.DECRYPT_MODE, secretKey);

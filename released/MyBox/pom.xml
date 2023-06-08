@@ -4,7 +4,7 @@
 
     <groupId>mara</groupId>
     <artifactId>MyBox</artifactId>
-    <version>6.7.3</version>
+    <version>6.7.4</version>
     <packaging>jar</packaging>
     <name>MyBox</name>
     <properties>
@@ -251,7 +251,6 @@
             <artifactId>jackson-databind</artifactId>
             <version>2.15.0</version>
         </dependency>
-       
     </dependencies>
     
 
