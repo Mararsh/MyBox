@@ -520,11 +520,11 @@ public class ControlImagesSave extends BaseController {
                 try {
                     String imagesFilePrefix = targetFile.getParent() + File.separator + FileNameTools.prefix(targetFile.getName());
                     for (int i = 0; i < imageInfos.size(); ++i) {
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         BufferedImage bufferedImage = image(i);
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         if (bufferedImage == null) {
@@ -533,7 +533,7 @@ public class ControlImagesSave extends BaseController {
                         String filename = imagesFilePrefix + "-" + StringTools.fillLeftZero(i, digit) + "." + imagesFormat;
                         BufferedImage converted = ImageConvertTools.convertColorSpace(bufferedImage, formatController.attributes);
                         ImageFileWriters.writeImageFile(converted, formatController.attributes, filename);
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         fileNames.add(filename);
@@ -607,16 +607,16 @@ public class ControlImagesSave extends BaseController {
 
                     int count = 0;
                     for (int i = 0; i < imageInfos.size(); ++i) {
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         BufferedImage bufferedImage = image(i);
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         String sourceFormat = imageInfos.get(i).getImageFormat();
                         PdfTools.writePage(document, sourceFormat, bufferedImage, ++count, imageInfos.size(), pdfOptionsController);
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         String msg = MessageFormat.format(message("NumberPageWritten"), (i + 1) + "/" + imageInfos.size());
@@ -673,16 +673,16 @@ public class ControlImagesSave extends BaseController {
                     writer.prepareWriteSequence(null);
                     ImageWriteParam param = ImageTiffFile.getPara(null, writer);
                     for (int i = 0; i < imageInfos.size(); ++i) {
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         BufferedImage bufferedImage = image(i);
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         IIOMetadata metaData = ImageTiffFile.getWriterMeta(null, bufferedImage, writer, param);
                         writer.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         String msg = MessageFormat.format(message("NumberImageWritten"), (i + 1) + "/" + imageInfos.size());
@@ -734,11 +734,11 @@ public class ControlImagesSave extends BaseController {
                     gifWriter.setOutput(out);
                     gifWriter.prepareWriteSequence(null);
                     for (int i = 0; i < imageInfos.size(); ++i) {
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         BufferedImage bufferedImage = image(i);
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         if (!gifKeepSize) {
@@ -746,7 +746,7 @@ public class ControlImagesSave extends BaseController {
                         }
                         ImageGifFile.getParaMeta(imageInfos.get(i).getDuration(), gifLoopCheck.isSelected(), param, metaData);
                         gifWriter.writeToSequence(new IIOImage(bufferedImage, null, metaData), param);
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         String msg = MessageFormat.format(message("NumberImageWritten"), (i + 1) + "/" + imageInfos.size());
@@ -792,19 +792,19 @@ public class ControlImagesSave extends BaseController {
                 File tmpFile = FileTmpTools.getTempFile();
                 try (HSLFSlideShow ppt = new HSLFSlideShow()) {
                     for (int i = 0; i < imageInfos.size(); ++i) {
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         ppt.setPageSize(new java.awt.Dimension(pptWidth, pptHeight));
                         BufferedImage image = ImageConvertTools.convertToPNG(image(i));
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         HSLFPictureShape shape = MicrosoftDocumentTools.imageShape(ppt, image, "png");
                         shape.setAnchor(new java.awt.Rectangle(pptMargin, pptMargin, image.getWidth(), image.getHeight()));
                         HSLFSlide slide = ppt.createSlide();
                         slide.addShape(shape);
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         String msg = MessageFormat.format(message("NumberImageWritten"), (i + 1) + "/" + imageInfos.size());

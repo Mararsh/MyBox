@@ -89,13 +89,14 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
             @Override
             protected boolean handle() {
                 try {
+                    data2D.setTask(this);
                     List<List<String>> data = filteredData(dataColsIndices, false);
                     if (data == null || data.isEmpty()) {
                         error = message("NoData");
                         return false;
                     }
                     regression = new OLSLinearRegression(interceptCheck.isSelected())
-                            .setTask(task).setScale(scale)
+                            .setTask(this).setScale(scale)
                             .setInvalidAs(invalidAs)
                             .setyName(yName).setxNames(xNames);
                     int n = data.size();
@@ -106,6 +107,9 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
                         List<String> row = data.get(i);
                         sy[i] = row.get(0);
                         for (int j = 0; j < k; j++) {
+                            if (task == null || isCancelled()) {
+                                return false;
+                            }
                             sx[i][j] = row.get(j + 1);
                         }
                     }

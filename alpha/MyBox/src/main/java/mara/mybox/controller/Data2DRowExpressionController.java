@@ -113,7 +113,7 @@ public class Data2DRowExpressionController extends BaseData2DTargetsController {
             @Override
             protected boolean handle() {
                 try {
-                    data2D.setTask(task);
+                    data2D.setTask(this);
                     List<String> filled = data2D.calculateScriptsStatistic(scripts);
                     if (filled == null) {
                         return false;

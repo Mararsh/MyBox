@@ -34,30 +34,31 @@ import mara.mybox.value.AppVariables;
  * @License Apache License Version 2.0
  */
 public class ControlColorsPane extends BaseController {
-
+    
     protected ColorsManageController manageController;
     protected ColorPaletteName palette;
     protected TableColorPalette tableColorPalette;
     protected Rectangle clickedRect, enteredRect;
     protected DropShadow shadowEffect;
     protected double rectSize;
-    protected SimpleBooleanProperty clickNotify;
+    protected SimpleBooleanProperty clickNotify, loadedNotify;
     protected boolean canDragDrop;
-
+    
     @FXML
     protected ScrollPane scrollPane;
     @FXML
     protected FlowPane colorsPane;
     @FXML
     protected Label colorsPaneLabel;
-
+    
     @Override
     public void initValues() {
         try {
             super.initValues();
-
+            
             tableColorPalette = new TableColorPalette();
             clickNotify = new SimpleBooleanProperty(false);
+            loadedNotify = new SimpleBooleanProperty(false);
             shadowEffect = new DropShadow();
             rectSize = AppVariables.iconSize * 0.8;
             canDragDrop = false;
@@ -65,19 +66,19 @@ public class ControlColorsPane extends BaseController {
             MyBoxLog.error(e.toString());
         }
     }
-
+    
     public void setParameter(ColorsManageController manageController, boolean canDragDrop) {
         this.manageController = manageController;
         this.canDragDrop = canDragDrop;
     }
-
+    
     public boolean canDragDrop() {
         if (!canDragDrop) {
             return false;
         }
         return manageController == null || !manageController.palettesController.isAllColors();
     }
-
+    
     public void loadPalette(ColorPaletteName palette, boolean scrollEnd) {
         if (palette == null) {
             return;
@@ -87,26 +88,26 @@ public class ControlColorsPane extends BaseController {
         }
         task = new SingletonTask<Void>(this) {
             List<ColorData> colors;
-
+            
             @Override
             protected boolean handle() {
                 colors = tableColorPalette.colors(palette.getCpnid());
                 return true;
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 loadColors(palette, colors, scrollEnd);
             }
-
+            
         };
         start(task);
     }
-
+    
     public void loadColors(ColorPaletteName palette, List<ColorData> colors) {
         loadColors(palette, colors, false);
     }
-
+    
     public synchronized void loadColors(ColorPaletteName palette, List<ColorData> colors, boolean scrollEnd) {
         this.palette = palette;
         if (canDragDrop()) {
@@ -127,7 +128,7 @@ public class ControlColorsPane extends BaseController {
         }
         backgroundTask = new SingletonTask<Void>(this) {
             List<Rectangle> rects = new ArrayList<>();
-
+            
             @Override
             protected boolean handle() {
                 for (ColorData data : colors) {
@@ -148,12 +149,15 @@ public class ControlColorsPane extends BaseController {
                                 return;
                             }
                             colorsPane.getChildren().addAll(display);
+                            if (scrollEnd) {
+                                scrollPane.setVvalue(1.0);
+                            }
                         });
                     }
                 }
                 return true;
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 if (isCancelled()) {
@@ -166,11 +170,16 @@ public class ControlColorsPane extends BaseController {
                     scrollPane.setVvalue(1.0);
                 }
             }
-
+            
+            @Override
+            protected void finalAction() {
+                loadedNotify.set(!loadedNotify.get());
+            }
+            
         };
         start(backgroundTask, false);
     }
-
+    
     public Rectangle makeColorRect(ColorData data) {
         try {
             if (data == null) {
@@ -237,7 +246,7 @@ public class ControlColorsPane extends BaseController {
             return null;
         }
     }
-
+    
     public void rectClicked(Rectangle rect) {
         if (isSettingValues) {
             return;
@@ -263,7 +272,7 @@ public class ControlColorsPane extends BaseController {
         isSettingValues = false;
         clickNotify.set(!clickNotify.get());
     }
-
+    
     public void rectEntered(Rectangle rect) {
         if (isSettingValues || rect.equals(enteredRect) || rect.equals(clickedRect)) {
             return;
@@ -282,7 +291,7 @@ public class ControlColorsPane extends BaseController {
         enteredRect = rect;
         isSettingValues = false;
     }
-
+    
     public synchronized void colorDropped(DragEvent event, Rectangle targetRect) {
         if (event == null || !canDragDrop()) {
             return;
@@ -303,9 +312,9 @@ public class ControlColorsPane extends BaseController {
         }
         Color sourceColor = Color.web(event.getDragboard().getString());
         task = new SingletonTask<Void>(this) {
-
+            
             private List<ColorData> colors = null;
-
+            
             @Override
             protected boolean handle() {
                 try {
@@ -349,7 +358,7 @@ public class ControlColorsPane extends BaseController {
                 }
                 return true;
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 if (manageController != null) {
@@ -358,18 +367,18 @@ public class ControlColorsPane extends BaseController {
                     loadPalette(palette, false);
                 }
             }
-
+            
             @Override
             protected void finalAction() {
                 event.setDropCompleted(true);
                 event.consume();
                 task = null;
             }
-
+            
         };
         start(task);
     }
-
+    
     @FXML
     public void exitPane() {
         if (enteredRect != null && !enteredRect.equals(clickedRect)) {
@@ -379,12 +388,12 @@ public class ControlColorsPane extends BaseController {
             enteredRect = null;
         }
     }
-
+    
     public ColorData clickedColor() {
         if (clickedRect == null) {
             return null;
         }
         return (ColorData) clickedRect.getUserData();
     }
-
+    
 }

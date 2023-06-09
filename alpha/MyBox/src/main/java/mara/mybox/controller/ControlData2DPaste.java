@@ -114,7 +114,7 @@ public class ControlData2DPaste extends BaseController {
 
             @Override
             protected boolean handle() {
-                data = sourceController.selectedData(task);
+                data = sourceController.selectedData(this);
                 return data != null && !data.isEmpty();
             }
 

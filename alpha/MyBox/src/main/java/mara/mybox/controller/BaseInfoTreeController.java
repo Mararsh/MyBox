@@ -102,7 +102,7 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
                     InfoNode rootNode = root(conn);
-                    if (task == null || task.isCancelled()) {
+                    if (task == null || isCancelled()) {
                         return false;
                     }
                     rootItem = new TreeItem(rootNode);
@@ -111,7 +111,7 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
                     if (size < 1) {
                         return true;
                     }
-                    if (task == null || task.isCancelled()) {
+                    if (task == null || isCancelled()) {
                         return false;
                     }
                     rootItem.getChildren().add(new TreeItem(new InfoNode()));
@@ -120,7 +120,7 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
                     error = e.toString();
                     return false;
                 }
-                return task != null && !task.isCancelled();
+                return task != null && !isCancelled();
             }
 
             @Override

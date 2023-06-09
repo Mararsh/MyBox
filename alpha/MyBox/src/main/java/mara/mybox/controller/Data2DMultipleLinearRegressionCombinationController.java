@@ -95,6 +95,7 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
             @Override
             protected boolean handle() {
                 try {
+                    data2D.setTask(this);
                     data = filteredData(dataColsIndices, false);
                     if (data == null || data.isEmpty()) {
                         error = message("NoData");
@@ -110,6 +111,9 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
                     for (int yIndex = 0; yIndex < yLen; yIndex++) {
                         for (int i = 0; i < xLen; i++) {
                             for (int j = i + 1; j <= xLen; j++) {
+                                if (task == null || isCancelled()) {
+                                    return false;
+                                }
                                 List<Integer> xIndices = xList.subList(i, j);
                                 regress(yIndex, xIndices);
                             }
@@ -145,11 +149,14 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
                         List<String> row = data.get(r);
                         sy[r] = row.get(yIndex);
                         for (int c = 0; c < k; c++) {
+                            if (task == null || isCancelled()) {
+                                return;
+                            }
                             sx[r][c] = row.get(xIndices.get(c));
                         }
                     }
                     regression = new OLSLinearRegression(interceptCheck.isSelected())
-                            .setTask(task).setScale(scale)
+                            .setTask(this).setScale(scale)
                             .setInvalidAs(invalidAs)
                             .setyName(yName).setxNames(xnames);
                     regression.calculate(sy, sx);
@@ -166,6 +173,9 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
+                            if (task == null || isCancelled()) {
+                                return;
+                            }
                             resultsController.addRow(row);
                         }
                     });

@@ -361,7 +361,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
 
             @Override
             protected boolean handle() {
-                data2D.setTask(task);
+                data2D.setTask(this);
                 List<String> filledScripts = data2D.calculateScriptsStatistic(scripts);
                 if (filledScripts == null || filledScripts.size() != scripts.size()) {
                     return true;
@@ -402,7 +402,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
 
     public List<List<String>> filteredData(List<Integer> colIndices, boolean needRowNumber) {
         try {
-            data2D.startTask(task, filterController.filter);
+            data2D.startTask(data2D.getTask(), filterController.filter);
             if (isAllPages()) {
                 outputData = data2D.allRows(colIndices, needRowNumber);
             } else {
@@ -489,10 +489,11 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
 
     public TmpTable tmpTable(String dname, List<Integer> colIndices, boolean needRowNumber) {
         try {
+            SingletonTask data2DTask = data2D.getTask();
             Data2D tmp2D = data2D.cloneAll();
-            tmp2D.startTask(task, filterController.filter);
-            if (task != null) {
-                task.setInfo(message("Filter") + "...");
+            tmp2D.startTask(data2DTask, filterController.filter);
+            if (data2DTask != null) {
+                data2DTask.setInfo(message("Filter") + "...");
             }
             TmpTable tmpTable = new TmpTable()
                     .setSourceData(tmp2D)
@@ -516,7 +517,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                     tmpTable.setGroupExpression(groupController.filledExpression);
                 }
             }
-            tmpTable.setTask(task);
+            tmpTable.setTask(data2DTask);
             if (!isAllPages()) {
                 outputData = tableFiltered(data2D.columnIndices(), needRowNumber);
                 if (outputData == null || outputData.isEmpty()) {
@@ -555,7 +556,8 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
                     .setOrders(orders).setMax(max)
                     .setSourcePickIndice(colIndices)
                     .setIncludeRowNumber(needRowNumber)
-                    .setScale((short) dscale).setInvalidAs(invalidAs).setTask(task)
+                    .setScale((short) dscale).setInvalidAs(invalidAs)
+                    .setTask(data2D.getTask())
                     .setTargetType(targetType);
             return group;
         } catch (Exception e) {

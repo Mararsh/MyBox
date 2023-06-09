@@ -191,7 +191,7 @@ public class DataFileExcelController extends BaseData2DFileController {
 
             @Override
             protected boolean handle() {
-                dataFileExcel.setTask(task);
+                dataFileExcel.setTask(this);
                 return dataFileExcel.newSheet(newName);
             }
 
@@ -235,7 +235,7 @@ public class DataFileExcelController extends BaseData2DFileController {
 
             @Override
             protected boolean handle() {
-                dataFileExcel.setTask(task);
+                dataFileExcel.setTask(this);
                 return dataFileExcel.renameSheet(newName);
             }
 

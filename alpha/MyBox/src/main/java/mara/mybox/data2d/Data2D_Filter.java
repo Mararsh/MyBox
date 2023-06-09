@@ -28,6 +28,11 @@ public abstract class Data2D_Filter extends Data2D_Data {
         startFilter();
     }
 
+    public void startFilter(DataFilter filter) {
+        this.filter = filter;
+        startFilter();
+    }
+
     public void stopTask() {
         task = null;
         stopFilter();

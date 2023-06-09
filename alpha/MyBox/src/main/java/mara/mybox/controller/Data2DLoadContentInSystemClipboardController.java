@@ -62,7 +62,7 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
             @Override
             protected boolean handle() {
                 try {
-                    data = sourceController.selectedData(task);
+                    data = sourceController.selectedData(this);
                     return data != null && !data.isEmpty();
                 } catch (Exception e) {
                     error = e.toString();

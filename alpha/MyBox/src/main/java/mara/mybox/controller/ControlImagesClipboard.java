@@ -318,7 +318,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
             protected boolean handle() {
                 clips = new ArrayList<>();
                 for (ImageItem item : ImageItem.predefined()) {
-                    if (task == null || task.isCancelled()) {
+                    if (task == null || isCancelled()) {
                         return true;
                     }
                     Image image = item.readImage();

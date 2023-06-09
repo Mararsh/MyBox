@@ -685,7 +685,7 @@ public class BaseData2DSourceController extends ControlData2DLoad {
             if (data2D == null || checkedColsIndices == null) {
                 return null;
             }
-            data2D.startTask(task, filterController != null ? filterController.filter : null);
+            data2D.startFilter(filterController != null ? filterController.filter : null);
             if (!data2D.fillFilterStatistic()) {
                 return null;
             }

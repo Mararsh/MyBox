@@ -617,7 +617,7 @@ public class ControlMap extends BaseController {
                             .append("\"  style=\"max-width:95%;\"></div>\n");
                     s.append("<hr>\n");
 
-                    if (task == null || task.isCancelled()) {
+                    if (task == null || isCancelled()) {
                         return false;
                     }
 
@@ -627,7 +627,7 @@ public class ControlMap extends BaseController {
                                 message("Label"), message("Information"), message("CoordinateSystem")));
                         StringTable table = new StringTable(names);
                         for (MapPoint code : mapPoints) {
-                            if (task == null || task.isCancelled()) {
+                            if (task == null || isCancelled()) {
                                 return false;
                             }
                             table.add(code.htmlValues());
@@ -680,7 +680,7 @@ public class ControlMap extends BaseController {
 
                     data = new ArrayList<>();
                     for (MapPoint code : mapPoints) {
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         data.add(code.dataValues());

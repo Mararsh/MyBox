@@ -55,7 +55,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
                 @Override
                 protected boolean handle() {
                     for (ImageItem item : ImageItem.predefined()) {
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return true;
                         }
                         Image image = item.readImage();

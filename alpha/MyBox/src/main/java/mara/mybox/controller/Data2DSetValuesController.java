@@ -105,7 +105,7 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
             @Override
             protected boolean handle() {
                 try {
-                    data2D.setTask(task);
+                    data2D.setTask(this);
                     List<String> filled = data2D.calculateScriptsStatistic(scripts);
                     if (filled == null) {
                         return false;
@@ -169,7 +169,7 @@ public class Data2DSetValuesController extends BaseData2DTargetsController {
                             && tableController.dataController.backupController.needBackup()) {
                         tableController.dataController.backupController.addBackup(task, data2D.getFile());
                     }
-                    data2D.startTask(task, filterController.filter);
+                    data2D.startTask(this, filterController.filter);
                     count = data2D.setValue(checkedColsIndices, valueController.setValue, valueController.errorContinueCheck.isSelected());
                     data2D.stopFilter();
                     return count >= 0;

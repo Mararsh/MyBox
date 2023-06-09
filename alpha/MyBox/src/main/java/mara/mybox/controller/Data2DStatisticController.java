@@ -188,14 +188,14 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
             @Override
             protected boolean handle() {
                 try {
-                    data2D.startTask(task, filterController.filter);
-                    calculation.setTask(task);
+                    data2D.startTask(this, filterController.filter);
+                    calculation.setTask(this);
                     if (calculation.needStored()) {
-                        TmpTable tmpTable = TmpTable.toStatisticTable(data2D, task, checkedColsIndices, invalidAs);
+                        TmpTable tmpTable = TmpTable.toStatisticTable(data2D, this, checkedColsIndices, invalidAs);
                         if (tmpTable == null) {
                             return false;
                         }
-                        tmpTable.startTask(task, null);
+                        tmpTable.startTask(this, null);
                         calculation.setData2D(tmpTable)
                                 .setColsIndices(tmpTable.columnIndices().subList(1, tmpTable.columnsNumber()))
                                 .setColsNames(tmpTable.columnNames().subList(1, tmpTable.columnsNumber()));
@@ -245,15 +245,15 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
             @Override
             protected boolean handle() {
                 try {
-                    data2D.startTask(task, filterController.filter);
-                    calculation.setTask(task);
+                    data2D.startTask(this, filterController.filter);
+                    calculation.setTask(this);
                     if (calculation.needStored()) {
                         DataTable dataTable = data2D.singleColumn(task, checkedColsIndices);
                         if (dataTable == null) {
                             return false;
                         }
-                        dataTable.startTask(task, null);
-                        calculation.setTask(task);
+                        dataTable.startTask(this, null);
+                        calculation.setTask(this);
                         calculation.setData2D(dataTable)
                                 .setColsIndices(dataTable.columnIndices().subList(1, 2))
                                 .setColsNames(dataTable.columnNames().subList(1, 2));

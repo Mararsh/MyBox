@@ -53,12 +53,15 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
             @Override
             protected boolean handle() {
                 try {
-                    data2D.startTask(task, filterController.filter);
+                    data2D.startTask(this, filterController.filter);
                     if (otherColsIndices.isEmpty()) {
                         otherColsIndices = data2D.columnIndices();
                     }
                     for (int yIndex : otherColsIndices) {
                         for (int xIndex : checkedColsIndices) {
+                            if (task == null || isCancelled()) {
+                                return false;
+                            }
                             if (xIndex == yIndex) {
                                 continue;
                             }
@@ -97,6 +100,9 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
+                            if (task == null || isCancelled()) {
+                                return;
+                            }
                             resultsController.addRow(row);
                         }
                     });

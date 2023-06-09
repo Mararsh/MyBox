@@ -260,7 +260,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             @Override
             protected boolean handle() {
                 try {
-                    data2D.startTask(task, filterController.filter);
+                    data2D.startTask(this, filterController.filter);
                     readData();
                     data2D.stopFilter();
                     return outputData != null && !outputData.isEmpty();
@@ -447,6 +447,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             @Override
             protected boolean handle() {
                 try {
+                    data2D.setTask(this);
                     List<Integer> cols = dataColsIndices;
                     List<String> sortNames = sortNames();
                     if (sortNames != null) {
@@ -478,6 +479,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             @Override
             protected void finalAction() {
                 super.finalAction();
+                data2D.stopTask();
                 task = null;
                 if (ok) {
                     loadChartData();

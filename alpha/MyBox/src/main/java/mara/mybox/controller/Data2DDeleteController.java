@@ -47,7 +47,7 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
             @Override
             protected boolean handle() {
                 try {
-                    data2D.startTask(task, filterController.filter);
+                    data2D.startTask(this, filterController.filter);
                     data = new ArrayList<>();
                     filteredRowsIndices = filteredRowsIndices();
                     for (int i = 0; i < tableController.tableData.size(); i++) {
@@ -115,7 +115,7 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
                             && tableController.dataController.backupController.needBackup()) {
                         tableController.dataController.backupController.addBackup(task, data2D.getFile());
                     }
-                    data2D.startTask(task, filterController.filter);
+                    data2D.startTask(this, filterController.filter);
                     count = data2D.deleteRows(errorContinueCheck.isSelected());
                     data2D.stopFilter();
                     return count >= 0;

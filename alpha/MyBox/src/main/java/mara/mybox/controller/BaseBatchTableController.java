@@ -340,7 +340,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
                 try {
                     valids = new ArrayList<>();
                     for (int i = 0; i < tableData.size(); i++) {
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         File file = file(i);
@@ -352,7 +352,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
                             }
                         }
                     }
-                    return task != null && !task.isCancelled();
+                    return task != null && !isCancelled();
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -360,13 +360,13 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             }
 
             private void handleDir(File dir) {
-                if (task == null || task.isCancelled() || dir == null) {
+                if (task == null || isCancelled() || dir == null) {
                     return;
                 }
                 File[] list = dir.listFiles();
                 if (list != null) {
                     for (File file : list) {
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return;
                         }
                         if (file.isDirectory()) {

@@ -183,20 +183,25 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             @Override
             protected boolean handle() {
                 try {
+                    data2D.setTask(this);
                     group = groupData(DataTableGroup.TargetType.Table,
                             checkedColsIndices, false, -1, scale);
                     if (!group.run()) {
                         return false;
                     }
-                    if (task != null) {
-                        task.setInfo(message("Statistic") + "...");
+                    if (task == null || isCancelled()) {
+                        return false;
                     }
+                    task.setInfo(message("Statistic") + "...");
                     statistic = new DataTableGroupStatistic()
                             .setGroups(group).setCountChart(true)
                             .setCalculation(calculation)
                             .setCalNames(checkedColsNames)
-                            .setTask(task);
+                            .setTask(this);
                     if (!statistic.run()) {
+                        return false;
+                    }
+                    if (task == null || isCancelled()) {
                         return false;
                     }
                     dataFile = statistic.getChartData();
@@ -248,7 +253,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             @Override
             protected boolean handle() {
                 try {
-                    dataFile.startTask(backgroundTask, null);
+                    dataFile.startTask(this, null);
 
                     List<List<String>> resultsData;
                     if (displayAllCheck.isSelected()) {

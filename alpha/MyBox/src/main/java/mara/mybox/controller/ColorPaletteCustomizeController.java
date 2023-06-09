@@ -125,6 +125,9 @@ public class ColorPaletteCustomizeController extends BaseChildController {
             if (!PopTools.askSure(baseTitle, message("Total") + ": " + number)) {
                 return;
             }
+            if (task != null) {
+                task.cancel();
+            }
             task = new SingletonTask<Void>(this) {
                 private ColorPaletteName newPalatte;
                 private int count = 0;

@@ -232,7 +232,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    data2D.startTask(task, null);
+                    data2D.startTask(this, null);
                     data2D.readDataDefinition(conn);
                     if (isCancelled()) {
                         return false;
@@ -856,7 +856,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
 
     @Override
     public List<List<String>> readPageData(Connection conn) {
-        data2D.startTask(task, null);
+        data2D.startFilter(null);
         return data2D.readPageData(conn);
     }
 

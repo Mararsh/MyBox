@@ -543,14 +543,6 @@ public abstract class BaseImageController_ImageView extends BaseController {
     protected void startPickingColor() {
         if (paletteController == null || !paletteController.getMyStage().isShowing()) {
             paletteController = ColorsPickingController.oneOpen(this);
-            if (imageLabel != null) {
-                imageLabelOriginal = new Label(imageLabel.getText());
-                imageLabelOriginal.setStyle(imageLabel.getStyle());
-                imageLabel.setText(message("PickingColorsNow"));
-                imageLabel.setStyle(NodeStyleTools.darkRedTextStyle());
-            } else {
-                popInformation(message("PickingColorsNow"));
-            }
         }
     }
 
@@ -558,16 +550,6 @@ public abstract class BaseImageController_ImageView extends BaseController {
         if (paletteController != null) {
             paletteController.closeStage();
             paletteController = null;
-        }
-        if (imageLabel != null) {
-            if (imageLabelOriginal != null) {
-                imageLabel.setText(imageLabelOriginal.getText());
-                imageLabel.setStyle(imageLabelOriginal.getStyle());
-                imageLabelOriginal = null;
-            } else {
-                imageLabel.setText("");
-                imageLabel.setStyle(null);
-            }
         }
     }
 

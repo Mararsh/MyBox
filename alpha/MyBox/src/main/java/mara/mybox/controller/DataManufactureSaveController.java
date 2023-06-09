@@ -51,7 +51,7 @@ public class DataManufactureSaveController extends BaseChildController {
                     String name = targetController.name();
                     if (tableController.data2D.isMutiplePages()) {
                         if (tableController.data2D.isTableChanged()) {
-                            tableController.data2D.startTask(task, null);
+                            tableController.data2D.startTask(this, null);
                             csvFile = ((DataFileCSV) (tableController.data2D)).savePageAs(name);
                             tableController.data2D.stopTask();
                         } else {

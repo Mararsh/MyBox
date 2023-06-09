@@ -462,7 +462,7 @@ public class ImagesPlayController extends BaseImagesListController {
                     }
                     framesNumber = imageInfos.size();
                     for (int i = 0; i < framesNumber; i++) {
-                        if (task == null || task.isCancelled()) {
+                        if (task == null || isCancelled()) {
                             return false;
                         }
                         ImageInformation info = imageInfos.get(i);

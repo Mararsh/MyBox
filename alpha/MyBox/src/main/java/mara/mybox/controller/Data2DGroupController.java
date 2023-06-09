@@ -50,6 +50,7 @@ public class Data2DGroupController extends BaseData2DHandleController {
             @Override
             protected boolean handle() {
                 try {
+                    data2D.setTask(this);
                     TargetType targetType;
                     if (fileRadio.isSelected()) {
                         targetType = TargetType.SingleFile;

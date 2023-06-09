@@ -122,7 +122,7 @@ public class Data2DSpliceController extends BaseData2DController {
             protected boolean handle() {
                 try {
                     DataFileCSV csvA, csvB;
-                    dataAController.data2D.startTask(task, dataAController.filterController.filter);
+                    dataAController.data2D.startTask(this, dataAController.filterController.filter);
                     if (!dataAController.data2D.fillFilterStatistic()) {
                         return false;
                     }
@@ -139,7 +139,7 @@ public class Data2DSpliceController extends BaseData2DController {
                         return false;
                     }
 
-                    dataBController.data2D.startTask(task, dataBController.filterController.filter);
+                    dataBController.data2D.startTask(this, dataBController.filterController.filter);
                     if (!dataBController.data2D.fillFilterStatistic()) {
                         return false;
                     }
@@ -147,7 +147,7 @@ public class Data2DSpliceController extends BaseData2DController {
                         csvB = dataBController.data2D.copy(null, dataBController.checkedColsIndices,
                                 false, true, false);
                     } else {
-                        csvB = DataFileCSV.save(null, task, ",", dataBController.checkedColumns,
+                        csvB = DataFileCSV.save(null, this, ",", dataBController.checkedColumns,
                                 dataBController.tableFiltered(false));
                     }
                     dataBController.data2D.stopTask();
@@ -220,7 +220,7 @@ public class Data2DSpliceController extends BaseData2DController {
         }
         DataFileCSV targetCSV = DataFileCSV.tmpCSV(targetController.name());
         int rowCount = 0;
-        try ( CSVPrinter csvPrinter = new CSVPrinter(
+        try (CSVPrinter csvPrinter = new CSVPrinter(
                 new FileWriter(targetCSV.getFile(), targetCSV.getCharset()), targetCSV.cvsFormat())) {
             List<String> row = new ArrayList<>();
             for (Data2DColumn c : columns) {
@@ -228,7 +228,7 @@ public class Data2DSpliceController extends BaseData2DController {
             }
             csvPrinter.printRecord(row);
             int colLen = columns.size();
-            try ( CSVParser parser = CSVParser.parse(csvA.getFile(), csvA.getCharset(), csvA.cvsFormat())) {
+            try (CSVParser parser = CSVParser.parse(csvA.getFile(), csvA.getCharset(), csvA.cvsFormat())) {
                 for (CSVRecord record : parser) {
                     if (task == null || task.isCancelled()) {
                         return null;
@@ -250,7 +250,7 @@ public class Data2DSpliceController extends BaseData2DController {
                 }
                 MyBoxLog.error(e.toString());
             }
-            try ( CSVParser parser = CSVParser.parse(csvB.getFile(), csvB.getCharset(), csvB.cvsFormat())) {
+            try (CSVParser parser = CSVParser.parse(csvB.getFile(), csvB.getCharset(), csvB.cvsFormat())) {
                 for (CSVRecord record : parser) {
                     if (task == null || task.isCancelled()) {
                         return null;
@@ -323,10 +323,10 @@ public class Data2DSpliceController extends BaseData2DController {
         }
         DataFileCSV targetCSV = DataFileCSV.tmpCSV(targetController.name());
         int rowCount = 0;
-        try ( CSVPrinter csvPrinter = new CSVPrinter(
+        try (CSVPrinter csvPrinter = new CSVPrinter(
                 new FileWriter(targetCSV.getFile(), targetCSV.getCharset()), targetCSV.cvsFormat());
-                 CSVParser parserA = CSVParser.parse(csvA.getFile(), csvA.getCharset(), csvA.cvsFormat());
-                 CSVParser parserB = CSVParser.parse(csvB.getFile(), csvB.getCharset(), csvB.cvsFormat())) {
+                CSVParser parserA = CSVParser.parse(csvA.getFile(), csvA.getCharset(), csvA.cvsFormat());
+                CSVParser parserB = CSVParser.parse(csvB.getFile(), csvB.getCharset(), csvB.cvsFormat())) {
             List<String> row = new ArrayList<>();
             List<String> validNames = new ArrayList<>();
             for (Data2DColumn c : columns) {

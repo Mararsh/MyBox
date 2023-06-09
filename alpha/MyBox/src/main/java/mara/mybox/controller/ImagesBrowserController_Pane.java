@@ -217,7 +217,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
                 try {
                     mfList = new ArrayList<>();
                     for (int i = 0; i < imageFileList.size(); ++i) {
-                        if (backgroundTask == null || backgroundTask.isCancelled()) {
+                        if (backgroundTask == null || isCancelled()) {
                             break;
                         }
                         ImageView iView = imageViewList.get(i);
@@ -387,7 +387,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
                 protected boolean handle() {
                     try {
                         for (int i = 0; i < imageFileList.size(); ++i) {
-                            if (backgroundTask == null || backgroundTask.isCancelled()) {
+                            if (backgroundTask == null || isCancelled()) {
                                 break;
                             }
                             File file = imageFileList.get(i);

@@ -6,6 +6,7 @@ import javafx.scene.chart.StackedBarChart;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * Reference:
@@ -53,8 +54,12 @@ public class LabeledStackedBarChart<X, Y> extends StackedBarChart<X, Y> {
 
     @Override
     protected void layoutPlotChildren() {
-        super.layoutPlotChildren();
-        chartMaker.displayLabels();
+        try {
+            super.layoutPlotChildren();
+            chartMaker.displayLabels();
+        } catch (Exception e) {
+            MyBoxLog.debug(e);
+        }
     }
 
 }

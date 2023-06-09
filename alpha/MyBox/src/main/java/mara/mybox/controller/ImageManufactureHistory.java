@@ -486,7 +486,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
                     list = tableImageEditHistory.read(conn, currentFile);
                     if (list != null) {
                         for (ImageEditHistory his : list) {
-                            if (task == null || task.isCancelled()
+                            if (task == null || isCancelled()
                                     || !currentFile.equals(imageController.sourceFile)) {
                                 return false;
                             }

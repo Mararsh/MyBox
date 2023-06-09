@@ -118,7 +118,7 @@ public class DataTableQueryEditor extends TreeNodeEditor {
             @Override
             protected boolean handle() {
                 TableStringValues.add("DataTableQueryHistories", query);
-                dataTable.setTask(task);
+                dataTable.setTask(this);
                 dataCSV = dataTable.query(targetController.name(), task, query,
                         rowNumberCheck.isSelected() ? message("Row") : null);
                 return dataCSV != null;

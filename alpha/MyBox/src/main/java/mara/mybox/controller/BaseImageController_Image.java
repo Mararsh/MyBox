@@ -74,7 +74,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                 loadedInfo = new ImageInformation(file);
                 loadedInfo.setIndex(frame);
                 loadedInfo.setRequiredWidth(width);
-                loadedInfo.setTask(loadTask);
+                loadedInfo.setTask(this);
                 loadedInfo = ImageFileReaders.makeInfo(loadedInfo, onlyInformation);
                 if (loadedInfo == null) {
                     return false;

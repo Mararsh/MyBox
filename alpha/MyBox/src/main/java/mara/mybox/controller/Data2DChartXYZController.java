@@ -233,6 +233,7 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
             @Override
             protected boolean handle() {
                 try {
+                    data2D.setTask(this);
                     chartFile = null;
                     outputData = filteredData(dataColsIndices, false);
                     if (outputData == null || outputData.isEmpty()) {

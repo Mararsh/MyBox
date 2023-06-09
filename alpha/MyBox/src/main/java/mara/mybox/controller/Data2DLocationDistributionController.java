@@ -265,6 +265,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             @Override
             protected boolean handle() {
                 try {
+                    data2D.setTask(this);
                     csvData = sortedFile(data2D.dataName(), dataColsIndices, false);
                     if (csvData == null) {
                         return false;

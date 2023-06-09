@@ -552,7 +552,8 @@ public class XYChartMaker<X, Y> extends XYChartOptions<X, Y> {
     }
 
     protected void displayLabels() {
-        if (labelType == null || labelLocation == null
+        if (nodeLabels == null
+                || labelType == null || labelLocation == null
                 || labelType == LabelType.NotDisplay || labelType == LabelType.Pop) {
             return;
         }
@@ -573,7 +574,8 @@ public class XYChartMaker<X, Y> extends XYChartOptions<X, Y> {
     }
 
     protected void removeLabels(ObservableList<Node> nodes) {
-        if (labelType == null || labelType == LabelType.NotDisplay || labelType == LabelType.Pop) {
+        if (nodeLabels == null
+                || labelType == null || labelType == LabelType.NotDisplay || labelType == LabelType.Pop) {
             return;
         }
         for (Node node : nodeLabels.keySet()) {

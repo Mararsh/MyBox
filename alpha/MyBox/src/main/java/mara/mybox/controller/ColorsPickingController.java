@@ -43,7 +43,7 @@ public class ColorsPickingController extends BaseChildController {
     protected Label paletteLabel;
 
     public ColorsPickingController() {
-        baseTitle = message("PickingColorsNow");
+        baseTitle = message("PickColors");
     }
 
     @Override
@@ -66,6 +66,14 @@ public class ColorsPickingController extends BaseChildController {
             tableColor = new TableColor();
             tableColorPalette.setTableColor(tableColor);
 
+            colorsController.loadedNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    paletteLabel.setText(currentPalette.getName() + ": "
+                            + colorsController.colorsPane.getChildren().size());
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -80,7 +88,6 @@ public class ColorsPickingController extends BaseChildController {
                         paletteSelected();
                     });
 
-            popInformation(message("PickingColorsNow"));
             palettesController.loadPalettes();
 
         } catch (Exception e) {
