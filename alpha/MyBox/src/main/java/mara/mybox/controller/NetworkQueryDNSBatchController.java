@@ -8,7 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.NetworkTools;
 import mara.mybox.tools.SystemTools;
@@ -51,7 +51,7 @@ public class NetworkQueryDNSBatchController extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private StringBuilder s, f;
 
             @Override

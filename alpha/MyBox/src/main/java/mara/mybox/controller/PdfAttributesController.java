@@ -19,7 +19,7 @@ import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileCopyTools;
@@ -29,6 +29,7 @@ import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
@@ -264,7 +265,7 @@ public class PdfAttributesController extends BaseController {
             return;
         }
         pdfInfo = new PdfInformation(sourceFile);
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private boolean pop;
 
@@ -272,9 +273,10 @@ public class PdfAttributesController extends BaseController {
             protected boolean handle() {
                 ok = false;
                 pop = false;
+                setInfo(message("LoadingFileInfo"));
                 try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
                     pdfInfo.setUserPassword(password);
-                    pdfInfo.readInfo(doc);
+                    pdfInfo.readInfo(this, doc);
                     doc.close();
                     ok = true;
                 } catch (InvalidPasswordException e) {
@@ -442,7 +444,7 @@ public class PdfAttributesController extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {

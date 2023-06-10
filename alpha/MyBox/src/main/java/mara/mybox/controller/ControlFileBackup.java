@@ -28,6 +28,8 @@ import mara.mybox.db.table.TableFileBackup;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonBackgroundTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableFileSizeCell;
@@ -211,12 +213,13 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
     public void loadBackups() {
         if (backgroundTask != null) {
             backgroundTask.cancel();
+            backgroundTask = null;
         }
         if (sourceFile == null || !backupCheck.isSelected()) {
             tableData.clear();
             return;
         }
-        backgroundTask = new SingletonTask<Void>(this) {
+        backgroundTask = new SingletonBackgroundTask<Void>(this) {
             private List<FileBackup> list;
             private File currentFile;
 
@@ -309,7 +312,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -342,7 +345,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
         }
         List<FileBackup> targets = new ArrayList<>();
         targets.addAll(selected);
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -396,7 +399,7 @@ public class ControlFileBackup extends BaseTableViewController<FileBackup> {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {

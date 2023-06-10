@@ -45,7 +45,7 @@ import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.RecentVisitMenu;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import static mara.mybox.tools.DoubleTools.scale;
@@ -538,10 +538,10 @@ public class ChromaticityDiagramController extends ImageViewerController {
     }
 
     private void initCIEData() {
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private StringTable degree2nm1Table, degree10nm1Table, degree2nm5Table, degree10nm5Table;
 
             @Override
@@ -590,10 +590,10 @@ public class ChromaticityDiagramController extends ImageViewerController {
         if (file == null) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private String texts;
 
             @Override
@@ -859,10 +859,10 @@ public class ChromaticityDiagramController extends ImageViewerController {
         if (isSettingValues) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private Image image;
 
             @Override
@@ -930,10 +930,10 @@ public class ChromaticityDiagramController extends ImageViewerController {
         if (file == null) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {

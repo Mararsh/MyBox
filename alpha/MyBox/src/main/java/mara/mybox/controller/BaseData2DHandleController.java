@@ -23,6 +23,7 @@ import mara.mybox.data2d.TmpTable;
 import mara.mybox.data2d.reader.DataTableGroup;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.FileDeleteTools;
 import static mara.mybox.value.Languages.message;
@@ -354,10 +355,10 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             startOperation();
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {

@@ -42,7 +42,7 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -511,7 +511,7 @@ public class ControlImagesSave extends BaseController {
             parentController.popError(message("InvalidParameters"));
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             List<String> fileNames;
 
             @Override
@@ -591,7 +591,7 @@ public class ControlImagesSave extends BaseController {
             task.cancel();
             loading = null;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -661,7 +661,7 @@ public class ControlImagesSave extends BaseController {
             task.cancel();
             loading = null;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -720,7 +720,7 @@ public class ControlImagesSave extends BaseController {
             task.cancel();
             loading = null;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -784,7 +784,7 @@ public class ControlImagesSave extends BaseController {
             task.cancel();
             loading = null;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {

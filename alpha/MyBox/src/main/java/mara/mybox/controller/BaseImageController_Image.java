@@ -53,8 +53,8 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         if (file == null || !file.exists() || !file.isFile()) {
             return;
         }
-        if (loadTask != null) {
-            loadTask.cancel();
+        if (loadTask != null && !loadTask.isQuit()) {
+            return;
         }
         loadTask = new SingletonTask<Void>(this) {
             private ImageInformation loadedInfo;
@@ -100,6 +100,12 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                 }
             }
 
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                loadTask = null;
+            }
+
         };
         start(loadTask);
     }
@@ -114,8 +120,8 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             loadImageFile(file);
             return;
         }
-        if (loadTask != null) {
-            loadTask.cancel();
+        if (loadTask != null && !loadTask.isQuit()) {
+            return;
         }
         boolean exist = (info.getRegion() == null) && (sourceFile != null || image != null);
         loadTask = new SingletonTask<Void>(this) {
@@ -137,6 +143,11 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                 setImageChanged(exist);
             }
 
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                loadTask = null;
+            }
         };
         loadingController = start(loadTask);
     }
@@ -162,8 +173,8 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             loadImageInfo(info);
             return;
         }
-        if (loadTask != null) {
-            loadTask.cancel();
+        if (loadTask != null && !loadTask.isQuit()) {
+            return;
         }
         loadTask = new SingletonTask<Void>(this) {
 
@@ -178,6 +189,11 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
                 loadImage(image);
             }
 
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                loadTask = null;
+            }
         };
         loadingController = start(loadTask);
     }

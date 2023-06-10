@@ -37,6 +37,8 @@ import mara.mybox.db.table.TableData2DColumn;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonBackgroundTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.cell.TableComboBoxCell;
@@ -227,7 +229,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         } else {
             resetStatus();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -395,7 +397,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         if (csvData == null || csvData.getFile() == null || !csvData.getFile().exists()) {
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private Data2D targetData;
 
             @Override
@@ -466,7 +468,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         if (dataTable == null) {
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private Data2D targetData;
 
             @Override
@@ -607,7 +609,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private Data2DDefinition def;
 
             @Override
@@ -931,6 +933,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         }
         if (backgroundTask != null) {
             backgroundTask.cancel();
+            backgroundTask = null;
         }
         data2D.setDataSize(0);
         dataSizeLoaded = false;
@@ -940,7 +943,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
         if (saveButton != null) {
             saveButton.setDisable(true);
         }
-        backgroundTask = new SingletonTask<Void>(this) {
+        backgroundTask = new SingletonBackgroundTask<Void>(this) {
 
             @Override
             protected boolean handle() {

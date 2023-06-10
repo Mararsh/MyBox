@@ -15,7 +15,7 @@ import mara.mybox.db.data.GeographyCodeTools;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ConditionNode;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.value.Languages;
 
 /**
@@ -50,7 +50,7 @@ public class GeographyCodeConditionTreeController extends ControlConditionTree {
             task.cancel();
         }
         treeView.setRoot(null);
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private GeographyCode earch;
             private List<GeographyCode> continents, others;
             private List<Long> haveChildren;
@@ -234,7 +234,7 @@ public class GeographyCodeConditionTreeController extends ControlConditionTree {
             task.cancel();
         }
         parent.getChildren().clear();
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private List<GeographyCode> nodes;
             private List<Long> haveChildren;
             private List<Short> haveLevels;

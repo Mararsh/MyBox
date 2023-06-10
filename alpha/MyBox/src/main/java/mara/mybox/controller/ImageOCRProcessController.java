@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import com.recognition.software.jdeskew.ImageDeskew;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,6 +14,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -26,9 +28,10 @@ import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.bufferedimage.TransformTools;
+import static mara.mybox.controller.ImageViewerController.openFile;
 import mara.mybox.db.data.ConvolutionKernel;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileTmpTools;
@@ -53,6 +56,8 @@ public class ImageOCRProcessController extends ImageViewerController {
     protected ComboBox<String> rotateSelector, binarySelector, scaleSelector;
     @FXML
     protected Button demoButton;
+    @FXML
+    protected CheckBox loadCheck;
 
     @Override
     public void initControls() {
@@ -126,6 +131,14 @@ public class ImageOCRProcessController extends ImageViewerController {
                 }
             });
 
+            loadCheck.setSelected(UserConfig.getBoolean(baseName + "Load", false));
+            loadCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean oldV, Boolean newV) {
+                    UserConfig.setBoolean(baseName + "Load", loadCheck.isSelected());
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -145,6 +158,17 @@ public class ImageOCRProcessController extends ImageViewerController {
     @Override
     public void recoverAction() {
         loadImage(OCRController.sourceFile, OCRController.imageInformation, OCRController.imageView.getImage(), false);
+    }
+
+    @Override
+    public void afterSaveAs(File file) {
+        if (loadCheck.isSelected()) {
+            OCRController.sourceFileChanged(file);
+
+        } else {
+            openFile(file);
+
+        }
     }
 
     @FXML
@@ -167,7 +191,7 @@ public class ImageOCRProcessController extends ImageViewerController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private Image changedImage;
 
             @Override
@@ -200,7 +224,7 @@ public class ImageOCRProcessController extends ImageViewerController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private Image ocrImage;
 
             @Override
@@ -268,7 +292,7 @@ public class ImageOCRProcessController extends ImageViewerController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private Image ocrImage;
 
             @Override
@@ -541,7 +565,7 @@ public class ImageOCRProcessController extends ImageViewerController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private Image ocrImage;
 
             @Override

@@ -27,7 +27,7 @@ import mara.mybox.data.FileInformation;
 import mara.mybox.data.FileInformation.FileSelectorType;
 import mara.mybox.data.ProcessParameters;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -537,14 +537,14 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
         if (currentParameters == null || sourceFiles.isEmpty()) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
         processStartTime = new Date();
         totalFilesHandled = totalItemsHandled = 0;
         tableController.markFileHandling(-1);
         updateInterface("Started");
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {

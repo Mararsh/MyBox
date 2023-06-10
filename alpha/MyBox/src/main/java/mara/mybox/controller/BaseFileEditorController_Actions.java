@@ -8,6 +8,7 @@ import javafx.geometry.Point2D;
 import mara.mybox.data.FileEditInformation;
 import mara.mybox.data.FileEditInformation.Edit_Type;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.TextFileTools;
@@ -71,11 +72,11 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
         if (file == null) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
         sourceInformation.setFile(file);
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -106,10 +107,10 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
     }
 
     private void saveExisted() {
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -147,8 +148,8 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
         if (file == null) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
         FileEditInformation targetInformation = FileEditInformation.create(editType, file);
         targetInformation.setFile(file);
@@ -162,7 +163,7 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
         }
         targetInformation.setLineBreak(lineBreak);
         targetInformation.setLineBreakValue(TextTools.lineBreakValue(lineBreak));
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -172,17 +173,17 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
             @Override
             protected void whenSucceeded() {
                 recordFileWritten(file);
-                BaseFileEditorController controller = null;
+                BaseFileEditorController editor = null;
                 if (saveAsType == SaveAsType.Load) {
-                    controller = (BaseFileEditorController) myController;
+                    editor = (BaseFileEditorController) myController;
                 } else if (saveAsType == SaveAsType.Open) {
-                    controller = openNewStage();
+                    editor = openNewStage();
                 }
-                if (controller != null) {
-                    controller.editType = editType;
-                    controller.sourceInformation = targetInformation;
-                    controller.sourceInformation.setCharsetDetermined(true);
-                    controller.openFile(file);
+                if (editor != null) {
+                    editor.editType = editType;
+                    editor.sourceInformation = targetInformation;
+                    editor.sourceInformation.setCharsetDetermined(true);
+                    editor.openFile(file);
                 }
                 popSaved();
             }
@@ -224,10 +225,10 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                 if (!checkBeforeNextAction()) {
                     return;
                 }
-                if (task != null) {
-                    task.cancel();
+                if (task != null && !task.isQuit()) {
+                    return;
                 }
-                task = new SingletonTask<Void>(this) {
+                task = new SingletonCurrentTask<Void>(this) {
 
                     String text;
 
@@ -267,10 +268,10 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                 if (!checkBeforeNextAction()) {
                     return;
                 }
-                if (task != null) {
-                    task.cancel();
+                if (task != null && !task.isQuit()) {
+                    return;
                 }
-                task = new SingletonTask<Void>(this) {
+                task = new SingletonCurrentTask<Void>(this) {
 
                     String text;
 
@@ -320,10 +321,10 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                 if (!checkBeforeNextAction()) {
                     return;
                 }
-                if (task != null) {
-                    task.cancel();
+                if (task != null && !task.isQuit()) {
+                    return;
                 }
-                task = new SingletonTask<Void>(this) {
+                task = new SingletonCurrentTask<Void>(this) {
 
                     String text;
 
@@ -375,10 +376,10 @@ public abstract class BaseFileEditorController_Actions extends BaseFileEditorCon
                 if (!checkBeforeNextAction()) {
                     return;
                 }
-                if (task != null) {
-                    task.cancel();
+                if (task != null && !task.isQuit()) {
+                    return;
                 }
-                task = new SingletonTask<Void>(this) {
+                task = new SingletonCurrentTask<Void>(this) {
 
                     String text;
 

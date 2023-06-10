@@ -370,6 +370,9 @@ public abstract class BaseController_Attributes {
 
     }
 
+    public void setBackgroundTask(SingletonTask<Void> backgroundTask) {
+        this.backgroundTask = backgroundTask;
+    }
 
     /*
         popup

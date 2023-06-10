@@ -194,6 +194,7 @@ public abstract class BaseData2DController extends BaseController {
     }
 
     @FXML
+    @Override
     public void refreshAction() {
         if (listController == null) {
             return;
@@ -293,8 +294,8 @@ public abstract class BaseData2DController extends BaseController {
 
     @FXML
     public void importAction() {
-        if (parseTask != null) {
-            parseTask.cancel();
+        if (parseTask != null && !parseTask.isQuit()) {
+            return;
         }
         parseTask = new SingletonTask<Void>(this) {
 
@@ -326,12 +327,18 @@ public abstract class BaseData2DController extends BaseController {
                             CSVParser parser = CsvTools.csvParser(srcFile, ",", true)) {
                         List<String> header = parser.getHeaderNames();
                         for (CSVRecord record : parser) {
+                            if (parseTask == null || isCancelled()) {
+                                return false;
+                            }
                             String country = record.get("Country/Region");
                             String provice = record.get("Province/State");
                             String latitude = record.get("Lat");
                             String longitude = record.get("Long");
                             parseTask.setInfo(country + "  " + provice + "  " + recoveryCount);
                             for (int i = 4; i < record.size(); i++) {
+                                if (parseTask == null || isCancelled()) {
+                                    return false;
+                                }
                                 Data2DRow countryRow = tableCountry.newRow();
                                 String value = record.get(i);
                                 if (value == null || value.isBlank() || "0".equals(value)) {
@@ -371,12 +378,18 @@ public abstract class BaseData2DController extends BaseController {
                             CSVParser parser = CsvTools.csvParser(srcFile, ",", true)) {
                         List<String> header = parser.getHeaderNames();
                         for (CSVRecord record : parser) {
+                            if (parseTask == null || isCancelled()) {
+                                return false;
+                            }
                             String country = record.get("Country/Region");
                             String provice = record.get("Province/State");
                             String latitude = record.get("Lat");
                             String longitude = record.get("Long");
                             parseTask.setInfo(country + "  " + provice + "  " + deadCount + "    " + (int) (deadCount * 100 / recoveryCount) + "%");
                             for (int i = 4; i < record.size(); i++) {
+                                if (parseTask == null || isCancelled()) {
+                                    return false;
+                                }
                                 String value = record.get(i);
                                 if (value == null || value.isBlank() || "0".equals(value)) {
                                     continue;
@@ -434,12 +447,18 @@ public abstract class BaseData2DController extends BaseController {
                             CSVParser parser = CsvTools.csvParser(srcFile, ",", true)) {
                         List<String> header = parser.getHeaderNames();
                         for (CSVRecord record : parser) {
+                            if (parseTask == null || isCancelled()) {
+                                return false;
+                            }
                             String country = record.get("Country/Region");
                             String provice = record.get("Province/State");
                             String latitude = record.get("Lat");
                             String longitude = record.get("Long");
                             parseTask.setInfo(country + "  " + provice + "  " + confirmedCount + "    " + (int) (confirmedCount * 100 / deadCount) + "%");
                             for (int i = 4; i < record.size(); i++) {
+                                if (parseTask == null || isCancelled()) {
+                                    return false;
+                                }
                                 String value = record.get(i);
                                 if (value == null || value.isBlank() || "0".equals(value)) {
                                     continue;
@@ -516,6 +535,10 @@ public abstract class BaseData2DController extends BaseController {
     @Override
     public void cleanPane() {
         try {
+            if (parseTask != null) {
+                parseTask.cancel();
+                parseTask = null;
+            }
             dataController = null;
             loadController = null;
         } catch (Exception e) {

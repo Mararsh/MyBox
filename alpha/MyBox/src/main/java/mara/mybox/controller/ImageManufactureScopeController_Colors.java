@@ -14,7 +14,7 @@ import javafx.scene.paint.Paint;
 import javafx.util.Callback;
 import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.cell.ListColorCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
@@ -169,7 +169,7 @@ public abstract class ImageManufactureScopeController_Colors extends ImageManufa
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             @Override
             protected boolean handle() {
                 return tableColor.writeColors(colors, false) != null;

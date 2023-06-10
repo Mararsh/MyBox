@@ -38,7 +38,7 @@ import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.db.table.TableVisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import static mara.mybox.fxml.WindowTools.refreshInterfaceAll;
@@ -809,7 +809,7 @@ public class SettingsController extends BaseController {
         DerbyBase.mode = networkRadio.isSelected() ? "client" : "embedded";
         ConfigTools.writeConfigValue("DerbyMode", DerbyBase.mode);
         derbyBox.setDisable(true);
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private String ret;
 
             @Override

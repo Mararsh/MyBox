@@ -34,6 +34,7 @@ import mara.mybox.db.table.TableImageEditHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableFileSizeCell;
@@ -423,7 +424,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private Image hisImage;
             private ImageEditHistory his;
 
@@ -475,7 +476,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
             return;
         }
         infoLabel.setText(message("Loading..."));
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private List<ImageEditHistory> list;
             private File currentFile;
 
@@ -526,7 +527,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
         if (!PopTools.askSure(getTitle(), message("SureClear"))) {
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -550,7 +551,7 @@ public class ImageManufactureHistory extends BaseTableViewController<ImageEditHi
         if (selected == null) {
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {

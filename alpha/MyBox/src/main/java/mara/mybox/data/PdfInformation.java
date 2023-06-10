@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.scene.control.TextInputDialog;
 import javafx.stage.Stage;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
@@ -70,10 +71,13 @@ public class PdfInformation extends FileInformation {
         }
     }
 
-    public void loadInformation() {
+    public void loadInformation(SingletonTask task) {
         try {
             if (doc == null) {
                 return;
+            }
+            if (task != null) {
+                task.setInfo(message("ReadingData"));
             }
             PDDocumentInformation docInfo = doc.getDocumentInformation();
             if (docInfo.getCreationDate() != null) {
@@ -91,6 +95,9 @@ public class PdfInformation extends FileInformation {
             keywords = docInfo.getKeywords();
             version = doc.getVersion();
             access = doc.getCurrentAccessPermission();
+            if (task != null) {
+                task.setInfo(message("NumberOfPages") + ": " + numberOfPages);
+            }
 
             PDPage page = doc.getPage(0);
             String size = "";
@@ -117,6 +124,9 @@ public class PdfInformation extends FileInformation {
                         + PdfTools.pixels2mm(box.getHeight()) + "mm";
             }
             firstPageSize2 = size;
+            if (task != null) {
+                task.setInfo(message("Size") + ": " + firstPageSize);
+            }
             outline = doc.getDocumentCatalog().getDocumentOutline();
             infoLoaded = true;
         } catch (Exception e) {
@@ -124,22 +134,22 @@ public class PdfInformation extends FileInformation {
         }
     }
 
-    public void loadInfo(String password) {
+    public void loadInfo(SingletonTask task, String password) {
         try {
             openDocument(password);
             if (doc == null) {
                 return;
             }
-            loadInformation();
+            loadInformation(task);
             closeDocument();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    public void readInfo(PDDocument doc) {
+    public void readInfo(SingletonTask task, PDDocument doc) {
         this.doc = doc;
-        loadInformation();
+        loadInformation(task);
     }
 
     public BufferedImage readPageAsImage(int page) {
@@ -159,12 +169,15 @@ public class PdfInformation extends FileInformation {
         }
     }
 
-    public static boolean readPDF(PdfInformation info) {
+    public static boolean readPDF(SingletonTask task, PdfInformation info) {
         if (info == null) {
             return false;
         }
+        if (task != null) {
+            task.setInfo(message("LoadingFileInfo"));
+        }
         try (PDDocument doc = PDDocument.load(info.getFile(), info.getUserPassword(), AppVariables.pdfMemUsage)) {
-            info.readInfo(doc);
+            info.readInfo(task, doc);
             doc.close();
             return true;
         } catch (InvalidPasswordException e) {
@@ -187,7 +200,7 @@ public class PdfInformation extends FileInformation {
                     info.wait();
                 }
                 try (PDDocument doc = PDDocument.load(info.getFile(), info.getUserPassword(), AppVariables.pdfMemUsage)) {
-                    info.readInfo(doc);
+                    info.readInfo(task, doc);
                     doc.close();
                     return true;
                 } catch (Exception ee) {

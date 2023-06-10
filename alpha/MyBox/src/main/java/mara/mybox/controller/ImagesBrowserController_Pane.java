@@ -27,7 +27,7 @@ import javafx.scene.text.Text;
 import javafx.util.Callback;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonBackgroundTask;
 import mara.mybox.fxml.cell.TableImageInfoCell;
 import mara.mybox.fxml.cell.TableRowSelectionCell;
 import mara.mybox.tools.DateTools;
@@ -205,10 +205,11 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
         }
         if (backgroundTask != null) {
             backgroundTask.cancel();
+            backgroundTask = null;
         }
         makeGridBox();
         tableData.clear();
-        backgroundTask = new SingletonTask<Void>(this) {
+        backgroundTask = new SingletonBackgroundTask<Void>(this) {
 
             private List<Integer> mfList;
 
@@ -380,8 +381,9 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
             }
             if (backgroundTask != null) {
                 backgroundTask.cancel();
+                backgroundTask = null;
             }
-            backgroundTask = new SingletonTask<Void>(this) {
+            backgroundTask = new SingletonBackgroundTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {

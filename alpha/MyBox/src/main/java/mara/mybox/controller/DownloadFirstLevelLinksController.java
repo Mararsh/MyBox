@@ -58,7 +58,7 @@ import mara.mybox.data.Link.FilenameType;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -506,7 +506,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private String title;
 
             @Override
@@ -560,7 +560,7 @@ public class DownloadFirstLevelLinksController extends BaseTableViewController<L
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private List<Link> links;
 

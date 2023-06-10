@@ -10,8 +10,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
@@ -26,7 +27,7 @@ import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -36,9 +37,6 @@ import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
-import net.sourceforge.tess4j.ITessAPI;
-import net.sourceforge.tess4j.ITesseract;
-import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.Word;
 
 /**
@@ -70,7 +68,7 @@ public class ImageOCRController extends ImageViewerController {
     @FXML
     protected Label resultLabel;
     @FXML
-    protected CheckBox startCheck, LoadCheck;
+    protected CheckBox startCheck;
     @FXML
     protected HtmlTableController regionsTableController, wordsTableController, htmlController;
     @FXML
@@ -100,10 +98,21 @@ public class ImageOCRController extends ImageViewerController {
 
             preprocessController.OCRController = this;
             ocrOptionsController.setParameters(this, false, true);
+            ocrOptionsController.isSettingValues = true;
+            ocrOptionsController.htmlCheck.setSelected(true);
+            ocrOptionsController.isSettingValues = false;
 
             originalImageBox.disableProperty().bind(imageView.imageProperty().isNull());
             processPane.disableProperty().bind(imageView.imageProperty().isNull());
             rightPane.disableProperty().bind(imageView.imageProperty().isNull());
+
+            startCheck.setSelected(UserConfig.getBoolean(baseName + "Start", false));
+            startCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "Start", startCheck.isSelected());
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -189,6 +198,10 @@ public class ImageOCRController extends ImageViewerController {
 
             preprocessController.recoverAction();
 
+            if (startCheck.isSelected()) {
+                startAction();
+            }
+
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -217,14 +230,10 @@ public class ImageOCRController extends ImageViewerController {
     }
 
     protected void command() {
-        if (preprocessController.imageView.getImage() == null || timer != null || process != null
-                || ocrOptionsController.dataPathController.file() == null) {
+        if (preprocessController.imageView.getImage() == null || timer != null || process != null) {
             return;
         }
-        File tesseract = ocrOptionsController.tesseractPathController.file();
-        if (!tesseract.exists()) {
-            popError(Languages.message("InvalidParameters"));
-            ocrOptionsController.tesseractPathController.fileInput.setStyle(UserConfig.badStyle());
+        if (!ocrOptionsController.checkCommandPamameters(true, false)) {
             return;
         }
         loading = handling();
@@ -238,38 +247,16 @@ public class ImageOCRController extends ImageViewerController {
                     if (selected == null) {
                         selected = preprocessController.imageView.getImage();
                     }
-                    String imageFile = FileTmpTools.getTempFile(".png").getAbsolutePath();
+                    File imageFile = FileTmpTools.getTempFile(".png");
                     BufferedImage bufferedImage = SwingFXUtils.fromFXImage(selected, null);
                     bufferedImage = AlphaTools.removeAlpha(bufferedImage);
-                    ImageFileWriters.writeImageFile(bufferedImage, "png", imageFile);
-
-                    int version = ocrOptionsController.tesseractVersion();
+                    ImageFileWriters.writeImageFile(bufferedImage, "png", imageFile.getAbsolutePath());
                     String fileBase = FileTmpTools.getTempFile().getAbsolutePath();
-                    List<String> parameters = new ArrayList<>();
-                    parameters.addAll(Arrays.asList(
-                            tesseract.getAbsolutePath(),
-                            imageFile, fileBase,
-                            "--tessdata-dir", ocrOptionsController.dataPathController.file().getAbsolutePath(),
-                            version > 3 ? "--psm" : "-psm", ocrOptionsController.psm + ""
-                    ));
-                    if (ocrOptionsController.selectedLanguages != null) {
-                        parameters.addAll(Arrays.asList("-l", ocrOptionsController.selectedLanguages));
+                    process = process = ocrOptionsController.process(imageFile, fileBase);
+                    if (process == null) {
+                        return;
                     }
-                    File configFile = FileTmpTools.getTempFile();
-                    String s = "tessedit_create_txt 1\n"
-                            + "tessedit_create_hocr 1\n";
-                    Map<String, String> p = ocrOptionsController.checkParameters();
-                    if (p != null) {
-                        for (String key : p.keySet()) {
-                            s += key + "\t" + p.get(key) + "\n";
-                        }
-                    }
-                    TextFileTools.writeFile(configFile, s, Charset.forName("utf-8"));
-                    parameters.add(configFile.getAbsolutePath());
-
-                    ProcessBuilder pb = new ProcessBuilder(parameters).redirectErrorStream(true);
                     long startTime = new Date().getTime();
-                    process = pb.start();
                     try (BufferedReader inReader = process.inputReader(Charset.defaultCharset())) {
                         String line;
                         while ((line = inReader.readLine()) != null) {
@@ -349,68 +336,16 @@ public class ImageOCRController extends ImageViewerController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
-
-            private String texts, html;
-            private List<Rectangle> rectangles;
-            private List<Word> words;
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
                 try {
-                    Tesseract instance = new Tesseract();
-                    // https://stackoverflow.com/questions/58286373/tess4j-pdf-to-tiff-to-tesseract-warning-invalid-resolution-0-dpi-using-70/58296472#58296472
-                    instance.setVariable("user_defined_dpi", "96");
-                    instance.setVariable("debug_file", "/dev/null");
-                    instance.setPageSegMode(ocrOptionsController.psm);
-                    Map<String, String> p = ocrOptionsController.checkParameters();
-                    if (p != null && !p.isEmpty()) {
-                        for (String key : p.keySet()) {
-                            instance.setVariable(key, p.get(key));
-                        }
-                    }
-                    instance.setDatapath(ocrOptionsController.dataPathController.file().getAbsolutePath());
-                    if (ocrOptionsController.selectedLanguages != null) {
-                        instance.setLanguage(ocrOptionsController.selectedLanguages);
-                    }
                     Image selected = preprocessController.imageToHandle();
                     if (selected == null) {
                         selected = preprocessController.imageView.getImage();
                     }
-
-                    BufferedImage bufferedImage = SwingFXUtils.fromFXImage(selected, null);
-                    bufferedImage = AlphaTools.removeAlpha(bufferedImage);
-                    if (task == null || isCancelled() || bufferedImage == null) {
-                        return false;
-                    }
-
-                    List<ITesseract.RenderedFormat> formats = new ArrayList<>();
-                    formats.add(ITesseract.RenderedFormat.TEXT);
-                    formats.add(ITesseract.RenderedFormat.HOCR);
-
-                    File tmpFile = File.createTempFile("MyboxOCR", "");
-                    String tmp = File.createTempFile("MyboxOCR", "").getAbsolutePath();
-                    FileDeleteTools.delete(tmpFile);
-
-                    instance.createDocumentsWithResults​(bufferedImage, tmp,
-                            tmp, formats, ITessAPI.TessPageIteratorLevel.RIL_SYMBOL);
-                    File txtFile = new File(tmp + ".txt");
-                    texts = TextFileTools.readTexts(txtFile);
-                    FileDeleteTools.delete(txtFile);
-
-                    File htmlFile = new File(tmp + ".hocr");
-                    html = TextFileTools.readTexts(htmlFile);
-                    FileDeleteTools.delete(htmlFile);
-
-                    if (ocrOptionsController.wordLevel >= 0) {
-                        words = instance.getWords(bufferedImage, ocrOptionsController.wordLevel);
-                    }
-
-                    if (ocrOptionsController.regionLevel >= 0) {
-                        rectangles = instance.getSegmentedRegions(bufferedImage, ocrOptionsController.regionLevel);
-                    }
-
-                    return texts != null;
+                    return ocrOptionsController.imageOCR(this, selected, true);
                 } catch (Exception e) {
                     error = e.toString();
                     MyBoxLog.debug(e.toString());
@@ -420,25 +355,25 @@ public class ImageOCRController extends ImageViewerController {
 
             @Override
             protected void whenSucceeded() {
-                if (texts.length() == 0) {
+                if (ocrOptionsController.texts.length() == 0) {
                     popWarn(Languages.message("OCRMissComments"));
                 }
-                textArea.setText(texts);
+                textArea.setText(ocrOptionsController.texts);
                 resultLabel.setText(MessageFormat.format(Languages.message("OCRresults"),
-                        texts.length(), DateTools.datetimeMsDuration(cost)));
+                        ocrOptionsController.texts.length(), DateTools.datetimeMsDuration(cost)));
                 ocrTabPane.getSelectionModel().select(txtTab);
 
-                htmlController.loadHtml(html);
+                htmlController.loadHtml(ocrOptionsController.html);
 
-                if (rectangles != null) {
+                if (ocrOptionsController.rectangles != null) {
                     List<String> names = new ArrayList<>();
                     names.addAll(Arrays.asList(Languages.message("Index"),
                             Languages.message("CoordinateX"), Languages.message("CoordinateY"),
                             Languages.message("Width"), Languages.message("Height")
                     ));
                     regionsTableController.initTable(Languages.message(""), names);
-                    for (int i = 0; i < rectangles.size(); ++i) {
-                        Rectangle rect = rectangles.get(i);
+                    for (int i = 0; i < ocrOptionsController.rectangles.size(); ++i) {
+                        Rectangle rect = ocrOptionsController.rectangles.get(i);
                         List<String> data = new ArrayList<>();
                         data.addAll(Arrays.asList(
                                 i + "", rect.x + "", rect.y + "", rect.width + "", rect.height + ""
@@ -450,7 +385,7 @@ public class ImageOCRController extends ImageViewerController {
                     regionsTableController.clear();
                 }
 
-                if (words != null) {
+                if (ocrOptionsController.words != null) {
                     List<String> names = new ArrayList<>();
                     names.addAll(Arrays.asList(Languages.message("Index"),
                             Languages.message("Contents"), Languages.message("Confidence"),
@@ -458,8 +393,8 @@ public class ImageOCRController extends ImageViewerController {
                             Languages.message("Width"), Languages.message("Height")
                     ));
                     wordsTableController.initTable(Languages.message(""), names);
-                    for (int i = 0; i < words.size(); ++i) {
-                        Word word = words.get(i);
+                    for (int i = 0; i < ocrOptionsController.words.size(); ++i) {
+                        Word word = ocrOptionsController.words.get(i);
                         Rectangle rect = word.getBoundingBox();
                         List<String> data = new ArrayList<>();
                         data.addAll(Arrays.asList(
@@ -473,6 +408,12 @@ public class ImageOCRController extends ImageViewerController {
                     wordsTableController.clear();
                 }
 
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                ocrOptionsController.clearResults();
             }
 
         };

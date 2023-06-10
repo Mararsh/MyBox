@@ -21,7 +21,7 @@ import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.TableQueryCondition;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.StringTools;
@@ -695,10 +695,10 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
                 + "\n\n" + type + "\n" + title + "\n\n" + sql + "\n\n" + message("DataDeletedComments"))) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private int deletedCount = 0;
 
@@ -723,6 +723,13 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
                     refreshAction();
                 }
             }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                task = null;
+            }
+
         };
         start(task);
     }
@@ -746,13 +753,12 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
         if (task != null && !task.isQuit()) {
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private int count = 0;
 
             @Override
             protected boolean handle() {
                 count = DerbyBase.update(clearSQL);
-
                 return true;
             }
 
@@ -760,6 +766,12 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
             protected void whenSucceeded() {
                 alertInformation(message("Deleted") + ": " + count);
                 refreshAction();
+            }
+
+            @Override
+            protected void finalAction() {
+                super.finalAction();
+                task = null;
             }
 
         };

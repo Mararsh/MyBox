@@ -15,6 +15,9 @@ public class SingletonTask<Void> extends BaseTask<Void> {
     protected BaseController controller;
     protected LoadingController loading;
 
+    public SingletonTask() {
+    }
+
     public SingletonTask(BaseController controller) {
         this.controller = controller;
     }
@@ -81,6 +84,13 @@ public class SingletonTask<Void> extends BaseTask<Void> {
                 controller.popFailed();
             }
         }
+    }
+
+    @Override
+    protected void finalAction() {
+        super.finalAction();
+        controller = null;
+        loading = null;
     }
 
     /*

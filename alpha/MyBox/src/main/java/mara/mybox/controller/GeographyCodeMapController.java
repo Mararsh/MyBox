@@ -15,7 +15,7 @@ import mara.mybox.db.data.GeographyCodeTools;
 import static mara.mybox.db.data.GeographyCodeTools.validCoordinate;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.tools.StringTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -86,7 +86,7 @@ public class GeographyCodeMapController extends ControlMap {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             List<MapPoint> points;
 

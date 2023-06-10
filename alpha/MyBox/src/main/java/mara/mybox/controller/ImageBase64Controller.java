@@ -21,7 +21,7 @@ import mara.mybox.bufferedimage.BufferedImageTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileNameTools;
@@ -129,16 +129,16 @@ public class ImageBase64Controller extends BaseController {
                 return;
             }
         }
+        if (controller.task != null && !controller.task.isQuit()) {
+            return;
+        }
         if (!(controller instanceof MenuHtmlCodesController)) {
             resultArea.clear();
         }
         if (label != null) {
             label.setText("");
         }
-        if (controller.task != null) {
-            controller.task.cancel();
-        }
-        controller.task = new SingletonTask<Void>(controller) {
+        controller.task = new SingletonCurrentTask<Void>(controller) {
 
             private String imageBase64;
 
@@ -207,10 +207,10 @@ public class ImageBase64Controller extends BaseController {
         if (file == null) {
             return;
         }
-        if (controller.task != null) {
-            controller.task.cancel();
+        if (controller.task != null && !controller.task.isQuit()) {
+            return;
         }
-        controller.task = new SingletonTask<Void>(controller) {
+        controller.task = new SingletonCurrentTask<Void>(controller) {
 
             @Override
             protected boolean handle() {

@@ -10,7 +10,7 @@ import javafx.fxml.FXML;
 import javax.imageio.ImageIO;
 import mara.mybox.bufferedimage.PixelsOperation;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SoundTools;
 import mara.mybox.fxml.style.StyleData.StyleColor;
 import mara.mybox.fxml.style.StyleTools;
@@ -67,7 +67,7 @@ public class MyBoxIconsController extends BaseBatchFileController {
             popError(message("WrongSourceCodesPath"));
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private List<File> icons = null;
 
             @Override

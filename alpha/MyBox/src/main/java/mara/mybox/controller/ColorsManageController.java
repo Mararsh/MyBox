@@ -38,7 +38,7 @@ import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fximage.PaletteTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableColorCell;
@@ -474,7 +474,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
         if (file == null) {
             return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             @Override
             protected boolean handle() {
                 if ("all".equals(type)) {
@@ -524,10 +524,10 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
                     displayHtml(title, rows);
                 } else {
                     String atitle = title;
-                    if (task != null) {
-                        task.cancel();
+                    if (task != null && !task.isQuit()) {
+                        return;
                     }
-                    task = new SingletonTask<Void>(this) {
+                    task = new SingletonCurrentTask<Void>(this) {
 
                         private List<ColorData> data;
 
@@ -666,10 +666,10 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
         if (colorsController.clickedRect == null) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private int deletedCount = 0;
 
@@ -711,10 +711,10 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
         if (palettesController.isAllColors()) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {

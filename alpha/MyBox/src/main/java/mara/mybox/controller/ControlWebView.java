@@ -49,6 +49,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ImageClipboardTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.WebViewTools;
@@ -1785,7 +1786,7 @@ public class ControlWebView extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             @Override
             protected boolean handle() {
                 File tmpFile = HtmlWriteTools.writeHtml(html);

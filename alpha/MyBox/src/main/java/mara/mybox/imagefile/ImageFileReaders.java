@@ -33,9 +33,9 @@ import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.FileNameTools;
 import static mara.mybox.value.AppVariables.imageRenderHints;
 import static mara.mybox.value.Languages.message;
-import thridparty.image4j.ICODecoder;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+import thridparty.image4j.ICODecoder;
 
 /**
  * @Author Mara
@@ -114,7 +114,7 @@ public class ImageFileReaders {
             return readIcon(imageInfo);
         }
         BufferedImage bufferedImage = null;
-        try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(imageInfo.getFile())))) {
+        try (ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(imageInfo.getFile())))) {
             ImageReader reader = getReader(iis, format);
             if (reader == null) {
                 return null;
@@ -201,7 +201,7 @@ public class ImageFileReaders {
                     }
                 }
             } else {
-                try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(file)))) {
+                try (ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(file)))) {
                     ImageReader reader = getReader(iis, format);
                     if (reader != null) {
                         if (fileInfo == null) {
@@ -351,7 +351,7 @@ public class ImageFileReaders {
         if ("ico".equals(format) || "icon".equals(format)) {
             fileInfo = ImageFileInformation.readIconFile(file);
         } else {
-            try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(file)))) {
+            try (ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(file)))) {
                 ImageReader reader = getReader(iis, format);
                 if (reader == null) {
                     return null;
@@ -901,7 +901,7 @@ public class ImageFileReaders {
 
     public static IIOMetadata getIIOMetadata(File file) {
         IIOMetadata iioMetaData = null;
-        try ( ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(file)))) {
+        try (ImageInputStream iis = ImageIO.createImageInputStream(new BufferedInputStream(new FileInputStream(file)))) {
             ImageReader reader = getReader(iis, FileNameTools.suffix(file.getName()).toLowerCase());
             if (reader == null) {
                 return null;

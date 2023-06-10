@@ -7,7 +7,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TreeItem;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.InfoNode;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -63,7 +63,7 @@ public class TreeNodeCopyController extends ControlInfoTreeSelector {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {

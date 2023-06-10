@@ -31,7 +31,8 @@ import mara.mybox.data.FileInformation;
 import mara.mybox.data.FileInformation.FileSelectorType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonBackgroundTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.cell.TableFileSizeCell;
 import mara.mybox.fxml.cell.TableNumberCell;
 import mara.mybox.fxml.cell.TableTimeCell;
@@ -329,10 +330,10 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
         if (tableData == null || tableData.isEmpty()) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private List<File> valids;
 
             @Override
@@ -454,6 +455,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
     public void countSize(boolean reset) {
         if (backgroundTask != null) {
             backgroundTask.cancel();
+            backgroundTask = null;
         }
         tableLabel.setText(message("CountingFilesSize"));
         totalFilesNumber = totalFilesSize = 0;
@@ -461,7 +463,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             updateLabel();
             return;
         }
-        backgroundTask = new SingletonTask<Void>(this) {
+        backgroundTask = new SingletonBackgroundTask<Void>(this) {
 
             private boolean canceled;
 
@@ -729,10 +731,10 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
         if (files == null || files.isEmpty()) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private List<P> infos;
 

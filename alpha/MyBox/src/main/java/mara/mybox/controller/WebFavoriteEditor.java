@@ -10,7 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.tools.IconTools;
 import static mara.mybox.value.Languages.message;
@@ -87,7 +87,7 @@ public class WebFavoriteEditor extends TreeNodeEditor {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private File iconFile;
 
             @Override

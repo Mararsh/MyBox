@@ -23,7 +23,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableImageClipboard;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ImageClipboardTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableMessageCell;
@@ -140,7 +140,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
             task.cancel();
         }
         lastSystemClip = clip;
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private ImageClipboard clipData;
 
@@ -182,7 +182,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private ImageClipboard clip;
 
@@ -251,7 +251,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image selectedImage;
 
@@ -281,7 +281,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image selectedImage;
 
@@ -310,7 +310,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private List<ImageClipboard> clips;
 

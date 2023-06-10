@@ -23,6 +23,7 @@ import mara.mybox.db.table.TableTreeNodeTag;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TreeTableDateCell;
@@ -89,12 +90,12 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
     }
 
     public void loadTree(InfoNode selectNode) {
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
         treeView.setRoot(null);
         focusNode = null;
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private TreeItem<InfoNode> rootItem;
 
             @Override
@@ -269,10 +270,10 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
             popError(message("NameShouldNotInclude") + " \"" + NodeSeparater + "\"");
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private InfoNode newNode;
 
             @Override
@@ -304,10 +305,10 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
         if (item == null) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {

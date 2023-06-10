@@ -9,7 +9,7 @@ import javafx.scene.control.ComboBox;
 import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -146,10 +146,10 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
         if (targetController == null) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private DataFileCSV csvFile;
 
@@ -169,8 +169,8 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
 
             @Override
             protected void finalAction() {
-                super.finalAction();
                 data2D.stopTask();
+                super.finalAction();
                 task = null;
             }
 
@@ -183,7 +183,7 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
     }
 
     public void handleRowsTask() {
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {

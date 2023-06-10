@@ -8,7 +8,7 @@ import mara.mybox.calculation.OLSLinearRegression;
 import mara.mybox.data.StringTable;
 import mara.mybox.data2d.Data2D_Attributes.InvalidAs;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.HtmlWriteTools;
@@ -84,7 +84,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
             task.cancel();
         }
         modelController.clear();
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {

@@ -25,7 +25,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.CropTools;
 import mara.mybox.fximage.TransformTools;
 import mara.mybox.fxml.ImageClipboardTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.value.Fxmls;
@@ -229,10 +229,10 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         if (imageView == null || imageView.getImage() == null) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image areaImage;
 
@@ -256,10 +256,10 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         if (imageView == null || imageView.getImage() == null) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image areaImage;
 
@@ -327,10 +327,10 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             }
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image targetImage;
 
@@ -542,11 +542,11 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         if (imageView.getImage() == null) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
         currentAngle = rotateAngle;
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image newImage;
 
@@ -596,10 +596,10 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         if (newfile == null || imageToSave == null) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {

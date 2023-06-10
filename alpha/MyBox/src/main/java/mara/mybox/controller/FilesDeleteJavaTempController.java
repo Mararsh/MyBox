@@ -5,6 +5,7 @@ import java.text.MessageFormat;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileTools;
@@ -81,7 +82,7 @@ public class FilesDeleteJavaTempController extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private long before = 0, after = 0;
 
             @Override

@@ -23,9 +23,9 @@ import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.data.PdfInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.tools.PdfTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -245,12 +245,11 @@ public class PdfViewController extends PdfViewController_Html {
             initPage(file, page);
             if (task != null) {
                 task.cancel();
+                task = null;
             }
             if (outlineTask != null) {
                 outlineTask.cancel();
-            }
-            if (thumbTask != null) {
-                thumbTask.cancel();
+                outlineTask = null;
             }
             infoLoaded.set(false);
             outlineTree.setRoot(null);
@@ -288,6 +287,7 @@ public class PdfViewController extends PdfViewController_Html {
     public void loadInformation() {
         if (task != null) {
             task.cancel();
+            task = null;
         }
         if (pdfInformation == null) {
             if (sourceFile == null) {
@@ -300,12 +300,12 @@ public class PdfViewController extends PdfViewController_Html {
         pageSelector.getItems().clear();
         isSettingValues = false;
         pageLabel.setText("");
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
                 setTotalPages(0);
-                if (!PdfInformation.readPDF(pdfInformation)) {
+                if (!PdfInformation.readPDF(this, pdfInformation)) {
                     error = pdfInformation.getError();
                     return false;
                 }
@@ -333,17 +333,22 @@ public class PdfViewController extends PdfViewController_Html {
             }
 
         };
-        start(task, message("LoadingFileInfo"));
+        start(task);
     }
 
     @Override
     protected Image readPageImage() {
-        try {
-            BufferedImage bufferedImage = PdfTools.page2image(sourceFile, password, frameIndex, dpi,
+        try (PDDocument doc = PDDocument.load(sourceFile, password, AppVariables.pdfMemUsage)) {
+            PDFRenderer renderer = new PDFRenderer(doc);
+            BufferedImage bufferedImage = renderer.renderImageWithDPI(frameIndex, dpi,
                     transparentBackgroundCheck.isSelected() ? ImageType.ARGB : ImageType.RGB);
+            doc.close();
             return SwingFXUtils.toFXImage(bufferedImage, null);
         } catch (Exception e) {
-            MyBoxLog.console(e);
+            if (task != null) {
+                task.setInfo(e.toString());
+            }
+            MyBoxLog.error(e);
             return null;
         }
     }

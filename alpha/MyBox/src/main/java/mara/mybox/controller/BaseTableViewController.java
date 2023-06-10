@@ -34,6 +34,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.cell.TableRowSelectionCell;
 import mara.mybox.fxml.style.StyleTools;
@@ -179,10 +180,10 @@ public abstract class BaseTableViewController<P> extends BaseController {
         if (!checkBeforeLoadingTableData()) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private List<P> data;
 
             @Override
@@ -843,10 +844,10 @@ public abstract class BaseTableViewController<P> extends BaseController {
             clearAction();
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private int deletedCount = 0;
 
@@ -899,10 +900,10 @@ public abstract class BaseTableViewController<P> extends BaseController {
         if (!PopTools.askSure(getTitle(), message("SureClearData"))) {
             return;
         }
-        if (task != null) {
-            task.cancel();
+        if (task != null && !task.isQuit()) {
+            return;
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             long deletedCount = 0;
 
             @Override

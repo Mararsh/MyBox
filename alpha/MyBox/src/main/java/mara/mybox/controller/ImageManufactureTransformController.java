@@ -12,7 +12,7 @@ import javafx.scene.image.Image;
 import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.TransformTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
 
 /**
@@ -102,7 +102,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image newImage;
 
@@ -131,7 +131,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image newImage;
 
@@ -160,7 +160,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image newImage;
 
@@ -188,7 +188,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image newImage;
 
@@ -216,7 +216,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image newImage;
 
@@ -250,7 +250,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private int angle;
             private Image newImage;

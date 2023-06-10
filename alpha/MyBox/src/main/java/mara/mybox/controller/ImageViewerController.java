@@ -32,7 +32,7 @@ import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -510,7 +510,7 @@ public class ImageViewerController extends BaseImageController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image areaImage;
 
@@ -588,7 +588,7 @@ public class ImageViewerController extends BaseImageController {
             }
         }
 
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private Image savedImage;
 
@@ -674,7 +674,7 @@ public class ImageViewerController extends BaseImageController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -717,19 +717,24 @@ public class ImageViewerController extends BaseImageController {
                 popInformation(message("Saved"));
                 recordFileWritten(targetFile);
 
-                if (saveAsType == SaveAsType.Load) {
-                    sourceFileChanged(targetFile);
+                afterSaveAs(targetFile);
 
-                } else if (saveAsType == SaveAsType.Open) {
-                    openFile(targetFile);
-
-                } else if (saveAsType == SaveAsType.Edit) {
-                    ImageManufactureController.openFile(targetFile);
-
-                }
             }
         };
         start(task);
+    }
+
+    public void afterSaveAs(File file) {
+        if (saveAsType == SaveAsType.Load) {
+            sourceFileChanged(file);
+
+        } else if (saveAsType == SaveAsType.Open) {
+            openFile(file);
+
+        } else if (saveAsType == SaveAsType.Edit) {
+            ImageManufactureController.openFile(file);
+
+        }
     }
 
     @FXML

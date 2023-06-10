@@ -35,7 +35,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.NodeTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.style.HtmlStyles;
 import mara.mybox.imagefile.ImageFileWriters;
@@ -158,7 +158,7 @@ public class ImageAnalyseController extends BaseController {
         alphaBarchart.getData().clear();
         dominantController.clear();
         updateStageTitle(sourceFile);
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private BufferedImage bufferedImage;
 
             @Override
@@ -704,7 +704,7 @@ public class ImageAnalyseController extends BaseController {
 
             dataPane.getSelectionModel().select(currentTab);
 
-            task = new SingletonTask<Void>(this) {
+            task = new SingletonCurrentTask<Void>(this) {
 
                 @Override
                 protected boolean handle() {

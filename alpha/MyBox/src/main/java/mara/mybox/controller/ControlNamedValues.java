@@ -16,7 +16,7 @@ import mara.mybox.db.data.NamedValues;
 import mara.mybox.db.table.TableNamedValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.cell.TableDateCell;
 import mara.mybox.fxml.cell.TableTextTruncCell;
 import mara.mybox.fxml.style.StyleTools;
@@ -82,7 +82,7 @@ public class ControlNamedValues extends BaseSysTableController<NamedValues> {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
 
@@ -141,7 +141,7 @@ public class ControlNamedValues extends BaseSysTableController<NamedValues> {
         NamedValues selected = tableData.get(index);
         String newName = PopTools.askValue(getTitle(), message("CurrentName") + ":" + selected.getName(),
                 message("NewName"), selected.getName() + "m");
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             NamedValues updated;
 
             @Override

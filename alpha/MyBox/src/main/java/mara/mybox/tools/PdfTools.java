@@ -43,8 +43,6 @@ import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.pdmodel.interactive.action.PDActionGoTo;
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
-import org.apache.pdfbox.rendering.ImageType;
-import org.apache.pdfbox.rendering.PDFRenderer;
 
 /**
  * @Author Mara
@@ -472,36 +470,6 @@ public class PdfTools {
             return false;
         }
 
-    }
-
-    // page is 0-based
-    public static BufferedImage page2image(File file, String password, int page,
-            float scale, ImageType imageType) {
-        try {
-            try (PDDocument doc = PDDocument.load(file, password, AppVariables.pdfMemUsage)) {
-                PDFRenderer renderer = new PDFRenderer(doc);
-                BufferedImage image = renderer.renderImage(page, scale, imageType);
-                doc.close();
-                return image;
-            }
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    // page is 0-based
-    public static BufferedImage page2image(File file, String password, int page, int dpi, ImageType imageType) {
-        try {
-            try (PDDocument doc = PDDocument.load(file, password, AppVariables.pdfMemUsage)) {
-                PDFRenderer renderer = new PDFRenderer(doc);
-                BufferedImage image = renderer.renderImageWithDPI(page, dpi, imageType);
-                doc.close();
-                return image;
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-            return null;
-        }
     }
 
     public static void setValues(PDDocument doc, String author, String producer, int defaultZoom, float version) {

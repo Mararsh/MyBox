@@ -24,7 +24,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.BaseTable;
 import mara.mybox.db.table.TableGeographyCode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -206,7 +206,7 @@ public class DataExportController extends BaseTaskController {
         tabPane.getSelectionModel().select(logsTab);
         startTime = new Date().getTime();
         beforeTask();
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             private final boolean skip = targetPathController.isSkip();
 

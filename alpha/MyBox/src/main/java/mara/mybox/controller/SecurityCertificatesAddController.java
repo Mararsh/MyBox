@@ -13,7 +13,7 @@ import javafx.scene.control.TextInputDialog;
 import javafx.stage.Stage;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.SingletonTask;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.tools.CertificateTools;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
@@ -108,7 +108,7 @@ public class SecurityCertificatesAddController extends BaseController {
         }
         final String alias = result.get().trim();
 
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
 
             @Override
             protected boolean handle() {
@@ -165,7 +165,7 @@ public class SecurityCertificatesAddController extends BaseController {
         if (task != null) {
             task.cancel();
         }
-        task = new SingletonTask<Void>(this) {
+        task = new SingletonCurrentTask<Void>(this) {
             private String result;
 
             @Override
