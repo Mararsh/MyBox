@@ -402,7 +402,7 @@ public class XmlEditorController extends BaseController {
     protected void textsChanged(boolean changed) {
 //        MyBoxLog.debug(changed);
         textsChanged = changed;
-        textsTab.setText(message("Texts") + (changed ? " *" : ""));
+        textsTab.setText("XML" + (changed ? " *" : ""));
         textsLabel.setText(message("CharactersNumber") + ": " + StringTools.format(textsArea.getLength()));
         if (changed) {
             fileChanged();

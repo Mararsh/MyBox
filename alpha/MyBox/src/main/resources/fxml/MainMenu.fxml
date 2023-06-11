@@ -156,7 +156,7 @@ License:    Apache License Version 2.0
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#openImageViewer" text="%ImageViewer" />
                                 <MenuItem mnemonicParsing="false" onAction="#openImageManufacture" text="%EditImage" />
-                                <!--<MenuItem mnemonicParsing="false" onAction="#openSVGEditor" text="%SVGEditor" />-->
+                                <MenuItem mnemonicParsing="false" onAction="#openSVGEditor" text="%SVGEditor" />
                                 <Menu mnemonicParsing="false" text="%ImageManufacture">
                                     <items>                                       
                                         <MenuItem mnemonicParsing="false" onAction="#ImagesEditor" text="%ImagesEditor" />

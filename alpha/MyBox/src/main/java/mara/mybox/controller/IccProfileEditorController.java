@@ -1849,7 +1849,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             name = embedICCName;
         }
         final File file = chooseSaveFile(UserConfig.getPath(VisitHistoryTools.getPathKey(VisitHistory.FileType.XML)),
-                name, FileFilters.XmlExtensionFilter);
+                name, FileFilters.XMLExtensionFilter);
         if (file == null) {
             return;
         }

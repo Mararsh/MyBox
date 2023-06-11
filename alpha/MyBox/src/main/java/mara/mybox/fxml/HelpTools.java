@@ -277,6 +277,9 @@ public class HelpTools {
             table.newLinkRow(message("XmlTutorial") + " - " + message("Chinese"), xmlZhLink());
             table.newLinkRow(message("XmlTutorial") + " - " + message("English"), xmlEnLink());
             table.newLinkRow(message("DomSpecification"), domSpecification());
+            table.newLinkRow(message("Charset"), "https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/nio/charset/Charset.html");
+            table.newLinkRow("URI", "https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/net/URI.html");
+            table.newLinkRow("URL", "https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/net/URL.html");
 
             File htmFile = HtmlWriteTools.writeHtml(table.html());
             return htmFile;

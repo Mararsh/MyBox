@@ -120,7 +120,9 @@ public class VisitHistoryTools {
         } else if (fileType == VisitHistory.FileType.JSON) {
             return FileFilters.JSONExtensionFilter;
         } else if (fileType == VisitHistory.FileType.XML) {
-            return FileFilters.XmlExtensionFilter;
+            return FileFilters.XMLExtensionFilter;
+        } else if (fileType == VisitHistory.FileType.SVG) {
+            return FileFilters.SVGExtensionFilter;
         } else {
             return FileFilters.AllExtensionFilter;
         }

@@ -84,8 +84,7 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
 
         List<MenuItem> items = new ArrayList<>();
         items.addAll(Arrays.asList(imageViewer, EditImage,
-                //                EditSVG,
-                imageManufactureMenu(), manufactureBatchMenu(),
+                EditSVG, imageManufactureMenu(), manufactureBatchMenu(),
                 ImageAnalyse, ImagesPlay, imagesBrowser, new SeparatorMenuItem(),
                 ManageColors, QueryColor, colorSpaceMenu(), new SeparatorMenuItem(),
                 ImagesInMyBoxClipboard, ImagesInSystemClipboard, miscellaneousMenu()));

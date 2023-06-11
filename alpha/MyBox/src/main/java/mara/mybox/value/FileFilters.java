@@ -22,11 +22,12 @@ public class FileFilters {
             add(new FileChooser.ExtensionFilter("*", "*.*", "*"));
             add(new FileChooser.ExtensionFilter("txt", "*.txt", "*.csv", "*.log", "*.ini", "*.cfg", "*.conf", "*.sh", "*.del", "*.pom", "*.env", "*.properties"));
             add(new FileChooser.ExtensionFilter("codes", "*.java", "*.c", "*.h", "*.py", "*.php", "*.fxml", "*.cpp", "*.cc", "*.js", "*.css", "*.bat"));
+            add(new FileChooser.ExtensionFilter("csv", "*.csv"));
             add(new FileChooser.ExtensionFilter("html", "*.html", "*.htm"));
             add(new FileChooser.ExtensionFilter("xml", "*.xml"));
             add(new FileChooser.ExtensionFilter("json", "*.json"));
             add(new FileChooser.ExtensionFilter("markdown", "*.md"));
-            add(new FileChooser.ExtensionFilter("csv", "*.csv"));
+            add(new FileChooser.ExtensionFilter("svg", "*.svg"));
         }
     };
 
@@ -134,12 +135,6 @@ public class FileFilters {
     public static List<FileChooser.ExtensionFilter> PdfExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
             add(new FileChooser.ExtensionFilter("pdf", "*.pdf", "*.PDF"));
-        }
-    };
-
-    public static List<FileChooser.ExtensionFilter> XmlExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
-        {
-            add(new FileChooser.ExtensionFilter("xml", "*.xml"));
         }
     };
 
@@ -342,6 +337,12 @@ public class FileFilters {
     public static List<FileChooser.ExtensionFilter> XMLExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
             add(new FileChooser.ExtensionFilter("xml", "*.xml"));
+        }
+    };
+
+    public static List<FileChooser.ExtensionFilter> SVGExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("svg", "*.svg"));
         }
     };
 

@@ -124,7 +124,7 @@ License:    Apache License Version 2.0
                                 </VBox>
                             </content>
                         </Tab>
-                        <Tab fx:id="textsTab" closable="false" text="%Texts">
+                        <Tab fx:id="textsTab" closable="false" text="XML">
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0">
                                     <children>
