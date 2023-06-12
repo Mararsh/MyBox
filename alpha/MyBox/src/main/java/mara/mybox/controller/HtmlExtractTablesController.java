@@ -7,7 +7,6 @@ import mara.mybox.data2d.DataFileCSV;
 import mara.mybox.data.StringTable;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.HtmlReadTools;
 import mara.mybox.tools.TextFileTools;
 import static mara.mybox.value.Languages.message;
@@ -27,16 +26,6 @@ public class HtmlExtractTablesController extends BaseBatchFileController {
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.Html, VisitHistory.FileType.CSV);
-    }
-
-    @Override
-    public boolean matchType(File file) {
-        String suffix = FileNameTools.suffix(file.getName());
-        if (suffix == null) {
-            return false;
-        }
-        suffix = suffix.trim().toLowerCase();
-        return "html".equals(suffix) || "htm".equals(suffix);
     }
 
     @Override

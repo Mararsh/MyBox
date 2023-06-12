@@ -18,10 +18,6 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class BaseImageController_Image extends BaseImageController_MouseEvents {
 
-    public File imageFile() {
-        return sourceFile;
-    }
-
     @Override
     public void sourceFileChanged(File file) {
         if (file == null) {
@@ -233,7 +229,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         if (metaButton != null) {
             metaButton.setDisable(imageInformation == null);
         }
-        File file = imageFile();
+        File file = sourceFile();
         if (deleteButton != null) {
             deleteButton.setDisable(file == null);
         }
@@ -340,8 +336,9 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             return;
         }
         UserConfig.setInt(baseName + "LoadWidth", loadWidth);
-        if (imageFile() != null) {
-            loadImageFile(imageFile(), loadWidth);
+        File file = sourceFile();
+        if (file != null && file.exists()) {
+            loadImageFile(file, loadWidth);
         } else if (imageView.getImage() != null) {
             loadImage(imageView.getImage(), loadWidth);
         } else if (image != null) {

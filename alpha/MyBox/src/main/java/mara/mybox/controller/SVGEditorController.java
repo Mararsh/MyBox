@@ -4,17 +4,30 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.FxFileTools;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileDeleteTools;
+import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
@@ -148,6 +161,61 @@ public class SVGEditorController extends XmlEditorController {
             } else {
                 FileDeleteTools.delete(tmpFile);
             }
+        }
+    }
+
+    @FXML
+    protected void popExamplesMenu(Event event) {
+        if (UserConfig.getBoolean("SVGExamplesPopWhenMouseHovering", true)) {
+            showExamplesMenu(event);
+        }
+    }
+
+    @FXML
+    protected void showExamplesMenu(Event event) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+
+            items.add(exampleMenu("AJ_Digital_Camera.svg"));
+
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem pMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            pMenu.setSelected(UserConfig.getBoolean("SVGExamplesPopWhenMouseHovering", true));
+            pMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("SVGExamplesPopWhenMouseHovering", pMenu.isSelected());
+                }
+            });
+            items.add(pMenu);
+
+            popEventMenu(event, items);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    protected MenuItem exampleMenu(String filename) {
+        try {
+            File exampleFile = FxFileTools.getInternalFile("/data/examples/" + filename,
+                    "data", filename, false);
+            if (exampleFile == null || !exampleFile.exists()) {
+                return null;
+            }
+            File tmpFile = FileTmpTools.generateFile(FileNameTools.suffix(filename));
+            FileCopyTools.copyFile(exampleFile, tmpFile);
+            if (tmpFile == null || !tmpFile.exists()) {
+                return null;
+            }
+            MenuItem menu = new MenuItem(filename);
+            menu.setOnAction((ActionEvent mevent) -> {
+                sourceFileChanged(tmpFile);
+            });
+            return menu;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
     }
 

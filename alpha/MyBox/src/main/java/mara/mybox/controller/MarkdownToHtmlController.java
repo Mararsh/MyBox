@@ -93,16 +93,6 @@ public class MarkdownToHtmlController extends BaseBatchFileController {
     }
 
     @Override
-    public boolean matchType(File file) {
-        String suffix = FileNameTools.suffix(file.getName());
-        if (suffix == null) {
-            return false;
-        }
-        suffix = suffix.trim().toLowerCase();
-        return "md".equals(suffix);
-    }
-
-    @Override
     public String handleFile(File srcFile, File targetPath) {
         try {
             File target = makeTargetFile(srcFile, targetPath);

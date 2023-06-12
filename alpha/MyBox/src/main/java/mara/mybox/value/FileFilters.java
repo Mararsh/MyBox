@@ -1,8 +1,11 @@
 package mara.mybox.value;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.stage.FileChooser;
+import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.FileNameTools;
 
 /**
  * @Author Mara
@@ -10,6 +13,33 @@ import javafx.stage.FileChooser;
  * @License Apache License Version 2.0
  */
 public class FileFilters {
+
+    public static boolean accept(List<FileChooser.ExtensionFilter> filters, File file) {
+        try {
+            if (filters == null || file == null) {
+                return false;
+            }
+            String suffix = FileNameTools.suffix(file.getName());
+            for (FileChooser.ExtensionFilter filter : filters) {
+                List<String> exts = filter.getExtensions();
+                for (String ext : exts) {
+                    if (ext.equals("*") || ext.equals("*.*")) {
+                        return true;
+                    }
+                    if (suffix == null || suffix.isBlank()) {
+                        return false;
+                    }
+                    if (ext.equalsIgnoreCase("*." + suffix)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return false;
+        }
+    }
 
     public static List<FileChooser.ExtensionFilter> AllExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
@@ -336,7 +366,7 @@ public class FileFilters {
 
     public static List<FileChooser.ExtensionFilter> XMLExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
-            add(new FileChooser.ExtensionFilter("xml", "*.xml"));
+            add(new FileChooser.ExtensionFilter("xml", "*.xml", "*.svg", "*.html", "*.htm"));
         }
     };
 

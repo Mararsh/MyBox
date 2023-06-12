@@ -63,7 +63,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
                             pathFiles.add(file);
                         }
                     }
-                    FileSortTools.sortFiles(pathFiles, sortMode);
+                    FileSortTools.sortFiles(pathFiles, browseController.sortMode);
                 }
                 totalLabel.setText("/" + pathFiles.size());
 
@@ -146,15 +146,15 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
         }
         if (nextFiles.isEmpty()) {
             nextFiles = null;
-            nextButton.setDisable(true);
+            browseController.nextButton.setDisable(true);
         } else {
-            nextButton.setDisable(false);
+            browseController.nextButton.setDisable(false);
         }
         if (previousFiles.isEmpty()) {
             previousFiles = null;
-            previousButton.setDisable(true);
+            browseController.previousButton.setDisable(true);
         } else {
-            previousButton.setDisable(false);
+            browseController.previousButton.setDisable(false);
         }
 
         if (loadingController != null) {

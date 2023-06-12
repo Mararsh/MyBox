@@ -43,7 +43,7 @@ public class XmlEditorController extends BaseController {
     protected final SimpleBooleanProperty loadNotify;
 
     @FXML
-    protected Tab domTab, textsTab, optionsTab, backupTab;
+    protected Tab domTab, textsTab, optionsTab, browseTab, backupTab;
     @FXML
     protected TextArea textsArea;
     @FXML
@@ -56,6 +56,8 @@ public class XmlEditorController extends BaseController {
     protected ControlFileBackup backupController;
     @FXML
     protected CheckBox wrapTextsCheck;
+    @FXML
+    protected ControlFileBrowse browseController;
 
     public XmlEditorController() {
         baseTitle = message("XmlEditor");
@@ -85,6 +87,8 @@ public class XmlEditorController extends BaseController {
             domController.xmlEditor = this;
 
             backupController.setParameters(this, baseName);
+
+            browseController.setParameter(this);
 
             tabChanged();
 
@@ -136,11 +140,11 @@ public class XmlEditorController extends BaseController {
 
         sourceFile = file;
         writePanes(TextFileTools.readTexts(file));
+        browseController.setCurrentFile(sourceFile);
     }
 
     public boolean writePanes(String xml) {
         fileChanged = false;
-        openSourceButton.setDisable(sourceFile == null || !sourceFile.exists());
         isSettingValues = true;
         loadDom(xml, false);
         loadText(xml, false);
@@ -515,12 +519,6 @@ public class XmlEditorController extends BaseController {
     public void clearAction() {
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
-//            if (tab == backupTab) {
-//                return;
-//            }
-//            if (!PopTools.askSure(getTitle(), message("SureClearData"))) {
-//                return;
-//            }
             if (tab == domTab) {
                 clearDom();
             } else if (tab == textsTab) {
@@ -539,10 +537,11 @@ public class XmlEditorController extends BaseController {
         try {
             TextClipboardPopController.closeAll();
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            menuButton.setDisable(tab == backupTab || tab == optionsTab);
-            synchronizeButton.setDisable(tab == backupTab || tab == optionsTab);
-            clearButton.setDisable(tab == backupTab || tab == optionsTab);
-            saveButton.setDisable(tab == backupTab || tab == optionsTab);
+            boolean noHandle = tab == backupTab || tab == optionsTab || tab == browseTab;
+            menuButton.setDisable(noHandle);
+            synchronizeButton.setDisable(noHandle);
+            clearButton.setDisable(noHandle);
+            saveButton.setDisable(noHandle);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }

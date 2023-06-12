@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.HtmlWriteTools;
 import static mara.mybox.value.Languages.message;
 
@@ -25,16 +24,6 @@ public class HtmlFramesetController extends FilesMergeController {
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.Html);
-    }
-
-    @Override
-    public boolean matchType(File file) {
-        String suffix = FileNameTools.suffix(file.getName());
-        if (suffix == null) {
-            return false;
-        }
-        suffix = suffix.trim().toLowerCase();
-        return "html".equals(suffix) || "htm".equals(suffix);
     }
 
     @Override

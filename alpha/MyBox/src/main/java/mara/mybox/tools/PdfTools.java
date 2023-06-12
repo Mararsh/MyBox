@@ -83,10 +83,6 @@ public class PdfTools {
         return "PDF".equals(suffix.toUpperCase());
     }
 
-    public static boolean isPDF(File file) {
-        return isPDF(file.getAbsolutePath());
-    }
-
     public static PDDocument createPDF(File file) {
         return createPDF(file, UserConfig.getString("AuthorKey", System.getProperty("user.name")));
     }

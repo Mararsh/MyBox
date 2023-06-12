@@ -681,7 +681,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
     }
 
     public boolean matchType(File file) {
-        return true;
+        return FileFilters.accept(sourceExtensionFilter, file);
     }
 
     public boolean match(File file) {
@@ -689,7 +689,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             return false;
         }
 
-        if (fileSelectorType == FileSelectorType.All) {
+        if (fileSelectorType == null || fileSelectorType == FileSelectorType.All) {
             return true;
         }
         if (sourceFilesSelector == null) {

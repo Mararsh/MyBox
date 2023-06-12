@@ -34,7 +34,6 @@ import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.TextFileTools;
-import mara.mybox.value.FileFilters;
 import mara.mybox.value.Languages;
 import mara.mybox.value.UserConfig;
 import net.sourceforge.tess4j.Word;
@@ -60,7 +59,7 @@ public class ImageOCRController extends ImageViewerController {
     protected Process process;
 
     @FXML
-    protected VBox originalImageBox, imagesBox;
+    protected VBox originalImageBox, imagesBox, ocrBox;
     @FXML
     protected ScrollPane imagePane, processPane;
     @FXML
@@ -84,11 +83,11 @@ public class ImageOCRController extends ImageViewerController {
 
     public ImageOCRController() {
         baseTitle = Languages.message("ImageOCR");
-        TipsLabelKey = "OCRPreprocessComment";
+    }
 
-        TargetPathType = VisitHistory.FileType.Text;
-        TargetFileType = VisitHistory.FileType.Text;
-        targetExtensionFilter = FileFilters.TextExtensionFilter;
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Image, VisitHistory.FileType.Text);
     }
 
     @Override
@@ -102,9 +101,8 @@ public class ImageOCRController extends ImageViewerController {
             ocrOptionsController.htmlCheck.setSelected(true);
             ocrOptionsController.isSettingValues = false;
 
-            originalImageBox.disableProperty().bind(imageView.imageProperty().isNull());
-            processPane.disableProperty().bind(imageView.imageProperty().isNull());
-            rightPane.disableProperty().bind(imageView.imageProperty().isNull());
+            tabPane.disableProperty().bind(imageView.imageProperty().isNull());
+            ocrBox.disableProperty().bind(imageView.imageProperty().isNull());
 
             startCheck.setSelected(UserConfig.getBoolean(baseName + "Start", false));
             startCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {

@@ -37,7 +37,7 @@ public class FileExtensions {
     );
 
     public static String[] TextFileSuffix = {"txt", "java", "fxml", "xml",
-        "json", "log", "js", "css", "csv", "pom", "ini", "del", "svg",
+        "json", "log", "js", "css", "csv", "pom", "ini", "del", "svg", "html", "htm",
         "c", "cpp", "cxx", "cc", "c++", "h", "php", "py", "perl", "iml",
         "sh", "bat", "tcl", "mf", "md", "properties", "env", "cfg", "conf"};
 

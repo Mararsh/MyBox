@@ -15,7 +15,6 @@ import mara.mybox.db.data.Data2DDefinition;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableData2DDefinition;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
 import static mara.mybox.value.Languages.message;
 import org.apache.poi.ss.usermodel.Cell;
@@ -64,16 +63,6 @@ public class DataFileExcelMergeController extends FilesMergeController {
     }
 
     @Override
-    public boolean matchType(File file) {
-        String suffix = FileNameTools.suffix(file.getName());
-        if (suffix == null) {
-            return false;
-        }
-        suffix = suffix.trim().toLowerCase();
-        return "xlsx".equals(suffix) || "xls".equals(suffix);
-    }
-
-    @Override
     protected boolean openWriter() {
         try {
             targetBook = new XSSFWorkbook();
@@ -87,7 +76,7 @@ public class DataFileExcelMergeController extends FilesMergeController {
     @Override
     public String handleFile(File srcFile) {
         String result;
-        try ( Workbook sourceBook = WorkbookFactory.create(srcFile)) {
+        try (Workbook sourceBook = WorkbookFactory.create(srcFile)) {
             List<String> rowData = new ArrayList<>();
             for (int s = 0; s < sourceBook.getNumberOfSheets(); s++) {
                 if (task == null || task.isCancelled()) {
@@ -147,14 +136,14 @@ public class DataFileExcelMergeController extends FilesMergeController {
     @Override
     protected boolean closeWriter() {
         try {
-            try ( FileOutputStream fileOut = new FileOutputStream(targetFile)) {
+            try (FileOutputStream fileOut = new FileOutputStream(targetFile)) {
                 targetBook.write(fileOut);
             }
             targetBook.close();
             if (sheetsIndex.isEmpty()) {
                 return true;
             }
-            try ( Connection conn = DerbyBase.getConnection()) {
+            try (Connection conn = DerbyBase.getConnection()) {
                 TableData2DDefinition tableData2DDefinition = new TableData2DDefinition();
                 for (String sheet : sheetsIndex.keySet()) {
                     Data2DDefinition def = tableData2DDefinition.queryFileSheet(conn, Data2DDefinition.Type.Excel, targetFile, sheet);

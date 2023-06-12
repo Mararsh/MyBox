@@ -59,6 +59,10 @@ public class ImageOCRProcessController extends ImageViewerController {
     @FXML
     protected CheckBox loadCheck;
 
+    public ImageOCRProcessController() {
+        TipsLabelKey = "OCRPreprocessComment";
+    }
+
     @Override
     public void initControls() {
         try {

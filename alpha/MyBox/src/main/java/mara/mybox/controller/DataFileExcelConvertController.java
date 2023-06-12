@@ -6,7 +6,6 @@ import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import mara.mybox.db.data.VisitHistory;
-import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.MicrosoftDocumentTools;
 import static mara.mybox.value.Languages.message;
 import org.apache.poi.ss.usermodel.Row;
@@ -34,19 +33,9 @@ public class DataFileExcelConvertController extends BaseDataConvertController {
     }
 
     @Override
-    public boolean matchType(File file) {
-        String suffix = FileNameTools.suffix(file.getName());
-        if (suffix == null) {
-            return false;
-        }
-        suffix = suffix.trim().toLowerCase();
-        return "xlsx".equals(suffix) || "xls".equals(suffix);
-    }
-
-    @Override
     public String handleFile(File srcFile, File targetPath) {
         String result;
-        try ( Workbook wb = WorkbookFactory.create(srcFile)) {
+        try (Workbook wb = WorkbookFactory.create(srcFile)) {
             for (int s = 0; s < wb.getNumberOfSheets(); s++) {
                 Sheet sheet = wb.getSheetAt(s);
                 updateLogs(message("Reading") + " " + message("Sheet") + ":" + sheet.getSheetName());

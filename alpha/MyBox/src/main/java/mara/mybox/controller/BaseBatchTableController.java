@@ -392,7 +392,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
     }
 
     protected boolean isValidFile(File file) {
-        return true;
+        return FileFilters.accept(sourceExtensionFilter, file);
     }
 
     protected boolean isSelected(int index) {

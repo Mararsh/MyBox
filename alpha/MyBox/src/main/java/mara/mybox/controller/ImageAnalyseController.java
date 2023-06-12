@@ -20,8 +20,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Transform;
 import javafx.scene.web.WebView;
@@ -51,20 +49,13 @@ import mara.mybox.value.UserConfig;
 /**
  * @Author Mara
  * @CreateDate 2019-9-6
- * @Description
  * @License Apache License Version 2.0
  */
-public class ImageAnalyseController extends BaseController {
+public class ImageAnalyseController extends ImageViewerController {
 
     protected ImageStatistic data;
     protected long nonTransparent;
 
-    @FXML
-    protected ImageViewerController sourceController;
-    @FXML
-    protected VBox dataBox;
-    @FXML
-    protected HBox dataOpBox;
     @FXML
     protected CheckBox componentsLegendCheck, grayHistCheck, redHistCheck,
             greenHistCheck, blueHistCheck, alphaHistCheck,
@@ -94,7 +85,7 @@ public class ImageAnalyseController extends BaseController {
 
     @Override
     public void setFileType() {
-        setFileType(VisitHistory.FileType.Html);
+        setFileType(VisitHistory.FileType.Image, VisitHistory.FileType.Html);
     }
 
     @Override
@@ -102,21 +93,13 @@ public class ImageAnalyseController extends BaseController {
         try {
             super.initControls();
 
-            dataOpBox.disableProperty().bind(sourceController.imageView.imageProperty().isNull());
-            dataPane.disableProperty().bind(sourceController.imageView.imageProperty().isNull());
+            rightPane.disableProperty().bind(imageView.imageProperty().isNull());
 
             initComponentsTab();
 
             dominantController.analyseController = this;
 
-            sourceController.loadNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    loadData();
-                }
-            });
-
-            sourceController.rectDrawnNotify.addListener(new ChangeListener<Boolean>() {
+            rectDrawnNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     loadData();
@@ -130,14 +113,28 @@ public class ImageAnalyseController extends BaseController {
         }
     }
 
+    @Override
+    public boolean afterImageLoaded() {
+        try {
+            if (!super.afterImageLoaded()) {
+                return false;
+            }
+            loadData();
+
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return false;
+        }
+    }
+
     protected void loadData() {
-        if (sourceController.image == null || isSettingValues) {
+        if (image == null || isSettingValues) {
             return;
         }
         if (task != null) {
             task.cancel();
         }
-        sourceFile = sourceController.sourceFile;
         statisticController.clear();
         colorsBarchart.getData().clear();
         grayView.getEngine().loadContent("");
@@ -164,7 +161,7 @@ public class ImageAnalyseController extends BaseController {
             @Override
             protected boolean handle() {
                 try {
-                    bufferedImage = imageToHandle();
+                    bufferedImage = bufferedImageToHandle();
                     if (bufferedImage == null) {
                         return false;
                     }
@@ -196,14 +193,14 @@ public class ImageAnalyseController extends BaseController {
         start(task);
     }
 
-    protected BufferedImage imageToHandle() {
+    public BufferedImage bufferedImageToHandle() {
         try {
             Image aImage = null;
-            if (sourceController.selectAreaCheck.isSelected()) {
-                aImage = sourceController.imageToHandle();
+            if (selectAreaCheck.isSelected()) {
+                aImage = imageToHandle();
             }
             if (aImage == null) {
-                aImage = sourceController.image;
+                aImage = image;
             }
             return SwingFXUtils.fromFXImage(aImage, null);
         } catch (Exception e) {
@@ -221,11 +218,11 @@ public class ImageAnalyseController extends BaseController {
      */
     protected void showStatistic() {
         try {
-            if (sourceController.image == null || data == null) {
+            if (image == null || data == null) {
                 return;
             }
             StringBuilder s = new StringBuilder();
-            long imageSize = (long) (sourceController.image.getWidth() * sourceController.image.getHeight());
+            long imageSize = (long) (image.getWidth() * image.getHeight());
             s.append("<P>").append(message("Pixels")).append(":").append(StringTools.format(imageSize)).append("<BR>")
                     .append(message("NonTransparent")).append(":").append(StringTools.format(nonTransparent))
                     .append("(").append(FloatTools.percentage(nonTransparent, imageSize)).append("%)").append("</P>");
@@ -314,7 +311,7 @@ public class ImageAnalyseController extends BaseController {
     // https://stackoverflow.com/questions/37634769/dynamically-change-chart-colors-using-colorpicker/37646943
     private void updateComponentsLegend() {
         try {
-            if (sourceController.image == null || data == null) {
+            if (image == null || data == null) {
                 return;
             }
             if (!componentsLegendCheck.isSelected()) {
@@ -462,7 +459,7 @@ public class ImageAnalyseController extends BaseController {
     }
 
     protected void showComponentsHistogram() {
-        if (sourceController.image == null || data == null || colorsBarchart.getData() == null) {
+        if (image == null || data == null || colorsBarchart.getData() == null) {
             return;
         }
 
@@ -508,7 +505,7 @@ public class ImageAnalyseController extends BaseController {
     }
 
     protected void showComponentsHistogram(int index, final ColorComponent component) {
-        if (sourceController.image == null || data == null) {
+        if (image == null || data == null) {
             return;
         }
         // https://stackoverflow.com/questions/31774771/javafx-chart-axis-only-shows-last-label?r=SearchResults
@@ -605,7 +602,7 @@ public class ImageAnalyseController extends BaseController {
     @Override
     public void saveAsAction() {
         try {
-            if (sourceController.image == null || data == null) {
+            if (image == null || data == null) {
                 return;
             }
             if (task != null && !task.isQuit()) {
@@ -722,7 +719,7 @@ public class ImageAnalyseController extends BaseController {
                         if (sourceFile != null) {
                             s.append("<h3  class=\"center\">").append(sourceFile).append("</h3>\n");
                         }
-                        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(sourceController.image, null);
+                        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
                         ImageFileWriters.writeImageFile(bufferedImage, "jpg", path + File.separator + "image.jpg");
                         String imageName = subPath + "/image.jpg";
                         s.append("<div align=\"center\"><img src=\"").append(imageName).append("\"  style=\"max-width:95%;\"></div>\n");
@@ -853,10 +850,10 @@ public class ImageAnalyseController extends BaseController {
     @Override
     public void refreshAction() {
         try {
-            sourceController.fitSize();
-            sourceController.drawMaskRulerXY();
-            sourceController.checkCoordinate();
-            sourceController.setMaskStroke();
+            fitSize();
+            drawMaskRulerXY();
+            checkCoordinate();
+            setMaskStroke();
             loadData();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

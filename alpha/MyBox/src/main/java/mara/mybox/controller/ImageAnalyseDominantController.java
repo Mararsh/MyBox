@@ -221,7 +221,7 @@ public class ImageAnalyseDominantController extends BaseController {
                 try {
                     BufferedImage image = inImage;
                     if (image == null) {
-                        image = analyseController.imageToHandle();
+                        image = analyseController.bufferedImageToHandle();
                     }
                     if (image == null) {
                         return false;

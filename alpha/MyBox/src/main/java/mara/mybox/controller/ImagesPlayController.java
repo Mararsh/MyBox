@@ -622,7 +622,7 @@ public class ImagesPlayController extends BaseImagesListController {
     }
 
     @Override
-    public File imageFile() {
+    public File sourceFile() {
         if (fileFormat == null || fileFormat.equalsIgnoreCase("pdf")
                 || fileFormat.equalsIgnoreCase("ppt") || fileFormat.equalsIgnoreCase("pptx")) {
             return null;

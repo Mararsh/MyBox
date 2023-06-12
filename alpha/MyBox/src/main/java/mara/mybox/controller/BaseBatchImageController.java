@@ -5,7 +5,6 @@ import mara.mybox.bufferedimage.ImageFileInformation;
 import mara.mybox.bufferedimage.ImageInformation;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.tools.FileTools;
 
 /**
  * @Author Mara
@@ -58,11 +57,6 @@ public abstract class BaseBatchImageController extends BaseBatchFileController {
 
     public void afterImageInfoLoaded() {
 
-    }
-
-    @Override
-    public boolean matchType(File file) {
-        return FileTools.isSupportedImage(file);
     }
 
 }

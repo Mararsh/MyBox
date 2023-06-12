@@ -48,15 +48,6 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button fx:id="openSourceButton" mnemonicParsing="false" onAction="#openSourcePath">
-                            <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/Red/iconOpenPath.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
                         <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveAction">
                             <graphic>
                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -186,6 +177,18 @@ License:    Apache License Version 2.0
                                 </ScrollPane>
                             </content>
                         </Tab>
+                  <Tab fx:id="browseTab" closable="false" text="%Browse">
+                     <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0">
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                           <children>
+                              <fx:include fx:id="browse" source="ControlFileBrowse.fxml" />
+                           </children>
+                        </VBox>
+                     </content>
+                  </Tab>
                         <Tab fx:id="backupTab" closable="false" text="%Backup">
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="RIGHT_TO_LEFT" VBox.vgrow="ALWAYS">

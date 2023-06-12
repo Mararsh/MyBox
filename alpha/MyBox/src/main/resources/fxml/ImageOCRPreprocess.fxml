@@ -26,6 +26,11 @@ License:    Apache License Version 2.0
     <children>
         <VBox fx:id="imageOptionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="2.0">
             <children>
+            <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../../GitHub/MyBox/alpha/MyBox/src/main/resources/buttons/Red/iconTips.png" />
+               </image>
+            </ImageView>
                 <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="NEVER">
                     <children>
                         <Label text="%Scale" />
@@ -71,34 +76,16 @@ License:    Apache License Version 2.0
                         </Button>
                     </children>
                 </HBox>
-            <CheckBox fx:id="loadCheck" minHeight="-Infinity" mnemonicParsing="false" text="%LoadAfterSaveAs" wrapText="true" />
             </children>
         </VBox>
-        <FlowPane alignment="CENTER_RIGHT" hgap="5.0" prefWrapLength="600.0" vgap="5.0">
-            <children>
-                <CheckBox fx:id="selectAreaCheck" mnemonicParsing="false">
-                    <graphic>
-                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconTarget.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </CheckBox>
-                <Button fx:id="selectAllButton" mnemonicParsing="false" onAction="#selectAllAction">
+      <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="100.0" vgap="2.0">
+         <children>
+            <CheckBox fx:id="loadCheck" minHeight="-Infinity" mnemonicParsing="false" text="%LoadAfterSaveAs" wrapText="true" />
+                <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#pickSaveAs" onMouseEntered="#popSaveAs">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/Red/iconSelectAll.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button fx:id="menuButton" mnemonicParsing="false" onAction="#menuAction">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconMenu.png" />
+                                <Image url="@../buttons/iconSaveAs.png" />
                             </image>
                         </ImageView>
                     </graphic>
@@ -139,11 +126,42 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#pickSaveAs" onMouseEntered="#popSaveAs">
+            <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconPop.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+         </children>
+      </FlowPane>
+        <FlowPane alignment="CENTER_RIGHT" hgap="5.0" prefWrapLength="600.0" vgap="5.0">
+            <children>
+                <CheckBox fx:id="selectAreaCheck" mnemonicParsing="false">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconTarget.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </CheckBox>
+                <Button fx:id="selectAllButton" mnemonicParsing="false" onAction="#selectAllAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
-                                <Image url="@../buttons/iconSaveAs.png" />
+                                <Image url="@../buttons/Red/iconSelectAll.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="menuButton" mnemonicParsing="false" onAction="#menuAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconMenu.png" />
                             </image>
                         </ImageView>
                     </graphic>

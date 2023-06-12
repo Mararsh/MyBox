@@ -4,7 +4,6 @@ import java.io.File;
 import java.nio.charset.Charset;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Languages;
@@ -24,16 +23,6 @@ public class HtmlToTextController extends BaseBatchFileController {
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.Html, VisitHistory.FileType.Text);
-    }
-
-    @Override
-    public boolean matchType(File file) {
-        String suffix = FileNameTools.suffix(file.getName());
-        if (suffix == null) {
-            return false;
-        }
-        suffix = suffix.trim().toLowerCase();
-        return "html".equals(suffix) || "htm".equals(suffix);
     }
 
     @Override

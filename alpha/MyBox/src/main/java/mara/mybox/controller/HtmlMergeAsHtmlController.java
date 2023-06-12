@@ -83,16 +83,6 @@ public class HtmlMergeAsHtmlController extends FilesMergeController {
     }
 
     @Override
-    public boolean matchType(File file) {
-        String suffix = FileNameTools.suffix(file.getName());
-        if (suffix == null) {
-            return false;
-        }
-        suffix = suffix.trim().toLowerCase();
-        return "html".equals(suffix) || "htm".equals(suffix);
-    }
-
-    @Override
     protected boolean openWriter() {
         try {
             writer = new FileWriter(targetFile, Charset.forName("utf-8"));
