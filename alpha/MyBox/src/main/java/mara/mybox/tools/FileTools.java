@@ -12,6 +12,7 @@ import java.nio.file.attribute.FileTime;
 import java.util.Arrays;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.FileExtensions;
+import static mara.mybox.value.Languages.message;
 import org.apache.commons.io.FileUtils;
 
 /**
@@ -54,6 +55,20 @@ public class FileTools {
                 }
             }
         }
+    }
+
+    public static String fileInformation(File file) {
+        if (file == null) {
+            return null;
+        }
+        StringBuilder s = new StringBuilder();
+        s.append(message("FileName"))
+                .append(": ").append(file.getAbsolutePath()).append("\n");
+        s.append(message("FileSize"))
+                .append(": ").append(FileTools.showFileSize(file.length())).append("\n");
+        s.append(message("FileModifyTime"))
+                .append(": ").append(DateTools.datetimeToString(file.lastModified()));
+        return s.toString();
     }
 
     public static boolean isSupportedImage(File file) {

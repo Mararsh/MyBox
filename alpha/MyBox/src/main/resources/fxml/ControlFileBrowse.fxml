@@ -29,7 +29,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="previousButton" mnemonicParsing="false" onAction="#previousAction">
+                <Button fx:id="previousFileButton" mnemonicParsing="false" onAction="#previousAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -38,7 +38,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="nextButton" mnemonicParsing="false" onAction="#nextAction">
+                <Button fx:id="nextFileButton" mnemonicParsing="false" onAction="#nextAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                             <image>

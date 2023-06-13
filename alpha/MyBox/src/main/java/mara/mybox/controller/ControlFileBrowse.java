@@ -6,6 +6,7 @@ import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Toggle;
@@ -36,6 +37,8 @@ public class ControlFileBrowse extends BaseController {
             CreateTimeDescRadio, CreateTimeAscRadio;
     @FXML
     protected Label infoLabel;
+    @FXML
+    protected Button nextFileButton, previousFileButton;
 
     public void setParameter(BaseController parent) {
         try {
@@ -152,15 +155,16 @@ public class ControlFileBrowse extends BaseController {
 
     public void checkStatus() {
         try {
-            nextButton.setDisable(true);
-            previousButton.setDisable(true);
+            nextFileButton.setDisable(true);
+            previousFileButton.setDisable(true);
             openSourceButton.setDisable(sourceFile == null);
             if (sourceFile == null) {
                 infoLabel.setText("");
                 openSourceButton.setDisable(true);
                 return;
             }
-            String info = sourceFile.getParent() + "\n";
+            String info = message("Directory") + ": "
+                    + sourceFile.getParent() + "\n";
             List<File> files = pathFiles(sourceFile);
             if (files == null || files.isEmpty()) {
                 info += message("Valid") + ": 0";
@@ -168,10 +172,10 @@ public class ControlFileBrowse extends BaseController {
                 info += message("Valid") + ": " + files.size();
                 String currentName = sourceFile.getAbsolutePath();
                 if (!currentName.equals(files.get(0).getAbsolutePath())) {
-                    previousButton.setDisable(false);
+                    previousFileButton.setDisable(false);
                 }
                 if (!currentName.equals(files.get(files.size() - 1).getAbsolutePath())) {
-                    nextButton.setDisable(false);
+                    nextFileButton.setDisable(false);
                 }
             }
             infoLabel.setText(info);
@@ -183,9 +187,6 @@ public class ControlFileBrowse extends BaseController {
     @FXML
     @Override
     public void nextAction() {
-        if (!parentController.checkBeforeNextAction()) {
-            return;
-        }
         File file = nextFile(sourceFile);
         if (file == null) {
             popError(message("NoMore"));
@@ -218,9 +219,6 @@ public class ControlFileBrowse extends BaseController {
     @FXML
     @Override
     public void previousAction() {
-        if (!parentController.checkBeforeNextAction()) {
-            return;
-        }
         File file = previousFile(sourceFile);
         if (file == null) {
             popError(message("NoMore"));

@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.Optional;
-import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -36,7 +35,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2023-4-30
  * @License Apache License Version 2.0
  */
-public class XmlEditorController extends BaseController {
+public class XmlEditorController extends BaseFileController {
 
     protected boolean domChanged, textsChanged, fileChanged;
     protected String title;
@@ -56,8 +55,6 @@ public class XmlEditorController extends BaseController {
     protected ControlFileBackup backupController;
     @FXML
     protected CheckBox wrapTextsCheck;
-    @FXML
-    protected ControlFileBrowse browseController;
 
     public XmlEditorController() {
         baseTitle = message("XmlEditor");
@@ -137,10 +134,8 @@ public class XmlEditorController extends BaseController {
 
             }
         }
-
         sourceFile = file;
         writePanes(TextFileTools.readTexts(file));
-        browseController.setCurrentFile(sourceFile);
     }
 
     public boolean writePanes(String xml) {
@@ -150,9 +145,12 @@ public class XmlEditorController extends BaseController {
         loadText(xml, false);
         updateTitle();
         isSettingValues = false;
-        if (backupController != null) {
-            backupController.loadBackups(sourceFile);
+        if (sourceFile != null) {
+            recordFileOpened(sourceFile);
         }
+        fileInfoLabel.setText(FileTools.fileInformation(sourceFile));
+        browseController.setCurrentFile(sourceFile);
+        backupController.loadBackups(sourceFile);
         loadNotify.set(!loadNotify.get());
         return true;
     }
@@ -164,21 +162,24 @@ public class XmlEditorController extends BaseController {
             if (!checkBeforeNextAction()) {
                 return;
             }
-            String name = PopTools.askValue(getBaseTitle(), message("Create"), message("Root"), "data");
-            if (name == null || name.isBlank()) {
+            String blank = makeBlank();
+            if (blank == null || blank.isBlank()) {
                 return;
             }
             sourceFile = null;
-            getMyStage().setTitle(getBaseTitle());
-            fileChanged = false;
-            if (backupController != null) {
-                backupController.loadBackups(null);
-            }
-            writePanes("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
-                    + "<" + name + "></" + name + ">");
+            writePanes(blank);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public String makeBlank() {
+        String name = PopTools.askValue(getBaseTitle(), message("Create"), message("Root"), "data");
+        if (name == null || name.isBlank()) {
+            return null;
+        }
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+                + "<" + name + "></" + name + ">";
     }
 
     /*
@@ -187,6 +188,9 @@ public class XmlEditorController extends BaseController {
     @FXML
     @Override
     public void saveAction() {
+        if (task != null && !task.isQuit()) {
+            return;
+        }
         if (sourceFile == null) {
             targetFile = chooseSaveFile();
         } else {
@@ -195,18 +199,23 @@ public class XmlEditorController extends BaseController {
         if (targetFile == null) {
             return;
         }
-        String xml = currentXML(true);
-        if (xml == null || xml.isBlank()) {
-            popError(message("NoData"));
-            return;
-        }
-        if (task != null && !task.isQuit()) {
-            return;
-        }
         task = new SingletonCurrentTask<Void>(this) {
+            private String xml;
+
             @Override
             protected boolean handle() {
                 try {
+                    xml = null;
+                    Tab currentTab = tabPane.getSelectionModel().getSelectedItem();
+                    if (currentTab == domTab) {
+                        xml = xmlByDom();
+                    } else if (currentTab == textsTab) {
+                        xml = xmlByText();
+                    }
+                    if (xml == null || xml.isBlank()) {
+                        error = message("NoData");
+                        return false;
+                    }
                     String encoding = domController.doc.getXmlEncoding();
                     if (encoding == null) {
                         encoding = "utf-8";
@@ -238,31 +247,6 @@ public class XmlEditorController extends BaseController {
         start(task);
     }
 
-    public String currentXML(boolean synchronize) {
-        try {
-            Tab currentTab = tabPane.getSelectionModel().getSelectedItem();
-
-            if (currentTab == domTab) {
-                String xml = xmlByDom();
-                if (synchronize) {
-                    loadText(xml, false);
-                }
-                return xml;
-
-            } else if (currentTab == textsTab) {
-                String xml = xmlByText();
-                if (synchronize) {
-                    loadDom(xml, false);
-                }
-                return xml;
-
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-        return null;
-    }
-
     public void updateTitle() {
         if (getMyStage() == null) {
             return;
@@ -285,21 +269,27 @@ public class XmlEditorController extends BaseController {
     @FXML
     @Override
     public void saveAsAction() {
+        if (task != null && !task.isQuit()) {
+            return;
+        }
         File file = chooseSaveFile();
         if (file == null) {
             return;
         }
-        String xml = currentXML(false);
-        if (xml == null || xml.isBlank()) {
-            popError(message("NoData"));
-            return;
-        }
-        if (task != null) {
-            task.cancel();
-        }
         task = new SingletonCurrentTask<Void>(this) {
             @Override
             protected boolean handle() {
+                String xml = null;
+                Tab currentTab = tabPane.getSelectionModel().getSelectedItem();
+                if (currentTab == domTab) {
+                    xml = xmlByDom();
+                } else if (currentTab == textsTab) {
+                    xml = xmlByText();
+                }
+                if (xml == null || xml.isBlank()) {
+                    error = message("NoData");
+                    return false;
+                }
                 String encoding = domController.doc.getXmlEncoding();
                 if (encoding == null) {
                     encoding = "utf-8";
@@ -316,11 +306,15 @@ public class XmlEditorController extends BaseController {
             protected void whenSucceeded() {
                 popSaved();
                 recordFileWritten(file);
-                XmlEditorController.open(file);
+                openSavedFile(file);
             }
 
         };
         start(task);
+    }
+
+    public void openSavedFile(File file) {
+        XmlEditorController.open(file);
     }
 
 
@@ -468,15 +462,38 @@ public class XmlEditorController extends BaseController {
     }
 
     public void synchronizeDom() {
-        Platform.runLater(() -> {
-            loadText(xmlByDom(), true);
-        });
+        if (task != null && !task.isQuit()) {
+            return;
+        }
+        task = new SingletonCurrentTask<Void>(this) {
+            String xml;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    xml = xmlByDom();
+                    return true;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                synchronizeDomXML(xml);
+            }
+
+        };
+        start(task);
+    }
+
+    public void synchronizeDomXML(String xml) {
+        loadText(xml, true);
     }
 
     public void synchronizeTexts() {
-        Platform.runLater(() -> {
-            loadDom(xmlByText(), true);
-        });
+        loadDom(xmlByText(), true);
     }
 
     @FXML

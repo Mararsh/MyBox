@@ -70,8 +70,6 @@ public class ImageViewerController extends BaseImageController {
     protected ControlImageFormat formatController;
     @FXML
     protected ControlFileBackup backupController;
-    @FXML
-    protected ControlFileBrowse browseController;
 
     public ImageViewerController() {
         baseTitle = message("ImageViewer");
@@ -224,9 +222,6 @@ public class ImageViewerController extends BaseImageController {
                     UserConfig.setBoolean(baseName + "BrowsePane", browsePane.isExpanded());
                 });
                 browsePane.setExpanded(UserConfig.getBoolean(baseName + "BrowsePane", false));
-            }
-            if (browseController != null) {
-                browseController.setParameter(this);
             }
 
         } catch (Exception e) {

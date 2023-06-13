@@ -705,6 +705,18 @@ public class HelpTools {
         return "https://www.w3.org/TR/DOM-Level-3-Core/";
     }
 
+    public static String svgEnLink() {
+        return "https://www.w3schools.com/graphics/svg_intro.asp";
+    }
+
+    public static String svgZhLink() {
+        return "https://www.runoob.com/svg/svg-tutorial.html";
+    }
+
+    public static String svgSpecification() {
+        return "https://www.w3.org/Graphics/SVG/";
+    }
+
     public static List<MenuItem> htmlHelps(BaseController controller) {
         try {
             List<MenuItem> items = new ArrayList<>();

@@ -18,12 +18,10 @@ import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
-import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.AlphaTools;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
@@ -59,9 +57,7 @@ public class ImageOCRController extends ImageViewerController {
     protected Process process;
 
     @FXML
-    protected VBox originalImageBox, imagesBox, ocrBox;
-    @FXML
-    protected ScrollPane imagePane, processPane;
+    protected Tab imageTab, processTab, optionsTab, resultsTab;
     @FXML
     protected TextArea textArea;
     @FXML
@@ -102,7 +98,6 @@ public class ImageOCRController extends ImageViewerController {
             ocrOptionsController.isSettingValues = false;
 
             tabPane.disableProperty().bind(imageView.imageProperty().isNull());
-            ocrBox.disableProperty().bind(imageView.imageProperty().isNull());
 
             startCheck.setSelected(UserConfig.getBoolean(baseName + "Start", false));
             startCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -120,14 +115,15 @@ public class ImageOCRController extends ImageViewerController {
     @FXML
     @Override
     public boolean menuAction() {
-        if (processPane.isFocused() || preprocessController.scrollPane.isFocused() || preprocessController.imageView.isFocused()) {
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+        if (tab == processTab) {
             preprocessController.menuAction();
             return true;
 
-        } else if (imagePane.isFocused() || originalImageBox.isFocused() || scrollPane.isFocused() || imageView.isFocused()) {
+        } else if (tab == imageTab) {
             return super.menuAction();
 
-        } else if (rightPane.isFocused() || ocrTabPane.isFocused()) {
+        } else if (tab == resultsTab) {
 
             if (txtTab.isSelected()) {
                 Point2D localToScreen = textArea.localToScreen(textArea.getWidth() - 80, 80);
@@ -153,14 +149,15 @@ public class ImageOCRController extends ImageViewerController {
     @FXML
     @Override
     public boolean popAction() {
-        if (processPane.isFocused() || preprocessController.scrollPane.isFocused() || preprocessController.imageView.isFocused()) {
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+        if (tab == processTab) {
             preprocessController.popAction();
             return true;
 
-        } else if (imagePane.isFocused() || originalImageBox.isFocused() || scrollPane.isFocused() || imageView.isFocused()) {
+        } else if (tab == imageTab) {
             return super.popAction();
 
-        } else if (rightPane.isFocused() || ocrTabPane.isFocused()) {
+        } else if (tab == resultsTab) {
 
             if (txtTab.isSelected()) {
                 TextPopController.openInput(this, textArea);
@@ -296,6 +293,7 @@ public class ImageOCRController extends ImageViewerController {
                                 textArea.setText(texts);
                                 resultLabel.setText(MessageFormat.format(Languages.message("OCRresults"),
                                         texts.length(), DateTools.datetimeMsDuration(new Date().getTime() - startTime)));
+                                tabPane.getSelectionModel().select(resultsTab);
                                 ocrTabPane.getSelectionModel().select(txtTab);
                             } else {
                                 if (outputs != null && !outputs.isBlank()) {
@@ -359,6 +357,7 @@ public class ImageOCRController extends ImageViewerController {
                 textArea.setText(ocrOptionsController.texts);
                 resultLabel.setText(MessageFormat.format(Languages.message("OCRresults"),
                         ocrOptionsController.texts.length(), DateTools.datetimeMsDuration(cost)));
+                tabPane.getSelectionModel().select(resultsTab);
                 ocrTabPane.getSelectionModel().select(txtTab);
 
                 htmlController.loadHtml(ocrOptionsController.html);

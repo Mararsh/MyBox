@@ -252,6 +252,8 @@ public class StyleButton {
             switch (id) {
                 case "nextButton":
                     return new StyleData(id, message("Next"), "PAGE DOWN", "iconNext.png");
+                case "nextFileButton":
+                    return new StyleData(id, message("NextFile"), "", "iconNext.png");
                 default:
                     return new StyleData(id, message("Next"), "", "iconNext.png");
             }
@@ -260,6 +262,8 @@ public class StyleButton {
             switch (id) {
                 case "previousButton":
                     return new StyleData(id, message("Previous"), "PAGE UP", "iconPrevious.png");
+                case "previousFileButton":
+                    return new StyleData(id, message("PreviousFile"), "", "iconPrevious.png");
                 default:
                     return new StyleData(id, message("Previous"), "", "iconPrevious.png");
             }

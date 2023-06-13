@@ -75,6 +75,7 @@ public class ControlXmlNodeEdit extends ControlXmlNodeBase {
                 valueArea.setEditable(true);
                 setBox.getChildren().add(valueBox);
                 VBox.setVgrow(valueBox, Priority.ALWAYS);
+                VBox.setVgrow(valueArea, Priority.ALWAYS);
                 break;
             case Node.ELEMENT_NODE:
                 NamedNodeMap attrs = node.getAttributes();
@@ -85,6 +86,7 @@ public class ControlXmlNodeEdit extends ControlXmlNodeBase {
                 }
                 setBox.getChildren().add(attrBox);
                 VBox.setVgrow(attrBox, Priority.ALWAYS);
+                VBox.setVgrow(attributesTable, Priority.ALWAYS);
                 break;
             case Node.DOCUMENT_NODE:
                 Document document = (Document) node;
@@ -104,6 +106,7 @@ public class ControlXmlNodeEdit extends ControlXmlNodeBase {
                 valueArea.setEditable(false);
                 setBox.getChildren().add(valueBox);
                 VBox.setVgrow(valueBox, Priority.ALWAYS);
+                VBox.setVgrow(valueArea, Priority.ALWAYS);
                 break;
             default:
         }

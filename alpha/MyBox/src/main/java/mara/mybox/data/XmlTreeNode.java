@@ -4,6 +4,7 @@ import java.io.StringReader;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.application.Platform;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import mara.mybox.controller.BaseController;
@@ -144,7 +145,9 @@ public class XmlTreeNode {
                 if (controller instanceof BaseLogs) {
                     ((BaseLogs) controller).updateLogs(arg0.toString(), true, true);
                 } else {
-                    controller.alertError(arg0.toString());
+                    Platform.runLater(() -> {
+                        controller.alertError(arg0.toString());
+                    });
                 }
             }
 
@@ -153,7 +156,9 @@ public class XmlTreeNode {
                 if (controller instanceof BaseLogs) {
                     ((BaseLogs) controller).updateLogs(arg0.toString(), true, true);
                 } else {
-                    controller.alertError(arg0.toString());
+                    Platform.runLater(() -> {
+                        controller.alertError(arg0.toString());
+                    });
                 }
             }
 
@@ -162,7 +167,9 @@ public class XmlTreeNode {
                 if (controller instanceof BaseLogs) {
                     ((BaseLogs) controller).updateLogs(arg0.toString(), true, true);
                 } else {
-                    controller.alertWarning(arg0.toString());
+                    Platform.runLater(() -> {
+                        controller.alertWarning(arg0.toString());
+                    });
                 }
             }
         });
@@ -175,7 +182,9 @@ public class XmlTreeNode {
             Strip(controller, doc);
             return doc;
         } catch (Exception e) {
-            controller.alertError(e.toString());
+            Platform.runLater(() -> {
+                controller.alertError(e.toString());
+            });
             return null;
         }
     }
@@ -231,7 +240,9 @@ public class XmlTreeNode {
             if (controller instanceof BaseLogs) {
                 ((BaseLogs) controller).updateLogs(e.toString(), true, true);
             } else {
-                controller.alertError(e.toString());
+                Platform.runLater(() -> {
+                    controller.alertError(e.toString());
+                });
             }
         }
         return node;

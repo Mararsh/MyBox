@@ -25,6 +25,7 @@ import mara.mybox.data.XmlTreeNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
@@ -68,33 +69,68 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
     /*
         tree
      */
-    public TreeItem<XmlTreeNode> makeTree(String xml) {
-        try {
-            if (xml == null) {
-                clearTree();
-                return null;
-            }
-            doc = XmlTreeNode.doc(this, xml);
-            return loadTree(doc);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
+    public void makeTree(String xml) {
+        if (task != null && !task.isQuit()) {
+            return;
         }
+        if (xml == null) {
+            clearTree();
+            return;
+        }
+        task = new SingletonCurrentTask<Void>(this) {
+            TreeItem<XmlTreeNode> root;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    doc = XmlTreeNode.doc(myController, xml);
+                    root = makeTreeItem(new XmlTreeNode(doc));
+                    return root != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                treeView.setRoot(root);
+            }
+
+        };
+        start(task);
     }
 
-    public TreeItem<XmlTreeNode> loadTree(Node doc) {
-        try {
-            clearTree();
-            if (doc == null) {
-                return null;
-            }
-            TreeItem<XmlTreeNode> xml = makeTreeItem(new XmlTreeNode(doc));
-            treeView.setRoot(xml);
-            return xml;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
+    public void loadNode(Node doc) {
+        if (task != null && !task.isQuit()) {
+            return;
         }
+        clearTree();
+        if (doc == null) {
+            return;
+        }
+        task = new SingletonCurrentTask<Void>(this) {
+
+            TreeItem<XmlTreeNode> root;
+
+            @Override
+            protected boolean handle() {
+                try {
+                    root = makeTreeItem(new XmlTreeNode(doc));
+                    return root != null;
+                } catch (Exception e) {
+                    error = e.toString();
+                    return false;
+                }
+            }
+
+            @Override
+            protected void whenSucceeded() {
+                treeView.setRoot(root);
+            }
+
+        };
+        start(task);
     }
 
     public TreeItem<XmlTreeNode> makeTreeItem(XmlTreeNode xmlTreeNode) {
@@ -137,28 +173,6 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
             } else {
                 parentChildren.add(item);
             }
-            return item;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
-
-    public TreeItem<XmlTreeNode> updateTreeItem(TreeItem<XmlTreeNode> item) {
-        try {
-            if (item == null) {
-                return null;
-            }
-            TreeItem<XmlTreeNode> parentItem = item.getParent();
-            if (parentItem == null) {
-                return loadTree(item.getValue().getNode());
-            }
-            int index = parentItem.getChildren().indexOf(item);
-            if (index < 0) {
-                return null;
-            }
-            parentItem.getChildren().set(index, item);
-            focusItem(item);
             return item;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -425,7 +439,7 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
     @FXML
     @Override
     public void refreshAction() {
-        loadTree(doc);
+        loadNode(doc);
     }
 
     @FXML
@@ -446,6 +460,28 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
 
     @FXML
     protected void showHelps(Event event) {
+        try {
+            List<MenuItem> items = xmlHelps(event);
+
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            hoverMenu.setSelected(UserConfig.getBoolean("XmlHelpsPopWhenMouseHovering", false));
+            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("XmlHelpsPopWhenMouseHovering", hoverMenu.isSelected());
+                }
+            });
+            items.add(hoverMenu);
+
+            popEventMenu(event, items);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public List<MenuItem> xmlHelps(Event event) {
         try {
             List<MenuItem> items = new ArrayList<>();
 
@@ -478,21 +514,10 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
             });
             items.add(menuItem);
 
-            items.add(new SeparatorMenuItem());
-
-            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            hoverMenu.setSelected(UserConfig.getBoolean("XmlHelpsPopWhenMouseHovering", false));
-            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("XmlHelpsPopWhenMouseHovering", hoverMenu.isSelected());
-                }
-            });
-            items.add(hoverMenu);
-
-            popEventMenu(event, items);
+            return items;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+            return null;
         }
     }
 

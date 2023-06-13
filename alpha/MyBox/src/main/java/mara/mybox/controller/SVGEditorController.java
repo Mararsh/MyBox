@@ -6,12 +6,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.web.WebEngine;
@@ -44,6 +44,8 @@ public class SVGEditorController extends XmlEditorController {
     protected String currentXML;
 
     @FXML
+    protected ControlSvgTree treeController;
+    @FXML
     protected WebView webView;
 
     public SVGEditorController() {
@@ -52,11 +54,22 @@ public class SVGEditorController extends XmlEditorController {
     }
 
     @Override
+    public void initValues() {
+        try {
+            super.initValues();
+
+            domController = treeController;
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.SVG);
     }
 
-    // http://dev.w3.org/SVG/tools/svgweb/samples/svg-files/
     @Override
     public void initControls() {
         try {
@@ -77,6 +90,12 @@ public class SVGEditorController extends XmlEditorController {
         return super.writePanes(xml);
     }
 
+    @Override
+    public String makeBlank() {
+        return "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 500 500\">\n"
+                + "</svg>";
+    }
+
     public void loadHtml(String xml) {
         currentXML = xml;
         webEngine.getLoadWorker().cancel();
@@ -84,21 +103,21 @@ public class SVGEditorController extends XmlEditorController {
     }
 
     @Override
-    public void synchronizeDom() {
-        Platform.runLater(() -> {
-            String xml = xmlByDom();
-            loadText(xml, true);
-            loadHtml(xml);
-        });
+    public void synchronizeDomXML(String xml) {
+        super.synchronizeDomXML(xml);
+        loadHtml(xml);
     }
 
     @Override
     public void synchronizeTexts() {
-        Platform.runLater(() -> {
-            String xml = xmlByText();
-            loadDom(xml, true);
-            loadHtml(xml);
-        });
+        String xml = xmlByText();
+        loadDom(xml, true);
+        loadHtml(xml);
+    }
+
+    @Override
+    public void openSavedFile(File file) {
+        SVGEditorController.open(file);
     }
 
     @FXML
@@ -174,9 +193,84 @@ public class SVGEditorController extends XmlEditorController {
     @FXML
     protected void showExamplesMenu(Event event) {
         try {
+            Menu w3menu = new Menu("w3");
             List<MenuItem> items = new ArrayList<>();
-
+            items.add(exampleMenu("accessible.svg"));
             items.add(exampleMenu("AJ_Digital_Camera.svg"));
+            items.add(exampleMenu("alphachannel.svg"));
+            items.add(exampleMenu("android.svg"));
+            items.add(exampleMenu("basura.svg"));
+            items.add(exampleMenu("cartman.svg"));
+            items.add(exampleMenu("compuserver_msn_Ford_Focus.svg"));
+            items.add(exampleMenu("displayWebStats.svg"));
+            items.add(exampleMenu("gaussian3.svg"));
+            items.add(exampleMenu("jsonatom.svg"));
+            items.add(exampleMenu("lineargradient2.svg"));
+            items.add(exampleMenu("mouseEvents.svg"));
+            items.add(exampleMenu("ny1.svg"));
+            items.add(exampleMenu("radialgradient2.svg"));
+            items.add(exampleMenu("rg1024_eggs.svg"));
+            items.add(exampleMenu("rg1024_green_grapes.svg"));
+            items.add(exampleMenu("rg1024_metal_effect.svg"));
+            items.add(exampleMenu("rg1024_Ufo_in_metalic_style.svg"));
+            items.add(exampleMenu("snake.svg"));
+            items.add(exampleMenu("star.svg"));
+            items.add(exampleMenu("Steps.svg"));
+            items.add(exampleMenu("svg2009.svg"));
+            items.add(exampleMenu("tiger.svg"));
+            items.add(exampleMenu("USStates.svg"));
+            items.add(exampleMenu("yinyang.svg"));
+
+            items.add(new SeparatorMenuItem());
+
+            MenuItem menuItem = new MenuItem("http://dev.w3.org/SVG/tools/svgweb/samples/svg-files/");
+            menuItem.setStyle("-fx-text-fill: #2e598a;");
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress("http://dev.w3.org/SVG/tools/svgweb/samples/svg-files/", true);
+                }
+            });
+            items.add(menuItem);
+
+            w3menu.getItems().addAll(items);
+
+            Menu batikMenu = new Menu("batik");
+            items.clear();
+            items.add(exampleMenu("3D.svg"));
+            items.add(exampleMenu("anne.svg"));
+            items.add(exampleMenu("asf-logo.svg"));
+            items.add(exampleMenu("barChart.svg"));
+            items.add(exampleMenu("batik3D.svg"));
+            items.add(exampleMenu("batikLogo.svg"));
+            items.add(exampleMenu("batikYin.svg"));
+            items.add(exampleMenu("batikFX.svg"));
+            items.add(exampleMenu("logoShadowOffset.svg"));
+            items.add(exampleMenu("mapSpain.svg"));
+            items.add(exampleMenu("mapWaadt.svg"));
+            items.add(exampleMenu("mathMetal.svg"));
+            items.add(exampleMenu("moonPhases.svg"));
+            items.add(exampleMenu("sizeOfSun.svg"));
+            items.add(exampleMenu("strokeFont.svg"));
+            items.add(exampleMenu("textRotate.svg"));
+
+            items.add(new SeparatorMenuItem());
+
+            menuItem = new MenuItem("https://github.com/apache/xmlgraphics-batik/tree/main/samples");
+            menuItem.setStyle("-fx-text-fill: #2e598a;");
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress("https://github.com/apache/xmlgraphics-batik/tree/main/samples", true);
+                }
+            });
+            items.add(menuItem);
+
+            batikMenu.getItems().addAll(items);
+
+            items.clear();
+            items.add(w3menu);
+            items.add(batikMenu);
 
             items.add(new SeparatorMenuItem());
 
@@ -203,7 +297,7 @@ public class SVGEditorController extends XmlEditorController {
             if (exampleFile == null || !exampleFile.exists()) {
                 return null;
             }
-            File tmpFile = FileTmpTools.generateFile(FileNameTools.suffix(filename));
+            File tmpFile = FileTmpTools.generateFile(FileNameTools.prefix(filename), FileNameTools.suffix(filename));
             FileCopyTools.copyFile(exampleFile, tmpFile);
             if (tmpFile == null || !tmpFile.exists()) {
                 return null;
@@ -222,9 +316,11 @@ public class SVGEditorController extends XmlEditorController {
     /*
         static
      */
-    public static SVGEditorController open(BaseController parent, String file) {
+    public static SVGEditorController open(File file) {
         try {
             SVGEditorController controller = (SVGEditorController) WindowTools.openStage(Fxmls.SVGEditorFxml);
+            controller.sourceFileChanged(file);
+            controller.requestMouse();
             return controller;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

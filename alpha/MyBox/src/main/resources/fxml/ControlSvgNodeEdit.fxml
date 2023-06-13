@@ -20,7 +20,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlXmlNodeEdit">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlSvgNodeEdit">
     <children>
       <HBox alignment="CENTER_LEFT" spacing="2.0">
          <children>
@@ -152,7 +152,7 @@ License:    Apache License Version 2.0
                         <TableView fx:id="attributesTable" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                            <columns>
                               <TableColumn fx:id="attrColumn" prefWidth="120.0" text="%Attribute" />
-                              <TableColumn fx:id="valueColumn" prefWidth="200.0" text="%Value" />
+                              <TableColumn fx:id="valueColumn" prefWidth="500.0" text="%Value" />
                            </columns>
                         </TableView>
                      </children>

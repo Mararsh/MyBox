@@ -41,7 +41,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-8-10
  * @License Apache License Version 2.0
  */
-public abstract class BaseImageController_ImageView extends BaseController {
+public abstract class BaseImageController_ImageView extends BaseFileController {
 
     public static final String DefaultStrokeColor = "#c94d58", DefaultAnchorColor = "#0066cc";
     protected ImageInformation imageInformation;
