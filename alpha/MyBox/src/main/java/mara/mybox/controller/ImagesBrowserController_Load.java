@@ -58,7 +58,7 @@ public abstract class ImagesBrowserController_Load extends ImageViewerController
     }
 
     @FXML
-    protected VBox imagesPane, mainBox, viewBox, gridOptionsBox;
+    protected VBox imagesPane, viewBox, gridOptionsBox;
     @FXML
     protected ComboBox<String> colsnumBox, filesBox, thumbWidthSelector;
     @FXML

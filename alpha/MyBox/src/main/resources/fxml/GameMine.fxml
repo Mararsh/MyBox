@@ -37,7 +37,7 @@ License:    Apache License Version 2.0
                                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                     </padding>
                                     <children>
-                                        <HBox fx:id="operationBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                        <HBox  alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
                                             <children>
                                                 <Button fx:id="helpMeButton" layoutX="1136.0" layoutY="13.0" mnemonicParsing="false" onAction="#helpMe">
                                                     <graphic>

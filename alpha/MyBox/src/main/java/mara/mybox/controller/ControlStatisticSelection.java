@@ -5,7 +5,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.VBox;
 import mara.mybox.calculation.DescriptiveStatistic;
 import mara.mybox.calculation.DescriptiveStatistic.StatisticType;
 import mara.mybox.dev.MyBoxLog;
@@ -28,8 +27,6 @@ public class ControlStatisticSelection extends BaseController {
             maximumCheck, minimumCheck, medianCheck, upperQuartileCheck, lowerQuartileCheck,
             UpperMildOutlierLineCheck, UpperExtremeOutlierLineCheck, LowerMildOutlierLineCheck, LowerExtremeOutlierLineCheck,
             modeCheck;
-    @FXML
-    protected VBox operationBox;
 
     @Override
     public void setControlsStyle() {

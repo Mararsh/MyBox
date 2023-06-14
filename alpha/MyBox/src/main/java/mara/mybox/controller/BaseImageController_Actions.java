@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
@@ -42,14 +41,8 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     protected int currentAngle = 0, rotateAngle = 90;
     protected Color bgColor = Color.WHITE;
 
-    protected void initOperationBox() {
+    protected void initCheckboxs() {
         try {
-            if (imageView != null) {
-                if (operationBox != null) {
-                    operationBox.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
-                }
-            }
-
             if (selectAreaCheck != null) {
                 selectAreaCheck.setSelected(UserConfig.getBoolean(baseName + "SelectArea", false));
                 selectAreaCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -193,7 +186,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     @FXML
     public void repeatAction() {
         ImageRepeatController controller = (ImageRepeatController) openStage(Fxmls.ImageRepeatFxml);
-        checkImage(controller.sourceController);
+        checkImage(controller);
     }
 
     @FXML

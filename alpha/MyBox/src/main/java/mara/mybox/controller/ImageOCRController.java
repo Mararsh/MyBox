@@ -97,8 +97,6 @@ public class ImageOCRController extends ImageViewerController {
             ocrOptionsController.htmlCheck.setSelected(true);
             ocrOptionsController.isSettingValues = false;
 
-            tabPane.disableProperty().bind(imageView.imageProperty().isNull());
-
             startCheck.setSelected(UserConfig.getBoolean(baseName + "Start", false));
             startCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override

@@ -57,7 +57,7 @@ public class ImageViewerController extends BaseImageController {
     @FXML
     protected VBox panesBox, contentBox, fileBox, saveAsBox;
     @FXML
-    protected FlowPane saveFramesPane, opPane;
+    protected FlowPane saveFramesPane, buttonsPane;
     @FXML
     protected ToggleGroup framesSaveGroup;
     @FXML
@@ -87,6 +87,10 @@ public class ImageViewerController extends BaseImageController {
             initEditPane();
             initBrowsePane();
             initRenderPane();
+
+            if (imageView != null && rightPane != null) {
+                rightPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -231,6 +235,9 @@ public class ImageViewerController extends BaseImageController {
 
     protected void initEditPane() {
         try {
+            if (imageView == null) {
+                return;
+            }
             if (editPane != null) {
                 editPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
                 editPane.expandedProperty().addListener((ObservableValue<? extends Boolean> ov, Boolean oldValue, Boolean newValue) -> {
@@ -239,8 +246,14 @@ public class ImageViewerController extends BaseImageController {
                 editPane.setExpanded(UserConfig.getBoolean(baseName + "EditPane", false));
             }
 
-            if (opPane != null) {
-                opPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
+            if (buttonsPane != null) {
+                buttonsPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
+            }
+            if (tabPane != null) {
+                tabPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
+            }
+            if (scrollPane != null) {
+                scrollPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
             }
 
         } catch (Exception e) {

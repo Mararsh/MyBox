@@ -23,7 +23,7 @@ public abstract class BaseImageController extends BaseImageController_Actions {
             initViewControls();
             initMaskPane();
             initMaskControls(false);
-            initOperationBox();
+            initCheckboxs();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

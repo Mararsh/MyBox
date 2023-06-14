@@ -35,195 +35,241 @@ License:    Apache License Version 2.0
     <center>
         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" BorderPane.alignment="CENTER">
             <children>
-                    <SplitPane fx:id="splitPane" dividerPositions="0.3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                        <items>
-                            <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                                <content>
-                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                        <children>
-                              <TitledPane fx:id="filePane" maxWidth="1.7976931348623157E308" text="%File">
-                                 <content>
-                                    <VBox spacing="2.0">
-                                       <children>
-                                          <HBox alignment="CENTER_LEFT" spacing="2.0" VBox.vgrow="NEVER">
-                                             <children>
-                                                                <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#pickSourceFile" onMouseEntered="#popSourceFile">
+                <SplitPane fx:id="splitPane" dividerPositions="0.3" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                    <items>
+                        <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                            <content>
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                    <children>
+                                        <TitledPane fx:id="filePane" maxWidth="1.7976931348623157E308" text="%File">
+                                            <content>
+                                                <VBox spacing="2.0">
+                                                    <children>
+                                                        <HBox alignment="CENTER_LEFT" spacing="2.0">
+                                                            <children>
+                                                                <Label minHeight="-Infinity" text="%LoadWidth" wrapText="true" />
+                                                                <ComboBox fx:id="loadWidthBox" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="100.0" />
+                                                            </children>
+                                                        </HBox>
+                                                        <VBox fx:id="fileBox" spacing="2.0" VBox.vgrow="NEVER">
+                                                            <children>
+                                                                <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="800.0" vgap="2.0">
+                                                                    <children>
+                                                                        <Button fx:id="browseButton" mnemonicParsing="false" onAction="#browseAction">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/Red/iconBrowse.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                        <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/Red/iconInfo.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                        <Button fx:id="metaButton" mnemonicParsing="false" onAction="#metaAction">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/Red/iconMeta.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
+                                                                    </children>
+                                                                </FlowPane>
+                                                            </children>
+                                                        </VBox>
+                                                        <Label fx:id="imageInfoLabel" minHeight="-Infinity" wrapText="true" VBox.vgrow="NEVER" />
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </TitledPane>
+                                        <TitledPane fx:id="framePane" expanded="false" maxWidth="1.7976931348623157E308" text="%Frame">
+                                            <content>
+                                                <VBox spacing="2.0" VBox.vgrow="NEVER">
+                                                    <children>
+                                                        <FlowPane fx:id="frameSelectorPane" alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
+                                                            <children>
+                                                                <Label text="%Frame" />
+                                                                <ComboBox fx:id="frameSelector" nodeOrientation="LEFT_TO_RIGHT" prefWidth="80.0" />
+                                                                <Label fx:id="framesLabel" layoutX="10.0" layoutY="19.0" />
+                                                            </children>
+                                                        </FlowPane>
+                                                        <FlowPane alignment="CENTER_LEFT" hgap="2.0" layoutX="10.0" layoutY="10.0" vgap="2.0">
+                                                            <children>
+                                                                <Button fx:id="playFramesButton" mnemonicParsing="false" onAction="#playAction">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
-                                                                                <Image url="@../buttons/Red/iconSelectFile.png" />
+                                                                                <Image url="@../buttons/Red/iconPlay.png" />
                                                                             </image>
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </Button>
-                                                                <Button fx:id="loadContentInSystemClipboardButton" mnemonicParsing="false" onAction="#loadContentInSystemClipboard">
+                                                                <Button fx:id="previousFrameButton" mnemonicParsing="false" onAction="#previousFrame">
                                                                     <graphic>
-                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                             <image>
-                                                                                <Image url="@../buttons/iconImageSystem.png" />
+                                                                                <Image url="@../buttons/Red/iconPrevious.png" />
                                                                             </image>
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </Button>
-                                             </children>
-                                          </HBox>
-                                          <HBox alignment="CENTER_LEFT" spacing="2.0">
-                                             <children>
-                                                <Label minHeight="-Infinity" text="%LoadWidth" wrapText="true" />
-                                                <ComboBox fx:id="loadWidthBox" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="100.0" />
-                                             </children>
-                                          </HBox>
-                                          <VBox fx:id="fileBox" spacing="2.0" VBox.vgrow="NEVER">
-                                             <children>
-                                                <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="800.0" vgap="2.0">
-                                                   <children>
-                                                      <Button fx:id="browseButton" mnemonicParsing="false" onAction="#browseAction">
-                                                         <graphic>
-                                                            <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../buttons/Red/iconBrowse.png" />
-                                                               </image>
-                                                            </ImageView>
-                                                         </graphic>
-                                                      </Button>
-                                                      <Button fx:id="infoButton" mnemonicParsing="false" onAction="#infoAction">
-                                                         <graphic>
-                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../buttons/Red/iconInfo.png" />
-                                                               </image>
-                                                            </ImageView>
-                                                         </graphic>
-                                                      </Button>
-                                                      <Button fx:id="metaButton" mnemonicParsing="false" onAction="#metaAction">
-                                                         <graphic>
-                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../buttons/Red/iconMeta.png" />
-                                                               </image>
-                                                            </ImageView>
-                                                         </graphic>
-                                                      </Button>
-                                                   </children>
-                                                </FlowPane>
-                                             </children>
-                                          </VBox>
-                                          <Label fx:id="imageInfoLabel" minHeight="-Infinity" wrapText="true" VBox.vgrow="NEVER" />
-                                       </children>
-                                    </VBox>
-                                 </content>
-                              </TitledPane>
-                              <TitledPane fx:id="viewPane" maxWidth="1.7976931348623157E308" text="%View">
-                                 <content>
-                                    <VBox spacing="2.0">
-                                       <children>
-                                          <FlowPane hgap="2.0" prefWrapLength="800.0" vgap="2.0">
-                                             <children>
-                                                <Label minHeight="-Infinity" text="%ZoomStep" wrapText="true" />
-                                                <ComboBox fx:id="zoomStepSelector" editable="true" prefWidth="120.0" />
-                                             </children>
-                                          </FlowPane>
-                                          <FlowPane alignment="CENTER_LEFT" hgap="2.0" layoutX="20.0" layoutY="20.0" prefWrapLength="800.0" vgap="2.0">
-                                             <children>
-                                                <Button fx:id="myBoxClipboardButton" mnemonicParsing="false" onAction="#myBoxClipBoard">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/Red/iconClipboard.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </Button>
-                                                <Button fx:id="settingsButton" mnemonicParsing="false" onAction="#settings">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/Red/iconSetting.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </Button>
-                                             </children>
-                                          </FlowPane>
-                                       </children>
-                                    </VBox>
-                                 </content>
-                              </TitledPane>
-                              <TitledPane fx:id="browsePane" text="%Browse">
-                                 <content>
-                                    <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                       <children>
-                                          <fx:include fx:id="browse" source="ControlFileBrowse.fxml" />
-                                       </children>
-                                    </VBox>
-                                 </content>
-                              </TitledPane>
-                                        </children>
-                                    </VBox>
-                                </content>
-                            </ScrollPane>
-                            <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                                <content>
-                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                        <children>
-                              <HBox alignment="CENTER_LEFT" spacing="5.0">
-                                 <children>
-                                                  <CheckBox fx:id="startCheck" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mnemonicParsing="false" text="%StartWhenImageLoad" wrapText="true" HBox.hgrow="ALWAYS" />
-                                    <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
-                                       <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconDoubleLeft.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </CheckBox>
-                                                <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction" styleClass="big" stylesheets="@../styles/MyBox.css" HBox.hgrow="NEVER">
+                                                                <Button fx:id="nextFrameButton" mnemonicParsing="false" onAction="#nextFrame">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconNext.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                            </children>
+                                                        </FlowPane>
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </TitledPane>
+                                        <TitledPane fx:id="viewPane" maxWidth="1.7976931348623157E308" text="%View">
+                                            <content>
+                                                <VBox spacing="2.0">
+                                                    <children>
+                                                        <FlowPane hgap="2.0" prefWrapLength="800.0" vgap="2.0">
+                                                            <children>
+                                                                <Label minHeight="-Infinity" text="%ZoomStep" wrapText="true" />
+                                                                <ComboBox fx:id="zoomStepSelector" editable="true" prefWidth="120.0" />
+                                                            </children>
+                                                        </FlowPane>
+                                                        <FlowPane alignment="CENTER_LEFT" hgap="2.0" layoutX="20.0" layoutY="20.0" prefWrapLength="800.0" vgap="2.0">
+                                                            <children>
+                                                                <Button fx:id="myBoxClipboardButton" mnemonicParsing="false" onAction="#myBoxClipBoard">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconClipboard.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                                <Button fx:id="settingsButton" mnemonicParsing="false" onAction="#settings">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconSetting.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic>
+                                                                </Button>
+                                                            </children>
+                                                        </FlowPane>
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </TitledPane>
+                                        <TitledPane fx:id="browsePane" text="%Browse">
+                                            <content>
+                                                <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                    <children>
+                                                        <fx:include fx:id="browse" source="ControlFileBrowse.fxml" />
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </TitledPane>
+                                    </children>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+                        <ScrollPane fx:id="rightPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                            <content>
+                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                    <children>
+                                        <HBox alignment="CENTER_LEFT" spacing="5.0">
+                                            <children>
+                                                <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#pickSourceFile" onMouseEntered="#popSourceFile">
                                                     <graphic>
-                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                             <image>
-                                                                <Image url="@../buttons/Red/iconStart.png" />
+                                                                <Image url="@../buttons/Red/iconSelectFile.png" />
                                                             </image>
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                 </children>
-                              </HBox>
-                              <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
-                                <tabs>
-                                  <Tab fx:id="imageTab" text="%OriginalImage">
-                                       <content>
+                                                <Button fx:id="loadContentInSystemClipboardButton" mnemonicParsing="false" onAction="#loadContentInSystemClipboard">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/iconImageSystem.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
+                                                <CheckBox fx:id="startCheck" minHeight="-Infinity" mnemonicParsing="false" text="%StartWhenImageLoad" wrapText="true" />
+                                                <FlowPane fx:id="buttonsPane" alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
+                                                    <children>
+                                                        <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconDoubleLeft.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </CheckBox>
+                                                        <Button fx:id="startButton" defaultButton="true" mnemonicParsing="false" onAction="#startAction" styleClass="big" stylesheets="@../styles/MyBox.css">
+                                                            <graphic>
+                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                    <image>
+                                                                        <Image url="@../buttons/Red/iconStart.png" />
+                                                                    </image>
+                                                                </ImageView>
+                                                            </graphic>
+                                                        </Button>
+                                                    </children>
+                                                </FlowPane>
+                                            </children>
+                                        </HBox>
+                                        <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                                            <tabs>
+                                                <Tab fx:id="imageTab" text="%OriginalImage">
+                                                    <content>
                                                         <VBox fx:id="originalImageBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                             <children>
                                                                 <FlowPane alignment="CENTER_RIGHT" hgap="5.0" prefWrapLength="2000.0" vgap="5.0">
                                                                     <children>
-                                                      <CheckBox fx:id="coordinateCheck" mnemonicParsing="false">
-                                                         <graphic>
-                                                            <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../buttons/Red/iconLocation.png" />
-                                                               </image>
-                                                            </ImageView>
-                                                         </graphic>
-                                                      </CheckBox>
-                                                      <CheckBox fx:id="rulerXCheck" mnemonicParsing="false">
-                                                         <graphic>
-                                                            <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../buttons/Red/iconXRuler.png" />
-                                                               </image>
-                                                            </ImageView>
-                                                         </graphic>
-                                                      </CheckBox>
-                                                      <CheckBox fx:id="gridCheck" mnemonicParsing="false">
-                                                         <graphic>
-                                                            <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../buttons/Red/iconGrid.png" />
-                                                               </image>
-                                                            </ImageView>
-                                                         </graphic>
-                                                      </CheckBox>
+                                                                        <CheckBox fx:id="coordinateCheck" mnemonicParsing="false">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/Red/iconLocation.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </CheckBox>
+                                                                        <CheckBox fx:id="rulerXCheck" mnemonicParsing="false">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/Red/iconXRuler.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </CheckBox>
+                                                                        <CheckBox fx:id="gridCheck" mnemonicParsing="false">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/Red/iconGrid.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </CheckBox>
                                                                         <Button fx:id="menuButton" mnemonicParsing="false" onAction="#menuAction">
                                                                             <graphic>
                                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -233,15 +279,15 @@ License:    Apache License Version 2.0
                                                                                 </ImageView>
                                                                             </graphic>
                                                                         </Button>
-                                                      <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
-                                                         <graphic>
-                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../buttons/Red/iconPop.png" />
-                                                               </image>
-                                                            </ImageView>
-                                                         </graphic>
-                                                      </Button>
+                                                                        <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/Red/iconPop.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
                                                                         <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut">
                                                                             <graphic>
                                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -278,15 +324,15 @@ License:    Apache License Version 2.0
                                                                                 </ImageView>
                                                                             </graphic>
                                                                         </Button>
-                                                      <Button fx:id="functionsButton" mnemonicParsing="false" onAction="#showFunctionsMenu" onMouseEntered="#popFunctionsMenu">
-                                                         <graphic>
-                                                            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                               <image>
-                                                                  <Image url="@../buttons/Red/iconFunction.png" />
-                                                               </image>
-                                                            </ImageView>
-                                                         </graphic>
-                                                      </Button>
+                                                                        <Button fx:id="functionsButton" mnemonicParsing="false" onAction="#showFunctionsMenu" onMouseEntered="#popFunctionsMenu">
+                                                                            <graphic>
+                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                                    <image>
+                                                                                        <Image url="@../buttons/Red/iconFunction.png" />
+                                                                                    </image>
+                                                                                </ImageView>
+                                                                            </graphic>
+                                                                        </Button>
                                                                     </children>
                                                                 </FlowPane> 
                                                                 <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
@@ -350,89 +396,90 @@ License:    Apache License Version 2.0
                                                                         </AnchorPane>
                                                                     </content>
                                                                 </ScrollPane>
+                                                                <Label fx:id="imageLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity"  wrapText="true" />
                                                             </children>
-                                             <padding>
-                                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                             </padding>
+                                                            <padding>
+                                                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                            </padding>
                                                         </VBox>
-                                       </content>
-                                    </Tab>
-                                  <Tab fx:id="processTab" text="%Preprocess">
-                                       <content>
-                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                             <children>
-                                                              <fx:include fx:id="preprocess" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ImageOCRPreprocess.fxml" VBox.vgrow="ALWAYS" />
-                                             </children>
-                                             <padding>
-                                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                             </padding>
-                                          </VBox>
-                                       </content>
-                                    </Tab>
-                                    <Tab fx:id="optionsTab" text="%OCROptions">
-                                       <content>
-                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                             <children>
-                                                                  <fx:include fx:id="ocrOptions" source="ControlOCROptions.fxml" />
-                                             </children>
-                                          </VBox>
-                                       </content>
-                                    </Tab>
-                                    <Tab fx:id="resultsTab" text="%Results">
-                                       <content>
-                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                             <padding>
-                                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                             </padding>
-                                             <children>
-                                                <TabPane fx:id="ocrTabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                                   <tabs>
-                                                                  <Tab fx:id="txtTab" closable="false" text="%Text">
-                                                                      <content>
-                                                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                                              <children>
-                                                                                  <TextArea fx:id="textArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
-                                                                              </children>
-                                                                              <padding>
-                                                                                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                                                              </padding>
-                                                                          </VBox>
-                                                                      </content>
-                                                                  </Tab>
-                                                                  <Tab fx:id="htmlTab" closable="false" text="html">
-                                                                      <content>
-                                                                          <fx:include fx:id="html" source="HtmlTable.fxml" />
-                                                                      </content>
-                                                                  </Tab>
-                                                                  <Tab fx:id="regionsTab" closable="false" text="%Regions">
-                                                                      <content>
-                                                                          <fx:include fx:id="regionsTable" source="HtmlTable.fxml" />
-                                                                      </content>
-                                                                  </Tab>
-                                                                  <Tab fx:id="wordsTab" closable="false" text="%Words">
-                                                                      <content>
-                                                                          <fx:include fx:id="wordsTable" source="HtmlTable.fxml" />
-                                                                      </content>
-                                                                  </Tab>
-                                                   </tabs>
-                                                </TabPane>
-                                                          <Label fx:id="resultLabel" maxWidth="1.7976931348623157E308" styleClass="bottom-label" stylesheets="@../styles/MyBox.css" wrapText="true">
-                                        </Label>
-                                             </children>
-                                          </VBox>
-                                       </content>
-                                    </Tab>
-                                </tabs>
-                              </TabPane>
-                                        </children>
-                                        <padding>
-                                            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                        </padding>
-                                    </VBox>
-                                </content>
-                            </ScrollPane>
-                        </items>
-                    </SplitPane>
+                                                    </content>
+                                                </Tab>
+                                                <Tab fx:id="processTab" text="%Preprocess">
+                                                    <content>
+                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                            <children>
+                                                                <fx:include fx:id="preprocess" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ImageOCRPreprocess.fxml" VBox.vgrow="ALWAYS" />
+                                                            </children>
+                                                            <padding>
+                                                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                            </padding>
+                                                        </VBox>
+                                                    </content>
+                                                </Tab>
+                                                <Tab fx:id="optionsTab" text="%OCROptions">
+                                                    <content>
+                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                                            <children>
+                                                                <fx:include fx:id="ocrOptions" source="ControlOCROptions.fxml" />
+                                                            </children>
+                                                        </VBox>
+                                                    </content>
+                                                </Tab>
+                                                <Tab fx:id="resultsTab" text="%Results">
+                                                    <content>
+                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                                            <padding>
+                                                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                            </padding>
+                                                            <children>
+                                                                <TabPane fx:id="ocrTabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                                                    <tabs>
+                                                                        <Tab fx:id="txtTab" closable="false" text="%Text">
+                                                                            <content>
+                                                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                                                                    <children>
+                                                                                        <TextArea fx:id="textArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                                                                                    </children>
+                                                                                    <padding>
+                                                                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                                                                    </padding>
+                                                                                </VBox>
+                                                                            </content>
+                                                                        </Tab>
+                                                                        <Tab fx:id="htmlTab" closable="false" text="html">
+                                                                            <content>
+                                                                                <fx:include fx:id="html" source="HtmlTable.fxml" />
+                                                                            </content>
+                                                                        </Tab>
+                                                                        <Tab fx:id="regionsTab" closable="false" text="%Regions">
+                                                                            <content>
+                                                                                <fx:include fx:id="regionsTable" source="HtmlTable.fxml" />
+                                                                            </content>
+                                                                        </Tab>
+                                                                        <Tab fx:id="wordsTab" closable="false" text="%Words">
+                                                                            <content>
+                                                                                <fx:include fx:id="wordsTable" source="HtmlTable.fxml" />
+                                                                            </content>
+                                                                        </Tab>
+                                                                    </tabs>
+                                                                </TabPane>
+                                                                <Label fx:id="resultLabel" maxWidth="1.7976931348623157E308" styleClass="bottom-label" stylesheets="@../styles/MyBox.css" wrapText="true">
+                                                                </Label>
+                                                            </children>
+                                                        </VBox>
+                                                    </content>
+                                                </Tab>
+                                            </tabs>
+                                        </TabPane>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                    </padding>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+                    </items>
+                </SplitPane>
             </children>
             <BorderPane.margin>
                 <Insets />

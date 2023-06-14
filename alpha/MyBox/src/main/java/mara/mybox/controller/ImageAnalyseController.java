@@ -93,8 +93,6 @@ public class ImageAnalyseController extends ImageViewerController {
         try {
             super.initControls();
 
-            rightPane.disableProperty().bind(imageView.imageProperty().isNull());
-
             initComponentsTab();
 
             dominantController.analyseController = this;

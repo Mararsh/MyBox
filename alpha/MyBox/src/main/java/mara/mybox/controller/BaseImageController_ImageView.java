@@ -14,7 +14,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -77,8 +76,6 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
             selectAreaCheck;
     @FXML
     protected ComboBox<String> zoomStepSelector, loadWidthBox;
-    @FXML
-    protected HBox operationBox;
     @FXML
     protected ControlImageRender renderController;
 
@@ -379,7 +376,8 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
         try {
             String imageInfo = "", fileInfo = "", loadInfo = "";
             if (sourceFile != null) {
-                fileInfo = message("FileSize") + ":" + FileTools.showFileSize(sourceFile.length()) + "\n"
+                fileInfo = message("File") + ":" + sourceFile.getAbsolutePath() + "\n"
+                        + message("FileSize") + ":" + FileTools.showFileSize(sourceFile.length()) + "\n"
                         + message("ModifyTime") + ":" + DateTools.datetimeToString(sourceFile.lastModified());
             }
             if (framesNumber > 1) {
@@ -411,7 +409,7 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
             String finalInfo = fileInfo + "\n" + imageInfo + "\n" + loadInfo;
             if (imageInfoLabel != null) {
                 if (imageLabel != null) {
-                    imageLabel.setText(StringTools.replaceLineBreak(finalInfo));
+                    imageLabel.setText(StringTools.replaceLineBreak(loadInfo));
                 }
                 if (imageInformation != null && imageInformation.isIsSampled()) {
                     finalInfo += "\n-------\n" + imageInformation.sampleInformation(image);

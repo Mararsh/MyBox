@@ -14,7 +14,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.VBox;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.DateTools;
@@ -39,8 +38,6 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
 
     @FXML
     protected TitledPane createPane;
-    @FXML
-    protected VBox mainBox;
     @FXML
     protected Tab imageTab, scopeTab, hisTab, backupTab;
     @FXML

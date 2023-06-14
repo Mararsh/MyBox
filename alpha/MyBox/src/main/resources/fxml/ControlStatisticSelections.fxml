@@ -17,7 +17,7 @@ License:    Apache License Version 2.0
 
 <VBox fx:id="thisPane" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlStatisticSelection">
     <children>
-        <VBox fx:id="operationBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+        <VBox  spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
             <children>
                 <HBox alignment="CENTER_LEFT" spacing="2.0">
                     <children>

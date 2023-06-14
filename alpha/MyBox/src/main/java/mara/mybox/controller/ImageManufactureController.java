@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
@@ -52,9 +51,6 @@ public class ImageManufactureController extends ImageManufactureController_Actio
             initHisTab();
             initBackupsTab();
             initEditBar();
-
-            mainBox.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
-            rightPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
 
             operationsController.setParameters(this);
         } catch (Exception e) {

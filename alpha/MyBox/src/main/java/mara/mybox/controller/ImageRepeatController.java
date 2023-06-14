@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -33,7 +34,9 @@ public class ImageRepeatController extends ImageViewerController {
             interval, margin;
 
     @FXML
-    protected ImageViewerController sourceController;
+    protected ImageRepeatResultController repeatController;
+    @FXML
+    protected Tab imageTab, repeatTab, optionsTab, saveTab;
     @FXML
     protected ToggleGroup repeatGroup;
     @FXML
@@ -59,10 +62,12 @@ public class ImageRepeatController extends ImageViewerController {
         try {
             super.initControls();
 
-            mainBox.disableProperty().bind(imageView.imageProperty().isNull());
-            optionsBox.disableProperty().bind(sourceController.imageView.imageProperty().isNull());
-            saveAsBox.disableProperty().bind(imageView.imageProperty().isNull());
+            repeatController.sourceController = this;
+            repeatController.formatController = formatController;
 
+            saveTab.disableProperty().bind(repeatController.imageView.imageProperty().isNull());
+
+            checkRepeatType();
             repeatGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue<? extends Toggle> v, Toggle ov, Toggle nv) {
@@ -72,38 +77,21 @@ public class ImageRepeatController extends ImageViewerController {
 
             intervalSelector.getItems().addAll(Arrays.asList("0", "1", "2", "3", "5", "-1", "-3", "-5", "10", "15", "20", "30"));
             intervalSelector.getSelectionModel().select(UserConfig.getString(baseName + "Interval", "5"));
-//            intervalSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-//                @Override
-//                public void changed(ObservableValue<? extends String> sv, String ov, String nv) {
-//                    okAction();
-//                }
-//            });
 
             marginSelector.getItems().addAll(Arrays.asList("5", "10", "15", "20", "1", "3", "30", "0"));
             marginSelector.getSelectionModel().select(UserConfig.getString(baseName + "Margins", "5"));
-//            marginSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-//                @Override
-//                public void changed(ObservableValue<? extends String> sv, String ov, String nv) {
-//                    okAction();
-//                }
-//            });
 
             colorSetController.init(this, baseName + "Color");
-//            colorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
-//                @Override
-//                public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
-//                    drawRepeat();
-//                }
-//            });
 
-            sourceController.loadNotify.addListener(new ChangeListener<Boolean>() {
+            loadNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    initRepeat();
+                    repeatController.loadImage(null);
+                    tabPane.getSelectionModel().select(imageTab);
                 }
             });
 
-            sourceController.rectDrawnNotify.addListener(new ChangeListener<Boolean>() {
+            rectDrawnNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     originalSize();
@@ -122,7 +110,7 @@ public class ImageRepeatController extends ImageViewerController {
             veriticalInput.setText(UserConfig.getInt(baseName + "RepeatVertivcal", 3) + "");
         } else {
             repeatLabel.setText(message("CanvasSize"));
-            Image srcImage = sourceImage();
+            Image srcImage = scopeImage();
             horizontalInput.setText(UserConfig.getInt(baseName + "CanvasHorizontal",
                     srcImage == null ? 500 : (int) srcImage.getWidth() * 3) + "");
             veriticalInput.setText(UserConfig.getInt(baseName + "CanvasVertical",
@@ -130,32 +118,9 @@ public class ImageRepeatController extends ImageViewerController {
         }
     }
 
-    public void initRepeat() {
-        loadImage(null);
-        originalSize();
-        checkRepeatType();
-        imageLabel.setText("");
-        if (sourceController.sourceFile != null) {
-            myStage.setTitle(baseTitle + " - " + sourceController.sourceFile);
-        } else {
-            myStage.setTitle(baseTitle);
-        }
-    }
-
-    public Image sourceImage() {
-        sourceController.bgColor = colorSetController.color();
-        return sourceController.scopeImage();
-    }
-
-    @FXML
-    @Override
-    public void openSourcePath() {
-        sourceController.openSourcePath();
-    }
-
     @FXML
     public void originalSize() {
-        Image srcImage = sourceImage();
+        Image srcImage = scopeImage();
         if (srcImage == null) {
             return;
         }
@@ -166,7 +131,7 @@ public class ImageRepeatController extends ImageViewerController {
     @FXML
     @Override
     public void okAction() {
-        Image srcImage = sourceImage();
+        Image srcImage = scopeImage();
         if (srcImage == null) {
             popError(message("NoData") + ": " + message("Image"));
             return;
@@ -308,9 +273,11 @@ public class ImageRepeatController extends ImageViewerController {
             task.cancel();
         }
         task = new SingletonCurrentTask<Void>(this) {
+            Image repeatImage;
+
             @Override
             protected boolean handle() {
-                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(sourceImage(), null);
+                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(scopeImage(), null);
                 if (repeatRadio.isSelected()) {
                     bufferedImage = RepeatTools.repeat(bufferedImage, scaleWidth, scaleHeight,
                             repeatH, repeatV, interval, margin, colorSetController.awtColor());
@@ -321,26 +288,30 @@ public class ImageRepeatController extends ImageViewerController {
                 if (bufferedImage == null) {
                     return false;
                 }
-                image = SwingFXUtils.toFXImage(bufferedImage, null);
-                return image != null;
+                repeatImage = SwingFXUtils.toFXImage(bufferedImage, null);
+                return repeatImage != null;
             }
 
             @Override
             protected void whenSucceeded() {
-                imageView.setImage(image);
-                setZoomStep(image);
-                fitSize();
-                imageLabel.setText((int) image.getWidth() + "x" + (int) image.getHeight());
+                repeatController.loadImage(repeatImage);
+                tabPane.getSelectionModel().select(repeatTab);
             }
 
         };
         start(task);
     }
 
+    @FXML
+    @Override
+    public void saveAsAction() {
+        repeatController.saveAsAction();
+    }
+
     @Override
     public boolean keyEventsFilter(KeyEvent event) {
-        if (sourceController.thisPane.isFocusWithin()) {
-            if (sourceController.keyEventsFilter(event)) {
+        if (tabPane.getSelectionModel().getSelectedItem() == repeatTab) {
+            if (repeatController.keyEventsFilter(event)) {
                 return true;
             }
         }
