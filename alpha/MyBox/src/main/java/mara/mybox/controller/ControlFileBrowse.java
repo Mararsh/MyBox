@@ -124,7 +124,7 @@ public class ControlFileBrowse extends BaseController {
         checkStatus();
     }
 
-    public List<File> pathFiles(File cfile) {
+    public List<File> validFiles(File cfile) {
         try {
             if (cfile == null) {
                 return null;
@@ -148,6 +148,66 @@ public class ControlFileBrowse extends BaseController {
         }
     }
 
+    protected List<File> nextFiles(File file, int filesNumber) {
+        if (file == null || filesNumber <= 0) {
+            return null;
+        }
+        try {
+            List<File> pathFiles = validFiles(file);
+            int total = pathFiles.size();
+            if (total <= 0) {
+                return null;
+            }
+            List<File> files = new ArrayList<>();
+            int pos = pathFiles.indexOf(file);
+            if (pos >= total - 1) {
+                return null;
+            }
+            if (pos < 0) {
+                pos = 0;
+            }
+            int start = pos + 1;
+            int end = Math.min(start + filesNumber, total);
+            for (int i = start; i < end; ++i) {
+                files.add(pathFiles.get(i));
+            }
+            return files;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    protected List<File> previousFiles(File file, int filesNumber) {
+        if (file == null || filesNumber <= 0) {
+            return null;
+        }
+        try {
+            List<File> pathFiles = validFiles(file);
+            int total = pathFiles.size();
+            if (total <= 0) {
+                return null;
+            }
+            List<File> files = new ArrayList<>();
+            int pos = pathFiles.indexOf(file);
+            if (pos == 0) {
+                return null;
+            }
+            if (pos < 0) {
+                pos = total;
+            }
+            int end = pos;
+            int start = Math.max(end - filesNumber, 0);
+            for (int i = start; i < end; ++i) {
+                files.add(pathFiles.get(i));
+            }
+            return files;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public void setCurrentFile(File currentfile) {
         this.sourceFile = currentfile;
         checkStatus();
@@ -165,7 +225,7 @@ public class ControlFileBrowse extends BaseController {
             }
             String info = message("Directory") + ": "
                     + sourceFile.getParent() + "\n";
-            List<File> files = pathFiles(sourceFile);
+            List<File> files = validFiles(sourceFile);
             if (files == null || files.isEmpty()) {
                 info += message("Valid") + ": 0";
             } else {
@@ -187,6 +247,10 @@ public class ControlFileBrowse extends BaseController {
     @FXML
     @Override
     public void nextAction() {
+        if (parentController instanceof ImagesBrowserController) {
+            ((ImagesBrowserController) parentController).nextAction();
+            return;
+        }
         File file = nextFile(sourceFile);
         if (file == null) {
             popError(message("NoMore"));
@@ -197,7 +261,7 @@ public class ControlFileBrowse extends BaseController {
 
     public File nextFile(File cfile) {
         try {
-            List<File> files = pathFiles(cfile);
+            List<File> files = validFiles(cfile);
             if (files != null) {
                 String currentName = cfile.getAbsolutePath();
                 int end = files.size() - 1;
@@ -219,6 +283,10 @@ public class ControlFileBrowse extends BaseController {
     @FXML
     @Override
     public void previousAction() {
+        if (parentController instanceof ImagesBrowserController) {
+            ((ImagesBrowserController) parentController).previousAction();
+            return;
+        }
         File file = previousFile(sourceFile);
         if (file == null) {
             popError(message("NoMore"));
@@ -229,7 +297,7 @@ public class ControlFileBrowse extends BaseController {
 
     public File previousFile(File cfile) {
         try {
-            List<File> files = pathFiles(cfile);
+            List<File> files = validFiles(cfile);
             if (files != null) {
                 String currentName = cfile.getAbsolutePath();
                 if (currentName.equals(files.get(0).getAbsolutePath())) {

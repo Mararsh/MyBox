@@ -47,7 +47,6 @@ public abstract class ImagesBrowserController_Load extends ImageViewerController
     protected TableColumn<ImageInformation, Long> fileSizeColumn, modifiedTimeColumn, createTimeColumn;
     protected TableColumn<ImageInformation, Boolean> isScaledColumn, isMutipleFramesColumn;
 
-    protected List<File> nextFiles, previousFiles;
     protected List<Integer> selectedIndexes;
     protected int maxShow = 100;
     protected File path;
@@ -69,8 +68,6 @@ public abstract class ImagesBrowserController_Load extends ImageViewerController
     protected ToggleGroup popGroup;
     @FXML
     protected Button zoomOutAllButton, zoomInAllButton, imageSizeAllButton, paneSizeAllButton;
-    @FXML
-    protected ImageViewerController imageController;
 
     @FXML
     @Override
@@ -195,7 +192,6 @@ public abstract class ImagesBrowserController_Load extends ImageViewerController
                 backgroundTask = null;
             }
             path = null;
-            filesNumber = 0;
             totalLabel.setText("");
             getMyStage().setTitle(getBaseTitle());
             if (imageFileList == null || imageFileList.isEmpty() || colsNum <= 0) {
@@ -227,7 +223,9 @@ public abstract class ImagesBrowserController_Load extends ImageViewerController
                     filesBox.getItems().add(total + "");
                 }
             }
-            filesNumber = imageFileList.size();
+            if (filesNumber <= 0) {
+                filesNumber = imageFileList.size();
+            }
             if (!filesBox.getItems().contains(filesNumber + "")) {
                 filesBox.getItems().add(0, filesNumber + "");
             }
@@ -264,8 +262,7 @@ public abstract class ImagesBrowserController_Load extends ImageViewerController
     protected abstract void makeImagesNevigator(boolean makeCurrentList);
 
     public void viewImage(File file) {
-        imageController.loadImageFile(file);
-        updateStageTitle(file);
+        loadImageFile(file);
     }
 
 }

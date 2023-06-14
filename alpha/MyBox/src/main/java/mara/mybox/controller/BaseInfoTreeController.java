@@ -409,7 +409,7 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
             case InfoNode.SQL:
                 return DatabaseSqlController.open(false);
             case InfoNode.JavaScript:
-                return JavaScriptController.open("");
+                return JavaScriptController.loadScript("");
             case InfoNode.InformationInTree:
                 return TreeManageController.oneOpen();
             case InfoNode.JEXLCode:

@@ -139,7 +139,8 @@ public class WebViewTools {
     // https://blog.csdn.net/weixin_29251337/article/details/117888001
     public static void addStyle(WebEngine webEngine, String style, String styleid) {
         try {
-            if (webEngine == null || style == null || style.isBlank()) {
+            if (webEngine == null || styleid == null || styleid.isBlank()
+                    || style == null || style.isBlank()) {
                 return;
             }
             removeNode(webEngine, styleid);
@@ -147,7 +148,7 @@ public class WebViewTools {
                     + "node.id = \"" + styleid + "\";\n"
                     + "node.type = \"text/css\";\n"
                     + "node.innerHTML = \"" + StringTools.replaceLineBreak(style) + "\";\n"
-                    + "document.getElementsByTagName(\"HEAD\").item(0).appendChild(node);";
+                    + "document.body.appendChild(node);";
             webEngine.executeScript(js);
         } catch (Exception e) {
             MyBoxLog.debug(e);

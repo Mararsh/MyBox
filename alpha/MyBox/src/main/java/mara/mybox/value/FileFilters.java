@@ -170,7 +170,7 @@ public class FileFilters {
 
     public static List<FileChooser.ExtensionFilter> HtmlExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
-            add(new FileChooser.ExtensionFilter("htm", "*.html", "*.htm"));
+            add(new FileChooser.ExtensionFilter("htm", "*.html", "*.htm", "*.svg"));
         }
     };
 
@@ -373,6 +373,12 @@ public class FileFilters {
     public static List<FileChooser.ExtensionFilter> SVGExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
             add(new FileChooser.ExtensionFilter("svg", "*.svg"));
+        }
+    };
+
+    public static List<FileChooser.ExtensionFilter> JavascriptExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
+        {
+            add(new FileChooser.ExtensionFilter("js", "*.js"));
         }
     };
 

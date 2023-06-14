@@ -31,7 +31,6 @@ import mara.mybox.fxml.SingletonBackgroundTask;
 import mara.mybox.fxml.cell.TableImageInfoCell;
 import mara.mybox.fxml.cell.TableRowSelectionCell;
 import mara.mybox.tools.DateTools;
-import mara.mybox.tools.FileSortTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.value.Languages;
 
@@ -47,118 +46,38 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
         if (isSettingValues) {
             return;
         }
-        previousFiles = new ArrayList<>();
-        nextFiles = new ArrayList<>();
         try {
             if (imageFileList != null && !imageFileList.isEmpty() && filesNumber > 0) {
-                loadingController = handling();
-
                 File firstFile = imageFileList.get(0);
-                path = firstFile.getParentFile();
-                List<File> pathFiles = new ArrayList<>();
-                File[] pfiles = path.listFiles();
-                if (pfiles != null) {
-                    for (File file : pfiles) {
-                        if (file.isFile() && FileTools.isSupportedImage(file)) {
-                            pathFiles.add(file);
-                        }
-                    }
-                    FileSortTools.sortFiles(pathFiles, browseController.sortMode);
+                List<File> pathFiles = browseController.validFiles(firstFile);
+                int total = pathFiles.size();
+                totalLabel.setText("/" + total);
+
+                browseController.setCurrentFile(firstFile);
+                if (total <= 0 || filesNumber >= total) {
+                    browseController.nextFileButton.setDisable(true);
+                    browseController.previousFileButton.setDisable(true);
+                } else {
+                    browseController.nextFileButton.setDisable(false);
+                    browseController.previousFileButton.setDisable(false);
                 }
-                totalLabel.setText("/" + pathFiles.size());
 
                 if (makeCurrentList) {
                     imageFileList.clear();
-                    int pos = pathFiles.indexOf(firstFile);
-                    if (pos < 0) {
-                        pos = 0;
-                    }
-                    int start;
-                    int end;
-                    if (pathFiles.size() <= filesNumber) {
-                        start = 0;
-                        end = pathFiles.size() - 1;
-                    } else if (pos + filesNumber < pathFiles.size()) {
-                        start = pos;
-                        end = pos + filesNumber - 1;
-                    } else {
-                        start = pathFiles.size() - filesNumber;
-                        end = pathFiles.size() - 1;
-                    }
-                    for (int i = start; i <= end; ++i) {
-                        imageFileList.add(pathFiles.get(i));
+                    if (total > 0) {
+                        if (filesNumber >= total) {
+                            imageFileList.addAll(pathFiles);
+                        } else {
+                            imageFileList.addAll(pathFiles.subList(0, filesNumber));
+                        }
                     }
                 }
-
-                if (pathFiles.size() > filesNumber) {
-
-                    List<String> pathFnames = new ArrayList<>();
-                    for (File f : pathFiles) {
-                        pathFnames.add(f.getAbsolutePath());
-                    }
-                    List<String> iFnames = new ArrayList<>();
-                    for (File f : imageFileList) {
-                        iFnames.add(f.getAbsolutePath());
-                    }
-                    int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
-                    for (String f : iFnames) {
-                        int index = pathFnames.indexOf(f);
-                        if (index < 0) {
-                            continue;
-                        }
-                        if (index <= min) {
-                            min = index;
-                        }
-                        if (index >= max) {
-                            max = index;
-                        }
-                    }
-                    if (max < min) {
-                        min = -1;
-                        max = pathFiles.size();
-                    }
-
-                    for (int i = max - 1; i >= 0; --i) {
-                        String fname = pathFnames.get(i);
-                        if (!iFnames.contains(fname)) {
-                            previousFiles.add(0, new File(fname));
-                            if (previousFiles.size() == filesNumber) {
-                                break;
-                            }
-                        }
-                    }
-
-                    for (int i = min + 1; i < pathFnames.size(); ++i) {
-                        String fname = pathFnames.get(i);
-                        if (!iFnames.contains(fname)) {
-                            nextFiles.add(new File(fname));
-                            if (nextFiles.size() == filesNumber) {
-                                break;
-                            }
-                        }
-                    }
-
-                }
-
+            } else {
+                browseController.setCurrentFile(null);
             }
+
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
-        }
-        if (nextFiles.isEmpty()) {
-            nextFiles = null;
-            browseController.nextButton.setDisable(true);
-        } else {
-            browseController.nextButton.setDisable(false);
-        }
-        if (previousFiles.isEmpty()) {
-            previousFiles = null;
-            browseController.previousButton.setDisable(true);
-        } else {
-            browseController.previousButton.setDisable(false);
-        }
-
-        if (loadingController != null) {
-            loadingController.closeStage();
         }
         makeImagesPane();
     }

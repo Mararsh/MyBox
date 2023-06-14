@@ -64,6 +64,7 @@ public class VisitHistory extends BaseData {
         public static int DataFile = 32;
         public static int JSON = 33;
         public static int SVG = 34;
+        public static int Javascript = 35;
 
         public static int None = 100;
     }

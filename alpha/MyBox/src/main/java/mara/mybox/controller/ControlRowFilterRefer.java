@@ -83,12 +83,12 @@ public class ControlRowFilterRefer extends BaseInfoTreeController {
 
     @FXML
     public void editAction() {
-        JavaScriptController.open(scriptInput.getText());
+        JavaScriptController.loadScript(scriptInput.getText());
     }
 
     @FXML
     public void dataAction() {
-        JavaScriptController.open("");
+        JavaScriptController.loadScript("");
     }
 
     public void clear() {

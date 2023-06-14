@@ -22,6 +22,7 @@ import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -354,7 +355,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                 }
                 popSaved();
                 if (indexs == null || indexs.isEmpty() || indexs.contains(currentIndex)) {
-                    viewImage(imageController.sourceFile);
+                    viewImage(sourceFile);
                 }
             }
 
@@ -365,22 +366,32 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
     @FXML
     @Override
     public void nextAction() {
-        if (nextFiles != null) {
-            previousFiles = imageFileList;
-            imageFileList.clear();
-            imageFileList.addAll(nextFiles);
-            makeImagesNevigator(false);
+        if (imageFileList == null || imageFileList.isEmpty()) {
+            return;
+        }
+        List<File> files = browseController.nextFiles(imageFileList.get(imageFileList.size() - 1), filesNumber);
+        if (files == null || files.isEmpty()) {
+            popError(message("NoMore"));
+            browseController.nextFileButton.setDisable(true);
+        } else {
+            loadImages(files, colsNum);
+            browseController.previousFileButton.setDisable(false);
         }
     }
 
     @FXML
     @Override
     public void previousAction() {
-        if (previousFiles != null) {
-            nextFiles = imageFileList;
-            imageFileList.clear();
-            imageFileList.addAll(previousFiles);
-            makeImagesNevigator(false);
+        if (imageFileList == null || imageFileList.isEmpty()) {
+            return;
+        }
+        List<File> files = browseController.previousFiles(imageFileList.get(0), filesNumber);
+        if (files == null || files.isEmpty()) {
+            popError(message("NoMore"));
+            browseController.previousFileButton.setDisable(true);
+        } else {
+            loadImages(files, colsNum);
+            browseController.nextFileButton.setDisable(false);
         }
     }
 
@@ -422,7 +433,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                 return;
             }
             File file = info.getImageFileInformation().getFile();
-            imageController.changeFile(info, newFile);
+            changeFile(info, newFile);
             tableData.set(index, info);
             imageFileList.set(index, newFile);
             if (displayMode == DisplayMode.ImagesGrid) {

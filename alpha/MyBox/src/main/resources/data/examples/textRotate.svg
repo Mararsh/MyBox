@@ -29,76 +29,92 @@
 <?xml-stylesheet type="text/css" href="./tests/resources/style/test.css" ?>
 
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="450" height="500" viewBox="0 0 450 500">
-<title>Text Rotation</title>
+    <title>Text Rotation</title>
 
     <!-- ============================================================= -->
     <!-- Test content                                                  -->
     <!-- ============================================================= -->
 
     <defs>
-            <text x="0" y="0" transform="scale(1.6, 1.6)" fill="DarkSlateBlue" text-anchor="middle" font-size="40" font-family="Serif" id="words">batik</text>
+        <text x="0" y="0" transform="scale(1.6, 1.6)" fill="DarkSlateBlue" text-anchor="middle" font-size="40" font-family="Serif" id="words">batik</text>
     </defs>
     <g id="testContent">
-    <text class="title" x="50%" y="10%" font-size="15" text-anchor="middle" >
+        <text class="title" x="50%" y="10%" font-size="15" text-anchor="middle" >
             Text Transformation</text>
-    <g opacity="1.0" transform="translate(225, 250)" id="rotatedText">
-    <g opacity="0.95"  transform="scale(1.05) rotate(15)">
-    <use xlink:href="#words"/>
-    <g opacity="0.95"  transform="scale(1.05) rotate(15)">
-    <use xlink:href="#words"/>
-    <g opacity="0.95"  transform="scale(1.05) rotate(15)">
-    <use xlink:href="#words"/>
-    <g opacity="0.95"  transform="scale(1.05) rotate(15)">
-    <use xlink:href="#words"/>
-    <g opacity="0.95"  transform="scale(1.05) rotate(15)">
-    <use xlink:href="#words"/>
-    <g opacity="0.95"  transform="scale(1.05) rotate(15)">
-    <use xlink:href="#words"/>
-    <g opacity="0.95"  transform="scale(1.05) rotate(15)">
-    <use xlink:href="#words"/>
-    <g opacity="0.95"  transform="scale(1.05) rotate(15)">
-    <use xlink:href="#words"/>
-    <g opacity="0.95"  transform="scale(1.05) rotate(15)">
-    <use xlink:href="#words"/>
-    <g opacity="0.95"  transform="scale(1.05) rotate(15)">
-    <use xlink:href="#words"/>
-    <g opacity="0.95"  transform="scale(1.05) rotate(15)">
-    <use xlink:href="#words"/>
-    <g opacity="0.95"  transform="scale(1.05) rotate(15)">
-    <use xlink:href="#words"/>
-    <g opacity="0.95"  transform="scale(1.05) rotate(15)">
-    <use xlink:href="#words"/>
-    <g opacity="0.95"  transform="scale(1.05) rotate(15)">
-    <use xlink:href="#words"/>
-    <g opacity="0.95"  transform="scale(1.05) rotate(15)">
-    <use xlink:href="#words"/>
-    <g opacity="0.95"  transform="scale(1.05) rotate(15)">
-    <use xlink:href="#words"/>
-    <g opacity="0.95"  transform="scale(1.05) rotate(15)">
-    <use xlink:href="#words"/>
-    <g opacity="0.95"  transform="scale(1.05) rotate(15)">
-    <use xlink:href="#words"/>
-    <g opacity="0.95"  transform="scale(1.05) rotate(15)">
-    <use xlink:href="#words"/>
-    <g opacity="0.95"  transform="scale(1.05) rotate(15)">
-    <use xlink:href="#words"/>
-    <g opacity="0.95"  transform="scale(1.05) rotate(15)">
-    <use xlink:href="#words"/>
-    <g opacity="0.95"  transform="scale(1.05) rotate(15)">
-    <use xlink:href="#words"/>
-    <g opacity="0.95"  transform="scale(1.05) rotate(15)">
-    <use xlink:href="#words"/>
-    <g opacity="0.95"  transform="scale(1.05) rotate(15)">
-    <use xlink:href="#words"/>
-    </g></g></g></g></g>
-    </g></g></g></g></g>
-    </g></g></g></g></g>
-    </g></g></g></g></g>
-    </g></g></g></g>
-        <text style="font-size:75;font-family:Serif;fill:white" text-anchor="middle">batik</text>
-    </g>
-    </g>
-
-
-    
+        <g opacity="1.0" transform="translate(225, 250)" id="rotatedText">
+            <g opacity="0.95"  transform="scale(1.05) rotate(15)">
+                <use xlink:href="#words"/>
+                <g opacity="0.95"  transform="scale(1.05) rotate(15)">
+                    <use xlink:href="#words"/>
+                    <g opacity="0.95"  transform="scale(1.05) rotate(15)">
+                        <use xlink:href="#words"/>
+                        <g opacity="0.95"  transform="scale(1.05) rotate(15)">
+                            <use xlink:href="#words"/>
+                            <g opacity="0.95"  transform="scale(1.05) rotate(15)">
+                                <use xlink:href="#words"/>
+                                <g opacity="0.95"  transform="scale(1.05) rotate(15)">
+                                    <use xlink:href="#words"/>
+                                    <g opacity="0.95"  transform="scale(1.05) rotate(15)">
+                                        <use xlink:href="#words"/>
+                                        <g opacity="0.95"  transform="scale(1.05) rotate(15)">
+                                            <use xlink:href="#words"/>
+                                            <g opacity="0.95"  transform="scale(1.05) rotate(15)">
+                                                <use xlink:href="#words"/>
+                                                <g opacity="0.95"  transform="scale(1.05) rotate(15)">
+                                                    <use xlink:href="#words"/>
+                                                    <g opacity="0.95"  transform="scale(1.05) rotate(15)">
+                                                        <use xlink:href="#words"/>
+                                                        <g opacity="0.95"  transform="scale(1.05) rotate(15)">
+                                                            <use xlink:href="#words"/>
+                                                            <g opacity="0.95"  transform="scale(1.05) rotate(15)">
+                                                                <use xlink:href="#words"/>
+                                                                <g opacity="0.95"  transform="scale(1.05) rotate(15)">
+                                                                    <use xlink:href="#words"/>
+                                                                    <g opacity="0.95"  transform="scale(1.05) rotate(15)">
+                                                                        <use xlink:href="#words"/>
+                                                                        <g opacity="0.95"  transform="scale(1.05) rotate(15)">
+                                                                            <use xlink:href="#words"/>
+                                                                            <g opacity="0.95"  transform="scale(1.05) rotate(15)">
+                                                                                <use xlink:href="#words"/>
+                                                                                <g opacity="0.95"  transform="scale(1.05) rotate(15)">
+                                                                                    <use xlink:href="#words"/>
+                                                                                    <g opacity="0.95"  transform="scale(1.05) rotate(15)">
+                                                                                        <use xlink:href="#words"/>
+                                                                                        <g opacity="0.95"  transform="scale(1.05) rotate(15)">
+                                                                                            <use xlink:href="#words"/>
+                                                                                            <g opacity="0.95"  transform="scale(1.05) rotate(15)">
+                                                                                                <use xlink:href="#words"/>
+                                                                                                <g opacity="0.95"  transform="scale(1.05) rotate(15)">
+                                                                                                    <use xlink:href="#words"/>
+                                                                                                    <g opacity="0.95"  transform="scale(1.05) rotate(15)">
+                                                                                                        <use xlink:href="#words"/>
+                                                                                                        <g opacity="0.95"  transform="scale(1.05) rotate(15)">
+                                                                                                            <use xlink:href="#words"/>
+                                                                                                        </g>
+                                                                                                    </g>
+                                                                                                </g>
+                                                                                            </g>
+                                                                                        </g>
+                                                                                    </g>
+                                                                                </g>
+                                                                            </g>
+                                                                        </g>
+                                                                    </g>
+                                                                </g>
+                                                            </g>
+                                                        </g>
+                                                    </g>
+                                                </g>
+                                            </g>
+                                        </g>
+                                    </g>
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+            <text style="font-size:75;font-family:Serif;fill:white" text-anchor="middle">batik</text>
+        </g>
+    </g>    
 </svg>

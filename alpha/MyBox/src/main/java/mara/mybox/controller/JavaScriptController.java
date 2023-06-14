@@ -1,9 +1,11 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import mara.mybox.db.data.InfoNode;
+import mara.mybox.db.data.VisitHistory;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
@@ -40,6 +42,11 @@ public class JavaScriptController extends TreeManageController {
         category = InfoNode.JavaScript;
         nameMsg = message("Name");
         valueMsg = "JavaScript";
+    }
+
+    @Override
+    public void setFileType() {
+        setFileType(VisitHistory.FileType.Javascript);
     }
 
     @Override
@@ -160,10 +167,22 @@ public class JavaScriptController extends TreeManageController {
         }
     }
 
-    public static JavaScriptController open(String script) {
+    public static JavaScriptController loadScript(String script) {
         try {
             JavaScriptController controller = (JavaScriptController) WindowTools.openStage(Fxmls.JavaScriptFxml);
             controller.edit(script);
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static JavaScriptController openFile(File file) {
+        try {
+            JavaScriptController controller = (JavaScriptController) WindowTools.openStage(Fxmls.JavaScriptFxml);
+            controller.selectSourceFile(file);
             controller.requestMouse();
             return controller;
         } catch (Exception e) {

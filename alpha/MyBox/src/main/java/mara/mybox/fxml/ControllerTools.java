@@ -8,11 +8,13 @@ import mara.mybox.controller.DataFileCSVController;
 import mara.mybox.controller.DataFileExcelController;
 import mara.mybox.controller.FileDecompressUnarchiveController;
 import mara.mybox.controller.ImageViewerController;
+import mara.mybox.controller.JavaScriptController;
 import mara.mybox.controller.JsonEditorController;
 import mara.mybox.controller.MarkdownEditorController;
 import mara.mybox.controller.MediaPlayerController;
 import mara.mybox.controller.PdfViewController;
 import mara.mybox.controller.PptViewController;
+import mara.mybox.controller.SVGEditorController;
 import mara.mybox.controller.TextEditorController;
 import mara.mybox.controller.WebBrowserController;
 import mara.mybox.controller.WordViewController;
@@ -75,6 +77,10 @@ public class ControllerTools {
             controller = JsonEditorController.open(file);
         } else if ("xml".equals(suffix)) {
             controller = XmlEditorController.open(file);
+        } else if ("svg".equals(suffix)) {
+            controller = SVGEditorController.open(file);
+        } else if ("js".equals(suffix)) {
+            controller = JavaScriptController.openFile(file);
         } else if (Arrays.asList(FileExtensions.TextFileSuffix).contains(suffix)) {
             controller = TextEditorController.open(file);
         } else if (CompressTools.compressFormats().contains(suffix) || CompressTools.archiveFormats().contains(suffix)) {

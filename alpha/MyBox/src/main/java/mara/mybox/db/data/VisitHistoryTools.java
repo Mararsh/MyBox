@@ -123,6 +123,8 @@ public class VisitHistoryTools {
             return FileFilters.XMLExtensionFilter;
         } else if (fileType == VisitHistory.FileType.SVG) {
             return FileFilters.SVGExtensionFilter;
+        } else if (fileType == VisitHistory.FileType.Javascript) {
+            return FileFilters.JavascriptExtensionFilter;
         } else {
             return FileFilters.AllExtensionFilter;
         }
