@@ -20,6 +20,7 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonCurrentTask;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileCopyTools;
@@ -209,7 +210,7 @@ public class PdfAttributesController extends BaseController {
     }
 
     @Override
-    public void sourceFileChanged(final File file) {
+    public void sourceFileChanged(File file) {
         sourceFileInput.setStyle(UserConfig.badStyle());
         if (!PdfTools.isPDF(file.getAbsolutePath())) {
             return;
@@ -218,38 +219,14 @@ public class PdfAttributesController extends BaseController {
         loadPdfInformation(null);
     }
 
-    public void checkUserPassword() {
-        String p1 = userPasswordInput.getText();
-        String p2 = userPasswordInput2.getText();
-        boolean valid;
-        if (p1 == null || p1.isEmpty()) {
-            valid = p2 == null || p2.isEmpty();
-        } else {
-            valid = p1.equals(p2);
+    public void load(File file, String password) {
+        sourceFileInput.setText(file.getAbsolutePath());
+        sourceFileInput.setStyle(UserConfig.badStyle());
+        if (!PdfTools.isPDF(file.getAbsolutePath())) {
+            return;
         }
-        if (valid) {
-            userPasswordInput.setStyle(null);
-            userPasswordInput2.setStyle(null);
-        } else {
-            userPasswordInput2.setStyle(UserConfig.badStyle());
-        }
-    }
-
-    public void checkOwnerPassword() {
-        String p1 = ownerPasswordInput.getText();
-        String p2 = ownerPasswordInput2.getText();
-        boolean valid;
-        if (p1 == null || p1.isEmpty()) {
-            valid = p2 == null || p2.isEmpty();
-        } else {
-            valid = p1.equals(p2);
-        }
-        if (valid) {
-            ownerPasswordInput.setStyle(null);
-            ownerPasswordInput2.setStyle(null);
-        } else {
-            ownerPasswordInput2.setStyle(UserConfig.badStyle());
-        }
+        sourceFile = file;
+        loadPdfInformation(password);
     }
 
     public void loadPdfInformation(final String password) {
@@ -318,6 +295,40 @@ public class PdfAttributesController extends BaseController {
             }
         };
         start(task);
+    }
+
+    public void checkUserPassword() {
+        String p1 = userPasswordInput.getText();
+        String p2 = userPasswordInput2.getText();
+        boolean valid;
+        if (p1 == null || p1.isEmpty()) {
+            valid = p2 == null || p2.isEmpty();
+        } else {
+            valid = p1.equals(p2);
+        }
+        if (valid) {
+            userPasswordInput.setStyle(null);
+            userPasswordInput2.setStyle(null);
+        } else {
+            userPasswordInput2.setStyle(UserConfig.badStyle());
+        }
+    }
+
+    public void checkOwnerPassword() {
+        String p1 = ownerPasswordInput.getText();
+        String p2 = ownerPasswordInput2.getText();
+        boolean valid;
+        if (p1 == null || p1.isEmpty()) {
+            valid = p2 == null || p2.isEmpty();
+        } else {
+            valid = p1.equals(p2);
+        }
+        if (valid) {
+            ownerPasswordInput.setStyle(null);
+            ownerPasswordInput2.setStyle(null);
+        } else {
+            ownerPasswordInput2.setStyle(UserConfig.badStyle());
+        }
     }
 
     @FXML
@@ -507,6 +518,25 @@ public class PdfAttributesController extends BaseController {
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return false;
+        }
+    }
+
+    /*
+        static
+     */
+    public static PdfAttributesController open(File file, String password) {
+        try {
+            PdfAttributesController controller = (PdfAttributesController) WindowTools.openStage(Fxmls.PdfAttributesFxml);
+            if (controller != null) {
+                controller.requestMouse();
+                if (file != null) {
+                    controller.load(file, password);
+                }
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
         }
     }
 

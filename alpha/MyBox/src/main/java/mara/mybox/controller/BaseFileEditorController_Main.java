@@ -53,6 +53,9 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
             openSourceButton.setDisable(nullFile);
         }
         isSettingValues = false;
+        if (browseController != null) {
+            browseController.setCurrentFile(sourceFile);
+        }
     }
 
     protected void initMainBox() {
@@ -348,6 +351,8 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
 
                 sourceInformation.setPagesNumber(pagesNumber);
             }
+            s.append(message("File"))
+                    .append(": ").append(sourceFile).append("\n");
             s.append(message("FileSize"))
                     .append(": ").append(FileTools.showFileSize(sourceFile.length())).append("\n");
             s.append(message("FileModifyTime"))

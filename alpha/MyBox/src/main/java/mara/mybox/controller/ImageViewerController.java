@@ -326,9 +326,7 @@ public class ImageViewerController extends BaseImageController {
                 }
             }
 
-            if (browseController != null) {
-                browseController.setCurrentFile(sourceFile());
-            }
+            setFilesBrowse();
 
             refinePane();
             return true;
@@ -339,6 +337,12 @@ public class ImageViewerController extends BaseImageController {
             }
             alertInformation(message("NotSupported"));
             return false;
+        }
+    }
+
+    public void setFilesBrowse() {
+        if (browseController != null) {
+            browseController.setCurrentFile(imageFile());
         }
     }
 
@@ -354,7 +358,7 @@ public class ImageViewerController extends BaseImageController {
 
     @FXML
     public void saveAllFramesSelected() {
-        File file = sourceFile();
+        File file = imageFile();
         if (file != null && file.exists() && framesNumber > 1) {
             formatController.formatPane.getChildren().setAll(formatController.tifRadio, formatController.gifRadio);
             if ("gif".equalsIgnoreCase(FileNameTools.suffix(file.getName()))) {
@@ -434,7 +438,7 @@ public class ImageViewerController extends BaseImageController {
         if (task != null) {
             task.cancel();
         }
-        File srcFile = sourceFile();
+        File srcFile = imageFile();
         if (srcFile == null) {
             targetFile = chooseSaveFile();
             if (targetFile == null) {
@@ -526,7 +530,7 @@ public class ImageViewerController extends BaseImageController {
                 || (saveAsButton != null && saveAsButton.isDisabled())) {
             return;
         }
-        File srcFile = sourceFile();
+        File srcFile = imageFile();
         String fname;
         if (srcFile != null) {
             fname = FileNameTools.filter(FileNameTools.prefix(srcFile.getName()))

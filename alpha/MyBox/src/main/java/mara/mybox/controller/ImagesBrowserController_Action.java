@@ -22,7 +22,6 @@ import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.value.Fxmls;
 import mara.mybox.value.Languages;
-import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -361,38 +360,6 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
 
         };
         start(task);
-    }
-
-    @FXML
-    @Override
-    public void nextAction() {
-        if (imageFileList == null || imageFileList.isEmpty()) {
-            return;
-        }
-        List<File> files = browseController.nextFiles(imageFileList.get(imageFileList.size() - 1), filesNumber);
-        if (files == null || files.isEmpty()) {
-            popError(message("NoMore"));
-            browseController.nextFileButton.setDisable(true);
-        } else {
-            loadImages(files, colsNum);
-            browseController.previousFileButton.setDisable(false);
-        }
-    }
-
-    @FXML
-    @Override
-    public void previousAction() {
-        if (imageFileList == null || imageFileList.isEmpty()) {
-            return;
-        }
-        List<File> files = browseController.previousFiles(imageFileList.get(0), filesNumber);
-        if (files == null || files.isEmpty()) {
-            popError(message("NoMore"));
-            browseController.previousFileButton.setDisable(true);
-        } else {
-            loadImages(files, colsNum);
-            browseController.nextFileButton.setDisable(false);
-        }
     }
 
     @Override

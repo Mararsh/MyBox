@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import java.util.Arrays;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
@@ -232,6 +233,10 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    public File imageFile() {
+        return sourceFile();
     }
 
     protected void popImageMenu(double x, double y) {

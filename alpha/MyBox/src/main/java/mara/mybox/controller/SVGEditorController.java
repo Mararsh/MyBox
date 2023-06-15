@@ -292,18 +292,18 @@ public class SVGEditorController extends XmlEditorController {
 
     protected MenuItem exampleMenu(String filename) {
         try {
-            File exampleFile = FxFileTools.getInternalFile("/data/examples/" + filename,
-                    "data", filename, false);
-            if (exampleFile == null || !exampleFile.exists()) {
-                return null;
-            }
-            File tmpFile = FileTmpTools.generateFile(FileNameTools.prefix(filename), FileNameTools.suffix(filename));
-            FileCopyTools.copyFile(exampleFile, tmpFile);
-            if (tmpFile == null || !tmpFile.exists()) {
-                return null;
-            }
             MenuItem menu = new MenuItem(filename);
             menu.setOnAction((ActionEvent mevent) -> {
+                File exampleFile = FxFileTools.getInternalFile("/data/examples/" + filename,
+                        "data", filename, false);
+                if (exampleFile == null || !exampleFile.exists()) {
+                    return;
+                }
+                File tmpFile = FileTmpTools.generateFile(FileNameTools.prefix(filename), FileNameTools.suffix(filename));
+                FileCopyTools.copyFile(exampleFile, tmpFile);
+                if (tmpFile == null || !tmpFile.exists()) {
+                    return;
+                }
                 sourceFileChanged(tmpFile);
             });
             return menu;

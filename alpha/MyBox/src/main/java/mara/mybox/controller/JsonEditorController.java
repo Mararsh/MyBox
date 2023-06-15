@@ -33,7 +33,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2023-4-30
  * @License Apache License Version 2.0
  */
-public class JsonEditorController extends BaseController {
+public class JsonEditorController extends BaseFileController {
 
     protected boolean domChanged, textsChanged, fileChanged;
     protected String title;
@@ -134,15 +134,13 @@ public class JsonEditorController extends BaseController {
 
     public boolean writePanes(String json) {
         fileChanged = false;
-        openSourceButton.setDisable(sourceFile == null || !sourceFile.exists());
         isSettingValues = true;
         loadDom(json, false);
         loadText(json, false);
         updateTitle();
         isSettingValues = false;
-        if (backupController != null) {
-            backupController.loadBackups(sourceFile);
-        }
+        backupController.loadBackups(sourceFile);
+        browseController.setCurrentFile(sourceFile);
         loadNotify.set(!loadNotify.get());
         return true;
     }
@@ -156,10 +154,6 @@ public class JsonEditorController extends BaseController {
             }
             sourceFile = null;
             getMyStage().setTitle(getBaseTitle());
-            fileChanged = false;
-            if (backupController != null) {
-                backupController.loadBackups(null);
-            }
             writePanes("{}");
         } catch (Exception e) {
             MyBoxLog.error(e);

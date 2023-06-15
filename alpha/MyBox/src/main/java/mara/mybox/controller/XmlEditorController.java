@@ -85,8 +85,6 @@ public class XmlEditorController extends BaseFileController {
 
             backupController.setParameters(this, baseName);
 
-            browseController.setParameter(this);
-
             tabChanged();
 
         } catch (Exception e) {
@@ -148,7 +146,6 @@ public class XmlEditorController extends BaseFileController {
         if (sourceFile != null) {
             recordFileOpened(sourceFile);
         }
-        fileInfoLabel.setText(FileTools.fileInformation(sourceFile));
         browseController.setCurrentFile(sourceFile);
         backupController.loadBackups(sourceFile);
         loadNotify.set(!loadNotify.get());

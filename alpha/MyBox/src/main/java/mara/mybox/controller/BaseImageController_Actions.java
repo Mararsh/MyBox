@@ -159,7 +159,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     @FXML
     public void browseAction() {
         ImagesBrowserController controller = (ImagesBrowserController) openStage(Fxmls.ImagesBrowserFxml);
-        File file = sourceFile();
+        File file = imageFile();
         if (file != null) {
             controller.loadImages(file.getParentFile(), 9);
         }
@@ -198,7 +198,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     @FXML
     public void convertAction() {
         ImageConverterBatchController controller = (ImageConverterBatchController) openStage(Fxmls.ImageConverterBatchFxml);
-        File file = sourceFile();
+        File file = imageFile();
         if (file != null) {
             controller.tableController.addFile(file);
         }
@@ -311,11 +311,11 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                 if (imageInformation != null && imageInformation.getRegion() != null) {
                     imageController.loadRegion(imageInformation);
                 } else if (imageController instanceof ImageSampleController || imageController instanceof ImageSplitController) {
-                    imageController.loadImage(sourceFile(), imageInformation, imageView.getImage(), imageChanged);
+                    imageController.loadImage(imageFile(), imageInformation, imageView.getImage(), imageChanged);
                 } else if (imageInformation != null && imageInformation.isIsScaled()) {
                     imageController.loadImage(imageView.getImage());
                 } else {
-                    imageController.loadImage(sourceFile(), imageInformation, imageView.getImage(), imageChanged);
+                    imageController.loadImage(imageFile(), imageInformation, imageView.getImage(), imageChanged);
                 }
             }
             return;
@@ -398,7 +398,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
 
             }
 
-            if (sourceFile() != null) {
+            if (imageFile() != null) {
                 menu = new MenuItem(message("Browse"), StyleTools.getIconImageView("iconBrowse.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     browseAction();
@@ -447,7 +447,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             });
             handleMenu.getItems().add(menu);
 
-            if (sourceFile() != null) {
+            if (imageFile() != null) {
                 menu = new MenuItem(message("Convert"), StyleTools.getIconImageView("iconDelimiter.png"));
                 menu.setOnAction((ActionEvent event) -> {
                     convertAction();
@@ -582,7 +582,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         if (file == null) {
             return;
         }
-        saveImage(sourceFile(), file, imageToSaveAs());
+        saveImage(imageFile(), file, imageToSaveAs());
     }
 
     public void saveImage(File srcFile, File newfile, Object imageToSave) {

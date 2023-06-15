@@ -360,6 +360,22 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </Tab>
+                              <Tab fx:id="browseTab" text="%Browse">
+                                 <content>
+                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="ALWAYS">
+                                       <children>
+                                          <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                             <padding>
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                             </padding>
+                                             <content>
+                                                <fx:include fx:id="browse" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlFileBrowse.fxml" />
+                                             </content>
+                                          </ScrollPane>
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </Tab>
                                     </tabs>
                                 </TabPane>
                             </children>

@@ -80,7 +80,6 @@ public class HtmlEditorController extends WebAddressController {
 
     public void panesLoad() {
         sourceFile = editController.sourceFile;
-        openSourceButton.setDisable(sourceFile == null || !sourceFile.exists());
     }
 
     @FXML

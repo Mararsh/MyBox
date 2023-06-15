@@ -328,6 +328,9 @@ public class ControlHtmlEditor extends BaseWebViewController {
         if (backupController != null) {
             backupController.loadBackups(sourceFile);
         }
+        if (browseController != null) {
+            browseController.setCurrentFile(sourceFile);
+        }
         loadNotify.set(!loadNotify.get());
         return true;
     }
@@ -341,6 +344,11 @@ public class ControlHtmlEditor extends BaseWebViewController {
         } else if (webViewController.contents != null) {
             loadContents(webViewController.contents);
         }
+    }
+
+    @Override
+    public void selectSourceFile(File file) {
+        loadFile(file);
     }
 
     /*

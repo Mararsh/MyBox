@@ -164,6 +164,14 @@ public class FileInformation {
         }
     }
 
+    public String getName() {
+        if (file != null) {
+            return file.getName();
+        } else {
+            return data;
+        }
+    }
+
     public boolean isSelected() {
         return selected.get();
     }

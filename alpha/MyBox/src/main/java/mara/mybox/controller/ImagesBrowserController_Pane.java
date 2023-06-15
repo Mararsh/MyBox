@@ -49,17 +49,17 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
         try {
             if (imageFileList != null && !imageFileList.isEmpty() && filesNumber > 0) {
                 File firstFile = imageFileList.get(0);
-                List<File> pathFiles = browseController.validFiles(firstFile);
+                List<File> pathFiles = filesController.validFiles(firstFile);
                 int total = pathFiles.size();
                 totalLabel.setText("/" + total);
 
-                browseController.setCurrentFile(firstFile);
+                filesController.setCurrentFile(firstFile);
                 if (total <= 0 || filesNumber >= total) {
-                    browseController.nextFileButton.setDisable(true);
-                    browseController.previousFileButton.setDisable(true);
+                    filesController.nextFileButton.setDisable(true);
+                    filesController.previousFileButton.setDisable(true);
                 } else {
-                    browseController.nextFileButton.setDisable(false);
-                    browseController.previousFileButton.setDisable(false);
+                    filesController.nextFileButton.setDisable(false);
+                    filesController.previousFileButton.setDisable(false);
                 }
 
                 if (makeCurrentList) {
@@ -73,7 +73,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
                     }
                 }
             } else {
-                browseController.setCurrentFile(null);
+                filesController.setCurrentFile(null);
             }
 
         } catch (Exception e) {

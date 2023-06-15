@@ -68,6 +68,8 @@ public abstract class ImagesBrowserController_Load extends ImageViewerController
     protected ToggleGroup popGroup;
     @FXML
     protected Button zoomOutAllButton, zoomInAllButton, imageSizeAllButton, paneSizeAllButton;
+    @FXML
+    protected ControlFilesBrowse filesController;
 
     @FXML
     @Override

@@ -43,7 +43,7 @@ import org.apache.commons.csv.CSVRecord;
  * @CreateDate 2022-2-21
  * @License Apache License Version 2.0
  */
-public abstract class BaseData2DController extends BaseController {
+public abstract class BaseData2DController extends BaseFileController {
 
     protected Data2D.Type type;
     protected TableData2DDefinition tableData2DDefinition;

@@ -514,7 +514,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
     }
 
     @Override
-    public File sourceFile() {
+    public File imageFile() {
         return null;
     }
 

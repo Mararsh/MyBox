@@ -229,7 +229,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         if (metaButton != null) {
             metaButton.setDisable(imageInformation == null);
         }
-        File file = sourceFile();
+        File file = imageFile();
         if (deleteButton != null) {
             deleteButton.setDisable(file == null);
         }
@@ -336,7 +336,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             return;
         }
         UserConfig.setInt(baseName + "LoadWidth", loadWidth);
-        File file = sourceFile();
+        File file = imageFile();
         if (file != null && file.exists()) {
             loadImageFile(file, loadWidth);
         } else if (imageView.getImage() != null) {

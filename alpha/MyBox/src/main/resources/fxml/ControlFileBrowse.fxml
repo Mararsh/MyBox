@@ -7,61 +7,53 @@ License:    Apache License Version 2.0
 -->
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlFileBrowse">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlFileBrowse">
     <children>
-      <Label fx:id="infoLabel" minHeight="-Infinity" wrapText="true" />
-        <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
-            <children>
-                <Button fx:id="openSourceButton" mnemonicParsing="false" onAction="#openSourcePath">
-                    <graphic>
+      <CheckBox fx:id="listCheck" minHeight="-Infinity" mnemonicParsing="false" text="%ListDirectoryValidFiles" wrapText="true" />
+      <VBox fx:id="listBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" VBox.vgrow="ALWAYS">
+         <children>
+            <Label fx:id="infoLabel" minHeight="-Infinity" wrapText="true" />
+              <FlowPane alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
+                  <children>
+                      <Button fx:id="openSourceButton" mnemonicParsing="false" onAction="#openSourcePath">
+                          <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                  <image>
+                                      <Image url="@../buttons/Red/iconOpenPath.png" />
+                                  </image>
+                              </ImageView>
+                          </graphic>
+                      </Button>
+                  <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
+                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconOpenPath.png" />
-                            </image>
+                           <image>
+                              <Image url="@../buttons/Red/iconRefresh.png" />
+                           </image>
                         </ImageView>
-                    </graphic>
-                </Button>
-                <Button fx:id="previousFileButton" mnemonicParsing="false" onAction="#previousAction">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconPrevious.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-                <Button fx:id="nextFileButton" mnemonicParsing="false" onAction="#nextAction">
-                    <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@../buttons/Red/iconNext.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-            </children>
-        </FlowPane>
-        <RadioButton fx:id="NameAscRadio" mnemonicParsing="false" selected="true" text="%NameAsc">
-            <toggleGroup>
-                <ToggleGroup fx:id="sortGroup" />
-            </toggleGroup>
-        </RadioButton>
-        <RadioButton fx:id="NameDescRadio" mnemonicParsing="false" text="%NameDesc" toggleGroup="$sortGroup" />
-        <RadioButton fx:id="FormatAscRadio" mnemonicParsing="false" text="%FormatAsc" toggleGroup="$sortGroup" />
-        <RadioButton fx:id="FormatDescRadio" mnemonicParsing="false" text="%FormatDesc" toggleGroup="$sortGroup" />
-        <RadioButton fx:id="ModifyTimeDescRadio" mnemonicParsing="false" text="%ModifyTimeDesc" toggleGroup="$sortGroup" />
-        <RadioButton fx:id="ModifyTimeAscRadio" mnemonicParsing="false" text="%ModifyTimeAsc" toggleGroup="$sortGroup" />
-        <RadioButton fx:id="SizeDescRadio" mnemonicParsing="false" text="%SizeDesc" toggleGroup="$sortGroup" />
-        <RadioButton fx:id="SizeAscRadio" mnemonicParsing="false" text="%SizeAsc" toggleGroup="$sortGroup" />
-        <RadioButton fx:id="CreateTimeDescRadio" mnemonicParsing="false" text="%CreateTimeDesc" toggleGroup="$sortGroup" />
-        <RadioButton fx:id="CreateTimeAscRadio" mnemonicParsing="false" text="%CreateTimeAsc" toggleGroup="$sortGroup" />
+                     </graphic>
+                  </Button>
+                  <Label minHeight="-Infinity" text="%DoubleClickToOpen" wrapText="true" />
+                  </children>
+              </FlowPane>
+            <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+              <columns>
+                <TableColumn fx:id="fileColumn" prefWidth="100.0" text="%File" />
+                  <TableColumn fx:id="typeColumn" prefWidth="50.0" text="%Type" />
+                  <TableColumn fx:id="sizeColumn" prefWidth="75.0" text="%Size" />
+                  <TableColumn fx:id="timeColumn" prefWidth="150.0" text="%ModifyTime" />
+              </columns>
+            </TableView>
+         </children>
+      </VBox>
     </children>
 </VBox>

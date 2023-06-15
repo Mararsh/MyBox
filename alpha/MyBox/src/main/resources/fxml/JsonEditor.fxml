@@ -48,11 +48,11 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button fx:id="openSourceButton" mnemonicParsing="false" onAction="#openSourcePath">
+                        <Button fx:id="synchronizeButton" mnemonicParsing="false" onAction="#synchronizeAction">
                             <graphic>
-                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/Red/iconOpenPath.png" />
+                                        <Image url="@../buttons/iconSynchronize.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -66,11 +66,11 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button fx:id="synchronizeButton" mnemonicParsing="false" onAction="#synchronizeAction">
+                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
                             <graphic>
                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../buttons/iconSynchronize.png" />
+                                        <Image url="@../buttons/Red/iconClear.png" />
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -84,15 +84,15 @@ License:    Apache License Version 2.0
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
-                            <graphic>
-                                <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../buttons/Red/iconClear.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </Button>
+                  <Button fx:id="txtButton" mnemonicParsing="false" onAction="#editTexts">
+                     <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/Red/iconTxt.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
                         <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#pickSaveAs" onMouseEntered="#popSaveAs">
                             <graphic>
                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -130,15 +130,6 @@ License:    Apache License Version 2.0
                                     <children>
                                         <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
                                             <children>
-                                                <Button fx:id="editTextsButton" mnemonicParsing="false" onAction="#editTexts">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/Red/iconEdit.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button>
                                                 <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -202,6 +193,22 @@ License:    Apache License Version 2.0
                                 </VBox>
                             </content>
                         </Tab>
+                  <Tab fx:id="browseTab" closable="false" text="%Browse">
+                     <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="ALWAYS">
+                           <children>
+                              <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                 <padding>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </padding>
+                                 <content>
+                                    <fx:include fx:id="browse" source="ControlFileBrowse.fxml" />
+                                 </content>
+                              </ScrollPane>
+                           </children>
+                        </VBox>
+                     </content>
+                  </Tab>
                     </tabs>
                 </TabPane>
             </children>

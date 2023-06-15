@@ -26,7 +26,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.BytesEditorController">
+<BorderPane fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.BytesEditorController">
     <top>
         <fx:include fx:id="mainMenu" source="MainMenu.fxml" />
     </top>
@@ -44,15 +44,6 @@ License:    Apache License Version 2.0
                                                 <VBox>
                                                     <children>
                                                         <Label fx:id="infoLabel" minHeight="-Infinity" wrapText="true" />
-                                                        <Button fx:id="openSourceButton" mnemonicParsing="false" onAction="#openSourcePath">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/Red/iconOpenPath.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </Button>
                                                     </children>
                                                 </VBox>
                                             </content>
@@ -148,7 +139,7 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                                        <TitledPane fx:id="findPane" layoutX="10.0" layoutY="10.0" text="%FindReplace">
+                                        <TitledPane fx:id="findPane" expanded="false" layoutX="10.0" layoutY="10.0" text="%FindReplace">
                                             <content>
                                                 <fx:include fx:id="findReplace" source="ControlFindReplace.fxml" />
                                             </content>
@@ -254,6 +245,15 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </TitledPane>
+                              <TitledPane fx:id="browsePane" expanded="false" text="%Browse">
+                                 <content>
+                                    <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                       <children>
+                                          <fx:include fx:id="browse" source="ControlFileBrowse.fxml" />
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </TitledPane>
                                     </children>
                                 </VBox>
                             </content>
@@ -293,7 +293,7 @@ License:    Apache License Version 2.0
                                         <Label fx:id="editLabel" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                         <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
                                             <graphic>
-                                                <ImageView  fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                     <image>
                                                         <Image url="@../buttons/Red/iconDoubleLeft.png" />
                                                     </image>

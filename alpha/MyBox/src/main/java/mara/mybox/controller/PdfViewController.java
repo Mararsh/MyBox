@@ -330,6 +330,7 @@ public class PdfViewController extends PdfViewController_Html {
                 loadPage();
                 checkOutline();
                 checkThumbs();
+                browseController.setCurrentFile(sourceFile);
             }
 
         };
@@ -528,6 +529,15 @@ public class PdfViewController extends PdfViewController_Html {
     @Override
     public void playAction() {
         ImagesPlayController.playPDF(sourceFile, password);
+    }
+
+    @Override
+    public void setFilesBrowse() {
+    }
+
+    @FXML
+    public void permissionAction() {
+        PdfAttributesController.open(sourceFile, password);
     }
 
     /*

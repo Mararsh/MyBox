@@ -237,7 +237,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
         s += MessageFormat.format(Languages.message("TotalFilesNumberSize"),
                 totalFilesNumber, FileTools.showFileSize(totalFilesSize));
         if (viewButton != null) {
-            s += "  " + Languages.message("DoubleClickToView");
+            s += "  " + Languages.message("DoubleClickToOpen");
         }
         tableLabel.setText(s);
     }

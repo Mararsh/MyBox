@@ -645,7 +645,7 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
                 s += "    (" + message("NotIncludeSubFolders") + ")";
             }
             if (viewButton != null) {
-                s += "    " + message("DoubleClickToView");
+                s += "    " + message("DoubleClickToOpen");
             }
             tableLabel.setText(s);
         }

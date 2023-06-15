@@ -316,9 +316,6 @@
     .fnt6 {font-style:italic;font-weight:normal;font-size:83;font-family:FontID4, 'Humnst777 BT'}
     .fnt1 {font-style:italic;font-weight:normal;font-size:167;font-family:FontID1, 'Humnst777 Lt BT'}
    ]]></style></defs>
-        <g id="relief">
-            <image transform="matrix(0.555102 0 0 0.555268 -5368.74 5205.7)" x="0" y="-8696" width="15792"
-                   height="12444" xlink:href="tests/resources/images/spainRelief.png"/></g>
         
         <g id="areas_density">
             <path class="fil0"
@@ -1637,7 +1634,7 @@
                 <text x="3665" y="363" class="fil8 fnt11">Population density</text>
                 <text x="3665" y="4063" class="fil8 fnt11">Population change</text>
                 <text x="3665" y="1815" class="fil8 fnt11">Population absolute</text>
-                <!-- Hmm, there is a superscript "2" here that is aligned to the German text... -->
+        <!-- Hmm, there is a superscript "2" here that is aligned to the German text... -->
                 <text x="3665" y="510" class="fil8 fnt7">Inhab. per km² at province level</text>
                 <text x="3665" y="4210" class="fil8 fnt7">Percentual change of the</text>
                 <text x="3665" y="4344" class="fil8 fnt7">province vs situation 1970</text>
