@@ -374,6 +374,9 @@ public class HelpTools {
             s.append("    <H3>").append(message("EditImage")).append("</H3>\n");
             s.append("    <PRE>").append(message("ImageManufactureTips")).append("</PRE>\n");
 
+            s.append("    <H3>").append(message("SVGEditor")).append("</H3>\n");
+            s.append("    <PRE>").append(message("SVGEditorTips")).append("</PRE>\n");
+
             s.append("    <H3>").append(message("ImageAnalyse")).append("</H3>\n");
             s.append("    <PRE>").append(message("ImageAnalyseTips")).append("</PRE>\n");
 
@@ -626,23 +629,23 @@ public class HelpTools {
     }
 
     public static String javaAPILink() {
-        return "https://docs.oracle.com/en/java/javase/18/docs/api/index.html";
+        return "https://docs.oracle.com/en/java/javase/20/docs/api/index.html";
     }
 
     public static String javaMathLink() {
-        return "https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Math.html";
+        return "https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/lang/Math.html";
     }
 
     public static String decimalFormatLink() {
-        return "https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/DecimalFormat.html";
+        return "https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/text/DecimalFormat.html";
     }
 
     public static String simpleDateFormatLink() {
-        return "https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/text/SimpleDateFormat.html";
+        return "https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/text/SimpleDateFormat.html";
     }
 
     public static String renderingHintsLink() {
-        return "https://docs.oracle.com/en/java/javase/18/docs/api/java.desktop/java/awt/RenderingHints.html";
+        return "https://docs.oracle.com/en/java/javase/20/docs/api/java.desktop/java/awt/RenderingHints.html";
     }
 
     public static String cssLink() {
@@ -682,7 +685,7 @@ public class HelpTools {
     }
 
     public static String jsonEnLink() {
-        return "https://www.w3schools.com/js/js_json_intro.asp";
+        return "https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/JSON";
     }
 
     public static String jsonZhLink() {
@@ -694,7 +697,7 @@ public class HelpTools {
     }
 
     public static String xmlEnLink() {
-        return "https://www.w3schools.com/xml/default.asp";
+        return "https://developer.mozilla.org/en-US/docs/Web/XML/XML_introduction";
     }
 
     public static String xmlZhLink() {
@@ -706,7 +709,7 @@ public class HelpTools {
     }
 
     public static String svgEnLink() {
-        return "https://www.w3schools.com/graphics/svg_intro.asp";
+        return "https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial";
     }
 
     public static String svgZhLink() {

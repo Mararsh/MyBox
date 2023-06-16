@@ -656,6 +656,9 @@ public class StyleButton {
         if (id.startsWith("options")) {
             return new StyleData(id, message("Options"), "", "iconSetting.png");
         }
+        if (id.startsWith("systemWebBrowser")) {
+            return new StyleData(id, message("SystemWebBrowser"), "", "iconWindow.png");
+        }
         return null;
     }
 

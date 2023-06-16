@@ -35,6 +35,7 @@ public class ControlFileBrowse extends BaseController {
 
     protected ObservableList<FileInformation> tableData;
     protected FileSortMode sortMode;
+    protected boolean doubleClicked;
 
     @FXML
     protected CheckBox listCheck;
@@ -84,6 +85,7 @@ public class ControlFileBrowse extends BaseController {
         if (selected == null) {
             return;
         }
+        doubleClicked = true;
         parentController.selectSourceFile(selected.getFile());
     }
 
@@ -149,19 +151,18 @@ public class ControlFileBrowse extends BaseController {
     }
 
     public void setCurrentFile(File file) {
-        if (sourceFile == null || file == null
-                || !sourceFile.getParent().equals(file.getParent())) {
-            sourceFile = file;
+        sourceFile = file;
+        if (!doubleClicked) {
             refreshAction();
-        } else {
-            sourceFile = file;
         }
+        doubleClicked = false;
     }
 
     @FXML
     @Override
     public void refreshAction() {
         try {
+            doubleClicked = false;
             if (!listCheck.isSelected()) {
                 return;
             }

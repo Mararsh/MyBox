@@ -111,7 +111,7 @@ License:    Apache License Version 2.0
                                           </ImageView>
                                        </graphic>
                                     </Button>
-                                    <ImageView fx:id="tipsView1" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                    <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@../buttons/Red/iconTips.png" />
                                        </image>
@@ -260,6 +260,15 @@ License:    Apache License Version 2.0
                                                       <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                          <image>
                                                             <Image url="@../buttons/Red/iconPdf.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
+                                                <Button fx:id="systemWebBrowserButton" layoutX="364.0" layoutY="10.0" mnemonicParsing="false" onAction="#systemWebBrowser">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/Red/iconWindow.png" />
                                                          </image>
                                                       </ImageView>
                                                    </graphic>

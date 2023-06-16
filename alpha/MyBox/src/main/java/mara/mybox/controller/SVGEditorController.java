@@ -25,6 +25,7 @@ import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTmpTools;
+import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -92,14 +93,17 @@ public class SVGEditorController extends XmlEditorController {
 
     @Override
     public String makeBlank() {
-        return "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 500 500\">\n"
-                + "</svg>";
+        return "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 500 500\" >\n</svg>";
     }
 
     public void loadHtml(String xml) {
-        currentXML = xml;
-        webEngine.getLoadWorker().cancel();
-        webEngine.loadContent(currentXML);
+        try {
+            currentXML = xml;
+            webEngine.getLoadWorker().cancel();
+            webEngine.loadContent(currentXML);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     @Override
@@ -127,6 +131,21 @@ public class SVGEditorController extends XmlEditorController {
             return;
         }
         HtmlEditorController.openHtml(currentXML);
+    }
+
+    @FXML
+    public void systemWebBrowser() {
+        if (currentXML == null || currentXML.isBlank()) {
+            popError(message("NoData"));
+            return;
+        }
+        File tmpFile = FileTmpTools.getTempFile(".svg");
+        TextFileTools.writeFile(tmpFile, currentXML);
+        if (tmpFile != null && tmpFile.exists()) {
+            browse(tmpFile);
+        } else {
+            popError(message("Failed"));
+        }
     }
 
     @FXML
@@ -242,17 +261,14 @@ public class SVGEditorController extends XmlEditorController {
             items.add(exampleMenu("asf-logo.svg"));
             items.add(exampleMenu("barChart.svg"));
             items.add(exampleMenu("batik3D.svg"));
-            items.add(exampleMenu("batikLogo.svg"));
             items.add(exampleMenu("batikYin.svg"));
             items.add(exampleMenu("batikFX.svg"));
             items.add(exampleMenu("logoShadowOffset.svg"));
             items.add(exampleMenu("mapSpain.svg"));
             items.add(exampleMenu("mapWaadt.svg"));
-            items.add(exampleMenu("mathMetal.svg"));
             items.add(exampleMenu("moonPhases.svg"));
             items.add(exampleMenu("sizeOfSun.svg"));
             items.add(exampleMenu("strokeFont.svg"));
-            items.add(exampleMenu("textRotate.svg"));
 
             items.add(new SeparatorMenuItem());
 
