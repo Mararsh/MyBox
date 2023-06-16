@@ -354,7 +354,7 @@ public class ImageSplitController extends BaseImagesListController {
             isSettingValues = false;
             checkSplitMethod();
 
-            saveController.thumbsListButton.setVisible(imageInformation == null || !imageInformation.isIsSampled());
+            saveController.editFramesButton.setVisible(imageInformation == null || !imageInformation.isIsSampled());
 
             return true;
         } catch (Exception e) {

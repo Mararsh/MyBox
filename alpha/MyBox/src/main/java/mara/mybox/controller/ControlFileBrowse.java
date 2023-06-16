@@ -18,6 +18,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.FileInformation;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.ControllerTools;
 import mara.mybox.fxml.cell.TableFileSizeCell;
 import mara.mybox.fxml.cell.TableTimeCell;
 import mara.mybox.tools.FileSortTools;
@@ -35,10 +36,10 @@ public class ControlFileBrowse extends BaseController {
 
     protected ObservableList<FileInformation> tableData;
     protected FileSortMode sortMode;
-    protected boolean doubleClicked;
+    protected boolean doubleClickedToLoad;
 
     @FXML
-    protected CheckBox listCheck;
+    protected CheckBox listCheck, newCheck;
     @FXML
     protected VBox listBox;
     @FXML
@@ -85,8 +86,12 @@ public class ControlFileBrowse extends BaseController {
         if (selected == null) {
             return;
         }
-        doubleClicked = true;
-        parentController.selectSourceFile(selected.getFile());
+        if (newCheck.isSelected()) {
+            ControllerTools.openTarget(selected.getFile().getAbsolutePath());
+        } else {
+            doubleClickedToLoad = true;
+            parentController.selectSourceFile(selected.getFile());
+        }
     }
 
     public void setParameter(BaseController parent) {
@@ -152,17 +157,17 @@ public class ControlFileBrowse extends BaseController {
 
     public void setCurrentFile(File file) {
         sourceFile = file;
-        if (!doubleClicked) {
+        if (!doubleClickedToLoad) {
             refreshAction();
         }
-        doubleClicked = false;
+        doubleClickedToLoad = false;
     }
 
     @FXML
     @Override
     public void refreshAction() {
         try {
-            doubleClicked = false;
+            doubleClickedToLoad = false;
             if (!listCheck.isSelected()) {
                 return;
             }
@@ -185,6 +190,7 @@ public class ControlFileBrowse extends BaseController {
                     tableData.add(new FileInformation(file));
                 }
             }
+            info += "  " + message("DoubleClickToOpen");
             infoLabel.setText(info);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

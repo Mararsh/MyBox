@@ -352,6 +352,9 @@ public class StyleButton {
         if (id.startsWith("help")) {
             return new StyleData(id, message("HelpMe"), "", "iconClaw.png");
         }
+        if (id.startsWith("editFrames")) {
+            return new StyleData(id, message("ImagesEditor"), "", "iconEdit.png");
+        }
         if (id.startsWith("edit")) {
             return new StyleData(id, message("Edit"), "", "iconEdit.png");
         }

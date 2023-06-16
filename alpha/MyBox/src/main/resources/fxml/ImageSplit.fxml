@@ -106,6 +106,15 @@ License:    Apache License Version 2.0
                                                         </FlowPane>
                                                         <FlowPane alignment="CENTER_LEFT" hgap="2.0" layoutX="10.0" layoutY="10.0" vgap="2.0">
                                                             <children>
+                                                                <Button fx:id="editFramesButton" mnemonicParsing="false" onAction="#editFrames">
+                                                                    <graphic>
+                                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                                            <image>
+                                                                                <Image url="@../buttons/Red/iconThumbsList.png" />
+                                                                            </image>
+                                                                        </ImageView>
+                                                                    </graphic> 
+                                                                </Button>
                                                                 <Button fx:id="playFramesButton" mnemonicParsing="false" onAction="#playAction">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">

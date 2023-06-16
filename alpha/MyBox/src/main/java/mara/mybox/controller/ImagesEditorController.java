@@ -73,7 +73,7 @@ public class ImagesEditorController extends BaseImagesListController {
     }
 
     public void open(File file) {
-        tableController.addFile(sourceFile);
+        tableController.addFile(file);
     }
 
     public void loadImages(List<ImageInformation> infos) {

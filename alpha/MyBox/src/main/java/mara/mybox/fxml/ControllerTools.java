@@ -14,7 +14,7 @@ import mara.mybox.controller.MarkdownEditorController;
 import mara.mybox.controller.MediaPlayerController;
 import mara.mybox.controller.PdfViewController;
 import mara.mybox.controller.PptViewController;
-import mara.mybox.controller.SVGEditorController;
+import mara.mybox.controller.SvgEditorController;
 import mara.mybox.controller.TextEditorController;
 import mara.mybox.controller.WebBrowserController;
 import mara.mybox.controller.WordViewController;
@@ -78,7 +78,7 @@ public class ControllerTools {
         } else if ("xml".equals(suffix)) {
             controller = XmlEditorController.open(file);
         } else if ("svg".equals(suffix)) {
-            controller = SVGEditorController.open(file);
+            controller = SvgEditorController.open(file);
         } else if ("js".equals(suffix)) {
             controller = JavaScriptController.openFile(file);
         } else if (Arrays.asList(FileExtensions.TextFileSuffix).contains(suffix)) {

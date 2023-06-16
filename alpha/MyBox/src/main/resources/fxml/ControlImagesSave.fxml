@@ -40,37 +40,37 @@ License:    Apache License Version 2.0
                                 <RadioButton fx:id="gifFileRadio" mnemonicParsing="false" text="%AnimatedGifFile" toggleGroup="$saveGroup" />
                                 <RadioButton fx:id="pdfRadio" layoutX="90.0" layoutY="10.0" mnemonicParsing="false" text="pdf" toggleGroup="$saveGroup" />
                                 <RadioButton fx:id="pptRadio" layoutX="177.0" layoutY="10.0" mnemonicParsing="false" text="ppt" toggleGroup="$saveGroup" />
-                        <RadioButton fx:id="videoRadio" layoutX="179.0" layoutY="28.0" mnemonicParsing="false" text="%VideoFFmpeg" toggleGroup="$saveGroup" />
+                                <RadioButton fx:id="videoRadio" layoutX="179.0" layoutY="28.0" mnemonicParsing="false" text="%VideoFFmpeg" toggleGroup="$saveGroup" />
                             </children>
                         </FlowPane>
-                  <HBox fx:id="savedWidthBox" alignment="CENTER_LEFT" spacing="2.0">
-                     <children>
-                        <Label text="%SavedWidth" />
-                        <ComboBox fx:id="savedWidthSelector" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="100.0" />
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER_LEFT" spacing="2.0">
-                     <children>
-                              <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#pickSaveAs" onMouseEntered="#popSaveAs">
-                                  <graphic>
-                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                          <image>
-                                              <Image url="@../buttons/iconSaveAs.png" />
-                                          </image>
-                                      </ImageView>
-                                  </graphic>
-                              </Button>
-                        <Button fx:id="thumbsListButton" mnemonicParsing="false" onAction="#editFrames">
-                           <graphic>
-                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../buttons/Red/iconThumbsList.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                     </children>
-                  </HBox>
+                        <HBox fx:id="savedWidthBox" alignment="CENTER_LEFT" spacing="2.0">
+                            <children>
+                                <Label text="%SavedWidth" />
+                                <ComboBox fx:id="savedWidthSelector" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="100.0" />
+                            </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="2.0">
+                            <children>
+                                <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#pickSaveAs" onMouseEntered="#popSaveAs">
+                                    <graphic>
+                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/iconSaveAs.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="editFramesButton" mnemonicParsing="false" onAction="#editFrames">
+                                    <graphic>
+                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../buttons/Red/iconThumbsList.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                            </children>
+                        </HBox>
                         <Label fx:id="saveImagesLabel" minHeight="-Infinity" text="%FilePrefixInput" wrapText="true" />
                     </children>
                 </VBox>
@@ -79,13 +79,13 @@ License:    Apache License Version 2.0
         <TitledPane fx:id="convertPane" expanded="true" layoutX="10.0" layoutY="224.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%ImagesOptions">
             <content>
                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="ALWAYS">
-               <content>
-                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                     <children>
-                              <fx:include fx:id="format" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageFormat.fxml" />
-                     </children>
-                  </VBox>
-               </content>
+                    <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                            <children>
+                                <fx:include fx:id="format" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageFormat.fxml" />
+                            </children>
+                        </VBox>
+                    </content>
                 </ScrollPane>
             </content>
         </TitledPane>
@@ -141,13 +141,13 @@ License:    Apache License Version 2.0
         <TitledPane fx:id="pdfPane" expanded="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%PdfOptions" VBox.vgrow="ALWAYS">
             <content>
                 <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="ALWAYS">
-               <content>
-                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                     <children>
-                              <fx:include fx:id="pdfOptions" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlPdfWriteOptions.fxml" />
-                     </children>
-                  </VBox>
-               </content>
+                    <content>
+                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                            <children>
+                                <fx:include fx:id="pdfOptions" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlPdfWriteOptions.fxml" />
+                            </children>
+                        </VBox>
+                    </content>
                 </ScrollPane>
             </content>
         </TitledPane>

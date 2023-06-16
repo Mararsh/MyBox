@@ -73,7 +73,7 @@ public class ImagesPlayController extends BaseImagesListController {
     @FXML
     protected CheckBox transparentBackgroundCheck;
     @FXML
-    protected Button goFramesButton, thumbsListButton;
+    protected Button goFramesButton;
     @FXML
     protected VBox fileVBox, imageBox, pdfBox;
     @FXML
@@ -165,7 +165,6 @@ public class ImagesPlayController extends BaseImagesListController {
         try {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(toInput, new Tooltip(message("ToPageComments")));
-            NodeStyleTools.setTooltip(thumbsListButton, new Tooltip(message("ImagesEditor")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -654,6 +653,7 @@ public class ImagesPlayController extends BaseImagesListController {
     }
 
     @FXML
+    @Override
     public void editFrames() {
         ImagesEditorController controller = (ImagesEditorController) openStage(Fxmls.ImagesEditorFxml);
         controller.loadImages(imageInfos);

@@ -65,7 +65,7 @@ License:    Apache License Version 2.0
                                                                         </ImageView>
                                                                     </graphic>
                                                                 </Button>
-                                                                <Button fx:id="thumbsListButton" mnemonicParsing="false" onAction="#editFrames">
+                                                                <Button fx:id="editFramesButton" mnemonicParsing="false" onAction="#editFrames">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                             <image>

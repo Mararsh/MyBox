@@ -39,7 +39,7 @@ import org.apache.fop.svg.PDFTranscoder;
  * @CreateDate 2023-2-12
  * @License Apache License Version 2.0
  */
-public class SVGEditorController extends XmlEditorController {
+public class SvgEditorController extends XmlEditorController {
 
     protected WebEngine webEngine;
     protected String currentXML;
@@ -49,7 +49,7 @@ public class SVGEditorController extends XmlEditorController {
     @FXML
     protected WebView webView;
 
-    public SVGEditorController() {
+    public SvgEditorController() {
         baseTitle = message("SVGEditor");
         TipsLabelKey = "SVGEditorTips";
     }
@@ -121,7 +121,7 @@ public class SVGEditorController extends XmlEditorController {
 
     @Override
     public void openSavedFile(File file) {
-        SVGEditorController.open(file);
+        SvgEditorController.open(file);
     }
 
     @FXML
@@ -200,6 +200,17 @@ public class SVGEditorController extends XmlEditorController {
                 FileDeleteTools.delete(tmpFile);
             }
         }
+    }
+
+    @FXML
+    protected void txtAction() {
+        if (currentXML == null || currentXML.isBlank()) {
+            popError(message("NoData"));
+            return;
+        }
+        TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
+        controller.loadContents(currentXML);
+        controller.requestMouse();
     }
 
     @FXML
@@ -332,9 +343,9 @@ public class SVGEditorController extends XmlEditorController {
     /*
         static
      */
-    public static SVGEditorController open(File file) {
+    public static SvgEditorController open(File file) {
         try {
-            SVGEditorController controller = (SVGEditorController) WindowTools.openStage(Fxmls.SVGEditorFxml);
+            SvgEditorController controller = (SvgEditorController) WindowTools.openStage(Fxmls.SvgEditorFxml);
             controller.sourceFileChanged(file);
             controller.requestMouse();
             return controller;

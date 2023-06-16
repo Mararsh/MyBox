@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.ObservableList;
@@ -16,11 +15,6 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import mara.mybox.data.XmlTreeNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
@@ -43,7 +37,6 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
 
     protected XmlEditorController xmlEditor;
     protected Document doc;
-    protected Transformer transformer;
 
     @FXML
     protected TreeTableColumn<XmlTreeNode, String> typeColumn;
@@ -216,37 +209,9 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
     }
 
     public String xml(Node node) {
-        if (node == null) {
-            return null;
-        }
-        String encoding = node instanceof Document
-                ? ((Document) node).getXmlEncoding()
-                : node.getOwnerDocument().getXmlEncoding();
-        if (encoding == null) {
-            encoding = "utf-8";
-        }
-        try (ByteArrayOutputStream os = new ByteArrayOutputStream();) {
-            if (transformer == null) {
-                transformer = TransformerFactory.newInstance().newTransformer();
-                transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-                transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
-            }
-            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
-                    node instanceof Document ? "no" : "yes");
-            transformer.setOutputProperty(OutputKeys.ENCODING, encoding);
-            transformer.setOutputProperty(OutputKeys.INDENT,
-                    UserConfig.getBoolean("XmlTransformerIndent", true) ? "yes" : "no");
-            StreamResult streamResult = new StreamResult();
-            streamResult.setOutputStream(os);
-            transformer.transform(new DOMSource(node), streamResult);
-            os.flush();
-            os.close();
-            return os.toString(encoding);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
+        return XmlTreeNode.transform(node);
     }
+
 
     /*
         actions

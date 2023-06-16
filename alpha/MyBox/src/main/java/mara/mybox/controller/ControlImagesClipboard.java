@@ -46,7 +46,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
     @FXML
     protected FlowPane buttonsPane;
     @FXML
-    protected Button useClipButton, thumbsListButton;
+    protected Button useClipButton;
     @FXML
     protected TableColumn<ImageClipboard, Integer> widthColumn, heightColumn;
     @FXML

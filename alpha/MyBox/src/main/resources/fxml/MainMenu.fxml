@@ -187,7 +187,9 @@ License:    Apache License Version 2.0
                                         <MenuItem mnemonicParsing="false" onAction="#openImageAlphaExtract" text="%ImageAlphaExtract" />
                                         <MenuItem mnemonicParsing="false" onAction="#openImageAlphaAdd" text="%ImageAlphaAdd" />
                                         <SeparatorMenuItem mnemonicParsing="false" />
-                                        <MenuItem fx:id="imageOcrBatchMenu" mnemonicParsing="false" onAction="#openImageOCRBatch" text="%ImageOCRBatch" /> 
+                                        <MenuItem mnemonicParsing="false" onAction="#openImageOCRBatch" text="%ImageOCRBatch" /> 
+                                        <SeparatorMenuItem mnemonicParsing="false" />
+                                        <MenuItem mnemonicParsing="false" onAction="#SvgTypesetting" text="%SvgTypesetting" /> 
                                     </items>
                                 </Menu>
                                 <MenuItem mnemonicParsing="false" onAction="#openImageAnalyse" text="%ImageAnalyse" />

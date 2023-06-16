@@ -854,7 +854,7 @@ public class PopTools {
                     "[a-zA-z]+://[^\\s]*       " + message("URL"),
                     "^(\\s*)\\n       " + message("BlankLine"),
                     "\\d+\\.\\d+\\.\\d+\\.\\d+      " + message("IP"),
-                    "line1\\s*line2      " + message("MultipleLines"));
+                    "line1\\s*\\nline2      " + message("MultipleLines"));
             List<Node> nodes = new ArrayList<>();
             for (String value : values) {
                 String[] vv = value.split("      ");

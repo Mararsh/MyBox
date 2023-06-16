@@ -38,6 +38,7 @@ import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.tools.DateTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
+import mara.mybox.value.FileExtensions;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -300,6 +301,7 @@ public class ImageViewerController extends BaseImageController {
                 saveAllFramesRadio.setSelected(true);
                 saveAllFramesSelected();
             }
+
             if (framesLabel != null) {
                 framesLabel.setText("/" + framesNumber);
             }
@@ -313,18 +315,8 @@ public class ImageViewerController extends BaseImageController {
                 frameSelector.setValue((frameIndex + 1) + "");
                 isSettingValues = false;
             }
-            if (panesBox != null && framePane != null) {
-                if (framesNumber <= 1) {
-                    if (panesBox.getChildren().contains(framePane)) {
-                        panesBox.getChildren().remove(framePane);
-                    }
-                } else {
-                    if (!panesBox.getChildren().contains(framePane)) {
-                        panesBox.getChildren().add(1, framePane);
-                        framePane.setExpanded(true);
-                    }
-                }
-            }
+
+            setFramePane();
 
             setFilesBrowse();
 
@@ -340,10 +332,43 @@ public class ImageViewerController extends BaseImageController {
         }
     }
 
+    public void setFramePane() {
+        try {
+            if (framePane == null || panesBox == null) {
+                return;
+            }
+            if (sourceFile == null) {
+                if (panesBox.getChildren().contains(framePane)) {
+                    panesBox.getChildren().remove(framePane);
+                }
+                return;
+            }
+            String fileFormat = FileNameTools.suffix(sourceFile.getName()).toLowerCase();
+            if (FileExtensions.MultiFramesImages.contains(fileFormat)) {
+                if (!panesBox.getChildren().contains(framePane)) {
+                    panesBox.getChildren().add(1, framePane);
+                }
+                framePane.setExpanded(true);
+            } else {
+                if (panesBox.getChildren().contains(framePane)) {
+                    panesBox.getChildren().remove(framePane);
+                }
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     public void setFilesBrowse() {
         if (browseController != null) {
             browseController.setCurrentFile(imageFile());
         }
+    }
+
+    @FXML
+    public void editFrames() {
+        ImagesEditorController controller = (ImagesEditorController) openStage(Fxmls.ImagesEditorFxml);
+        controller.open(sourceFile);
     }
 
     @FXML

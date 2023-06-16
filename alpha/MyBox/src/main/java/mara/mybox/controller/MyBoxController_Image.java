@@ -44,7 +44,7 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
 
         MenuItem EditSVG = new MenuItem(message("SVGEditor"));
         EditSVG.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.SVGEditorFxml);
+            loadScene(Fxmls.SvgEditorFxml);
         });
 
         MenuItem imagesBrowser = new MenuItem(message("ImagesBrowser"));
@@ -228,12 +228,18 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
             loadScene(Fxmls.ImageOCRBatchFxml);
         });
 
+        MenuItem SvgTypesetting = new MenuItem(message("SvgTypesetting"));
+        SvgTypesetting.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.SvgTypesettingFxml);
+        });
+
         Menu manufactureBatchMenu = new Menu(message("ImageManufactureBatch"));
         manufactureBatchMenu.getItems().addAll(imageSizeMenu, imageCropMenu, imagePasteMenu,
                 imageColorMenu, imageEffectsMenu, imageEnhancementMenu, imageReplaceColorMenu,
                 imageTextMenu, imageArcMenu, imageShadowMenu, imageTransformMenu, imageMarginsMenu, new SeparatorMenuItem(),
                 imageConverterBatch, imageAlphaExtract, imageAlphaAdd, new SeparatorMenuItem(),
-                imageOCRBatch);
+                imageOCRBatch, new SeparatorMenuItem(),
+                SvgTypesetting);
         return manufactureBatchMenu;
 
     }

@@ -23,7 +23,7 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
 
     @FXML
     protected void openSVGEditor(ActionEvent event) {
-        loadScene(Fxmls.SVGEditorFxml);
+        loadScene(Fxmls.SvgEditorFxml);
     }
 
     @FXML
@@ -149,6 +149,11 @@ public abstract class MainMenuController_Image extends MainMenuController_Docume
     @FXML
     protected void openImageOCRBatch(ActionEvent event) {
         loadScene(Fxmls.ImageOCRBatchFxml);
+    }
+
+    @FXML
+    protected void SvgTypesetting(ActionEvent event) {
+        loadScene(Fxmls.SvgTypesettingFxml);
     }
 
     @FXML

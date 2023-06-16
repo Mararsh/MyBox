@@ -221,6 +221,7 @@ MyBox基于以下开放资源：
 | RYB色相 | 美术色彩 | <https://blog.csdn.net/weixin_44938037/article/details/90599711>   |
 | jsch | sftp | <http://www.jcraft.com/jsch/>    |
 | jackson | json | <https://github.com/FasterXML/jackson>    |
+| batik | SVG | <https://xmlgraphics.apache.org/batik/>    |
 
 
 # 特点

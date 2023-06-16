@@ -306,14 +306,6 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         }
     }
 
-    public void loadMultipleFramesImage(File file) {
-        if (file == null || !file.exists() || file.length() == 0) {
-            return;
-        }
-        ImagesEditorController controller = (ImagesEditorController) openStage(Fxmls.ImagesEditorFxml);
-        controller.open(file);
-    }
-
     public void updateImage(Image image) {
         try {
             imageView.setImage(image);

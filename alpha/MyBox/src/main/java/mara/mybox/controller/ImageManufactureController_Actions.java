@@ -110,11 +110,6 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
     }
 
     @FXML
-    public void editFrames() {
-        loadMultipleFramesImage(sourceFile);
-    }
-
-    @FXML
     @Override
     public void undoAction() {
         if (undoButton.isDisabled()) {

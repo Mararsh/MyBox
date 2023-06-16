@@ -26,7 +26,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javax.imageio.IIOImage;
@@ -44,7 +43,6 @@ import mara.mybox.db.data.VisitHistory.FileType;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.imagefile.ImageFileWriters;
 import mara.mybox.imagefile.ImageGifFile;
 import mara.mybox.imagefile.ImageTiffFile;
@@ -59,7 +57,6 @@ import mara.mybox.value.AppValues;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.FileFilters;
 import mara.mybox.value.Fxmls;
-import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -106,7 +103,7 @@ public class ControlImagesSave extends BaseController {
     @FXML
     protected ControlPdfWriteOptions pdfOptionsController;
     @FXML
-    protected Button thumbsListButton;
+    protected Button editFramesButton;
     @FXML
     protected ComboBox<String> savedWidthSelector;
     @FXML
@@ -120,16 +117,6 @@ public class ControlImagesSave extends BaseController {
     @Override
     public void setFileType() {
         setFileType(FileType.Image);
-    }
-
-    @Override
-    public void setControlsStyle() {
-        try {
-            super.setControlsStyle();
-            NodeStyleTools.setTooltip(thumbsListButton, new Tooltip(Languages.message("ImagesEditor")));
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
     }
 
     public void setParent(BaseImagesListController parent) {
@@ -159,7 +146,7 @@ public class ControlImagesSave extends BaseController {
     }
 
     public void imageInfosChanged() {
-        thumbsListButton.setDisable(imageInfos.isEmpty());
+        editFramesButton.setDisable(imageInfos.isEmpty());
         saveAsButton.setDisable(imageInfos.isEmpty());
     }
 

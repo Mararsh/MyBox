@@ -1,8 +1,7 @@
-<?xml version="1.0" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="600" height="500" onload="Init()">
-<title>Snake</title>
-<script type="text/ecmascript">
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="500" onload="Init()" preserveAspectRatio="xMidYMid meet" version="1.1" width="600" zoomAndPan="magnify">
+    <title>Snake</title>
+    <script type="text/ecmascript" xlink:actuate="onLoad" xlink:show="other" xlink:type="simple">
 <![CDATA[
 var svgNS = "http://www.w3.org/2000/svg";
 var xlinkNS = "http://www.w3.org/1999/xlink";
@@ -227,31 +226,22 @@ document.documentElement.addEventListener("keydown",KeyPress,false)
 
 ]]>
 </script>
-
-<g transform="translate(50,50)">
-
-<rect id="board" x="-4" y="-4" width="408" height="308" rx="2" ry="2" fill="#9999ff" stroke="none" stroke-width="3" />
-
-<circle id="Food" cx="-100" cy="-100" r="6" stroke="none" fill="#c00"/>
-
-<path id="Player" style="fill:none;stroke:#090;stroke-width:8;stroke-linejoin:round;stroke-linecap:round;" d="M 10,10  L10,40" />
-
-<g id="Head" transform="translate(10,40)">
-<ellipse cx="0" cy="0" rx="7" ry="10" fill="#090"/>
-<ellipse cx="-3" cy="0" rx="3" ry="4" fill="#fff"/>
-<ellipse cx="3" cy="0" rx="3" ry="4" fill="#fff"/>
-<circle cx="-3" cy="2" r="2" fill="#000"/>
-<circle cx="3" cy="2" r="2" fill="#000"/>
-</g>
-
-<text id="ScoreBoard" x="0" y="350" font-family="sans-serif" font-size="40" font-weight="bold" fill="#000">Score: 0</text>
-
-<g id="Splash" visibility="visible" font-family="sans-serif" font-weight="bold">
-<rect x="50" y="50" width="300" height="200" rx="5" ry="5" fill="#ffffff" fill-opacity="0.7" stroke="none" stroke-width="3" />
-<text id="Text1" x="90" y="130" font-size="40" fill="#c3c"> </text>
-<text id="Text2" x="95" y="180" font-size="20" fill="#c3c"> </text>
-</g>
-
-</g>
-
+    <g transform="translate(50,50)">
+        <rect fill="#9999ff" height="308" id="board" rx="2" ry="2" stroke="none" stroke-width="3" width="408" x="-4" y="-4"/>
+        <circle cx="-100" cy="-100" fill="#c00" id="Food" r="6" stroke="none"/>
+        <path d="M 10,10  L10,40" id="Player" style="fill:none;stroke:#090;stroke-width:8;stroke-linejoin:round;stroke-linecap:round;"/>
+        <g id="Head" transform="translate(10,40)">
+            <ellipse cx="0" cy="0" fill="#090" rx="7" ry="10"/>
+            <ellipse cx="-3" cy="0" fill="#fff" rx="3" ry="4"/>
+            <ellipse cx="3" cy="0" fill="#fff" rx="3" ry="4"/>
+            <circle cx="-3" cy="2" fill="#000" r="2"/>
+            <circle cx="3" cy="2" fill="#000" r="2"/>
+        </g>
+        <text fill="#000" font-family="sans-serif" font-size="40" font-weight="bold" id="ScoreBoard" x="0" y="350">Score: 0</text>
+        <g font-family="sans-serif" font-weight="bold" id="Splash" visibility="visible">
+            <rect fill="#ffffff" fill-opacity="0.7" height="200" rx="5" ry="5" stroke="none" stroke-width="3" width="300" x="50" y="50"/>
+            <text fill="#c3c" font-size="40" id="Text1" x="90" y="130"/>
+            <text fill="#c3c" font-size="20" id="Text2" x="95" y="180"/>
+        </g>
+    </g>
 </svg>

@@ -1,5 +1,6 @@
 package mara.mybox.data;
 
+import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -7,6 +8,11 @@ import java.util.List;
 import javafx.application.Platform;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.BaseLogs;
 import mara.mybox.db.DerbyBase;
@@ -35,6 +41,7 @@ public class XmlTreeNode {
     public static DocumentBuilder builder;
     public static boolean ignoreComment, ignoreBlankComment,
             ignoreBlankText, ignoreBlankCDATA, ignoreBlankInstrution;
+    public static Transformer transformer;
 
     protected String title, value;
     protected NodeType type;
@@ -438,6 +445,43 @@ public class XmlTreeNode {
             info += indent + "\t" + "System Id=" + v + "\n";
         }
         return info;
+    }
+
+    public static String transform(Node node) {
+        if (node == null) {
+            return null;
+        }
+        String encoding = node instanceof Document
+                ? ((Document) node).getXmlEncoding()
+                : node.getOwnerDocument().getXmlEncoding();
+        if (encoding == null) {
+            encoding = "utf-8";
+        }
+        boolean indent = UserConfig.getBoolean("XmlTransformerIndent", true);
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream();) {
+            if (transformer == null) {
+                transformer = TransformerFactory.newInstance().newTransformer();
+                transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+                transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
+            }
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
+                    node instanceof Document ? "no" : "yes");
+            transformer.setOutputProperty(OutputKeys.ENCODING, encoding);
+            transformer.setOutputProperty(OutputKeys.INDENT, indent ? "yes" : "no");
+            StreamResult streamResult = new StreamResult();
+            streamResult.setOutputStream(os);
+            transformer.transform(new DOMSource(node), streamResult);
+            os.flush();
+            os.close();
+            String s = os.toString(encoding);
+            if (indent) {
+                s = s.replaceAll("><", ">\n<");
+            }
+            return s;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
     /*
