@@ -650,10 +650,6 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 }
             }
 
-            if (panesMenuButton != null) {
-                StyleTools.setIconTooltips(panesMenuButton, "iconPanes.png", message("Panes"));
-            }
-
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }

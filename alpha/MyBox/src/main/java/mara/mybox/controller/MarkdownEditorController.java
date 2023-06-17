@@ -293,6 +293,16 @@ public class MarkdownEditorController extends TextEditorController {
     }
 
     @FXML
+    public void popHtmlAction() {
+        webViewController.popAction();
+    }
+
+    @FXML
+    public void popCodesAction() {
+        TextPopController.openInput(this, codesArea);
+    }
+
+    @FXML
     @Override
     public boolean menuAction() {
         try {

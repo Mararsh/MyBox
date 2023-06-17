@@ -333,6 +333,11 @@ public class BytesEditorController extends BaseFileEditorController {
         return true;
     }
 
+    @FXML
+    public void popTextAction() {
+        TextPopController.openInput(this, pairArea);
+    }
+
     /*
         static
      */

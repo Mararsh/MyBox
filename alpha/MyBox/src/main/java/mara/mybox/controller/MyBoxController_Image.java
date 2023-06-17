@@ -42,11 +42,6 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
             loadScene(Fxmls.ImageManufactureFxml);
         });
 
-        MenuItem EditSVG = new MenuItem(message("SVGEditor"));
-        EditSVG.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.SvgEditorFxml);
-        });
-
         MenuItem imagesBrowser = new MenuItem(message("ImagesBrowser"));
         imagesBrowser.setOnAction((ActionEvent event1) -> {
             loadScene(Fxmls.ImagesBrowserFxml);
@@ -84,8 +79,8 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
 
         List<MenuItem> items = new ArrayList<>();
         items.addAll(Arrays.asList(imageViewer, EditImage,
-                EditSVG, imageManufactureMenu(), manufactureBatchMenu(),
-                ImageAnalyse, ImagesPlay, imagesBrowser, new SeparatorMenuItem(),
+                imageManufactureMenu(), manufactureBatchMenu(),
+                ImageAnalyse, ImagesPlay, imagesBrowser, svgMenu(), new SeparatorMenuItem(),
                 ManageColors, QueryColor, colorSpaceMenu(), new SeparatorMenuItem(),
                 ImagesInMyBoxClipboard, ImagesInSystemClipboard, miscellaneousMenu()));
 
@@ -228,19 +223,40 @@ public abstract class MyBoxController_Image extends MyBoxController_Document {
             loadScene(Fxmls.ImageOCRBatchFxml);
         });
 
-        MenuItem SvgTypesetting = new MenuItem(message("SvgTypesetting"));
-        SvgTypesetting.setOnAction((ActionEvent event1) -> {
-            loadScene(Fxmls.SvgTypesettingFxml);
-        });
-
         Menu manufactureBatchMenu = new Menu(message("ImageManufactureBatch"));
         manufactureBatchMenu.getItems().addAll(imageSizeMenu, imageCropMenu, imagePasteMenu,
                 imageColorMenu, imageEffectsMenu, imageEnhancementMenu, imageReplaceColorMenu,
                 imageTextMenu, imageArcMenu, imageShadowMenu, imageTransformMenu, imageMarginsMenu, new SeparatorMenuItem(),
                 imageConverterBatch, imageAlphaExtract, imageAlphaAdd, new SeparatorMenuItem(),
-                imageOCRBatch, new SeparatorMenuItem(),
-                SvgTypesetting);
+                imageOCRBatch);
         return manufactureBatchMenu;
+
+    }
+
+    private Menu svgMenu() {
+        MenuItem EditSVG = new MenuItem(message("SVGEditor"));
+        EditSVG.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.SvgEditorFxml);
+        });
+
+        MenuItem SvgTypesetting = new MenuItem(message("SvgTypesetting"));
+        SvgTypesetting.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.SvgTypesettingFxml);
+        });
+
+        MenuItem SvgToImage = new MenuItem(message("SvgToImage"));
+        SvgToImage.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.SvgToImageFxml);
+        });
+
+        MenuItem SvgToPDF = new MenuItem(message("SvgToPDF"));
+        SvgToPDF.setOnAction((ActionEvent event1) -> {
+            loadScene(Fxmls.SvgToPDFFxml);
+        });
+
+        Menu svgMenu = new Menu(message("SVG"));
+        svgMenu.getItems().addAll(EditSVG, SvgTypesetting, SvgToImage, SvgToPDF);
+        return svgMenu;
 
     }
 

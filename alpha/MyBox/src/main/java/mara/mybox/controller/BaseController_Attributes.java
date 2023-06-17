@@ -85,7 +85,7 @@ public abstract class BaseController_Attributes {
             addRowsButton, deleteRowsButton, selectButton, selectAllButton, selectNoneButton,
             pasteButton, pasteContentInSystemClipboardButton, loadContentInSystemClipboardButton,
             myBoxClipboardButton, systemClipboardButton,
-            renameButton, tipsButton, setButton, allButton, menuButton, synchronizeButton, panesMenuButton,
+            renameButton, tipsButton, setButton, allButton, menuButton, synchronizeButton,
             firstButton, lastButton, previousButton, nextButton,
             pageFirstButton, pageLastButton, pagePreviousButton, pageNextButton,
             infoButton, metaButton, openSourceButton,

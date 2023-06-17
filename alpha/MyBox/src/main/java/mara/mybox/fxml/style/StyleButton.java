@@ -570,7 +570,12 @@ public class StyleButton {
             return new StyleData(id, message("SendMessage"), "", "iconMessage.png");
         }
         if (id.startsWith("pop")) {
-            return new StyleData(id, message("Pop"), "CTRL+p", "iconPop.png");
+            switch (id) {
+                case "popButton":
+                    return new StyleData(id, message("Pop"), "CTRL+p", "iconPop.png");
+                default:
+                    return new StyleData(id, message("Pop"), "", "iconPop.png");
+            }
         }
         if (id.startsWith("play")) {
             switch (id) {
@@ -661,6 +666,9 @@ public class StyleButton {
         }
         if (id.startsWith("systemWebBrowser")) {
             return new StyleData(id, message("SystemWebBrowser"), "", "iconWindow.png");
+        }
+        if (id.startsWith("panesMenu")) {
+            return new StyleData(id, message("Panes"), "", "iconPanes.png");
         }
         return null;
     }

@@ -31,7 +31,6 @@ public class ImageConverterBatchController extends BaseBatchImageController {
     public ImageConverterBatchController() {
         baseTitle = Languages.message("ImageConverterBatch");
         browseTargets = true;
-
     }
 
     @Override
@@ -95,13 +94,8 @@ public class ImageConverterBatchController extends BaseBatchImageController {
 
     @Override
     public boolean makeActualParameters() {
-        if (!super.makeActualParameters()) {
-            return false;
-        }
-
         attributes = formatController.attributes;
-
-        return true;
+        return super.makeActualParameters();
     }
 
     @Override

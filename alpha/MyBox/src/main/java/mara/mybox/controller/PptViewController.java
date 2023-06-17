@@ -163,6 +163,7 @@ public class PptViewController extends BaseFileImagesViewController {
                 initCurrentPage();
                 loadPage();
                 checkThumbs();
+                browseController.setCurrentFile(sourceFile);
             }
 
         };

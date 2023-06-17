@@ -320,8 +320,8 @@ License:    Apache License Version 2.0
                                                           </ImageView>
                                                       </graphic>
                                                   </Button>
-                                                    <ComboBox fx:id="dpiBox" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="80.0" />
                                                     <Label text="dpi" />
+                                                    <ComboBox fx:id="dpiBox" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="80.0" />
                                                     <ComboBox fx:id="percentBox" editable="true" nodeOrientation="LEFT_TO_RIGHT" prefWidth="80.0" />
                                                     <Label text="\%" />
                                  </children>

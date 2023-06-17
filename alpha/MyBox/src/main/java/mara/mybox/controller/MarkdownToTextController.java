@@ -12,7 +12,6 @@ import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Languages;
 
@@ -29,6 +28,7 @@ public class MarkdownToTextController extends BaseBatchFileController {
 
     public MarkdownToTextController() {
         baseTitle = Languages.message("MarkdownToText");
+        targetFileSuffix = "txt";
     }
 
     @Override
@@ -72,20 +72,6 @@ public class MarkdownToTextController extends BaseBatchFileController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return Languages.message("Failed");
-        }
-    }
-
-    @Override
-    public File makeTargetFile(File sourceFile, File targetPath) {
-        try {
-            String namePrefix = FileNameTools.prefix(sourceFile.getName());
-            String nameSuffix = "";
-            if (sourceFile.isFile()) {
-                nameSuffix = ".txt";
-            }
-            return makeTargetFile(namePrefix, nameSuffix, targetPath);
-        } catch (Exception e) {
-            return null;
         }
     }
 

@@ -6,7 +6,6 @@ import java.io.File;
 import java.nio.charset.Charset;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
@@ -22,6 +21,7 @@ public class HtmlToMarkdownController extends BaseBatchFileController {
 
     public HtmlToMarkdownController() {
         baseTitle = Languages.message("HtmlToMarkdown");
+        targetFileSuffix = "md";
     }
 
     @Override
@@ -62,20 +62,6 @@ public class HtmlToMarkdownController extends BaseBatchFileController {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return Languages.message("Failed");
-        }
-    }
-
-    @Override
-    public File makeTargetFile(File sourceFile, File targetPath) {
-        try {
-            String namePrefix = FileNameTools.prefix(sourceFile.getName());
-            String nameSuffix = "";
-            if (sourceFile.isFile()) {
-                nameSuffix = ".md";
-            }
-            return makeTargetFile(namePrefix, nameSuffix, targetPath);
-        } catch (Exception e) {
-            return null;
         }
     }
 

@@ -148,6 +148,8 @@ public class Fxmls {
 
     public static final String SvgEditorFxml = "/fxml/SvgEditor.fxml";
     public static final String SvgTypesettingFxml = "/fxml/SvgTypesetting.fxml";
+    public static final String SvgToImageFxml = "/fxml/SvgToImage.fxml";
+    public static final String SvgToPDFFxml = "/fxml/SvgToPDF.fxml";
 
     public static final String ImageConverterBatchFxml = "/fxml/ImageConverterBatch.fxml";
     public static final String ImagesSpliceFxml = "/fxml/ImagesSplice.fxml";

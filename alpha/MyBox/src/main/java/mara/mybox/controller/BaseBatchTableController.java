@@ -384,7 +384,11 @@ public abstract class BaseBatchTableController<P> extends BaseTableViewControlle
             @Override
             protected void whenSucceeded() {
                 tableData.clear();
-                addFiles(0, valids);
+                if (valids.isEmpty()) {
+                    popInformation(message("NotFound"));
+                } else {
+                    addFiles(0, valids);
+                }
             }
 
         };

@@ -135,6 +135,11 @@ public class TextEditorController extends BaseFileEditorController {
         return true;
     }
 
+    @FXML
+    public void popBytesAction() {
+        BytesPopController.open(this, pairArea);
+    }
+
     /*
         static
      */
