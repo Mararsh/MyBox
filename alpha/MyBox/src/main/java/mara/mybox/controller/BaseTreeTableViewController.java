@@ -10,6 +10,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SeparatorMenuItem;
@@ -35,7 +36,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-4-23
  * @License Apache License Version 2.0
  */
-public abstract class BaseTreeViewController<NodeP> extends BaseController {
+public abstract class BaseTreeTableViewController<NodeP> extends BaseController {
 
     protected final SimpleBooleanProperty loadedNotify;
     protected NodeP focusNode;
@@ -44,8 +45,10 @@ public abstract class BaseTreeViewController<NodeP> extends BaseController {
     protected TreeTableView<NodeP> treeView;
     @FXML
     protected TreeTableColumn<NodeP, String> hierarchyColumn, titleColumn, valueColumn;
+    @FXML
+    protected Label treeLabel;
 
-    public BaseTreeViewController() {
+    public BaseTreeTableViewController() {
         loadedNotify = new SimpleBooleanProperty(false);
     }
 
@@ -141,6 +144,15 @@ public abstract class BaseTreeViewController<NodeP> extends BaseController {
                 }
             });
 
+            if (treeLabel != null) {
+                treeView.expandedItemCountProperty().addListener(new ChangeListener<Number>() {
+                    @Override
+                    public void changed(ObservableValue v, Number ov, Number nv) {
+                        treeLabel.setText(message("ExpandedItemCount") + ": " + treeView.getExpandedItemCount());
+                    }
+                });
+            }
+
             loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue v, Boolean ov, Boolean nv) {
@@ -156,6 +168,14 @@ public abstract class BaseTreeViewController<NodeP> extends BaseController {
     /*
         tree
      */
+    public void setRoot(TreeItem<NodeP> root) {
+        treeView.setRoot(root);
+        if (root != null) {
+            root.setExpanded(true);
+        }
+        loadedNotify.set(!loadedNotify.get());
+    }
+
     public void treeLoaded() {
         if (focusNode != null) {
             focusNode(focusNode);
@@ -576,6 +596,8 @@ public abstract class BaseTreeViewController<NodeP> extends BaseController {
     @FXML
     public void clearTree() {
         treeView.setRoot(null);
+        focusNode = null;
+        loadedNotify.set(!loadedNotify.get());
     }
 
 }

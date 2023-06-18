@@ -33,7 +33,7 @@ import org.w3c.dom.NodeList;
  * @CreateDate 2023-5-27
  * @License Apache License Version 2.0
  */
-public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
+public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
 
     protected XmlEditorController xmlEditor;
     protected Document doc;
@@ -78,7 +78,7 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
                 try {
                     doc = XmlTreeNode.doc(myController, xml);
                     root = makeTreeItem(new XmlTreeNode(doc));
-                    return root != null;
+                    return true;
                 } catch (Exception e) {
                     error = e.toString();
                     return false;
@@ -87,7 +87,10 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
 
             @Override
             protected void whenSucceeded() {
-                treeView.setRoot(root);
+                setRoot(root);
+                if (error != null) {
+                    popError(error);
+                }
             }
 
         };
@@ -98,8 +101,8 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
         if (task != null && !task.isQuit()) {
             return;
         }
-        clearTree();
         if (doc == null) {
+            clearTree();
             return;
         }
         task = new SingletonCurrentTask<Void>(this) {
@@ -108,18 +111,16 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
 
             @Override
             protected boolean handle() {
-                try {
-                    root = makeTreeItem(new XmlTreeNode(doc));
-                    return root != null;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
+                root = makeTreeItem(new XmlTreeNode(doc));
+                return true;
             }
 
             @Override
             protected void whenSucceeded() {
-                treeView.setRoot(root);
+                setRoot(root);
+                if (error != null) {
+                    popError(error);
+                }
             }
 
         };
@@ -146,7 +147,11 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
             }
             return item;
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
             return null;
         }
     }
@@ -168,7 +173,11 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
             }
             return item;
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            if (task != null) {
+                task.setError(e.toString());
+            } else {
+                MyBoxLog.error(e);
+            }
             return null;
         }
     }
@@ -178,12 +187,12 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
         nodeController.editNode(item);
     }
 
-    @FXML
     @Override
-    public void clearTree() {
-        super.clearTree();
+    public void treeLoaded() {
+        super.treeLoaded();
         nodeController.clearNode();
     }
+
 
     /*
         values
@@ -393,7 +402,7 @@ public class ControlXmlTree extends BaseTreeViewController<XmlTreeNode> {
             }
 
             xmlEditor.domChanged(true);
-            xmlEditor.popInformation(message("DeletedSuccessfully"));
+            xmlEditor.popInformation(message("CopySuccessfully"));
 
             nodeController.clearNode();
         } catch (Exception e) {

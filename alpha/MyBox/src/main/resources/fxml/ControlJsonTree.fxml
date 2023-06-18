@@ -9,6 +9,7 @@ License:    Apache License Version 2.0
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TreeTableColumn?>
@@ -77,6 +78,7 @@ License:    Apache License Version 2.0
                                 <TreeTableColumn fx:id="valueColumn" prefWidth="300.0" text="%Value" />
                             </columns>
                         </TreeTableView>
+                  <Label fx:id="treeLabel" />
                     </children>
                     <padding>
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

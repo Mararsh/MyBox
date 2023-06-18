@@ -38,7 +38,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-4-23
  * @License Apache License Version 2.0
  */
-public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
+public class BaseInfoTreeController extends BaseTreeTableViewController<InfoNode> {
 
     protected static final int AutoExpandThreshold = 500;
     protected boolean expandAll, nodeExecutable;
@@ -93,8 +93,7 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
         if (task != null && !task.isQuit()) {
             return;
         }
-        treeView.setRoot(null);
-        focusNode = null;
+        clearTree();
         task = new SingletonCurrentTask<Void>(this) {
             private TreeItem<InfoNode> rootItem;
 
@@ -126,11 +125,8 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
 
             @Override
             protected void whenSucceeded() {
-                treeView.setRoot(rootItem);
-                loadedNotify.set(!loadedNotify.get());
-                if (selectNode != null) {
-                    focusNode(selectNode);
-                }
+                focusNode = selectNode;
+                setRoot(rootItem);
             }
 
         };
@@ -181,6 +177,7 @@ public class BaseInfoTreeController extends BaseTreeViewController<InfoNode> {
         return equalNode(item1.getValue(), item2.getValue());
     }
 
+    @Override
     public boolean equalNode(InfoNode node1, InfoNode node2) {
         if (node1 == null || node2 == null) {
             return false;

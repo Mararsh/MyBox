@@ -1073,15 +1073,11 @@ public abstract class BaseController_Interface extends BaseController_Files {
             }
             if (splitPane.getItems().contains(leftPane)) {
                 double defaultv = dividersSize == 1 ? 0.35 : 0.15;
-                try {
-                    String v = UserConfig.getString(interfaceName + "LeftPanePosition", defaultv + "");
-                    splitPane.setDividerPosition(0, Double.parseDouble(v));
-                } catch (Exception e) {
-                    splitPane.setDividerPosition(0, defaultv);
-                }
+                double v = UserConfig.getDouble(interfaceName + "LeftPanePosition", defaultv);
+                splitPane.setDividerPosition(0, v);
                 leftDividerListener = (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-                    if (!isSettingValues) {
-                        UserConfig.setString(interfaceName + "LeftPanePosition", newValue.doubleValue() + "");
+                    if (!isSettingValues && newValue != null) {
+                        UserConfig.setDouble(interfaceName + "LeftPanePosition", newValue.doubleValue());
                     }
                 };
                 splitPane.getDividers().get(0).positionProperty().addListener(leftDividerListener);
@@ -1089,15 +1085,11 @@ public abstract class BaseController_Interface extends BaseController_Files {
             if (splitPane.getItems().contains(rightPane)) {
                 int index = splitPane.getDividers().size() - 1;
                 double defaultv = index > 0 ? 0.85 : 0.65;
-                try {
-                    String v = UserConfig.getString(interfaceName + "RightPanePosition", defaultv + "");
-                    splitPane.setDividerPosition(index, Double.parseDouble(v));
-                } catch (Exception e) {
-                    splitPane.setDividerPosition(index, defaultv);
-                }
+                double v = UserConfig.getDouble(interfaceName + "RightPanePosition", defaultv);
+                splitPane.setDividerPosition(index, v);
                 rightDividerListener = (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-                    if (!isSettingValues) {
-                        UserConfig.setString(interfaceName + "RightPanePosition", newValue.doubleValue() + "");
+                    if (!isSettingValues && newValue != null) {
+                        UserConfig.setDouble(interfaceName + "RightPanePosition", newValue.doubleValue());
                     }
                 };
                 splitPane.getDividers().get(index).positionProperty().addListener(rightDividerListener);

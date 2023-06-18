@@ -390,8 +390,7 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
             @Override
             protected void whenSucceeded() {
                 if (isRoot) {
-                    treeView.setRoot(rootItem);
-                    rootItem.setExpanded(true);
+                    setRoot(rootItem);
                 } else {
                     targetItem.getChildren().clear();
                     if (targetItem.getParent() != null) {
@@ -399,14 +398,11 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
                     }
                 }
                 popSuccessful();
+                manageController.nodeDeleted(node);
             }
 
         };
         start(task, treeView);
-    }
-
-    protected void nodeDeleted(InfoNode node) {
-        manageController.nodeDeleted(node);
     }
 
     protected void renameNode(TreeItem<InfoNode> item) {

@@ -40,7 +40,7 @@ public class JsonEditorController extends BaseFileController {
     protected final SimpleBooleanProperty loadNotify;
 
     @FXML
-    protected Tab domTab, textsTab, optionsTab, backupTab;
+    protected Tab domTab, textsTab, optionsTab;
     @FXML
     protected TextArea textsArea;
     @FXML
@@ -139,8 +139,10 @@ public class JsonEditorController extends BaseFileController {
         loadText(json, false);
         updateTitle();
         isSettingValues = false;
+        recordFileOpened(sourceFile);
         backupController.loadBackups(sourceFile);
         browseController.setCurrentFile(sourceFile);
+        fileInfoLabel.setText(FileTools.fileInformation(sourceFile));
         loadNotify.set(!loadNotify.get());
         return true;
     }
@@ -517,10 +519,10 @@ public class JsonEditorController extends BaseFileController {
         try {
             TextClipboardPopController.closeAll();
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            menuButton.setDisable(tab == backupTab || tab == optionsTab);
-            synchronizeButton.setDisable(tab == backupTab || tab == optionsTab);
-            clearButton.setDisable(tab == backupTab || tab == optionsTab);
-            saveButton.setDisable(tab == backupTab || tab == optionsTab);
+            menuButton.setDisable(tab == optionsTab);
+            synchronizeButton.setDisable(tab == optionsTab);
+            clearButton.setDisable(tab == optionsTab);
+            saveButton.setDisable(tab == optionsTab);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }

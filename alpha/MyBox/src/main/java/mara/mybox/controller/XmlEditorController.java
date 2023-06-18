@@ -36,13 +36,13 @@ import mara.mybox.value.UserConfig;
  * @License Apache License Version 2.0
  */
 public class XmlEditorController extends BaseFileController {
-
+    
     protected boolean domChanged, textsChanged, fileChanged;
     protected String title;
     protected final SimpleBooleanProperty loadNotify;
-
+    
     @FXML
-    protected Tab domTab, textsTab, optionsTab, browseTab, backupTab;
+    protected Tab domTab, textsTab, optionsTab;
     @FXML
     protected TextArea textsArea;
     @FXML
@@ -55,38 +55,38 @@ public class XmlEditorController extends BaseFileController {
     protected ControlFileBackup backupController;
     @FXML
     protected CheckBox wrapTextsCheck;
-
+    
     public XmlEditorController() {
         baseTitle = message("XmlEditor");
         TipsLabelKey = "XmlEditorTips";
         loadNotify = new SimpleBooleanProperty(false);
     }
-
+    
     @Override
     public void setFileType() {
         setFileType(VisitHistory.FileType.XML);
     }
-
+    
     @Override
     public void initControls() {
         try {
             super.initControls();
-
+            
             tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
                 @Override
                 public void changed(ObservableValue ov, Tab oldValue, Tab newValue) {
                     tabChanged();
                 }
             });
-
+            
             initTextsTab();
-
+            
             domController.xmlEditor = this;
-
+            
             backupController.setParameters(this, baseName);
-
+            
             tabChanged();
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -117,7 +117,7 @@ public class XmlEditorController extends BaseFileController {
             Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
             stage.setAlwaysOnTop(true);
             stage.toFront();
-
+            
             Optional<ButtonType> result = alert.showAndWait();
             if (result == null || !result.isPresent() || result.get() == buttonCancel) {
                 return;
@@ -125,17 +125,17 @@ public class XmlEditorController extends BaseFileController {
             if (result.get() == buttonSystem) {
                 browse(file);
                 return;
-
+                
             } else if (result.get() == buttontext) {
                 TextEditorController.open(file);
                 return;
-
+                
             }
         }
         sourceFile = file;
         writePanes(TextFileTools.readTexts(file));
     }
-
+    
     public boolean writePanes(String xml) {
         fileChanged = false;
         isSettingValues = true;
@@ -143,15 +143,14 @@ public class XmlEditorController extends BaseFileController {
         loadText(xml, false);
         updateTitle();
         isSettingValues = false;
-        if (sourceFile != null) {
-            recordFileOpened(sourceFile);
-        }
-        browseController.setCurrentFile(sourceFile);
+        recordFileOpened(sourceFile);
         backupController.loadBackups(sourceFile);
+        browseController.setCurrentFile(sourceFile);
+        fileInfoLabel.setText(FileTools.fileInformation(sourceFile));
         loadNotify.set(!loadNotify.get());
         return true;
     }
-
+    
     @FXML
     @Override
     public void createAction() {
@@ -169,7 +168,7 @@ public class XmlEditorController extends BaseFileController {
             MyBoxLog.error(e);
         }
     }
-
+    
     public String makeBlank() {
         String name = PopTools.askValue(getBaseTitle(), message("Create"), message("Root"), "data");
         if (name == null || name.isBlank()) {
@@ -198,7 +197,7 @@ public class XmlEditorController extends BaseFileController {
         }
         task = new SingletonCurrentTask<Void>(this) {
             private String xml;
-
+            
             @Override
             protected boolean handle() {
                 try {
@@ -231,7 +230,7 @@ public class XmlEditorController extends BaseFileController {
                     return false;
                 }
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 popSaved();
@@ -239,11 +238,11 @@ public class XmlEditorController extends BaseFileController {
                 fileChanged = false;
                 sourceFileChanged(targetFile);
             }
-
+            
         };
         start(task);
     }
-
+    
     public void updateTitle() {
         if (getMyStage() == null) {
             return;
@@ -257,12 +256,12 @@ public class XmlEditorController extends BaseFileController {
         }
         myStage.setTitle(title);
     }
-
+    
     protected void fileChanged() {
         fileChanged = true;
         updateTitle();
     }
-
+    
     @FXML
     @Override
     public void saveAsAction() {
@@ -298,18 +297,18 @@ public class XmlEditorController extends BaseFileController {
                 }
                 return FileTools.rename(tmpFile, file);
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 popSaved();
                 recordFileWritten(file);
                 openSavedFile(file);
             }
-
+            
         };
         start(task);
     }
-
+    
     public void openSavedFile(File file) {
         XmlEditorController.open(file);
     }
@@ -322,11 +321,11 @@ public class XmlEditorController extends BaseFileController {
         domController.makeTree(xml);
         domChanged(updated);
     }
-
+    
     public String xmlByDom() {
         return domController.xml(domController.doc);
     }
-
+    
     public void domChanged(boolean changed) {
         domChanged = changed;
         domTab.setText(message("Tree") + (changed ? " *" : ""));
@@ -334,21 +333,21 @@ public class XmlEditorController extends BaseFileController {
             fileChanged();
         }
     }
-
+    
     public void updateNode(TreeItem<XmlTreeNode> item) {
         domChanged(true);
     }
-
+    
     public void clearDom() {
         domController.clearTree();
         domChanged(true);
     }
-
+    
     @FXML
     @Override
     public void refreshAction() {
         fileChanged = false;
-
+        
     }
 
     /*
@@ -365,7 +364,7 @@ public class XmlEditorController extends BaseFileController {
                     textsChanged(true);
                 }
             });
-
+            
             wrapTextsCheck.setSelected(UserConfig.getBoolean(baseName + "WrapText", true));
             textsArea.setWrapText(wrapTextsCheck.isSelected());
             wrapTextsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -375,12 +374,12 @@ public class XmlEditorController extends BaseFileController {
                     textsArea.setWrapText(wrapTextsCheck.isSelected());
                 }
             });
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-
+    
     public void loadText(String xml, boolean updated) {
         try {
             textsArea.setText(xml);
@@ -389,11 +388,11 @@ public class XmlEditorController extends BaseFileController {
             MyBoxLog.error(e.toString());
         }
     }
-
+    
     public String xmlByText() {
         return textsArea.getText();
     }
-
+    
     protected void textsChanged(boolean changed) {
 //        MyBoxLog.debug(changed);
         textsChanged = changed;
@@ -403,14 +402,14 @@ public class XmlEditorController extends BaseFileController {
             fileChanged();
         }
     }
-
+    
     @FXML
     protected void editTexts() {
         TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
         controller.loadContents(textsArea.getText());
         controller.requestMouse();
     }
-
+    
     @FXML
     protected void clearTexts() {
         textsArea.clear();
@@ -429,42 +428,42 @@ public class XmlEditorController extends BaseFileController {
             if (tab == textsTab) {
                 TextPopController.openInput(this, textsArea);
                 return true;
-
+                
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
         return false;
     }
-
+    
     @FXML
     @Override
     public boolean synchronizeAction() {
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
-
+            
             if (tab == domTab) {
                 synchronizeDom();
                 return true;
-
+                
             } else if (tab == textsTab) {
                 synchronizeTexts();
                 return true;
-
+                
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
         return false;
     }
-
+    
     public void synchronizeDom() {
         if (task != null && !task.isQuit()) {
             return;
         }
         task = new SingletonCurrentTask<Void>(this) {
             String xml;
-
+            
             @Override
             protected boolean handle() {
                 try {
@@ -475,46 +474,46 @@ public class XmlEditorController extends BaseFileController {
                     return false;
                 }
             }
-
+            
             @Override
             protected void whenSucceeded() {
                 synchronizeDomXML(xml);
             }
-
+            
         };
         start(task);
     }
-
+    
     public void synchronizeDomXML(String xml) {
         loadText(xml, true);
     }
-
+    
     public void synchronizeTexts() {
         loadDom(xmlByText(), true);
     }
-
+    
     @FXML
     @Override
     public boolean menuAction() {
         try {
             closePopup();
-
+            
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == domTab) {
                 domController.popFunctionsMenu(null);
                 return true;
-
+                
             } else if (tab == textsTab) {
                 MenuTextEditController.open(this, textsArea);
                 return true;
-
+                
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
         return false;
     }
-
+    
     @FXML
     @Override
     public void myBoxClipBoard() {
@@ -527,7 +526,7 @@ public class XmlEditorController extends BaseFileController {
             MyBoxLog.debug(e.toString());
         }
     }
-
+    
     @FXML
     @Override
     public void clearAction() {
@@ -537,7 +536,7 @@ public class XmlEditorController extends BaseFileController {
                 clearDom();
             } else if (tab == textsTab) {
                 clearTexts();
-
+                
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -551,7 +550,7 @@ public class XmlEditorController extends BaseFileController {
         try {
             TextClipboardPopController.closeAll();
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            boolean noHandle = tab == backupTab || tab == optionsTab || tab == browseTab;
+            boolean noHandle = tab == optionsTab;
             menuButton.setDisable(noHandle);
             synchronizeButton.setDisable(noHandle);
             clearButton.setDisable(noHandle);
@@ -560,7 +559,7 @@ public class XmlEditorController extends BaseFileController {
             MyBoxLog.debug(e.toString());
         }
     }
-
+    
     @Override
     public boolean checkBeforeNextAction() {
         if (isPop || !fileChanged) {
@@ -577,7 +576,7 @@ public class XmlEditorController extends BaseFileController {
             Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
             stage.setAlwaysOnTop(true);
             stage.toFront();
-
+            
             Optional<ButtonType> result = alert.showAndWait();
             if (result == null || !result.isPresent()) {
                 return false;
@@ -608,7 +607,7 @@ public class XmlEditorController extends BaseFileController {
             return null;
         }
     }
-
+    
     public static XmlEditorController open(File file) {
         try {
             XmlEditorController controller = (XmlEditorController) WindowTools.openStage(Fxmls.XmlEditorFxml);
@@ -620,5 +619,5 @@ public class XmlEditorController extends BaseFileController {
             return null;
         }
     }
-
+    
 }
