@@ -59,7 +59,7 @@ License:    Apache License Version 2.0
                   <Label layoutX="39.0" layoutY="10.0" minWidth="-Infinity" text="%To" />
                   <TextField fx:id="brightnessToInput" prefWidth="100.0" promptText="1~100" text="100" />
                   <Label minWidth="-Infinity" text="%ValueStep" />
-                  <TextField fx:id="brightnessStepInput" prefWidth="100.0" text="1" />
+                  <TextField fx:id="brightnessStepInput" prefWidth="100.0" text="10" />
                </children>
             </HBox>
             <HBox alignment="CENTER_LEFT" layoutX="12.0" layoutY="35.0" spacing="5.0">
@@ -70,7 +70,7 @@ License:    Apache License Version 2.0
                   <Label layoutX="39.0" layoutY="10.0" minWidth="-Infinity" text="%To" />
                   <TextField fx:id="saturationToInput" prefWidth="100.0" promptText="1~100" text="100" />
                   <Label minWidth="-Infinity" text="%ValueStep" />
-                  <TextField fx:id="saturationStepInput" prefWidth="100.0" text="1" />
+                  <TextField fx:id="saturationStepInput" prefWidth="100.0" text="10" />
                </children>
             </HBox>
          </children>

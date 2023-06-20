@@ -40,9 +40,7 @@ public class ControlInfoTreeSelector extends BaseInfoTreeController {
         }
         TreeItem<InfoNode> targetRoot = new TreeItem(sourceRoot.getValue());
         cloneNode(sourceRoot, targetRoot);
-        treeView.setRoot(targetRoot);
-        targetRoot.setExpanded(sourceRoot.isExpanded());
-        loadedNotify.set(!loadedNotify.get());
+        setRoot(targetRoot);
     }
 
     public void cloneNode(TreeItem<InfoNode> sourceNode, TreeItem<InfoNode> targetNode) {

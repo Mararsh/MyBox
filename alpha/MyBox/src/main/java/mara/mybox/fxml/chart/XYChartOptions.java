@@ -117,7 +117,8 @@ public class XYChartOptions<X, Y> extends ChartOptions<X, Y> {
             numberTickRotation = UserConfig.getInt(conn, chartName + "NumberTickRotation", 0);
             lineWidth = UserConfig.getInt(conn, chartName + "LineWidth", 2);
             barGap = UserConfig.getDouble(conn, chartName + "BarGap", 2d);
-            categoryGap = UserConfig.getDouble(conn, chartName + "CategoryBarGap", 1d);
+            categoryGap = chartType == ChartType.StackedBar ? 1
+                    : UserConfig.getDouble(conn, chartName + "CategoryBarGap", 1d);
 
             bubbleStyle = UserConfig.getString(conn, chartName + "BubbleStyle", DefaultBubbleStyle);
 

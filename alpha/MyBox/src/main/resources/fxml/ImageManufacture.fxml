@@ -264,7 +264,7 @@ License:    Apache License Version 2.0
                                                         <Image url="@../buttons/Red/iconTips.png" />
                                                     </image>
                                                 </ImageView>
-                                                <FlowPane fx:id="buttonsPane" alignment="CENTER_RIGHT" hgap="5.0" maxWidth="1.7976931348623157E308" prefWrapLength="800.0" vgap="5.0" HBox.hgrow="ALWAYS">
+                                                <FlowPane fx:id="buttonsPane" alignment="CENTER_RIGHT" hgap="5.0" maxWidth="1.7976931348623157E308" vgap="5.0" HBox.hgrow="ALWAYS">
                                                     <children>
                                                         <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
                                                             <graphic>
@@ -398,7 +398,7 @@ License:    Apache License Version 2.0
                                             <content>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                     <children>
-                                                        <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="800.0" vgap="2.0">
+                                                        <FlowPane alignment="CENTER_RIGHT" hgap="2.0" vgap="2.0">
                                                             <children>
                                                                 <CheckBox fx:id="contextMenuCheck" mnemonicParsing="false" selected="true">
                                                                     <graphic>

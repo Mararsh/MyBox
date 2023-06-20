@@ -65,6 +65,12 @@ public class ControlJsonTree extends BaseTreeTableViewController<JsonTreeNode> {
     /*
         tree
      */
+    @Override
+    public void setRoot(TreeItem<JsonTreeNode> root) {
+        super.setRoot(root);
+        nodeController.clearNode();
+    }
+
     public void makeTree(String json) {
         try {
             if (json == null) {
@@ -203,12 +209,6 @@ public class ControlJsonTree extends BaseTreeTableViewController<JsonTreeNode> {
         nodeController.editNode(item);
     }
 
-    @FXML
-    @Override
-    public void clearTree() {
-        super.clearTree();
-        nodeController.clearNode();
-    }
 
     /*
         values

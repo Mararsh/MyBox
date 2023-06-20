@@ -1,9 +1,6 @@
 package mara.mybox.controller;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
@@ -27,14 +24,11 @@ import mara.mybox.tools.FileCopyTools;
 import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTmpTools;
+import mara.mybox.tools.SvgTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
-import org.apache.batik.transcoder.TranscoderInput;
-import org.apache.batik.transcoder.TranscoderOutput;
-import org.apache.batik.transcoder.image.PNGTranscoder;
-import org.apache.fop.svg.PDFTranscoder;
 
 /**
  * @Author Mara
@@ -62,6 +56,8 @@ public class SvgEditorController extends XmlEditorController {
             super.initValues();
 
             domController = treeController;
+
+            treeController.editorController = this;
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -167,19 +163,8 @@ public class SvgEditorController extends XmlEditorController {
             popError(message("NoData"));
             return;
         }
-        File tmpFile = FileTmpTools.generateFile("pdf");
-        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(currentXML.getBytes("utf-8"));
-                BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
-            PDFTranscoder transcoder = new PDFTranscoder();
-            TranscoderInput input = new TranscoderInput(inputStream);
-            TranscoderOutput output = new TranscoderOutput(outputStream);
-            transcoder.transcode(input, output);
-            outputStream.flush();
-            outputStream.close();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-        if (tmpFile.exists()) {
+        File tmpFile = SvgTools.textToPDF(this, currentXML);
+        if (tmpFile != null && tmpFile.exists()) {
             if (tmpFile.length() > 0) {
                 PdfViewController.open(tmpFile);
             } else {
@@ -194,19 +179,8 @@ public class SvgEditorController extends XmlEditorController {
             popError(message("NoData"));
             return;
         }
-        File tmpFile = FileTmpTools.generateFile("png");
-        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(currentXML.getBytes("utf-8"));
-                BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
-            PNGTranscoder transcoder = new PNGTranscoder();
-            TranscoderInput input = new TranscoderInput(inputStream);
-            TranscoderOutput output = new TranscoderOutput(outputStream);
-            transcoder.transcode(input, output);
-            outputStream.flush();
-            outputStream.close();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-        if (tmpFile.exists()) {
+        File tmpFile = SvgTools.textToImage(this, currentXML);
+        if (tmpFile != null && tmpFile.exists()) {
             if (tmpFile.length() > 0) {
                 ImageViewerController.openFile(tmpFile);
             } else {

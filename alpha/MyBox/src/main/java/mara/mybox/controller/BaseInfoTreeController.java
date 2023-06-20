@@ -332,7 +332,7 @@ public class BaseInfoTreeController extends BaseTreeTableViewController<InfoNode
             if (item == null || item.isLeaf()) {
                 return;
             }
-            if (nodeLoaded(item)) {
+            if (isLoaded(item)) {
                 for (TreeItem<InfoNode> childItem : item.getChildren()) {
                     if (task == null || task.isCancelled()) {
                         return;
@@ -360,7 +360,7 @@ public class BaseInfoTreeController extends BaseTreeTableViewController<InfoNode
                         if (!tableTreeNode.childrenEmpty(conn, childNode.getNodeid())) {
                             childItem.expandedProperty().addListener(
                                     (ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) -> {
-                                        if (newVal && !childItem.isLeaf() && !nodeLoaded(childItem)) {
+                                        if (newVal && !childItem.isLeaf() && !isLoaded(childItem)) {
                                             unfold(childItem, false);
                                         }
                                     });

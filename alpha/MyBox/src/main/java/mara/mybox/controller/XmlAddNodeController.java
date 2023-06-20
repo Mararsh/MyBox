@@ -44,6 +44,11 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
     protected VBox nameBox;
 
     @Override
+    public void setStageStatus() {
+        setAsPop(baseName);
+    }
+
+    @Override
     public void initControls() {
         try {
             super.initControls();

@@ -153,13 +153,6 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
                 });
             }
 
-            loadedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue v, Boolean ov, Boolean nv) {
-                    treeLoaded();
-                }
-            });
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -172,17 +165,15 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         treeView.setRoot(root);
         if (root != null) {
             root.setExpanded(true);
+            if (focusNode != null) {
+                focusNode(focusNode);
+            }
         }
+        focusNode = null;
         loadedNotify.set(!loadedNotify.get());
     }
 
-    public void treeLoaded() {
-        if (focusNode != null) {
-            focusNode(focusNode);
-        }
-    }
-
-    public boolean nodeLoaded(TreeItem<NodeP> item) {
+    public boolean isLoaded(TreeItem<NodeP> item) {
         try {
             return title(item.getChildren().get(0).getValue()) != null;
         } catch (Exception e) {
@@ -595,9 +586,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
 
     @FXML
     public void clearTree() {
-        treeView.setRoot(null);
-        focusNode = null;
-        loadedNotify.set(!loadedNotify.get());
+        setRoot(null);
     }
 
 }

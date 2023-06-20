@@ -22,6 +22,8 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlSvgTree extends ControlXmlTree {
 
+    protected SvgEditorController editorController;
+
     @FXML
     protected ControlSvgNodeEdit svgNodeController;
 

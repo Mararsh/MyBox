@@ -670,6 +670,9 @@ public class StyleButton {
         if (id.startsWith("panesMenu")) {
             return new StyleData(id, message("Panes"), "", "iconPanes.png");
         }
+        if (id.startsWith("draw")) {
+            return new StyleData(id, message("Draw"), "", "iconDraw.png");
+        }
         return null;
     }
 

@@ -110,6 +110,7 @@ public class ControlXmlNodeEdit extends ControlXmlNodeBase {
                 break;
             default:
         }
+        refreshStyle(setBox);
         thisPane.setDisable(false);
     }
 

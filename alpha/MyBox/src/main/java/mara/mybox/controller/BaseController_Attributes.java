@@ -497,6 +497,22 @@ public abstract class BaseController_Attributes {
         popWarn(text, UserConfig.textDuration(), UserConfig.textSize());
     }
 
+    public void displayInfo(String text) {
+        if (task != null && !task.isQuit() && this instanceof BaseLogs) {
+            ((BaseLogs) this).updateLogs(text);
+        } else {
+            popInformation(text);
+        }
+    }
+
+    public void displayError(String text) {
+        if (task != null && !task.isQuit() && this instanceof BaseLogs) {
+            ((BaseLogs) this).updateLogs(text, true, true);
+        } else {
+            popError(text);
+        }
+    }
+
     @FXML
     public void closePopup() {
         if (popupTimer != null) {

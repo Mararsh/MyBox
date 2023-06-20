@@ -62,6 +62,12 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
     /*
         tree
      */
+    @Override
+    public void setRoot(TreeItem<XmlTreeNode> root) {
+        super.setRoot(root);
+        nodeController.clearNode();
+    }
+
     public void makeTree(String xml) {
         if (task != null && !task.isQuit()) {
             return;
@@ -186,13 +192,6 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
     public void itemClicked(MouseEvent event, TreeItem<XmlTreeNode> item) {
         nodeController.editNode(item);
     }
-
-    @Override
-    public void treeLoaded() {
-        super.treeLoaded();
-        nodeController.clearNode();
-    }
-
 
     /*
         values

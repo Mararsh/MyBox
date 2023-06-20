@@ -713,7 +713,7 @@ public class HelpTools {
     }
 
     public static String svgZhLink() {
-        return "https://www.runoob.com/svg/svg-tutorial.html";
+        return "http://www.vue5.com/svg/svg_tutorial.html";
     }
 
     public static String svgSpecification() {

@@ -1,14 +1,10 @@
 package mara.mybox.controller;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import mara.mybox.db.data.VisitHistory;
+import mara.mybox.tools.FileTools;
+import mara.mybox.tools.SvgTools;
 import static mara.mybox.value.Languages.message;
-import org.apache.batik.transcoder.TranscoderInput;
-import org.apache.batik.transcoder.TranscoderOutput;
-import org.apache.fop.svg.PDFTranscoder;
 
 /**
  * @Author Mara
@@ -33,19 +29,12 @@ public class SvgToPDFController extends BaseBatchFileController {
         if (target == null) {
             return message("Skip");
         }
-        try (FileInputStream inputStream = new FileInputStream(srcFile);
-                BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(target))) {
-            PDFTranscoder transcoder = new PDFTranscoder();
-            TranscoderInput input = new TranscoderInput(inputStream);
-            TranscoderOutput output = new TranscoderOutput(outputStream);
-            transcoder.transcode(input, output);
-            outputStream.flush();
-            outputStream.close();
-        } catch (Exception e) {
-            updateLogs(e.toString());
+        File tmpFile = SvgTools.fileToPDF(this, srcFile);
+        if (tmpFile == null || !tmpFile.exists()) {
             return message("Failed");
         }
-        if (target.exists() && target.length() > 0) {
+
+        if (FileTools.rename(tmpFile, target, true)) {
             targetFileGenerated(target);
             return message("Successful");
         } else {

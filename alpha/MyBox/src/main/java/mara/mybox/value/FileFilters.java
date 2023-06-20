@@ -366,7 +366,7 @@ public class FileFilters {
 
     public static List<FileChooser.ExtensionFilter> XMLExtensionFilter = new ArrayList<FileChooser.ExtensionFilter>() {
         {
-            add(new FileChooser.ExtensionFilter("xml", "*.xml", "*.svg", "*.html", "*.htm"));
+            add(new FileChooser.ExtensionFilter("xml", "*.xml"));
         }
     };
 
