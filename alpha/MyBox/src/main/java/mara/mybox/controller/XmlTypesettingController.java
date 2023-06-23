@@ -17,8 +17,10 @@ import javax.xml.transform.stream.StreamResult;
 import mara.mybox.data.XmlTreeNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.tools.SvgTools;
 import mara.mybox.tools.TextFileTools;
 import mara.mybox.tools.TextTools;
+import mara.mybox.tools.XmlTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.w3c.dom.Document;
@@ -64,7 +66,7 @@ public class XmlTypesettingController extends BaseBatchFileController {
     @Override
     public boolean makeMoreParameters() {
         try {
-            builder = XmlTreeNode.builder(this);
+            builder = XmlTools.builder(this);
             if (builder == null) {
                 popError(message("Failed") + ": DocumentBuilder");
                 return false;
@@ -98,7 +100,7 @@ public class XmlTypesettingController extends BaseBatchFileController {
             if (doc == null) {
                 return message("Failed");
             }
-            XmlTreeNode.Strip(this, doc);
+            XmlTools.Strip(this, doc);
             String sourceEncoding = doc.getXmlEncoding();
             if (sourceEncoding == null) {
                 sourceEncoding = "utf-8";

@@ -22,6 +22,8 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.style.StyleTools;
+import mara.mybox.tools.SvgTools;
+import mara.mybox.tools.XmlTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.w3c.dom.Document;
@@ -82,7 +84,7 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
             @Override
             protected boolean handle() {
                 try {
-                    doc = XmlTreeNode.doc(myController, xml);
+                    doc = XmlTools.doc(myController, xml);
                     root = makeTreeItem(new XmlTreeNode(doc));
                     return true;
                 } catch (Exception e) {
@@ -217,7 +219,7 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
     }
 
     public String xml(Node node) {
-        return XmlTreeNode.transform(node);
+        return SvgTools.transform(node);
     }
 
 

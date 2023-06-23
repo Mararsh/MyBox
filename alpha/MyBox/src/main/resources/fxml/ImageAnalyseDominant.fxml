@@ -87,9 +87,9 @@ License:    Apache License Version 2.0
                         </VBox>
                     </content>
                 </ScrollPane>
-                <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE">
+                <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
-                        <Tab text="%Colors">
+                        <Tab fx:id="colorTab" text="%Colors">
                      <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                            <children>
@@ -101,7 +101,7 @@ License:    Apache License Version 2.0
                         </VBox>
                      </content>
                         </Tab>
-                        <Tab text="%PieChart">
+                        <Tab fx:id="pieTab" text="%PieChart">
                             <content>
                                 <PieChart fx:id="dominantPie" legendSide="RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" titleSide="LEFT" />
                             </content>

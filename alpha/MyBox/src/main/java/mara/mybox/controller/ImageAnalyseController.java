@@ -626,11 +626,13 @@ public class ImageAnalyseController extends ImageViewerController {
             final Image colorsBarchartSnap = colorsBarchart.snapshot(snapPara, null);
 
             dataPane.getSelectionModel().select(dominantTab);
+            dominantController.tabPane.getSelectionModel().select(dominantController.colorTab);
             html = dominantController.colorsController.currentHtml();
             Thread.sleep(50);
             final String dominantViewHml = HtmlReadTools.body(html);
 
             Thread.sleep(50);
+            dominantController.tabPane.getSelectionModel().select(dominantController.pieTab);
             final Image dominantPieSnap = dominantController.dominantPie.snapshot(snapPara, null);
 
             dataPane.getSelectionModel().select(grayTab);

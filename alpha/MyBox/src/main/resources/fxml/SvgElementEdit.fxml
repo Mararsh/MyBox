@@ -33,7 +33,6 @@ License:    Apache License Version 2.0
 
 <VBox fx:id="thisPane" prefHeight="600.0" prefWidth="800.0" spacing="2.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.SvgElementEditController">
     <children>
-        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="%SvgElement" />
         <SplitPane fx:id="splitPane" dividerPositions="0.7" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
             <items>
                 <ScrollPane fx:id="mainPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
@@ -139,7 +138,7 @@ License:    Apache License Version 2.0
                                         <AnchorPane fx:id="maskPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#paneClicked" onMouseDragged="#mouseDragged" onMouseMoved="#showXY" onMousePressed="#mousePressed" onMouseReleased="#mouseReleased" VBox.vgrow="ALWAYS">
                                             <children>
                                                 <ImageView fx:id="imageView" cache="true" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
-                                                <ImageView fx:id="maskView" cache="true" fitHeight="100.0" fitWidth="100.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true" />
+                                                <ImageView fx:id="shapeView" cache="true" fitHeight="100.0" fitWidth="100.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true" />
                                                 <Rectangle fx:id="borderLine" arcHeight="5.0" arcWidth="5.0" disable="true" fill="#ffffff00" height="200.0" layoutX="30.0" layoutY="74.0" onMousePressed="#handlerPressed" onMouseReleased="#rectangleReleased" stroke="#cccccc" strokeType="OUTSIDE" width="200.0">
                                                     <cursor>
                                                         <Cursor fx:constant="NONE" />
@@ -249,19 +248,21 @@ License:    Apache License Version 2.0
                     <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                             <children>
-                                <FlowPane hgap="2.0" vgap="2.0">
+                        <Label fx:id="infoLabel" />
+                        <ComboBox fx:id="opacitySelector" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                                <FlowPane fx:id="typePane" hgap="2.0" vgap="2.0">
                                     <children>
-                                        <RadioButton mnemonicParsing="false" selected="true" text="%Rectangle">
+                                        <RadioButton fx:id="rectRadio" mnemonicParsing="false" selected="true" text="%Rectangle">
                                             <toggleGroup>
                                                 <ToggleGroup fx:id="elementType" />
                                             </toggleGroup>
                                         </RadioButton>
-                                        <RadioButton layoutX="58.0" layoutY="10.0" mnemonicParsing="false" text="%Circle" toggleGroup="$elementType" />
-                                        <RadioButton mnemonicParsing="false" text="%Ellipse" toggleGroup="$elementType" />
-                                        <RadioButton layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%SvgLine" toggleGroup="$elementType" />
-                                        <RadioButton layoutX="58.0" layoutY="10.0" mnemonicParsing="false" text="%Polygon" toggleGroup="$elementType" />
-                                        <RadioButton layoutX="105.0" layoutY="10.0" mnemonicParsing="false" text="%SvgPath" toggleGroup="$elementType" />
-                                        <RadioButton layoutX="153.0" layoutY="10.0" mnemonicParsing="false" text="%Polyline" toggleGroup="$elementType" />
+                                        <RadioButton fx:id="circleRadio" layoutX="58.0" layoutY="10.0" mnemonicParsing="false" text="%Circle" toggleGroup="$elementType" />
+                                        <RadioButton fx:id="ellipseRadio" mnemonicParsing="false" text="%Ellipse" toggleGroup="$elementType" />
+                                        <RadioButton fx:id="lineRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%SvgLine" toggleGroup="$elementType" />
+                                        <RadioButton fx:id="polylineRadio" layoutX="153.0" layoutY="10.0" mnemonicParsing="false" text="%Polyline" toggleGroup="$elementType" />
+                                        <RadioButton fx:id="polygonRadio" layoutX="58.0" layoutY="10.0" mnemonicParsing="false" text="%Polygon" toggleGroup="$elementType" />
+                                        <RadioButton fx:id="pathRadio" layoutX="105.0" layoutY="10.0" mnemonicParsing="false" text="%SvgPath" toggleGroup="$elementType" />
                                     </children>
                                 </FlowPane>
                                 <VBox fx:id="setBox" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
@@ -309,7 +310,7 @@ License:    Apache License Version 2.0
         </SplitPane>
         <HBox alignment="CENTER_RIGHT" spacing="5.0">
             <children>
-                <Label fx:id="imageLabel" maxWidth="1.7976931348623157E308" wrapText="true" HBox.hgrow="ALWAYS" />
+                <Label fx:id="imageLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" HBox.hgrow="ALWAYS" />
                 <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

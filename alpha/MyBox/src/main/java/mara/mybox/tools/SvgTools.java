@@ -1,16 +1,27 @@
 package mara.mybox.tools;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import mara.mybox.controller.BaseController;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.PopTools;
+import mara.mybox.imagefile.ImageFileReaders;
+import mara.mybox.value.UserConfig;
 import org.apache.batik.anim.dom.SVGDOMImplementation;
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
@@ -19,6 +30,7 @@ import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.fop.svg.PDFTranscoder;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 /**
  * @Author Mara
@@ -28,58 +40,102 @@ import org.w3c.dom.Document;
 public class SvgTools {
 
     /*
-        Transcoder
+        text
      */
-    public static File textToImage(BaseController controller, String svg) {
+    public static String transform(Node node) {
+        if (node == null) {
+            return null;
+        }
+        return transform(node, UserConfig.getBoolean("XmlTransformerIndent", true));
+    }
+
+    public static String transform(Node node, boolean indent) {
+        if (node == null) {
+            return null;
+        }
+        String encoding = node instanceof Document ? ((Document) node).getXmlEncoding() : node.getOwnerDocument().getXmlEncoding();
+        return transform(node, encoding, indent);
+    }
+
+    public static String transform(Node node, String encoding, boolean indent) {
+        if (node == null) {
+            return null;
+        }
+        if (encoding == null) {
+            encoding = "utf-8";
+        }
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+            if (XmlTools.transformer == null) {
+                XmlTools.transformer = TransformerFactory.newInstance().newTransformer();
+                XmlTools.transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+                XmlTools.transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
+            }
+            XmlTools.transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, node instanceof Document ? "no" : "yes");
+            XmlTools.transformer.setOutputProperty(OutputKeys.ENCODING, encoding);
+            XmlTools.transformer.setOutputProperty(OutputKeys.INDENT, indent ? "yes" : "no");
+            StreamResult streamResult = new StreamResult();
+            streamResult.setOutputStream(os);
+            XmlTools.transformer.transform(new DOMSource(node), streamResult);
+            os.flush();
+            os.close();
+            String s = os.toString(encoding);
+            if (indent) {
+                s = s.replaceAll("><", ">\n<");
+            }
+            return s;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    /*
+        image
+     */
+    public static File textToImageFile(BaseController controller, float width, float height, String svg) {
         if (svg == null || svg.isBlank()) {
             return null;
         }
         try (ByteArrayInputStream inputStream = new ByteArrayInputStream(svg.getBytes("utf-8"))) {
-            return toImage(controller, inputStream);
+            return toImageFile(controller, width, height, inputStream);
         } catch (Exception e) {
-            if (controller != null) {
-                controller.displayError(e.toString());
-            } else {
-                MyBoxLog.error(e);
-            }
+            PopTools.showError(controller, e.toString());
             return null;
         }
     }
 
-    public static File fileToImage(BaseController controller, File svgFile) {
+    public static File fileToImageFile(BaseController controller, float width, float height, File svgFile) {
         if (svgFile == null || !svgFile.exists()) {
             return null;
         }
         try (FileInputStream inputStream = new FileInputStream(svgFile)) {
-            return toImage(controller, inputStream);
+            return toImageFile(controller, width, height, inputStream);
         } catch (Exception e) {
-            if (controller != null) {
-                controller.displayError(e.toString());
-            } else {
-                MyBoxLog.error(e);
-            }
+            PopTools.showError(controller, e.toString());
             return null;
         }
     }
 
-    public static File toImage(BaseController controller, InputStream inputStream) {
+    public static File toImageFile(BaseController controller, float width, float height, InputStream inputStream) {
         if (inputStream == null) {
             return null;
         }
         File tmpFile = FileTmpTools.generateFile("png");
         try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
             PNGTranscoder transcoder = new PNGTranscoder();
+            if (width > 0) {
+                transcoder.addTranscodingHint(PNGTranscoder.KEY_WIDTH, width);
+            }
+            if (height > 0) {
+                transcoder.addTranscodingHint(PNGTranscoder.KEY_HEIGHT, height);
+            }
             TranscoderInput input = new TranscoderInput(inputStream);
             TranscoderOutput output = new TranscoderOutput(outputStream);
             transcoder.transcode(input, output);
             outputStream.flush();
             outputStream.close();
         } catch (Exception e) {
-            if (controller != null) {
-                controller.displayError(e.toString());
-            } else {
-                MyBoxLog.error(e);
-            }
+            PopTools.showError(controller, e.toString());
         }
         if (tmpFile.exists() && tmpFile.length() > 0) {
             return tmpFile;
@@ -88,56 +144,74 @@ public class SvgTools {
         return null;
     }
 
-    public static File textToPDF(BaseController controller, String svg) {
+    public static BufferedImage textToBufferedImage(BaseController controller, float width, float height, String svg) {
+        return ImageFileReaders.readImage(textToImageFile(controller, width, height, svg));
+    }
+
+    public static Image textToFxImage(BaseController controller, float width, float height, String svg) {
+        BufferedImage bufferedImage = textToBufferedImage(controller, width, height, svg);
+        if (bufferedImage != null) {
+            return SwingFXUtils.toFXImage(bufferedImage, null);
+        } else {
+            return null;
+        }
+    }
+
+    public static BufferedImage nodeToBufferedImage(BaseController controller, float width, float height, Node node) {
+        return textToBufferedImage(controller, width, height, transform(node, false));
+    }
+
+    public static Image nodeToFxImage(BaseController controller, float width, float height, Node node) {
+        return textToFxImage(controller, width, height, transform(node, false));
+    }
+
+    /*
+        pdf
+     */
+    public static File textToPDF(BaseController controller, float width, float height, String svg) {
         if (svg == null || svg.isBlank()) {
             return null;
         }
         try (ByteArrayInputStream inputStream = new ByteArrayInputStream(svg.getBytes("utf-8"))) {
-            return toPDF(controller, inputStream);
+            return toPDF(controller, width, height, inputStream);
         } catch (Exception e) {
-            if (controller != null) {
-                controller.displayError(e.toString());
-            } else {
-                MyBoxLog.error(e);
-            }
+            PopTools.showError(controller, e.toString());
             return null;
         }
     }
 
-    public static File fileToPDF(BaseController controller, File svgFile) {
+    public static File fileToPDF(BaseController controller, float width, float height, File svgFile) {
         if (svgFile == null || !svgFile.exists()) {
             return null;
         }
         try (FileInputStream inputStream = new FileInputStream(svgFile)) {
-            return toPDF(controller, inputStream);
+            return toPDF(controller, width, height, inputStream);
         } catch (Exception e) {
-            if (controller != null) {
-                controller.displayError(e.toString());
-            } else {
-                MyBoxLog.error(e);
-            }
+            PopTools.showError(controller, e.toString());
             return null;
         }
     }
 
-    public static File toPDF(BaseController controller, InputStream inputStream) {
+    public static File toPDF(BaseController controller, float width, float height, InputStream inputStream) {
         if (inputStream == null) {
             return null;
         }
         File tmpFile = FileTmpTools.generateFile("pdf");
         try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(tmpFile))) {
             PDFTranscoder transcoder = new PDFTranscoder();
+            if (width > 0) {
+                transcoder.addTranscodingHint(PDFTranscoder.KEY_WIDTH, width);
+            }
+            if (height > 0) {
+                transcoder.addTranscodingHint(PDFTranscoder.KEY_HEIGHT, height);
+            }
             TranscoderInput input = new TranscoderInput(inputStream);
             TranscoderOutput output = new TranscoderOutput(outputStream);
             transcoder.transcode(input, output);
             outputStream.flush();
             outputStream.close();
         } catch (Exception e) {
-            if (controller != null) {
-                controller.displayError(e.toString());
-            } else {
-                MyBoxLog.error(e);
-            }
+            PopTools.showError(controller, e.toString());
         }
         if (tmpFile.exists() && tmpFile.length() > 0) {
             return tmpFile;
@@ -147,11 +221,21 @@ public class SvgTools {
     }
 
     /*
-        SVGGraphics2D
+        generate
      */
-    public static Document document() {
-        return GenericDOMImplementation.getDOMImplementation()
-                .createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI, "svg", null);
+    public static String blankSVG(int width, int height) {
+        String svg = "<svg xmlns=\"http://www.w3.org/2000/svg\"";
+        if (width > 0) {
+            svg += "width=\"" + width + "\" ";
+        }
+        if (height > 0) {
+            svg += "height=\"" + height + "\" ";
+        }
+        return svg += "></svg>";
+    }
+
+    public static Document blankDoc(int width, int height) {
+        return XmlTools.doc(null, blankSVG(width, height));
     }
 
     public static File toFile(SVGGraphics2D g, File file) {
@@ -190,6 +274,13 @@ public class SvgTools {
 //            return null;
 //        }
 //        return s.replaceAll("><", ">\n<");
+    }
+
+    /*
+        SVGGraphics2D
+     */
+    public static Document document() {
+        return GenericDOMImplementation.getDOMImplementation().createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI, "svg", null);
     }
 
 }

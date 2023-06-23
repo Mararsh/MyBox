@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
@@ -96,13 +95,9 @@ public class HtmlDomDeleteController extends BaseChildController {
         try {
             count = 0;
             List<TreeItem<HtmlNode>> sourcesItems = sourceController.selectedItems();
-            List<TreeItem<HtmlNode>> manageItems = new ArrayList<>();
             for (TreeItem<HtmlNode> sourceItem : sourcesItems) {
                 String sourceNumber = sourceController.hierarchyNumber(sourceItem);
                 TreeItem<HtmlNode> manageItem = manageController.findSequenceNumber(sourceNumber);
-                manageItems.add(manageItem);
-            }
-            for (TreeItem<HtmlNode> manageItem : manageItems) {
                 Element selectedElement = manageItem.getValue().getElement();
                 selectedElement.remove();
                 count++;

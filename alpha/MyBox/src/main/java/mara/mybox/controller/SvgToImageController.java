@@ -20,6 +20,8 @@ public class SvgToImageController extends BaseBatchFileController {
     protected ImageAttributes attributes;
 
     @FXML
+    protected ControlSvgOptions optionsController;
+    @FXML
     protected ControlImageFormat formatController;
 
     public SvgToImageController() {
@@ -55,7 +57,8 @@ public class SvgToImageController extends BaseBatchFileController {
         if (target == null) {
             return message("Skip");
         }
-        File tmpFile = SvgTools.fileToImage(this, srcFile);
+        File tmpFile = SvgTools.fileToImageFile(this,
+                optionsController.width, optionsController.height, srcFile);
         if (tmpFile == null || !tmpFile.exists()) {
             return message("Failed");
         }

@@ -17,6 +17,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Tab;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
@@ -58,6 +59,9 @@ public class ImageAnalyseDominantController extends BaseController {
     @FXML
     protected ComboBox<String> colorsNumberSelectors, regionSizeSelector, weightSelector,
             kmeansLoopSelector;
+
+    @FXML
+    protected Tab colorTab, pieTab;
     @FXML
     protected ControlWebView colorsController;
     @FXML

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -48,6 +49,7 @@ import javafx.stage.WindowEvent;
 import jdk.jshell.JShell;
 import jdk.jshell.SourceCodeAnalysis;
 import mara.mybox.controller.BaseController;
+import mara.mybox.controller.BaseLogs;
 import mara.mybox.controller.ControlWebView;
 import mara.mybox.controller.HtmlStyleInputController;
 import mara.mybox.controller.MenuController;
@@ -246,6 +248,20 @@ public class PopTools {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;
+        }
+    }
+
+    public static void showError(BaseController controller, String error) {
+        if (controller != null) {
+            if (controller instanceof BaseLogs) {
+                ((BaseLogs) controller).updateLogs(error, true, true);
+            } else {
+                Platform.runLater(() -> {
+                    controller.alertError(error);
+                });
+            }
+        } else {
+            MyBoxLog.error(error);
         }
     }
 

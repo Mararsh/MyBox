@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.SvgTools;
@@ -12,6 +13,9 @@ import static mara.mybox.value.Languages.message;
  * @License Apache License Version 2.0
  */
 public class SvgToPDFController extends BaseBatchFileController {
+
+    @FXML
+    protected ControlSvgOptions optionsController;
 
     public SvgToPDFController() {
         baseTitle = message("SvgToPDF");
@@ -29,7 +33,9 @@ public class SvgToPDFController extends BaseBatchFileController {
         if (target == null) {
             return message("Skip");
         }
-        File tmpFile = SvgTools.fileToPDF(this, srcFile);
+        File tmpFile = SvgTools.fileToPDF(this,
+                optionsController.width, optionsController.height,
+                srcFile);
         if (tmpFile == null || !tmpFile.exists()) {
             return message("Failed");
         }
