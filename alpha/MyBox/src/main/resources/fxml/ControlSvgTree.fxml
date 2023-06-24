@@ -28,15 +28,6 @@ License:    Apache License Version 2.0
                     <children>
                   <HBox spacing="5.0">
                      <children>
-                        <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showHelps" onMouseEntered="#popHelps">
-                           <graphic>
-                              <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../buttons/iconClaw.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
                               <FlowPane alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="200.0" vgap="2.0" HBox.hgrow="ALWAYS">
                                   <children>
                                       <CheckBox fx:id="rightPaneCheck" minWidth="-Infinity" mnemonicParsing="false">

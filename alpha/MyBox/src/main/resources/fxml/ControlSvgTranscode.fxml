@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Author:     Mara
+License:    Apache License Version 2.0
+            http://www.apache.org/licenses/LICENSE-2.0
+-->
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" prefWidth="400.0" spacing="5.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlSvgTranscode">
+    <children>
+      <HBox spacing="2.0">
+         <children>
+            <Label text="%Width" />
+            <TextField fx:id="widthInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+      <HBox minWidth="-Infinity" spacing="2.0">
+         <children>
+            <Label text="%Height" />
+            <TextField fx:id="heightInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+      <HBox layoutX="30.0" layoutY="89.0" minWidth="-Infinity" spacing="2.0">
+         <children>
+            <Label text="%Area" />
+            <TextField fx:id="areaInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+      <Label minHeight="-Infinity" text="%BlanktoUseCalculatedValue" wrapText="true" />
+    </children>
+</VBox>

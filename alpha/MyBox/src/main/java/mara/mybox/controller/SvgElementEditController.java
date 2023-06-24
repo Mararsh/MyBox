@@ -17,7 +17,6 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.WindowTools;
-import mara.mybox.tools.SvgTools;
 import mara.mybox.tools.XmlTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -183,15 +182,15 @@ public class SvgElementEditController extends ImageViewerController {
             @Override
             protected boolean handle() {
                 try {
-                    int width = editorController.svgOptionsController.width;
-                    int height = editorController.svgOptionsController.height;
-                    bgImage = SvgTools.nodeToFxImage(myController, width, height, root);
-                    width = (int) bgImage.getWidth();
-                    height = (int) bgImage.getHeight();
-                    String shape = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\""
-                            + width + "\" height=\"" + height + "\" >"
-                            + SvgTools.transform(node, false) + "</svg>";
-                    shapeImage = SvgTools.textToFxImage(myController, width, height, shape);
+//                    int width = editorController.svgOptionsController.width;
+//                    int height = editorController.svgOptionsController.height;
+//                    bgImage = SvgTools.nodeToFxImage(myController, width, height, root);
+//                    width = (int) bgImage.getWidth();
+//                    height = (int) bgImage.getHeight();
+//                    String shape = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\""
+//                            + width + "\" height=\"" + height + "\" >"
+//                            + SvgTools.transform(node, false) + "</svg>";
+//                    shapeImage = SvgTools.textToFxImage(myController, width, height, shape);
                     return shapeImage != null;
                 } catch (Exception e) {
                     error = e.toString();

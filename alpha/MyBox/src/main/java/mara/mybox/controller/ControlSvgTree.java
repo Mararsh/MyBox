@@ -6,12 +6,10 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
-import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -88,15 +86,7 @@ public class ControlSvgTree extends ControlXmlTree {
 
             items.add(new SeparatorMenuItem());
 
-            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            hoverMenu.setSelected(UserConfig.getBoolean("SvgHelpsPopWhenMouseHovering", false));
-            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("SvgHelpsPopWhenMouseHovering", hoverMenu.isSelected());
-                }
-            });
-            items.add(hoverMenu);
+            items.addAll(HelpTools.htmlHelps(this));
 
             popEventMenu(event, items);
         } catch (Exception e) {

@@ -15,7 +15,9 @@ import static mara.mybox.value.Languages.message;
 public class SvgToPDFController extends BaseBatchFileController {
 
     @FXML
-    protected ControlSvgOptions optionsController;
+    protected ControlXmlOptions xmlOptionsController;
+    @FXML
+    protected ControlSvgTranscode svgOptionsController;
 
     public SvgToPDFController() {
         baseTitle = message("SvgToPDF");
@@ -28,14 +30,21 @@ public class SvgToPDFController extends BaseBatchFileController {
     }
 
     @Override
+    public boolean makeActualParameters() {
+        svgOptionsController.pickValues();
+        return super.makeActualParameters();
+    }
+
+    @Override
     public String handleFile(File srcFile, File targetPath) {
         File target = makeTargetFile(srcFile, targetPath);
         if (target == null) {
             return message("Skip");
         }
-        File tmpFile = SvgTools.fileToPDF(this,
-                optionsController.width, optionsController.height,
-                srcFile);
+        File tmpFile = SvgTools.fileToPDF(this, srcFile,
+                svgOptionsController.width,
+                svgOptionsController.height,
+                svgOptionsController.area);
         if (tmpFile == null || !tmpFile.exists()) {
             return message("Failed");
         }

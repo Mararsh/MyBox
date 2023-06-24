@@ -21,7 +21,6 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileCopyTools;
-import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.SvgTools;
@@ -43,8 +42,6 @@ public class SvgEditorController extends XmlEditorController {
     @FXML
     protected ControlSvgTree treeController;
     @FXML
-    protected ControlSvgOptions svgOptionsController;
-    @FXML
     protected WebView webView;
 
     public SvgEditorController() {
@@ -58,7 +55,6 @@ public class SvgEditorController extends XmlEditorController {
             super.initValues();
 
             domController = treeController;
-            optionsController = svgOptionsController;
 
             treeController.editorController = this;
 
@@ -166,16 +162,7 @@ public class SvgEditorController extends XmlEditorController {
             popError(message("NoData"));
             return;
         }
-        File tmpFile = SvgTools.textToPDF(this,
-                svgOptionsController.width, svgOptionsController.height,
-                currentXML);
-        if (tmpFile != null && tmpFile.exists()) {
-            if (tmpFile.length() > 0) {
-                PdfViewController.open(tmpFile);
-            } else {
-                FileDeleteTools.delete(tmpFile);
-            }
-        }
+        SvgTranscodeOptionsController.open(this, "pdf");
     }
 
     @FXML
@@ -184,16 +171,7 @@ public class SvgEditorController extends XmlEditorController {
             popError(message("NoData"));
             return;
         }
-        File tmpFile = SvgTools.textToImageFile(this,
-                svgOptionsController.width, svgOptionsController.height,
-                currentXML);
-        if (tmpFile != null && tmpFile.exists()) {
-            if (tmpFile.length() > 0) {
-                ImageViewerController.openFile(tmpFile);
-            } else {
-                FileDeleteTools.delete(tmpFile);
-            }
-        }
+        SvgTranscodeOptionsController.open(this, "image");
     }
 
     @FXML

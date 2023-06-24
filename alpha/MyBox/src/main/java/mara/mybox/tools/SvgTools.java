@@ -1,6 +1,6 @@
 package mara.mybox.tools;
 
-import java.awt.image.BufferedImage;
+import java.awt.Rectangle;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
@@ -11,8 +11,6 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.image.Image;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -20,7 +18,6 @@ import javax.xml.transform.stream.StreamResult;
 import mara.mybox.controller.BaseController;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.imagefile.ImageFileReaders;
 import mara.mybox.value.UserConfig;
 import org.apache.batik.anim.dom.SVGDOMImplementation;
 import org.apache.batik.dom.GenericDOMImplementation;
@@ -92,31 +89,34 @@ public class SvgTools {
     /*
         image
      */
-    public static File textToImageFile(BaseController controller, float width, float height, String svg) {
+    public static File textToImageFile(BaseController controller, String svg,
+            float width, float height, Rectangle area) {
         if (svg == null || svg.isBlank()) {
             return null;
         }
         try (ByteArrayInputStream inputStream = new ByteArrayInputStream(svg.getBytes("utf-8"))) {
-            return toImageFile(controller, width, height, inputStream);
+            return toImageFile(controller, inputStream, width, height, area);
         } catch (Exception e) {
             PopTools.showError(controller, e.toString());
             return null;
         }
     }
 
-    public static File fileToImageFile(BaseController controller, float width, float height, File svgFile) {
+    public static File fileToImageFile(BaseController controller, File svgFile,
+            float width, float height, Rectangle area) {
         if (svgFile == null || !svgFile.exists()) {
             return null;
         }
         try (FileInputStream inputStream = new FileInputStream(svgFile)) {
-            return toImageFile(controller, width, height, inputStream);
+            return toImageFile(controller, inputStream, width, height, area);
         } catch (Exception e) {
             PopTools.showError(controller, e.toString());
             return null;
         }
     }
 
-    public static File toImageFile(BaseController controller, float width, float height, InputStream inputStream) {
+    public static File toImageFile(BaseController controller, InputStream inputStream,
+            float width, float height, Rectangle area) {
         if (inputStream == null) {
             return null;
         }
@@ -128,6 +128,9 @@ public class SvgTools {
             }
             if (height > 0) {
                 transcoder.addTranscodingHint(PNGTranscoder.KEY_HEIGHT, height);
+            }
+            if (area != null) {
+                transcoder.addTranscodingHint(PNGTranscoder.KEY_AOI, area);
             }
             TranscoderInput input = new TranscoderInput(inputStream);
             TranscoderOutput output = new TranscoderOutput(outputStream);
@@ -144,55 +147,41 @@ public class SvgTools {
         return null;
     }
 
-    public static BufferedImage textToBufferedImage(BaseController controller, float width, float height, String svg) {
-        return ImageFileReaders.readImage(textToImageFile(controller, width, height, svg));
-    }
-
-    public static Image textToFxImage(BaseController controller, float width, float height, String svg) {
-        BufferedImage bufferedImage = textToBufferedImage(controller, width, height, svg);
-        if (bufferedImage != null) {
-            return SwingFXUtils.toFXImage(bufferedImage, null);
-        } else {
-            return null;
-        }
-    }
-
-    public static BufferedImage nodeToBufferedImage(BaseController controller, float width, float height, Node node) {
-        return textToBufferedImage(controller, width, height, transform(node, false));
-    }
-
-    public static Image nodeToFxImage(BaseController controller, float width, float height, Node node) {
-        return textToFxImage(controller, width, height, transform(node, false));
-    }
-
     /*
         pdf
      */
-    public static File textToPDF(BaseController controller, float width, float height, String svg) {
-        if (svg == null || svg.isBlank()) {
-            return null;
-        }
-        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(svg.getBytes("utf-8"))) {
-            return toPDF(controller, width, height, inputStream);
-        } catch (Exception e) {
-            PopTools.showError(controller, e.toString());
-            return null;
-        }
-    }
-
-    public static File fileToPDF(BaseController controller, float width, float height, File svgFile) {
-        if (svgFile == null || !svgFile.exists()) {
-            return null;
-        }
-        try (FileInputStream inputStream = new FileInputStream(svgFile)) {
-            return toPDF(controller, width, height, inputStream);
-        } catch (Exception e) {
-            PopTools.showError(controller, e.toString());
-            return null;
+    public static File textToPDF(BaseController controller, String svg,
+            float width, float height, Rectangle area) {
+        {
+            if (svg == null || svg.isBlank()) {
+                return null;
+            }
+            try (ByteArrayInputStream inputStream = new ByteArrayInputStream(svg.getBytes("utf-8"))) {
+                return toPDF(controller, inputStream, width, height, area);
+            } catch (Exception e) {
+                PopTools.showError(controller, e.toString());
+                return null;
+            }
         }
     }
 
-    public static File toPDF(BaseController controller, float width, float height, InputStream inputStream) {
+    public static File fileToPDF(BaseController controller, File svgFile,
+            float width, float height, Rectangle area) {
+        {
+            if (svgFile == null || !svgFile.exists()) {
+                return null;
+            }
+            try (FileInputStream inputStream = new FileInputStream(svgFile)) {
+                return toPDF(controller, inputStream, width, height, area);
+            } catch (Exception e) {
+                PopTools.showError(controller, e.toString());
+                return null;
+            }
+        }
+    }
+
+    public static File toPDF(BaseController controller, InputStream inputStream,
+            float width, float height, Rectangle area) {
         if (inputStream == null) {
             return null;
         }
@@ -204,6 +193,9 @@ public class SvgTools {
             }
             if (height > 0) {
                 transcoder.addTranscodingHint(PDFTranscoder.KEY_HEIGHT, height);
+            }
+            if (area != null) {
+                transcoder.addTranscodingHint(PDFTranscoder.KEY_AOI, area);
             }
             TranscoderInput input = new TranscoderInput(inputStream);
             TranscoderOutput output = new TranscoderOutput(outputStream);
