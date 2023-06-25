@@ -42,7 +42,7 @@ License:    Apache License Version 2.0
                     <items>
                         <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                             <content>
-                                <VBox  fx:id="panesBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                                <VBox fx:id="panesBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                                     <children>
                                         <TitledPane fx:id="filePane" maxWidth="1.7976931348623157E308" text="%File">
                                             <content>
@@ -204,6 +204,15 @@ License:    Apache License Version 2.0
                                     <children>
                                         <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="2.0">
                                             <children>
+                                                  <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
+                                                      <graphic>
+                                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                              <image>
+                                                                  <Image url="@../buttons/Red/iconDoubleLeft.png" />
+                                                              </image>
+                                                          </ImageView>
+                                                      </graphic>
+                                                  </CheckBox>
                                                 <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#pickSourceFile" onMouseEntered="#popSourceFile">
                                                     <graphic>
                                                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -229,15 +238,6 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                                 <FlowPane fx:id="buttonsPane" alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
                                                     <children>
-                                                        <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
-                                                            <graphic>
-                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                    <image>
-                                                                        <Image url="@../buttons/Red/iconDoubleLeft.png" />
-                                                                    </image>
-                                                                </ImageView>
-                                                            </graphic>
-                                                        </CheckBox>
                                                         <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#pickSaveAs" onMouseEntered="#popSaveAs">
                                                             <graphic>
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -442,7 +442,7 @@ License:    Apache License Version 2.0
                                                                         </AnchorPane>
                                                                     </content>
                                                                 </ScrollPane>
-                                                                <Label fx:id="imageLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity"  wrapText="true" />
+                                                                <Label fx:id="imageLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" />
                                                             </children>
                                                         </VBox>
                                                     </content>

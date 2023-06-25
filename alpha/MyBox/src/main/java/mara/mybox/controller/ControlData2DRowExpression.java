@@ -5,9 +5,14 @@ import java.util.List;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.data2d.Data2D;
 import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.db.table.TableStringValues;
@@ -15,6 +20,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ExpressionCalculator;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -137,14 +143,32 @@ public class ControlData2DRowExpression extends ControlJavaScriptRefer {
     }
 
     @FXML
-    public void showRowExpressionHelps(Event event) {
-        popEventMenu(event, HelpTools.rowExpressionHelps(this));
-    }
-
-    @FXML
     public void popRowExpressionHelps(Event event) {
         if (UserConfig.getBoolean("RowExpressionsHelpsPopWhenMouseHovering", false)) {
             showRowExpressionHelps(event);
+        }
+    }
+
+    @FXML
+    public void showRowExpressionHelps(Event event) {
+        try {
+            List<MenuItem> items = HelpTools.rowExpressionHelps();
+
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            hoverMenu.setSelected(UserConfig.getBoolean("RowExpressionsHelpsPopWhenMouseHovering", false));
+            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("RowExpressionsHelpsPopWhenMouseHovering", hoverMenu.isSelected());
+                }
+            });
+            items.add(hoverMenu);
+
+            popEventMenu(event, items);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
     }
 

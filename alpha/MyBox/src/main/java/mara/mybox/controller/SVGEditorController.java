@@ -17,6 +17,7 @@ import javafx.scene.web.WebView;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.style.StyleTools;
@@ -309,6 +310,73 @@ public class SvgEditorController extends XmlEditorController {
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;
+        }
+    }
+
+    @FXML
+    @Override
+    protected void popHelps(Event event) {
+        if (UserConfig.getBoolean("SvgHelpsPopWhenMouseHovering", false)) {
+            showHelps(event);
+        }
+    }
+
+    @FXML
+    @Override
+    protected void showHelps(Event event) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+
+            MenuItem menuItem = new MenuItem(message("SvgTutorial") + " - " + message("English"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.svgEnLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("SvgTutorial") + " - " + message("Chinese"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.svgZhLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("SvgSpecification"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.svgSpecification(), true);
+                }
+            });
+            items.add(menuItem);
+
+            items.add(new SeparatorMenuItem());
+
+            items.addAll(HelpTools.xmlHelps());
+
+            items.add(new SeparatorMenuItem());
+
+            items.addAll(HelpTools.htmlHelps());
+
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            hoverMenu.setSelected(UserConfig.getBoolean("SvgHelpsPopWhenMouseHovering", false));
+            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("SvgHelpsPopWhenMouseHovering", hoverMenu.isSelected());
+                }
+            });
+            items.add(hoverMenu);
+
+            popEventMenu(event, items);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
     }
 

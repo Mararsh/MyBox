@@ -8,6 +8,8 @@ import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.SvgTools;
+import mara.mybox.tools.TextFileTools;
+import mara.mybox.tools.XmlTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -50,7 +52,7 @@ public class SvgToImageController extends BaseBatchFileController {
     @Override
     public boolean makeActualParameters() {
         attributes = formatController.attributes;
-        svgOptionsController.pickValues();
+        svgOptionsController.checkInputs();
         return super.makeActualParameters();
     }
 
@@ -60,7 +62,9 @@ public class SvgToImageController extends BaseBatchFileController {
         if (target == null) {
             return message("Skip");
         }
-        File tmpFile = SvgTools.fileToImageFile(this, srcFile,
+        String svgText = TextFileTools.readTexts(srcFile);
+        svgOptionsController.checkValues(XmlTools.doc(this, svgText));
+        File tmpFile = SvgTools.textToImageFile(this, svgText,
                 svgOptionsController.width,
                 svgOptionsController.height,
                 svgOptionsController.area);

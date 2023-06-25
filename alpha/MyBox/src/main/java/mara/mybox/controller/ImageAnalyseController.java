@@ -4,6 +4,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import javafx.beans.value.ChangeListener;
@@ -554,15 +556,37 @@ public class ImageAnalyseController extends ImageViewerController {
             StringTable table = new StringTable(names, message(component.name()), 3);
             int[] histogram = data.histogram(component);
 
+            List<List<Integer>> sort = new ArrayList<>();
             for (int i = histogram.length - 1; i >= 0; --i) {
+                List<Integer> dataRow = new ArrayList<>();
+                dataRow.add(i);
+                dataRow.add(histogram[i]);
+                sort.add(dataRow);
+            }
+            Collections.sort(sort, new Comparator<List<Integer>>() {
+                @Override
+                public int compare(List<Integer> v1, List<Integer> v2) {
+                    int diff = v1.get(1) - v2.get(1);
+                    if (diff == 0) {
+                        return 0;
+                    } else if (diff > 0) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+                }
+            });
+            for (List<Integer> dataRow : sort) {
                 List<String> row = new ArrayList<>();
-                java.awt.Color aColor = ColorComponentTools.color(component, i);
+                int value = dataRow.get(0);
+                int count = dataRow.get(1);
+                java.awt.Color aColor = ColorComponentTools.color(component, value);
                 int red = aColor.getRed();
                 int green = aColor.getGreen();
                 int blue = aColor.getBlue();
                 Color fColor = ColorConvertTools.converColor(aColor);
-                row.addAll(Arrays.asList(i + "", StringTools.format(histogram[i]),
-                        FloatTools.percentage(histogram[i], nonTransparent) + "%",
+                row.addAll(Arrays.asList(value + "", StringTools.format(count),
+                        FloatTools.percentage(count, nonTransparent) + "%",
                         FxColorTools.color2rgba(fColor), red + " ", green + " ", blue + " ",
                         (int) Math.round(fColor.getOpacity() * 100) + "%",
                         Math.round(fColor.getHue()) + " ",
@@ -571,6 +595,7 @@ public class ImageAnalyseController extends ImageViewerController {
                 ));
                 table.add(row);
             }
+
             final String html = StringTable.tableHtml(table);
             view.getEngine().loadContent​(html);
 

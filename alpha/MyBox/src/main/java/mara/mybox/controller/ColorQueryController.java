@@ -12,7 +12,9 @@ import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
+import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -153,6 +155,20 @@ public class ColorQueryController extends BaseController {
         }
         queryAction();
         return true;
+    }
+
+    /*
+        static
+     */
+    public static ColorQueryController open() {
+        try {
+            ColorQueryController controller = (ColorQueryController) WindowTools.openStage(Fxmls.ColorQueryFxml);
+            controller.requestMouse();
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
     }
 
 }

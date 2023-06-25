@@ -5,16 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.controller.BaseController;
+import mara.mybox.controller.ColorQueryController;
 import mara.mybox.controller.WebBrowserController;
 import mara.mybox.data.ImageItem;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.HtmlStyles;
-import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.MarkdownTools;
@@ -22,7 +21,6 @@ import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -263,7 +261,7 @@ public class HelpTools {
             table.newLinkRow("Nashorn User's Guide", nashornLink());
             table.newLinkRow(message("CssTutorial") + " - " + message("Chinese"), cssZhLink());
             table.newLinkRow(message("CssTutorial") + " - " + message("English"), cssEnLink());
-            table.newLinkRow(message("CssReference"), cssLink());
+            table.newLinkRow(message("CssReference"), cssSpecificationLink());
             table.newLinkRow(message("JavafxCssGuide"), javaFxCssLink());
             table.newLinkRow("Full list of Math functions", javaMathLink());
             table.newLinkRow("Learning the Java Language", javaLink());
@@ -648,7 +646,7 @@ public class HelpTools {
         return "https://docs.oracle.com/en/java/javase/20/docs/api/java.desktop/java/awt/RenderingHints.html";
     }
 
-    public static String cssLink() {
+    public static String cssSpecificationLink() {
         return "https://www.w3.org/TR/CSS/#css";
     }
 
@@ -720,7 +718,7 @@ public class HelpTools {
         return "https://www.w3.org/Graphics/SVG/";
     }
 
-    public static List<MenuItem> htmlHelps(BaseController controller) {
+    public static List<MenuItem> htmlHelps() {
         try {
             List<MenuItem> items = new ArrayList<>();
 
@@ -762,6 +760,15 @@ public class HelpTools {
             });
             items.add(menuItem);
 
+            menuItem = new MenuItem("JavaScript language specification");
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.javaScriptSpecification(), true);
+                }
+            });
+            items.add(menuItem);
+
             items.add(new SeparatorMenuItem());
 
             menuItem = new MenuItem(message("CssTutorial") + " - " + message("English"));
@@ -786,22 +793,21 @@ public class HelpTools {
             menuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    WebBrowserController.openAddress(HelpTools.cssLink(), true);
+                    WebBrowserController.openAddress(HelpTools.cssSpecificationLink(), true);
                 }
             });
             items.add(menuItem);
 
             items.add(new SeparatorMenuItem());
 
-            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            hoverMenu.setSelected(UserConfig.getBoolean("HtmlHelpsPopWhenMouseHovering", false));
-            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+            menuItem = new MenuItem(message("ColorQuery"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("HtmlHelpsPopWhenMouseHovering", hoverMenu.isSelected());
+                    ColorQueryController.open();
                 }
             });
-            items.add(hoverMenu);
+            items.add(menuItem);
 
             return items;
         } catch (Exception e) {
@@ -810,7 +816,7 @@ public class HelpTools {
         }
     }
 
-    public static List<MenuItem> rowExpressionHelps(BaseController controller) {
+    public static List<MenuItem> rowExpressionHelps() {
         try {
             List<MenuItem> items = new ArrayList<>();
 
@@ -818,7 +824,7 @@ public class HelpTools {
             menuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    controller.openHtml(HelpTools.aboutRowExpression());
+                    WebBrowserController.openFile(HelpTools.aboutRowExpression());
                 }
             });
             items.add(menuItem);
@@ -829,7 +835,7 @@ public class HelpTools {
             menuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    controller.openLink(HelpTools.javaScriptEnLink());
+                    WebBrowserController.openAddress(HelpTools.javaScriptEnLink(), true);
                 }
             });
             items.add(menuItem);
@@ -838,7 +844,7 @@ public class HelpTools {
             menuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    controller.openLink(HelpTools.javaScriptZhLink());
+                    WebBrowserController.openAddress(HelpTools.javaScriptZhLink(), true);
                 }
             });
             items.add(menuItem);
@@ -847,7 +853,7 @@ public class HelpTools {
             menuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    controller.openLink(HelpTools.javaScriptSpecification());
+                    WebBrowserController.openAddress(HelpTools.javaScriptSpecification(), true);
                 }
             });
             items.add(menuItem);
@@ -856,22 +862,48 @@ public class HelpTools {
             menuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    controller.openLink(HelpTools.nashornLink());
+                    WebBrowserController.openAddress(HelpTools.nashornLink(), true);
                 }
             });
             items.add(menuItem);
 
-            items.add(new SeparatorMenuItem());
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
 
-            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            hoverMenu.setSelected(UserConfig.getBoolean("RowExpressionsHelpsPopWhenMouseHovering", false));
-            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+    public static List<MenuItem> xmlHelps() {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+
+            MenuItem menuItem = new MenuItem(message("XmlTutorial") + " - " + message("English"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("RowExpressionsHelpsPopWhenMouseHovering", hoverMenu.isSelected());
+                    WebBrowserController.openAddress(HelpTools.xmlEnLink(), true);
                 }
             });
-            items.add(hoverMenu);
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("XmlTutorial") + " - " + message("Chinese"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.xmlZhLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("DomSpecification"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.domSpecification(), true);
+                }
+            });
+            items.add(menuItem);
 
             return items;
         } catch (Exception e) {

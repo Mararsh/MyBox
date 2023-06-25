@@ -40,26 +40,26 @@ License:    Apache License Version 2.0
                             </content>
                         </Tab>
                         <Tab fx:id="optionsTab1" text="%Options">
-                     <content>
-                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="ALWAYS">
-                           <content>
-                              <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
-                                 <children>
-                                    <fx:include source="ControlSvgOptions.fxml" fx:id="xmlOptions" />
-                                    <Label text="%SvgTranscode">
-                                       <VBox.margin>
-                                          <Insets top="10.0" />
-                                       </VBox.margin>
-                                    </Label>
-                                    <fx:include fx:id="svgOptions" source="ControlSvgTranscode.fxml" />
-                                 </children>
-                              </VBox>
-                           </content>
-                           <padding>
-                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </padding>
-                        </ScrollPane>
-                     </content>
+                            <content>
+                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="ALWAYS">
+                                    <content>
+                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                            <children>
+                                                <fx:include source="ControlXmlOptions.fxml" fx:id="xmlOptions" />
+                                                <Label text="%SvgTranscode">
+                                                    <VBox.margin>
+                                                        <Insets top="10.0" />
+                                                    </VBox.margin>
+                                                </Label>
+                                                <fx:include fx:id="svgOptions" source="ControlSvgTranscode.fxml" />
+                                            </children>
+                                        </VBox>
+                                    </content>
+                                    <padding>
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                    </padding>
+                                </ScrollPane>
+                            </content>
                         </Tab>
                         <Tab fx:id="targetTab" text="%TargetFiles">
                             <content>

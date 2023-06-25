@@ -45,6 +45,17 @@ License:    Apache License Version 2.0
                                     </VBox>
                                  </content>
                               </TitledPane>
+                              <TitledPane layoutX="10.0" layoutY="69.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Options">
+                                 <content>
+                                    <VBox spacing="2.0">
+                                       <children>
+                                          <Label text="%TakeEffectNextReadWrite" />
+                                          <Separator prefWidth="200.0" />
+                                          <fx:include fx:id="options" source="ControlXmlOptions.fxml" />
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </TitledPane>
                               <TitledPane expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Backup">
                                  <content>
                                     <VBox spacing="2.0">
@@ -54,7 +65,7 @@ License:    Apache License Version 2.0
                                     </VBox>
                                  </content>
                               </TitledPane>
-                              <TitledPane fx:id="browsePane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Browse" VBox.vgrow="ALWAYS">
+                              <TitledPane fx:id="browsePane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Browse" VBox.vgrow="ALWAYS">
                                  <content>
                                     <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                        <children>
@@ -67,7 +78,7 @@ License:    Apache License Version 2.0
                         </VBox>
                      </content>
                   </ScrollPane>
-                  <VBox fx:id="mainBox" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                  <VBox fx:id="mainBox" alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                      <children>
                         <HBox alignment="CENTER_RIGHT" spacing="2.0">
                            <children>
@@ -158,6 +169,15 @@ License:    Apache License Version 2.0
                                         </image>
                                     </ImageView>
                               <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showHelps" onMouseEntered="#popHelps">
+                                 <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/iconClaw.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
                            </children>
                         </HBox>
                             <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" tabClosingPolicy="ALL_TABS" VBox.vgrow="ALWAYS">
@@ -209,27 +229,12 @@ License:    Apache License Version 2.0
                                             </VBox>
                                         </content>
                                     </Tab>
-                                    <Tab fx:id="optionsTab" closable="false" text="%Options">
-                                        <content>
-                                            <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
-                                                <content>
-                                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0">
-                                                        <children>
-                                                <Label text="%TakeEffectNextReadWrite" />
-                                                <Separator prefWidth="200.0" />
-                                                <fx:include fx:id="options" source="ControlXmlOptions.fxml" />
-                                                        </children>
-                                                        <padding>
-                                                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                                        </padding>
-                                                    </VBox>
-                                                </content>
-                                            </ScrollPane>
-                                        </content>
-                                    </Tab>
                                 </tabs>
                             </TabPane>
                      </children>
+                     <padding>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </padding>
                   </VBox>
                </items>
             </SplitPane>

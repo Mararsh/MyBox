@@ -13,14 +13,31 @@ import org.w3c.dom.*;
  */
 public class ControlSvgTranscode extends BaseController {
 
-    protected float width, height;
-    protected Rectangle area;
+    protected float width, height, docWidth, docHeight, inputWidth, inputHeight;
+    protected Rectangle area, inputArea, docArea;
 
     @FXML
     protected TextField widthInput, heightInput, areaInput;
 
-    public void input(Document doc) {
+    public void setDoc(Document doc) {
+        checkDoc(doc);
+        if (docWidth > 0) {
+            widthInput.setText(docWidth + "");
+        }
+        if (docHeight > 0) {
+            heightInput.setText(docHeight + "");
+        }
+        if (docArea != null) {
+            areaInput.setText((int) docArea.getX() + " " + (int) docArea.getY()
+                    + " " + (int) docArea.getWidth() + " " + (int) docArea.getWidth());
+        }
+    }
+
+    public void checkDoc(Document doc) {
         try {
+            docWidth = 0f;
+            docHeight = 0f;
+            docArea = null;
             if (doc == null) {
                 return;
             }
@@ -36,14 +53,27 @@ public class ControlSvgTranscode extends BaseController {
                     String value = attr.getNodeValue();
                     switch (name) {
                         case "width":
-                            widthInput.setText(value);
-                            break;
+                             try {
+                            docWidth = Float.parseFloat(value);
+                        } catch (Exception e) {
+                        }
+                        break;
                         case "height":
-                            heightInput.setText(value);
-                            break;
+                            try {
+                            docHeight = Float.parseFloat(value);
+                        } catch (Exception e) {
+                        }
+                        break;
                         case "viewbox":
-                            areaInput.setText(value);
-                            break;
+                            try {
+                            String[] v = value.split(" ");
+                            if (v != null && v.length >= 4) {
+                                docArea = new Rectangle(Integer.parseInt(v[0]), Integer.parseInt(v[1]),
+                                        Integer.parseInt(v[2]), Integer.parseInt(v[3]));
+                            }
+                        } catch (Exception e) {
+                        }
+                        break;
                     }
                 }
             }
@@ -52,30 +82,42 @@ public class ControlSvgTranscode extends BaseController {
         }
     }
 
-    public void pickValues() {
-        width = 0f;
+    public void checkInputs() {
+        inputWidth = 0f;
         try {
-            width = Float.parseFloat(widthInput.getText());
+            inputWidth = Float.parseFloat(widthInput.getText());
         } catch (Exception e) {
         }
-        height = 0f;
+        inputHeight = 0f;
         try {
-            height = Float.parseFloat(heightInput.getText());
+            inputHeight = Float.parseFloat(heightInput.getText());
         } catch (Exception e) {
         }
-        try {
-            height = Float.parseFloat(heightInput.getText());
-        } catch (Exception e) {
-        }
-        area = null;
+        inputArea = null;
         try {
             String[] v = areaInput.getText().split(" ");
             if (v != null && v.length >= 4) {
-                area = new Rectangle(Integer.parseInt(v[0]), Integer.parseInt(v[1]),
+                inputArea = new Rectangle(Integer.parseInt(v[0]), Integer.parseInt(v[1]),
                         Integer.parseInt(v[2]), Integer.parseInt(v[3]));
             }
         } catch (Exception e) {
         }
+    }
+
+    public void checkValues() {
+        width = inputWidth > 0 ? inputWidth : docWidth;
+        height = inputHeight > 0 ? inputHeight : docHeight;
+        area = inputArea == null ? inputArea : docArea;
+    }
+
+    public void checkValues(Document doc) {
+        checkDoc(doc);
+        checkValues();
+    }
+
+    public void pickValues() {
+        checkInputs();
+        checkValues();
     }
 
 }

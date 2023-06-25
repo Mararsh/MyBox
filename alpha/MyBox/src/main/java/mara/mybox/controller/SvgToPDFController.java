@@ -5,6 +5,8 @@ import javafx.fxml.FXML;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.SvgTools;
+import mara.mybox.tools.TextFileTools;
+import mara.mybox.tools.XmlTools;
 import static mara.mybox.value.Languages.message;
 
 /**
@@ -31,7 +33,7 @@ public class SvgToPDFController extends BaseBatchFileController {
 
     @Override
     public boolean makeActualParameters() {
-        svgOptionsController.pickValues();
+        svgOptionsController.checkInputs();
         return super.makeActualParameters();
     }
 
@@ -41,7 +43,9 @@ public class SvgToPDFController extends BaseBatchFileController {
         if (target == null) {
             return message("Skip");
         }
-        File tmpFile = SvgTools.fileToPDF(this, srcFile,
+        String svgText = TextFileTools.readTexts(srcFile);
+        svgOptionsController.checkValues(XmlTools.doc(this, svgText));
+        File tmpFile = SvgTools.textToPDF(this, svgText,
                 svgOptionsController.width,
                 svgOptionsController.height,
                 svgOptionsController.area);

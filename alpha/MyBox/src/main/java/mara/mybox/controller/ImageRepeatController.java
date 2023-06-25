@@ -36,7 +36,7 @@ public class ImageRepeatController extends ImageViewerController {
     @FXML
     protected ImageRepeatResultController repeatController;
     @FXML
-    protected Tab imageTab, repeatTab, optionsTab, saveTab;
+    protected Tab imageTab, repeatTab, saveTab;
     @FXML
     protected ToggleGroup repeatGroup;
     @FXML

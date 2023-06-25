@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -17,7 +14,6 @@ import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.XmlTreeNode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.TextClipboardTools;
@@ -25,7 +21,6 @@ import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.SvgTools;
 import mara.mybox.tools.XmlTools;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -423,76 +418,6 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
         if (xmlEditor != null && xmlEditor.sourceFile != null && xmlEditor.sourceFile.exists()) {
             xmlEditor.fileChanged = false;
             xmlEditor.sourceFileChanged(xmlEditor.sourceFile);
-        }
-    }
-
-    @FXML
-    protected void popHelps(Event event) {
-        if (UserConfig.getBoolean("XmlHelpsPopWhenMouseHovering", false)) {
-            showHelps(event);
-        }
-    }
-
-    @FXML
-    protected void showHelps(Event event) {
-        try {
-            List<MenuItem> items = xmlHelps(event);
-
-            items.add(new SeparatorMenuItem());
-
-            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            hoverMenu.setSelected(UserConfig.getBoolean("XmlHelpsPopWhenMouseHovering", false));
-            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("XmlHelpsPopWhenMouseHovering", hoverMenu.isSelected());
-                }
-            });
-            items.add(hoverMenu);
-
-            popEventMenu(event, items);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public List<MenuItem> xmlHelps(Event event) {
-        try {
-            List<MenuItem> items = new ArrayList<>();
-
-            MenuItem menuItem = new MenuItem(message("XmlTutorial") + " - " + message("English"));
-            menuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    WebBrowserController.openAddress(HelpTools.xmlEnLink(), true);
-                }
-            });
-            items.add(menuItem);
-
-            menuItem = new MenuItem(message("XmlTutorial") + " - " + message("Chinese"));
-            menuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    WebBrowserController.openAddress(HelpTools.xmlZhLink(), true);
-                }
-            });
-            items.add(menuItem);
-
-            items.add(new SeparatorMenuItem());
-
-            menuItem = new MenuItem(message("DomSpecification"));
-            menuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    WebBrowserController.openAddress(HelpTools.domSpecification(), true);
-                }
-            });
-            items.add(menuItem);
-
-            return items;
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-            return null;
         }
     }
 

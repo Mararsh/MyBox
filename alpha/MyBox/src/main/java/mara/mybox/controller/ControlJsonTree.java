@@ -11,10 +11,7 @@ import java.util.List;
 import java.util.Map;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -24,13 +21,11 @@ import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.JsonTreeNode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.style.StyleTools;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -452,65 +447,6 @@ public class ControlJsonTree extends BaseTreeTableViewController<JsonTreeNode> {
         if (jsonEditor != null && jsonEditor.sourceFile != null && jsonEditor.sourceFile.exists()) {
             jsonEditor.fileChanged = false;
             jsonEditor.sourceFileChanged(jsonEditor.sourceFile);
-        }
-    }
-
-    @FXML
-    protected void popHelps(Event event) {
-        if (UserConfig.getBoolean("JsonHelpsPopWhenMouseHovering", false)) {
-            showHelps(event);
-        }
-    }
-
-    @FXML
-    protected void showHelps(Event event) {
-        try {
-            List<MenuItem> items = new ArrayList<>();
-
-            MenuItem menuItem = new MenuItem(message("JsonTutorial") + " - " + message("English"));
-            menuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    WebBrowserController.openAddress(HelpTools.jsonEnLink(), true);
-                }
-            });
-            items.add(menuItem);
-
-            menuItem = new MenuItem(message("JsonTutorial") + " - " + message("Chinese"));
-            menuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    WebBrowserController.openAddress(HelpTools.jsonZhLink(), true);
-                }
-            });
-            items.add(menuItem);
-
-            items.add(new SeparatorMenuItem());
-
-            menuItem = new MenuItem(message("JsonSpecification"));
-            menuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    WebBrowserController.openAddress(HelpTools.jsonSpecification(), true);
-                }
-            });
-            items.add(menuItem);
-
-            items.add(new SeparatorMenuItem());
-
-            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
-            hoverMenu.setSelected(UserConfig.getBoolean("JsonHelpsPopWhenMouseHovering", false));
-            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    UserConfig.setBoolean("JsonHelpsPopWhenMouseHovering", hoverMenu.isSelected());
-                }
-            });
-            items.add(hoverMenu);
-
-            popEventMenu(event, items);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
         }
     }
 

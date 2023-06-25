@@ -259,6 +259,24 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </TitledPane>
+                              <TitledPane fx:id="conversionPane" layoutX="10.0" layoutY="438.0" text="%ConversionOptions">
+                                 <content>
+                                    <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                       <children>
+                                          <fx:include fx:id="options" source="ControlMarkdownOptions.fxml" />
+                                          <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                             <children>
+                                                <Label text="%Title" />
+                                                <TextField fx:id="titleInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                       </padding>
+                                    </VBox>
+                                 </content>
+                              </TitledPane>
                               <TitledPane fx:id="browsePane" expanded="false" text="%Browse">
                                  <content>
                                     <VBox spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
@@ -512,28 +530,6 @@ License:    Apache License Version 2.0
                                                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                                                             </padding>
                                                         </VBox>
-                                                    </content>
-                                                </Tab>
-                                                <Tab closable="false" text="%ConversionOptions">
-                                                    <content>
-                                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
-                                                            <content>
-                                                                <VBox spacing="5.0">
-                                                                    <children>
-                                                      <fx:include fx:id="options" source="ControlMarkdownOptions.fxml" />
-                                                      <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="5.0">
-                                                         <children>
-                                                            <Label text="%Title" />
-                                                            <TextField fx:id="titleInput" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                         </children>
-                                                      </HBox>
-                                                                    </children>
-                                                                    <padding>
-                                                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                                                    </padding>
-                                                                </VBox>
-                                                            </content>
-                                                        </ScrollPane>
                                                     </content>
                                                 </Tab>
                                             </tabs>

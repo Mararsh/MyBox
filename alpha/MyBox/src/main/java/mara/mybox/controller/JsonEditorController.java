@@ -1,16 +1,24 @@
 package mara.mybox.controller;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
@@ -19,8 +27,10 @@ import javafx.stage.Stage;
 import mara.mybox.data.JsonTreeNode;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextFileTools;
@@ -40,7 +50,7 @@ public class JsonEditorController extends BaseFileController {
     protected final SimpleBooleanProperty loadNotify;
 
     @FXML
-    protected Tab domTab, textsTab, optionsTab;
+    protected Tab domTab, textsTab;
     @FXML
     protected TextArea textsArea;
     @FXML
@@ -518,11 +528,6 @@ public class JsonEditorController extends BaseFileController {
     public void tabChanged() {
         try {
             TextClipboardPopController.closeAll();
-            Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            menuButton.setDisable(tab == optionsTab);
-            synchronizeButton.setDisable(tab == optionsTab);
-            clearButton.setDisable(tab == optionsTab);
-            saveButton.setDisable(tab == optionsTab);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -558,6 +563,63 @@ public class JsonEditorController extends BaseFileController {
             } else {
                 return false;
             }
+        }
+    }
+
+    @FXML
+    protected void popHelps(Event event) {
+        if (UserConfig.getBoolean("JsonHelpsPopWhenMouseHovering", false)) {
+            showHelps(event);
+        }
+    }
+
+    @FXML
+    protected void showHelps(Event event) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+
+            MenuItem menuItem = new MenuItem(message("JsonTutorial") + " - " + message("English"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.jsonEnLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("JsonTutorial") + " - " + message("Chinese"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.jsonZhLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("JsonSpecification"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.jsonSpecification(), true);
+                }
+            });
+            items.add(menuItem);
+
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            hoverMenu.setSelected(UserConfig.getBoolean("JsonHelpsPopWhenMouseHovering", false));
+            hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("JsonHelpsPopWhenMouseHovering", hoverMenu.isSelected());
+                }
+            });
+            items.add(hoverMenu);
+
+            popEventMenu(event, items);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
         }
     }
 

@@ -6,7 +6,6 @@ import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
@@ -102,19 +101,6 @@ public class SvgTools {
         }
     }
 
-    public static File fileToImageFile(BaseController controller, File svgFile,
-            float width, float height, Rectangle area) {
-        if (svgFile == null || !svgFile.exists()) {
-            return null;
-        }
-        try (FileInputStream inputStream = new FileInputStream(svgFile)) {
-            return toImageFile(controller, inputStream, width, height, area);
-        } catch (Exception e) {
-            PopTools.showError(controller, e.toString());
-            return null;
-        }
-    }
-
     public static File toImageFile(BaseController controller, InputStream inputStream,
             float width, float height, Rectangle area) {
         if (inputStream == null) {
@@ -157,21 +143,6 @@ public class SvgTools {
                 return null;
             }
             try (ByteArrayInputStream inputStream = new ByteArrayInputStream(svg.getBytes("utf-8"))) {
-                return toPDF(controller, inputStream, width, height, area);
-            } catch (Exception e) {
-                PopTools.showError(controller, e.toString());
-                return null;
-            }
-        }
-    }
-
-    public static File fileToPDF(BaseController controller, File svgFile,
-            float width, float height, Rectangle area) {
-        {
-            if (svgFile == null || !svgFile.exists()) {
-                return null;
-            }
-            try (FileInputStream inputStream = new FileInputStream(svgFile)) {
                 return toPDF(controller, inputStream, width, height, area);
             } catch (Exception e) {
                 PopTools.showError(controller, e.toString());
