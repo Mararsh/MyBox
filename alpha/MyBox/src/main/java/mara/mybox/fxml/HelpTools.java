@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.controller.BaseController;
@@ -14,6 +15,7 @@ import mara.mybox.data.ImageItem;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.HtmlStyles;
+import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.HtmlWriteTools;
 import mara.mybox.tools.MarkdownTools;
@@ -21,6 +23,7 @@ import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -718,7 +721,7 @@ public class HelpTools {
         return "https://www.w3.org/Graphics/SVG/";
     }
 
-    public static List<MenuItem> htmlHelps() {
+    public static List<MenuItem> htmlHelps(boolean popMenu) {
         try {
             List<MenuItem> items = new ArrayList<>();
 
@@ -809,6 +812,20 @@ public class HelpTools {
             });
             items.add(menuItem);
 
+            if (popMenu) {
+                items.add(new SeparatorMenuItem());
+
+                CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+                hoverMenu.setSelected(UserConfig.getBoolean("HtmlHelpsPopWhenMouseHovering", false));
+                hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        UserConfig.setBoolean("HtmlHelpsPopWhenMouseHovering", hoverMenu.isSelected());
+                    }
+                });
+                items.add(hoverMenu);
+            }
+
             return items;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -816,7 +833,7 @@ public class HelpTools {
         }
     }
 
-    public static List<MenuItem> rowExpressionHelps() {
+    public static List<MenuItem> rowExpressionHelps(boolean popMenu) {
         try {
             List<MenuItem> items = new ArrayList<>();
 
@@ -867,6 +884,20 @@ public class HelpTools {
             });
             items.add(menuItem);
 
+            if (popMenu) {
+                items.add(new SeparatorMenuItem());
+
+                CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+                hoverMenu.setSelected(UserConfig.getBoolean("RowExpressionsHelpsPopWhenMouseHovering", false));
+                hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        UserConfig.setBoolean("RowExpressionsHelpsPopWhenMouseHovering", hoverMenu.isSelected());
+                    }
+                });
+                items.add(hoverMenu);
+            }
+
             return items;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -874,7 +905,7 @@ public class HelpTools {
         }
     }
 
-    public static List<MenuItem> xmlHelps() {
+    public static List<MenuItem> xmlHelps(boolean popMenu) {
         try {
             List<MenuItem> items = new ArrayList<>();
 
@@ -904,6 +935,20 @@ public class HelpTools {
                 }
             });
             items.add(menuItem);
+
+            if (popMenu) {
+                items.add(new SeparatorMenuItem());
+
+                CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+                hoverMenu.setSelected(UserConfig.getBoolean("XmlHelpsPopWhenMouseHovering", false));
+                hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        UserConfig.setBoolean("XmlHelpsPopWhenMouseHovering", hoverMenu.isSelected());
+                    }
+                });
+                items.add(hoverMenu);
+            }
 
             return items;
         } catch (Exception e) {

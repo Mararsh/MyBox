@@ -23,6 +23,33 @@ License:    Apache License Version 2.0
     <children>
         <FlowPane fx:id="buttonsPane" alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="200.0" vgap="2.0">
             <children>
+            <CheckBox fx:id="coordinateCheck" mnemonicParsing="false">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconLocation.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </CheckBox>
+            <CheckBox fx:id="rulerXCheck" mnemonicParsing="false">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconXRuler.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </CheckBox>
+            <CheckBox fx:id="gridCheck" mnemonicParsing="false">
+               <graphic>
+                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconGrid.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </CheckBox>
                 <CheckBox fx:id="selectAreaCheck" mnemonicParsing="false">
                     <graphic>
                         <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -32,6 +59,15 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </CheckBox>
+            <Button fx:id="selectAllButton" mnemonicParsing="false" onAction="#selectAllAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconSelectAll.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
                 <Button fx:id="menuButton" mnemonicParsing="false" onAction="#menuAction">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -41,6 +77,15 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </Button>
+            <Button fx:id="popButton" mnemonicParsing="false" onAction="#popAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconPop.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
                 <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -153,6 +198,6 @@ License:    Apache License Version 2.0
                 </ScrollPane>
             </children>
         </VBox>
-        <Label fx:id="imageLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity"  wrapText="true" />
+        <Label fx:id="imageLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" />
     </children>
 </VBox>

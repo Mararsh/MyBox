@@ -30,19 +30,20 @@ import mara.mybox.value.UserConfig;
  */
 public class ImageRepeatController extends ImageViewerController {
 
-    protected int scaleWidth, scaleHeight, canvasWidth, canvasHeight, repeatH, repeatV,
-            interval, margin;
+    protected int canvasWidth, canvasHeight, repeatH, repeatV, interval, margin;
 
     @FXML
-    protected ImageRepeatResultController repeatController;
+    protected ControlImageSize sizeController;
     @FXML
-    protected Tab imageTab, repeatTab, saveTab;
+    protected ImageViewerController scaleController, repeatController;
+    @FXML
+    protected Tab imageTab, scaleTab, repeatTab, saveTab;
     @FXML
     protected ToggleGroup repeatGroup;
     @FXML
     protected RadioButton repeatRadio, tileRadio;
     @FXML
-    protected TextField widthInput, heightInput, horizontalInput, veriticalInput;
+    protected TextField horizontalInput, veriticalInput;
     @FXML
     protected ComboBox<String> intervalSelector, marginSelector;
     @FXML
@@ -62,10 +63,12 @@ public class ImageRepeatController extends ImageViewerController {
         try {
             super.initControls();
 
-            repeatController.sourceController = this;
             repeatController.formatController = formatController;
 
+            sizeController.setParameters(scaleController);
+
             saveTab.disableProperty().bind(repeatController.imageView.imageProperty().isNull());
+            repeatTab.disableProperty().bind(scaleController.imageView.imageProperty().isNull());
 
             checkRepeatType();
             repeatGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -86,21 +89,26 @@ public class ImageRepeatController extends ImageViewerController {
             loadNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    recoverSize();
                     repeatController.loadImage(null);
-                    tabPane.getSelectionModel().select(imageTab);
+                    tabPane.getSelectionModel().select(scaleTab);
                 }
             });
 
             rectDrawnNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    originalSize();
+                    recoverSize();
                 }
             });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    public Image sourceImage() {
+        return scaleController.scopeImage();
     }
 
     public void checkRepeatType() {
@@ -110,7 +118,7 @@ public class ImageRepeatController extends ImageViewerController {
             veriticalInput.setText(UserConfig.getInt(baseName + "RepeatVertivcal", 3) + "");
         } else {
             repeatLabel.setText(message("CanvasSize"));
-            Image srcImage = scopeImage();
+            Image srcImage = sourceImage();
             horizontalInput.setText(UserConfig.getInt(baseName + "CanvasHorizontal",
                     srcImage == null ? 500 : (int) srcImage.getWidth() * 3) + "");
             veriticalInput.setText(UserConfig.getInt(baseName + "CanvasVertical",
@@ -119,55 +127,18 @@ public class ImageRepeatController extends ImageViewerController {
     }
 
     @FXML
-    public void originalSize() {
-        Image srcImage = scopeImage();
-        if (srcImage == null) {
-            return;
-        }
-        widthInput.setText((int) srcImage.getWidth() + "");
-        heightInput.setText((int) srcImage.getHeight() + "");
+    public void okSize() {
+        sizeController.scale();
+    }
+
+    @FXML
+    public void recoverSize() {
+        scaleController.loadImage(scopeImage());
     }
 
     @FXML
     @Override
     public void okAction() {
-        Image srcImage = scopeImage();
-        if (srcImage == null) {
-            popError(message("NoData") + ": " + message("Image"));
-            return;
-        }
-        try {
-            int v = Integer.parseInt(widthInput.getText());
-            if (v > 0) {
-                scaleWidth = v;
-                widthInput.setStyle(null);
-                UserConfig.setInt(baseName + "ScaleWidth", scaleWidth);
-            } else {
-                widthInput.setStyle(UserConfig.badStyle());
-                popError(message("InvalidParameter") + ": " + message("Width"));
-                return;
-            }
-        } catch (Exception e) {
-            widthInput.setStyle(UserConfig.badStyle());
-            popError(message("InvalidParameter") + ": " + message("Width"));
-            return;
-        }
-        try {
-            int v = Integer.parseInt(heightInput.getText());
-            if (v > 0) {
-                scaleHeight = v;
-                heightInput.setStyle(null);
-                UserConfig.setInt(baseName + "ScaleHeight", scaleHeight);
-            } else {
-                heightInput.setStyle(UserConfig.badStyle());
-                popError(message("InvalidParameter") + ": " + message("Height"));
-                return;
-            }
-        } catch (Exception e) {
-            heightInput.setStyle(UserConfig.badStyle());
-            popError(message("InvalidParameter") + ": " + message("Height"));
-            return;
-        }
         if (repeatRadio.isSelected()) {
             try {
                 int v = Integer.parseInt(horizontalInput.getText());
@@ -277,12 +248,17 @@ public class ImageRepeatController extends ImageViewerController {
 
             @Override
             protected boolean handle() {
-                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(scopeImage(), null);
+                Image srcImage = sourceImage();
+                if (srcImage == null) {
+                    error = message("NoData") + ": " + message("Image");
+                    return false;
+                }
+                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(srcImage, null);
                 if (repeatRadio.isSelected()) {
-                    bufferedImage = RepeatTools.repeat(bufferedImage, scaleWidth, scaleHeight,
+                    bufferedImage = RepeatTools.repeat(bufferedImage,
                             repeatH, repeatV, interval, margin, colorSetController.awtColor());
                 } else {
-                    bufferedImage = RepeatTools.tile(bufferedImage, scaleWidth, scaleHeight,
+                    bufferedImage = RepeatTools.tile(bufferedImage,
                             canvasWidth, canvasHeight, interval, margin, colorSetController.awtColor());
                 }
                 if (bufferedImage == null) {

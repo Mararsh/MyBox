@@ -356,11 +356,11 @@ public class SvgEditorController extends XmlEditorController {
 
             items.add(new SeparatorMenuItem());
 
-            items.addAll(HelpTools.xmlHelps());
+            items.addAll(HelpTools.xmlHelps(false));
 
             items.add(new SeparatorMenuItem());
 
-            items.addAll(HelpTools.htmlHelps());
+            items.addAll(HelpTools.htmlHelps(false));
 
             items.add(new SeparatorMenuItem());
 
