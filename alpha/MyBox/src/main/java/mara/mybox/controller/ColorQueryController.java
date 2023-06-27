@@ -11,6 +11,7 @@ import mara.mybox.db.data.ColorData;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -141,6 +142,18 @@ public class ColorQueryController extends BaseController {
             return;
         }
         ColorsManageController.addOneColor(color.getColor());
+    }
+
+    @FXML
+    protected void popHelps(Event event) {
+        if (UserConfig.getBoolean("ColorHelpsPopWhenMouseHovering", false)) {
+            showHelps(event);
+        }
+    }
+
+    @FXML
+    protected void showHelps(Event event) {
+        popEventMenu(event, HelpTools.colorHelps(true));
     }
 
     @Override

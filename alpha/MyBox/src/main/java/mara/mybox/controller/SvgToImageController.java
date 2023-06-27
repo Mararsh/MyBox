@@ -4,6 +4,7 @@ import java.io.File;
 import javafx.fxml.FXML;
 import mara.mybox.bufferedimage.ImageAttributes;
 import mara.mybox.bufferedimage.ImageConvertTools;
+import mara.mybox.data.SVG;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.FileNameTools;
@@ -63,7 +64,7 @@ public class SvgToImageController extends BaseBatchFileController {
             return message("Skip");
         }
         String svgText = TextFileTools.readTexts(srcFile);
-        svgOptionsController.checkValues(XmlTools.doc(this, svgText));
+        svgOptionsController.checkValues(new SVG(XmlTools.doc(this, svgText)));
         File tmpFile = SvgTools.textToImageFile(this, svgText,
                 svgOptionsController.width,
                 svgOptionsController.height,

@@ -1,9 +1,11 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.TreeItem;
+import mara.mybox.data.SVG;
 import mara.mybox.data.XmlTreeNode;
+import static mara.mybox.data.XmlTreeNode.NodeType.Document;
+import static mara.mybox.data.XmlTreeNode.NodeType.Element;
 
 /**
  * @Author Mara
@@ -12,21 +14,36 @@ import mara.mybox.data.XmlTreeNode;
  */
 public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
 
-    @FXML
-    protected Button drawButton;
+    protected SvgEditorController editor;
 
     @Override
     public void editNode(TreeItem<XmlTreeNode> item) {
-        drawButton.setDisable(false);
         super.editNode(item);
-        if (treeItem == null) {
-            return;
+        String xml = null;
+        if (treeItem != null) {
+            SVG svg = editor.treeController.svg;
+            if (svg != null) {
+                XmlTreeNode currentTreeNode = treeItem.getValue();
+                if (currentTreeNode != null) {
+                    switch (currentTreeNode.getType()) {
+                        case Document:
+                        case DocumentType:
+                            xml = editor.xmlByText();
+                            break;
+                        case Element:
+                            String name = currentTreeNode.getNode().getNodeName();
+                            if (name.equalsIgnoreCase("svg")) {
+                                xml = editor.xmlByText();
+                            } else {
+                                xml = svg.nodeSVG(currentTreeNode.getNode());
+                            }
+                            break;
+                        default:
+                    }
+                }
+            }
         }
-        XmlTreeNode currentTreeNode = treeItem.getValue();
-        if (currentTreeNode == null) {
-            return;
-        }
-        drawButton.setDisable(!currentTreeNode.canDraw());
+        editor.loadHtml(xml);
     }
 
     @FXML

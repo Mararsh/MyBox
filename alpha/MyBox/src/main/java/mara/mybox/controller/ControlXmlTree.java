@@ -214,7 +214,7 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
     }
 
     public String xml(Node node) {
-        return SvgTools.transform(node);
+        return XmlTools.transform(node);
     }
 
 

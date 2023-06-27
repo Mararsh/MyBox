@@ -38,6 +38,7 @@ import mara.mybox.db.table.TableColorPaletteName;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fximage.PaletteTools;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
@@ -826,6 +827,19 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
         HtmlPopController.openHtml(selected.html());
         return true;
     }
+
+    @FXML
+    protected void popHelps(Event event) {
+        if (UserConfig.getBoolean("ColorHelpsPopWhenMouseHovering", false)) {
+            showHelps(event);
+        }
+    }
+
+    @FXML
+    protected void showHelps(Event event) {
+        popEventMenu(event, HelpTools.colorHelps(true));
+    }
+
 
     /*
         static methods

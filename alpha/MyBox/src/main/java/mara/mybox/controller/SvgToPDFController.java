@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.io.File;
 import javafx.fxml.FXML;
+import mara.mybox.data.SVG;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.SvgTools;
@@ -44,7 +45,7 @@ public class SvgToPDFController extends BaseBatchFileController {
             return message("Skip");
         }
         String svgText = TextFileTools.readTexts(srcFile);
-        svgOptionsController.checkValues(XmlTools.doc(this, svgText));
+        svgOptionsController.checkValues(new SVG(XmlTools.doc(this, svgText)));
         File tmpFile = SvgTools.textToPDF(this, svgText,
                 svgOptionsController.width,
                 svgOptionsController.height,

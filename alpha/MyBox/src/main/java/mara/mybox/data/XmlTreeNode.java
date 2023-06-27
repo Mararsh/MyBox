@@ -87,14 +87,15 @@ public class XmlTreeNode {
         if (t != NodeType.Element) {
             return false;
         }
-        String name = node.getNodeName();
-        if (name == null) {
-            return false;
-        }
-        return name.equalsIgnoreCase("rect") || name.equalsIgnoreCase("circle")
-                || name.equalsIgnoreCase("ellipse") || name.equalsIgnoreCase("line")
-                || name.equalsIgnoreCase("polyline") || name.equalsIgnoreCase("polygon")
-                || name.equalsIgnoreCase("path");
+        return true;
+//        String name = node.getNodeName();
+//        if (name == null) {
+//            return false;
+//        }
+//        return name.equalsIgnoreCase("rect") || name.equalsIgnoreCase("circle")
+//                || name.equalsIgnoreCase("ellipse") || name.equalsIgnoreCase("line")
+//                || name.equalsIgnoreCase("polyline") || name.equalsIgnoreCase("polygon")
+//                || name.equalsIgnoreCase("path");
     }
 
 

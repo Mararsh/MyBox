@@ -45,15 +45,15 @@ License:    Apache License Version 2.0
                                     </VBox>
                                  </content>
                               </TitledPane>
-                              <TitledPane layoutX="10.0" layoutY="69.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Options">
+                              <TitledPane layoutX="10.0" layoutY="69.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Options">
                                  <content>
-                                    <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
+                                    <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" pannable="true">
                                        <content>
-                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="2.0">
                                              <children>
                                                 <Label text="%TakeEffectNextReadWrite" />
                                                 <Separator prefWidth="200.0" />
-                                                <fx:include fx:id="options" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlJsonOptions.fxml" VBox.vgrow="ALWAYS" />
+                                                <fx:include fx:id="options" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" source="ControlJsonOptions.fxml" VBox.vgrow="ALWAYS" />
                                              </children>
                                              <padding>
                                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

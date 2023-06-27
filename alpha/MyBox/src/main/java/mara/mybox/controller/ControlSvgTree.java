@@ -1,6 +1,9 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.TreeItem;
+import mara.mybox.data.SVG;
+import mara.mybox.data.XmlTreeNode;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -11,6 +14,7 @@ import mara.mybox.dev.MyBoxLog;
 public class ControlSvgTree extends ControlXmlTree {
 
     protected SvgEditorController editorController;
+    protected SVG svg;
 
     @FXML
     protected ControlSvgNodeEdit svgNodeController;
@@ -25,6 +29,19 @@ public class ControlSvgTree extends ControlXmlTree {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @Override
+    public void setRoot(TreeItem<XmlTreeNode> root) {
+        super.setRoot(root);
+        svg = new SVG(doc);
+    }
+
+    @FXML
+    @Override
+    public void clearTree() {
+        super.clearTree();
+        svg = null;
     }
 
 }

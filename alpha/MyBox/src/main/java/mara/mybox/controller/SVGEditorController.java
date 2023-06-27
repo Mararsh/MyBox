@@ -58,6 +58,7 @@ public class SvgEditorController extends XmlEditorController {
             domController = treeController;
 
             treeController.editorController = this;
+            treeController.svgNodeController.editor = this;
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -184,6 +185,15 @@ public class SvgEditorController extends XmlEditorController {
         TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
         controller.loadContents(currentXML);
         controller.requestMouse();
+    }
+
+    @FXML
+    protected void popHtml() {
+        if (currentXML == null || currentXML.isBlank()) {
+            popError(message("NoData"));
+            return;
+        }
+        HtmlPopController.openHtml(currentXML);
     }
 
     @FXML

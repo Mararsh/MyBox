@@ -18,6 +18,7 @@ import mara.mybox.db.table.TableColorPalette;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxColorTools;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
@@ -163,6 +164,18 @@ public class ColorInputController extends BaseController {
     @Override
     public void clearAction() {
         valuesArea.clear();
+    }
+
+    @FXML
+    protected void popHelps(Event event) {
+        if (UserConfig.getBoolean("ColorHelpsPopWhenMouseHovering", false)) {
+            showHelps(event);
+        }
+    }
+
+    @FXML
+    protected void showHelps(Event event) {
+        popEventMenu(event, HelpTools.colorHelps(true));
     }
 
     @FXML

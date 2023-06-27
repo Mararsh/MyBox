@@ -957,4 +957,85 @@ public class HelpTools {
         }
     }
 
+    public static List<MenuItem> colorHelps(boolean popMenu) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+
+            MenuItem menuItem = new MenuItem(message("ColorCode"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress("https://openjfx.io/javadoc/20/javafx.graphics/javafx/scene/paint/Color.html", true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("ColorSpace"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress("https://docs.oracle.com/en/java/javase/20/docs/api/java.desktop/java/awt/color/ColorSpace.html", true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("ColorModels"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress("https://docs.oracle.com/en/java/javase/20/docs/api/java.desktop/java/awt/image/ColorModel.html", true);
+                }
+            });
+            items.add(menuItem);
+
+            items.add(new SeparatorMenuItem());
+
+            menuItem = new MenuItem("sRGB");
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress("https://www.w3.org/Graphics/Color/sRGB.html", true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("RYBComplementaryColor"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress("https://blog.csdn.net/weixin_44938037/article/details/90599711", true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("AboutColor"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openFile(aboutColor());
+                }
+            });
+            items.add(menuItem);
+
+            if (popMenu) {
+                items.add(new SeparatorMenuItem());
+
+                CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+                hoverMenu.setSelected(UserConfig.getBoolean("ColorHelpsPopWhenMouseHovering", false));
+                hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        UserConfig.setBoolean("ColorHelpsPopWhenMouseHovering", hoverMenu.isSelected());
+                    }
+                });
+                items.add(hoverMenu);
+            }
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
 }

@@ -3,8 +3,9 @@ package mara.mybox.controller;
 import java.awt.Rectangle;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
+import mara.mybox.data.SVG;
 import mara.mybox.dev.MyBoxLog;
-import org.w3c.dom.*;
+import mara.mybox.tools.SvgTools;
 
 /**
  * @Author Mara
@@ -19,8 +20,8 @@ public class ControlSvgTranscode extends BaseController {
     @FXML
     protected TextField widthInput, heightInput, areaInput;
 
-    public void setDoc(Document doc) {
-        checkDoc(doc);
+    public void setSVG(SVG svg) {
+        checkSVG(svg);
         if (docWidth > 0) {
             widthInput.setText(docWidth + "");
         }
@@ -28,54 +29,19 @@ public class ControlSvgTranscode extends BaseController {
             heightInput.setText(docHeight + "");
         }
         if (docArea != null) {
-            areaInput.setText((int) docArea.getX() + " " + (int) docArea.getY()
-                    + " " + (int) docArea.getWidth() + " " + (int) docArea.getWidth());
+            areaInput.setText(SvgTools.viewBoxString(docArea));
         }
     }
 
-    public void checkDoc(Document doc) {
+    public void checkSVG(SVG svg) {
         try {
             docWidth = 0f;
             docHeight = 0f;
             docArea = null;
-            if (doc == null) {
-                return;
-            }
-            NodeList svglist = doc.getElementsByTagName("svg");
-            if (svglist == null || svglist.getLength() == 0) {
-                return;
-            }
-            NamedNodeMap attrs = svglist.item(0).getAttributes();
-            if (attrs != null) {
-                for (int i = 0; i < attrs.getLength(); i++) {
-                    Node attr = attrs.item(i);
-                    String name = attr.getNodeName().toLowerCase();
-                    String value = attr.getNodeValue();
-                    switch (name) {
-                        case "width":
-                             try {
-                            docWidth = Float.parseFloat(value);
-                        } catch (Exception e) {
-                        }
-                        break;
-                        case "height":
-                            try {
-                            docHeight = Float.parseFloat(value);
-                        } catch (Exception e) {
-                        }
-                        break;
-                        case "viewbox":
-                            try {
-                            String[] v = value.split(" ");
-                            if (v != null && v.length >= 4) {
-                                docArea = new Rectangle(Integer.parseInt(v[0]), Integer.parseInt(v[1]),
-                                        Integer.parseInt(v[2]), Integer.parseInt(v[3]));
-                            }
-                        } catch (Exception e) {
-                        }
-                        break;
-                    }
-                }
+            if (svg != null) {
+                docWidth = svg.getWidth();
+                docHeight = svg.getHeight();
+                docArea = svg.getViewBox();
             }
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -93,15 +59,7 @@ public class ControlSvgTranscode extends BaseController {
             inputHeight = Float.parseFloat(heightInput.getText());
         } catch (Exception e) {
         }
-        inputArea = null;
-        try {
-            String[] v = areaInput.getText().split(" ");
-            if (v != null && v.length >= 4) {
-                inputArea = new Rectangle(Integer.parseInt(v[0]), Integer.parseInt(v[1]),
-                        Integer.parseInt(v[2]), Integer.parseInt(v[3]));
-            }
-        } catch (Exception e) {
-        }
+        inputArea = SvgTools.viewBox(areaInput.getText());
     }
 
     public void checkValues() {
@@ -110,8 +68,8 @@ public class ControlSvgTranscode extends BaseController {
         area = inputArea == null ? inputArea : docArea;
     }
 
-    public void checkValues(Document doc) {
-        checkDoc(doc);
+    public void checkValues(SVG svg) {
+        checkSVG(svg);
         checkValues();
     }
 

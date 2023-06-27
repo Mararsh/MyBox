@@ -38,7 +38,7 @@ public class SvgTranscodeOptionsController extends BaseChildController {
             this.editor = editor;
             this.target = target;
 
-            optionsController.setDoc(editor.treeController.doc);
+            optionsController.setSVG(editor.treeController.svg);
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

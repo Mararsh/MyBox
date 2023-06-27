@@ -4,20 +4,14 @@ import java.awt.Rectangle;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import mara.mybox.controller.BaseController;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.value.UserConfig;
 import org.apache.batik.anim.dom.SVGDOMImplementation;
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
@@ -26,7 +20,6 @@ import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.fop.svg.PDFTranscoder;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 
 /**
  * @Author Mara
@@ -35,55 +28,6 @@ import org.w3c.dom.Node;
  */
 public class SvgTools {
 
-    /*
-        text
-     */
-    public static String transform(Node node) {
-        if (node == null) {
-            return null;
-        }
-        return transform(node, UserConfig.getBoolean("XmlTransformerIndent", true));
-    }
-
-    public static String transform(Node node, boolean indent) {
-        if (node == null) {
-            return null;
-        }
-        String encoding = node instanceof Document ? ((Document) node).getXmlEncoding() : node.getOwnerDocument().getXmlEncoding();
-        return transform(node, encoding, indent);
-    }
-
-    public static String transform(Node node, String encoding, boolean indent) {
-        if (node == null) {
-            return null;
-        }
-        if (encoding == null) {
-            encoding = "utf-8";
-        }
-        try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
-            if (XmlTools.transformer == null) {
-                XmlTools.transformer = TransformerFactory.newInstance().newTransformer();
-                XmlTools.transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-                XmlTools.transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
-            }
-            XmlTools.transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, node instanceof Document ? "no" : "yes");
-            XmlTools.transformer.setOutputProperty(OutputKeys.ENCODING, encoding);
-            XmlTools.transformer.setOutputProperty(OutputKeys.INDENT, indent ? "yes" : "no");
-            StreamResult streamResult = new StreamResult();
-            streamResult.setOutputStream(os);
-            XmlTools.transformer.transform(new DOMSource(node), streamResult);
-            os.flush();
-            os.close();
-            String s = os.toString(encoding);
-            if (indent) {
-                s = s.replaceAll("><", ">\n<");
-            }
-            return s;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
-    }
 
     /*
         image
@@ -181,6 +125,32 @@ public class SvgTools {
         }
         FileDeleteTools.delete(tmpFile);
         return null;
+    }
+
+    /*
+        values
+     */
+    public static Rectangle viewBox(String value) {
+        Rectangle rect = null;
+        try {
+            String[] v = value.trim().split("\\s+");
+            if (v != null && v.length >= 4) {
+                rect = new Rectangle(Integer.parseInt(v[0]), Integer.parseInt(v[1]),
+                        Integer.parseInt(v[2]), Integer.parseInt(v[3]));
+            }
+        } catch (Exception e) {
+        }
+        return rect;
+    }
+
+    public static String viewBoxString(Rectangle rect) {
+        if (rect == null) {
+            return null;
+        }
+        return (int) rect.getX() + " "
+                + (int) rect.getY() + " "
+                + (int) rect.getWidth() + " "
+                + (int) rect.getHeight();
     }
 
     /*

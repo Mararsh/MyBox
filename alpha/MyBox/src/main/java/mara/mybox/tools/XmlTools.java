@@ -1,5 +1,6 @@
 package mara.mybox.tools;
 
+import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -7,7 +8,11 @@ import java.util.List;
 import javafx.application.Platform;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.BaseLogs;
 import mara.mybox.data.XmlTreeNode;
@@ -437,6 +442,56 @@ public class XmlTools {
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    /*
+        transform
+     */
+    public static String transform(Node node) {
+        if (node == null) {
+            return null;
+        }
+        return transform(node, UserConfig.getBoolean("XmlTransformerIndent", true));
+    }
+
+    public static String transform(Node node, boolean indent) {
+        if (node == null) {
+            return null;
+        }
+        String encoding = node instanceof Document ? ((Document) node).getXmlEncoding() : node.getOwnerDocument().getXmlEncoding();
+        return transform(node, encoding, indent);
+    }
+
+    public static String transform(Node node, String encoding, boolean indent) {
+        if (node == null) {
+            return null;
+        }
+        if (encoding == null) {
+            encoding = "utf-8";
+        }
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+            if (XmlTools.transformer == null) {
+                XmlTools.transformer = TransformerFactory.newInstance().newTransformer();
+                XmlTools.transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+                XmlTools.transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
+            }
+            XmlTools.transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, node instanceof Document ? "no" : "yes");
+            XmlTools.transformer.setOutputProperty(OutputKeys.ENCODING, encoding);
+            XmlTools.transformer.setOutputProperty(OutputKeys.INDENT, indent ? "yes" : "no");
+            StreamResult streamResult = new StreamResult();
+            streamResult.setOutputStream(os);
+            XmlTools.transformer.transform(new DOMSource(node), streamResult);
+            os.flush();
+            os.close();
+            String s = os.toString(encoding);
+            if (indent) {
+                s = s.replaceAll("><", ">\n<");
+            }
+            return s;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
         }
     }
 
