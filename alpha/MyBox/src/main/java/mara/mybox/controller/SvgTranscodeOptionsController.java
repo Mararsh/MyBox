@@ -2,6 +2,7 @@ package mara.mybox.controller;
 
 import java.io.File;
 import javafx.fxml.FXML;
+import mara.mybox.data.SVG;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.FileDeleteTools;
@@ -38,7 +39,7 @@ public class SvgTranscodeOptionsController extends BaseChildController {
             this.editor = editor;
             this.target = target;
 
-            optionsController.setSVG(editor.treeController.svg);
+            optionsController.setSVG(new SVG(editor.treeController.doc));
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

@@ -17,7 +17,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
@@ -110,16 +109,16 @@ License:    Apache License Version 2.0
                   <VBox fx:id="valueBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                      <children>
                         <Label text="%Value" />
-                        <TextArea fx:id="valueArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
+                        <TextArea fx:id="valueArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" VBox.vgrow="ALWAYS" />
                      </children>
                   </VBox>
                </content>
             </Tab>
           <Tab text="attr">
                <content>
-                  <VBox fx:id="attrBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                  <VBox fx:id="attrBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" spacing="2.0">
                      <children>
-                        <FlowPane hgap="2.0" prefWrapLength="200.0" vgap="2.0">
+                        <HBox alignment="CENTER_LEFT" spacing="2.0">
                            <children>
                               <Button fx:id="clearAttributesButton" mnemonicParsing="false" onAction="#clearAttributes">
                                  <graphic>
@@ -148,14 +147,70 @@ License:    Apache License Version 2.0
                                     </ImageView>
                                  </graphic>
                               </Button>
+                              <Label maxWidth="1.7976931348623157E308" text="%Attributes" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="examplesAttrButton" mnemonicParsing="false" onAction="#showExamplesAttrMenu" onMouseEntered="#popExamplesAttrMenu">
+                                 <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconExamples.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
                            </children>
-                        </FlowPane>
+                        </HBox>
                         <TableView fx:id="attributesTable" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                            <columns>
                               <TableColumn fx:id="attrColumn" prefWidth="120.0" text="%Attribute" />
                               <TableColumn fx:id="valueColumn" prefWidth="200.0" text="%Value" />
                            </columns>
                         </TableView>
+                     </children>
+                  </VBox>
+               </content>
+            </Tab>
+            <Tab text="path">
+               <content>
+                  <VBox fx:id="pathBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="2.0">
+                           <children>
+                              <Label maxWidth="1.7976931348623157E308" text="%SvgPath" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="examplesPathButton" mnemonicParsing="false" onAction="#showExamplesPathMenu" onMouseEntered="#popExamplesPathMenu">
+                                 <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconExamples.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </HBox>
+                        <TextArea fx:id="pathArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" wrapText="true" VBox.vgrow="ALWAYS" />
+                     </children>
+                  </VBox>
+               </content>
+            </Tab>
+            <Tab text="style">
+               <content>
+                  <VBox fx:id="styleBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="2.0">
+                           <children>
+                              <Label maxWidth="1.7976931348623157E308" text="%Style" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="examplesStyleButton" mnemonicParsing="false" onAction="#showExamplesStyleMenu" onMouseEntered="#popExamplesStyleMenu">
+                                 <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconExamples.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </HBox>
+                        <TextArea fx:id="styleArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" wrapText="true" VBox.vgrow="ALWAYS" />
                      </children>
                   </VBox>
                </content>

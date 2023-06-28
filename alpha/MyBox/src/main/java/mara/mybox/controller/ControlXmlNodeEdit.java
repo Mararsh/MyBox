@@ -7,7 +7,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.XmlTreeNode;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.tools.SvgTools;
 import mara.mybox.tools.XmlTools;
 import static mara.mybox.value.Languages.message;
 import org.w3c.dom.Document;
@@ -74,12 +73,7 @@ public class ControlXmlNodeEdit extends ControlXmlNodeBase {
                 VBox.setVgrow(valueArea, Priority.ALWAYS);
                 break;
             case Node.ELEMENT_NODE:
-                NamedNodeMap attrs = node.getAttributes();
-                if (attrs != null) {
-                    for (int i = 0; i < attrs.getLength(); i++) {
-                        attributesData.add(attrs.item(i));
-                    }
-                }
+                setAttributes();
                 setBox.getChildren().add(attrBox);
                 VBox.setVgrow(attrBox, Priority.ALWAYS);
                 VBox.setVgrow(attributesTable, Priority.ALWAYS);
@@ -108,6 +102,18 @@ public class ControlXmlNodeEdit extends ControlXmlNodeBase {
         }
         refreshStyle(setBox);
         thisPane.setDisable(false);
+    }
+
+    public void setAttributes() {
+        if (node == null) {
+            return;
+        }
+        NamedNodeMap attrs = node.getAttributes();
+        if (attrs != null) {
+            for (int i = 0; i < attrs.getLength(); i++) {
+                attributesData.add(attrs.item(i));
+            }
+        }
     }
 
     public Node pickValue() {
@@ -175,6 +181,7 @@ public class ControlXmlNodeEdit extends ControlXmlNodeBase {
                     .setTitle(updatedNode.getNodeName())
                     .setValue(XmlTools.value(updatedNode));
             treeItem.setValue(updatedTreeNode);
+            editNode(treeItem);
             treeController.xmlEditor.domChanged(true);
             treeController.xmlEditor.popInformation(message("UpdateSuccessfully"));
         } catch (Exception e) {
