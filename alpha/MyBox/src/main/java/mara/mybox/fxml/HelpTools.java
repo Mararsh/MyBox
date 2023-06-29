@@ -2,6 +2,7 @@ package mara.mybox.fxml;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -957,6 +958,68 @@ public class HelpTools {
         }
     }
 
+    public static List<MenuItem> svgHelps(boolean popMenu) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+
+            MenuItem menuItem = new MenuItem(message("SvgTutorial") + " - " + message("English"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.svgEnLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("SvgTutorial") + " - " + message("Chinese"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.svgZhLink(), true);
+                }
+            });
+            items.add(menuItem);
+
+            menuItem = new MenuItem(message("SvgSpecification"));
+            menuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    WebBrowserController.openAddress(HelpTools.svgSpecification(), true);
+                }
+            });
+            items.add(menuItem);
+
+            items.add(new SeparatorMenuItem());
+
+            items.addAll(HelpTools.xmlHelps(false));
+
+            items.add(new SeparatorMenuItem());
+
+            items.addAll(HelpTools.htmlHelps(false));
+
+            items.add(new SeparatorMenuItem());
+
+            if (popMenu) {
+                items.add(new SeparatorMenuItem());
+
+                CheckMenuItem hoverMenu = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+                hoverMenu.setSelected(UserConfig.getBoolean("SvgHelpsPopWhenMouseHovering", false));
+                hoverMenu.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        UserConfig.setBoolean("SvgHelpsPopWhenMouseHovering", hoverMenu.isSelected());
+                    }
+                });
+                items.add(hoverMenu);
+            }
+
+            return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
     public static List<MenuItem> colorHelps(boolean popMenu) {
         try {
             List<MenuItem> items = new ArrayList<>();
@@ -1032,6 +1095,63 @@ public class HelpTools {
             }
 
             return items;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static LinkedHashMap<String, String> svgPathExamples() {
+        try {
+            LinkedHashMap<String, String> values = new LinkedHashMap<>();
+            values.put(message("SvgPathM"), "M x,y; ");
+            values.put(message("SvgPathm"), "m dx,dy; ");
+            values.put(message("SvgPathL"), "L x,y; ");
+            values.put(message("SvgPathl"), "l dx,dy; ");
+            values.put(message("SvgPathH"), "H x; ");
+            values.put(message("SvgPathh"), "h dx; ");
+            values.put(message("SvgPathV"), "V y; ");
+            values.put(message("SvgPathv"), "v dy; ");
+            values.put(message("SvgPathQ"), "Q x1,y1 x,y; ");
+            values.put(message("SvgPathq"), "q dx1,dy1 dx,dy; ");
+            values.put(message("SvgPathT"), "T x,y; ");
+            values.put(message("SvgPatht"), "t dx,dy; ");
+            values.put(message("SvgPathC"), "C x1,y1 x2,y2 x,y; ");
+            values.put(message("SvgPathc"), "c dx1,dy1 dx2,dy2 dx,dy; ");
+            values.put(message("SvgPathS"), "S x2,y2 x,y; ");
+            values.put(message("SvgPaths"), "s dx2,dy2 dx,dy; ");
+            values.put(message("SvgPathA"), "A rx ry angle large-arc-flag sweep-flag x,y; ");
+            values.put(message("SvgPatha"), "s rx ry angle large-arc-flag sweep-flag x,y; ");
+            values.put(message("SvgPathZ"), "Z; ");
+
+            return values;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
+        }
+    }
+
+    public static LinkedHashMap<String, String> svgStyleExamples() {
+        try {
+            LinkedHashMap<String, String> values = new LinkedHashMap<>();
+            values.put(message("FilledColor") + " - " + message("ColorCode"), "fill: #CCCCCC; ");
+            values.put(message("FilledColor") + " - " + message("Name"), "fill: skyblue; ");
+            values.put(message("FilledColor") + " - HSB", "fill: hsb(0,50,100); ");
+            values.put(message("FilledColor") + " - " + message("None"), "fill: none; ");
+            values.put(message("StrokeColor") + " - " + message("ColorCode"), "stroke: black; ");
+            values.put(message("StrokeColor") + " - RGB", "stroke: rgb(0,128,0); ");
+            values.put(message("StrokeWidth"), "stroke-width: 2; ");
+            values.put(message("StrokeLinecap") + " - " + message("Butt"), "stroke-linecap: butt; ");
+            values.put(message("StrokeLinecap") + " - " + message("Round"), "stroke-linecap: round; ");
+            values.put(message("StrokeLinecap") + " - " + message("SquareShape"), "stroke-linecap: square; ");
+            values.put(message("StrokeDasharray"), "stroke-dasharray: 5,5; ");
+            values.put(message("StrokeDasharray") + " ", "stroke-dasharray: 20,10,5,5,5,10; ");
+            values.put(message("FontSize"), "font-size: 15px; ");
+            values.put(message("FontFamily"), "font-family: sans-serif; ");
+            values.put(message("Color"), "color: #6900ff; ");
+            values.put(message("BackgroundColor"), "background: #bae498; ");
+
+            return values;
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
             return null;

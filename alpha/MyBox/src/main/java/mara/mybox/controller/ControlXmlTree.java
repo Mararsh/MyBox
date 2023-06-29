@@ -18,7 +18,6 @@ import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.TextClipboardTools;
 import mara.mybox.fxml.style.StyleTools;
-import mara.mybox.tools.SvgTools;
 import mara.mybox.tools.XmlTools;
 import static mara.mybox.value.Languages.message;
 import org.w3c.dom.Document;
@@ -256,7 +255,18 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
 
         items.add(new SeparatorMenuItem());
 
-        menu = new MenuItem(message("AddNode"), StyleTools.getIconImageView("iconAdd.png"));
+        items.addAll(modifyMenus(treeItem));
+
+        return items;
+    }
+
+    public List<MenuItem> modifyMenus(TreeItem<XmlTreeNode> treeItem) {
+        if (treeItem == null) {
+            return null;
+        }
+        List<MenuItem> items = new ArrayList<>();
+
+        MenuItem menu = new MenuItem(message("AddNode"), StyleTools.getIconImageView("iconAdd.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             XmlAddNodeController.open(this, treeItem);
         });

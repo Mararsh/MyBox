@@ -1392,33 +1392,4 @@ public class PopTools {
         }
     }
 
-    public static void popSvgPathExamples(BaseController parent, TextInputControl input, Event event) {
-        try {
-            LinkedHashMap<String, String> values = new LinkedHashMap<>();
-            values.put(message("SvgPathM"), "M x,y; ");
-            values.put(message("SvgPathm"), "m dx,dy; ");
-            values.put(message("SvgPathL"), "L x,y; ");
-            values.put(message("SvgPathl"), "l dx,dy; ");
-            values.put(message("SvgPathH"), "H x; ");
-            values.put(message("SvgPathh"), "h dx; ");
-            values.put(message("SvgPathV"), "V y; ");
-            values.put(message("SvgPathv"), "v dy; ");
-            values.put(message("SvgPathQ"), "Q x1,y1 x,y; ");
-            values.put(message("SvgPathq"), "q dx1,dy1 dx,dy; ");
-            values.put(message("SvgPathT"), "T x,y; ");
-            values.put(message("SvgPatht"), "t dx,dy; ");
-            values.put(message("SvgPathC"), "C x1,y1 x2,y2 x,y; ");
-            values.put(message("SvgPathc"), "c dx1,dy1 dx2,dy2 dx,dy; ");
-            values.put(message("SvgPathS"), "S x2,y2 x,y; ");
-            values.put(message("SvgPaths"), "s dx2,dy2 dx,dy; ");
-            values.put(message("SvgPathA"), "A rx ry angle large-arc-flag sweep-flag x,y; ");
-            values.put(message("SvgPatha"), "s rx ry angle large-arc-flag sweep-flag x,y; ");
-            values.put(message("SvgPathZ"), "Z; ");
-
-            popValues(parent, input, "SvgPathExamples", values, event);
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
 }

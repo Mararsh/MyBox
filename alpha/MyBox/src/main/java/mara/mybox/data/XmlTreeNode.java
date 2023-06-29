@@ -79,23 +79,9 @@ public class XmlTreeNode {
         return XmlTools.hierarchyNumber(node);
     }
 
-    public boolean canDraw() {
-        if (node == null) {
-            return false;
-        }
+    public boolean canAddSvgElement() {
         NodeType t = XmlTools.type(node);
-        if (t != NodeType.Element) {
-            return false;
-        }
-        return true;
-//        String name = node.getNodeName();
-//        if (name == null) {
-//            return false;
-//        }
-//        return name.equalsIgnoreCase("rect") || name.equalsIgnoreCase("circle")
-//                || name.equalsIgnoreCase("ellipse") || name.equalsIgnoreCase("line")
-//                || name.equalsIgnoreCase("polyline") || name.equalsIgnoreCase("polygon")
-//                || name.equalsIgnoreCase("path");
+        return t == NodeType.Element;
     }
 
 

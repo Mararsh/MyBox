@@ -147,16 +147,6 @@ License:    Apache License Version 2.0
                                     </ImageView>
                                  </graphic>
                               </Button>
-                              <Label maxWidth="1.7976931348623157E308" text="%Attributes" HBox.hgrow="ALWAYS" />
-                              <Button fx:id="examplesAttrButton" mnemonicParsing="false" onAction="#showExamplesAttrMenu" onMouseEntered="#popExamplesAttrMenu">
-                                 <graphic>
-                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../buttons/Red/iconExamples.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
                            </children>
                         </HBox>
                         <TableView fx:id="attributesTable" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">

@@ -1,7 +1,15 @@
 package mara.mybox.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TreeItem;
+import mara.mybox.data.XmlTreeNode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.style.StyleTools;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -25,6 +33,25 @@ public class ControlSvgTree extends ControlXmlTree {
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
+    }
+
+    @Override
+    public List<MenuItem> modifyMenus(TreeItem<XmlTreeNode> treeItem) {
+        if (treeItem == null) {
+            return null;
+        }
+        List<MenuItem> items = new ArrayList<>();
+
+        MenuItem menu = new MenuItem(message("SvgAddElement"), StyleTools.getIconImageView("iconAdd.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            SvgAddElementController.open(editorController, treeItem);
+        });
+        menu.setDisable(treeItem.getValue() == null || !treeItem.getValue().canAddSvgElement());
+        items.add(menu);
+
+        items.addAll(super.modifyMenus(treeItem));
+
+        return items;
     }
 
 }

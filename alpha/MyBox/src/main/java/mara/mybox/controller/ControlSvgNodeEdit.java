@@ -10,6 +10,7 @@ import mara.mybox.data.XmlTreeNode;
 import static mara.mybox.data.XmlTreeNode.NodeType.Document;
 import static mara.mybox.data.XmlTreeNode.NodeType.Element;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.value.UserConfig;
 import org.w3c.dom.Element;
@@ -138,7 +139,7 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
 
     @FXML
     public void showExamplesPathMenu(Event event) {
-        PopTools.popSvgPathExamples(this, pathArea, event);
+        PopTools.popValues(this, pathArea, "SvgPathExamples", HelpTools.svgPathExamples(), event);
     }
 
     @FXML
@@ -150,19 +151,7 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
 
     @FXML
     public void showExamplesStyleMenu(Event event) {
-        PopTools.popSvgPathExamples(this, pathArea, event);
-    }
-
-    @FXML
-    public void popExamplesAttrMenu(Event event) {
-        if (UserConfig.getBoolean("SvgAttrExamplesPopWhenMouseHovering", false)) {
-            showExamplesAttrMenu(event);
-        }
-    }
-
-    @FXML
-    public void showExamplesAttrMenu(Event event) {
-        PopTools.popSvgPathExamples(this, pathArea, event);
+        PopTools.popValues(this, styleArea, "SvgStyleExamples", HelpTools.svgStyleExamples(), event);
     }
 
 }

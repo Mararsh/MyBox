@@ -147,7 +147,7 @@ public class Fxmls {
     public static final String ImageManufactureBatchMarginsFxml = "/fxml/ImageManufactureBatchMargins.fxml";
 
     public static final String SvgEditorFxml = "/fxml/SvgEditor.fxml";
-    public static final String SvgElementEditFxml = "/fxml/SvgElementEdit.fxml";
+    public static final String SvgAddElementFxml = "/fxml/SvgAddElement.fxml";
     public static final String SvgTypesettingFxml = "/fxml/SvgTypesetting.fxml";
     public static final String SvgToImageFxml = "/fxml/SvgToImage.fxml";
     public static final String SvgToPDFFxml = "/fxml/SvgToPDF.fxml";
