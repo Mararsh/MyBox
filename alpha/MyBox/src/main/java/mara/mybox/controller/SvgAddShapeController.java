@@ -31,7 +31,7 @@ import org.w3c.dom.Node;
  * @CreateDate 2023-6-29
  * @License Apache License Version 2.0
  */
-public class SvgAddElementController extends BaseChildController {
+public class SvgAddShapeController extends BaseChildController {
 
     protected SvgEditorController editor;
     protected TreeItem<XmlTreeNode> treeItem;
@@ -56,8 +56,8 @@ public class SvgAddElementController extends BaseChildController {
     @FXML
     protected ComboBox<String> strokeWidthSelector;
 
-    public SvgAddElementController() {
-        baseTitle = message("SvgAddElement");
+    public SvgAddShapeController() {
+        baseTitle = message("SvgAddShape");
     }
 
     @Override
@@ -247,9 +247,9 @@ public class SvgAddElementController extends BaseChildController {
     /*
         static methods
      */
-    public static SvgAddElementController open(SvgEditorController editorController, TreeItem<XmlTreeNode> item) {
-        SvgAddElementController controller = (SvgAddElementController) WindowTools.openChildStage(
-                editorController.getMyWindow(), Fxmls.SvgAddElementFxml);
+    public static SvgAddShapeController open(SvgEditorController editorController, TreeItem<XmlTreeNode> item) {
+        SvgAddShapeController controller = (SvgAddShapeController) WindowTools.openChildStage(
+                editorController.getMyWindow(), Fxmls.SvgAddShapeFxml);
         if (controller != null) {
             controller.setParameters(editorController, item);
             controller.requestMouse();

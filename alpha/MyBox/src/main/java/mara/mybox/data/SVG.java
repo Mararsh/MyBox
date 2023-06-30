@@ -1,9 +1,9 @@
 package mara.mybox.data;
 
 import java.awt.Rectangle;
+import java.io.File;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.SvgTools;
-import mara.mybox.tools.XmlTools;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -19,8 +19,9 @@ public class SVG {
 
     protected Document doc;
     protected Element svgNode;
-    protected float width, height;
+    protected float width, height, renderedWidth, renderedheight;
     protected Rectangle viewBox;
+    protected File imageFile;
 
     public SVG() {
         doc = null;
@@ -28,10 +29,12 @@ public class SVG {
         width = -1;
         height = -1;
         viewBox = null;
+        imageFile = null;
     }
 
     public SVG(Document doc) {
         try {
+            this.doc = doc;
             if (doc == null) {
                 return;
             }
@@ -65,34 +68,12 @@ public class SVG {
                     }
                 } catch (Exception e) {
                 }
-
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public String makeSVG(String content) {
-        if (content == null) {
-            return null;
-        }
-        String xml = "<svg xmlns=\"http://www.w3.org/2000/svg\" ";
-        if (width > 0) {
-            xml += " width=\"" + width + "\" ";
-        }
-        if (height > 0) {
-            xml += " height=\"" + height + "\" ";
-        }
-        if (viewBox != null) {
-            xml += " viewBox=\"" + SvgTools.viewBoxString(viewBox) + "\" ";
-        }
-        xml += ">\n" + content + "\n</svg>";
-        return xml;
-    }
-
-    public String nodeSVG(Node node) {
-        return makeSVG(XmlTools.transform(node, true));
-    }
 
     /*
         get

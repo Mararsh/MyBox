@@ -59,7 +59,7 @@ public class ImageAnalyseController extends ImageViewerController {
     protected long nonTransparent;
 
     @FXML
-    protected CheckBox componentsLegendCheck, grayHistCheck, redHistCheck,
+    protected CheckBox sortCheck, componentsLegendCheck, grayHistCheck, redHistCheck,
             greenHistCheck, blueHistCheck, alphaHistCheck,
             hueHistCheck, saturationHistCheck, brightnessHistCheck;
     @FXML
@@ -103,6 +103,15 @@ public class ImageAnalyseController extends ImageViewerController {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     loadData();
+                }
+            });
+
+            sortCheck.setSelected(UserConfig.getBoolean(baseName + "Sort", true));
+            sortCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> ov, Boolean oldVal, Boolean newVal) {
+                    UserConfig.setBoolean(baseName + "Sort", newVal);
+                    showColorData();
                 }
             });
 
@@ -563,19 +572,21 @@ public class ImageAnalyseController extends ImageViewerController {
                 dataRow.add(histogram[i]);
                 sort.add(dataRow);
             }
-            Collections.sort(sort, new Comparator<List<Integer>>() {
-                @Override
-                public int compare(List<Integer> v1, List<Integer> v2) {
-                    int diff = v1.get(1) - v2.get(1);
-                    if (diff == 0) {
-                        return 0;
-                    } else if (diff > 0) {
-                        return -1;
-                    } else {
-                        return 1;
+            if (sortCheck.isSelected()) {
+                Collections.sort(sort, new Comparator<List<Integer>>() {
+                    @Override
+                    public int compare(List<Integer> v1, List<Integer> v2) {
+                        int diff = v1.get(1) - v2.get(1);
+                        if (diff == 0) {
+                            return 0;
+                        } else if (diff > 0) {
+                            return -1;
+                        } else {
+                            return 1;
+                        }
                     }
-                }
-            });
+                });
+            }
             for (List<Integer> dataRow : sort) {
                 List<String> row = new ArrayList<>();
                 int value = dataRow.get(0);

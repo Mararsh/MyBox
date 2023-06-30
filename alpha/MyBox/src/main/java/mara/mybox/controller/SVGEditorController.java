@@ -3,11 +3,14 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -39,11 +42,14 @@ public class SvgEditorController extends XmlEditorController {
 
     protected WebEngine webEngine;
     protected String currentXML;
+    protected float bgOpacity;
 
     @FXML
     protected ControlSvgTree treeController;
     @FXML
     protected WebView webView;
+    @FXML
+    protected ComboBox<String> opacitySelector;
 
     public SvgEditorController() {
         baseTitle = message("SVGEditor");
@@ -89,6 +95,24 @@ public class SvgEditorController extends XmlEditorController {
             webView.setCache(false);
             webEngine = webView.getEngine();
             webEngine.setJavaScriptEnabled(true);
+
+            bgOpacity = UserConfig.getFloat(baseName + "BackgroundOpacity", 0.3f);
+            opacitySelector.getItems().addAll(
+                    "0.3", "0.1", "0.2", "0.5", "0.8", "0", "0.6", "0.4", "0.7", "0.9", "1.0"
+            );
+            opacitySelector.setValue(bgOpacity + "");
+            opacitySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        bgOpacity = Float.parseFloat(newValue);
+                        opacitySelector.getEditor().setStyle(null);
+                        treeController.svgNodeController.loadNodeHtml();
+                    } catch (Exception e) {
+                        opacitySelector.getEditor().setStyle(UserConfig.badStyle());
+                    }
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

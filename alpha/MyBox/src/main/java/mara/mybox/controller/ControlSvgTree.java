@@ -42,11 +42,11 @@ public class ControlSvgTree extends ControlXmlTree {
         }
         List<MenuItem> items = new ArrayList<>();
 
-        MenuItem menu = new MenuItem(message("SvgAddElement"), StyleTools.getIconImageView("iconAdd.png"));
+        MenuItem menu = new MenuItem(message("SvgAddShape"), StyleTools.getIconImageView("iconAdd.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
-            SvgAddElementController.open(editorController, treeItem);
+            SvgAddShapeController.open(editorController, treeItem);
         });
-        menu.setDisable(treeItem.getValue() == null || !treeItem.getValue().canAddSvgElement());
+        menu.setDisable(treeItem.getValue() == null || !treeItem.getValue().canAddSvgShape());
         items.add(menu);
 
         items.addAll(super.modifyMenus(treeItem));

@@ -79,9 +79,12 @@ public class XmlTreeNode {
         return XmlTools.hierarchyNumber(node);
     }
 
-    public boolean canAddSvgElement() {
-        NodeType t = XmlTools.type(node);
-        return t == NodeType.Element;
+    public boolean canAddSvgShape() {
+        if (XmlTools.type(node) != NodeType.Element) {
+            return false;
+        }
+        String tag = node.getNodeName();
+        return "svg".equalsIgnoreCase(tag) || "g".equalsIgnoreCase(tag);
     }
 
 

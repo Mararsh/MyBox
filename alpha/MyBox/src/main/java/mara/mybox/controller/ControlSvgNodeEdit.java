@@ -5,13 +5,14 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.VBox;
-import mara.mybox.data.SVG;
 import mara.mybox.data.XmlTreeNode;
 import static mara.mybox.data.XmlTreeNode.NodeType.Document;
+import static mara.mybox.data.XmlTreeNode.NodeType.DocumentType;
 import static mara.mybox.data.XmlTreeNode.NodeType.Element;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.tools.SvgTools;
 import mara.mybox.value.UserConfig;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -34,9 +35,26 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
     @Override
     public void editNode(TreeItem<XmlTreeNode> item) {
         super.editNode(item);
+        if (treeItem != null) {
+            XmlTreeNode currentTreeNode = treeItem.getValue();
+            if (currentTreeNode != null && currentTreeNode.getType() == Element) {
+                String name = currentTreeNode.getNode().getNodeName();
+                if (!name.equalsIgnoreCase("svg")) {
+                    if (name.equalsIgnoreCase("path")) {
+                        setBox.getChildren().add(0, pathBox);
+                        setBox.getChildren().add(1, styleBox);
+                    } else {
+                        setBox.getChildren().add(0, styleBox);
+                    }
+                }
+            }
+        }
+        loadNodeHtml();
+    }
+
+    public void loadNodeHtml() {
         String xml = null;
         if (treeItem != null) {
-            SVG svg = new SVG(editor.treeController.doc);
             XmlTreeNode currentTreeNode = treeItem.getValue();
             if (currentTreeNode != null) {
                 switch (currentTreeNode.getType()) {
@@ -49,12 +67,11 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
                         if (name.equalsIgnoreCase("svg")) {
                             xml = editor.xmlByDom();
                         } else {
-                            xml = svg.nodeSVG(currentTreeNode.getNode());
-                            if (name.equalsIgnoreCase("path")) {
-                                setBox.getChildren().add(0, pathBox);
-                                setBox.getChildren().add(1, styleBox);
+                            if (editor.bgOpacity >= 1) {
+                                xml = editor.xmlByDom();
                             } else {
-                                setBox.getChildren().add(0, styleBox);
+                                xml = SvgTools.nodeSVG(editor.treeController.doc,
+                                        currentTreeNode.getNode(), editor.bgOpacity);
                             }
                         }
                         break;
@@ -88,7 +105,6 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
                 attributesData.add(attrs.item(i));
             }
         }
-
     }
 
     @Override

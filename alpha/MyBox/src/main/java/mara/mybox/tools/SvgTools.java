@@ -10,6 +10,7 @@ import java.io.FileWriter;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import mara.mybox.controller.BaseController;
+import mara.mybox.data.SVG;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import org.apache.batik.anim.dom.SVGDOMImplementation;
@@ -19,7 +20,7 @@ import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.fop.svg.PDFTranscoder;
-import org.w3c.dom.Document;
+import org.w3c.dom.*;
 
 /**
  * @Author Mara
@@ -38,16 +39,24 @@ public class SvgTools {
             return null;
         }
         try (ByteArrayInputStream inputStream = new ByteArrayInputStream(svg.getBytes("utf-8"))) {
-            return toImageFile(controller, inputStream, width, height, area);
+            return toImageFile(controller, new TranscoderInput(inputStream), width, height, area);
         } catch (Exception e) {
             PopTools.showError(controller, e.toString());
             return null;
         }
     }
 
-    public static File toImageFile(BaseController controller, InputStream inputStream,
+    public static File svgToImageFile(BaseController controller, SVG svg) {
+        if (svg == null) {
+            return null;
+        }
+        return toImageFile(controller, new TranscoderInput(svg.getDoc()),
+                svg.getWidth(), svg.getHeight(), svg.getViewBox());
+    }
+
+    public static File toImageFile(BaseController controller, TranscoderInput input,
             float width, float height, Rectangle area) {
-        if (inputStream == null) {
+        if (input == null) {
             return null;
         }
         File tmpFile = FileTmpTools.generateFile("png");
@@ -62,7 +71,6 @@ public class SvgTools {
             if (area != null) {
                 transcoder.addTranscodingHint(PNGTranscoder.KEY_AOI, area);
             }
-            TranscoderInput input = new TranscoderInput(inputStream);
             TranscoderOutput output = new TranscoderOutput(outputStream);
             transcoder.transcode(input, output);
             outputStream.flush();
@@ -169,6 +177,32 @@ public class SvgTools {
 
     public static Document blankDoc(int width, int height) {
         return XmlTools.doc(null, blankSVG(width, height));
+    }
+
+    public static String nodeSVG(Document doc, Node node, float bgOpacity) {
+        if (node == null) {
+            return null;
+        }
+        Document nodeDoc = (Document) doc.cloneNode(true);
+        NodeList svglist = nodeDoc.getElementsByTagName("svg");
+        if (svglist == null || svglist.getLength() == 0) {
+            return null;
+        }
+        Element nodeSVG = (Element) svglist.item(0);
+        NodeList nodes = nodeSVG.getChildNodes();
+        Element allG = nodeDoc.createElement("g");
+        if (bgOpacity > 0) {
+            allG.setAttribute("opacity", bgOpacity + "");
+            for (int i = 0; i < nodes.getLength(); i++) {
+                allG.appendChild(nodes.item(i));
+            }
+        }
+        for (int i = nodes.getLength() - 1; i >= 0; i--) {
+            nodeSVG.removeChild(nodes.item(i));
+        }
+        nodeSVG.appendChild(allG);
+        nodeSVG.appendChild(nodeDoc.importNode(node, true));
+        return XmlTools.transform(nodeDoc, true);
     }
 
     public static File toFile(SVGGraphics2D g, File file) {

@@ -343,7 +343,7 @@ public class ImageFileReaders {
     }
 
     public static ImageFileInformation readImageFileMetaData(File file) {
-        if (!file.exists() || !file.isFile()) {
+        if (file == null || !file.exists() || !file.isFile()) {
             return null;
         }
         ImageFileInformation fileInfo = new ImageFileInformation(file);

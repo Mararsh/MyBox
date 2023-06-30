@@ -238,6 +238,7 @@ License:    Apache License Version 2.0
                                                 </ImageView>
                                                 <FlowPane fx:id="buttonsPane" alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
                                                     <children>
+                                          <CheckBox fx:id="sortCheck" mnemonicParsing="false" selected="true" text="%Sort" />
                                                         <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#pickSaveAs" onMouseEntered="#popSaveAs">
                                                             <graphic>
                                                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
