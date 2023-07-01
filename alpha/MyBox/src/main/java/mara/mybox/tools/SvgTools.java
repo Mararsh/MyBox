@@ -164,23 +164,27 @@ public class SvgTools {
     /*
         generate
      */
-    public static String blankSVG(int width, int height) {
-        String svg = "<svg xmlns=\"http://www.w3.org/2000/svg\"";
+    public static String blankSVG(float width, float height) {
+        String svg = "<svg xmlns=\"http://www.w3.org/2000/svg\" ";
         if (width > 0) {
-            svg += "width=\"" + width + "\" ";
+            svg += " width=\"" + width + "\" ";
         }
         if (height > 0) {
-            svg += "height=\"" + height + "\" ";
+            svg += " height=\"" + height + "\" ";
         }
-        return svg += "></svg>";
+        return svg += " ></svg>";
     }
 
-    public static Document blankDoc(int width, int height) {
+    public static Document blankDoc(float width, float height) {
         return XmlTools.doc(null, blankSVG(width, height));
     }
 
+    public static Document blankDoc() {
+        return blankDoc(500.0f, 500.0f);
+    }
+
     public static String nodeSVG(Document doc, Node node, float bgOpacity) {
-        if (node == null) {
+        if (doc == null || node == null) {
             return null;
         }
         Document nodeDoc = (Document) doc.cloneNode(true);
@@ -188,20 +192,20 @@ public class SvgTools {
         if (svglist == null || svglist.getLength() == 0) {
             return null;
         }
-        Element nodeSVG = (Element) svglist.item(0);
-        NodeList nodes = nodeSVG.getChildNodes();
-        Element allG = nodeDoc.createElement("g");
+        Element svgNode = (Element) svglist.item(0);
+        Node newSvgNode = svgNode.cloneNode(false);
+        Element backgound = nodeDoc.createElement("g");
+        backgound.setAttribute("id", "MyBox-SVG-Backgound");
         if (bgOpacity > 0) {
-            allG.setAttribute("opacity", bgOpacity + "");
-            for (int i = 0; i < nodes.getLength(); i++) {
-                allG.appendChild(nodes.item(i));
+            backgound.setAttribute("opacity", bgOpacity + "");
+            NodeList svgChildren = svgNode.getChildNodes();
+            for (int i = 0; i < svgChildren.getLength(); i++) {
+                backgound.appendChild(svgChildren.item(i).cloneNode(true));
             }
         }
-        for (int i = nodes.getLength() - 1; i >= 0; i--) {
-            nodeSVG.removeChild(nodes.item(i));
-        }
-        nodeSVG.appendChild(allG);
-        nodeSVG.appendChild(nodeDoc.importNode(node, true));
+        newSvgNode.appendChild(backgound);
+        newSvgNode.appendChild(nodeDoc.importNode(node, true));
+        nodeDoc.replaceChild(newSvgNode, svgNode);
         return XmlTools.transform(nodeDoc, true);
     }
 

@@ -8,21 +8,24 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.TreeItem;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import mara.mybox.data.SVG;
-import mara.mybox.data.XmlTreeNode;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
-import mara.mybox.fxml.WindowTools;
-import mara.mybox.value.Fxmls;
-import static mara.mybox.value.Languages.message;
+import mara.mybox.tools.SvgTools;
 import mara.mybox.value.UserConfig;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * @Author Mara
@@ -31,9 +34,13 @@ import mara.mybox.value.UserConfig;
  */
 public class ControlSvgShape extends BaseImageController {
 
-    protected SvgEditorController editor;
-    protected TreeItem<XmlTreeNode> treeItem;
     protected SVG svg;
+    protected Rectangle svgRect;
+    protected Document doc;
+    protected Element element;
+    protected WebEngine webEngine;
+    protected double width, height;
+    protected float bgOpacity;
 
     @FXML
     protected Label parentLabel;
@@ -45,14 +52,23 @@ public class ControlSvgShape extends BaseImageController {
     @FXML
     protected TabPane selectPane;
     @FXML
+    protected Tab shapeTab, styleTab, penTab, xmlTab;
+    @FXML
     protected ScrollPane shapePane;
     @FXML
-    protected VBox attributesBox, rectangleBox, circleBox, ellipseBox, lineBox,
+    protected VBox shapeBox, rectangleBox, circleBox, ellipseBox, lineBox,
             polylineBox, polygonBox, pathBox;
+    @FXML
+    protected TextField circleCenterXInput, circleCenterYInput, circleRadiusInput,
+            rectXInput, rectYInput, rectWidthInput, rectHeightInput;
     @FXML
     protected TextArea pathArea, styleArea;
     @FXML
     protected ComboBox<String> strokeWidthSelector;
+    @FXML
+    protected WebView webView;
+    @FXML
+    protected ComboBox<String> opacitySelector;
 
     @Override
     public void initControls() {
@@ -71,25 +87,29 @@ public class ControlSvgShape extends BaseImageController {
             );
             strokeWidthSelector.setValue(UserConfig.getString(baseName + "StrokeWidth", "2px"));
 
-            attributesBox.getChildren().remove(selectPane);
-            checkType();
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
+            webView.setCache(false);
+            webEngine = webView.getEngine();
+            webEngine.setJavaScriptEnabled(true);
 
-    public void setParameters(SvgEditorController editorController, TreeItem<XmlTreeNode> item) {
-        try {
-            editor = editorController;
-            treeItem = item;
-            svg = new SVG(editor.treeController.doc);
+            bgOpacity = UserConfig.getFloat(baseName + "BackgroundOpacity", 0.3f);
+            opacitySelector.getItems().addAll(
+                    "0.3", "0.1", "0.2", "0.5", "0.8", "0", "0.6", "0.4", "0.7", "0.9", "1.0"
+            );
+            opacitySelector.setValue(bgOpacity + "");
+            opacitySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        bgOpacity = Float.parseFloat(newValue);
+                        opacitySelector.getEditor().setStyle(null);
+                    } catch (Exception e) {
+                        opacitySelector.getEditor().setStyle(UserConfig.badStyle());
+                    }
+                }
+            });
 
-            String hierarchyNumber = treeItem.getValue().hierarchyNumber();
-            String info = editorController.sourceFile != null
-                    ? editorController.sourceFile.getAbsolutePath() + "   " : "";
-            parentLabel.setText(message("AddInto") + ": " + info + hierarchyNumber);
+            shapeBox.getChildren().remove(selectPane);
 
-            checkType();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -97,11 +117,54 @@ public class ControlSvgShape extends BaseImageController {
 
     public void checkType() {
         try {
+            if (doc == null) {
+                return;
+            }
+            if (svg == null) {
+                svg = new SVG(doc);
+            }
+            width = svg.getWidth();
+            if (width <= 0) {
+                if (svg.getViewBox() != null) {
+                    width = svg.getViewBox().getWidth();
+                }
+                if (width <= 0 && svgRect != null) {
+                    width = svgRect.getWidth();
+                }
+            }
+            height = svg.getHeight();
+            if (height <= 0) {
+                if (svg.getViewBox() != null) {
+                    height = svg.getViewBox().getHeight();
+                }
+                if (height <= 0 && svgRect != null) {
+                    height = svgRect.getHeight();
+                }
+            }
+
             if (rectRadio.isSelected()) {
                 shapePane.setContent(rectangleBox);
+                element = doc.createElement("rect");
+                element.setAttribute("x", width / 4 + "");
+                element.setAttribute("y", height / 4 + "");
+                element.setAttribute("width", width / 2 + "");
+                element.setAttribute("height", height / 2 + "");
+
+                rectXInput.setText(element.getAttribute("x"));
+                rectYInput.setText(element.getAttribute("y"));
+                rectWidthInput.setText(element.getAttribute("width"));
+                rectHeightInput.setText(element.getAttribute("height"));
 
             } else if (circleRadio.isSelected()) {
                 shapePane.setContent(circleBox);
+                element = doc.createElement("circle");
+                element.setAttribute("cx", width / 2 + "");
+                element.setAttribute("cy", height / 2 + "");
+                element.setAttribute("r", Math.min(width, height) / 4 + "");
+
+                circleCenterXInput.setText(element.getAttribute("cx"));
+                circleCenterYInput.setText(element.getAttribute("cy"));
+                circleRadiusInput.setText(element.getAttribute("r"));
 
             } else if (ellipseRadio.isSelected()) {
                 shapePane.setContent(ellipseBox);
@@ -122,9 +185,37 @@ public class ControlSvgShape extends BaseImageController {
                 shapePane.setContent(null);
 
             }
-            refreshStyle(attributesBox);
+            refreshStyle(shapeBox);
+
+            String xml = SvgTools.nodeSVG(doc, element, bgOpacity);
+            webEngine.getLoadWorker().cancel();
+            webEngine.loadContent(xml);
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void setDoc(Document inDoc, Rectangle rect) {
+        doc = inDoc;
+        svg = new SVG(doc);
+        svgRect = rect;
+        checkType();
+    }
+
+    public void newDoc() {
+        doc = SvgTools.blankDoc();
+        svg = new SVG(doc);
+        checkType();
+    }
+
+    public Element newElement() {
+        try {
+
+            return element;
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+            return null;
         }
     }
 
@@ -165,18 +256,19 @@ public class ControlSvgShape extends BaseImageController {
     }
 
     @FXML
-    public void synchronizeDraw() {
-
+    @Override
+    public boolean synchronizeAction() {
+        return false;
     }
 
     @FXML
-    public void synchronizeValues() {
+    @Override
+    public void clearAction() {
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+        if (tab == shapeTab) {
 
-    }
-
-    @FXML
-    public void clearValues() {
-
+        }
+        newElement();
     }
 
     @FXML
@@ -184,17 +276,9 @@ public class ControlSvgShape extends BaseImageController {
 
     }
 
-    /*
-        static methods
-     */
-    public static ControlSvgShape open(SvgEditorController editorController, TreeItem<XmlTreeNode> item) {
-        ControlSvgShape controller = (ControlSvgShape) WindowTools.openChildStage(
-                editorController.getMyWindow(), Fxmls.SvgAddShapeFxml);
-        if (controller != null) {
-            controller.setParameters(editorController, item);
-            controller.requestMouse();
-        }
-        return controller;
+    @FXML
+    public void popHtml() {
+
     }
 
 }

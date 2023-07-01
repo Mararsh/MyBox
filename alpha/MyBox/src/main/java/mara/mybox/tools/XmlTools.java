@@ -357,6 +357,15 @@ public class XmlTools {
         return info;
     }
 
+    public static Document clone(Document doc) {
+        try {
+            return doc(null, transform(doc, false));
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
 
     /*
         tree
@@ -473,9 +482,9 @@ public class XmlTools {
         try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
             if (XmlTools.transformer == null) {
                 XmlTools.transformer = TransformerFactory.newInstance().newTransformer();
-                XmlTools.transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-                XmlTools.transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
             }
+            XmlTools.transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+            XmlTools.transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
             XmlTools.transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, node instanceof Document ? "no" : "yes");
             XmlTools.transformer.setOutputProperty(OutputKeys.ENCODING, encoding);
             XmlTools.transformer.setOutputProperty(OutputKeys.INDENT, indent ? "yes" : "no");

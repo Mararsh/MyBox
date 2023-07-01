@@ -997,8 +997,6 @@ public class HelpTools {
 
             items.addAll(HelpTools.htmlHelps(false));
 
-            items.add(new SeparatorMenuItem());
-
             if (popMenu) {
                 items.add(new SeparatorMenuItem());
 

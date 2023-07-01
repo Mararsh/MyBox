@@ -42,7 +42,7 @@ public class SvgEditorController extends XmlEditorController {
 
     protected WebEngine webEngine;
     protected String currentXML;
-    protected float bgOpacity;
+    protected float width, height, bgOpacity;
 
     @FXML
     protected ControlSvgTree treeController;

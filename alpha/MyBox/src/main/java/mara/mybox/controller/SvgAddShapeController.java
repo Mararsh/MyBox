@@ -6,6 +6,7 @@ import javafx.scene.control.TreeItem;
 import mara.mybox.data.SVG;
 import mara.mybox.data.XmlTreeNode;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.WebViewTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
@@ -41,6 +42,8 @@ public class SvgAddShapeController extends BaseChildController {
             String info = editorController.sourceFile != null
                     ? editorController.sourceFile.getAbsolutePath() + "   " : "";
             parentLabel.setText(message("AddInto") + ": " + info + hierarchyNumber);
+
+            shapeController.setDoc(editor.treeController.doc, WebViewTools.tagRect(editor.webEngine, "svg", 0));
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

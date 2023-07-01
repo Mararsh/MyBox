@@ -7,6 +7,7 @@ import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.ScrollBar;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.web.HTMLEditor;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -326,6 +327,27 @@ public class WebViewTools {
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
             return -1;
+        }
+    }
+
+    public static Rectangle tagRect(WebEngine webEngine, String tag, int index) {
+        try {
+            Rectangle rect = new Rectangle();
+            String js = "var rect = document.getElementsByTagName('" + tag + "')[" + index + "].getBoundingClientRect();"
+                    + "rect.x + ' ' + rect.y + ' ' + rect.width + ' ' + rect.height ";
+            Object c = webEngine.executeScript(js);
+            if (c == null) {
+                return null;
+            }
+            String[] values = ((String) c).split("\\s+");
+            rect.setX(Double.parseDouble(values[0]));
+            rect.setY(Double.parseDouble(values[1]));
+            rect.setWidth(Double.parseDouble(values[2]));
+            rect.setHeight(Double.parseDouble(values[3]));
+            return rect;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return null;
         }
     }
 
