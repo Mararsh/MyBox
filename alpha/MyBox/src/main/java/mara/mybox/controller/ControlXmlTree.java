@@ -425,10 +425,7 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
     @FXML
     @Override
     public void recoverAction() {
-        if (xmlEditor != null && xmlEditor.sourceFile != null && xmlEditor.sourceFile.exists()) {
-            xmlEditor.fileChanged = false;
-            xmlEditor.sourceFileChanged(xmlEditor.sourceFile);
-        }
+        xmlEditor.recoverAction();
     }
 
 }

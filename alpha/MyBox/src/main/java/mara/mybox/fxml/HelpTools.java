@@ -1102,25 +1102,25 @@ public class HelpTools {
     public static LinkedHashMap<String, String> svgPathExamples() {
         try {
             LinkedHashMap<String, String> values = new LinkedHashMap<>();
-            values.put(message("SvgPathM"), "M x,y; ");
-            values.put(message("SvgPathm"), "m dx,dy; ");
-            values.put(message("SvgPathL"), "L x,y; ");
-            values.put(message("SvgPathl"), "l dx,dy; ");
-            values.put(message("SvgPathH"), "H x; ");
-            values.put(message("SvgPathh"), "h dx; ");
-            values.put(message("SvgPathV"), "V y; ");
-            values.put(message("SvgPathv"), "v dy; ");
-            values.put(message("SvgPathQ"), "Q x1,y1 x,y; ");
-            values.put(message("SvgPathq"), "q dx1,dy1 dx,dy; ");
-            values.put(message("SvgPathT"), "T x,y; ");
-            values.put(message("SvgPatht"), "t dx,dy; ");
-            values.put(message("SvgPathC"), "C x1,y1 x2,y2 x,y; ");
-            values.put(message("SvgPathc"), "c dx1,dy1 dx2,dy2 dx,dy; ");
-            values.put(message("SvgPathS"), "S x2,y2 x,y; ");
-            values.put(message("SvgPaths"), "s dx2,dy2 dx,dy; ");
-            values.put(message("SvgPathA"), "A rx ry angle large-arc-flag sweep-flag x,y; ");
-            values.put(message("SvgPatha"), "s rx ry angle large-arc-flag sweep-flag x,y; ");
-            values.put(message("SvgPathZ"), "Z; ");
+            values.put("M x,y; ", message("SvgPathM"));
+            values.put("m dx,dy; ", message("SvgPathm"));
+            values.put("L x,y; ", message("SvgPathL"));
+            values.put("l dx,dy; ", message("SvgPathl"));
+            values.put("H x; ", message("SvgPathH"));
+            values.put("h dx; ", message("SvgPathh"));
+            values.put("V y; ", message("SvgPathV"));
+            values.put("v dy; ", message("SvgPathv"));
+            values.put("Q x1,y1 x,y; ", message("SvgPathQ"));
+            values.put("q dx1,dy1 dx,dy; ", message("SvgPathq"));
+            values.put("T x,y; ", message("SvgPathT"));
+            values.put("t dx,dy; ", message("SvgPatht"));
+            values.put("C x1,y1 x2,y2 x,y; ", message("SvgPathC"));
+            values.put("c dx1,dy1 dx2,dy2 dx,dy; ", message("SvgPathc"));
+            values.put("S x2,y2 x,y; ", message("SvgPathS"));
+            values.put("s dx2,dy2 dx,dy; ", message("SvgPaths"));
+            values.put("A rx ry angle large-arc-flag sweep-flag x,y; ", message("SvgPathA"));
+            values.put("s rx ry angle large-arc-flag sweep-flag x,y; ", message("SvgPatha"));
+            values.put("Z; ", message("SvgPathZ"));
 
             return values;
         } catch (Exception e) {
@@ -1132,22 +1132,22 @@ public class HelpTools {
     public static LinkedHashMap<String, String> svgStyleExamples() {
         try {
             LinkedHashMap<String, String> values = new LinkedHashMap<>();
-            values.put(message("FilledColor") + " - " + message("ColorCode"), "fill: #CCCCCC; ");
-            values.put(message("FilledColor") + " - " + message("Name"), "fill: skyblue; ");
-            values.put(message("FilledColor") + " - HSB", "fill: hsb(0,50,100); ");
-            values.put(message("FilledColor") + " - " + message("None"), "fill: none; ");
-            values.put(message("StrokeColor") + " - " + message("ColorCode"), "stroke: black; ");
-            values.put(message("StrokeColor") + " - RGB", "stroke: rgb(0,128,0); ");
-            values.put(message("StrokeWidth"), "stroke-width: 2; ");
-            values.put(message("StrokeLinecap") + " - " + message("Butt"), "stroke-linecap: butt; ");
-            values.put(message("StrokeLinecap") + " - " + message("Round"), "stroke-linecap: round; ");
-            values.put(message("StrokeLinecap") + " - " + message("SquareShape"), "stroke-linecap: square; ");
-            values.put(message("StrokeDasharray"), "stroke-dasharray: 5,5; ");
-            values.put(message("StrokeDasharray") + " ", "stroke-dasharray: 20,10,5,5,5,10; ");
-            values.put(message("FontSize"), "font-size: 15px; ");
-            values.put(message("FontFamily"), "font-family: sans-serif; ");
-            values.put(message("Color"), "color: #6900ff; ");
-            values.put(message("BackgroundColor"), "background: #bae498; ");
+            values.put("fill: #CCCCCC; ", message("FilledColor") + " - " + message("ColorCode"));
+            values.put("fill: skyblue; ", message("FilledColor") + " - " + message("Name"));
+            values.put("fill: hsb(0,50,100); ", message("FilledColor") + " - HSB");
+            values.put("fill: none; ", message("FilledColor") + " - " + message("None"));
+            values.put("stroke: black; ", message("StrokeColor") + " - " + message("ColorCode"));
+            values.put("stroke: rgb(0,128,0); ", message("StrokeColor") + " - RGB");
+            values.put("stroke-width: 2; ", message("StrokeWidth"));
+            values.put("stroke-linecap: butt; ", message("StrokeLinecap") + " - " + message("Butt"));
+            values.put("stroke-linecap: round; ", message("StrokeLinecap") + " - " + message("Round"));
+            values.put("stroke-linecap: square; ", message("StrokeLinecap") + " - " + message("SquareShape"));
+            values.put("stroke-dasharray: 5,5; ", message("StrokeDasharray"));
+            values.put("stroke-dasharray: 20,10,5,5,5,10; ", message("StrokeDasharray"));
+            values.put("font-size: 15px; ", message("FontSize"));
+            values.put("font-family: sans-serif; ", message("FontFamily"));
+            values.put("color: #6900ff; ", message("Color"));
+            values.put("background: #bae498; ", message("BackgroundColor"));
 
             return values;
         } catch (Exception e) {

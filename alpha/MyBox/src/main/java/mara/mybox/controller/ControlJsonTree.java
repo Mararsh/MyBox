@@ -444,10 +444,7 @@ public class ControlJsonTree extends BaseTreeTableViewController<JsonTreeNode> {
     @FXML
     @Override
     public void recoverAction() {
-        if (jsonEditor != null && jsonEditor.sourceFile != null && jsonEditor.sourceFile.exists()) {
-            jsonEditor.fileChanged = false;
-            jsonEditor.sourceFileChanged(jsonEditor.sourceFile);
-        }
+        jsonEditor.recoverAction();
     }
 
 }

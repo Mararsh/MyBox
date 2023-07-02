@@ -1365,9 +1365,9 @@ public class PopTools {
             controller.addNode(new Separator());
 
             List<Node> nodes = new ArrayList<>();
-            for (String name : values.keySet()) {
-                String value = values.get(name);
-                Button button = new Button(value + "    " + name);
+            for (String value : values.keySet()) {
+                String msg = values.get(value);
+                Button button = new Button(value + (msg != null && !msg.isBlank() ? "    " + msg : ""));
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {

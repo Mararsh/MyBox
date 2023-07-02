@@ -87,6 +87,9 @@ public class JsonEditorController extends BaseFileController {
                 }
             });
             initTextsTab();
+
+            recoverButton.setDisable(true);
+
             domController.jsonEditor = this;
             tabChanged();
 
@@ -150,6 +153,7 @@ public class JsonEditorController extends BaseFileController {
         updateTitle();
         isSettingValues = false;
         recordFileOpened(sourceFile);
+        recoverButton.setDisable(sourceFile == null);
         backupController.loadBackups(sourceFile);
         browseController.setCurrentFile(sourceFile);
         fileInfoLabel.setText(FileTools.fileInformation(sourceFile));
@@ -169,6 +173,15 @@ public class JsonEditorController extends BaseFileController {
             writePanes("{}");
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    @FXML
+    @Override
+    public void recoverAction() {
+        if (sourceFile != null && sourceFile.exists()) {
+            fileChanged = false;
+            sourceFileChanged(sourceFile);
         }
     }
 

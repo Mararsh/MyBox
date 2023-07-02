@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.awt.Rectangle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
@@ -15,7 +16,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import mara.mybox.data.SVG;
@@ -93,7 +93,7 @@ public class ControlSvgShape extends BaseImageController {
 
             bgOpacity = UserConfig.getFloat(baseName + "BackgroundOpacity", 0.3f);
             opacitySelector.getItems().addAll(
-                    "0.3", "0.1", "0.2", "0.5", "0.8", "0", "0.6", "0.4", "0.7", "0.9", "1.0"
+                    "0.3", "0", "1.0", "0.05", "0.02", "0.1", "0.2", "0.5", "0.8", "0.6", "0.4", "0.7", "0.9"
             );
             opacitySelector.setValue(bgOpacity + "");
             opacitySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -187,10 +187,9 @@ public class ControlSvgShape extends BaseImageController {
             }
             refreshStyle(shapeBox);
 
-            String xml = SvgTools.nodeSVG(doc, element, bgOpacity);
-            webEngine.getLoadWorker().cancel();
-            webEngine.loadContent(xml);
-
+//            String xml = SvgTools.focus(doc, element, bgOpacity);
+//            webEngine.getLoadWorker().cancel();
+//            webEngine.loadContent(xml);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

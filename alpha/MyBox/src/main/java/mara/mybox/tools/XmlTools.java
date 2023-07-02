@@ -366,6 +366,21 @@ public class XmlTools {
         }
     }
 
+    public static Element findName(Document doc, String name, int index) {
+        try {
+            if (doc == null || name == null || name.isBlank() || index < 0) {
+                return null;
+            }
+            NodeList svglist = doc.getElementsByTagName(name);
+            if (svglist == null || svglist.getLength() <= index) {
+                return null;
+            }
+            return (Element) svglist.item(index);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
 
     /*
         tree
@@ -394,24 +409,30 @@ public class XmlTools {
         if (node == null) {
             return "";
         }
+        String h = "";
         Node parent = node.getParentNode();
-        if (parent == null) {
-            return "";
+        Node cnode = node;
+        while (parent != null) {
+            int index = index(cnode);
+            if (index < 0) {
+                return "";
+            }
+            h = "." + (index + 1) + h;
+            cnode = parent;
+            parent = parent.getParentNode();
         }
-        int index = index(node);
-        if (index < 0) {
-            return "";
+        if (h.startsWith(".")) {
+            h = h.substring(1, h.length());
         }
-        String p = hierarchyNumber(parent);
-        return (p == null || p.isBlank() ? "" : p + ".") + (index + 1);
+        return h;
     }
 
-    public static Node find(Node node, String sequenceNumber) {
+    public static Node find(Node node, String hierarchyNumber) {
         try {
-            if (node == null || sequenceNumber == null || sequenceNumber.isBlank()) {
+            if (node == null || hierarchyNumber == null || hierarchyNumber.isBlank()) {
                 return null;
             }
-            String[] numbers = sequenceNumber.split("\\.", -1);
+            String[] numbers = hierarchyNumber.split("\\.", -1);
             if (numbers == null || numbers.length == 0) {
                 return null;
             }

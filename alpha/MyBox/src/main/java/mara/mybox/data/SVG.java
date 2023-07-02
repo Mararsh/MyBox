@@ -4,11 +4,11 @@ import java.awt.Rectangle;
 import java.io.File;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.SvgTools;
+import mara.mybox.tools.XmlTools;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * @Author Mara
@@ -38,11 +38,7 @@ public class SVG {
             if (doc == null) {
                 return;
             }
-            NodeList svglist = doc.getElementsByTagName("svg");
-            if (svglist == null || svglist.getLength() == 0) {
-                return;
-            }
-            svgNode = (Element) svglist.item(0);
+            svgNode = XmlTools.findName(doc, "svg", 0);
             NamedNodeMap attrs = svgNode.getAttributes();
             if (attrs == null || attrs.getLength() == 0) {
                 return;

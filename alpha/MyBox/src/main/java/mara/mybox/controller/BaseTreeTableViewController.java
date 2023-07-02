@@ -294,12 +294,22 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
         if (item == null) {
             return "";
         }
+        String h = "";
         TreeItem<NodeP> parent = item.getParent();
-        if (parent == null) {
-            return "";
+        TreeItem<NodeP> citem = item;
+        while (parent != null) {
+            int index = parent.getChildren().indexOf(citem);
+            if (index < 0) {
+                return "";
+            }
+            h = "." + (index + 1) + h;
+            citem = parent;
+            parent = parent.getParent();
         }
-        String p = hierarchyNumber(parent);
-        return (p == null || p.isBlank() ? "" : p + ".") + (parent.getChildren().indexOf(item) + 1);
+        if (h.startsWith(".")) {
+            h = h.substring(1, h.length());
+        }
+        return h;
     }
 
     public String label(TreeItem<NodeP> item) {

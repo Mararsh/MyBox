@@ -83,6 +83,8 @@ public class XmlEditorController extends BaseFileController {
 
             initTextsTab();
 
+            recoverButton.setDisable(true);
+
             domController.xmlEditor = this;
 
             backupController.setParameters(this, baseName);
@@ -146,6 +148,7 @@ public class XmlEditorController extends BaseFileController {
         updateTitle();
         isSettingValues = false;
         recordFileOpened(sourceFile);
+        recoverButton.setDisable(sourceFile == null);
         backupController.loadBackups(sourceFile);
         browseController.setCurrentFile(sourceFile);
         fileInfoLabel.setText(FileTools.fileInformation(sourceFile));
@@ -178,6 +181,15 @@ public class XmlEditorController extends BaseFileController {
         }
         return "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
                 + "<" + name + "></" + name + ">";
+    }
+
+    @FXML
+    @Override
+    public void recoverAction() {
+        if (sourceFile != null && sourceFile.exists()) {
+            fileChanged = false;
+            sourceFileChanged(sourceFile);
+        }
     }
 
     /*
