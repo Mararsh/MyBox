@@ -20,13 +20,13 @@ License:    Apache License Version 2.0
         <HBox alignment="CENTER_LEFT" spacing="10.0">
             <children>
                 <Label text="%MyBoxColorCustomizeDark" />
-                <fx:include fx:id="darkColorSet" source="ColorSet.fxml" />
+                <fx:include fx:id="darkColorSet" source="ControlColorSet.fxml" />
             </children>
         </HBox>
         <HBox alignment="CENTER_LEFT" spacing="10.0">
             <children>
                 <Label text="%MyBoxColorCustomizeLight" />
-                <fx:include fx:id="lightColorSet" source="ColorSet.fxml" />
+                <fx:include fx:id="lightColorSet" source="ControlColorSet.fxml" />
             </children>
         </HBox>
       <HBox alignment="CENTER_LEFT" spacing="10.0">

@@ -352,7 +352,7 @@ License:    Apache License Version 2.0
                                                                                     </graphic>
                                                                                 </Button>
                                                                                 <Label maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                                                                <fx:include fx:id="colorSet" source="ColorSet.fxml" />
+                                                                                <fx:include fx:id="colorSet" source="ControlColorSet.fxml" />
                                                                                 <CheckBox fx:id="pickColorCheck" mnemonicParsing="false">
                                                                                     <graphic>
                                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

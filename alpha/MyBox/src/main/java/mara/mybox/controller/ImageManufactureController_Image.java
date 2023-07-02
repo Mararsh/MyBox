@@ -55,7 +55,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
     @FXML
     protected ImageManufactureHistory hisController;
     @FXML
-    protected ColorSetController colorSetController;
+    protected ControlColorSet colorSetController;
     @FXML
     protected Button viewImageButton;
 

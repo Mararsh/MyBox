@@ -66,7 +66,7 @@ public class ControlImageText extends BaseController {
     protected CheckBox outlineCheck, verticalCheck, rightToLeftCheck,
             bordersCheck, bordersFillCheck, bordersStrokeDottedCheck;
     @FXML
-    protected ColorSetController colorSetController, bordersFillColorSetController, bordersStrokeColorSetController;
+    protected ControlColorSet colorSetController, bordersFillColorSetController, bordersStrokeColorSetController;
     @FXML
     protected ToggleGroup positionGroup;
     @FXML

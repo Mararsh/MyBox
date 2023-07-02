@@ -44,7 +44,7 @@ public class ImageManufactureBatchReplaceColorController extends BaseImageManufa
     protected CheckBox excludeCheck, ignoreTransparentCheck, squareRootCheck,
             hueCheck, saturationCheck, brightnessCheck;
     @FXML
-    protected ColorSetController originalColorSetController, newColorSetController;
+    protected ControlColorSet originalColorSetController, newColorSetController;
 
     public ImageManufactureBatchReplaceColorController() {
         baseTitle = message("ImageManufactureBatchReplaceColor");

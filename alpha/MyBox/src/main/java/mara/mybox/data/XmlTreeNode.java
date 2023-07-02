@@ -84,7 +84,9 @@ public class XmlTreeNode {
             return false;
         }
         String tag = node.getNodeName();
-        return "svg".equalsIgnoreCase(tag) || "g".equalsIgnoreCase(tag);
+        return "svg".equalsIgnoreCase(tag)
+                || "g".equalsIgnoreCase(tag)
+                || "defs".equalsIgnoreCase(tag);
     }
 
 

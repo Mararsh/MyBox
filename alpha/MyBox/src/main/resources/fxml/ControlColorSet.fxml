@@ -12,7 +12,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.shape.Rectangle?>
 
-<HBox fx:id="thisPane" alignment="CENTER_LEFT" spacing="5.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ColorSetController">
+<HBox fx:id="thisPane" alignment="CENTER_LEFT" spacing="5.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlColorSet">
     <children>
         <Rectangle fx:id="rect" fill="#ffffff00" height="20.0" stroke="BLACK" strokeMiterLimit="0.0" strokeType="INSIDE" width="20.0" />
         <Button fx:id="colorButton" mnemonicParsing="false" onAction="#openColorPalette" onMouseEntered="#popColorPalette">

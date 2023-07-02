@@ -1,16 +1,17 @@
 package mara.mybox.tools;
 
 import java.awt.Rectangle;
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import mara.mybox.controller.BaseController;
-import mara.mybox.data.SVG;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.PopTools;
 import org.apache.batik.anim.dom.SVGDOMImplementation;
@@ -33,30 +34,35 @@ public class SvgTools {
     /*
         image
      */
-    public static File textToImageFile(BaseController controller, String svg,
+    public static File textToImage(BaseController controller, String svg,
             float width, float height, Rectangle area) {
         if (svg == null || svg.isBlank()) {
             return null;
         }
         try (ByteArrayInputStream inputStream = new ByteArrayInputStream(svg.getBytes("utf-8"))) {
-            return toImageFile(controller, new TranscoderInput(inputStream), width, height, area);
+            return toImage(controller, inputStream, width, height, area);
         } catch (Exception e) {
             PopTools.showError(controller, e.toString());
             return null;
         }
     }
-    
-    public static File svgToImageFile(BaseController controller, SVG svg) {
-        if (svg == null) {
+
+    public static File fileToImage(BaseController controller, File file,
+            float width, float height, Rectangle area) {
+        if (file == null || !file.exists()) {
             return null;
         }
-        return toImageFile(controller, new TranscoderInput(svg.getDoc()),
-                svg.getWidth(), svg.getHeight(), svg.getViewBox());
+        try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
+            return toImage(controller, inputStream, width, height, area);
+        } catch (Exception e) {
+            PopTools.showError(controller, e.toString());
+            return null;
+        }
     }
-    
-    public static File toImageFile(BaseController controller, TranscoderInput input,
+
+    public static File toImage(BaseController controller, InputStream inputStream,
             float width, float height, Rectangle area) {
-        if (input == null) {
+        if (inputStream == null) {
             return null;
         }
         File tmpFile = FileTmpTools.generateFile("png");
@@ -71,6 +77,7 @@ public class SvgTools {
             if (area != null) {
                 transcoder.addTranscodingHint(PNGTranscoder.KEY_AOI, area);
             }
+            TranscoderInput input = new TranscoderInput(inputStream);
             TranscoderOutput output = new TranscoderOutput(outputStream);
             transcoder.transcode(input, output);
             outputStream.flush();
@@ -90,19 +97,30 @@ public class SvgTools {
      */
     public static File textToPDF(BaseController controller, String svg,
             float width, float height, Rectangle area) {
-        {
-            if (svg == null || svg.isBlank()) {
-                return null;
-            }
-            try (ByteArrayInputStream inputStream = new ByteArrayInputStream(svg.getBytes("utf-8"))) {
-                return toPDF(controller, inputStream, width, height, area);
-            } catch (Exception e) {
-                PopTools.showError(controller, e.toString());
-                return null;
-            }
+        if (svg == null || svg.isBlank()) {
+            return null;
+        }
+        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(svg.getBytes("utf-8"))) {
+            return toPDF(controller, inputStream, width, height, area);
+        } catch (Exception e) {
+            PopTools.showError(controller, e.toString());
+            return null;
         }
     }
-    
+
+    public static File fileToPDF(BaseController controller, File file,
+            float width, float height, Rectangle area) {
+        if (file == null || !file.exists()) {
+            return null;
+        }
+        try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
+            return toPDF(controller, inputStream, width, height, area);
+        } catch (Exception e) {
+            PopTools.showError(controller, e.toString());
+            return null;
+        }
+    }
+
     public static File toPDF(BaseController controller, InputStream inputStream,
             float width, float height, Rectangle area) {
         if (inputStream == null) {
@@ -150,7 +168,7 @@ public class SvgTools {
         }
         return rect;
     }
-    
+
     public static String viewBoxString(Rectangle rect) {
         if (rect == null) {
             return null;
@@ -174,15 +192,15 @@ public class SvgTools {
         }
         return svg += " ></svg>";
     }
-    
+
     public static Document blankDoc(float width, float height) {
-        return XmlTools.doc(null, blankSVG(width, height));
+        return XmlTools.textToDoc(null, blankSVG(width, height));
     }
-    
+
     public static Document blankDoc() {
         return blankDoc(500.0f, 500.0f);
     }
-    
+
     public static Document focus(Document doc, Node node, float bgOpacity) {
         if (doc == null) {
             return doc;
@@ -215,7 +233,7 @@ public class SvgTools {
         }
         return clonedDoc;
     }
-    
+
     public static File toFile(SVGGraphics2D g, File file) {
         if (g == null || file == null) {
             return null;
@@ -229,7 +247,7 @@ public class SvgTools {
             return null;
         }
     }
-    
+
     public static File toFile(SVGGraphics2D g) {
         if (g == null) {
             return null;
@@ -244,7 +262,7 @@ public class SvgTools {
             return null;
         }
     }
-    
+
     public static String toText(SVGGraphics2D g) {
         String s = TextFileTools.readTexts(toFile(g), Charset.forName("utf-8"));
         return s;
@@ -260,5 +278,5 @@ public class SvgTools {
     public static Document document() {
         return GenericDOMImplementation.getDOMImplementation().createDocument(SVGDOMImplementation.SVG_NAMESPACE_URI, "svg", null);
     }
-    
+
 }

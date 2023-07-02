@@ -53,7 +53,7 @@ License:    Apache License Version 2.0
                                              <children>
                                                                   <Label text="%TakeEffectNextReadWrite" />
                                                                   <Separator prefWidth="200.0" />
-                                                <fx:include fx:id="options" minHeight="-Infinity" source="ControlXmlOptions.fxml" />
+                                                <fx:include fx:id="options" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" source="ControlXmlOptions.fxml" VBox.vgrow="ALWAYS" />
                                              </children>
                                              <padding>
                                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

@@ -166,7 +166,6 @@ public class Fxmls {
     public static final String ImageRepeatFxml = "/fxml/ImageRepeat.fxml";
 
     public static final String ColorsManageFxml = "/fxml/ColorsManage.fxml";
-    public static final String ColorSetFxml = "/fxml/ColorSet.fxml";
     public static final String ColorPalettePopupFxml = "/fxml/ColorPalettePopup.fxml";
     public static final String ColorInputFxml = "/fxml/ColorInput.fxml";
     public static final String ColorCopyFxml = "/fxml/ColorCopy.fxml";

@@ -108,7 +108,7 @@ License:    Apache License Version 2.0
             <FlowPane fx:id="strokeColorPane" hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
                <children>
                   <Label fx:id="strokeColorLabel" text="%Background" />
-                  <fx:include fx:id="color" source="ColorSet.fxml" />
+                  <fx:include fx:id="color" source="ControlColorSet.fxml" />
                </children>
             </FlowPane>
               <FlowPane fx:id="snapPane" alignment="CENTER_LEFT" hgap="5.0" prefWrapLength="200.0" vgap="5.0">

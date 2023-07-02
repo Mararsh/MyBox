@@ -57,7 +57,7 @@ public class ImagesSpliceController extends ImageViewerController {
     @FXML
     protected ComboBox<String> columnsBox, intervalBox, MarginsBox;
     @FXML
-    protected ColorSetController colorSetController;
+    protected ControlColorSet colorSetController;
     @FXML
     protected HBox opBox;
     @FXML

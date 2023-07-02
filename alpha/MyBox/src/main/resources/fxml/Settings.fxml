@@ -164,13 +164,13 @@ License:    Apache License Version 2.0
                                                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                                                             <children>
                                                                 <Label text="%BackgroundColor" />
-                                                                <fx:include fx:id="popBgColor" source="ColorSet.fxml" />
+                                                                <fx:include fx:id="popBgColor" source="ControlColorSet.fxml" />
                                                                 <Label text="%Information" />
-                                                                <fx:include fx:id="popInfoColor" source="ColorSet.fxml" />
+                                                                <fx:include fx:id="popInfoColor" source="ControlColorSet.fxml" />
                                                                 <Label text="%Error" />
-                                                                <fx:include fx:id="popErrorColor" source="ColorSet.fxml" />
+                                                                <fx:include fx:id="popErrorColor" source="ControlColorSet.fxml" />
                                                                 <Label text="%Warning" />
-                                                                <fx:include fx:id="popWarnColor" source="ColorSet.fxml" />
+                                                                <fx:include fx:id="popWarnColor" source="ControlColorSet.fxml" />
                                                             </children>
                                                         </HBox>
                                                     </children>
@@ -424,7 +424,7 @@ License:    Apache License Version 2.0
                                                     <children>
                                                         <Label text="%Stroke" />
                                                         <Label text="%Color" />
-                                                        <fx:include fx:id="strokeColorSet" source="ColorSet.fxml" />
+                                                        <fx:include fx:id="strokeColorSet" source="ControlColorSet.fxml" />
                                                         <Label text="%Width" />
                                                         <ComboBox fx:id="strokeWidthBox" editable="true" prefWidth="100.0" />
                                                     </children>
@@ -433,7 +433,7 @@ License:    Apache License Version 2.0
                                                     <children>
                                                         <Label text="%Anchor" />
                                                         <Label text="%Color" />
-                                                        <fx:include fx:id="anchorColorSet" source="ColorSet.fxml" />
+                                                        <fx:include fx:id="anchorColorSet" source="ControlColorSet.fxml" />
                                                         <Label text="%Width" />
                                                         <ComboBox fx:id="anchorWidthBox" editable="true" prefWidth="100.0" />
                                                         <CheckBox fx:id="anchorSolidCheck" mnemonicParsing="false" text="%Solid" />
@@ -443,7 +443,7 @@ License:    Apache License Version 2.0
                                                     <children>
                                                         <Label text="%GridLines" />
                                                         <Label text="%Color" />
-                                                        <fx:include fx:id="gridColorSet" source="ColorSet.fxml" />
+                                                        <fx:include fx:id="gridColorSet" source="ControlColorSet.fxml" />
                                                         <Label text="%Width" />
                                                         <ComboBox fx:id="gridWidthSelector" editable="true" prefWidth="100.0" />
                                                         <Label text="%Interval" />
@@ -455,7 +455,7 @@ License:    Apache License Version 2.0
                                                 <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                     <children>
                                                         <Label text="%AlphaColor" wrapText="true" />
-                                                        <fx:include fx:id="alphaColorSet" source="ColorSet.fxml" />
+                                                        <fx:include fx:id="alphaColorSet" source="ControlColorSet.fxml" />
                                                         <Label fx:id="alphaLabel" text="%AlphaReplaceComments" />
                                                     </children>
                                                 </HBox>

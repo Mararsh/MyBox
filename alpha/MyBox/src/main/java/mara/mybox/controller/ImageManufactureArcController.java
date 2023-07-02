@@ -26,7 +26,7 @@ public class ImageManufactureArcController extends ImageManufactureOperationCont
     @FXML
     protected ComboBox arcBox;
     @FXML
-    protected ColorSetController colorSetController;
+    protected ControlColorSet colorSetController;
 
     @Override
     public void initPane() {

@@ -161,7 +161,7 @@ License:    Apache License Version 2.0
                                                         <FlowPane hgap="2.0" layoutX="32.0" layoutY="90.0" vgap="2.0">
                                                             <children>
                                                                 <Label text="%Background" />
-                                                                <fx:include fx:id="colorSet" source="ColorSet.fxml" />
+                                                                <fx:include fx:id="colorSet" source="ControlColorSet.fxml" />
                                                             </children>
                                                         </FlowPane>
                                                         <Button fx:id="createButton" mnemonicParsing="false" onAction="#createAction">

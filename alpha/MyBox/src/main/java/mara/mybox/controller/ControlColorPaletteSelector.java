@@ -196,6 +196,7 @@ public class ControlColorPaletteSelector extends BaseController {
                     } else {
                         palettesList.getItems().addAll(palettes);
                     }
+                    palettesList.refresh();
                     String s = UserConfig.getString(baseName + "Palette", PaletteTools.defaultPaletteName());
                     for (ColorPaletteName palette : palettes) {
                         if (palette.getName().equals(s)) {

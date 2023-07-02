@@ -57,7 +57,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
     @FXML
     protected TableColumn<GeographyCode, GeoCoordinateSystem> coordinateSystemColumn;
     @FXML
-    protected ColorSetController predefinedColorSetController, inputtedColorSetController;
+    protected ControlColorSet predefinedColorSetController, inputtedColorSetController;
 
     public GeographyCodeController() {
         baseTitle = Languages.message("GeographyCode");

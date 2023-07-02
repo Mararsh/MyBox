@@ -1,6 +1,8 @@
 package mara.mybox.tools;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileReader;
 import java.io.StringReader;
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -56,9 +58,27 @@ public class XmlTools {
     /*
         parse
      */
-    public static Document doc(BaseController controller, String xml) {
+    public static Document textToDoc(BaseController controller, String xml) {
         try {
-            Document doc = builder(controller).parse(new InputSource(new StringReader(xml)));
+            return doc(controller, new InputSource(new StringReader(xml)));
+        } catch (Exception e) {
+            PopTools.showError(controller, e.toString());
+            return null;
+        }
+    }
+
+    public static Document fileToDoc(BaseController controller, File file) {
+        try {
+            return doc(controller, new InputSource(new FileReader(file)));
+        } catch (Exception e) {
+            PopTools.showError(controller, e.toString());
+            return null;
+        }
+    }
+
+    public static Document doc(BaseController controller, InputSource inputSource) {
+        try {
+            Document doc = builder(controller).parse(inputSource);
             Strip(controller, doc);
             return doc;
         } catch (Exception e) {
@@ -355,15 +375,6 @@ public class XmlTools {
             info += indent + "\t" + "System Id=\"" + v + "\"\n";
         }
         return info;
-    }
-
-    public static Document clone(Document doc) {
-        try {
-            return doc(null, transform(doc, false));
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
     }
 
     public static Element findName(Document doc, String name, int index) {

@@ -226,7 +226,7 @@ License:    Apache License Version 2.0
                                                                 <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
                                                                     <children>
                                                                         <Label text="%Background" />
-                                                                        <fx:include fx:id="colorSet" source="ColorSet.fxml" />
+                                                                        <fx:include fx:id="colorSet" source="ControlColorSet.fxml" />
                                                                     </children>
                                                                 </FlowPane>
                                                                 <FlowPane alignment="CENTER_LEFT" hgap="2.0" layoutX="15.0" layoutY="214.0" vgap="2.0">

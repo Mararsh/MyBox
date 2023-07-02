@@ -78,7 +78,7 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
             @Override
             protected boolean handle() {
                 try {
-                    doc = XmlTools.doc(myController, xml);
+                    doc = XmlTools.textToDoc(myController, xml);
                     root = makeTreeItem(new XmlTreeNode(doc));
                     return true;
                 } catch (Exception e) {

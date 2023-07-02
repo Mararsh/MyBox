@@ -48,7 +48,7 @@ License:    Apache License Version 2.0
                                               <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
                                                   <children>
                                                       <Label fx:id="colorUnit1" text="%OriginalColor" />
-                                                      <fx:include fx:id="originalColorSet" source="ColorSet.fxml" />
+                                                      <fx:include fx:id="originalColorSet" source="ControlColorSet.fxml" />
                                                   </children>
                                               </FlowPane>
                                                 <FlowPane hgap="5.0" prefWidth="80.0" vgap="5.0">
@@ -87,7 +87,7 @@ License:    Apache License Version 2.0
                                     <FlowPane fx:id="newColorPane" hgap="5.0" prefWrapLength="80.0" vgap="5.0">
                                        <children>
                                           <Label fx:id="colorUnit111" text="%NewColor" />
-                                          <fx:include fx:id="newColorSet" source="ColorSet.fxml" />
+                                          <fx:include fx:id="newColorSet" source="ControlColorSet.fxml" />
                                        </children>
                                     </FlowPane>
                                     <FlowPane fx:id="newColorPane1" hgap="5.0" prefWrapLength="80.0" vgap="5.0">

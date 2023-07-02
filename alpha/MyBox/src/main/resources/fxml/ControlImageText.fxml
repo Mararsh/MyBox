@@ -102,7 +102,7 @@
                                         <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
                                             <children>
                                                 <Label text="%FontColor" />
-                                                <fx:include fx:id="colorSet" source="ColorSet.fxml" />
+                                                <fx:include fx:id="colorSet" source="ControlColorSet.fxml" />
                                             </children>
                                         </FlowPane>
                                         <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
@@ -179,14 +179,14 @@
                                         <FlowPane hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
                                             <children>
                                                 <CheckBox fx:id="bordersFillCheck" mnemonicParsing="false" selected="true" text="%Fill" />
-                                                <fx:include fx:id="bordersFillColorSet" source="ColorSet.fxml" />
+                                                <fx:include fx:id="bordersFillColorSet" source="ControlColorSet.fxml" />
                                             </children>
                                         </FlowPane>
                                         <FlowPane hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
                                             <children>
                                                 <Label fx:id="strokeWidthLabel" text="%Stroke" />
                                                 <Label fx:id="strokeColorLabel" text="%Color" />
-                                                <fx:include fx:id="bordersStrokeColorSet" source="ColorSet.fxml" />
+                                                <fx:include fx:id="bordersStrokeColorSet" source="ControlColorSet.fxml" />
                                                 <Label fx:id="strokeWidthLabel1" text="%Width" />
                                                 <ComboBox fx:id="bordersStrokeWidthSelector" editable="true" prefWidth="100.0" />
                                                 <CheckBox fx:id="bordersStrokeDottedCheck" mnemonicParsing="false" text="%Dotted" />

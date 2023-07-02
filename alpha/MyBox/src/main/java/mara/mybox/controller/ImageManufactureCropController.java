@@ -31,7 +31,7 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
     @FXML
     protected RadioButton includeRadio, excludeRadio;
     @FXML
-    protected ColorSetController colorSetController;
+    protected ControlColorSet colorSetController;
     @FXML
     protected CheckBox clipboardCheck, clipMarginsCheck, imageMarginsCheck;
 

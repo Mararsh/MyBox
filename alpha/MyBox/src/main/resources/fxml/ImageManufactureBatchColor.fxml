@@ -216,7 +216,7 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                                               <HBox fx:id="colorBox" alignment="CENTER_LEFT" spacing="5.0">
                                                                   <children>
-                                                                      <fx:include fx:id="colorSet" source="ColorSet.fxml" />
+                                                                      <fx:include fx:id="colorSet" source="ControlColorSet.fxml" />
                                                                   </children>
                                                               </HBox>
                                                 <FlowPane fx:id="replacePane" hgap="5.0" prefWrapLength="80.0" vgap="5.0">

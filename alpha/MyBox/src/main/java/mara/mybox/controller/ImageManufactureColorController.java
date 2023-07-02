@@ -90,7 +90,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
     @FXML
     protected ImageView distanceTipsView;
     @FXML
-    protected ColorSetController originalColorSetController, newColorSetController, valueColorSetController;
+    protected ControlColorSet originalColorSetController, newColorSetController, valueColorSetController;
     @FXML
     protected ControlImagesBlend blendController;
 

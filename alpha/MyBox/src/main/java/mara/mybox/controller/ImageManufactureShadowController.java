@@ -26,7 +26,7 @@ public class ImageManufactureShadowController extends ImageManufactureOperationC
     @FXML
     protected ComboBox shadowBox;
     @FXML
-    protected ColorSetController colorSetController;
+    protected ControlColorSet colorSetController;
 
     @Override
     public void initPane() {

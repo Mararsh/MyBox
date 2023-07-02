@@ -91,7 +91,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
     @FXML
     protected Button okSizeButton, calculateXYZButton, calculateXYButton, displayDataButton;
     @FXML
-    protected ColorSetController colorSetController;
+    protected ControlColorSet colorSetController;
     @FXML
     protected ToggleGroup bgGroup, dotGroup;
     @FXML

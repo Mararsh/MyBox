@@ -135,7 +135,7 @@ public class GameEliminationController extends BaseController {
     @FXML
     protected ControlWebView imageInfoController;
     @FXML
-    protected ColorSetController colorSetController;
+    protected ControlColorSet colorSetController;
 
     public GameEliminationController() {
         baseTitle = message("GameElimniation");

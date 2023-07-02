@@ -67,9 +67,9 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
     @FXML
     protected CheckBox fillCheck, dottedCheck, coordinatePenCheck;
     @FXML
-    protected ColorSetController strokeColorSetController;
+    protected ControlColorSet strokeColorSetController;
     @FXML
-    protected ColorSetController fillColorSetController;
+    protected ControlColorSet fillColorSetController;
     @FXML
     protected ControlImagesBlend blendController;
 

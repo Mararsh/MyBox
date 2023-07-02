@@ -44,7 +44,7 @@ public class HtmlFindController extends WebAddressController {
     @FXML
     protected TextField findInput;
     @FXML
-    protected ColorSetController findColorController, findBgColorController, currentColorController, currentBgColorController;
+    protected ControlColorSet findColorController, findBgColorController, currentColorController, currentBgColorController;
     @FXML
     protected Label foundLabel;
     @FXML

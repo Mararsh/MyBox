@@ -5,9 +5,12 @@ import java.io.File;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import mara.mybox.data.SVG;
@@ -41,9 +44,13 @@ public class ControlSvgView extends BaseController {
     protected Rectangle viewBox;
 
     @FXML
+    protected WebView webView;
+    @FXML
     protected TextField widthInput, heightInput, viewBoxInput;
     @FXML
-    protected WebView webView;
+    protected CheckBox bgColorCheck;
+    @FXML
+    protected ControlColorSet bgColorController;
     @FXML
     protected ComboBox<String> opacitySelector;
 
@@ -70,6 +77,23 @@ public class ControlSvgView extends BaseController {
             webEngine = webView.getEngine();
             webEngine.setJavaScriptEnabled(true);
 
+            bgColorController.init(this, baseName + "BackgroundColor", Color.TRANSPARENT);
+            bgColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+                @Override
+                public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
+                    if (bgColorCheck.isSelected()) {
+                        drawSVG();
+                    }
+                }
+            });
+
+            bgColorCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
+                    drawSVG();
+                }
+            });
+
             bgOpacity = UserConfig.getFloat(baseName + "BackgroundOpacity", 0.3f);
             opacitySelector.getItems().addAll(
                     "0.3", "0", "1.0", "0.05", "0.02", "0.1", "0.2", "0.5", "0.8", "0.6", "0.4", "0.7", "0.9"
@@ -81,7 +105,7 @@ public class ControlSvgView extends BaseController {
                     try {
                         bgOpacity = Float.parseFloat(newValue);
                         opacitySelector.getEditor().setStyle(null);
-                        display();
+                        drawSVG();
                     } catch (Exception e) {
                         opacitySelector.getEditor().setStyle(UserConfig.badStyle());
                     }
@@ -116,14 +140,18 @@ public class ControlSvgView extends BaseController {
             } else {
                 viewBoxInput.clear();
             }
-            display();
+
+            drawSVG();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public void display() {
+    public void drawSVG() {
         try {
+            if (isSettingValues) {
+                return;
+            }
             if (doc == null) {
                 webEngine.loadContent("");
                 return;
@@ -145,6 +173,13 @@ public class ControlSvgView extends BaseController {
             } else {
                 svgNode.removeAttribute("viewBox");
             }
+            if (bgColorCheck.isSelected()) {
+                String style = svgNode.getAttribute("style");
+                svgNode.setAttribute("style",
+                        (style == null || style.isBlank() ? "" : style + ";")
+                        + "background-color: " + bgColorController.rgb() + "; ");
+            }
+
             currentXML = XmlTools.transform(view);
             webEngine.loadContent(currentXML);
         } catch (Exception e) {
@@ -171,11 +206,14 @@ public class ControlSvgView extends BaseController {
         } catch (Exception e) {
         }
         viewBox = SvgTools.viewBox(viewBoxInput.getText());
-        display();
+        drawSVG();
     }
 
     @FXML
     public void defaultSize() {
+//        isSettingValues = true;
+//        bgColorCheck.setSelected(false);
+//        isSettingValues = false;
         loadDoc(doc, focusedNode);
     }
 
@@ -225,7 +263,7 @@ public class ControlSvgView extends BaseController {
             popError(message("NoData"));
             return;
         }
-        File tmpFile = SvgTools.textToImageFile(this, currentXML, width, height, viewBox);
+        File tmpFile = SvgTools.textToImage(this, currentXML, width, height, viewBox);
         if (tmpFile != null && tmpFile.exists()) {
             if (tmpFile.length() > 0) {
                 ImageViewerController.openFile(tmpFile);

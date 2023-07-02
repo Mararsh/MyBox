@@ -126,14 +126,14 @@
                 <FlowPane fx:id="strokeColorPane" hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
                     <children>
                         <Label fx:id="strokeColorLabel" text="%StrokeColor" />
-                        <fx:include fx:id="strokeColorSet" source="ColorSet.fxml" />
+                        <fx:include fx:id="strokeColorSet" source="ControlColorSet.fxml" />
                     </children>
                 </FlowPane>
                 <CheckBox fx:id="dottedCheck" mnemonicParsing="false" text="%Dotted" />
                 <FlowPane fx:id="fillPane" hgap="5.0" layoutX="10.0" layoutY="10.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
                     <children>
                         <CheckBox fx:id="fillCheck" mnemonicParsing="false" text="%Fill" />
-                        <fx:include fx:id="fillColorSet" source="ColorSet.fxml" />
+                        <fx:include fx:id="fillColorSet" source="ControlColorSet.fxml" />
                     </children>
                 </FlowPane>
                 <FlowPane fx:id="rectArcPane" hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">

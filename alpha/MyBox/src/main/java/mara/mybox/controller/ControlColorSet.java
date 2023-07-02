@@ -26,7 +26,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2020-09-04
  * @License Apache License Version 2.0
  */
-public class ColorSetController extends BaseController {
+public class ControlColorSet extends BaseController {
 
     protected TableColor tableColor;
     protected String thisName;
@@ -38,7 +38,7 @@ public class ColorSetController extends BaseController {
     @FXML
     protected Button colorButton;
 
-    public ColorSetController() {
+    public ControlColorSet() {
         baseTitle = "ColorImport";
     }
 
@@ -53,11 +53,11 @@ public class ColorSetController extends BaseController {
         }
     }
 
-    public ColorSetController init(BaseController parent, String name) {
+    public ControlColorSet init(BaseController parent, String name) {
         return init(parent, name, Color.TRANSPARENT);
     }
 
-    public ColorSetController init(BaseController parent, String name, Color defaultColor) {
+    public ControlColorSet init(BaseController parent, String name, Color defaultColor) {
         try {
             if (parent == null) {
                 return this;

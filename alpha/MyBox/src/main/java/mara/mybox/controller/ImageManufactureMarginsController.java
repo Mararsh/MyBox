@@ -54,7 +54,7 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
     @FXML
     protected VBox setBox;
     @FXML
-    protected ColorSetController colorSetController;
+    protected ControlColorSet colorSetController;
     @FXML
     protected Label commentsLabel;
 

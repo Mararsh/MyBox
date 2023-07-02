@@ -6,6 +6,7 @@ import javafx.scene.control.TextField;
 import mara.mybox.data.SVG;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.SvgTools;
+import org.w3c.dom.Document;
 
 /**
  * @Author Mara
@@ -14,39 +15,11 @@ import mara.mybox.tools.SvgTools;
  */
 public class ControlSvgTranscode extends BaseController {
 
-    protected float width, height, docWidth, docHeight, inputWidth, inputHeight;
-    protected Rectangle area, inputArea, docArea;
+    protected float width, height, inputWidth, inputHeight;
+    protected Rectangle area, inputArea;
 
     @FXML
     protected TextField widthInput, heightInput, areaInput;
-
-    public void setSVG(SVG svg) {
-        checkSVG(svg);
-        if (docWidth > 0) {
-            widthInput.setText(docWidth + "");
-        }
-        if (docHeight > 0) {
-            heightInput.setText(docHeight + "");
-        }
-        if (docArea != null) {
-            areaInput.setText(SvgTools.viewBoxString(docArea));
-        }
-    }
-
-    public void checkSVG(SVG svg) {
-        try {
-            docWidth = 0f;
-            docHeight = 0f;
-            docArea = null;
-            if (svg != null) {
-                docWidth = svg.getWidth();
-                docHeight = svg.getHeight();
-                docArea = svg.getViewBox();
-            }
-        } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
-        }
-    }
 
     public void checkInputs() {
         inputWidth = 0f;
@@ -62,20 +35,23 @@ public class ControlSvgTranscode extends BaseController {
         inputArea = SvgTools.viewBox(areaInput.getText());
     }
 
-    public void checkValues() {
-        width = inputWidth > 0 ? inputWidth : docWidth;
-        height = inputHeight > 0 ? inputHeight : docHeight;
-        area = inputArea == null ? inputArea : docArea;
-    }
-
-    public void checkValues(SVG svg) {
-        checkSVG(svg);
-        checkValues();
-    }
-
-    public void pickValues() {
-        checkInputs();
-        checkValues();
+    public void checkValues(Document doc) {
+        try {
+            float docWidth = 0f;
+            float docHeight = 0f;
+            Rectangle docArea = null;
+            if (doc != null) {
+                SVG svg = new SVG(doc);
+                docWidth = svg.getWidth();
+                docHeight = svg.getHeight();
+                docArea = svg.getViewBox();
+            }
+            width = inputWidth > 0 ? inputWidth : docWidth;
+            height = inputHeight > 0 ? inputHeight : docHeight;
+            area = inputArea == null ? inputArea : docArea;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
     }
 
 }
