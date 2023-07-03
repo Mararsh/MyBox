@@ -211,9 +211,6 @@ public class ControlSvgView extends BaseController {
 
     @FXML
     public void defaultSize() {
-//        isSettingValues = true;
-//        bgColorCheck.setSelected(false);
-//        isSettingValues = false;
         loadDoc(doc, focusedNode);
     }
 

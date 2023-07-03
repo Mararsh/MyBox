@@ -42,8 +42,7 @@ public class SvgAddShapeController extends BaseChildController {
                     ? editorController.sourceFile.getAbsolutePath() + "   " : "";
             parentLabel.setText(message("AddInto") + ": " + info + hierarchyNumber);
 
-            shapeController.setParameters(editor.treeController.doc,
-                    treeItem.getValue().getNode(),
+            shapeController.addShape(editor.treeController.doc, hierarchyNumber,
                     editor.viewController.viewBox);
 
         } catch (Exception e) {

@@ -212,11 +212,6 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
         return message("CopyName");
     }
 
-    public String xml(Node node) {
-        return XmlTools.transform(node);
-    }
-
-
     /*
         actions
      */
@@ -326,7 +321,7 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
             if (treeItem == null) {
                 return;
             }
-            String xml = xml(treeItem.getValue().getNode());
+            String xml = XmlTools.transform(treeItem.getValue().getNode());
             if (xml == null || xml.isBlank()) {
                 popInformation(message("NoData"));
             } else {

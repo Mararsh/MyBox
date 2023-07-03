@@ -25,6 +25,7 @@ import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.tools.SvgTools;
 import mara.mybox.tools.XmlTools;
+import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -36,17 +37,17 @@ import org.w3c.dom.Node;
  * @License Apache License Version 2.0
  */
 public class ControlSvgShape extends BaseImageController {
-    
+
     protected SVG svg;
     protected Rectangle svgRect;
     protected Document doc;
     protected Node parentNode;
-    protected Element newShape;
+    protected Element shape;
     protected WebEngine webEngine;
     protected double width, height;
     protected float bgOpacity;
     protected int strokeWidth;
-    
+
     @FXML
     protected Label parentLabel;
     @FXML
@@ -57,7 +58,7 @@ public class ControlSvgShape extends BaseImageController {
     @FXML
     protected TabPane selectPane;
     @FXML
-    protected Tab shapeTab, styleTab, penTab, xmlTab;
+    protected Tab parametersTab, xmlTab;
     @FXML
     protected ScrollPane shapePane;
     @FXML
@@ -67,28 +68,28 @@ public class ControlSvgShape extends BaseImageController {
     protected TextField circleCenterXInput, circleCenterYInput, circleRadiusInput,
             rectXInput, rectYInput, rectWidthInput, rectHeightInput, dashInput;
     @FXML
-    protected TextArea pathArea, styleArea;
+    protected TextArea pathArea, styleArea, xmlArea;
     @FXML
     protected ComboBox<String> strokeWidthSelector;
     @FXML
-    protected CheckBox fillCheck;
+    protected CheckBox fillCheck, wrapXmlCheck;
     @FXML
     protected ControlColorSet fillColorController, strokeColorController;
     @FXML
     protected ControlSvgView viewController;
-    
+
     @Override
     public void initControls() {
         try {
             super.initControls();
-            
+
             elementType.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    makeShape();
+                    createShape();
                 }
             });
-            
+
             strokeWidth = UserConfig.getInt(baseName + "StrokeWidth", 2);
             strokeWidthSelector.getItems().addAll(
                     "2", "1", "3", "4", "0", "6", "10", "15", "20"
@@ -111,54 +112,137 @@ public class ControlSvgShape extends BaseImageController {
                     }
                 }
             });
-            
+
             strokeColorController.init(this, baseName + "StrokeColor", Color.BLACK);
             fillColorController.init(this, baseName + "FillColor", Color.TRANSPARENT);
-            
+
             fillCheck.setSelected(false);
-            
+
             shapeBox.getChildren().remove(selectPane);
-            
+
+            wrapXmlCheck.setSelected(UserConfig.getBoolean(baseName + "WarpXML", true));
+            wrapXmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "WarpXML", newValue);
+                    xmlArea.setWrapText(newValue);
+                }
+            });
+            xmlArea.setWrapText(wrapXmlCheck.isSelected());
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
-    public void setParameters(Document inDoc, Node parent, Rectangle rect) {
+
+    public void addShape(Document inDoc, String hierarchyNumber, Rectangle rect) {
         try {
             doc = (Document) inDoc.cloneNode(true);
-            String hierarchyNumber = XmlTools.hierarchyNumber(parent);
             parentNode = XmlTools.find(doc, hierarchyNumber);
             svg = new SVG(doc);
             svgRect = rect;
-            makeShape();
+            createShape();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
+
     public void newDoc() {
         try {
             doc = SvgTools.blankDoc();
             svg = new SVG(doc);
             parentNode = svg.getSvgNode();
-            makeShape();
+            createShape();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
-    public void makeShape() {
+
+    public void createShape() {
+        try {
+            if (isSettingValues || doc == null) {
+                return;
+            }
+            pickSVG();
+
+            if (rectRadio.isSelected()) {
+                shapePane.setContent(rectangleBox);
+                rectXInput.setText(width / 4 + "");
+                rectYInput.setText(height / 4 + "");
+                rectWidthInput.setText(width / 2 + "");
+                rectHeightInput.setText(height / 2 + "");
+
+            } else if (circleRadio.isSelected()) {
+                shapePane.setContent(circleBox);
+                circleCenterXInput.setText(width / 2 + "");
+                circleCenterYInput.setText(height / 2 + "");
+                circleRadiusInput.setText(Math.min(width, height) / 4 + "");
+
+            } else if (ellipseRadio.isSelected()) {
+
+            } else if (lineRadio.isSelected()) {
+
+            } else if (polylineRadio.isSelected()) {
+
+            } else if (polygonRadio.isSelected()) {
+
+            } else if (pathRadio.isSelected()) {
+
+            } else {
+                popError(message("InvalidData"));
+                return;
+            }
+
+            pickParameters();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void loadShape(Element element) {
+        try {
+            if (isSettingValues || element == null) {
+                return;
+            }
+            isSettingValues = true;
+            switch (element.getNodeName().toLowerCase()) {
+                case "rect":
+                    rectRadio.setSelected(true);
+                    shapePane.setContent(rectangleBox);
+                    rectXInput.setText(element.getAttribute("x"));
+                    rectYInput.setText(element.getAttribute("y"));
+                    rectWidthInput.setText(element.getAttribute("width"));
+                    rectHeightInput.setText(element.getAttribute("height"));
+                    break;
+                case "circle":
+                    circleRadio.setSelected(true);
+                    shapePane.setContent(circleBox);
+                    circleCenterXInput.setText(element.getAttribute("cx"));
+                    circleCenterYInput.setText(element.getAttribute("cy"));
+                    circleRadiusInput.setText(element.getAttribute("r"));
+                    break;
+                default:
+                    popError(message("InvalidData"));
+                    isSettingValues = false;
+                    return;
+            }
+            isSettingValues = false;
+            refreshStyle(shapeBox);
+
+            displayShape(element);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void pickSVG() {
         try {
             if (doc == null || parentNode == null) {
                 return;
             }
             if (svg == null) {
                 svg = new SVG(doc);
-            }
-            try {
-                parentNode.removeChild(newShape);
-            } catch (Exception e) {
             }
             width = svg.getWidth();
             if (width <= 0) {
@@ -178,139 +262,221 @@ public class ControlSvgShape extends BaseImageController {
                     height = svgRect.getHeight();
                 }
             }
-            
-            if (rectRadio.isSelected()) {
-                shapePane.setContent(rectangleBox);
-                newShape = doc.createElement("rect");
-                newShape.setAttribute("x", width / 4 + "");
-                newShape.setAttribute("y", height / 4 + "");
-                newShape.setAttribute("width", width / 2 + "");
-                newShape.setAttribute("height", height / 2 + "");
-                
-                rectXInput.setText(newShape.getAttribute("x"));
-                rectYInput.setText(newShape.getAttribute("y"));
-                rectWidthInput.setText(newShape.getAttribute("width"));
-                rectHeightInput.setText(newShape.getAttribute("height"));
-                
-            } else if (circleRadio.isSelected()) {
-                shapePane.setContent(circleBox);
-                newShape = doc.createElement("circle");
-                newShape.setAttribute("cx", width / 2 + "");
-                newShape.setAttribute("cy", height / 2 + "");
-                newShape.setAttribute("r", Math.min(width, height) / 4 + "");
-                
-                circleCenterXInput.setText(newShape.getAttribute("cx"));
-                circleCenterYInput.setText(newShape.getAttribute("cy"));
-                circleRadiusInput.setText(newShape.getAttribute("r"));
-                
-            } else if (ellipseRadio.isSelected()) {
-                shapePane.setContent(ellipseBox);
-                
-            } else if (lineRadio.isSelected()) {
-                shapePane.setContent(lineBox);
-                
-            } else if (polylineRadio.isSelected()) {
-                shapePane.setContent(polylineBox);
-                
-            } else if (polygonRadio.isSelected()) {
-                shapePane.setContent(polygonBox);
-                
-            } else if (pathRadio.isSelected()) {
-                shapePane.setContent(pathBox);
-                
-            } else {
-                shapePane.setContent(null);
-                
-            }
-            refreshStyle(shapeBox);
-            
-            newShape.setAttribute("stroke", strokeColorController.rgb());
-            newShape.setAttribute("stroke-width", strokeWidth + "");
-            if (fillCheck.isSelected()) {
-                newShape.setAttribute("fill", fillColorController.rgb());
-            } else {
-                newShape.setAttribute("fill", "none");
-            }
-            
-            parentNode.appendChild(newShape);
-            viewController.loadDoc(doc, newShape);
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-    
-    public Element newElement() {
+
+    public boolean pickParameters() {
         try {
-            
-            return newShape;
+            if (doc == null || parentNode == null) {
+                return false;
+            }
+            Element element = null;
+            if (rectRadio.isSelected()) {
+                element = pickRect();
+
+            } else if (circleRadio.isSelected()) {
+                element = pickCircle();
+
+            } else if (ellipseRadio.isSelected()) {
+                shapePane.setContent(ellipseBox);
+
+            } else if (lineRadio.isSelected()) {
+                shapePane.setContent(lineBox);
+
+            } else if (polylineRadio.isSelected()) {
+                shapePane.setContent(polylineBox);
+
+            } else if (polygonRadio.isSelected()) {
+                shapePane.setContent(polygonBox);
+
+            } else if (pathRadio.isSelected()) {
+                shapePane.setContent(pathBox);
+
+            } else {
+                shapePane.setContent(null);
+
+            }
+            if (element == null) {
+                return false;
+            }
+            element.setAttribute("stroke", strokeColorController.rgb());
+            element.setAttribute("stroke-width", strokeWidth + "");
+            if (fillCheck.isSelected()) {
+                element.setAttribute("fill", fillColorController.rgb());
+            } else {
+                element.setAttribute("fill", "none");
+            }
+            displayShape(element);
+            xmlArea.setText(XmlTools.transform(shape, true));
+            return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public Element pickRect() {
+        try {
+            if (doc == null || !rectRadio.isSelected()) {
+                return null;
+            }
+            float x, y, w, h;
+            try {
+                x = Float.parseFloat(rectXInput.getText());
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": x");
+                return null;
+            }
+            try {
+                y = Float.parseFloat(rectYInput.getText());
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": y");
+                return null;
+            }
+            try {
+                w = Float.parseFloat(rectWidthInput.getText());
+            } catch (Exception e) {
+                w = -1f;
+            }
+            if (w <= 0) {
+                popError(message("InvalidParameter") + ": " + message("Width"));
+                return null;
+            }
+            try {
+                h = Float.parseFloat(rectHeightInput.getText());
+            } catch (Exception e) {
+                h = -1f;
+            }
+            if (h <= 0) {
+                popError(message("InvalidParameter") + ": " + message("Height"));
+                return null;
+            }
+            Element element = doc.createElement("rect");
+            element.setAttribute("x", x + "");
+            element.setAttribute("y", y + "");
+            element.setAttribute("width", w + "");
+            element.setAttribute("height", h + "");
+            return element;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
             return null;
         }
     }
-    
+
+    public Element pickCircle() {
+        try {
+            if (doc == null || !circleRadio.isSelected()) {
+                return null;
+            }
+            float x, y, r;
+            try {
+                x = Float.parseFloat(circleCenterXInput.getText());
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": x");
+                return null;
+            }
+            try {
+                y = Float.parseFloat(circleCenterYInput.getText());
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": y");
+                return null;
+            }
+            try {
+                r = Float.parseFloat(circleRadiusInput.getText());
+            } catch (Exception e) {
+                r = -1f;
+            }
+            if (r <= 0) {
+                popError(message("InvalidParameter") + ": " + message("Radius"));
+                return null;
+            }
+            Element element = doc.createElement("circle");
+            element.setAttribute("cx", x + "");
+            element.setAttribute("cy", y + "");
+            element.setAttribute("r", r + "");
+            return element;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public void displayShape(Element element) {
+        try {
+            parentNode.removeChild(shape);
+        } catch (Exception e) {
+        }
+        shape = element;
+        if (shape != null) {
+            parentNode.appendChild(shape);
+        }
+        viewController.loadDoc(doc, shape);
+    }
+
     @FXML
     public void popExamplesPathMenu(Event event) {
         if (UserConfig.getBoolean("SvgPathExamplesPopWhenMouseHovering", false)) {
             showExamplesPathMenu(event);
         }
     }
-    
+
     @FXML
     public void showExamplesPathMenu(Event event) {
         PopTools.popValues(this, pathArea, "SvgPathExamples", HelpTools.svgPathExamples(), event);
     }
-    
+
     @FXML
     public void popExamplesStyleMenu(Event event) {
         if (UserConfig.getBoolean("SvgStyleExamplesPopWhenMouseHovering", false)) {
             showExamplesStyleMenu(event);
         }
     }
-    
+
     @FXML
     public void showExamplesStyleMenu(Event event) {
         PopTools.popValues(this, styleArea, "SvgStyleExamples", HelpTools.svgStyleExamples(), event);
     }
-    
+
     @FXML
     protected void popHelps(Event event) {
         if (UserConfig.getBoolean("SvgHelpsPopWhenMouseHovering", false)) {
             showHelps(event);
         }
     }
-    
+
     @FXML
     protected void showHelps(Event event) {
         popEventMenu(event, HelpTools.svgHelps(true));
     }
-    
+
     @FXML
     @Override
     public boolean synchronizeAction() {
-        makeShape();
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+        if (tab == parametersTab) {
+            pickParameters();
+        } else if (tab == xmlTab) {
+            pickXml();
+        }
         return true;
     }
-    
-    @FXML
-    @Override
-    public void clearAction() {
-        Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        if (tab == shapeTab) {
-            
+
+    public void pickXml() {
+        try {
+            Document nd = XmlTools.textToDoc(this, xmlArea.getText());
+            Element element = (Element) doc.importNode(nd.getDocumentElement(), false);
+            loadShape(element);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
-        newElement();
     }
-    
+
     @FXML
     public void popXml() {
-        
+        TextPopController.openInput(this, xmlArea);
     }
-    
-    @FXML
-    public void popHtml() {
-        
-    }
-    
+
 }

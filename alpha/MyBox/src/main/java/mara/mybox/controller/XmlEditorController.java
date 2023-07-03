@@ -28,6 +28,7 @@ import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.StringTools;
 import mara.mybox.tools.TextFileTools;
+import mara.mybox.tools.XmlTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -148,7 +149,7 @@ public class XmlEditorController extends BaseFileController {
         updateTitle();
         isSettingValues = false;
         recordFileOpened(sourceFile);
-        recoverButton.setDisable(sourceFile == null);
+        recoverButton.setDisable(true);
         backupController.loadBackups(sourceFile);
         browseController.setCurrentFile(sourceFile);
         fileInfoLabel.setText(FileTools.fileInformation(sourceFile));
@@ -274,6 +275,7 @@ public class XmlEditorController extends BaseFileController {
     protected void fileChanged() {
         fileChanged = true;
         updateTitle();
+        recoverButton.setDisable(sourceFile == null);
     }
 
     @FXML
@@ -337,7 +339,7 @@ public class XmlEditorController extends BaseFileController {
     }
 
     public String xmlByDom() {
-        return domController.xml(domController.doc);
+        return XmlTools.transform(domController.doc, true);
     }
 
     public void domChanged(boolean changed) {

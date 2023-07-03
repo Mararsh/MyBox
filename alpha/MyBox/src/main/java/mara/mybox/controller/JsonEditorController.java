@@ -153,7 +153,7 @@ public class JsonEditorController extends BaseFileController {
         updateTitle();
         isSettingValues = false;
         recordFileOpened(sourceFile);
-        recoverButton.setDisable(sourceFile == null);
+        recoverButton.setDisable(true);
         backupController.loadBackups(sourceFile);
         browseController.setCurrentFile(sourceFile);
         fileInfoLabel.setText(FileTools.fileInformation(sourceFile));
@@ -279,6 +279,7 @@ public class JsonEditorController extends BaseFileController {
     protected void fileChanged() {
         fileChanged = true;
         updateTitle();
+        recoverButton.setDisable(sourceFile == null);
     }
 
     @FXML
