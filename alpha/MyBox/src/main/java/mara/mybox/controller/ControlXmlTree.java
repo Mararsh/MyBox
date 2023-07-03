@@ -189,9 +189,20 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
         nodeController.editNode(item);
     }
 
+    @Override
+    public void focusItem(TreeItem<XmlTreeNode> item) {
+        super.focusItem(item);
+        itemClicked(null, item);
+    }
+
     /*
         values
      */
+    public Node selectedNode() {
+        TreeItem<XmlTreeNode> selecteItem = selected();
+        return selecteItem == null ? null : selecteItem.getValue().getNode();
+    }
+
     @Override
     public boolean validNode(XmlTreeNode node) {
         return node != null && node.getNode() != null;
@@ -394,13 +405,16 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
             Node newNode = xmlNode.cloneNode(true);
             Node parentNode = xmlNode.getParentNode();
 
+            TreeItem<XmlTreeNode> newTreeItem;
             if (afterNode && index < parentItem.getChildren().size() - 1) {
                 parentNode.insertBefore(newNode, xmlNode.getNextSibling());
-                addTreeItem(parentItem, index + 1, new XmlTreeNode(newNode));
+                newTreeItem = addTreeItem(parentItem, index + 1, new XmlTreeNode(newNode));
             } else {
                 parentNode.appendChild(newNode);
-                addTreeItem(parentItem, -1, new XmlTreeNode(newNode));
+                newTreeItem = addTreeItem(parentItem, -1, new XmlTreeNode(newNode));
             }
+
+            focusItem(newTreeItem);
 
             xmlEditor.domChanged(true);
             xmlEditor.popInformation(message("CopySuccessfully"));

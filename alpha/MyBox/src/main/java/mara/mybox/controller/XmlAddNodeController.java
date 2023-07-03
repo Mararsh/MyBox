@@ -204,6 +204,7 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
                 children.add(newItem);
             }
 
+            treeController.focusItem(newItem);
             treeController.xmlEditor.domChanged(true);
             treeController.xmlEditor.popInformation(message("CreatedSuccessfully"));
 

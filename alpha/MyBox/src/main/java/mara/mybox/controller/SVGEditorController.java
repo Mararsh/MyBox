@@ -82,6 +82,12 @@ public class SvgEditorController extends XmlEditorController {
     }
 
     @Override
+    public void domChanged(boolean changed) {
+        super.domChanged(changed);
+        viewController.loadDoc(treeController.doc, treeController.selectedNode());
+    }
+
+    @Override
     public String makeBlank() {
         return SvgTools.blankSVG(500, 500);
     }

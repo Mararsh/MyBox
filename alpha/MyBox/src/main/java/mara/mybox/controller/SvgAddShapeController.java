@@ -54,51 +54,19 @@ public class SvgAddShapeController extends BaseChildController {
     @Override
     public void okAction() {
         try {
-            if (treeItem == null) {
-                close();
-                return;
-            }
-            XmlTreeNode treeNode = treeItem.getValue();
-            if (treeNode == null) {
-                close();
-                return;
-            }
-            Node node = treeNode.getNode();
-            if (node == null) {
+            if (treeItem == null || shapeController.shape == null) {
                 close();
                 return;
             }
 
-            Node newNode = null;
-//            if (elementRadio.isSelected()) {
-//                String name = nameInput.getText();
-//                if (name == null || name.isBlank()) {
-//                    popError(message("InvalidParameter") + ": " + message("Name"));
-//                    return;
-//                }
-//                Element element = doc.createElement(name.trim());
-//                for (Node attr : attributesData) {
-//                    element.setAttribute(attr.getNodeName(), attr.getNodeValue());
-//                }
-//                newNode = element;
-//
-//            } else if (textRadio.isSelected()) {
-//                newNode = doc.createTextNode(value);
-//
-//            } else if (cdataRadio.isSelected()) {
-//                newNode = doc.createCDATASection(value);
-//
-//            } else if (commentRadio.isSelected()) {
-//                newNode = doc.createComment(value);
-//            } else {
-//                return;
-//            }
+            Node newNode = editor.treeController.doc.importNode(shapeController.shape, true);
+            treeItem.getValue().getNode().appendChild(newNode);
             TreeItem<XmlTreeNode> newItem = new TreeItem(new XmlTreeNode(newNode));
-            node.appendChild(newNode);
             treeItem.getChildren().add(newItem);
 
             close();
 
+            editor.treeController.focusItem(newItem);
             editor.domChanged(true);
             editor.popInformation(message("CreatedSuccessfully"));
 

@@ -104,6 +104,9 @@ public class ControlSvgView extends BaseController {
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
                         bgOpacity = Float.parseFloat(newValue);
+                        if (bgOpacity >= 0) {
+                            UserConfig.setFloat(baseName + "BackgroundOpacity", bgOpacity);
+                        }
                         opacitySelector.getEditor().setStyle(null);
                         drawSVG();
                     } catch (Exception e) {

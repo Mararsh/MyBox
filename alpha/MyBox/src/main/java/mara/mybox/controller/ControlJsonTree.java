@@ -204,6 +204,12 @@ public class ControlJsonTree extends BaseTreeTableViewController<JsonTreeNode> {
         nodeController.editNode(item);
     }
 
+    @Override
+    public void focusItem(TreeItem<JsonTreeNode> item) {
+        super.focusItem(item);
+        nodeController.editNode(item);
+    }
+
 
     /*
         values
