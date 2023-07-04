@@ -57,7 +57,7 @@ public class XmlEditorController extends BaseFileController {
     @FXML
     protected ControlFileBackup backupController;
     @FXML
-    protected CheckBox wrapTextsCheck;
+    protected CheckBox wrapTextsCheck, typesettingCheck;
 
     public XmlEditorController() {
         baseTitle = message("XmlEditor");
@@ -339,7 +339,7 @@ public class XmlEditorController extends BaseFileController {
     }
 
     public String xmlByDom() {
-        return XmlTools.transform(domController.doc, true);
+        return XmlTools.transform(domController.doc);
     }
 
     public void domChanged(boolean changed) {
@@ -390,6 +390,8 @@ public class XmlEditorController extends BaseFileController {
                     textsArea.setWrapText(wrapTextsCheck.isSelected());
                 }
             });
+
+            typesettingCheck.selectedProperty().bindBidirectional(optionsController.indentCheck.selectedProperty());
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

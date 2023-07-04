@@ -327,6 +327,11 @@ public abstract class MainMenuController_Development extends MainMenuController_
     }
 
     @FXML
+    public void makeFunctionsList() {
+        openHtml(HelpTools.makeFunctionsList(menuBar));
+    }
+
+    @FXML
     public void autoTesting() {
         loadScene(Fxmls.AutoTestingCasesFxml);
     }

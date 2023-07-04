@@ -222,7 +222,7 @@ License:    Apache License Version 2.0
                                                                     </ImageView>
                                                                 </graphic>
                                                             </Button>
-                                                            <CheckBox fx:id="wrapTextsCheck" mnemonicParsing="false">
+                                                            <CheckBox fx:id="wrapTextsCheck" mnemonicParsing="false" selected="true">
                                                                 <graphic>
                                                                     <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                         <image>
@@ -231,6 +231,15 @@ License:    Apache License Version 2.0
                                                                     </ImageView>
                                                                 </graphic>
                                                             </CheckBox>
+                                                <CheckBox fx:id="typesettingCheck" mnemonicParsing="false" selected="true">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/red/iconTree.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </CheckBox>
                                                         </children>
                                                     </HBox>
                                                     <TextArea fx:id="textsArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />

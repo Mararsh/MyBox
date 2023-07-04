@@ -36,53 +36,46 @@ License:    Apache License Version 2.0
                         <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="ALWAYS">
                             <content>
                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                    <children>
-                                        <TitledPane text="%File">
-                                            <content>
-                                                <VBox spacing="2.0">
-                                                    <children>
-                                                        <Label fx:id="fileInfoLabel" minHeight="-Infinity" wrapText="true" />
-                                                    </children>
-                                                </VBox>
-                                            </content>
-                                        </TitledPane>
-                              <TitledPane layoutX="10.0" layoutY="69.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" text="%Options">
+                           <children>
+                              <TitledPane text="%File">
                                  <content>
-                                    <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" pannable="true">
-                                       <content>
-                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="2.0">
-                                             <children>
-                                                                  <Label text="%TakeEffectNextReadWrite" />
-                                                                  <Separator prefWidth="200.0" />
-                                                <fx:include fx:id="options" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" source="ControlXmlOptions.fxml" VBox.vgrow="ALWAYS" />
-                                             </children>
-                                             <padding>
-                                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                                             </padding>
-                                          </VBox>
-                                       </content>
-                                    </ScrollPane>
+                                    <VBox spacing="2.0">
+                                       <children>
+                                          <Label fx:id="fileInfoLabel" minHeight="-Infinity" wrapText="true" />
+                                       </children>
+                                    </VBox>
                                  </content>
                               </TitledPane>
-                                        <TitledPane expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Backup">
-                                            <content>
-                                                <VBox spacing="2.0">
-                                                    <children>
-                                                        <fx:include fx:id="backup" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlFileBackup.fxml" VBox.vgrow="ALWAYS" />
-                                                    </children>
-                                                </VBox>
-                                            </content>
-                                        </TitledPane>
-                                        <TitledPane fx:id="browsePane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Browse" VBox.vgrow="ALWAYS">
-                                            <content>
-                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                                    <children>
-                                                        <fx:include fx:id="browse" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlFileBrowse.fxml" VBox.vgrow="ALWAYS" />
-                                                    </children>
-                                                </VBox>
-                                            </content>
-                                        </TitledPane>
-                                    </children>
+                              <TitledPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Options">
+                                 <content>
+                                    <VBox spacing="2.0">
+                                       <children>
+                                          <Label text="%TakeEffectNextReadWrite" />
+                                          <Separator prefWidth="200.0" />
+                                          <fx:include fx:id="options" source="ControlXmlOptions.fxml" />
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </TitledPane>
+                              <TitledPane expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Backup">
+                                 <content>
+                                    <VBox spacing="2.0">
+                                       <children>
+                                          <fx:include fx:id="backup" source="ControlFileBackup.fxml" />
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </TitledPane>
+                              <TitledPane fx:id="browsePane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Browse">
+                                 <content>
+                                    <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                       <children>
+                                          <fx:include fx:id="browse" source="ControlFileBrowse.fxml" />
+                                       </children>
+                                    </VBox>
+                                 </content>
+                              </TitledPane>
+                           </children>
                                 </VBox>
                             </content>
                         </ScrollPane>
@@ -240,7 +233,7 @@ License:    Apache License Version 2.0
                                                                                 </ImageView>
                                                                             </graphic>
                                                                         </Button>
-                                                                        <CheckBox fx:id="wrapTextsCheck" mnemonicParsing="false">
+                                                                        <CheckBox fx:id="wrapTextsCheck" mnemonicParsing="false" selected="true">
                                                                             <graphic>
                                                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
                                                                                     <image>
@@ -249,6 +242,15 @@ License:    Apache License Version 2.0
                                                                                 </ImageView>
                                                                             </graphic>
                                                                         </CheckBox>
+                                                      <CheckBox fx:id="typesettingCheck" layoutX="51.0" layoutY="14.0" mnemonicParsing="false" selected="true">
+                                                         <graphic>
+                                                            <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                               <image>
+                                                                  <Image url="@../buttons/red/iconTree.png" />
+                                                               </image>
+                                                            </ImageView>
+                                                         </graphic>
+                                                      </CheckBox>
                                                                     </children>
                                                                 </HBox>
                                                                 <TextArea fx:id="textsArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />

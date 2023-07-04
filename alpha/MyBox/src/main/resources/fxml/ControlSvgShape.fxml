@@ -268,7 +268,7 @@ License:    Apache License Version 2.0
                                                                                           <children>
                                                                                               <CheckBox fx:id="fillCheck" mnemonicParsing="false" text="%Fill" />
                                                                                               <fx:include fx:id="fillColor" source="ControlColorSet.fxml" />
-                                                                        <Label minHeight="-Infinity" text="%Opacity" wrapText="true" />
+                                                                        <Label minHeight="-Infinity" text="%FillOpacity" wrapText="true" />
                                                                         <ComboBox fx:id="fillOpacitySelector" editable="true" prefWidth="100.0" />
                                                                                           </children>
                                                                                       </FlowPane>
@@ -276,7 +276,7 @@ License:    Apache License Version 2.0
                                                                                           <children>
                                                                                               <Label minHeight="-Infinity" text="%StrokeColor" wrapText="true" />
                                                                                               <fx:include fx:id="strokeColor" source="ControlColorSet.fxml" />
-                                                                        <Label minHeight="-Infinity" text="%Opacity" wrapText="true" />
+                                                                        <Label minHeight="-Infinity" text="%StrokeOpacity" wrapText="true" />
                                                                         <ComboBox fx:id="strokeOpacitySelector" editable="true" prefWidth="100.0" />
                                                                                           </children>
                                                                                       </FlowPane>

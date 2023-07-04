@@ -23,6 +23,7 @@ import mara.mybox.data.SVG;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.tools.SvgTools;
 import mara.mybox.tools.XmlTools;
 import static mara.mybox.value.Languages.message;
@@ -212,30 +213,30 @@ public class ControlSvgShape extends BaseImageController {
             double min = Math.min(width, height);
             if (rectRadio.isSelected()) {
                 shapePane.setContent(rectangleBox);
-                rectXInput.setText(width / 4 + "");
-                rectYInput.setText(height / 4 + "");
-                rectWidthInput.setText(width / 2 + "");
-                rectHeightInput.setText(height / 2 + "");
+                rectXInput.setText((int) (width / 4) + "");
+                rectYInput.setText((int) (height / 4) + "");
+                rectWidthInput.setText((int) (width / 2) + "");
+                rectHeightInput.setText((int) (height / 2) + "");
 
             } else if (circleRadio.isSelected()) {
                 shapePane.setContent(circleBox);
-                circleXInput.setText(width / 2 + "");
-                circleYInput.setText(height / 2 + "");
-                circleRadiusInput.setText(min / 4 + "");
+                circleXInput.setText((int) (width / 2) + "");
+                circleYInput.setText((int) (height / 2) + "");
+                circleRadiusInput.setText((int) (min / 4) + "");
 
             } else if (ellipseRadio.isSelected()) {
                 shapePane.setContent(ellipseBox);
-                ellipseXInput.setText(width / 2 + "");
-                ellipseYInput.setText(height / 2 + "");
-                ellipseXRadiusInput.setText(min * 2 / 5 + "");
-                ellipseYRadiusInput.setText(min / 4 + "");
+                ellipseXInput.setText((int) (width / 2) + "");
+                ellipseYInput.setText((int) (height / 2) + "");
+                ellipseXRadiusInput.setText((int) (min * 2 / 5) + "");
+                ellipseYRadiusInput.setText((int) (min / 4) + "");
 
             } else if (lineRadio.isSelected()) {
                 shapePane.setContent(lineBox);
-                lineX1Input.setText(width / 4 + "");
-                lineY1Input.setText(height / 5 + "");
-                lineX2Input.setText(width * 4 / 5 + "");
-                lineY2Input.setText(height * 4 / 5 + "");
+                lineX1Input.setText((int) (width / 4) + "");
+                lineY1Input.setText((int) (height / 5) + "");
+                lineX2Input.setText((int) (width * 4 / 5) + "");
+                lineY2Input.setText((int) (height * 4 / 5) + "");
 
             } else if (polylineRadio.isSelected()) {
                 shapePane.setContent(polylineBox);
@@ -546,7 +547,7 @@ public class ControlSvgShape extends BaseImageController {
                 return null;
             }
             Element element = doc.createElement("polyline");
-            element.setAttribute("points", p.replaceAll("\n", " "));
+            element.setAttribute("points", StringTools.trimBlanks(p));
             return element;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -565,7 +566,7 @@ public class ControlSvgShape extends BaseImageController {
                 return null;
             }
             Element element = doc.createElement("polygon");
-            element.setAttribute("points", p.replaceAll("\n", " "));
+            element.setAttribute("points", StringTools.trimBlanks(p));
             return element;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -584,7 +585,7 @@ public class ControlSvgShape extends BaseImageController {
                 return null;
             }
             Element element = doc.createElement("path");
-            element.setAttribute("d", d.replaceAll("\n", " "));
+            element.setAttribute("d", StringTools.trimBlanks(d));
             return element;
         } catch (Exception e) {
             MyBoxLog.error(e);

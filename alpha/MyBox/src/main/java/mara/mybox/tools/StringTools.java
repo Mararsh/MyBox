@@ -80,6 +80,13 @@ public class StringTools {
         return string.replaceAll("\r\n|\n|\r", replaceAs);
     }
 
+    public static String trimBlanks(String string) {
+        if (string == null) {
+            return string;
+        }
+        return string.replaceAll("\\s+", " ").trim();
+    }
+
     public static String[] separatedBySpace(String string) {
         String[] ss = new String[2];
         String s = string.trim();

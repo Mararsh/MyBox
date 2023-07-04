@@ -85,6 +85,9 @@ public class StyleCheckBox {
         if (id.startsWith("miao")) {
             return new StyleData(id, message("Meow"), message("MiaoPrompt"), "", "iconCat.png");
         }
+        if (id.startsWith("typesetting")) {
+            return new StyleData(id, "", message("TypesettingWhenWrite"), "", "iconTree.png");
+        }
         switch (id) {
             case "tableThumbCheck":
                 return new StyleData("tableThumbCheck", "", message("Thumbnail"), "", "iconThumbsList.png");

@@ -7,11 +7,13 @@ import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import mara.mybox.controller.BaseController;
 import mara.mybox.controller.ColorQueryController;
 import mara.mybox.controller.WebBrowserController;
+import mara.mybox.data.FunctionsList;
 import mara.mybox.data.ImageItem;
 import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
@@ -81,7 +83,7 @@ public class HelpTools {
             return htmFile;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -122,7 +124,7 @@ public class HelpTools {
             return htmFile;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -153,7 +155,7 @@ public class HelpTools {
             File htmFile = HtmlWriteTools.writeHtml(table.html());
             return htmFile;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -172,7 +174,7 @@ public class HelpTools {
             File htmFile = HtmlWriteTools.writeHtml(table.html());
             return htmFile;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -184,7 +186,7 @@ public class HelpTools {
                     "doc", "mybox_about_data2d_" + lang + ".html");
             return file;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -196,7 +198,7 @@ public class HelpTools {
                     "doc", "mybox_about_grouping_" + lang + ".html");
             return file;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -208,7 +210,7 @@ public class HelpTools {
                     "doc", "mybox_about_row_expression_" + lang + ".html");
             return file;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -238,7 +240,7 @@ public class HelpTools {
                             HtmlStyles.styleValue("Table"), table.body());
                     htmFile = HtmlWriteTools.writeHtml(html);
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                 }
                 return htmFile != null && htmFile.exists();
             }
@@ -286,7 +288,23 @@ public class HelpTools {
             File htmFile = HtmlWriteTools.writeHtml(table.html());
             return htmFile;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static File makeFunctionsList(MenuBar menuBar) {
+        try {
+            FunctionsList list = new FunctionsList(menuBar, false);
+            StringTable table = list.make();
+            if (table != null) {
+                File htmFile = HtmlWriteTools.writeHtml(table.html());
+                return htmFile;
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -298,7 +316,7 @@ public class HelpTools {
                     "doc", "mybox_interface_tips_" + lang + ".html");
             return file;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -609,7 +627,7 @@ public class HelpTools {
 
             return TextFileTools.writeFile(file, html);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -829,7 +847,7 @@ public class HelpTools {
 
             return items;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -901,7 +919,7 @@ public class HelpTools {
 
             return items;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -953,7 +971,7 @@ public class HelpTools {
 
             return items;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -1013,7 +1031,7 @@ public class HelpTools {
 
             return items;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -1094,7 +1112,7 @@ public class HelpTools {
 
             return items;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -1124,7 +1142,7 @@ public class HelpTools {
 
             return values;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -1136,13 +1154,15 @@ public class HelpTools {
             values.put("fill: skyblue; ", message("FilledColor") + " - " + message("Name"));
             values.put("fill: hsb(0,50,100); ", message("FilledColor") + " - HSB");
             values.put("fill: none; ", message("FilledColor") + " - " + message("None"));
+            values.put("fill-opacity: 0.3; ", message("FillOpacity"));
             values.put("stroke: black; ", message("StrokeColor") + " - " + message("ColorCode"));
             values.put("stroke: rgb(0,128,0); ", message("StrokeColor") + " - RGB");
+            values.put("stroke-opacity: 0.3; ", message("StrokeOpacity"));
             values.put("stroke-width: 2; ", message("StrokeWidth"));
             values.put("stroke-linecap: butt; ", message("StrokeLinecap") + " - " + message("Butt"));
             values.put("stroke-linecap: round; ", message("StrokeLinecap") + " - " + message("Round"));
             values.put("stroke-linecap: square; ", message("StrokeLinecap") + " - " + message("SquareShape"));
-            values.put("stroke-dasharray: 5,5; ", message("StrokeDasharray"));
+            values.put("stroke-dasharray: 2,5; ", message("StrokeDasharray"));
             values.put("stroke-dasharray: 20,10,5,5,5,10; ", message("StrokeDasharray"));
             values.put("font-size: 15px; ", message("FontSize"));
             values.put("font-family: sans-serif; ", message("FontFamily"));
@@ -1151,7 +1171,7 @@ public class HelpTools {
 
             return values;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

@@ -71,6 +71,10 @@ public class ImageAnalyseDominantController extends BaseController {
     @FXML
     protected Label actualLoopLabel;
 
+    public ImageAnalyseDominantController() {
+        TipsLabelKey = "ImageQuantizationComments";
+    }
+
     @Override
     public void setControlsStyle() {
         try {

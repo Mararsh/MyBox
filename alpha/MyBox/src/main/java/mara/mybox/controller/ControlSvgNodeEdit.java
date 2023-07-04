@@ -10,6 +10,7 @@ import static mara.mybox.data.XmlTreeNode.NodeType.Element;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.UserConfig;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -92,14 +93,14 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
             Element element = (Element) node;
             String style = styleArea.getText();
             if (style != null && !style.isBlank()) {
-                element.setAttribute("style", style.replaceAll("\n", " "));
+                element.setAttribute("style", StringTools.trimBlanks(style));
             } else {
                 element.removeAttribute("style");
             }
             if ("path".equalsIgnoreCase(node.getNodeName())) {
                 String path = pathArea.getText();
                 if (path != null && !path.isBlank()) {
-                    element.setAttribute("d", path.replaceAll("\n", " "));
+                    element.setAttribute("d", StringTools.trimBlanks(path));
                 } else {
                     element.removeAttribute("d");
                 }

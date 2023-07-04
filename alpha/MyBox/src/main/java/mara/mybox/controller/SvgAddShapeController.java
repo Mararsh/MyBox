@@ -54,11 +54,15 @@ public class SvgAddShapeController extends BaseChildController {
     @Override
     public void okAction() {
         try {
-            if (treeItem == null || shapeController.shape == null) {
+            if (treeItem == null) {
                 close();
                 return;
             }
-
+            shapeController.synchronizeAction();
+            if (shapeController.shape == null) {
+                popError(message("NoData"));
+                return;
+            }
             Node newNode = editor.treeController.doc.importNode(shapeController.shape, true);
             treeItem.getValue().getNode().appendChild(newNode);
             TreeItem<XmlTreeNode> newItem = new TreeItem(new XmlTreeNode(newNode));
