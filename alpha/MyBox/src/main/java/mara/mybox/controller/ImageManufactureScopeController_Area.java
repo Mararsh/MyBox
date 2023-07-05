@@ -61,13 +61,13 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
                 case RectangleColor:
                     maskRectangleData = rect;
                     scope.setRectangle(maskRectangleData.cloneValues());
-                    drawMaskRectangleLineAsData();
+                    drawMaskRectangleLine();
                     break;
                 case Ellipse:
                 case EllipseColor:
                     maskEllipseData = new DoubleEllipse(x1, y1, x2, y2);
                     scope.setEllipse(maskEllipseData.cloneValues());
-                    drawMaskEllipseLineAsData();
+                    drawMaskEllipseLine();
                     break;
                 default:
                     return;
@@ -118,7 +118,7 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
                 case CircleColor:
                     maskCircleData = circle;
                     scope.setCircle(maskCircleData.cloneValues());
-                    drawMaskCircleLineAsData();
+                    drawMaskCircleLine();
                     break;
                 default:
                     return;
@@ -131,13 +131,13 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
     }
 
     @Override
-    public boolean drawMaskRectangleLineAsData() {
+    public boolean drawMaskRectangleLine() {
         if (maskRectangleLine == null || !maskPane.getChildren().contains(maskRectangleLine)
                 || maskRectangleData == null
                 || imageView == null || imageView.getImage() == null) {
             return false;
         }
-        if (!super.drawMaskRectangleLineAsData()) {
+        if (!super.drawMaskRectangleLine()) {
             return false;
         }
         rectLeftTopXInput.setText(scale(maskRectangleData.getSmallX(), 2) + "");
@@ -148,13 +148,13 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
     }
 
     @Override
-    public boolean drawMaskCircleLineAsData() {
+    public boolean drawMaskCircleLine() {
         if (maskCircleLine == null || !maskCircleLine.isVisible()
                 || maskCircleData == null
                 || imageView == null || imageView.getImage() == null) {
             return false;
         }
-        if (!super.drawMaskCircleLineAsData()) {
+        if (!super.drawMaskCircleLine()) {
             return false;
         }
         circleCenterXInput.setText(scale(maskCircleData.getCenterX(), 2) + "");
@@ -164,13 +164,13 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
     }
 
     @Override
-    public boolean drawMaskEllipseLineAsData() {
+    public boolean drawMaskEllipseLine() {
         if (maskEllipseLine == null || !maskEllipseLine.isVisible()
                 || maskEllipseData == null
                 || imageView == null || imageView.getImage() == null) {
             return false;
         }
-        if (!super.drawMaskEllipseLineAsData()) {
+        if (!super.drawMaskEllipseLine()) {
             return false;
         }
         DoubleRectangle rect = maskEllipseData.getRectangle();

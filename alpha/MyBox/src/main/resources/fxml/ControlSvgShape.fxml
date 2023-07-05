@@ -383,8 +383,7 @@ License:    Apache License Version 2.0
                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                             </padding>
                             <children>
-                        <fx:include fx:id="svgOptions" source="ControlSvgOptions.fxml" />
-                                <fx:include fx:id="image" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageShape.fxml" VBox.vgrow="ALWAYS" />
+                                <fx:include fx:id="image" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlSvgImage.fxml" VBox.vgrow="ALWAYS" />
                             </children>
                         </VBox>
                     </content>

@@ -311,14 +311,14 @@ public class HtmlFindController extends WebAddressController {
     }
 
     protected String itemsStyle() {
-        return "color:" + findColorController.rgb()
-                + "; background: " + findBgColorController.rgb()
+        return "color:" + findColorController.css()
+                + "; background: " + findBgColorController.css()
                 + "; font-size:" + findFontSelector.getValue() + ";";
     }
 
     protected String currentStyle() {
-        return "color:" + currentColorController.rgb()
-                + "; background: " + currentBgColorController.rgb()
+        return "color:" + currentColorController.css()
+                + "; background: " + currentBgColorController.css()
                 + "; font-size:" + findFontSelector.getValue() + ";";
     }
 

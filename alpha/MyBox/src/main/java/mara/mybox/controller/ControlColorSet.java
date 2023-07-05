@@ -112,6 +112,10 @@ public class ControlColorSet extends BaseController {
         return FxColorTools.color2rgba(color());
     }
 
+    public String css() {
+        return FxColorTools.color2css(color());
+    }
+
     public void resetRect() {
         Color color = Color.web(UserConfig.getString(thisName, FxColorTools.color2rgba(defaultColor)));
         setColor(color);

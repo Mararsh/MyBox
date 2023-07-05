@@ -336,8 +336,8 @@ public class ImageAnalyseController extends ImageViewerController {
                 Label legendLabel = (Label) legendItem;
                 Node legend = legendLabel.getGraphic();
                 if (legend != null) {
-                    String colorString = FxColorTools.color2rgb(ColorComponentTools.componentColor(legendLabel.getText()));
-                    legend.setStyle("-fx-background-color: " + colorString);
+                    legend.setStyle("-fx-background-color: "
+                            + FxColorTools.color2css(ColorComponentTools.componentColor(legendLabel.getText())));
                 }
             }
         } catch (Exception e) {

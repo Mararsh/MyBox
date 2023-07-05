@@ -297,7 +297,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                         imageController.maskRectangleData.getSmallY(),
                         imageController.maskRectangleData.getSmallX() + finalClip.getWidth() - 1,
                         imageController.maskRectangleData.getSmallY() + finalClip.getHeight() - 1);
-                imageController.drawMaskRectangleLineAsData();
+                imageController.drawMaskRectangleLine();
                 imageController.scope.setRectangle(imageController.maskRectangleData.cloneValues());
                 maskView.setImage(blendedImage);
                 maskView.setOpacity(1.0);

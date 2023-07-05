@@ -211,7 +211,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
         outlineSource = bufferedImage;
         maskRectangleData = rect.cloneValues();
         setMaskRectangleLineVisible(true);
-        drawMaskRectangleLineAsData();
+        drawMaskRectangleLine();
 
         makeOutline();
     }
@@ -261,7 +261,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
                         maskRectangleData.getSmallX(), maskRectangleData.getSmallY(),
                         maskRectangleData.getSmallX() + outline[0].getWidth() - 1,
                         maskRectangleData.getSmallY() + outline[0].getHeight() - 1);
-                drawMaskRectangleLineAsData();
+                drawMaskRectangleLine();
                 scope.setOutlineSource(outlineSource);
                 scope.setOutline(outline[1]);
                 scope.setRectangle(maskRectangleData.cloneValues());

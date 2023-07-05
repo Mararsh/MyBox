@@ -87,7 +87,7 @@ public class XYZChart {
                 for (int i = 0; i < seriesSize; i++) {
                     String color;
                     if (colorType == ColorType.Column) {
-                        color = FxColorTools.color2rgb(columns.get(i + 2).getColor());
+                        color = FxColorTools.color2css(columns.get(i + 2).getColor());
                     } else {
                         color = FxColorTools.randomRGB();
                     }

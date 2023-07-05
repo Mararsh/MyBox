@@ -79,9 +79,7 @@ public class ControlSvgShape extends BaseController {
     @FXML
     protected ControlColorSet fillColorController, strokeColorController;
     @FXML
-    protected ControlSvgOptions svgOptionsController;
-    @FXML
-    protected ControlImageShape imageController;
+    protected ControlSvgImage imageController;
 
     @Override
     public void initControls() {
@@ -175,13 +173,6 @@ public class ControlSvgShape extends BaseController {
             });
             xmlArea.setWrapText(wrapXmlCheck.isSelected());
 
-            svgOptionsController.drawNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    draw();
-                }
-            });
-
             imageController.svgShape = this;
 
         } catch (Exception e) {
@@ -195,7 +186,7 @@ public class ControlSvgShape extends BaseController {
             doc = (Document) editor.treeController.doc.cloneNode(true);
             parentNode = XmlTools.find(doc, hierarchyNumber);
             svg = new SVG(doc);
-            svgOptionsController.loadDoc(doc, null);
+            imageController.loadDoc(doc);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -205,6 +196,8 @@ public class ControlSvgShape extends BaseController {
         imageController.loadBackGround();
         if (shape == null) {
             createShape();
+        } else {
+            pickParameters();
         }
     }
 
@@ -319,7 +312,7 @@ public class ControlSvgShape extends BaseController {
             if (element == null) {
                 return false;
             }
-            element.setAttribute("stroke", strokeColorController.rgb());
+            element.setAttribute("stroke", strokeColorController.css());
             element.setAttribute("stroke-width", strokeWidth + "");
             element.setAttribute("stroke-opacity", strokeOpacity + "");
             String dash = dashInput.getText();
@@ -334,13 +327,13 @@ public class ControlSvgShape extends BaseController {
                 element.removeAttribute("stroke-linecap");
             }
             if (fillCheck.isSelected()) {
-                element.setAttribute("fill", fillColorController.rgb());
+                element.setAttribute("fill", fillColorController.css());
                 element.setAttribute("fill-opacity", fillOpacity + "");
             } else {
                 element.setAttribute("fill", "none");
             }
 
-            imageController.displayShape(element);
+            imageController.loadShape(element);
             xmlArea.setText(XmlTools.transform(shape, true));
             return true;
         } catch (Exception e) {
@@ -651,10 +644,51 @@ public class ControlSvgShape extends BaseController {
                     isSettingValues = false;
                     return;
             }
+
+            try {
+                strokeColorController.setColor(Color.web(element.getAttribute("stroke")));
+            } catch (Exception e) {
+                strokeColorController.setColor(Color.BLACK);
+            }
+            try {
+                strokeWidthSelector.setValue(Float.valueOf(element.getAttribute("stroke-width")) + "");
+            } catch (Exception e) {
+                strokeWidthSelector.setValue("1px");
+            }
+            try {
+                strokeOpacitySelector.setValue(Float.valueOf(element.getAttribute("stroke-opacity")) + "");
+            } catch (Exception e) {
+                strokeOpacitySelector.setValue("1.0");
+            }
+            dashInput.setText(element.getAttribute("stroke-dasharray"));
+            String v = element.getAttribute("stroke-linecap");
+            if ("square".equalsIgnoreCase(v)) {
+                linecapSquareRadio.setSelected(true);
+            } else if ("round".equalsIgnoreCase(v)) {
+                linecapRoundRadio.setSelected(true);
+            } else {
+                linecapButtRadio.setSelected(true);
+            }
+            v = element.getAttribute("fill");
+            if (v == null || "none".equalsIgnoreCase(v)) {
+                fillCheck.setSelected(false);
+            } else {
+                fillCheck.setSelected(true);
+                try {
+                    fillColorController.setColor(Color.web(v));
+                } catch (Exception e) {
+                    fillColorController.setColor(Color.TRANSPARENT);
+                }
+            }
+            try {
+                strokeOpacitySelector.setValue(Float.valueOf(element.getAttribute("fill-opacity")) + "");
+            } catch (Exception e) {
+                strokeOpacitySelector.setValue("1.0");
+            }
             isSettingValues = false;
             refreshStyle(shapeBox);
 
-            imageController.displayShape(element);
+            imageController.loadShape(element);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

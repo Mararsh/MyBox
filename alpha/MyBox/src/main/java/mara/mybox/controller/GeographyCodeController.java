@@ -118,9 +118,9 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             if (this.isSelected()) {
                 setStyle("-fx-background-color:  #0096C9; -fx-text-background-color: white");
             } else if (GeographyCode.isPredefined(item)) {
-                setStyle("-fx-background-color: " + predefinedColorSetController.rgb());
+                setStyle("-fx-background-color: " + predefinedColorSetController.css());
             } else {
-                setStyle("-fx-background-color: " + inputtedColorSetController.rgb());
+                setStyle("-fx-background-color: " + inputtedColorSetController.css());
             }
         }
     };

@@ -161,17 +161,17 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
                 case Outline:
                     setMaskRectangleLineVisible(true);
                     maskRectangleData = scope.getRectangle();
-                    return drawMaskRectangleLineAsData();
+                    return drawMaskRectangleLine();
                 case Circle:
                 case CircleColor:
                     initMaskCircleLine(true);
                     maskCircleData = scope.getCircle();
-                    return drawMaskCircleLineAsData();
+                    return drawMaskCircleLine();
                 case Ellipse:
                 case EllipseColor:
                     initMaskEllipseLine(true);
                     maskEllipseData = scope.getEllipse();
-                    return drawMaskEllipseLineAsData();
+                    return drawMaskEllipseLine();
                 case Polygon:
                 case PolygonColor: {
                     initMaskPolygonLine(true);
@@ -183,7 +183,7 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
                         pointsList.getSelectionModel().selectLast();
                     }
                     maskPolygonData = scope.getPolygon();
-                    return drawMaskPolygonLineAsData();
+                    return drawMaskPolygonLine();
                 }
             }
             return true;

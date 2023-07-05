@@ -52,7 +52,7 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
             focusedNode = treeItem.getValue().getNode();
         } catch (Exception e) {
         }
-        editor.svgOptionsController.loadDoc(editor.treeController.doc, focusedNode);
+        editor.htmlController.loadDoc(editor.treeController.doc, focusedNode);
     }
 
     @Override

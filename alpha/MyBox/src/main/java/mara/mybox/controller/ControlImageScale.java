@@ -77,7 +77,7 @@ public class ControlImageScale extends ControlImageSize {
             height = imageController.imageView.getImage().getHeight();
             imageController.setMaskRectangleLineVisible(true);
             imageController.maskRectangleData = new DoubleRectangle(0, 0, width - 1, height - 1);
-            imageController.drawMaskRectangleLineAsData();
+            imageController.drawMaskRectangleLine();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -102,7 +102,7 @@ public class ControlImageScale extends ControlImageSize {
                     imageController.maskRectangleData.getSmallY(),
                     imageController.maskRectangleData.getSmallX() + width - 1,
                     imageController.maskRectangleData.getSmallY() + height - 1);
-            imageController.drawMaskRectangleLineAsData();
+            imageController.drawMaskRectangleLine();
 
         } else {
             width = imageController.maskRectangleData.getWidth();

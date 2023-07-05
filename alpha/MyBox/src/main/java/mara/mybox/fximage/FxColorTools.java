@@ -253,6 +253,13 @@ public class FxColorTools {
                 color.getRed(), color.getGreen(), color.getBlue());
     }
 
+    public static String color2css(java.awt.Color color) {
+        return "rgba(" + color.getRed() + ","
+                + color.getGreen() + ","
+                + color.getBlue() + ","
+                + color.getAlpha() / 255f + ")";
+    }
+
     public static String hsb2rgba(float h, float s, float b) {
         return color2rgba(Color.hsb(h, s, b));
     }

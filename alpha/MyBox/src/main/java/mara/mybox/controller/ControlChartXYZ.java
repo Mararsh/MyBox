@@ -201,7 +201,7 @@ public class ControlChartXYZ extends BaseController {
                 for (int i = 0; i < seriesSize; i++) {
                     String color;
                     if (colorColumnsRadio.isSelected()) {
-                        color = FxColorTools.color2rgb(columns.get(i + 2).getColor());
+                        color = FxColorTools.color2css(columns.get(i + 2).getColor());
                     } else {
                         color = FxColorTools.randomRGB();
                     }

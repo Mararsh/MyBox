@@ -191,7 +191,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         scrollPane.setPannable(false);
         mouseX = event.getX();
         mouseY = event.getY();
-//        MyBoxLog.debug((int) mouseX + " " + (int) mouseY);
     }
 
     @FXML

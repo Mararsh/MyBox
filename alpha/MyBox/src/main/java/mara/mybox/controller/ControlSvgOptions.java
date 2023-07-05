@@ -30,11 +30,11 @@ import org.w3c.dom.Node;
  */
 public class ControlSvgOptions extends BaseController {
 
-    protected Document doc, view;
+    protected Document doc;
     protected Node focusedNode;
     protected float width, height, bgOpacity;
     protected Rectangle viewBox;
-    protected SimpleBooleanProperty drawNotify;
+    protected SimpleBooleanProperty sizeNotify, bgColorNotify, opacityNotify;
 
     @FXML
     protected TextField widthInput, heightInput, viewBoxInput;
@@ -64,14 +64,16 @@ public class ControlSvgOptions extends BaseController {
         try {
             super.initControls();
 
-            drawNotify = new SimpleBooleanProperty(false);
+            sizeNotify = new SimpleBooleanProperty(false);
+            bgColorNotify = new SimpleBooleanProperty(false);
+            opacityNotify = new SimpleBooleanProperty(false);
 
             bgColorController.init(this, baseName + "BackgroundColor", Color.TRANSPARENT);
             bgColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
                     if (bgColorCheck.isSelected()) {
-                        makeView();
+                        bgColorChanged();
                     }
                 }
             });
@@ -79,7 +81,7 @@ public class ControlSvgOptions extends BaseController {
             bgColorCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    makeView();
+                    bgColorChanged();
                 }
             });
 
@@ -97,7 +99,7 @@ public class ControlSvgOptions extends BaseController {
                             UserConfig.setFloat(baseName + "BackgroundOpacity", bgOpacity);
                         }
                         opacitySelector.getEditor().setStyle(null);
-                        makeView();
+                        opacityChanged();
                     } catch (Exception e) {
                         opacitySelector.getEditor().setStyle(UserConfig.badStyle());
                     }
@@ -135,50 +137,22 @@ public class ControlSvgOptions extends BaseController {
             } else {
                 viewBoxInput.clear();
             }
-
-            makeView();
+            sizeChanged();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public void makeView() {
-        try {
-            if (isSettingValues) {
-                return;
-            }
-            if (doc == null) {
-                view = null;
-                return;
-            }
-            view = SvgTools.focus(doc, focusedNode, bgOpacity);
-            Element svgNode = XmlTools.findName(view, "svg", 0);
-            if (width > 0) {
-                svgNode.setAttribute("width", width + "");
-            } else {
-                svgNode.removeAttribute("width");
-            }
-            if (height > 0) {
-                svgNode.setAttribute("height", height + "");
-            } else {
-                svgNode.removeAttribute("height");
-            }
-            if (viewBox != null) {
-                svgNode.setAttribute("viewBox", SvgTools.viewBoxString(viewBox));
-            } else {
-                svgNode.removeAttribute("viewBox");
-            }
-            if (bgColorCheck.isSelected()) {
-                String style = svgNode.getAttribute("style");
-                svgNode.setAttribute("style",
-                        (style == null || style.isBlank() ? "" : style + ";")
-                        + "background-color: " + bgColorController.rgb() + "; ");
-            }
+    public void sizeChanged() {
+        sizeNotify.set(!sizeNotify.get());
+    }
 
-            drawNotify.set(!drawNotify.get());
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+    public void bgColorChanged() {
+        bgColorNotify.set(!bgColorNotify.get());
+    }
+
+    public void opacityChanged() {
+        opacityNotify.set(!opacityNotify.get());
     }
 
     @FXML
@@ -200,7 +174,8 @@ public class ControlSvgOptions extends BaseController {
         } catch (Exception e) {
         }
         viewBox = SvgTools.viewBox(viewBoxInput.getText());
-        makeView();
+
+        sizeChanged();
     }
 
     @FXML
@@ -208,16 +183,51 @@ public class ControlSvgOptions extends BaseController {
         loadDoc(doc, focusedNode);
     }
 
+    public Document toSVG(boolean bgColor) {
+        try {
+            if (doc == null) {
+                return null;
+            }
+            Document svgDoc = SvgTools.focus(doc, focusedNode, bgOpacity);
+            Element svgNode = XmlTools.findName(svgDoc, "svg", 0);
+            if (width > 0) {
+                svgNode.setAttribute("width", width + "");
+            } else {
+                svgNode.removeAttribute("width");
+            }
+            if (height > 0) {
+                svgNode.setAttribute("height", height + "");
+            } else {
+                svgNode.removeAttribute("height");
+            }
+            if (viewBox != null) {
+                svgNode.setAttribute("viewBox", SvgTools.viewBoxString(viewBox));
+            } else {
+                svgNode.removeAttribute("viewBox");
+            }
+            if (bgColorCheck.isSelected()) {
+                String style = svgNode.getAttribute("style");
+                svgNode.setAttribute("style",
+                        (style == null || style.isBlank() ? "" : style + ";")
+                        + "background-color: " + bgColorController.css() + "; ");
+            }
+            return svgDoc;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
     public String toXML() {
-        return XmlTools.transform(view);
+        return XmlTools.transform(toSVG(true));
     }
 
     public File toImage() {
-        return SvgTools.docToImage(this, view, width, height, viewBox);
+        return SvgTools.docToImage(this, toSVG(true), width, height, viewBox);
     }
 
     public File toPDF() {
-        return SvgTools.docToPDF(this, view, width, height, viewBox);
+        return SvgTools.docToPDF(this, toSVG(true), width, height, viewBox);
     }
 
 }

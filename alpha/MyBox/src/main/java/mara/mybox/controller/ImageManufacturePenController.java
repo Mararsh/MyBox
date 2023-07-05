@@ -407,7 +407,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             @Override
             protected void whenSucceeded() {
                 maskView.setImage(newImage);
-                imageController.drawMaskRectangleLineAsData();
+                imageController.drawMaskRectangleLine();
             }
 
         };
@@ -438,7 +438,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             @Override
             protected void whenSucceeded() {
                 maskView.setImage(newImage);
-                imageController.drawMaskCircleLineAsData();
+                imageController.drawMaskCircleLine();
             }
 
         };
@@ -469,7 +469,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             @Override
             protected void whenSucceeded() {
                 maskView.setImage(newImage);
-                imageController.drawMaskEllipseLineAsData();
+                imageController.drawMaskEllipseLine();
             }
 
         };
@@ -482,7 +482,7 @@ public class ImageManufacturePenController extends ImageManufactureOperationCont
             return;
         }
         if (imageController.maskPolygonData == null || imageController.maskPolygonData.getSize() <= 2) {
-            imageController.drawMaskPolygonLineAsData();
+            imageController.drawMaskPolygonLine();
             return;
         }
         if (task != null) {

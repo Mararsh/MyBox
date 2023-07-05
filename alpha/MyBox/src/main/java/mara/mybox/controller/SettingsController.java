@@ -375,7 +375,7 @@ public class SettingsController extends BaseController {
             popBgColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
-                    UserConfig.setString("PopTextBgColor", popBgColorController.rgb());
+                    UserConfig.setString("PopTextBgColor", popBgColorController.css());
                     popSuccessful();
                 }
             });
@@ -384,7 +384,7 @@ public class SettingsController extends BaseController {
             popInfoColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
-                    UserConfig.setString("PopInfoColor", popInfoColorController.rgb());
+                    UserConfig.setString("PopInfoColor", popInfoColorController.css());
                     popSuccessful();
                 }
             });
@@ -393,7 +393,7 @@ public class SettingsController extends BaseController {
             popErrorColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
-                    UserConfig.setString("PopErrorColor", popErrorColorController.rgb());
+                    UserConfig.setString("PopErrorColor", popErrorColorController.css());
                     popSuccessful();
                 }
             });
@@ -402,7 +402,7 @@ public class SettingsController extends BaseController {
             popWarnColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
-                    UserConfig.setString("PopWarnColor", popWarnColorController.rgb());
+                    UserConfig.setString("PopWarnColor", popWarnColorController.css());
                     popSuccessful();
                 }
             });

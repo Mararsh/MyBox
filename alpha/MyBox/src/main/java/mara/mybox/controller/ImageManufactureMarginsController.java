@@ -173,7 +173,7 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
             imageController.maskRectangleData = new DoubleRectangle(0, 0,
                     imageView.getImage().getWidth() - 1,
                     imageView.getImage().getHeight() - 1);
-            imageController.drawMaskRectangleLineAsData();
+            imageController.drawMaskRectangleLine();
             commentsLabel.setText(Languages.message("DragMarginsComments"));
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

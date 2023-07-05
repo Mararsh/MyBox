@@ -302,9 +302,8 @@ public class ImageAnalyseDominantController extends BaseController {
             }
             dominantPie.setData(pieChartData);
             for (int i = 0; i < colors.size(); ++i) {
-                String colorString = FxColorTools.color2rgb(colors.get(i));
                 PieChart.Data data = pieChartData.get(i);
-                data.getNode().setStyle("-fx-pie-color: " + colorString + ";");
+                data.getNode().setStyle("-fx-pie-color: " + FxColorTools.color2css(colors.get(i)) + ";");
             }
             dominantPie.setLegendSide(Side.TOP);
             dominantPie.setLegendVisible(true);
