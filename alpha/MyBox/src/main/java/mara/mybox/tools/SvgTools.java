@@ -34,6 +34,14 @@ public class SvgTools {
     /*
         image
      */
+    public static File docToImage(BaseController controller, Document doc,
+            float width, float height, Rectangle area) {
+        if (doc == null) {
+            return null;
+        }
+        return textToImage(controller, XmlTools.transform(doc), width, height, area);
+    }
+
     public static File textToImage(BaseController controller, String svg,
             float width, float height, Rectangle area) {
         if (svg == null || svg.isBlank()) {
@@ -95,6 +103,14 @@ public class SvgTools {
     /*
         pdf
      */
+    public static File docToPDF(BaseController controller, Document doc,
+            float width, float height, Rectangle area) {
+        if (doc == null) {
+            return null;
+        }
+        return textToPDF(controller, XmlTools.transform(doc), width, height, area);
+    }
+
     public static File textToPDF(BaseController controller, String svg,
             float width, float height, Rectangle area) {
         if (svg == null || svg.isBlank()) {

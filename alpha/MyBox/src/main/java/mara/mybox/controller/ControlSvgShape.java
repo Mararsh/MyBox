@@ -1,6 +1,5 @@
 package mara.mybox.controller;
 
-import java.awt.Rectangle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
@@ -37,15 +36,14 @@ import org.w3c.dom.Node;
  * @CreateDate 2023-6-29
  * @License Apache License Version 2.0
  */
-public class ControlSvgShape extends BaseImageController {
+public class ControlSvgShape extends BaseController {
 
+    protected SvgEditorController editor;
     protected SVG svg;
-    protected Rectangle svgRect;
     protected Document doc;
     protected Node parentNode;
     protected Element shape;
     protected WebEngine webEngine;
-    protected double width, height;
     protected float fillOpacity, strokeOpacity;
     protected int strokeWidth;
 
@@ -81,7 +79,9 @@ public class ControlSvgShape extends BaseImageController {
     @FXML
     protected ControlColorSet fillColorController, strokeColorController;
     @FXML
-    protected ControlSvgView viewController;
+    protected ControlSvgOptions svgOptionsController;
+    @FXML
+    protected ControlImageShape imageController;
 
     @Override
     public void initControls() {
@@ -175,20 +175,36 @@ public class ControlSvgShape extends BaseImageController {
             });
             xmlArea.setWrapText(wrapXmlCheck.isSelected());
 
+            svgOptionsController.drawNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    draw();
+                }
+            });
+
+            imageController.svgShape = this;
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    public void addShape(Document inDoc, String hierarchyNumber, Rectangle rect) {
+    public void setParameters(SvgEditorController editorController, String hierarchyNumber) {
         try {
-            doc = (Document) inDoc.cloneNode(true);
+            editor = editorController;
+            doc = (Document) editor.treeController.doc.cloneNode(true);
             parentNode = XmlTools.find(doc, hierarchyNumber);
             svg = new SVG(doc);
-            svgRect = rect;
-            createShape();
+            svgOptionsController.loadDoc(doc, null);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void draw() {
+        imageController.loadBackGround();
+        if (shape == null) {
+            createShape();
         }
     }
 
@@ -208,8 +224,14 @@ public class ControlSvgShape extends BaseImageController {
             if (isSettingValues || doc == null) {
                 return;
             }
-            pickSVG();
-
+            double width, height;
+            if (imageController.image != null) {
+                width = imageController.image.getWidth();
+                height = imageController.image.getHeight();
+            } else {
+                width = 500;
+                height = 500;
+            }
             double min = Math.min(width, height);
             if (rectRadio.isSelected()) {
                 shapePane.setContent(rectangleBox);
@@ -260,38 +282,6 @@ public class ControlSvgShape extends BaseImageController {
             }
 
             pickParameters();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void pickSVG() {
-        try {
-            if (doc == null || parentNode == null) {
-                return;
-            }
-            if (svg == null) {
-                svg = new SVG(doc);
-            }
-            width = svg.getWidth();
-            if (width <= 0) {
-                if (svg.getViewBox() != null) {
-                    width = svg.getViewBox().getWidth();
-                }
-                if (width <= 0 && svgRect != null) {
-                    width = svgRect.getWidth();
-                }
-            }
-            height = svg.getHeight();
-            if (height <= 0) {
-                if (svg.getViewBox() != null) {
-                    height = svg.getViewBox().getHeight();
-                }
-                if (height <= 0 && svgRect != null) {
-                    height = svgRect.getHeight();
-                }
-            }
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -350,7 +340,7 @@ public class ControlSvgShape extends BaseImageController {
                 element.setAttribute("fill", "none");
             }
 
-            displayShape(element);
+            imageController.displayShape(element);
             xmlArea.setText(XmlTools.transform(shape, true));
             return true;
         } catch (Exception e) {
@@ -593,18 +583,6 @@ public class ControlSvgShape extends BaseImageController {
         }
     }
 
-    public void displayShape(Element element) {
-        try {
-            parentNode.removeChild(shape);
-        } catch (Exception e) {
-        }
-        shape = element;
-        if (shape != null) {
-            parentNode.appendChild(shape);
-        }
-        viewController.loadDoc(doc, shape);
-    }
-
     public void pickXml() {
         try {
             Document nd = XmlTools.textToDoc(this, xmlArea.getText());
@@ -676,7 +654,7 @@ public class ControlSvgShape extends BaseImageController {
             isSettingValues = false;
             refreshStyle(shapeBox);
 
-            displayShape(element);
+            imageController.displayShape(element);
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -715,7 +693,7 @@ public class ControlSvgShape extends BaseImageController {
 
     @FXML
     protected void showHelps(Event event) {
-        popEventMenu(event, HelpTools.svgHelps(true));
+        editor.popEventMenu(event, HelpTools.svgHelps(true));
     }
 
     @FXML

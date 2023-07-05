@@ -2,6 +2,7 @@ package mara.mybox.fximage;
 
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.Map;
 import java.util.Random;
 import javafx.embed.swing.SwingFXUtils;
@@ -29,6 +30,7 @@ import mara.mybox.controller.ControlImageText;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.fximage.FxColorTools.toAwtColor;
+import mara.mybox.imagefile.ImageFileReaders;
 
 /**
  * @Author Mara
@@ -57,6 +59,14 @@ public class FxImageTools {
             }
         }
         return newImage;
+    }
+
+    public static Image readImage(File file) {
+        BufferedImage bufferedImage = ImageFileReaders.readImage(file);
+        if (bufferedImage == null) {
+            return null;
+        }
+        return SwingFXUtils.toFXImage(bufferedImage, null);
     }
 
     public static byte[] bytes(Image image, String format) {

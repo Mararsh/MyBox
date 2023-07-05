@@ -13,6 +13,8 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import mara.mybox.db.data.VisitHistory;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.FxFileTools;
@@ -20,9 +22,11 @@ import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileCopyTools;
+import mara.mybox.tools.FileDeleteTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTmpTools;
 import mara.mybox.tools.SvgTools;
+import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
@@ -34,10 +38,15 @@ import mara.mybox.value.UserConfig;
  */
 public class SvgEditorController extends XmlEditorController {
 
+    protected WebEngine webEngine;
+    protected String currentXML;
+
     @FXML
     protected ControlSvgTree treeController;
     @FXML
-    protected ControlSvgView viewController;
+    protected ControlSvgOptions svgOptionsController;
+    @FXML
+    protected WebView webView;
 
     public SvgEditorController() {
         baseTitle = message("SVGEditor");
@@ -69,10 +78,21 @@ public class SvgEditorController extends XmlEditorController {
         try {
             super.initControls();
 
+            webView.setCache(false);
+            webEngine = webView.getEngine();
+            webEngine.setJavaScriptEnabled(true);
+
             treeController.loadedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    viewController.loadDoc(treeController.doc, null);
+                    svgOptionsController.loadDoc(treeController.doc, null);
+                }
+            });
+
+            svgOptionsController.drawNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    loadHtml();
                 }
             });
 
@@ -84,7 +104,84 @@ public class SvgEditorController extends XmlEditorController {
     @Override
     public void domChanged(boolean changed) {
         super.domChanged(changed);
-        viewController.loadDoc(treeController.doc, treeController.selectedNode());
+        svgOptionsController.loadDoc(treeController.doc, treeController.selectedNode());
+    }
+
+    public void loadHtml() {
+        currentXML = svgOptionsController.toXML();
+        webEngine.loadContent(currentXML);
+    }
+
+    @FXML
+    public void htmlAction() {
+        if (currentXML == null || currentXML.isBlank()) {
+            popError(message("NoData"));
+            return;
+        }
+        HtmlEditorController.openHtml(currentXML);
+    }
+
+    @FXML
+    public void systemWebBrowser() {
+        if (currentXML == null || currentXML.isBlank()) {
+            popError(message("NoData"));
+            return;
+        }
+        File tmpFile = FileTmpTools.getTempFile(".svg");
+        TextFileTools.writeFile(tmpFile, currentXML);
+        if (tmpFile != null && tmpFile.exists()) {
+            browse(tmpFile);
+        } else {
+            popError(message("Failed"));
+        }
+    }
+
+    @FXML
+    public void pdfAction() {
+        File tmpFile = svgOptionsController.toPDF();
+        if (tmpFile == null || !tmpFile.exists()) {
+            popError(message("NoData"));
+            return;
+        }
+        if (tmpFile.length() > 0) {
+            PdfViewController.open(tmpFile);
+        } else {
+            FileDeleteTools.delete(tmpFile);
+        }
+    }
+
+    @FXML
+    public void viewAction() {
+        File tmpFile = svgOptionsController.toImage();
+        if (tmpFile == null || !tmpFile.exists()) {
+            popError(message("NoData"));
+            return;
+        }
+        if (tmpFile.length() > 0) {
+            ImageViewerController.openFile(tmpFile);
+        } else {
+            FileDeleteTools.delete(tmpFile);
+        }
+    }
+
+    @FXML
+    protected void txtAction() {
+        if (currentXML == null || currentXML.isBlank()) {
+            popError(message("NoData"));
+            return;
+        }
+        TextEditorController controller = (TextEditorController) WindowTools.openStage(Fxmls.TextEditorFxml);
+        controller.loadContents(currentXML);
+        controller.requestMouse();
+    }
+
+    @FXML
+    protected void popXml() {
+        if (currentXML == null || currentXML.isBlank()) {
+            popError(message("NoData"));
+            return;
+        }
+        HtmlPopController.openHtml(currentXML);
     }
 
     @Override
