@@ -114,6 +114,8 @@ public class ControlSvgOptions extends BaseController {
     public void loadDoc(Document doc, Node focus) {
         try {
             if (doc == null) {
+                this.doc = null;
+                sizeChanged();
                 return;
             }
             this.doc = (Document) doc.cloneNode(true);

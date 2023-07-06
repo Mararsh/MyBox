@@ -17,6 +17,7 @@ import mara.mybox.data.XmlTreeNode.NodeType;
 import static mara.mybox.data.XmlTreeNode.NodeType.Attribute;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
+import mara.mybox.tools.XmlTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import org.w3c.dom.Document;
@@ -29,9 +30,9 @@ import org.w3c.dom.Node;
  * @License Apache License Version 2.0
  */
 public class XmlAddNodeController extends ControlXmlNodeBase {
-
+    
     protected TreeItem<XmlTreeNode> treeItem;
-
+    
     @FXML
     protected Label parentLabel, indexLabel;
     @FXML
@@ -39,51 +40,57 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
     @FXML
     protected ToggleGroup typeGroup;
     @FXML
-    protected RadioButton elementRadio, textRadio, cdataRadio, commentRadio;
+    protected RadioButton elementRadio, textRadio, cdataRadio, commentRadio, xmlRadio;
     @FXML
     protected VBox nameBox;
-
+    
     @Override
     public void setStageStatus() {
         setAsPop(baseName);
     }
-
+    
     @Override
     public void initControls() {
         try {
             super.initControls();
-
+            
             typeGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
                     checkType();
                 }
             });
-
+            
             VBox.setVgrow(setBox, Priority.ALWAYS);
             checkType();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-
+    
     public void checkType() {
         try {
             setBox.getChildren().clear();
-
+            valueArea.clear();
+            
             if (elementRadio.isSelected()) {
                 setBox.getChildren().addAll(nameBox, attrBox);
                 VBox.setVgrow(attrBox, Priority.ALWAYS);
-
+                
             } else {
-                setBox.getChildren().add(valueBox);
-                VBox.setVgrow(valueBox, Priority.ALWAYS);
+                setBox.getChildren().addAll(valueArea);
+                VBox.setVgrow(valueArea, Priority.ALWAYS);
+                
+                if (xmlRadio.isSelected()) {
+                    valueArea.setText("<tag attr=\"value\">\n\ttext\n</tag>");
+                }
+                
             }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-
+    
     public void setParameters(ControlXmlTree treeController, TreeItem<XmlTreeNode> treeItem) {
         try {
             this.treeController = treeController;
@@ -119,16 +126,16 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
                 default:
                     close();
             }
-
+            
             parentLabel.setText(message("AddInto") + ": "
                     + treeController.hierarchyNumber(treeItem));
             indexInput.setText((treeItem.getChildren().size() + 1) + "");
-
+            
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
-
+    
     @FXML
     @Override
     public void okAction() {
@@ -142,8 +149,8 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
                 close();
                 return;
             }
-            Node node = treeNode.getNode();
-            if (node == null) {
+            Node parentNode = treeNode.getNode();
+            if (parentNode == null) {
                 close();
                 return;
             }
@@ -159,12 +166,12 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
                 popError(message("InvalidParameter") + ": " + message("Index"));
                 return;
             }
-
+            
             Document doc;
-            if (node instanceof Document) {
-                doc = (Document) node;
+            if (parentNode instanceof Document) {
+                doc = (Document) parentNode;
             } else {
-                doc = node.getOwnerDocument();
+                doc = parentNode.getOwnerDocument();
             }
             String value = valueArea.getText();
             Node newNode;
@@ -179,15 +186,19 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
                     element.setAttribute(attr.getNodeName(), attr.getNodeValue());
                 }
                 newNode = element;
-
+                
             } else if (textRadio.isSelected()) {
                 newNode = doc.createTextNode(value);
-
+                
             } else if (cdataRadio.isSelected()) {
                 newNode = doc.createCDATASection(value);
-
+                
             } else if (commentRadio.isSelected()) {
                 newNode = doc.createComment(value);
+                
+            } else if (xmlRadio.isSelected()) {
+                newNode = doc.importNode(XmlTools.toElement(myController, value), true);
+                
             } else {
                 return;
             }
@@ -196,36 +207,36 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
             int tindex = index - 1;
             if (tindex >= 0 && index < children.size()) {
                 Node tnode = children.get(tindex).getValue().getNode();
-                node.insertBefore(newNode, tnode);
+                parentNode.insertBefore(newNode, tnode);
                 children.add(tindex, newItem);
-
+                
             } else {
-                node.appendChild(newNode);
+                parentNode.appendChild(newNode);
                 children.add(newItem);
             }
-
+            
             treeController.focusItem(newItem);
             treeController.xmlEditor.domChanged(true);
             treeController.xmlEditor.popInformation(message("CreatedSuccessfully"));
-
+            
             close();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-
+    
     @FXML
     @Override
     public void cancelAction() {
         close();
     }
-
+    
     @Override
     public boolean keyESC() {
         close();
         return false;
     }
-
+    
     @Override
     public boolean keyF6() {
         close();
@@ -244,5 +255,5 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
         }
         return controller;
     }
-
+    
 }

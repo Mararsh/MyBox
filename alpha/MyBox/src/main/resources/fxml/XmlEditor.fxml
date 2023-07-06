@@ -117,6 +117,15 @@ License:    Apache License Version 2.0
                                     </ImageView>
                               <FlowPane alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
                                  <children>
+                                    <CheckBox fx:id="typesettingCheck" mnemonicParsing="false" selected="true">
+                                       <graphic>
+                                          <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../buttons/red/iconTree.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </CheckBox>
                                     <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showHelps" onMouseEntered="#popHelps">
                                        <graphic>
                                           <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -231,15 +240,6 @@ License:    Apache License Version 2.0
                                                                     </ImageView>
                                                                 </graphic>
                                                             </CheckBox>
-                                                <CheckBox fx:id="typesettingCheck" mnemonicParsing="false" selected="true">
-                                                   <graphic>
-                                                      <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                         <image>
-                                                            <Image url="@../buttons/red/iconTree.png" />
-                                                         </image>
-                                                      </ImageView>
-                                                   </graphic>
-                                                </CheckBox>
                                                         </children>
                                                     </HBox>
                                                     <TextArea fx:id="textsArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />

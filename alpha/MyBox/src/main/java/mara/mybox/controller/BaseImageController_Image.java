@@ -288,7 +288,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             } else {
                 setImageChanged(imageInformation.isIsScaled());
             }
-            setMaskStroke();
+            setMaskStyles();
 
             isPickingColor = false;
             checkPickingColor();

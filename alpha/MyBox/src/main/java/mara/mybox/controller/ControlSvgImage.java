@@ -3,14 +3,14 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import mara.mybox.data.DoubleCircle;
+import mara.mybox.data.DoubleEllipse;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
@@ -18,7 +18,7 @@ import mara.mybox.fximage.FxImageTools;
 import mara.mybox.fximage.ImageViewTools;
 import mara.mybox.tools.FileDeleteTools;
 import static mara.mybox.value.Languages.message;
-import org.w3c.dom.Document;
+import mara.mybox.value.UserConfig;
 import org.w3c.dom.Element;
 
 /**
@@ -32,13 +32,11 @@ public class ControlSvgImage extends BaseImageController {
     protected Element shape;
     protected ShapeType shapeType;
     protected DoublePoint lastPoint;
+    protected Line line;
 
     public enum ShapeType {
         Rectangle, Circle, Ellipse, Line, Polyline, Polygon, Path
     }
-
-    @FXML
-    protected ControlSvgOptions optionsController;
 
     @Override
     public void initControls() {
@@ -47,28 +45,6 @@ public class ControlSvgImage extends BaseImageController {
 
             imageView.toBack();
 
-            optionsController.sizeNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    loadBackGround();
-                }
-            });
-
-            optionsController.opacityNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    loadBackGround();
-                }
-            });
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void loadDoc(Document doc) {
-        try {
-            optionsController.loadDoc(doc, null);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -77,7 +53,7 @@ public class ControlSvgImage extends BaseImageController {
     public void loadBackGround() {
         try {
             imageView.toBack();
-            File tmpFile = optionsController.toImage();
+            File tmpFile = svgShape.optionsController.toImage();
             if (tmpFile != null && tmpFile.exists()) {
                 loadImage(FxImageTools.readImage(tmpFile));
                 FileDeleteTools.delete(tmpFile);
@@ -91,7 +67,7 @@ public class ControlSvgImage extends BaseImageController {
     }
 
     public void setBackGroundOpacity() {
-        imageView.setOpacity(optionsController.bgOpacity);
+        imageView.setOpacity(svgShape.optionsController.bgOpacity);
     }
 
     @Override
@@ -128,18 +104,22 @@ public class ControlSvgImage extends BaseImageController {
 
     @Override
     public Color shapeFill() {
-        return svgShape.fillColorController.color();
+        if (svgShape.fillCheck.isSelected()) {
+            return svgShape.fillColorController.color();
+        } else {
+            return Color.TRANSPARENT;
+        }
     }
 
     public void loadShape(Element element) {
         try {
             shapeType = null;
             initMaskControls(false);
+            clearLine();
             if (isSettingValues || element == null) {
                 return;
             }
             shape = element;
-            isSettingValues = true;
             switch (element.getNodeName().toLowerCase()) {
                 case "rect":
                     shapeType = ShapeType.Rectangle;
@@ -161,10 +141,18 @@ public class ControlSvgImage extends BaseImageController {
                     drawMaskCircleLine();
                     break;
                 case "ellipse":
-
+                    shapeType = ShapeType.Ellipse;
+                    setMaskEllipseLineVisible(true);
+                    double ex = Double.parseDouble(shape.getAttribute("cx"));
+                    double ey = Double.parseDouble(shape.getAttribute("cy"));
+                    double erx = Double.parseDouble(shape.getAttribute("rx"));
+                    double ery = Double.parseDouble(shape.getAttribute("ry"));
+                    maskEllipseData = new DoubleEllipse(ex - erx, ey - ery, ex + erx, ey + ery);
+                    drawMaskEllipseLine();
                     break;
                 case "line":
-
+                    shapeType = ShapeType.Line;
+                    drawLine();
                     break;
                 case "polyline":
 
@@ -177,13 +165,63 @@ public class ControlSvgImage extends BaseImageController {
                     break;
                 default:
                     popError(message("InvalidData"));
-                    isSettingValues = false;
                     return;
             }
-            isSettingValues = false;
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    public void clearLine() {
+        if (line != null) {
+            maskPane.getChildren().remove(line);
+            line = null;
+        }
+        maskPane.getChildren().removeAll(topLeftHandler, bottomRightHandler);
+    }
+
+    public void drawLine() {
+        try {
+            double x1 = Double.parseDouble(shape.getAttribute("x1"));
+            double y1 = Double.parseDouble(shape.getAttribute("y1"));
+            double x2 = Double.parseDouble(shape.getAttribute("x2"));
+            double y2 = Double.parseDouble(shape.getAttribute("y2"));
+
+            int anchorHW = UserConfig.getInt("AnchorWidth", 10) / 2;
+            double xRatio = imageView.getBoundsInParent().getWidth() / getImageWidth();
+            double yRatio = imageView.getBoundsInParent().getHeight() / getImageHeight();
+            double x1r = x1 * xRatio;
+            double y1r = y1 * yRatio;
+            double x2r = x2 * xRatio;
+            double y2r = y2 * yRatio;
+
+            double layX = imageView.getLayoutX() + x1r;
+            double layY = imageView.getLayoutY() + y1r;
+
+            double x1d = layX;
+            double y1d = layY;
+            double x2d = layX + x2r - x1r + 1;
+            double y2d = layY + y2r - y1r + 1;
+
+            line = new Line(x1d, y1d, x2d, y2d);
+            line.setVisible(true);
+
+            topLeftHandler.setLayoutX(x1d - anchorHW);
+            topLeftHandler.setLayoutY(y1d - anchorHW);
+            bottomRightHandler.setLayoutX(x2d - anchorHW);
+            bottomRightHandler.setLayoutY(y2d - anchorHW);
+
+            if (!maskPane.getChildren().contains(line)) {
+                maskPane.getChildren().add(line);
+                maskPane.getChildren().addAll(topLeftHandler, bottomRightHandler);
+            }
+
+            setShapeStyle(line);
+            setAnchorStyle();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
     }
 

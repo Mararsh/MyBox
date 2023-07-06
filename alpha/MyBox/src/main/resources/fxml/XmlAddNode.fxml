@@ -31,7 +31,7 @@ License:    Apache License Version 2.0
             <children>
                 <Label fx:id="indexLabel" text="%Index" />
                 <TextField fx:id="indexInput" />
-                <Label text="%RowEndComments" />
+                <Label text="%InvalidMeansEnd" />
             </children>
         </HBox>
         <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
@@ -45,6 +45,7 @@ License:    Apache License Version 2.0
                 <RadioButton fx:id="textRadio" mnemonicParsing="false" text="Text" toggleGroup="$typeGroup" />
                 <RadioButton fx:id="cdataRadio" mnemonicParsing="false" text="CDATA" toggleGroup="$typeGroup" />
                 <RadioButton fx:id="commentRadio" mnemonicParsing="false" text="Comment" toggleGroup="$typeGroup" />
+            <RadioButton layoutX="219.0" layoutY="10.0" mnemonicParsing="false" text="xml" toggleGroup="$typeGroup" fx:id="xmlRadio" />
             </children>
         </FlowPane>
         <VBox fx:id="setBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" />
@@ -68,7 +69,6 @@ License:    Apache License Version 2.0
                     <content>
                         <VBox fx:id="valueBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                             <children>
-                                <Label text="%Value" />
                                 <TextArea fx:id="valueArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
                             </children>
                         </VBox>

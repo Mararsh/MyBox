@@ -44,7 +44,7 @@ public class ControlSvgShape extends BaseController {
     protected Node parentNode;
     protected Element shape;
     protected WebEngine webEngine;
-    protected float fillOpacity, strokeOpacity;
+    protected float fillOpacity;
     protected int strokeWidth;
 
     @FXML
@@ -56,9 +56,9 @@ public class ControlSvgShape extends BaseController {
             polylineRadio, polygonRadio, pathRadio,
             linecapSquareRadio, linecapRoundRadio, linecapButtRadio;
     @FXML
-    protected TabPane selectPane;
+    protected Tab shapeTab, styleTab, xmlTab;
     @FXML
-    protected Tab parametersTab, xmlTab;
+    protected TabPane shapesPane;
     @FXML
     protected ScrollPane shapePane;
     @FXML
@@ -73,11 +73,13 @@ public class ControlSvgShape extends BaseController {
     @FXML
     protected TextArea pathArea, styleArea, xmlArea, polylineArea, polygonArea;
     @FXML
-    protected ComboBox<String> strokeWidthSelector, fillOpacitySelector, strokeOpacitySelector;
+    protected ComboBox<String> strokeWidthSelector, fillOpacitySelector;
     @FXML
     protected CheckBox fillCheck, wrapXmlCheck;
     @FXML
     protected ControlColorSet fillColorController, strokeColorController;
+    @FXML
+    protected ControlSvgOptions optionsController;
     @FXML
     protected ControlSvgImage imageController;
 
@@ -85,6 +87,7 @@ public class ControlSvgShape extends BaseController {
     public void initControls() {
         try {
             super.initControls();
+            imageController.svgShape = this;
 
             elementType.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -93,111 +96,29 @@ public class ControlSvgShape extends BaseController {
                 }
             });
 
-            strokeWidth = UserConfig.getInt(baseName + "StrokeWidth", 2);
-            strokeWidthSelector.getItems().addAll(
-                    "2", "1", "3", "4", "0", "6", "10", "15", "20"
-            );
-            strokeWidthSelector.setValue(strokeWidth + "");
-            strokeWidthSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        int v = Integer.parseInt(newValue);
-                        if (v >= 0) {
-                            strokeWidth = v;
-                            UserConfig.setInt(baseName + "StrokeWidth", v);
-                            strokeWidthSelector.getEditor().setStyle(null);
-                        } else {
-                            strokeWidthSelector.getEditor().setStyle(UserConfig.badStyle());
-                        }
-                    } catch (Exception e) {
-                        strokeWidthSelector.getEditor().setStyle(UserConfig.badStyle());
-                    }
-                }
-            });
-
-            strokeColorController.init(this, baseName + "StrokeColor", Color.BLACK);
-
-            fillColorController.init(this, baseName + "FillColor", Color.TRANSPARENT);
-            fillCheck.setSelected(false);
-
-            fillOpacity = UserConfig.getFloat(baseName + "FillOpacity", 0.3f);
-            fillOpacitySelector.getItems().addAll(
-                    "0.3", "0.5", "0", "1.0", "0.05", "0.02", "0.1", "0.2", "0.8", "0.6", "0.4", "0.7", "0.9"
-            );
-            fillOpacitySelector.setValue(fillOpacity + "");
-            fillOpacitySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        fillOpacity = Float.parseFloat(newValue);
-                        if (fillOpacity >= 0) {
-                            UserConfig.setFloat(baseName + "FillOpacity", fillOpacity);
-                        }
-                        fillOpacitySelector.getEditor().setStyle(null);
-                    } catch (Exception e) {
-                        fillOpacitySelector.getEditor().setStyle(UserConfig.badStyle());
-                    }
-                }
-            });
-
-            strokeOpacity = UserConfig.getFloat(baseName + "StrokeOpacity", 1.0f);
-            strokeOpacitySelector.getItems().addAll(
-                    "1.0", "0.3", "0", "0.05", "0.02", "0.1", "0.2", "0.5", "0.8", "0.6", "0.4", "0.7", "0.9"
-            );
-            strokeOpacitySelector.setValue(strokeOpacity + "");
-            strokeOpacitySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    try {
-                        strokeOpacity = Float.parseFloat(newValue);
-                        if (strokeOpacity >= 0) {
-                            UserConfig.setFloat(baseName + "StrokeOpacity", strokeOpacity);
-                        }
-                        strokeOpacitySelector.getEditor().setStyle(null);
-                    } catch (Exception e) {
-                        strokeOpacitySelector.getEditor().setStyle(UserConfig.badStyle());
-                    }
-                }
-            });
-
-            shapeBox.getChildren().remove(selectPane);
-
-            wrapXmlCheck.setSelected(UserConfig.getBoolean(baseName + "WarpXML", true));
-            wrapXmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "WarpXML", newValue);
-                    xmlArea.setWrapText(newValue);
-                }
-            });
-            xmlArea.setWrapText(wrapXmlCheck.isSelected());
-
-            imageController.svgShape = this;
+            initShapes();
+            initStyle();
+            initXML();
+            initOptions();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
+    /*
+        doc
+     */
     public void setParameters(SvgEditorController editorController, String hierarchyNumber) {
         try {
             editor = editorController;
             doc = (Document) editor.treeController.doc.cloneNode(true);
             parentNode = XmlTools.find(doc, hierarchyNumber);
             svg = new SVG(doc);
-            imageController.loadDoc(doc);
+            optionsController.loadDoc(doc, null);
+            createShape();
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
-        }
-    }
-
-    public void draw() {
-        imageController.loadBackGround();
-        if (shape == null) {
-            createShape();
-        } else {
-            pickParameters();
         }
     }
 
@@ -206,7 +127,21 @@ public class ControlSvgShape extends BaseController {
             doc = SvgTools.blankDoc();
             svg = new SVG(doc);
             parentNode = svg.getSvgNode();
+            optionsController.loadDoc(doc, null);
             createShape();
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    /*
+        shape
+     */
+    public void initShapes() {
+        try {
+
+            shapeBox.getChildren().remove(shapesPane);
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -248,6 +183,7 @@ public class ControlSvgShape extends BaseController {
 
             } else if (lineRadio.isSelected()) {
                 shapePane.setContent(lineBox);
+                MyBoxLog.console(width);
                 lineX1Input.setText((int) (width / 4) + "");
                 lineY1Input.setText((int) (height / 5) + "");
                 lineX2Input.setText((int) (width * 4 / 5) + "");
@@ -274,17 +210,18 @@ public class ControlSvgShape extends BaseController {
                 return;
             }
 
-            pickParameters();
+            goShape();
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
-    public boolean pickParameters() {
+    @FXML
+    public void goShape() {
         try {
-            if (doc == null || parentNode == null) {
-                return false;
+            if (doc == null) {
+                return;
             }
             Element element = null;
             if (rectRadio.isSelected()) {
@@ -309,36 +246,16 @@ public class ControlSvgShape extends BaseController {
                 element = pickPath();
 
             }
+
             if (element == null) {
-                return false;
+                return;
             }
-            element.setAttribute("stroke", strokeColorController.css());
-            element.setAttribute("stroke-width", strokeWidth + "");
-            element.setAttribute("stroke-opacity", strokeOpacity + "");
-            String dash = dashInput.getText();
-            if (dash != null && !dash.isBlank()) {
-                element.setAttribute("stroke-dasharray", dash);
-            }
-            if (linecapSquareRadio.isSelected()) {
-                element.setAttribute("stroke-linecap", "square");
-            } else if (linecapRoundRadio.isSelected()) {
-                element.setAttribute("stroke-linecap", "round");
-            } else {
-                element.removeAttribute("stroke-linecap");
-            }
-            if (fillCheck.isSelected()) {
-                element.setAttribute("fill", fillColorController.css());
-                element.setAttribute("fill-opacity", fillOpacity + "");
-            } else {
-                element.setAttribute("fill", "none");
-            }
+            pickStyle(element);
 
             imageController.loadShape(element);
             xmlArea.setText(XmlTools.transform(shape, true));
-            return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
-            return false;
         }
     }
 
@@ -512,6 +429,7 @@ public class ControlSvgShape extends BaseController {
             element.setAttribute("y1", y1 + "");
             element.setAttribute("x2", x2 + "");
             element.setAttribute("y2", y2 + "");
+            MyBoxLog.console(x1);
             return element;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -576,10 +494,124 @@ public class ControlSvgShape extends BaseController {
         }
     }
 
-    public void pickXml() {
+    /*
+        style
+     */
+    public void initStyle() {
         try {
-            Document nd = XmlTools.textToDoc(this, xmlArea.getText());
-            Element element = (Element) doc.importNode(nd.getDocumentElement(), false);
+            strokeWidth = UserConfig.getInt(baseName + "StrokeWidth", 2);
+            strokeWidthSelector.getItems().addAll(
+                    "2", "1", "3", "4", "0", "6", "10", "15", "20"
+            );
+            strokeWidthSelector.setValue(strokeWidth + "");
+            strokeWidthSelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        int v = Integer.parseInt(newValue);
+                        if (v >= 0) {
+                            strokeWidth = v;
+                            UserConfig.setInt(baseName + "StrokeWidth", v);
+                            strokeWidthSelector.getEditor().setStyle(null);
+                        } else {
+                            strokeWidthSelector.getEditor().setStyle(UserConfig.badStyle());
+                        }
+                    } catch (Exception e) {
+                        strokeWidthSelector.getEditor().setStyle(UserConfig.badStyle());
+                    }
+                }
+            });
+
+            strokeColorController.init(this, baseName + "StrokeColor", Color.BLACK);
+
+            fillColorController.init(this, baseName + "FillColor", Color.TRANSPARENT);
+            fillCheck.setSelected(false);
+
+            fillOpacity = UserConfig.getFloat(baseName + "FillOpacity", 0.3f);
+            fillOpacitySelector.getItems().addAll(
+                    "0.3", "0.5", "0", "1.0", "0.05", "0.02", "0.1", "0.2", "0.8", "0.6", "0.4", "0.7", "0.9"
+            );
+            fillOpacitySelector.setValue(fillOpacity + "");
+            fillOpacitySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue ov, String oldValue, String newValue) {
+                    try {
+                        fillOpacity = Float.parseFloat(newValue);
+                        if (fillOpacity >= 0) {
+                            UserConfig.setFloat(baseName + "FillOpacity", fillOpacity);
+                        }
+                        fillOpacitySelector.getEditor().setStyle(null);
+                    } catch (Exception e) {
+                        fillOpacitySelector.getEditor().setStyle(UserConfig.badStyle());
+                    }
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void goStyle() {
+        goShape();
+    }
+
+    public void pickStyle(Element element) {
+        try {
+            if (element == null) {
+                return;
+            }
+            element.setAttribute("stroke", strokeColorController.css());
+            element.setAttribute("stroke-width", strokeWidth + "");
+            String dash = dashInput.getText();
+            if (dash != null && !dash.isBlank()) {
+                element.setAttribute("stroke-dasharray", dash);
+            }
+            if (linecapSquareRadio.isSelected()) {
+                element.setAttribute("stroke-linecap", "square");
+            } else if (linecapRoundRadio.isSelected()) {
+                element.setAttribute("stroke-linecap", "round");
+            } else {
+                element.removeAttribute("stroke-linecap");
+            }
+            if (fillCheck.isSelected()) {
+                element.setAttribute("fill", fillColorController.css());
+                element.setAttribute("fill-opacity", fillOpacity + "");
+            } else {
+                element.setAttribute("fill", "none");
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    /*
+        xml
+     */
+    public void initXML() {
+        try {
+            wrapXmlCheck.setSelected(UserConfig.getBoolean(baseName + "WarpXML", true));
+            wrapXmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "WarpXML", newValue);
+                    xmlArea.setWrapText(newValue);
+                }
+            });
+
+            xmlArea.setWrapText(wrapXmlCheck.isSelected());
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    @FXML
+    public void goXml() {
+        try {
+            Element element = XmlTools.toElement(this, xmlArea.getText());
+            element = (Element) doc.importNode(element, true);
             loadShape(element);
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -655,11 +687,6 @@ public class ControlSvgShape extends BaseController {
             } catch (Exception e) {
                 strokeWidthSelector.setValue("1px");
             }
-            try {
-                strokeOpacitySelector.setValue(Float.valueOf(element.getAttribute("stroke-opacity")) + "");
-            } catch (Exception e) {
-                strokeOpacitySelector.setValue("1.0");
-            }
             dashInput.setText(element.getAttribute("stroke-dasharray"));
             String v = element.getAttribute("stroke-linecap");
             if ("square".equalsIgnoreCase(v)) {
@@ -680,11 +707,6 @@ public class ControlSvgShape extends BaseController {
                     fillColorController.setColor(Color.TRANSPARENT);
                 }
             }
-            try {
-                strokeOpacitySelector.setValue(Float.valueOf(element.getAttribute("fill-opacity")) + "");
-            } catch (Exception e) {
-                strokeOpacitySelector.setValue("1.0");
-            }
             isSettingValues = false;
             refreshStyle(shapeBox);
 
@@ -694,6 +716,38 @@ public class ControlSvgShape extends BaseController {
         }
     }
 
+    @FXML
+    public void popXml() {
+        TextPopController.openInput(this, xmlArea);
+    }
+
+    /*
+        options
+     */
+    public void initOptions() {
+        try {
+            optionsController.sizeNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    imageController.loadBackGround();
+                }
+            });
+
+            optionsController.opacityNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    imageController.setBackGroundOpacity();
+                }
+            });
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    /*
+        helps
+     */
     @FXML
     public void popExamplesPathMenu(Event event) {
         if (UserConfig.getBoolean("SvgPathExamplesPopWhenMouseHovering", false)) {
@@ -728,23 +782,6 @@ public class ControlSvgShape extends BaseController {
     @FXML
     protected void showHelps(Event event) {
         editor.popEventMenu(event, HelpTools.svgHelps(true));
-    }
-
-    @FXML
-    @Override
-    public boolean synchronizeAction() {
-        Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        if (tab == parametersTab) {
-            pickParameters();
-        } else if (tab == xmlTab) {
-            pickXml();
-        }
-        return true;
-    }
-
-    @FXML
-    public void popXml() {
-        TextPopController.openInput(this, xmlArea);
     }
 
 }

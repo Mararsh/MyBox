@@ -889,7 +889,7 @@ public class ImageAnalyseController extends ImageViewerController {
             fitSize();
             drawMaskRulerXY();
             checkCoordinate();
-            setMaskStroke();
+            setMaskStyles();
             loadData();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

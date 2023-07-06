@@ -74,7 +74,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
     // Any mask operations when pane size is changed
     public void drawMaskControls() {
         try {
-            setMaskStroke();
+            setMaskStyles();
 
             drawMaskRulerXY();
             checkCoordinate();
@@ -112,7 +112,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         }
     }
 
-    public void setMaskStroke() {
+    public void setMaskStyles() {
         try {
             if (isSettingValues) {
                 return;
@@ -124,11 +124,20 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             checkCoordinate();
             drawMaskRulerXY();
 
-            setMaskLinesStroke();
+            setMaskLinesStyle();
 
+            setAnchorStyle();
+
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+        }
+    }
+
+    public void setAnchorStyle() {
+        try {
             Color anchorColor = Color.web(UserConfig.getString("AnchorColor", DefaultAnchorColor));
             int anchorWidth = UserConfig.getInt("AnchorWidth", 10);
-            setMaskAnchorsStroke(anchorColor, anchorWidth);
+            setMaskAnchorsStyle(anchorColor, anchorWidth);
 
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -164,37 +173,34 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
     }
 
     public Color shapeFill() {
-        return null;
+        return Color.TRANSPARENT;
     }
 
-    public void setShapeStroke(Shape shape) {
+    public void setShapeStyle(Shape shape) {
         if (shape == null) {
             return;
         }
         shape.setStroke(strokeColor());
         shape.setStrokeWidth(strokeWidth());
-        shape.setOpacity(shapeOpacity());
-        Color fill = shapeFill();
-        if (fill != null) {
-            shape.setFill(fill);
-        }
         shape.getStrokeDashArray().clear();
         List<Double> dash = strokeDash();
         if (dash != null) {
             shape.getStrokeDashArray().addAll(dash);
         }
+        shape.setOpacity(shapeOpacity());
+        shape.setFill(shapeFill());
     }
 
-    public void setMaskLinesStroke() {
-        setShapeStroke(maskRectangleLine);
-        setShapeStroke(maskCircleLine);
-        setShapeStroke(maskEllipseLine);
-        setShapeStroke(maskPolygonLine);
-        setShapeStroke(maskPolyline);
+    public void setMaskLinesStyle() {
+        setShapeStyle(maskRectangleLine);
+        setShapeStyle(maskCircleLine);
+        setShapeStyle(maskEllipseLine);
+        setShapeStyle(maskPolygonLine);
+        setShapeStyle(maskPolyline);
 
     }
 
-    public void setMaskAnchorsStroke(Color anchorColor, double anchorWidth) {
+    public void setMaskAnchorsStyle(Color anchorColor, double anchorWidth) {
         if (isSettingValues || maskPane == null) {
             return;
         }
@@ -337,7 +343,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                             bottomLeftHandler, bottomCenterHandler, bottomRightHandler);
                 }
             }
-            setMaskStroke();
+            setMaskStyles();
         } else {
             maskPane.getChildren().removeAll(maskRectangleLine,
                     leftCenterHandler, rightCenterHandler,
@@ -469,7 +475,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                         leftCenterHandler, rightCenterHandler,
                         topCenterHandler, bottomCenterHandler);
             }
-            setMaskStroke();
+            setMaskStyles();
         } else {
             maskPane.getChildren().removeAll(maskCircleLine,
                     leftCenterHandler, rightCenterHandler,
@@ -544,7 +550,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                         leftCenterHandler, rightCenterHandler,
                         topCenterHandler, bottomCenterHandler);
             }
-            setMaskStroke();
+            setMaskStyles();
         } else {
             maskPane.getChildren().removeAll(maskEllipseLine,
                     leftCenterHandler, rightCenterHandler,
@@ -621,7 +627,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             if (!maskPane.getChildren().contains(maskPolygonLine)) {
                 maskPane.getChildren().addAll(maskPolygonLine, polygonP1, polygonP2);
             }
-            setMaskStroke();
+            setMaskStyles();
 
         } else {
             maskPane.getChildren().removeAll(maskPolygonLine, polygonP1, polygonP2);
@@ -725,7 +731,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             if (!maskPane.getChildren().contains(maskPolyline)) {
                 maskPane.getChildren().addAll(maskPolyline, polygonP1);
             }
-            setMaskStroke();
+            setMaskStyles();
 
         } else {
             maskPane.getChildren().removeAll(maskPolyline, polygonP1, polygonP2);
@@ -1034,7 +1040,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             if (object != null && object instanceof BaseImageController_Mask) {
                 try {
                     BaseImageController controller = (BaseImageController) object;
-                    controller.setMaskStroke();
+                    controller.setMaskStyles();
                 } catch (Exception e) {
                 }
             }

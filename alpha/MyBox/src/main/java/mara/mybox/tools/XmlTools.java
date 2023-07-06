@@ -87,6 +87,15 @@ public class XmlTools {
         }
     }
 
+    public static Element toElement(BaseController controller, String xml) {
+        try {
+            return textToDoc(controller, xml).getDocumentElement();
+        } catch (Exception e) {
+            PopTools.showError(controller, e.toString());
+            return null;
+        }
+    }
+
     public static DocumentBuilder builder(BaseController controller) {
         try (Connection conn = DerbyBase.getConnection()) {
             ignoreComment = UserConfig.getBoolean(conn, "XmlIgnoreComments", false);

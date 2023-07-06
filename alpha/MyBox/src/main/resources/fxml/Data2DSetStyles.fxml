@@ -154,7 +154,7 @@ License:    Apache License Version 2.0
                                                                             <children>
                                                                                 <Label text="%To" />
                                                                                 <TextField fx:id="toInput" prefWidth="100.0" />
-                                                                                <Label text="%RowEndComments" />
+                                                                                <Label text="%InvalidMeansEnd" />
                                                                             </children>
                                                                         </FlowPane>
                                                                     </children>

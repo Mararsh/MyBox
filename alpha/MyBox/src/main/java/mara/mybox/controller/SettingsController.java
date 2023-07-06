@@ -958,7 +958,7 @@ public class SettingsController extends BaseController {
                         Boolean old_toggle, Boolean new_toggle) {
                     UserConfig.setBoolean("AnchorSolid", new_toggle);
                     if (parentController instanceof BaseImageController) {
-                        ((BaseImageController) parentController).setMaskStroke();
+                        ((BaseImageController) parentController).setMaskStyles();
                     }
                 }
             });
