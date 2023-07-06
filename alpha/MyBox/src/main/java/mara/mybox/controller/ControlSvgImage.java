@@ -3,22 +3,17 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.fxml.FXML;
-import javafx.scene.Cursor;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
+import mara.mybox.data.DoubleLine;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
-import mara.mybox.fximage.ImageViewTools;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.FileDeleteTools;
 import static mara.mybox.value.Languages.message;
-import mara.mybox.value.UserConfig;
 import org.w3c.dom.Element;
 
 /**
@@ -28,11 +23,12 @@ import org.w3c.dom.Element;
  */
 public class ControlSvgImage extends BaseImageController {
 
-    protected ControlSvgShape svgShape;
+    protected ControlSvgShape svgShapeControl;
     protected Element shape;
     protected ShapeType shapeType;
+    protected boolean isLoading;
+
     protected DoublePoint lastPoint;
-    protected Line line;
 
     public enum ShapeType {
         Rectangle, Circle, Ellipse, Line, Polyline, Polygon, Path
@@ -44,6 +40,7 @@ public class ControlSvgImage extends BaseImageController {
             super.initControls();
 
             imageView.toBack();
+            loadShape(null);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -53,7 +50,7 @@ public class ControlSvgImage extends BaseImageController {
     public void loadBackGround() {
         try {
             imageView.toBack();
-            File tmpFile = svgShape.optionsController.toImage();
+            File tmpFile = svgShapeControl.optionsController.toImage();
             if (tmpFile != null && tmpFile.exists()) {
                 loadImage(FxImageTools.readImage(tmpFile));
                 FileDeleteTools.delete(tmpFile);
@@ -67,12 +64,80 @@ public class ControlSvgImage extends BaseImageController {
     }
 
     public void setBackGroundOpacity() {
-        imageView.setOpacity(svgShape.optionsController.bgOpacity);
+        imageView.setOpacity(svgShapeControl.optionsController.bgOpacity);
+    }
+
+    public void loadShape(Element element) {
+        try {
+            isLoading = true;
+            shapeType = null;
+            shape = element;
+            initMaskControls(false);
+            if (element != null) {
+                switch (element.getNodeName().toLowerCase()) {
+                    case "rect":
+                        shapeType = ShapeType.Rectangle;
+                        setMaskRectangleLineVisible(true);
+                        double x = Double.parseDouble(shape.getAttribute("x"));
+                        double y = Double.parseDouble(shape.getAttribute("y"));
+                        double width = Double.parseDouble(shape.getAttribute("width"));
+                        double height = Double.parseDouble(shape.getAttribute("height"));
+                        maskRectangleData = new DoubleRectangle(x, y, x + width - 1, y + height - 1);
+                        drawMaskRectangleLine();
+                        break;
+                    case "circle":
+                        shapeType = ShapeType.Circle;
+                        setMaskCircleLineVisible(true);
+                        double cx = Double.parseDouble(shape.getAttribute("cx"));
+                        double cy = Double.parseDouble(shape.getAttribute("cy"));
+                        double r = Double.parseDouble(shape.getAttribute("r"));
+                        maskCircleData = new DoubleCircle(cx, cy, r);
+                        drawMaskCircleLine();
+                        break;
+                    case "ellipse":
+                        shapeType = ShapeType.Ellipse;
+                        setMaskEllipseLineVisible(true);
+                        double ex = Double.parseDouble(shape.getAttribute("cx"));
+                        double ey = Double.parseDouble(shape.getAttribute("cy"));
+                        double erx = Double.parseDouble(shape.getAttribute("rx"));
+                        double ery = Double.parseDouble(shape.getAttribute("ry"));
+                        maskEllipseData = new DoubleEllipse(ex - erx, ey - ery, ex + erx, ey + ery);
+                        drawMaskEllipseLine();
+                        break;
+                    case "line":
+                        shapeType = ShapeType.Line;
+                        setMaskLineLineVisible(true);
+                        double x1 = Double.parseDouble(shape.getAttribute("x1"));
+                        double y1 = Double.parseDouble(shape.getAttribute("y1"));
+                        double x2 = Double.parseDouble(shape.getAttribute("x2"));
+                        double y2 = Double.parseDouble(shape.getAttribute("y2"));
+                        maskLineData = new DoubleLine(x1, y1, x2, y2);
+                        drawMaskLineLine();
+                        break;
+                    case "polyline":
+
+                        break;
+                    case "polygon":
+
+                        break;
+                    case "path":
+
+                        break;
+                    default:
+                        popError(message("InvalidData"));
+
+                }
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        isLoading = false;
     }
 
     @Override
     public Color strokeColor() {
-        Color strokeColor = svgShape.strokeColorController.color();
+        Color strokeColor = svgShapeControl.strokeColorController.color();
         if (strokeColor == null) {
             strokeColor = Color.RED;
         }
@@ -81,7 +146,7 @@ public class ControlSvgImage extends BaseImageController {
 
     @Override
     public double strokeWidth() {
-        double strokeWidth = svgShape.strokeWidth;
+        double strokeWidth = svgShapeControl.strokeWidth;
         if (strokeWidth <= 0) {
             strokeWidth = 2.0d;
         }
@@ -99,244 +164,98 @@ public class ControlSvgImage extends BaseImageController {
 
     @Override
     public float shapeOpacity() {
-        return svgShape.fillOpacity;
+        return svgShapeControl.fillOpacity;
     }
 
     @Override
     public Color shapeFill() {
-        if (svgShape.fillCheck.isSelected()) {
-            return svgShape.fillColorController.color();
+        if (svgShapeControl.fillCheck.isSelected()) {
+            return svgShapeControl.fillColorController.color();
         } else {
             return Color.TRANSPARENT;
         }
     }
 
-    public void loadShape(Element element) {
-        try {
-            shapeType = null;
-            initMaskControls(false);
-            clearLine();
-            if (isSettingValues || element == null) {
-                return;
-            }
-            shape = element;
-            switch (element.getNodeName().toLowerCase()) {
-                case "rect":
-                    shapeType = ShapeType.Rectangle;
-                    setMaskRectangleLineVisible(true);
-                    double x = Double.parseDouble(shape.getAttribute("x"));
-                    double y = Double.parseDouble(shape.getAttribute("y"));
-                    double width = Double.parseDouble(shape.getAttribute("width"));
-                    double height = Double.parseDouble(shape.getAttribute("height"));
-                    maskRectangleData = new DoubleRectangle(x, y, x + width - 1, y + height - 1);
-                    drawMaskRectangleLine();
-                    break;
-                case "circle":
-                    shapeType = ShapeType.Circle;
-                    setMaskCircleLineVisible(true);
-                    double cx = Double.parseDouble(shape.getAttribute("cx"));
-                    double cy = Double.parseDouble(shape.getAttribute("cy"));
-                    double r = Double.parseDouble(shape.getAttribute("r"));
-                    maskCircleData = new DoubleCircle(cx, cy, r);
-                    drawMaskCircleLine();
-                    break;
-                case "ellipse":
-                    shapeType = ShapeType.Ellipse;
-                    setMaskEllipseLineVisible(true);
-                    double ex = Double.parseDouble(shape.getAttribute("cx"));
-                    double ey = Double.parseDouble(shape.getAttribute("cy"));
-                    double erx = Double.parseDouble(shape.getAttribute("rx"));
-                    double ery = Double.parseDouble(shape.getAttribute("ry"));
-                    maskEllipseData = new DoubleEllipse(ex - erx, ey - ery, ex + erx, ey + ery);
-                    drawMaskEllipseLine();
-                    break;
-                case "line":
-                    shapeType = ShapeType.Line;
-                    drawLine();
-                    break;
-                case "polyline":
-
-                    break;
-                case "polygon":
-
-                    break;
-                case "path":
-
-                    break;
-                default:
-                    popError(message("InvalidData"));
-                    return;
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+    public void updateSvgShape() {
+        if (isLoading) {
+            return;
         }
+        svgShapeControl.loadShape(shape);
+        svgShapeControl.loadXml(shape);
     }
 
-    public void clearLine() {
-        if (line != null) {
-            maskPane.getChildren().remove(line);
-            line = null;
-        }
-        maskPane.getChildren().removeAll(topLeftHandler, bottomRightHandler);
+    public String scaleValue(double d) {
+        return DoubleTools.scale2(d) + "";
     }
 
-    public void drawLine() {
+    @Override
+    public boolean drawMaskRectangleLine() {
         try {
-            double x1 = Double.parseDouble(shape.getAttribute("x1"));
-            double y1 = Double.parseDouble(shape.getAttribute("y1"));
-            double x2 = Double.parseDouble(shape.getAttribute("x2"));
-            double y2 = Double.parseDouble(shape.getAttribute("y2"));
-
-            int anchorHW = UserConfig.getInt("AnchorWidth", 10) / 2;
-            double xRatio = imageView.getBoundsInParent().getWidth() / getImageWidth();
-            double yRatio = imageView.getBoundsInParent().getHeight() / getImageHeight();
-            double x1r = x1 * xRatio;
-            double y1r = y1 * yRatio;
-            double x2r = x2 * xRatio;
-            double y2r = y2 * yRatio;
-
-            double layX = imageView.getLayoutX() + x1r;
-            double layY = imageView.getLayoutY() + y1r;
-
-            double x1d = layX;
-            double y1d = layY;
-            double x2d = layX + x2r - x1r + 1;
-            double y2d = layY + y2r - y1r + 1;
-
-            line = new Line(x1d, y1d, x2d, y2d);
-            line.setVisible(true);
-
-            topLeftHandler.setLayoutX(x1d - anchorHW);
-            topLeftHandler.setLayoutY(y1d - anchorHW);
-            bottomRightHandler.setLayoutX(x2d - anchorHW);
-            bottomRightHandler.setLayoutY(y2d - anchorHW);
-
-            if (!maskPane.getChildren().contains(line)) {
-                maskPane.getChildren().add(line);
-                maskPane.getChildren().addAll(topLeftHandler, bottomRightHandler);
+            if (!super.drawMaskRectangleLine() || isLoading || shape == null) {
+                return false;
             }
-
-            setShapeStyle(line);
-            setAnchorStyle();
-
+            shape.setAttribute("x", scaleValue(maskRectangleData.getSmallX()));
+            shape.setAttribute("y", scaleValue(maskRectangleData.getSmallY()));
+            shape.setAttribute("width", scaleValue(maskRectangleData.getWidth()));
+            shape.setAttribute("height", scaleValue(maskRectangleData.getHeight()));
+            updateSvgShape();
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return false;
         }
     }
 
-    @FXML
     @Override
-    public void imageClicked(MouseEvent event, DoublePoint p) {
-        if (null == shapeType || imageView.getImage() == null || p == null) {
-            imageView.setCursor(Cursor.OPEN_HAND);
-            return;
-        }
-        if (isPickingColor) {
-            return;
-        }
-        switch (shapeType) {
-            case Polyline: {
-                if (event.getButton() != MouseButton.SECONDARY) {
-                    imageView.setCursor(Cursor.OPEN_HAND);
-                    return;
-                }
-                DoublePoint p0 = maskPolylineLineData.get(0);
-                double offsetX = p.getX() - p0.getX();
-                double offsetY = p.getY() - p0.getY();
-                if (offsetX != 0 || offsetY != 0) {
-                    maskPolylineLineData = maskPolylineLineData.move(offsetX, offsetY);
-                    drawMaskPolyline();
-                }
+    public boolean drawMaskCircleLine() {
+        try {
+            if (!super.drawMaskCircleLine() || isLoading || shape == null) {
+                return false;
             }
-            break;
-        }
-
-    }
-
-    @FXML
-    @Override
-    public void mousePressed(MouseEvent event) {
-        if (null == shapeType || imageView.getImage() == null) {
-            return;
-        }
-        if (isPickingColor) {
-            return;
-        }
-        DoublePoint p = ImageViewTools.getImageXY(event, imageView);
-        showXY(event, p);
-
-        if (event.getButton() == MouseButton.SECONDARY || p == null) {
-            return;
-        }
-        if (lastPoint != null && lastPoint.getX() == p.getX() && lastPoint.getY() == p.getY()) {
-            return;
-        }
-        switch (shapeType) {
-            case Polyline:
-                scrollPane.setPannable(false);
-                maskPolylineLineData.add(p);
-                lastPoint = p;
-                drawMaskPolyline();
-                break;
+            shape.setAttribute("cx", scaleValue(maskCircleData.getCenterX()));
+            shape.setAttribute("cy", scaleValue(maskCircleData.getCenterY()));
+            shape.setAttribute("r", scaleValue(maskCircleData.getRadius()));
+            updateSvgShape();
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
         }
     }
 
-    @FXML
     @Override
-    public void mouseDragged(MouseEvent event) {
-        if (null == shapeType || imageView.getImage() == null) {
-            return;
+    public boolean drawMaskEllipseLine() {
+        try {
+            if (!super.drawMaskEllipseLine() || isLoading || shape == null) {
+                return false;
+            }
+            shape.setAttribute("cx", scaleValue(maskEllipseData.getCenterX()));
+            shape.setAttribute("cy", scaleValue(maskEllipseData.getCenterY()));
+            shape.setAttribute("rx", scaleValue(maskEllipseData.getRadiusX()));
+            shape.setAttribute("ry", scaleValue(maskEllipseData.getRadiusY()));
+            updateSvgShape();
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
         }
-        if (isPickingColor) {
-            return;
-        }
-        DoublePoint p = ImageViewTools.getImageXY(event, imageView);
-        showXY(event, p);
-
-        if (event.getButton() == MouseButton.SECONDARY || p == null) {
-            return;
-        }
-        if (lastPoint != null && lastPoint.getX() == p.getX() && lastPoint.getY() == p.getY()) {
-            return;
-        }
-        switch (shapeType) {
-            case Polyline:
-                scrollPane.setPannable(false);
-                maskPolylineLineData.add(p);
-                lastPoint = p;
-                drawMaskPolyline();
-                break;
-
-        }
-
     }
 
-    @FXML
     @Override
-    public void mouseReleased(MouseEvent event) {
-        scrollPane.setPannable(true);
-        if (null == shapeType || imageView == null || imageView.getImage() == null) {
-            return;
-        }
-        if (isPickingColor) {
-            return;
-        }
-        DoublePoint p = ImageViewTools.getImageXY(event, imageView);
-        showXY(event, p);
-
-        if (event.getButton() == MouseButton.SECONDARY || p == null) {
-            return;
-        }
-        switch (shapeType) {
-            case Polyline:
-                if (lastPoint == null || lastPoint.getX() != p.getX() || lastPoint.getY() != p.getY()) {
-                    maskPolylineLineData.add(p);
-                    lastPoint = p;
-                }
-                drawMaskPolyline();
-                break;
-
+    public boolean drawMaskLineLine() {
+        try {
+            if (!super.drawMaskLineLine() || isLoading || shape == null) {
+                return false;
+            }
+            shape.setAttribute("x1", scaleValue(maskLineData.getStartX()));
+            shape.setAttribute("y1", scaleValue(maskLineData.getStartY()));
+            shape.setAttribute("x2", scaleValue(maskLineData.getEndX()));
+            shape.setAttribute("y2", scaleValue(maskLineData.getEndY()));
+            updateSvgShape();
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
         }
     }
 

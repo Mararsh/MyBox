@@ -296,13 +296,14 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
             @Override
             protected void whenSucceeded() {
                 scopeView.setImage(outlineImage);
-                double radio = imageView.getBoundsInParent().getWidth() / getImageWidth();
+                double xradio = viewXRatio();
+                double yradio = viewYRatio();
                 double offsetX = maskRectangleData.getSmallX() >= 0 ? 0 : maskRectangleData.getSmallX();
                 double offsetY = maskRectangleData.getSmallY() >= 0 ? 0 : maskRectangleData.getSmallY();
-                scopeView.setLayoutX(imageView.getLayoutX() + offsetX * radio);
-                scopeView.setLayoutY(imageView.getLayoutY() + offsetY * radio);
-                scopeView.setFitWidth(outlineImage.getWidth() * radio);
-                scopeView.setFitHeight(outlineImage.getHeight() * radio);
+                scopeView.setLayoutX(imageView.getLayoutX() + offsetX * xradio);
+                scopeView.setLayoutY(imageView.getLayoutY() + offsetY * yradio);
+                scopeView.setFitWidth(outlineImage.getWidth() * xradio);
+                scopeView.setFitHeight(outlineImage.getHeight() * yradio);
             }
         };
         start(task);

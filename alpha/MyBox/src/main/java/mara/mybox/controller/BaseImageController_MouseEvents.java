@@ -10,6 +10,7 @@ import javafx.scene.Cursor;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.DoubleEllipse;
+import mara.mybox.data.DoubleLine;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 
@@ -204,8 +205,8 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         scrollPane.setPannable(true);
         double offsetX = maskRectangleLine.getLayoutX() + event.getX() - mouseX - imageView.getLayoutX();
         double offsetY = maskRectangleLine.getLayoutY() + event.getY() - mouseY - imageView.getLayoutY();
-        double x = offsetX * getImageWidth() / imageView.getBoundsInParent().getWidth();
-        double y = offsetY * getImageHeight() / imageView.getBoundsInParent().getHeight();
+        double x = offsetX * imageXRatio();
+        double y = offsetY * imageYRatio();
 
         if (x <= 0 - maskRectangleData.getWidth()) {
             x = 0 - maskRectangleData.getWidth() + 1;
@@ -234,8 +235,8 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         scrollPane.setPannable(true);
         double offsetX = maskCircleLine.getLayoutX() + event.getX() - mouseX - imageView.getLayoutX();
         double offsetY = maskCircleLine.getLayoutY() + event.getY() - mouseY - imageView.getLayoutY();
-        double x = offsetX * getImageWidth() / imageView.getBoundsInParent().getWidth();
-        double y = offsetY * getImageHeight() / imageView.getBoundsInParent().getHeight();
+        double x = offsetX * imageXRatio();
+        double y = offsetY * imageYRatio();
 
         if (x <= 0 - maskCircleData.getRadius()) {
             x = 0 - maskCircleData.getRadius() + 1;
@@ -265,8 +266,8 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         scrollPane.setPannable(true);
         double offsetX = maskEllipseLine.getLayoutX() + event.getX() - mouseX - imageView.getLayoutX();
         double offsetY = maskEllipseLine.getLayoutY() + event.getY() - mouseY - imageView.getLayoutY();
-        double x = offsetX * getImageWidth() / imageView.getBoundsInParent().getWidth();
-        double y = offsetY * getImageHeight() / imageView.getBoundsInParent().getHeight();
+        double x = offsetX * imageXRatio();
+        double y = offsetY * imageYRatio();
 
         double rx = maskEllipseData.getRadiusX();
         double ry = maskEllipseData.getRadiusY();
@@ -289,6 +290,27 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
     }
 
     @FXML
+    public void lineReleased(MouseEvent event) {
+        if (isPickingColor || maskLine == null || !maskLine.isVisible()
+                || !maskPane.getChildren().contains(maskLine)
+                || (mouseX == event.getX() && mouseY == event.getY())) {
+            return;
+        }
+        scrollPane.setPannable(true);
+
+        double startX = maskLine.getStartX() + event.getX() - mouseX - imageView.getLayoutX();
+        double startY = maskLine.getStartY() + event.getY() - mouseY - imageView.getLayoutY();
+        double endX = maskLine.getEndX() + event.getX() - mouseX - imageView.getLayoutX();
+        double endY = maskLine.getEndY() + event.getY() - mouseY - imageView.getLayoutY();
+
+        double xradio = imageXRatio();
+        double yradio = imageYRatio();
+
+        maskLineData = new DoubleLine(startX * xradio, startY * yradio, endX * xradio, endY * yradio);
+        drawMaskLineLine();
+    }
+
+    @FXML
     public void polygonReleased(MouseEvent event) {
         if (isPickingColor || maskPolygonLine == null || !maskPolygonLine.isVisible()
                 || !maskPane.getChildren().contains(maskPolygonLine)
@@ -298,8 +320,8 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         scrollPane.setPannable(true);
         double offsetX = maskPolygonLine.getLayoutX() + event.getX() - mouseX - imageView.getLayoutX();
         double offsetY = maskPolygonLine.getLayoutY() + event.getY() - mouseY - imageView.getLayoutY();
-        double x = offsetX * getImageWidth() / imageView.getBoundsInParent().getWidth();
-        double y = offsetY * getImageHeight() / imageView.getBoundsInParent().getHeight();
+        double x = offsetX * imageXRatio();
+        double y = offsetY * imageYRatio();
 
         List<DoublePoint> maskPoints = maskPolygonData.getPoints();
         List<DoublePoint> points = new ArrayList<>();
@@ -322,9 +344,16 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
 
         double offsetX = topLeftHandler.getLayoutX() + event.getX() - mouseX - imageView.getLayoutX();
         double offsetY = topLeftHandler.getLayoutY() + event.getY() - mouseY - imageView.getLayoutY();
-        double x = offsetX * getImageWidth() / imageView.getBoundsInParent().getWidth();
-        double y = offsetY * getImageHeight() / imageView.getBoundsInParent().getHeight();
-        if (maskRectangleLine != null && maskRectangleLine.isVisible()) {
+        double x = offsetX * imageXRatio();
+        double y = offsetY * imageYRatio();
+
+        if (maskLine != null && maskLine.isVisible()) {
+
+            maskLineData.setStartX(x);
+            maskLineData.setStartY(y);
+            drawMaskLineLine();
+
+        } else if (maskRectangleLine != null && maskRectangleLine.isVisible()) {
 
             if (x < maskRectangleData.getBigX() && y < maskRectangleData.getBigY()) {
                 if (x >= getImageWidth() - 1) {
@@ -349,7 +378,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         }
         if (maskRectangleLine != null && maskRectangleLine.isVisible()) {
             double offsetY = topCenterHandler.getLayoutY() + event.getY() - mouseY - imageView.getLayoutY();
-            double y = offsetY * getImageHeight() / imageView.getBoundsInParent().getHeight();
+            double y = offsetY * imageYRatio();
             if (y < maskRectangleData.getBigY()) {
                 if (y >= getImageHeight() - 1) {
                     y = getImageHeight() - 2;
@@ -362,7 +391,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         if (maskCircleLine != null && maskCircleLine.isVisible()) {
             double d = bottomCenterHandler.getLayoutY() - topCenterHandler.getLayoutY() - event.getY() + mouseY;
             if (d > 0) {
-                d = d * getImageHeight() / imageView.getBoundsInParent().getHeight();
+                d = d * imageYRatio();
                 maskCircleData.setRadius(d / 2);
                 drawMaskCircleLine();
             }
@@ -371,7 +400,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         if (maskEllipseLine != null && maskEllipseLine.isVisible()) {
             double ry = (bottomCenterHandler.getLayoutY() - topCenterHandler.getLayoutY() - event.getY() + mouseY) / 2;
             if (ry > 0) {
-                ry = ry * getImageHeight() / imageView.getBoundsInParent().getHeight();
+                ry = ry * imageYRatio();
                 double rx = maskEllipseData.getRadiusX();
                 double cx = maskEllipseData.getCenterX();
                 double cy = maskEllipseData.getCenterY();
@@ -392,8 +421,8 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
 
         double offsetX = topRightHandler.getLayoutX() + event.getX() - mouseX - imageView.getLayoutX();
         double offsetY = topRightHandler.getLayoutY() + event.getY() - mouseY - imageView.getLayoutY();
-        double x = offsetX * getImageWidth() / imageView.getBoundsInParent().getWidth();
-        double y = offsetY * getImageHeight() / imageView.getBoundsInParent().getHeight();
+        double x = offsetX * imageXRatio();
+        double y = offsetY * imageYRatio();
 
         if (x > maskRectangleData.getSmallX() && y < maskRectangleData.getBigY()) {
             if (x <= 0) {
@@ -417,8 +446,8 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
 
         double offsetX = bottomLeftHandler.getLayoutX() + event.getX() - mouseX - imageView.getLayoutX();
         double offsetY = bottomLeftHandler.getLayoutY() + event.getY() - mouseY - imageView.getLayoutY();
-        double x = offsetX * getImageWidth() / imageView.getBoundsInParent().getWidth();
-        double y = offsetY * getImageHeight() / imageView.getBoundsInParent().getHeight();
+        double x = offsetX * imageXRatio();
+        double y = offsetY * imageYRatio();
 
         if (x < maskRectangleData.getBigX() && y > maskRectangleData.getSmallY()) {
             if (x >= getImageWidth() - 1) {
@@ -442,7 +471,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
 
         if (maskRectangleLine != null && maskRectangleLine.isVisible()) {
             double offsetY = bottomCenterHandler.getLayoutY() + event.getY() - mouseY - imageView.getLayoutY();
-            double y = offsetY * getImageHeight() / imageView.getBoundsInParent().getHeight();
+            double y = offsetY * imageYRatio();
 
             if (y > maskRectangleData.getSmallY()) {
                 if (y <= 0) {
@@ -456,7 +485,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         if (maskCircleLine != null && maskCircleLine.isVisible()) {
             double d = bottomCenterHandler.getLayoutY() + event.getY() - mouseY - topCenterHandler.getLayoutY();
             if (d > 0) {
-                d = d * getImageHeight() / imageView.getBoundsInParent().getHeight();
+                d = d * imageYRatio();
                 maskCircleData.setRadius(d / 2);
                 drawMaskCircleLine();
             }
@@ -465,7 +494,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         if (maskEllipseLine != null && maskEllipseLine.isVisible()) {
             double ry = (bottomCenterHandler.getLayoutY() + event.getY() - mouseY - topCenterHandler.getLayoutY()) / 2;
             if (ry > 0) {
-                ry = ry * getImageHeight() / imageView.getBoundsInParent().getHeight();
+                ry = ry * imageYRatio();
                 double rx = maskEllipseData.getRadiusX();
                 double cx = maskEllipseData.getCenterX();
                 double cy = maskEllipseData.getCenterY();
@@ -486,10 +515,15 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
 
         double offsetX = bottomRightHandler.getLayoutX() + event.getX() - mouseX - imageView.getLayoutX();
         double offsetY = bottomRightHandler.getLayoutY() + event.getY() - mouseY - imageView.getLayoutY();
-        double x = offsetX * getImageWidth() / imageView.getBoundsInParent().getWidth();
-        double y = offsetY * getImageHeight() / imageView.getBoundsInParent().getHeight();
+        double x = offsetX * imageXRatio();
+        double y = offsetY * imageYRatio();
 
-        if (x > maskRectangleData.getSmallX() && y > maskRectangleData.getSmallY()) {
+        if (maskLine != null && maskLine.isVisible()) {
+            maskLineData.setEndX(x);
+            maskLineData.setEndY(y);
+            drawMaskLineLine();
+
+        } else if (x > maskRectangleData.getSmallX() && y > maskRectangleData.getSmallY()) {
             if (x <= 0) {
                 x = 1;
             }
@@ -511,7 +545,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
 
         if (maskRectangleLine != null && maskRectangleLine.isVisible()) {
             double offsetX = leftCenterHandler.getLayoutX() + event.getX() - mouseX - imageView.getLayoutX();
-            double x = offsetX * getImageWidth() / imageView.getBoundsInParent().getWidth();
+            double x = offsetX * imageXRatio();
 
             if (x < maskRectangleData.getBigX()) {
                 if (x >= getImageWidth() - 1) {
@@ -525,7 +559,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         if (maskCircleLine != null && maskCircleLine.isVisible()) {
             double d = rightCenterHandler.getLayoutX() - leftCenterHandler.getLayoutX() - event.getX() + mouseX;
             if (d > 0) {
-                d = d * getImageWidth() / imageView.getBoundsInParent().getWidth();
+                d = d * imageXRatio();
                 maskCircleData.setRadius(d / 2);
                 drawMaskCircleLine();
             }
@@ -534,7 +568,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         if (maskEllipseLine != null && maskEllipseLine.isVisible()) {
             double rx = (rightCenterHandler.getLayoutX() - leftCenterHandler.getLayoutX() - event.getX() + mouseX) / 2;
             if (rx > 0) {
-                rx = rx * getImageWidth() / imageView.getBoundsInParent().getWidth();
+                rx = rx * imageXRatio();
                 double ry = maskEllipseData.getRadiusY();
                 double cx = maskEllipseData.getCenterX();
                 double cy = maskEllipseData.getCenterY();
@@ -554,7 +588,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
 
         if (maskRectangleLine != null && maskRectangleLine.isVisible()) {
             double offsetX = rightCenterHandler.getLayoutX() + event.getX() - mouseX - imageView.getLayoutX();
-            double x = offsetX * getImageWidth() / imageView.getBoundsInParent().getWidth();
+            double x = offsetX * imageXRatio();
 
             if (x > maskRectangleData.getSmallX()) {
                 if (x <= 0) {
@@ -568,7 +602,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         if (maskCircleLine != null && maskCircleLine.isVisible()) {
             double d = rightCenterHandler.getLayoutX() + event.getX() - mouseX - leftCenterHandler.getLayoutX();
             if (d > 0) {
-                d = d * getImageWidth() / imageView.getBoundsInParent().getWidth();
+                d = d * imageXRatio();
                 maskCircleData.setRadius(d / 2);
                 drawMaskCircleLine();
             }
@@ -577,7 +611,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         if (maskEllipseLine != null && maskEllipseLine.isVisible()) {
             double rx = (rightCenterHandler.getLayoutX() + event.getX() - mouseX - leftCenterHandler.getLayoutX()) / 2;
             if (rx > 0) {
-                rx = rx * getImageWidth() / imageView.getBoundsInParent().getWidth();
+                rx = rx * imageXRatio();
                 double ry = maskEllipseData.getRadiusY();
                 double cx = maskEllipseData.getCenterX();
                 double cy = maskEllipseData.getCenterY();

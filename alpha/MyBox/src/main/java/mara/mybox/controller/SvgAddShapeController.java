@@ -58,11 +58,11 @@ public class SvgAddShapeController extends BaseChildController {
                 return;
             }
             shapeController.synchronizeAction();
-            if (shapeController.shape == null) {
+            if (shapeController.imageController.shape == null) {
                 popError(message("NoData"));
                 return;
             }
-            Node newNode = editor.treeController.doc.importNode(shapeController.shape, true);
+            Node newNode = editor.treeController.doc.importNode(shapeController.imageController.shape, true);
             treeItem.getValue().getNode().appendChild(newNode);
             TreeItem<XmlTreeNode> newItem = new TreeItem(new XmlTreeNode(newNode));
             treeItem.getChildren().add(newItem);

@@ -17,6 +17,7 @@ import static mara.mybox.controller.BaseImageController_ImageView.DefaultAnchorC
 import static mara.mybox.controller.BaseImageController_ImageView.DefaultStrokeColor;
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
+import mara.mybox.data.DoubleLine;
 import mara.mybox.data.DoubleLines;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoublePolygon;
@@ -36,6 +37,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
     protected DoubleRectangle maskRectangleData;
     protected DoubleCircle maskCircleData;
     protected DoubleEllipse maskEllipseData;
+    protected DoubleLine maskLineData;
     protected DoublePolygon maskPolygonData;
     protected DoublePolyline maskPolylineData;
     protected DoublePolyline maskPolylineLineData;
@@ -52,6 +54,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
     protected Circle maskCircleLine;
     @FXML
     protected Ellipse maskEllipseLine;
+    @FXML
+    protected Line maskLine;
     @FXML
     protected Polygon maskPolygonLine;
     @FXML
@@ -82,6 +86,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             drawMaskRectangleLine();
             drawMaskCircleLine();
             drawMaskEllipseLine();
+            drawMaskLineLine();
             drawMaskPolygonLine();
             drawMaskPolyline();
         } catch (Exception e) {
@@ -176,6 +181,22 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         return Color.TRANSPARENT;
     }
 
+    public double viewXRatio() {
+        return imageView.getBoundsInParent().getWidth() / getImageWidth();
+    }
+
+    public double viewYRatio() {
+        return imageView.getBoundsInParent().getHeight() / getImageHeight();
+    }
+
+    public double imageXRatio() {
+        return getImageWidth() / imageView.getBoundsInParent().getWidth();
+    }
+
+    public double imageYRatio() {
+        return getImageHeight() / imageView.getBoundsInParent().getHeight();
+    }
+
     public void setShapeStyle(Shape shape) {
         if (shape == null) {
             return;
@@ -195,6 +216,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         setShapeStyle(maskRectangleLine);
         setShapeStyle(maskCircleLine);
         setShapeStyle(maskEllipseLine);
+        setShapeStyle(maskLine);
         setShapeStyle(maskPolygonLine);
         setShapeStyle(maskPolyline);
 
@@ -283,6 +305,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             initMaskRectangleLine(show);
             initMaskCircleLine(show);
             initMaskEllipseLine(show);
+            initMaskLineLine(show);
             initMaskPolygonLine(show);
             initMaskPolyline(show);
             initMaskPolylineLine(show);
@@ -302,6 +325,9 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             }
             if (maskEllipseLine != null && maskEllipseLine.isVisible()) {
                 initMaskEllipseLine(true);
+            }
+            if (maskLine != null && maskLine.isVisible()) {
+                initMaskLineLine(true);
             }
             if (maskPolygonLine != null && maskPolygonLine.isVisible()) {
                 initMaskPolygonLine(true);
@@ -371,8 +397,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                 || imageView == null || imageView.getImage() == null) {
             return;
         }
-        double xRatio = getImageWidth() / imageView.getBoundsInParent().getWidth();
-        double yRatio = getImageHeight() / imageView.getBoundsInParent().getHeight();
+        double xRatio = imageXRatio();
+        double yRatio = imageYRatio();
 
         double smallX = maskRectangleLine.getLayoutX() - imageView.getLayoutX();
         smallX = smallX * xRatio;
@@ -412,8 +438,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                 return false;
             }
             int anchorHW = UserConfig.getInt("AnchorWidth", 10) / 2;
-            double xRatio = imageView.getBoundsInParent().getWidth() / getImageWidth();
-            double yRatio = imageView.getBoundsInParent().getHeight() / getImageHeight();
+            double xRatio = viewXRatio();
+            double yRatio = viewYRatio();
             double x1 = maskRectangleData.getSmallX() * xRatio;
             double y1 = maskRectangleData.getSmallY() * yRatio;
             double x2 = maskRectangleData.getBigX() * xRatio;
@@ -502,7 +528,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             }
 
             int anchorHW = UserConfig.getInt("AnchorWidth", 10) / 2;
-            double xRatio = imageView.getBoundsInParent().getWidth() / getImageWidth();
+            double xRatio = viewXRatio();
             double r = maskCircleData.getRadius() * xRatio;
             double x = maskCircleData.getCenterX() * xRatio;
             double y = maskCircleData.getCenterY() * xRatio;
@@ -577,8 +603,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             }
 
             int anchorHW = UserConfig.getInt("AnchorWidth", 10) / 2;
-            double xRatio = imageView.getBoundsInParent().getWidth() / getImageWidth();
-            double yRatio = imageView.getBoundsInParent().getHeight() / getImageHeight();
+            double xRatio = viewXRatio();
+            double yRatio = viewYRatio();
             double rx = maskEllipseData.getRadiusX() * xRatio;
             double ry = maskEllipseData.getRadiusY() * yRatio;
             double cx = maskEllipseData.getCenterX() * xRatio;
@@ -598,6 +624,79 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             rightCenterHandler.setLayoutY(maskEllipseLine.getLayoutY() - anchorHW);
 
 //            updateLabelTitle();
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.debug(e.toString());
+            return false;
+        }
+
+    }
+
+    public void initMaskLineLine(boolean show) {
+        if (imageView == null || maskPane == null || maskLine == null) {
+            return;
+        }
+        maskLine.setOpacity(1);
+        setMaskLineLineVisible(show);
+        if (show && imageView.getImage() != null) {
+            setDafultMaskLineValues();
+            drawMaskLineLine();
+        }
+    }
+
+    public void setMaskLineLineVisible(boolean show) {
+        if (imageView == null || maskPane == null || maskLine == null) {
+            return;
+        }
+        if (show && imageView.getImage() != null) {
+            maskLine.setVisible(true);
+            if (!maskPane.getChildren().contains(maskLine)) {
+                maskPane.getChildren().addAll(maskLine,
+                        topLeftHandler, bottomRightHandler);
+            }
+            setMaskStyles();
+        } else {
+            maskPane.getChildren().removeAll(maskLine,
+                    topLeftHandler, bottomRightHandler);
+            maskLine.setVisible(false);
+        }
+    }
+
+    public void setDafultMaskLineValues() {
+        if (imageView == null || maskPane == null || maskLine == null) {
+            return;
+        }
+        double w = getImageWidth();
+        double h = getImageHeight();
+        maskLineData = new DoubleLine(w / 4, h / 4, w * 3 / 4, h * 3 / 4);
+    }
+
+    public boolean drawMaskLineLine() {
+        try {
+            if (maskLine == null || !maskLine.isVisible()
+                    || maskLineData == null
+                    || imageView == null || imageView.getImage() == null) {
+                return false;
+            }
+            int anchorHW = UserConfig.getInt("AnchorWidth", 10) / 2;
+            double xRatio = viewXRatio();
+            double yRatio = viewYRatio();
+            double startX = imageView.getLayoutX() + maskLineData.getStartX() * xRatio;
+            double startY = imageView.getLayoutY() + maskLineData.getStartY() * yRatio;
+            double endX = imageView.getLayoutX() + maskLineData.getEndX() * xRatio;
+            double endY = imageView.getLayoutY() + maskLineData.getEndY() * yRatio;
+
+            maskLine.setStartX(startX);
+            maskLine.setStartY(startY);
+            maskLine.setEndX(endX);
+            maskLine.setEndY(endY);
+            maskLine.setVisible(true);
+
+            topLeftHandler.setLayoutX(startX - anchorHW);
+            topLeftHandler.setLayoutY(startY - anchorHW);
+            bottomRightHandler.setLayoutX(endX - anchorHW);
+            bottomRightHandler.setLayoutY(endY - anchorHW);
+
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -652,8 +751,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             }
 
             int anchorHW = UserConfig.getInt("AnchorWidth", 10) / 2;
-            double xRatio = imageView.getBoundsInParent().getWidth() / getImageWidth();
-            double yRatio = imageView.getBoundsInParent().getHeight() / getImageHeight();
+            double xRatio = viewXRatio();
+            double yRatio = viewYRatio();
 
             List<Double> d = new ArrayList<>();
             for (int i = 0; i < maskPolygonData.getSize(); ++i) {
@@ -760,8 +859,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             maskPolyline.getPoints().clear();
 
             int anchorHW = UserConfig.getInt("AnchorWidth", 10) / 2;
-            double xRatio = imageView.getBoundsInParent().getWidth() / getImageWidth();
-            double yRatio = imageView.getBoundsInParent().getHeight() / getImageHeight();
+            double xRatio = viewXRatio();
+            double yRatio = viewYRatio();
 
             List<Double> d = new ArrayList<>();
             for (int i = 0; i < maskPolylineData.getSize(); ++i) {
@@ -835,8 +934,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         if (size == 0) {
             return true;
         }
-        double xRatio = imageView.getBoundsInParent().getWidth() / getImageWidth();
-        double yRatio = imageView.getBoundsInParent().getHeight() / getImageHeight();
+        double xRatio = viewXRatio();
+        double yRatio = viewYRatio();
         double drawStrokeWidth = strokeWidth * xRatio;
         if (size == 1) {
             polygonP1.setOpacity(1);
@@ -897,8 +996,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         if (size == 0) {
             return true;
         }
-        double xRatio = imageView.getBoundsInParent().getWidth() / getImageWidth();
-        double yRatio = imageView.getBoundsInParent().getHeight() / getImageHeight();
+        double xRatio = viewXRatio();
+        double yRatio = viewYRatio();
         double drawStrokeWidth = strokeWidth * xRatio;
         if (size == 1) {
             polygonP1.setOpacity(1);
@@ -945,8 +1044,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
 
     public Line drawMaskPenLine(double strokeWidth, Color strokeColor, boolean dotted, float opacity,
             DoublePoint lastPonit, DoublePoint thisPoint) {
-        double xRatio = imageView.getBoundsInParent().getWidth() / getImageWidth();
-        double yRatio = imageView.getBoundsInParent().getHeight() / getImageHeight();
+        double xRatio = viewXRatio();
+        double yRatio = viewYRatio();
         double drawStrokeWidth = strokeWidth * xRatio;
         if (lastPonit == null) {
             polygonP1.setOpacity(1);
@@ -995,8 +1094,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         if (size == 0) {
             return true;
         }
-        double xRatio = imageView.getBoundsInParent().getWidth() / getImageWidth();
-        double yRatio = imageView.getBoundsInParent().getHeight() / getImageHeight();
+        double xRatio = viewXRatio();
+        double yRatio = viewYRatio();
         if (size == 1) {
             polygonP1.setOpacity(1);
             DoublePoint p1 = maskPenData.getPoint(0);

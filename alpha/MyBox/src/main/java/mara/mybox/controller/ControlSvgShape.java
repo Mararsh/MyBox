@@ -42,7 +42,6 @@ public class ControlSvgShape extends BaseController {
     protected SVG svg;
     protected Document doc;
     protected Node parentNode;
-    protected Element shape;
     protected WebEngine webEngine;
     protected float fillOpacity;
     protected int strokeWidth;
@@ -87,7 +86,7 @@ public class ControlSvgShape extends BaseController {
     public void initControls() {
         try {
             super.initControls();
-            imageController.svgShape = this;
+            imageController.svgShapeControl = this;
 
             elementType.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
@@ -149,7 +148,7 @@ public class ControlSvgShape extends BaseController {
 
     public void createShape() {
         try {
-            if (isSettingValues || doc == null) {
+            if (doc == null) {
                 return;
             }
             double width, height;
@@ -252,8 +251,9 @@ public class ControlSvgShape extends BaseController {
             }
             pickStyle(element);
 
+            loadXml(element);
             imageController.loadShape(element);
-            xmlArea.setText(XmlTools.transform(shape, true));
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -494,6 +494,69 @@ public class ControlSvgShape extends BaseController {
         }
     }
 
+    public void loadShape(Element element) {
+        try {
+            if (element == null) {
+                return;
+            }
+            switch (element.getNodeName().toLowerCase()) {
+                case "rect":
+                    rectRadio.setSelected(true);
+                    shapePane.setContent(rectangleBox);
+                    rectXInput.setText(element.getAttribute("x"));
+                    rectYInput.setText(element.getAttribute("y"));
+                    rectWidthInput.setText(element.getAttribute("width"));
+                    rectHeightInput.setText(element.getAttribute("height"));
+                    break;
+                case "circle":
+                    circleRadio.setSelected(true);
+                    shapePane.setContent(circleBox);
+                    circleXInput.setText(element.getAttribute("cx"));
+                    circleYInput.setText(element.getAttribute("cy"));
+                    circleRadiusInput.setText(element.getAttribute("r"));
+                    break;
+                case "ellipse":
+                    ellipseRadio.setSelected(true);
+                    shapePane.setContent(ellipseBox);
+                    ellipseXInput.setText(element.getAttribute("cx"));
+                    ellipseYInput.setText(element.getAttribute("cy"));
+                    ellipseXRadiusInput.setText(element.getAttribute("rx"));
+                    ellipseYRadiusInput.setText(element.getAttribute("ry"));
+                    break;
+                case "line":
+                    lineRadio.setSelected(true);
+                    shapePane.setContent(lineBox);
+                    lineX1Input.setText(element.getAttribute("x1"));
+                    lineY1Input.setText(element.getAttribute("y1"));
+                    lineX2Input.setText(element.getAttribute("x2"));
+                    lineY2Input.setText(element.getAttribute("y2"));
+                    break;
+                case "polyline":
+                    polylineRadio.setSelected(true);
+                    shapePane.setContent(polylineBox);
+                    polylineArea.setText(element.getAttribute("points"));
+                    break;
+                case "polygon":
+                    polygonRadio.setSelected(true);
+                    shapePane.setContent(polygonBox);
+                    polygonArea.setText(element.getAttribute("points"));
+                    break;
+                case "path":
+                    pathRadio.setSelected(true);
+                    shapePane.setContent(pathBox);
+                    pathArea.setText(element.getAttribute("d"));
+                    break;
+                default:
+                    popError(message("InvalidData"));
+                    return;
+            }
+            refreshStyle(shapeBox);
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
     /*
         style
      */
@@ -586,97 +649,11 @@ public class ControlSvgShape extends BaseController {
         }
     }
 
-    /*
-        xml
-     */
-    public void initXML() {
+    public void loadStyle(Element element) {
         try {
-            wrapXmlCheck.setSelected(UserConfig.getBoolean(baseName + "WarpXML", true));
-            wrapXmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    UserConfig.setBoolean(baseName + "WarpXML", newValue);
-                    xmlArea.setWrapText(newValue);
-                }
-            });
-
-            xmlArea.setWrapText(wrapXmlCheck.isSelected());
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    @FXML
-    public void goXml() {
-        try {
-            Element element = XmlTools.toElement(this, xmlArea.getText());
-            element = (Element) doc.importNode(element, true);
-            loadShape(element);
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void loadShape(Element element) {
-        try {
-            if (isSettingValues || element == null) {
+            if (element == null) {
                 return;
             }
-            isSettingValues = true;
-            switch (element.getNodeName().toLowerCase()) {
-                case "rect":
-                    rectRadio.setSelected(true);
-                    shapePane.setContent(rectangleBox);
-                    rectXInput.setText(element.getAttribute("x"));
-                    rectYInput.setText(element.getAttribute("y"));
-                    rectWidthInput.setText(element.getAttribute("width"));
-                    rectHeightInput.setText(element.getAttribute("height"));
-                    break;
-                case "circle":
-                    circleRadio.setSelected(true);
-                    shapePane.setContent(circleBox);
-                    circleXInput.setText(element.getAttribute("cx"));
-                    circleYInput.setText(element.getAttribute("cy"));
-                    circleRadiusInput.setText(element.getAttribute("r"));
-                    break;
-                case "ellipse":
-                    ellipseRadio.setSelected(true);
-                    shapePane.setContent(ellipseBox);
-                    ellipseXInput.setText(element.getAttribute("cx"));
-                    ellipseYInput.setText(element.getAttribute("cy"));
-                    ellipseXRadiusInput.setText(element.getAttribute("rx"));
-                    ellipseYRadiusInput.setText(element.getAttribute("ry"));
-                    break;
-                case "line":
-                    lineRadio.setSelected(true);
-                    shapePane.setContent(lineBox);
-                    lineX1Input.setText(element.getAttribute("x1"));
-                    lineY1Input.setText(element.getAttribute("y1"));
-                    lineX2Input.setText(element.getAttribute("x2"));
-                    lineY2Input.setText(element.getAttribute("y2"));
-                    break;
-                case "polyline":
-                    polylineRadio.setSelected(true);
-                    shapePane.setContent(polylineBox);
-                    polylineArea.setText(element.getAttribute("points"));
-                    break;
-                case "polygon":
-                    polygonRadio.setSelected(true);
-                    shapePane.setContent(polygonBox);
-                    polygonArea.setText(element.getAttribute("points"));
-                    break;
-                case "path":
-                    pathRadio.setSelected(true);
-                    shapePane.setContent(pathBox);
-                    pathArea.setText(element.getAttribute("d"));
-                    break;
-                default:
-                    popError(message("InvalidData"));
-                    isSettingValues = false;
-                    return;
-            }
-
             try {
                 strokeColorController.setColor(Color.web(element.getAttribute("stroke")));
             } catch (Exception e) {
@@ -707,18 +684,57 @@ public class ControlSvgShape extends BaseController {
                     fillColorController.setColor(Color.TRANSPARENT);
                 }
             }
-            isSettingValues = false;
-            refreshStyle(shapeBox);
 
-            imageController.loadShape(element);
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    /*
+        xml
+     */
+    public void initXML() {
+        try {
+            wrapXmlCheck.setSelected(UserConfig.getBoolean(baseName + "WarpXML", true));
+            wrapXmlCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    UserConfig.setBoolean(baseName + "WarpXML", newValue);
+                    xmlArea.setWrapText(newValue);
+                }
+            });
+
+            xmlArea.setWrapText(wrapXmlCheck.isSelected());
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
     }
 
     @FXML
+    public void goXml() {
+        try {
+            Element element = XmlTools.toElement(this, xmlArea.getText());
+            element = (Element) doc.importNode(element, true);
+            loadShape(element);
+            loadStyle(element);
+            imageController.loadShape(element);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @FXML
     public void popXml() {
         TextPopController.openInput(this, xmlArea);
+    }
+
+    public void loadXml(Element element) {
+        try {
+            xmlArea.setText(XmlTools.transform(element, true));
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
     }
 
     /*

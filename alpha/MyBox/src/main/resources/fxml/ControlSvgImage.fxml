@@ -19,6 +19,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.shape.Ellipse?>
+<?import javafx.scene.shape.Line?>
 <?import javafx.scene.shape.Polygon?>
 <?import javafx.scene.shape.Polyline?>
 <?import javafx.scene.shape.Rectangle?>
@@ -129,18 +130,11 @@ License:    Apache License Version 2.0
                                 <Cursor fx:constant="MOVE" />
                             </cursor>
                         </Ellipse>
-                        <Polygon fx:id="maskPolygonLine" fill="#ffffff00" layoutX="70.0" layoutY="124.0" stroke="RED" strokeType="INSIDE">
+                  <Line fx:id="maskLine" endX="377.33331298828125" endY="148.88890075683594" onMousePressed="#handlerPressed" onMouseReleased="#lineReleased" startX="124.44446563720703" startY="148.88890075683594" stroke="RED" />
+                        <Polygon fx:id="maskPolygonLine" fill="#ffffff00" layoutX="70.0" layoutY="124.0" points="-50.0, 40.0, 50.00000762939453, 39.99998474121094, 0.0, -60.0" stroke="RED" strokeType="INSIDE">
                             <cursor>
                                 <Cursor fx:constant="DEFAULT" />
                             </cursor>
-                            <points>
-                                <Double fx:value="-50.0" />
-                                <Double fx:value="40.0" />
-                                <Double fx:value="50.0" />
-                                <Double fx:value="40.0" />
-                                <Double fx:value="0.0" />
-                                <Double fx:value="-60.0" />
-                            </points>
                         </Polygon>
                         <Rectangle fx:id="polygonP1" fill="#ffffff00" height="10.0" layoutX="30.0" layoutY="21.0" stroke="BLUE" strokeType="INSIDE" width="10.0">
                             <cursor>
