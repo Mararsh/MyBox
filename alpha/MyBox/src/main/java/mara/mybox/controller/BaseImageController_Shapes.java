@@ -12,6 +12,7 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Polyline;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import javafx.scene.shape.StrokeLineCap;
 import javafx.stage.Window;
 import static mara.mybox.controller.BaseImageController_ImageView.DefaultAnchorColor;
 import static mara.mybox.controller.BaseImageController_ImageView.DefaultStrokeColor;
@@ -44,7 +45,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
     protected List<Line> maskPolylineLines;
     protected DoubleLines maskPenData;
     protected List<List<Line>> maskPenLines;
-    protected final SimpleBooleanProperty rectDrawnNotify;
+    protected final SimpleBooleanProperty rectDrawnNotify, circleDrawnNotify, ellipseDrawnNotify,
+            lineDrawnNotify, polylineDrawnNotify, polygonDrawnNotify;
     protected boolean isDrawing;
 
     @FXML
@@ -64,6 +66,11 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
 
     public BaseImageController_Shapes() {
         rectDrawnNotify = new SimpleBooleanProperty(false);
+        circleDrawnNotify = new SimpleBooleanProperty(false);
+        ellipseDrawnNotify = new SimpleBooleanProperty(false);
+        lineDrawnNotify = new SimpleBooleanProperty(false);
+        polylineDrawnNotify = new SimpleBooleanProperty(false);
+        polygonDrawnNotify = new SimpleBooleanProperty(false);
     }
 
     @Override
@@ -174,6 +181,10 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         return dash;
     }
 
+    public StrokeLineCap strokeLineCap() {
+        return StrokeLineCap.BUTT;
+    }
+
     public float shapeOpacity() {
         return 1.0f;
     }
@@ -204,6 +215,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         }
         shape.setStroke(strokeColor());
         shape.setStrokeWidth(strokeWidth());
+        shape.setStrokeLineCap(strokeLineCap());
         shape.getStrokeDashArray().clear();
         List<Double> dash = strokeDash();
         if (dash != null) {
@@ -379,7 +391,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             maskRectangleLine.setVisible(false);
             rectDrawnNotify.set(!rectDrawnNotify.get());
         }
-
     }
 
     public void setDafultMaskRectangleValues() {
@@ -508,6 +519,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                     leftCenterHandler, rightCenterHandler,
                     topCenterHandler, bottomCenterHandler);
             maskCircleLine.setVisible(false);
+            circleDrawnNotify.set(!circleDrawnNotify.get());
         }
     }
 
@@ -546,7 +558,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             rightCenterHandler.setLayoutX(maskCircleLine.getLayoutX() + maskCircleLine.getRadius() - anchorHW);
             rightCenterHandler.setLayoutY(maskCircleLine.getLayoutY() - anchorHW);
 
-//            updateLabelTitle();
+            circleDrawnNotify.set(!circleDrawnNotify.get());
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -583,6 +595,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                     leftCenterHandler, rightCenterHandler,
                     topCenterHandler, bottomCenterHandler);
             maskEllipseLine.setVisible(false);
+            ellipseDrawnNotify.set(!ellipseDrawnNotify.get());
         }
     }
 
@@ -624,7 +637,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             rightCenterHandler.setLayoutX(maskEllipseLine.getLayoutX() + maskEllipseLine.getRadiusX() - anchorHW);
             rightCenterHandler.setLayoutY(maskEllipseLine.getLayoutY() - anchorHW);
 
-//            updateLabelTitle();
+            ellipseDrawnNotify.set(!ellipseDrawnNotify.get());
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -660,6 +673,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             maskPane.getChildren().removeAll(maskLine,
                     topLeftHandler, bottomRightHandler);
             maskLine.setVisible(false);
+            lineDrawnNotify.set(!lineDrawnNotify.get());
         }
     }
 
@@ -698,6 +712,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             bottomRightHandler.setLayoutX(endX - anchorHW);
             bottomRightHandler.setLayoutY(endY - anchorHW);
 
+            lineDrawnNotify.set(!lineDrawnNotify.get());
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -732,6 +747,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         } else {
             maskPane.getChildren().removeAll(maskPolygonLine, polygonP1, polygonP2);
             maskPolygonLine.setVisible(false);
+            polygonDrawnNotify.set(!polygonDrawnNotify.get());
         }
     }
 
@@ -755,8 +771,9 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             double xRatio = viewXRatio();
             double yRatio = viewYRatio();
 
+            int size = maskPolygonData.getSize();
             List<Double> d = new ArrayList<>();
-            for (int i = 0; i < maskPolygonData.getSize(); ++i) {
+            for (int i = 0; i < size; ++i) {
                 d.add(maskPolygonData.get(i).getX() * xRatio);
                 d.add(maskPolygonData.get(i).getY() * yRatio);
             }
@@ -766,9 +783,10 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                 maskPolygonLine.setOpacity(0);
                 polygonP1.setOpacity(0);
                 polygonP2.setOpacity(0);
+                return true;
+            }
 
-            } else if (maskPolygonData.getSize() > 2) {
-
+            if (size > 2) {
                 maskPolygonLine.setOpacity(1);
                 polygonP1.setOpacity(0);
                 polygonP2.setOpacity(0);
@@ -776,32 +794,25 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                 maskPolygonLine.setLayoutX(imageView.getLayoutX());
                 maskPolygonLine.setLayoutY(imageView.getLayoutY());
 
-            } else if (maskPolygonData.getSize() == 2) {
-
+            } else {
                 maskPolygonLine.setOpacity(0);
+
+                DoublePoint p0 = maskPolygonData.get(0);
                 polygonP1.setOpacity(1);
-                polygonP2.setOpacity(1);
+                polygonP1.setLayoutX(imageView.getLayoutX() + p0.getX() * xRatio - anchorHW);
+                polygonP1.setLayoutY(imageView.getLayoutY() + p0.getY() * yRatio - anchorHW);
 
-                DoublePoint p1 = maskPolygonData.get(0);
-                polygonP1.setLayoutX(imageView.getLayoutX() + p1.getX() * xRatio - anchorHW);
-                polygonP1.setLayoutY(imageView.getLayoutY() + p1.getY() * yRatio - anchorHW);
+                if (size == 2) {
+                    DoublePoint p1 = maskPolygonData.get(1);
+                    polygonP2.setOpacity(1);
+                    polygonP2.setLayoutX(imageView.getLayoutX() + p1.getX() * xRatio - anchorHW);
+                    polygonP2.setLayoutY(imageView.getLayoutY() + p1.getY() * yRatio - anchorHW);
 
-                DoublePoint p2 = maskPolygonData.get(1);
-                polygonP2.setLayoutX(imageView.getLayoutX() + p2.getX() * xRatio - anchorHW);
-                polygonP2.setLayoutY(imageView.getLayoutY() + p2.getY() * yRatio - anchorHW);
-
-            } else if (maskPolygonData.getSize() == 1) {
-
-                maskPolygonLine.setOpacity(0);
-                polygonP1.setOpacity(1);
-                polygonP2.setOpacity(0);
-
-                DoublePoint p1 = maskPolygonData.get(0);
-                polygonP1.setLayoutX(imageView.getLayoutX() + p1.getX() * xRatio - anchorHW);
-                polygonP1.setLayoutY(imageView.getLayoutY() + p1.getY() * yRatio - anchorHW);
+                } else {
+                    polygonP2.setOpacity(0);
+                }
             }
-
-//            updateLabelTitle();
+            polygonDrawnNotify.set(!polygonDrawnNotify.get());
             return true;
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -836,6 +847,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         } else {
             maskPane.getChildren().removeAll(maskPolyline, polygonP1, polygonP2);
             maskPolyline.setVisible(false);
+            polylineDrawnNotify.set(!polylineDrawnNotify.get());
         }
     }
 
@@ -873,36 +885,36 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                 polygonP2.setOpacity(0);
                 return true;
             }
-            DoublePoint p0 = maskPolylineData.get(0);
-            double p0x = imageView.getLayoutX() + p0.getX() * xRatio;
-            double p0y = imageView.getLayoutY() + p0.getY() * yRatio;
 
             if (size > 2) {
-
                 maskPolyline.setOpacity(1);
                 polygonP1.setOpacity(0);
                 polygonP2.setOpacity(0);
 
-                maskPolyline.setLayoutX(p0x);        // the first point as layout
-                maskPolyline.setLayoutY(p0y);
+                maskPolyline.setLayoutX(imageView.getLayoutX());
+                maskPolyline.setLayoutY(imageView.getLayoutY());
 
             } else {
 
                 maskPolyline.setOpacity(0);
-                polygonP1.setOpacity(1);
-                polygonP2.setOpacity(0);
 
-                polygonP1.setLayoutX(p0x - anchorHW);
-                polygonP1.setLayoutY(p0y - anchorHW);
+                DoublePoint p0 = maskPolylineData.get(0);
+                polygonP1.setOpacity(1);
+                polygonP1.setLayoutX(imageView.getLayoutX() + p0.getX() * xRatio - anchorHW);
+                polygonP1.setLayoutY(imageView.getLayoutY() + p0.getY() * yRatio - anchorHW);
 
                 if (size == 2) {
-
                     DoublePoint p1 = maskPolylineData.get(1);
+                    polygonP2.setOpacity(1);
                     polygonP2.setLayoutX(imageView.getLayoutX() + p1.getX() * xRatio - anchorHW);
                     polygonP2.setLayoutY(imageView.getLayoutY() + p1.getY() * yRatio - anchorHW);
 
+                } else {
+                    polygonP2.setOpacity(0);
+
                 }
             }
+            polylineDrawnNotify.set(!polylineDrawnNotify.get());
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);

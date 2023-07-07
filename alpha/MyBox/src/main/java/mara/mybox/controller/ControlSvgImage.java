@@ -3,11 +3,18 @@ package mara.mybox.controller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.SVGPath;
+import javafx.scene.shape.StrokeLineCap;
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
 import mara.mybox.data.DoubleLine;
 import mara.mybox.data.DoublePoint;
+import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoublePolyline;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
@@ -27,6 +34,7 @@ public class ControlSvgImage extends BaseImageController {
     protected ControlSvgShape svgShapeControl;
     protected Element shape;
     protected ShapeType shapeType;
+    protected SVGPath svgPath;
     protected boolean isLoading;
 
     protected DoublePoint lastPoint;
@@ -35,12 +43,58 @@ public class ControlSvgImage extends BaseImageController {
         Rectangle, Circle, Ellipse, Line, Polyline, Polygon, Path
     }
 
+    @FXML
+    protected CheckBox displayAnchorsCheck, pickPointCheck;
+
     @Override
     public void initControls() {
         try {
             super.initControls();
 
             imageView.toBack();
+
+            rectDrawnNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                    updateRectangle();
+                }
+            });
+
+            circleDrawnNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                    updateCircle();
+                }
+            });
+
+            ellipseDrawnNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                    updateEllipse();
+                }
+            });
+
+            lineDrawnNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                    updateLine();
+                }
+            });
+
+            polylineDrawnNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                    updatePolyline();
+                }
+            });
+
+            polygonDrawnNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                    updatePolygon();
+                }
+            });
+
             loadShape(null);
 
         } catch (Exception e) {
@@ -65,14 +119,7 @@ public class ControlSvgImage extends BaseImageController {
     }
 
     public void setBackGroundOpacity() {
-        if (svgShapeControl.optionsController.bgColorCheck.isSelected()) {
-            borderLine.setFill(svgShapeControl.optionsController.bgColorController.color());
-            borderLine.setOpacity(1 - svgShapeControl.optionsController.bgOpacity);
-            imageView.setOpacity(1);
-        } else {
-            borderLine.setFill(Color.TRANSPARENT);
-            imageView.setOpacity(svgShapeControl.optionsController.bgOpacity);
-        }
+        imageView.setOpacity(svgShapeControl.optionsController.bgOpacity);
     }
 
     public void loadShape(Element element) {
@@ -81,6 +128,10 @@ public class ControlSvgImage extends BaseImageController {
             shapeType = null;
             shape = element;
             initMaskControls(false);
+            if (svgPath != null && maskPane.getChildren().contains(svgPath)) {
+                maskPane.getChildren().remove(svgPath);
+                svgPath.setContent("");
+            }
             if (element != null) {
                 switch (element.getNodeName().toLowerCase()) {
                     case "rect":
@@ -130,10 +181,15 @@ public class ControlSvgImage extends BaseImageController {
                         drawMaskPolyline();
                         break;
                     case "polygon":
-
+                        shapeType = ShapeType.Polygon;
+                        setMaskPolygonLineVisible(true);
+                        maskPolygonData = new DoublePolygon();
+                        maskPolygonData.addAll(shape.getAttribute("points"));
+                        drawMaskPolygonLine();
                         break;
                     case "path":
-
+                        shapeType = ShapeType.Path;
+                        drawPath();
                         break;
                     default:
                         popError(message("InvalidData"));
@@ -158,25 +214,52 @@ public class ControlSvgImage extends BaseImageController {
 
     @Override
     public double strokeWidth() {
-        double strokeWidth = svgShapeControl.strokeWidth;
+        float strokeWidth = svgShapeControl.strokeWidth;
         if (strokeWidth <= 0) {
-            strokeWidth = 2.0d;
+            strokeWidth = 2.0f;
         }
         return strokeWidth;
     }
 
     @Override
+    public StrokeLineCap strokeLineCap() {
+        if (svgShapeControl.linecapSquareRadio.isSelected()) {
+            return StrokeLineCap.SQUARE;
+        } else if (svgShapeControl.linecapRoundRadio.isSelected()) {
+            return StrokeLineCap.ROUND;
+        } else {
+            return StrokeLineCap.BUTT;
+        }
+    }
+
+    @Override
     public List<Double> strokeDash() {
-        double strokeWidth = strokeWidth();
-        List<Double> dash = new ArrayList<>();
-        dash.add(strokeWidth);
-        dash.add(strokeWidth * 3);
-        return dash;
+        try {
+            String text = svgShapeControl.dashInput.getText();
+            if (text == null || text.isBlank()) {
+                return null;
+            }
+            String[] values = text.split("\\s+");
+            if (values == null || values.length == 0) {
+                return null;
+            }
+            List<Double> dash = new ArrayList<>();
+            for (String v : values) {
+                dash.add(Double.valueOf(v));
+            }
+            return dash;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
     public float shapeOpacity() {
-        return svgShapeControl.fillOpacity;
+        if (svgShapeControl.fillCheck.isSelected()) {
+            return svgShapeControl.fillOpacity;
+        } else {
+            return 1.0f;
+        }
     }
 
     @Override
@@ -200,10 +283,9 @@ public class ControlSvgImage extends BaseImageController {
         return DoubleTools.scale2(d) + "";
     }
 
-    @Override
-    public boolean drawMaskRectangleLine() {
+    public boolean updateRectangle() {
         try {
-            if (!super.drawMaskRectangleLine() || isLoading || shape == null) {
+            if (isLoading || shape == null) {
                 return false;
             }
             shape.setAttribute("x", scaleValue(maskRectangleData.getSmallX()));
@@ -218,10 +300,9 @@ public class ControlSvgImage extends BaseImageController {
         }
     }
 
-    @Override
-    public boolean drawMaskCircleLine() {
+    public boolean updateCircle() {
         try {
-            if (!super.drawMaskCircleLine() || isLoading || shape == null) {
+            if (isLoading || shape == null) {
                 return false;
             }
             shape.setAttribute("cx", scaleValue(maskCircleData.getCenterX()));
@@ -235,10 +316,9 @@ public class ControlSvgImage extends BaseImageController {
         }
     }
 
-    @Override
-    public boolean drawMaskEllipseLine() {
+    public boolean updateEllipse() {
         try {
-            if (!super.drawMaskEllipseLine() || isLoading || shape == null) {
+            if (isLoading || shape == null) {
                 return false;
             }
             shape.setAttribute("cx", scaleValue(maskEllipseData.getCenterX()));
@@ -253,10 +333,9 @@ public class ControlSvgImage extends BaseImageController {
         }
     }
 
-    @Override
-    public boolean drawMaskLineLine() {
+    public boolean updateLine() {
         try {
-            if (!super.drawMaskLineLine() || isLoading || shape == null) {
+            if (isLoading || shape == null) {
                 return false;
             }
             shape.setAttribute("x1", scaleValue(maskLineData.getStartX()));
@@ -271,14 +350,45 @@ public class ControlSvgImage extends BaseImageController {
         }
     }
 
-    @Override
-    public boolean drawMaskPolyline() {
+    public boolean updatePolyline() {
         try {
-            if (!super.drawMaskPolyline() || isLoading || shape == null) {
+            if (isLoading || shape == null) {
                 return false;
             }
             shape.setAttribute("points", DoublePoint.toText(maskPolylineData.getPoints(), 2));
             updateSvgShape();
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public boolean updatePolygon() {
+        try {
+            if (isLoading || shape == null) {
+                return false;
+            }
+            shape.setAttribute("points", DoublePoint.toText(maskPolygonData.getPoints(), 2));
+            updateSvgShape();
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public boolean drawPath() {
+        try {
+            if (shape == null) {
+                return false;
+            }
+            if (svgPath == null) {
+                svgPath = new SVGPath();
+            }
+            svgPath.setContent(shape.getAttribute("d"));
+            setShapeStyle(svgPath);
+            maskPane.getChildren().add(svgPath);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);

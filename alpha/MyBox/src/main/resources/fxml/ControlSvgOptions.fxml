@@ -14,11 +14,12 @@ License:    Apache License Version 2.0
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlSvgOptions">
       <children>
-                  <FlowPane fx:id="buttonsPane" alignment="CENTER_LEFT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="450.0" vgap="2.0">
+                  <FlowPane fx:id="pane1" alignment="CENTER_LEFT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="450.0" vgap="2.0">
                       <children>
             <Label layoutX="193.0" layoutY="14.0" text="%Width" />
             <TextField fx:id="widthInput" prefWidth="80.0" />
@@ -46,10 +47,14 @@ License:    Apache License Version 2.0
             </Button>
                       </children>
                   </FlowPane>
-      <FlowPane fx:id="buttonsPane1" alignment="CENTER_LEFT" hgap="2.0" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" vgap="2.0">
+      <FlowPane fx:id="pane2" alignment="CENTER_LEFT" hgap="2.0" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" vgap="2.0">
          <children>
-            <CheckBox fx:id="bgColorCheck" mnemonicParsing="false" text="%BackgroundColor" />
-            <fx:include fx:id="bgColor" source="ControlColorSet.fxml" />
+            <HBox fx:id="bgColorBox" alignment="CENTER_LEFT" spacing="2.0">
+               <children>
+                  <CheckBox fx:id="bgColorCheck" mnemonicParsing="false" text="%BackgroundColor" />
+                  <fx:include fx:id="bgColor" source="ControlColorSet.fxml" />
+               </children>
+            </HBox>
             <Label text="%BackgroundOpacity" />
             <ComboBox fx:id="opacitySelector" editable="true" prefWidth="100.0" />
          </children>

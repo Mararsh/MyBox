@@ -31,7 +31,7 @@ License:    Apache License Version 2.0
             <items>
                 <ScrollPane fx:id="leftPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true">
                     <content>
-                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                        <VBox fx:id="optionsBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                             <padding>
                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                             </padding>
@@ -68,9 +68,21 @@ License:    Apache License Version 2.0
                                     <tabs>
                                                 <Tab fx:id="shapeTab" text="%Shape">
                                                     <content>
-                                                        <VBox fx:id="shapeBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                        <VBox fx:id="shapeOutBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                             <children>
-                                                                <ScrollPane fx:id="shapePane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS" />
+                                                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                             <content>
+                                                <VBox fx:id="shapeBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" />
+                                             </content></ScrollPane>
+                                          <Button fx:id="goShapeButton" mnemonicParsing="false" onAction="#goShape">
+                                             <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../buttons/Red/iconGo.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
                                                                 <TabPane fx:id="shapesPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
                                                                     <tabs>
                                                                         <Tab text="circle">
@@ -207,11 +219,10 @@ License:    Apache License Version 2.0
                                                                         </Tab>
                                                                         <Tab fx:id="pointsTab" text="polygon">
                                                                             <content>
-                                                                                <VBox fx:id="polygonBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
-                                                                                    <children>
-                                                                                        <Label text="%Points" />
-                                                                                        <TextArea fx:id="polygonArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" wrapText="true" VBox.vgrow="ALWAYS" />
-                                                                                    </children>
+                                                                                <VBox fx:id="polygonBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+                                                         <children>
+                                                            <fx:include fx:id="polygonPoints" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlPoints.fxml" VBox.vgrow="ALWAYS" />
+                                                         </children>
                                                                                 </VBox>
                                                                             </content>
                                                                         </Tab>
@@ -240,15 +251,6 @@ License:    Apache License Version 2.0
                                                                         </Tab>
                                                                     </tabs>
                                                                 </TabPane>
-                                          <Button fx:id="goShapeButton" mnemonicParsing="false" onAction="#goShape">
-                                             <graphic>
-                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../buttons/Red/iconGo.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </Button>
                                                             </children>
                                                         </VBox>
                                                     </content>

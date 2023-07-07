@@ -25,9 +25,6 @@ public class DoublePolygon implements DoubleShape {
     }
 
     public boolean add(double x, double y) {
-        if (x < 0 || y < 0) {
-            return false;
-        }
         points.add(new DoublePoint(x, y));
         getPolygon();
         return true;
@@ -42,18 +39,20 @@ public class DoublePolygon implements DoubleShape {
         return true;
     }
 
+    public boolean addAll(String values) {
+        return addAll(DoublePoint.parseList(values, DoublePoint.Separator));
+    }
+
     public boolean setAll(List<DoublePoint> ps) {
         if (ps == null) {
             return false;
         }
         points.clear();
-        points.addAll(ps);
-        getPolygon();
-        return true;
+        return addAll(ps);
     }
 
     public boolean remove(double x, double y) {
-        if (x < 0 || y < 0 || points == null || points.isEmpty()) {
+        if (points == null || points.isEmpty()) {
             return false;
         }
         List<Double> d = new ArrayList<>();

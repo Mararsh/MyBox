@@ -65,6 +65,15 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </CheckBox>
+            <Button fx:id="menuButton" mnemonicParsing="false" onAction="#menuAction">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../buttons/Red/iconMenu.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
                 <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -131,7 +140,7 @@ License:    Apache License Version 2.0
                             </cursor>
                         </Ellipse>
                         <Line fx:id="maskLine" endX="377.33331298828125" endY="148.88890075683594" onMousePressed="#handlerPressed" onMouseReleased="#lineReleased" startX="124.44446563720703" startY="148.88890075683594" stroke="RED" />
-                        <Polygon fx:id="maskPolygonLine" fill="#ffffff00" layoutX="70.0" layoutY="124.0" points="-50.0, 40.0, 50.00000762939453, 39.99998474121094, 0.0, -60.0" stroke="RED" strokeType="INSIDE" onMousePressed="#handlerPressed"  onMouseReleased="#polygonReleased" >
+                        <Polygon fx:id="maskPolygonLine" fill="#ffffff00" layoutX="70.0" layoutY="124.0" onMousePressed="#handlerPressed" onMouseReleased="#polygonReleased" points="-50.0, 40.0, 50.00000762939453, 39.99998474121094, 0.0, -60.0" stroke="RED" strokeType="INSIDE">
                             <cursor>
                                 <Cursor fx:constant="DEFAULT" />
                             </cursor>
@@ -146,7 +155,7 @@ License:    Apache License Version 2.0
                                 <Cursor fx:constant="NONE" />
                             </cursor>
                         </Rectangle>
-                        <Polyline fx:id="maskPolyline" fill="#ffffff00" layoutX="55.0" layoutY="81.0" stroke="RED" strokeType="INSIDE" onMousePressed="#handlerPressed"  onMouseReleased="#polylineReleased" >
+                        <Polyline fx:id="maskPolyline" fill="#ffffff00" layoutX="55.0" layoutY="81.0" onMousePressed="#handlerPressed" onMouseReleased="#polylineReleased" stroke="RED" strokeType="INSIDE">
                             <points>
                                 <Double fx:value="-50.0" />
                                 <Double fx:value="-40.0" />

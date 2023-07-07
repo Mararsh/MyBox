@@ -1,15 +1,12 @@
 package mara.mybox.controller;
 
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import mara.mybox.data.DoubleEllipse;
 import mara.mybox.data.DoublePoint;
+import mara.mybox.dev.MyBoxLog;
 
 /**
  * @Author Mara
@@ -28,7 +25,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             pickColor(p, imageView);
 
         } else if (event.getClickCount() > 1) {  // Notice: Double click always trigger single click at first
-            imageDoubleClicked(event, p);
+//            imageDoubleClicked(event, p);
 
         } else if (event.getClickCount() == 1) {
             imageSingleClicked(event, p);
@@ -54,45 +51,151 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         if (event == null || p == null) {
             return;
         }
-        if (maskPolygonLine != null && maskPolygonLine.isVisible()) {
-            singleClickedPolygonLine(event, p);
-        }
-
-        if (event.getButton() != MouseButton.SECONDARY) {
-            return;
-        }
-        Timer menuTimer = new Timer();
-        menuTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Platform.runLater(() -> {
-                    popImageMenu(event.getScreenX(), event.getScreenY());
-                });
+        if (maskRectangleLine != null && maskRectangleLine.isVisible()) {
+            if (singleClickedRectangle(event, p)) {
+                return;
             }
-        }, 100);  // double click will be eaten by the menu if not delay
 
+        } else if (maskCircleLine != null && maskCircleLine.isVisible()) {
+            if (singleClickedCircle(event, p)) {
+                return;
+            }
+
+        } else if (maskEllipseLine != null && maskEllipseLine.isVisible()) {
+            if (singleClickedEllipse(event, p)) {
+                return;
+            }
+
+        } else if (maskLine != null && maskLine.isVisible()) {
+            if (singleClickedLine(event, p)) {
+                return;
+            }
+
+        } else if (maskPolyline != null && maskPolyline.isVisible()) {
+            if (singleClickedPolyline(event, p)) {
+                return;
+            }
+
+        } else if (maskPolygonLine != null && maskPolygonLine.isVisible()) {
+            if (singleClickedPolygonLine(event, p)) {
+                return;
+            }
+
+        }
+        if (event.getButton() == MouseButton.SECONDARY) {
+            popImageMenu(event.getScreenX(), event.getScreenY());
+        }
     }
 
-    protected void singleClickedPolygonLine(MouseEvent event, DoublePoint p) {
-        if (p == null || maskPolygonLine == null || !maskPolygonLine.isVisible()) {
-            return;
+    protected boolean singleClickedRectangle(MouseEvent event, DoublePoint p) {
+        MyBoxLog.console(event.getClickCount());
+        if (p == null || maskRectangleLine == null || !maskRectangleLine.isVisible()) {
+            return false;
+        }
+        if (event.getButton() == MouseButton.SECONDARY) {
+            double offsetX = p.getX() - maskRectangleData.getSmallX();
+            double offsetY = p.getY() - maskRectangleData.getSmallY();
+
+            if (Math.abs(offsetX) > 0.01 || Math.abs(offsetY) > 0.01) {
+                maskRectangleData = maskRectangleData.move(offsetX, offsetY);
+                drawMaskRectangleLine();
+            }
+        }
+        return true;
+    }
+
+    protected boolean singleClickedCircle(MouseEvent event, DoublePoint p) {
+        if (p == null || maskCircleLine == null || !maskCircleLine.isVisible()) {
+            return false;
+        }
+        if (event.getButton() == MouseButton.SECONDARY) {
+            double offsetX = p.getX() - maskCircleData.getCenterX();
+            double offsetY = p.getY() - maskCircleData.getCenterY();
+
+            if (Math.abs(offsetX) > 0.01 || Math.abs(offsetY) > 0.01) {
+                maskCircleData = maskCircleData.move(offsetX, offsetY);
+                drawMaskCircleLine();
+            }
+        }
+        return true;
+    }
+
+    protected boolean singleClickedEllipse(MouseEvent event, DoublePoint p) {
+        if (p == null || maskEllipseLine == null || !maskEllipseLine.isVisible()) {
+            return false;
+        }
+        if (event.getButton() == MouseButton.SECONDARY) {
+            double offsetX = p.getX() - maskEllipseData.getCenterX();
+            double offsetY = p.getY() - maskEllipseData.getCenterY();
+
+            if (Math.abs(offsetX) > 0.01 || Math.abs(offsetY) > 0.01) {
+                maskEllipseData = maskEllipseData.move(offsetX, offsetY);
+                drawMaskEllipseLine();
+            }
+        }
+        return true;
+    }
+
+    protected boolean singleClickedLine(MouseEvent event, DoublePoint p) {
+        if (p == null || maskLine == null || !maskLine.isVisible()) {
+            return false;
+        }
+        if (event.getButton() == MouseButton.SECONDARY) {
+            double offsetX = p.getX() - maskLineData.getStartX();
+            double offsetY = p.getY() - maskLineData.getStartY();
+
+            if (Math.abs(offsetX) > 0.01 || Math.abs(offsetY) > 0.01) {
+                maskLineData = maskLineData.move(offsetX, offsetY);
+                drawMaskLineLine();
+            }
+        }
+        return true;
+    }
+
+    protected boolean singleClickedPolyline(MouseEvent event, DoublePoint p) {
+        if (p == null || maskPolyline == null || !maskPolyline.isVisible()) {
+            return false;
         }
         if (event.getButton() == MouseButton.PRIMARY) {
-            maskPolygonData.add(p.getX(), p.getY());
-            drawMaskPolygonLine();
+            maskPolylineData.add(p.getX(), p.getY());
+            maskPolyline.getPoints().add(p.getX() * viewXRatio());
+            maskPolyline.getPoints().add(p.getY() * viewYRatio());
+            polylineDrawnNotify.set(!polylineDrawnNotify.get());
 
-        } else if (event.getButton() == MouseButton.SECONDARY && maskPolygonData.getSize() > 2) {
-            List<DoublePoint> maskPoints = maskPolygonData.getPoints();
-            DoublePoint p0 = maskPoints.get(0);
+        } else if (event.getButton() == MouseButton.SECONDARY && maskPolylineData.getSize() > 0) {
+            DoublePoint p0 = maskPolylineData.getPoints().get(0);
             double offsetX = p.getX() - p0.getX();
             double offsetY = p.getY() - p0.getY();
 
-            if (offsetX != 0 || offsetY != 0) {
+            if (Math.abs(offsetX) > 0.01 || Math.abs(offsetY) > 0.01) {
+                maskPolylineData = maskPolylineData.move(offsetX, offsetY);
+                drawMaskPolyline();
+            }
+        }
+        return true;
+    }
+
+    protected boolean singleClickedPolygonLine(MouseEvent event, DoublePoint p) {
+        if (p == null || maskPolygonLine == null || !maskPolygonLine.isVisible()) {
+            return false;
+        }
+        if (event.getButton() == MouseButton.PRIMARY) {
+            maskPolygonData.add(p.getX(), p.getY());
+            maskPolygonLine.getPoints().add(p.getX() * viewXRatio());
+            maskPolygonLine.getPoints().add(p.getY() * viewYRatio());
+            polygonDrawnNotify.set(!polygonDrawnNotify.get());
+
+        } else if (event.getButton() == MouseButton.SECONDARY && maskPolygonData.getSize() > 0) {
+            DoublePoint p0 = maskPolygonData.getPoints().get(0);
+            double offsetX = p.getX() - p0.getX();
+            double offsetY = p.getY() - p0.getY();
+
+            if (Math.abs(offsetX) > 0.01 || Math.abs(offsetY) > 0.01) {
                 maskPolygonData = maskPolygonData.move(offsetX, offsetY);
                 drawMaskPolygonLine();
             }
         }
-
+        return true;
     }
 
     public void imageDoubleClicked(MouseEvent event, DoublePoint p) {

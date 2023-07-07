@@ -8,13 +8,13 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
@@ -43,8 +43,7 @@ public class ControlSvgShape extends BaseController {
     protected Document doc;
     protected Node parentNode;
     protected WebEngine webEngine;
-    protected float fillOpacity;
-    protected int strokeWidth;
+    protected float fillOpacity, strokeWidth;
 
     @FXML
     protected Label parentLabel;
@@ -59,9 +58,8 @@ public class ControlSvgShape extends BaseController {
     @FXML
     protected TabPane shapesPane;
     @FXML
-    protected ScrollPane shapePane;
-    @FXML
-    protected VBox shapeBox, rectangleBox, circleBox, ellipseBox, lineBox,
+    protected VBox optionsBox, shapeBox, shapeOutBox,
+            rectangleBox, circleBox, ellipseBox, lineBox,
             polylineBox, polygonBox, pathBox;
     @FXML
     protected TextField circleXInput, circleYInput, circleRadiusInput,
@@ -70,9 +68,9 @@ public class ControlSvgShape extends BaseController {
             lineX1Input, lineY1Input, lineX2Input, lineY2Input,
             dashInput;
     @FXML
-    protected TextArea pathArea, styleArea, xmlArea, polygonArea;
+    protected TextArea pathArea, styleArea, xmlArea;
     @FXML
-    protected ControlPoints polylinePointsController;
+    protected ControlPoints polylinePointsController, polygonPointsController;
     @FXML
     protected ComboBox<String> strokeWidthSelector, fillOpacitySelector;
     @FXML
@@ -88,6 +86,7 @@ public class ControlSvgShape extends BaseController {
     public void initControls() {
         try {
             super.initControls();
+
             imageController.svgShapeControl = this;
 
             elementType.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
@@ -141,7 +140,8 @@ public class ControlSvgShape extends BaseController {
     public void initShapes() {
         try {
 
-            shapeBox.getChildren().remove(shapesPane);
+            shapeOutBox.getChildren().remove(shapesPane);
+            refreshStyle(shapeOutBox);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -150,6 +150,7 @@ public class ControlSvgShape extends BaseController {
 
     public void createShape() {
         try {
+            shapeBox.getChildren().clear();
             if (doc == null) {
                 return;
             }
@@ -163,43 +164,44 @@ public class ControlSvgShape extends BaseController {
             }
             double min = Math.min(width, height);
             if (rectRadio.isSelected()) {
-                shapePane.setContent(rectangleBox);
+                shapeBox.getChildren().add(rectangleBox);
                 rectXInput.setText((int) (width / 4) + "");
                 rectYInput.setText((int) (height / 4) + "");
                 rectWidthInput.setText((int) (width / 2) + "");
                 rectHeightInput.setText((int) (height / 2) + "");
 
             } else if (circleRadio.isSelected()) {
-                shapePane.setContent(circleBox);
+                shapeBox.getChildren().add(circleBox);
                 circleXInput.setText((int) (width / 2) + "");
                 circleYInput.setText((int) (height / 2) + "");
                 circleRadiusInput.setText((int) (min / 4) + "");
 
             } else if (ellipseRadio.isSelected()) {
-                shapePane.setContent(ellipseBox);
+                shapeBox.getChildren().add(ellipseBox);
                 ellipseXInput.setText((int) (width / 2) + "");
                 ellipseYInput.setText((int) (height / 2) + "");
                 ellipseXRadiusInput.setText((int) (min * 2 / 5) + "");
                 ellipseYRadiusInput.setText((int) (min / 4) + "");
 
             } else if (lineRadio.isSelected()) {
-                shapePane.setContent(lineBox);
-                MyBoxLog.console(width);
+                shapeBox.getChildren().add(lineBox);
                 lineX1Input.setText((int) (width / 4) + "");
                 lineY1Input.setText((int) (height / 5) + "");
                 lineX2Input.setText((int) (width * 4 / 5) + "");
                 lineY2Input.setText((int) (height * 4 / 5) + "");
 
             } else if (polylineRadio.isSelected()) {
-                shapePane.setContent(polylineBox);
+                shapeBox.getChildren().add(polylineBox);
+                VBox.setVgrow(polylineBox, Priority.ALWAYS);
                 polylinePointsController.load("0,100 50,25 50,75 100,0");
 
             } else if (polygonRadio.isSelected()) {
-                shapePane.setContent(polygonBox);
-                polygonArea.setText("0,100 50,25 50,75 100,0");
+                shapeBox.getChildren().add(polygonBox);
+                VBox.setVgrow(polygonBox, Priority.ALWAYS);
+                polygonPointsController.load("0,100 50,25 50,75 100,0");
 
             } else if (pathRadio.isSelected()) {
-                shapePane.setContent(pathBox);
+                shapeBox.getChildren().add(pathBox);
                 pathArea.setText("M 10,30\n"
                         + "           A 20,20 0,0,1 50,30\n"
                         + "           A 20,20 0,0,1 90,30\n"
@@ -210,6 +212,8 @@ public class ControlSvgShape extends BaseController {
                 popError(message("InvalidData"));
                 return;
             }
+
+            refreshStyle(shapeOutBox);
 
             goShape();
 
@@ -462,7 +466,7 @@ public class ControlSvgShape extends BaseController {
             if (doc == null || !polygonRadio.isSelected()) {
                 return null;
             }
-            String p = polygonArea.getText();
+            String p = polygonPointsController.toText();
             if (p == null || p.isBlank()) {
                 popError(message("NoData"));
                 return null;
@@ -497,13 +501,14 @@ public class ControlSvgShape extends BaseController {
 
     public void loadShape(Element element) {
         try {
+            shapeBox.getChildren().clear();
             if (element == null) {
                 return;
             }
             switch (element.getNodeName().toLowerCase()) {
                 case "rect":
                     rectRadio.setSelected(true);
-                    shapePane.setContent(rectangleBox);
+                    shapeBox.getChildren().add(rectangleBox);
                     rectXInput.setText(element.getAttribute("x"));
                     rectYInput.setText(element.getAttribute("y"));
                     rectWidthInput.setText(element.getAttribute("width"));
@@ -511,14 +516,14 @@ public class ControlSvgShape extends BaseController {
                     break;
                 case "circle":
                     circleRadio.setSelected(true);
-                    shapePane.setContent(circleBox);
+                    shapeBox.getChildren().add(circleBox);
                     circleXInput.setText(element.getAttribute("cx"));
                     circleYInput.setText(element.getAttribute("cy"));
                     circleRadiusInput.setText(element.getAttribute("r"));
                     break;
                 case "ellipse":
                     ellipseRadio.setSelected(true);
-                    shapePane.setContent(ellipseBox);
+                    shapeBox.getChildren().add(ellipseBox);
                     ellipseXInput.setText(element.getAttribute("cx"));
                     ellipseYInput.setText(element.getAttribute("cy"));
                     ellipseXRadiusInput.setText(element.getAttribute("rx"));
@@ -526,7 +531,7 @@ public class ControlSvgShape extends BaseController {
                     break;
                 case "line":
                     lineRadio.setSelected(true);
-                    shapePane.setContent(lineBox);
+                    shapeBox.getChildren().add(lineBox);
                     lineX1Input.setText(element.getAttribute("x1"));
                     lineY1Input.setText(element.getAttribute("y1"));
                     lineX2Input.setText(element.getAttribute("x2"));
@@ -534,24 +539,24 @@ public class ControlSvgShape extends BaseController {
                     break;
                 case "polyline":
                     polylineRadio.setSelected(true);
-                    shapePane.setContent(polylineBox);
+                    shapeBox.getChildren().add(polylineBox);
                     polylinePointsController.load(element.getAttribute("points"));
                     break;
                 case "polygon":
                     polygonRadio.setSelected(true);
-                    shapePane.setContent(polygonBox);
-                    polygonArea.setText(element.getAttribute("points"));
+                    shapeBox.getChildren().add(polygonBox);
+                    polygonPointsController.load(element.getAttribute("points"));
                     break;
                 case "path":
                     pathRadio.setSelected(true);
-                    shapePane.setContent(pathBox);
+                    shapeBox.getChildren().add(pathBox);
                     pathArea.setText(element.getAttribute("d"));
                     break;
                 default:
                     popError(message("InvalidData"));
                     return;
             }
-            refreshStyle(shapeBox);
+            refreshStyle(shapeOutBox);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -563,7 +568,7 @@ public class ControlSvgShape extends BaseController {
      */
     public void initStyle() {
         try {
-            strokeWidth = UserConfig.getInt(baseName + "StrokeWidth", 2);
+            strokeWidth = UserConfig.getFloat(baseName + "StrokeWidth", 2);
             strokeWidthSelector.getItems().addAll(
                     "2", "1", "3", "4", "0", "6", "10", "15", "20"
             );
@@ -572,10 +577,10 @@ public class ControlSvgShape extends BaseController {
                 @Override
                 public void changed(ObservableValue ov, String oldValue, String newValue) {
                     try {
-                        int v = Integer.parseInt(newValue);
+                        float v = Float.parseFloat(newValue);
                         if (v >= 0) {
                             strokeWidth = v;
-                            UserConfig.setInt(baseName + "StrokeWidth", v);
+                            UserConfig.setFloat(baseName + "StrokeWidth", v);
                             strokeWidthSelector.getEditor().setStyle(null);
                         } else {
                             strokeWidthSelector.getEditor().setStyle(UserConfig.badStyle());
@@ -743,6 +748,8 @@ public class ControlSvgShape extends BaseController {
      */
     public void initOptions() {
         try {
+            optionsController.noBgColor();
+
             optionsController.sizeNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
@@ -751,13 +758,6 @@ public class ControlSvgShape extends BaseController {
             });
 
             optionsController.opacityNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    imageController.setBackGroundOpacity();
-                }
-            });
-
-            optionsController.bgColorNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     imageController.setBackGroundOpacity();
