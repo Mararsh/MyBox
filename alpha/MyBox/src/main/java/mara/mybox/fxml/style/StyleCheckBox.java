@@ -88,6 +88,9 @@ public class StyleCheckBox {
         if (id.startsWith("typesetting")) {
             return new StyleData(id, "", message("TypesettingWhenWrite"), "", "iconTree.png");
         }
+        if (id.startsWith("lostFocusCommit")) {
+            return new StyleData(id, "", message("CommitModificationWhenDataCellLoseFocus"), "", "iconInput.png");
+        }
         switch (id) {
             case "tableThumbCheck":
                 return new StyleData("tableThumbCheck", "", message("Thumbnail"), "", "iconThumbsList.png");

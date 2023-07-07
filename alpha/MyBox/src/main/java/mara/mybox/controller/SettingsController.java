@@ -306,8 +306,7 @@ public class SettingsController extends BaseController {
                     if (isSettingValues) {
                         return;
                     }
-                    AppVariables.commitModificationWhenDataCellLoseFocus = commitLoseFocusCheck.isSelected();
-                    UserConfig.setBoolean("CommitModificationWhenDataCellLoseFocus", AppVariables.commitModificationWhenDataCellLoseFocus);
+                    AppVariables.lostFocusCommitData(commitLoseFocusCheck.isSelected());
                 }
             });
 

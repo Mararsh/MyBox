@@ -50,7 +50,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-2-26
  * @License Apache License Version 2.0
  */
-public class ControlFileBackup extends BaseTableViewController<FileBackup> {
+public class ControlFileBackup extends BaseTablePagesController<FileBackup> {
 
     protected TableFileBackup tableFileBackup;
     protected int maxBackups;

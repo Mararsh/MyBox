@@ -130,8 +130,8 @@ License:    Apache License Version 2.0
                                 <Cursor fx:constant="MOVE" />
                             </cursor>
                         </Ellipse>
-                  <Line fx:id="maskLine" endX="377.33331298828125" endY="148.88890075683594" onMousePressed="#handlerPressed" onMouseReleased="#lineReleased" startX="124.44446563720703" startY="148.88890075683594" stroke="RED" />
-                        <Polygon fx:id="maskPolygonLine" fill="#ffffff00" layoutX="70.0" layoutY="124.0" points="-50.0, 40.0, 50.00000762939453, 39.99998474121094, 0.0, -60.0" stroke="RED" strokeType="INSIDE">
+                        <Line fx:id="maskLine" endX="377.33331298828125" endY="148.88890075683594" onMousePressed="#handlerPressed" onMouseReleased="#lineReleased" startX="124.44446563720703" startY="148.88890075683594" stroke="RED" />
+                        <Polygon fx:id="maskPolygonLine" fill="#ffffff00" layoutX="70.0" layoutY="124.0" points="-50.0, 40.0, 50.00000762939453, 39.99998474121094, 0.0, -60.0" stroke="RED" strokeType="INSIDE" onMousePressed="#handlerPressed"  onMouseReleased="#polygonReleased" >
                             <cursor>
                                 <Cursor fx:constant="DEFAULT" />
                             </cursor>
@@ -146,7 +146,7 @@ License:    Apache License Version 2.0
                                 <Cursor fx:constant="NONE" />
                             </cursor>
                         </Rectangle>
-                        <Polyline fx:id="maskPolyline" fill="#ffffff00" layoutX="55.0" layoutY="81.0" stroke="RED" strokeType="INSIDE">
+                        <Polyline fx:id="maskPolyline" fill="#ffffff00" layoutX="55.0" layoutY="81.0" stroke="RED" strokeType="INSIDE" onMousePressed="#handlerPressed"  onMouseReleased="#polylineReleased" >
                             <points>
                                 <Double fx:value="-50.0" />
                                 <Double fx:value="-40.0" />

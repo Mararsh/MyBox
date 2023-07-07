@@ -8,6 +8,7 @@ import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
 import mara.mybox.data.DoubleLine;
 import mara.mybox.data.DoublePoint;
+import mara.mybox.data.DoublePolyline;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
@@ -64,7 +65,14 @@ public class ControlSvgImage extends BaseImageController {
     }
 
     public void setBackGroundOpacity() {
-        imageView.setOpacity(svgShapeControl.optionsController.bgOpacity);
+        if (svgShapeControl.optionsController.bgColorCheck.isSelected()) {
+            borderLine.setFill(svgShapeControl.optionsController.bgColorController.color());
+            borderLine.setOpacity(1 - svgShapeControl.optionsController.bgOpacity);
+            imageView.setOpacity(1);
+        } else {
+            borderLine.setFill(Color.TRANSPARENT);
+            imageView.setOpacity(svgShapeControl.optionsController.bgOpacity);
+        }
     }
 
     public void loadShape(Element element) {
@@ -115,7 +123,11 @@ public class ControlSvgImage extends BaseImageController {
                         drawMaskLineLine();
                         break;
                     case "polyline":
-
+                        shapeType = ShapeType.Polyline;
+                        setMaskPolylineVisible(true);
+                        maskPolylineData = new DoublePolyline();
+                        maskPolylineData.addAll(shape.getAttribute("points"));
+                        drawMaskPolyline();
                         break;
                     case "polygon":
 
@@ -251,6 +263,21 @@ public class ControlSvgImage extends BaseImageController {
             shape.setAttribute("y1", scaleValue(maskLineData.getStartY()));
             shape.setAttribute("x2", scaleValue(maskLineData.getEndX()));
             shape.setAttribute("y2", scaleValue(maskLineData.getEndY()));
+            updateSvgShape();
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean drawMaskPolyline() {
+        try {
+            if (!super.drawMaskPolyline() || isLoading || shape == null) {
+                return false;
+            }
+            shape.setAttribute("points", DoublePoint.toText(maskPolylineData.getPoints(), 2));
             updateSvgShape();
             return true;
         } catch (Exception e) {

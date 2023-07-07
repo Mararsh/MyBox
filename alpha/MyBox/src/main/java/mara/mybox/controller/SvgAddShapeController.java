@@ -82,8 +82,7 @@ public class SvgAddShapeController extends BaseChildController {
         static methods
      */
     public static SvgAddShapeController open(SvgEditorController editorController, TreeItem<XmlTreeNode> item) {
-        SvgAddShapeController controller = (SvgAddShapeController) WindowTools.openChildStage(
-                editorController.getMyWindow(), Fxmls.SvgAddShapeFxml);
+        SvgAddShapeController controller = (SvgAddShapeController) WindowTools.openStage(Fxmls.SvgAddShapeFxml);
         if (controller != null) {
             controller.setParameters(editorController, item);
             controller.requestMouse();

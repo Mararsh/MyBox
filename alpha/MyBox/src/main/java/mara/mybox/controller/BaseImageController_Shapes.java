@@ -45,6 +45,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
     protected DoubleLines maskPenData;
     protected List<List<Line>> maskPenLines;
     protected final SimpleBooleanProperty rectDrawnNotify;
+    protected boolean isDrawing;
 
     @FXML
     protected Rectangle maskRectangleLine, leftCenterHandler, topLeftHandler, topCenterHandler, topRightHandler,
@@ -849,53 +850,62 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
 
     public boolean drawMaskPolyline() {
         try {
-            if (maskPolyline == null || imageView == null
-                    || imageView.getImage() == null || !maskPolyline.isVisible()) {
+            if (maskPolyline == null || !maskPolyline.isVisible()
+                    || maskPolylineData == null || imageView == null || imageView.getImage() == null) {
                 return false;
             }
-            maskPolyline.setOpacity(0);
-            polygonP1.setOpacity(0);
-
-            maskPolyline.getPoints().clear();
 
             int anchorHW = UserConfig.getInt("AnchorWidth", 10) / 2;
             double xRatio = viewXRatio();
             double yRatio = viewYRatio();
 
+            int size = maskPolylineData.getSize();
             List<Double> d = new ArrayList<>();
-            for (int i = 0; i < maskPolylineData.getSize(); ++i) {
+            for (int i = 0; i < size; ++i) {
                 d.add(maskPolylineData.get(i).getX() * xRatio);
                 d.add(maskPolylineData.get(i).getY() * yRatio);
             }
-            maskPolyline.getPoints().addAll(d);
+            maskPolyline.getPoints().setAll(d);
 
             if (d.isEmpty()) {
-
-            } else if (maskPolylineData.getSize() > 1) {
-
-                maskPolyline.setLayoutX(imageView.getLayoutX());
-                maskPolyline.setLayoutY(imageView.getLayoutY());
-
-                if (maskPolylineData.getSize() == 2) {  // Have to add one more to make it displayed.
-                    maskPolyline.getPoints().addAll(maskPolylineData.get(1).getX() * xRatio + 0.5,
-                            maskPolylineData.get(1).getY() * yRatio + 0.5);
-                }
-                maskPolyline.setOpacity(1);
-
-            } else if (maskPolylineData.getSize() == 1) {
-
-                polygonP1.setOpacity(1);
-
-                DoublePoint p1 = maskPolylineData.get(0);
-                polygonP1.setLayoutX(imageView.getLayoutX() + p1.getX() * xRatio - anchorHW);
-                polygonP1.setLayoutY(imageView.getLayoutY() + p1.getY() * yRatio - anchorHW);
-
+                maskPolyline.setOpacity(0);
+                polygonP1.setOpacity(0);
+                polygonP2.setOpacity(0);
+                return true;
             }
+            DoublePoint p0 = maskPolylineData.get(0);
+            double p0x = imageView.getLayoutX() + p0.getX() * xRatio;
+            double p0y = imageView.getLayoutY() + p0.getY() * yRatio;
 
-//            updateLabelTitle();
+            if (size > 2) {
+
+                maskPolyline.setOpacity(1);
+                polygonP1.setOpacity(0);
+                polygonP2.setOpacity(0);
+
+                maskPolyline.setLayoutX(p0x);        // the first point as layout
+                maskPolyline.setLayoutY(p0y);
+
+            } else {
+
+                maskPolyline.setOpacity(0);
+                polygonP1.setOpacity(1);
+                polygonP2.setOpacity(0);
+
+                polygonP1.setLayoutX(p0x - anchorHW);
+                polygonP1.setLayoutY(p0y - anchorHW);
+
+                if (size == 2) {
+
+                    DoublePoint p1 = maskPolylineData.get(1);
+                    polygonP2.setLayoutX(imageView.getLayoutX() + p1.getX() * xRatio - anchorHW);
+                    polygonP2.setLayoutY(imageView.getLayoutY() + p1.getY() * yRatio - anchorHW);
+
+                }
+            }
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
 

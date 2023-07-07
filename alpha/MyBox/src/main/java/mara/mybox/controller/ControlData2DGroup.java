@@ -28,7 +28,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2022-8-10
  * @License Apache License Version 2.0
  */
-public class ControlData2DGroup extends BaseTableViewController<DataFilter> {
+public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
 
     protected BaseData2DHandleController handleController;
     protected ChangeListener<Boolean> listener;

@@ -379,6 +379,7 @@ License:    Apache License Version 2.0
                                 <SeparatorMenuItem mnemonicParsing="false" />
 
                                 <CheckMenuItem fx:id="shortcutsCanNotOmitCheck" mnemonicParsing="false" onAction="#shortcutsCanNotOmitCtrlAlt" text="%ShortcutsCanNotOmitCtrlAlt" />
+                                <CheckMenuItem fx:id="loseFocusCommitDataCheck" mnemonicParsing="false" onAction="#loseFocusCommitData" text="%CommitModificationWhenDataCellLoseFocus" />
                                 <CheckMenuItem fx:id="clearExpiredDataCheck" mnemonicParsing="false" onAction="#clearExpiredDataBeforeExit" text="%ClearExpiredDataBeforeExit" />
                                 <CheckMenuItem fx:id="popColorSetCheck" mnemonicParsing="false" onAction="#popColorSetAction" text="%PopColorSetWhenMouseHovering" />
                                 <CheckMenuItem fx:id="controlPanesCheck" mnemonicParsing="false" onAction="#controlPanesAction" text="%ShowHidePanesWhenMouseHovering" />

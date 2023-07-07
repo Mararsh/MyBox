@@ -25,9 +25,6 @@ public class DoublePolyline implements DoubleShape {
     }
 
     public boolean add(double x, double y) {
-        if (x < 0 || y < 0) {
-            return false;
-        }
         return add(new DoublePoint(x, y));
     }
 
@@ -49,21 +46,19 @@ public class DoublePolyline implements DoubleShape {
         return true;
     }
 
+    public boolean addAll(String values) {
+        return addAll(DoublePoint.parseList(values, DoublePoint.Separator));
+    }
+
     public boolean setAll(List<DoublePoint> ps) {
-        if (ps == null) {
-            return false;
-        }
         points.clear();
-        points.addAll(ps);
-        getPolyline();
-        return true;
+        return addAll(ps);
     }
 
     public boolean remove(double x, double y) {
-        if (x < 0 || y < 0 || points == null || points.isEmpty()) {
+        if (points == null || points.isEmpty()) {
             return false;
         }
-        List<Double> d = new ArrayList<>();
         for (int i = 0; i < points.size(); ++i) {
             DoublePoint p = points.get(i);
             if (p.getX() == x && p.getY() == y) {
@@ -194,21 +189,18 @@ public class DoublePolyline implements DoubleShape {
 
     @Override
     public DoublePolyline move(double offset) {
-        DoublePolyline np = new DoublePolyline();
-        for (int i = 0; i < points.size(); ++i) {
-            DoublePoint p = points.get(i);
-            np.add(p.getX() + offset, p.getY() + offset);
-        }
-        return np;
+        return move(offset, offset);
     }
 
     @Override
     public DoublePolyline move(double offsetX, double offsetY) {
-        DoublePolyline np = new DoublePolyline();
+        List<DoublePoint> moved = new ArrayList<>();
         for (int i = 0; i < points.size(); ++i) {
             DoublePoint p = points.get(i);
-            np.add(p.getX() + offsetX, p.getY() + offsetY);
+            moved.add(p.move(offsetX, offsetY));
         }
+        DoublePolyline np = new DoublePolyline();
+        np.addAll(moved);
         return np;
     }
 
@@ -217,14 +209,6 @@ public class DoublePolyline implements DoubleShape {
             return null;
         }
         return points.get(i);
-    }
-
-    public void setPoints(List<DoublePoint> points) {
-        this.points = points;
-    }
-
-    public void setPolyline(Polyline polyline) {
-        this.polyline = polyline;
     }
 
 }

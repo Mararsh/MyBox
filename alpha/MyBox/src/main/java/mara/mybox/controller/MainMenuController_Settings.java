@@ -37,7 +37,7 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     @FXML
     protected ToggleGroup langGroup;
     @FXML
-    protected CheckMenuItem shortcutsCanNotOmitCheck, clearExpiredDataCheck,
+    protected CheckMenuItem shortcutsCanNotOmitCheck, loseFocusCommitDataCheck, clearExpiredDataCheck,
             closeCurrentCheck, recordWindowsSizeLocationCheck, popRecentCheck,
             popColorSetCheck, controlPanesCheck, controlTextCheck;
     @FXML
@@ -348,6 +348,11 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
     protected void shortcutsCanNotOmitCtrlAlt() {
         AppVariables.ShortcutsCanNotOmitCtrlAlt = shortcutsCanNotOmitCheck.isSelected();
         UserConfig.setBoolean("ShortcutsCanNotOmitCtrlAlt", AppVariables.ShortcutsCanNotOmitCtrlAlt);
+    }
+
+    @FXML
+    public void loseFocusCommitData(ActionEvent event) {
+        AppVariables.lostFocusCommitData(loseFocusCommitDataCheck.isSelected());
     }
 
     @FXML

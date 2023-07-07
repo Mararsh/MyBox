@@ -52,7 +52,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2018-11-28
  * @License Apache License Version 2.0
  */
-public abstract class BaseBatchTableController<P> extends BaseTableViewController<P> {
+public abstract class BaseBatchTableController<P> extends BaseTablePagesController<P> {
 
     protected long totalFilesNumber, totalFilesSize, fileSelectorSize, fileSelectorTime, currentIndex;
     protected FileSelectorType fileSelectorType;

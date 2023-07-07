@@ -69,10 +69,10 @@ public class DoubleLine implements DoubleShape {
 
     @Override
     public DoubleLine move(double offsetX, double offsetY) {
-        DoubleLine nCircle = new DoubleLine(
+        DoubleLine nline = new DoubleLine(
                 startX + offsetX, startY + offsetY,
                 endX + offsetX, endY + offsetY);
-        return nCircle;
+        return nline;
     }
 
     @Override

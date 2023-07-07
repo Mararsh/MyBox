@@ -23,7 +23,7 @@ import mara.mybox.value.Languages;
  * @CreateDate 2019-12-1
  * @License Apache License Version 2.0
  */
-public class MediaListController extends BaseTableViewController<MediaList> {
+public class MediaListController extends BaseTablePagesController<MediaList> {
 
     protected MediaPlayerController playerController;
 

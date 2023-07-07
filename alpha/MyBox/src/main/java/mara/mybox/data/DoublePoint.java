@@ -1,5 +1,7 @@
 package mara.mybox.data;
 
+import java.util.ArrayList;
+import java.util.List;
 import mara.mybox.tools.DoubleTools;
 
 /**
@@ -11,6 +13,7 @@ import mara.mybox.tools.DoubleTools;
  */
 public class DoublePoint {
 
+    public final static String Separator = "\\s+|\\,";
     private double x, y;
 
     public DoublePoint() {
@@ -35,6 +38,10 @@ public class DoublePoint {
 
     public boolean valid() {
         return !DoubleTools.invalidDouble(x) && !DoubleTools.invalidDouble(y);
+    }
+
+    public DoublePoint move(double offsetX, double offsetY) {
+        return new DoublePoint(x + offsetX, y + offsetY);
     }
 
     /*
@@ -64,21 +71,6 @@ public class DoublePoint {
         return Math.sqrt(distanceSquare(A, B));
     }
 
-    public static DoublePoint parse(String string, String separator) {
-        try {
-            if (string == null || string.isBlank()) {
-                return null;
-            }
-            String[] vs = string.split(separator);
-            if (vs == null || vs.length < 2) {
-                return null;
-            }
-            return new DoublePoint(Double.parseDouble(vs[0]), Double.parseDouble(vs[1]));
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
     public static int compare(String string1, String string2, String separator, boolean desc) {
         return compare(parse(string1, separator), parse(string2, separator), desc);
     }
@@ -106,6 +98,57 @@ public class DoublePoint {
         } catch (Exception e) {
             return 1;
         }
+    }
+
+    public static List<DoublePoint> parseList(String string, String separator) {
+        try {
+            if (string == null || string.isBlank()) {
+                return null;
+            }
+            String[] vs = string.split(separator);
+            if (vs == null || vs.length < 2) {
+                return null;
+            }
+            List<DoublePoint> list = new ArrayList<>();
+            for (int i = 0; i < vs.length - 1; i += 2) {
+                list.add(new DoublePoint(Double.parseDouble(vs[i]), Double.parseDouble(vs[i + 1])));
+            }
+            return list;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static DoublePoint parse(String string, String separator) {
+        try {
+            if (string == null || string.isBlank()) {
+                return null;
+            }
+            String[] vs = string.split(separator);
+            if (vs == null || vs.length < 2) {
+                return null;
+            }
+            return new DoublePoint(Double.parseDouble(vs[0]), Double.parseDouble(vs[1]));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static String toText(List<DoublePoint> points, int scale) {
+        if (points.isEmpty()) {
+            return null;
+        }
+        String s = null;
+        for (DoublePoint p : points) {
+            if (s != null) {
+                s += " ";
+            } else {
+                s = "";
+            }
+            s += DoubleTools.scale(p.getX(), scale) + ","
+                    + DoubleTools.scale(p.getY(), scale);
+        }
+        return s;
     }
 
     /*

@@ -21,7 +21,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2019-12-18
  * @License Apache License Version 2.0
  */
-public abstract class BaseSysTableController<P> extends BaseTableViewController<P> {
+public abstract class BaseSysTableController<P> extends BaseTablePagesController<P> {
 
     protected BaseTable tableDefinition;
 

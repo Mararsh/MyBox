@@ -70,7 +70,9 @@ public class ControlSvgShape extends BaseController {
             lineX1Input, lineY1Input, lineX2Input, lineY2Input,
             dashInput;
     @FXML
-    protected TextArea pathArea, styleArea, xmlArea, polylineArea, polygonArea;
+    protected TextArea pathArea, styleArea, xmlArea, polygonArea;
+    @FXML
+    protected ControlPoints polylinePointsController;
     @FXML
     protected ComboBox<String> strokeWidthSelector, fillOpacitySelector;
     @FXML
@@ -190,7 +192,7 @@ public class ControlSvgShape extends BaseController {
 
             } else if (polylineRadio.isSelected()) {
                 shapePane.setContent(polylineBox);
-                polylineArea.setText("0,100 50,25 50,75 100,0");
+                polylinePointsController.load("0,100 50,25 50,75 100,0");
 
             } else if (polygonRadio.isSelected()) {
                 shapePane.setContent(polygonBox);
@@ -429,7 +431,6 @@ public class ControlSvgShape extends BaseController {
             element.setAttribute("y1", y1 + "");
             element.setAttribute("x2", x2 + "");
             element.setAttribute("y2", y2 + "");
-            MyBoxLog.console(x1);
             return element;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -442,13 +443,13 @@ public class ControlSvgShape extends BaseController {
             if (doc == null || !polylineRadio.isSelected()) {
                 return null;
             }
-            String p = polylineArea.getText();
+            String p = polylinePointsController.toText();
             if (p == null || p.isBlank()) {
                 popError(message("NoData"));
                 return null;
             }
             Element element = doc.createElement("polyline");
-            element.setAttribute("points", StringTools.trimBlanks(p));
+            element.setAttribute("points", p);
             return element;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -534,7 +535,7 @@ public class ControlSvgShape extends BaseController {
                 case "polyline":
                     polylineRadio.setSelected(true);
                     shapePane.setContent(polylineBox);
-                    polylineArea.setText(element.getAttribute("points"));
+                    polylinePointsController.load(element.getAttribute("points"));
                     break;
                 case "polygon":
                     polygonRadio.setSelected(true);
@@ -750,6 +751,13 @@ public class ControlSvgShape extends BaseController {
             });
 
             optionsController.opacityNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    imageController.setBackGroundOpacity();
+                }
+            });
+
+            optionsController.bgColorNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     imageController.setBackGroundOpacity();

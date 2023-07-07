@@ -60,7 +60,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-12-17
  * @License Apache License Version 2.0
  */
-public class ControlData2DLoad extends BaseTableViewController<List<String>> {
+public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
 
     protected ControlData2D dataController;
     protected Data2D data2D;
@@ -600,7 +600,7 @@ public class ControlData2DLoad extends BaseTableViewController<List<String>> {
     }
 
     @FXML
-    public void renameAction(BaseTableViewController parent, int index, Data2DDefinition targetData) {
+    public void renameAction(BaseTablePagesController parent, int index, Data2DDefinition targetData) {
         String newName = PopTools.askValue(getTitle(), message("CurrentName") + ":" + targetData.getDataName(),
                 message("NewName"), targetData.getDataName() + "m");
         if (newName == null || newName.isBlank()) {

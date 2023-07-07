@@ -536,7 +536,7 @@ public class ControlData2D extends BaseController {
         start(task);
     }
 
-    public void renameAction(BaseTableViewController parent, int index, Data2DDefinition targetData) {
+    public void renameAction(BaseTablePagesController parent, int index, Data2DDefinition targetData) {
         tableController.renameAction(parent, index, targetData);
     }
 
@@ -689,8 +689,7 @@ public class ControlData2D extends BaseController {
             focusMenu.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    AppVariables.commitModificationWhenDataCellLoseFocus = focusMenu.isSelected();
-                    UserConfig.setBoolean("CommitModificationWhenDataCellLoseFocus", focusMenu.isSelected());
+                    AppVariables.lostFocusCommitData(focusMenu.isSelected());
                 }
             });
             items.add(focusMenu);

@@ -53,7 +53,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2021-2-26
  * @License Apache License Version 2.0
  */
-public class ImageManufactureHistory extends BaseTableViewController<ImageEditHistory> {
+public class ImageManufactureHistory extends BaseTablePagesController<ImageEditHistory> {
 
     protected ImageManufactureController imageController;
     protected TableImageEditHistory tableImageEditHistory;

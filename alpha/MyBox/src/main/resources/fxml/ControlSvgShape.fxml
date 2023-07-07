@@ -70,7 +70,7 @@ License:    Apache License Version 2.0
                                                     <content>
                                                         <VBox fx:id="shapeBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
                                                             <children>
-                                                                <ScrollPane fx:id="shapePane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" pannable="true" VBox.vgrow="ALWAYS" />
+                                                                <ScrollPane fx:id="shapePane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS" />
                                                                 <TabPane fx:id="shapesPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
                                                                     <tabs>
                                                                         <Tab text="circle">
@@ -198,11 +198,10 @@ License:    Apache License Version 2.0
                                                                         </Tab>
                                                                         <Tab fx:id="pointsTab1" text="polyline">
                                                                             <content>
-                                                                                <VBox fx:id="polylineBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
-                                                                                    <children>
-                                                                                        <Label text="%Points" />
-                                                                                        <TextArea fx:id="polylineArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" wrapText="true" VBox.vgrow="ALWAYS" />
-                                                                                    </children>
+                                                                                <VBox fx:id="polylineBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
+                                                         <children>
+                                                            <fx:include fx:id="polylinePoints" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlPoints.fxml" VBox.vgrow="ALWAYS" />
+                                                         </children>
                                                                                 </VBox>
                                                                             </content>
                                                                         </Tab>

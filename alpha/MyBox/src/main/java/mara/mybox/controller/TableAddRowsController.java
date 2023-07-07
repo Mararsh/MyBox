@@ -25,7 +25,7 @@ import mara.mybox.value.UserConfig;
  */
 public class TableAddRowsController extends BaseChildController {
 
-    protected BaseTableViewController tableViewController;
+    protected BaseTablePagesController tableViewController;
     protected int number;
 
     @FXML
@@ -39,7 +39,7 @@ public class TableAddRowsController extends BaseChildController {
     @FXML
     protected HBox rowBox;
 
-    public void setParameters(BaseTableViewController tableViewController) {
+    public void setParameters(BaseTablePagesController tableViewController) {
         try {
             this.tableViewController = tableViewController;
             this.baseName = tableViewController.baseName;
@@ -165,7 +165,7 @@ public class TableAddRowsController extends BaseChildController {
     /*
         static
      */
-    public static TableAddRowsController open(BaseTableViewController tableViewController) {
+    public static TableAddRowsController open(BaseTablePagesController tableViewController) {
         try {
             TableAddRowsController controller = (TableAddRowsController) WindowTools.openChildStage(
                     tableViewController.getMyWindow(), Fxmls.TableAddRowsFxml, false);
