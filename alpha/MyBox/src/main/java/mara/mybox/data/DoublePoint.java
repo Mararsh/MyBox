@@ -7,8 +7,6 @@ import mara.mybox.tools.DoubleTools;
 /**
  * @Author Mara
  * @CreateDate 2018-11-11 12:23:02
- * @Version 1.0
- * @Description
  * @License Apache License Version 2.0
  */
 public class DoublePoint {
@@ -42,6 +40,10 @@ public class DoublePoint {
 
     public DoublePoint move(double offsetX, double offsetY) {
         return new DoublePoint(x + offsetX, y + offsetY);
+    }
+
+    public String text(int scale) {
+        return DoubleTools.scale(x, scale) + "," + DoubleTools.scale(y, scale);
     }
 
     /*

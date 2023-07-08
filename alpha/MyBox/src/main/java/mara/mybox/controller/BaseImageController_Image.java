@@ -311,7 +311,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             imageView.setImage(image);
             refinePane();
 //            fitSize();
-            drawMaskControls();
+            redrawMaskShapes();
             setImageChanged(true);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -354,7 +354,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         if (selectAllButton != null) {
             selectAllButton.setDisable(!selected);
         }
-        initMaskRectangleLine(selected);
+        resetMaskRectangle(selected);
         updateLabelsTitle();
     }
 

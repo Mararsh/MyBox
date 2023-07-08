@@ -84,7 +84,7 @@ public class ControlSvgImage extends BaseImageController {
         try {
             shapeType = null;
             shape = element;
-            initMaskControls(false);
+            clearMaskShapes();
             if (svgPath != null && maskPane.getChildren().contains(svgPath)) {
                 maskPane.getChildren().remove(svgPath);
                 svgPath.setContent("");
@@ -96,45 +96,45 @@ public class ControlSvgImage extends BaseImageController {
             switch (element.getNodeName().toLowerCase()) {
                 case "rect":
                     shapeType = ShapeType.Rectangle;
-                    setMaskRectangleLineVisible(true);
+                    setMaskRectangleVisible(true);
                     double x = Double.parseDouble(shape.getAttribute("x"));
                     double y = Double.parseDouble(shape.getAttribute("y"));
                     double width = Double.parseDouble(shape.getAttribute("width"));
                     double height = Double.parseDouble(shape.getAttribute("height"));
                     maskRectangleData = new DoubleRectangle(x, y, x + width - 1, y + height - 1);
-                    drawMaskRectangleLine();
+                    drawMaskRectangle();
                     infoLabel.setText(message("ShapeDragMoveComments"));
                     break;
                 case "circle":
                     shapeType = ShapeType.Circle;
-                    setMaskCircleLineVisible(true);
+                    setMaskCircleVisible(true);
                     double cx = Double.parseDouble(shape.getAttribute("cx"));
                     double cy = Double.parseDouble(shape.getAttribute("cy"));
                     double r = Double.parseDouble(shape.getAttribute("r"));
                     maskCircleData = new DoubleCircle(cx, cy, r);
-                    drawMaskCircleLine();
+                    drawMaskCircle();
                     infoLabel.setText(message("ShapeDragMoveComments"));
                     break;
                 case "ellipse":
                     shapeType = ShapeType.Ellipse;
-                    setMaskEllipseLineVisible(true);
+                    setMaskEllipseVisible(true);
                     double ex = Double.parseDouble(shape.getAttribute("cx"));
                     double ey = Double.parseDouble(shape.getAttribute("cy"));
                     double erx = Double.parseDouble(shape.getAttribute("rx"));
                     double ery = Double.parseDouble(shape.getAttribute("ry"));
                     maskEllipseData = new DoubleEllipse(ex - erx, ey - ery, ex + erx, ey + ery);
-                    drawMaskEllipseLine();
+                    drawMaskEllipse();
                     infoLabel.setText(message("ShapeDragMoveComments"));
                     break;
                 case "line":
                     shapeType = ShapeType.Line;
-                    setMaskLineLineVisible(true);
+                    setMaskLineVisible(true);
                     double x1 = Double.parseDouble(shape.getAttribute("x1"));
                     double y1 = Double.parseDouble(shape.getAttribute("y1"));
                     double x2 = Double.parseDouble(shape.getAttribute("x2"));
                     double y2 = Double.parseDouble(shape.getAttribute("y2"));
                     maskLineData = new DoubleLine(x1, y1, x2, y2);
-                    drawMaskLineLine();
+                    drawMaskLine();
                     infoLabel.setText(message("ShapeDragMoveComments"));
                     break;
                 case "polyline":
@@ -147,10 +147,10 @@ public class ControlSvgImage extends BaseImageController {
                     break;
                 case "polygon":
                     shapeType = ShapeType.Polygon;
-                    setMaskPolygonLineVisible(true);
+                    setMaskPolygonVisible(true);
                     maskPolygonData = new DoublePolygon();
                     maskPolygonData.addAll(shape.getAttribute("points"));
-                    drawMaskPolygonLine();
+                    drawMaskPolygon();
                     infoLabel.setText(message("ShapePointsMoveComments"));
                     break;
                 case "path":

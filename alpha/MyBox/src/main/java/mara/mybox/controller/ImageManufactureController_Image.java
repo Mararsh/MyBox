@@ -77,7 +77,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
         maskView.setImage(null);
         maskView.setVisible(false);
         maskView.toBack();
-        initMaskControls(false);
+        clearMaskShapes();
     }
 
     public void imageTab() {

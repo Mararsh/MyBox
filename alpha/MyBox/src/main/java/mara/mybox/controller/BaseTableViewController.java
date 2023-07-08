@@ -10,6 +10,7 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableView;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppVariables;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -96,6 +97,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         try {
             List<P> selected = tableView.getSelectionModel().getSelectedItems();
             if (selected == null || selected.isEmpty()) {
+                popError(message("SelectToHandle"));
                 return;
             }
             tableData.removeAll(selected);

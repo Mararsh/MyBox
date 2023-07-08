@@ -75,7 +75,7 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
                     styleArea.setText(value);
                     continue;
                 }
-                attributesData.add(attrs.item(i));
+                tableData.add(attrs.item(i));
             }
         }
     }

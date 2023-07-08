@@ -303,15 +303,15 @@ License:    Apache License Version 2.0
                             <children>
                                 <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" spacing="2.0" VBox.vgrow="NEVER">
                                     <children>
-                                          <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
-                                              <graphic>
-                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                      <image>
-                                                          <Image url="@../buttons/Red/iconDoubleLeft.png" />
-                                                      </image>
-                                                  </ImageView>
-                                              </graphic>
-                                          </CheckBox>
+                                        <CheckBox fx:id="leftPaneCheck" minWidth="-Infinity" mnemonicParsing="false">
+                                            <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@../buttons/Red/iconDoubleLeft.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </CheckBox>
                                         <Button fx:id="selectFileButton" mnemonicParsing="false" onAction="#pickSourceFile" onMouseEntered="#popSourceFile">
                                             <graphic>
                                                 <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
@@ -527,16 +527,6 @@ License:    Apache License Version 2.0
                                                                                 <Double fx:value="-60.0" />
                                                                             </points>
                                                                         </Polygon>
-                                                                        <Rectangle fx:id="polygonP1" fill="#ffffff00" height="10.0" layoutX="30.0" layoutY="21.0" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                                                            <cursor>
-                                                                                <Cursor fx:constant="NONE" />
-                                                                            </cursor>
-                                                                        </Rectangle>
-                                                                        <Rectangle fx:id="polygonP2" fill="#ffffff00" height="10.0" layoutX="50.0" layoutY="21.0" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                                                            <cursor>
-                                                                                <Cursor fx:constant="NONE" />
-                                                                            </cursor>
-                                                                        </Rectangle>
                                                                         <Polyline fx:id="maskPolyline" fill="#ffffff00" layoutX="55.0" layoutY="81.0" stroke="RED" strokeType="INSIDE">
                                                                             <points>
                                                                                 <Double fx:value="-50.0" />

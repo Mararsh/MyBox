@@ -61,7 +61,7 @@ public abstract class ImageManufactureScopeController_Points extends ImageManufa
             for (int i = indices.size() - 1; i >= 0; i--) {
                 maskPolygonData.remove(indices.get(i));
             }
-            drawMaskPolygonLine();
+            drawMaskPolygon();
             scope.setPolygon(maskPolygonData.cloneValues());
         }
         pointsList.getItems().removeAll(pointsList.getSelectionModel().getSelectedItems());
@@ -78,7 +78,7 @@ public abstract class ImageManufactureScopeController_Points extends ImageManufa
         if (scope.getScopeType() == ImageScope.ScopeType.Polygon
                 || scope.getScopeType() == ImageScope.ScopeType.PolygonColor) {
             maskPolygonData.clear();
-            drawMaskPolygonLine();
+            drawMaskPolygon();
             scope.setPolygon(maskPolygonData.cloneValues());
         }
         indicateScope();

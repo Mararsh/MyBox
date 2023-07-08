@@ -278,7 +278,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             return;
         }
         maskRectangleData = new DoubleRectangle(0, 0, getImageWidth() - 1, getImageHeight() - 1);
-        drawMaskRectangleLine();
+        drawMaskRectangle();
     }
 
     @FXML

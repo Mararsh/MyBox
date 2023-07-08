@@ -523,16 +523,6 @@ License:    Apache License Version 2.0
                                                                                 <Double fx:value="-60.0" />
                                                                             </points>
                                                                         </Polygon>
-                                                                        <Rectangle fx:id="polygonP1" fill="#ffffff00" height="10.0" layoutX="30.0" layoutY="21.0" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                                                            <cursor>
-                                                                                <Cursor fx:constant="NONE" />
-                                                                            </cursor>
-                                                                        </Rectangle>
-                                                                        <Rectangle fx:id="polygonP2" fill="#ffffff00" height="10.0" layoutX="50.0" layoutY="21.0" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                                                                            <cursor>
-                                                                                <Cursor fx:constant="NONE" />
-                                                                            </cursor>
-                                                                        </Rectangle>
                                                                         <Polyline fx:id="maskPolyline" fill="#ffffff00" layoutX="55.0" layoutY="81.0" stroke="RED" strokeType="INSIDE">
                                                                             <points>
                                                                                 <Double fx:value="-50.0" />

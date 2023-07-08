@@ -61,13 +61,13 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
                 case RectangleColor:
                     maskRectangleData = rect;
                     scope.setRectangle(maskRectangleData.cloneValues());
-                    drawMaskRectangleLine();
+                    drawMaskRectangle();
                     break;
                 case Ellipse:
                 case EllipseColor:
                     maskEllipseData = new DoubleEllipse(x1, y1, x2, y2);
                     scope.setEllipse(maskEllipseData.cloneValues());
-                    drawMaskEllipseLine();
+                    drawMaskEllipse();
                     break;
                 default:
                     return;
@@ -118,7 +118,7 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
                 case CircleColor:
                     maskCircleData = circle;
                     scope.setCircle(maskCircleData.cloneValues());
-                    drawMaskCircleLine();
+                    drawMaskCircle();
                     break;
                 default:
                     return;
@@ -131,13 +131,13 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
     }
 
     @Override
-    public boolean drawMaskRectangleLine() {
+    public boolean drawMaskRectangle() {
         if (maskRectangleLine == null || !maskPane.getChildren().contains(maskRectangleLine)
                 || maskRectangleData == null
                 || imageView == null || imageView.getImage() == null) {
             return false;
         }
-        if (!super.drawMaskRectangleLine()) {
+        if (!super.drawMaskRectangle()) {
             return false;
         }
         rectLeftTopXInput.setText(scale(maskRectangleData.getSmallX(), 2) + "");
@@ -148,13 +148,13 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
     }
 
     @Override
-    public boolean drawMaskCircleLine() {
+    public boolean drawMaskCircle() {
         if (maskCircleLine == null || !maskCircleLine.isVisible()
                 || maskCircleData == null
                 || imageView == null || imageView.getImage() == null) {
             return false;
         }
-        if (!super.drawMaskCircleLine()) {
+        if (!super.drawMaskCircle()) {
             return false;
         }
         circleCenterXInput.setText(scale(maskCircleData.getCenterX(), 2) + "");
@@ -164,13 +164,13 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
     }
 
     @Override
-    public boolean drawMaskEllipseLine() {
+    public boolean drawMaskEllipse() {
         if (maskEllipseLine == null || !maskEllipseLine.isVisible()
                 || maskEllipseData == null
                 || imageView == null || imageView.getImage() == null) {
             return false;
         }
-        if (!super.drawMaskEllipseLine()) {
+        if (!super.drawMaskEllipse()) {
             return false;
         }
         DoubleRectangle rect = maskEllipseData.getRectangle();

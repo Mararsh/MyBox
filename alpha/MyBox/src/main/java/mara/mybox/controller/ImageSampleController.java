@@ -108,7 +108,7 @@ public class ImageSampleController extends ImageViewerController {
                 }
             });
 
-            initMaskControls(false);
+            clearMaskShapes();
 
             okButton.disableProperty().bind(
                     widthScaleSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle())
@@ -226,13 +226,13 @@ public class ImageSampleController extends ImageViewerController {
     }
 
     @Override
-    public boolean drawMaskRectangleLine() {
+    public boolean drawMaskRectangle() {
         if (maskRectangleLine == null || !maskPane.getChildren().contains(maskRectangleLine)
                 || maskRectangleData == null
                 || imageView == null || imageView.getImage() == null) {
             return false;
         }
-        if (!super.drawMaskRectangleLine()) {
+        if (!super.drawMaskRectangle()) {
             return false;
         }
         rectLeftTopXInput.setText(scale(maskRectangleData.getSmallX() / widthRatio(), 2) + "");
@@ -253,7 +253,7 @@ public class ImageSampleController extends ImageViewerController {
                 return false;
             }
             fitSize();
-            initMaskRectangleLine(true);
+            resetMaskRectangle(true);
             checkScales();
             return true;
         } catch (Exception e) {
@@ -273,7 +273,7 @@ public class ImageSampleController extends ImageViewerController {
             }
             maskRectangleData = rect;
             isSettingValues = true;
-            drawMaskRectangleLine();
+            drawMaskRectangle();
             isSettingValues = false;
 
         } catch (Exception e) {

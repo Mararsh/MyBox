@@ -27,7 +27,6 @@ License:    Apache License Version 2.0
 
 <VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ControlSvgImage">
     <children>
-        <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" />
         <FlowPane alignment="CENTER_RIGHT" hgap="2.0" prefWrapLength="800.0" vgap="2.0">
             <children>
                 <CheckBox fx:id="pickColorCheck" mnemonicParsing="false">
@@ -66,15 +65,15 @@ License:    Apache License Version 2.0
                         </ImageView>
                     </graphic>
                 </CheckBox>
-            <Button fx:id="menuButton" mnemonicParsing="false" onAction="#menuAction">
-               <graphic>
-                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../buttons/Red/iconMenu.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
+                <Button fx:id="menuButton" mnemonicParsing="false" onAction="#menuAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconMenu.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
                 <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut">
                     <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -146,16 +145,6 @@ License:    Apache License Version 2.0
                                 <Cursor fx:constant="DEFAULT" />
                             </cursor>
                         </Polygon>
-                        <Rectangle fx:id="polygonP1" fill="#ffffff00" height="10.0" layoutX="30.0" layoutY="21.0" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                            <cursor>
-                                <Cursor fx:constant="NONE" />
-                            </cursor>
-                        </Rectangle>
-                        <Rectangle fx:id="polygonP2" fill="#ffffff00" height="10.0" layoutX="50.0" layoutY="21.0" stroke="BLUE" strokeType="INSIDE" width="10.0">
-                            <cursor>
-                                <Cursor fx:constant="NONE" />
-                            </cursor>
-                        </Rectangle>
                         <Polyline fx:id="maskPolyline" fill="#ffffff00" layoutX="55.0" layoutY="81.0" onMousePressed="#handlerPressed" onMouseReleased="#polylineReleased" stroke="RED" strokeType="INSIDE">
                             <points>
                                 <Double fx:value="-50.0" />
@@ -213,5 +202,6 @@ License:    Apache License Version 2.0
                 </AnchorPane>
             </content>
         </ScrollPane>
+        <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" />
     </children>
 </VBox>

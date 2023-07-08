@@ -163,25 +163,25 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     break;
 
                 case Rectangle:
-                    initMaskRectangleLine(true);
+                    resetMaskRectangle(true);
                     scope.setRectangle(maskRectangleData.cloneValues());
                     indicateScope();
                     break;
 
                 case Circle:
-                    initMaskCircleLine(true);
+                    resetMaskCircle(true);
                     scope.setCircle(maskCircleData.cloneValues());
                     indicateScope();
                     break;
 
                 case Ellipse:
-                    initMaskEllipseLine(true);
+                    resetMaskEllipse(true);
                     scope.setEllipse(maskEllipseData.cloneValues());
                     indicateScope();
                     break;
 
                 case Polygon:
-                    initMaskPolygonLine(true);
+                    resetMaskPolygon(true);
                     scope.setPolygon(maskPolygonData.cloneValues());
                     indicateScope();
                     break;
@@ -191,25 +191,25 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     break;
 
                 case RectangleColor:
-                    initMaskRectangleLine(true);
+                    resetMaskRectangle(true);
                     scope.setRectangle(maskRectangleData.cloneValues());
                     checkMatchType();
                     break;
 
                 case CircleColor:
-                    initMaskCircleLine(true);
+                    resetMaskCircle(true);
                     scope.setCircle(maskCircleData.cloneValues());
                     checkMatchType();
                     break;
 
                 case EllipseColor:
-                    initMaskEllipseLine(true);
+                    resetMaskEllipse(true);
                     scope.setEllipse(maskEllipseData.cloneValues());
                     checkMatchType();
                     break;
 
                 case PolygonColor:
-                    initMaskPolygonLine(true);
+                    resetMaskPolygon(true);
                     scope.setPolygon(maskPolygonData.cloneValues());
                     checkMatchType();
                     break;
@@ -231,7 +231,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
 
     protected void clearScope() {
         try {
-            initMaskControls(false);
+            clearMaskShapes();
             isSettingValues = true;
             if (imageView.getImage() != null) {
                 scope = new ImageScope(imageView.getImage());

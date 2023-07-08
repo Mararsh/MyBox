@@ -184,7 +184,7 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
                     return;
                 }
                 Element element = doc.createElement(name.trim());
-                for (Node attr : attributesData) {
+                for (Node attr : tableData) {
                     element.setAttribute(attr.getNodeName(), attr.getNodeValue());
                 }
                 newNode = element;

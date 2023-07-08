@@ -8,6 +8,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
+import mara.mybox.fxml.cell.TableRowIndexCell;
 
 /**
  * @Author Mara
@@ -17,12 +18,15 @@ import mara.mybox.fxml.cell.TableAutoCommitCell;
 public class ControlPoints extends BaseTableViewController<DoublePoint> {
 
     @FXML
-    protected TableColumn<DoublePoint, Double> xColumn, yColumn;
+    protected TableColumn<DoublePoint, Double> indexColumn, xColumn, yColumn;
 
     @Override
     public void initControls() {
         try {
             super.initControls();
+
+            indexColumn.setCellValueFactory(new PropertyValueFactory<>("x"));
+            indexColumn.setCellFactory(new TableRowIndexCell());
 
             xColumn.setCellValueFactory(new PropertyValueFactory<>("x"));
             xColumn.setCellFactory(TableAutoCommitCell.forDoubleColumn());

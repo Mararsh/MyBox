@@ -10,18 +10,14 @@ import javafx.scene.shape.Polyline;
 /**
  * @Author Mara
  * @CreateDate 2018-11-11 12:29:29
- * @Version 1.0
- * @Description
  * @License Apache License Version 2.0
  */
 public class DoublePolyline implements DoubleShape {
 
-    private List<DoublePoint> points;
-    private Polyline polyline;
+    private final List<DoublePoint> points;
 
     public DoublePolyline() {
         points = new ArrayList<>();
-        polyline = new Polyline();
     }
 
     public boolean add(double x, double y) {
@@ -33,7 +29,6 @@ public class DoublePolyline implements DoubleShape {
             return false;
         }
         points.add(p);
-        getPolyline();
         return true;
     }
 
@@ -42,7 +37,6 @@ public class DoublePolyline implements DoubleShape {
             return false;
         }
         points.addAll(ps);
-        getPolyline();
         return true;
     }
 
@@ -62,11 +56,10 @@ public class DoublePolyline implements DoubleShape {
         for (int i = 0; i < points.size(); ++i) {
             DoublePoint p = points.get(i);
             if (p.getX() == x && p.getY() == y) {
-                points.remove(i);
+                remove(i);
                 break;
             }
         }
-        getPolyline();
         return true;
     }
 
@@ -75,17 +68,11 @@ public class DoublePolyline implements DoubleShape {
             return false;
         }
         points.remove(i);
-        getPolyline();
         return true;
     }
 
     public boolean removeLast() {
-        if (remove(points.size() - 1)) {
-            getPolyline();
-            return true;
-        } else {
-            return false;
-        }
+        return remove(points.size() - 1);
     }
 
     @Override
@@ -136,19 +123,20 @@ public class DoublePolyline implements DoubleShape {
 
     @Override
     public DoubleRectangle getBound() {
+        if (points == null || points.isEmpty()) {
+            return null;
+        }
+        Polyline polyline = new Polyline();
+        for (DoublePoint p : points) {
+            polyline.getPoints().add(p.getX());
+            polyline.getPoints().add(p.getY());
+        }
         Bounds bound = polyline.getBoundsInLocal();
         return new DoubleRectangle(bound.getMinX(), bound.getMinY(), bound.getMaxX(), bound.getMaxY());
     }
 
-    public Polyline getPolyline() {
-        polyline = new Polyline();
-        polyline.getPoints().addAll(getData());
-        return polyline;
-    }
-
     public void clear() {
         points.clear();
-        polyline = new Polyline();
     }
 
     public List<DoublePoint> getPoints() {

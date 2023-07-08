@@ -448,10 +448,6 @@ public class ControlSvgShape extends BaseController {
                 return null;
             }
             String p = polylinePointsController.toText();
-            if (p == null || p.isBlank()) {
-                popError(message("NoData"));
-                return null;
-            }
             Element element = doc.createElement("polyline");
             element.setAttribute("points", p);
             return element;
@@ -467,12 +463,8 @@ public class ControlSvgShape extends BaseController {
                 return null;
             }
             String p = polygonPointsController.toText();
-            if (p == null || p.isBlank()) {
-                popError(message("NoData"));
-                return null;
-            }
             Element element = doc.createElement("polygon");
-            element.setAttribute("points", StringTools.trimBlanks(p));
+            element.setAttribute("points", p);
             return element;
         } catch (Exception e) {
             MyBoxLog.error(e);

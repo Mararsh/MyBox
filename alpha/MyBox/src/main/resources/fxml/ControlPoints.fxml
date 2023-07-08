@@ -48,7 +48,7 @@ License:    Apache License Version 2.0
                </graphic>
             </Button>
             <Label fx:id="titleLabel" minHeight="-Infinity" wrapText="true" />
-            <Button fx:id="clearPointButton" mnemonicParsing="false" onAction="#clearAction">
+            <Button fx:id="clearDataButton" mnemonicParsing="false" onAction="#clearAction">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -57,7 +57,7 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </Button>
-            <Button fx:id="deletePointButton" mnemonicParsing="false" onAction="#deleteAction">
+            <Button fx:id="deleteDataButton" mnemonicParsing="false" onAction="#deleteAction">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -66,7 +66,7 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </Button>
-            <Button fx:id="addPointButton" mnemonicParsing="false" onAction="#addAction">
+            <Button fx:id="addDataButton" mnemonicParsing="false" onAction="#addAction">
                <graphic>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -88,6 +88,7 @@ License:    Apache License Version 2.0
       </FlowPane>
       <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
          <columns>
+            <TableColumn fx:id="indexColumn" editable="false" text="%Index" />
             <TableColumn prefWidth="160.0" text="x" fx:id="xColumn" />
             <TableColumn fx:id="yColumn" prefWidth="160.0" text="y" />
          </columns>

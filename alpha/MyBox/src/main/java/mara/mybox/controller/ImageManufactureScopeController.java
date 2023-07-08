@@ -272,7 +272,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
     @Override
     public void paneSizeChanged(double change) {
         refinePane();
-        drawMaskControls();
+        redrawMaskShapes();
     }
 
     @Override
@@ -282,7 +282,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
 
             if (imageChanged) {
                 indicateScope();
-                drawMaskControls();
+                redrawMaskShapes();
             }
 
         } catch (Exception e) {

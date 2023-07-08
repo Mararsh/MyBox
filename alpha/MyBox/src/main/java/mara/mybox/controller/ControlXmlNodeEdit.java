@@ -76,7 +76,7 @@ public class ControlXmlNodeEdit extends ControlXmlNodeBase {
                 setAttributes();
                 setBox.getChildren().add(attrBox);
                 VBox.setVgrow(attrBox, Priority.ALWAYS);
-                VBox.setVgrow(attributesTable, Priority.ALWAYS);
+                VBox.setVgrow(tableView, Priority.ALWAYS);
                 break;
             case Node.DOCUMENT_NODE:
                 Document document = (Document) node;
@@ -111,7 +111,7 @@ public class ControlXmlNodeEdit extends ControlXmlNodeBase {
         NamedNodeMap attrs = node.getAttributes();
         if (attrs != null) {
             for (int i = 0; i < attrs.getLength(); i++) {
-                attributesData.add(attrs.item(i));
+                tableData.add(attrs.item(i));
             }
         }
     }
@@ -136,7 +136,7 @@ public class ControlXmlNodeEdit extends ControlXmlNodeBase {
                         for (int i = attrs.getLength() - 1; i >= 0; i--) {
                             element.removeAttribute(attrs.item(i).getNodeName());
                         }
-                        for (Node attr : attributesData) {
+                        for (Node attr : tableData) {
                             element.setAttribute(attr.getNodeName(), attr.getNodeValue());
                         }
                     }

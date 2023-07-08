@@ -17,6 +17,7 @@ License:    Apache License Version 2.0
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
@@ -118,9 +119,37 @@ License:    Apache License Version 2.0
                <content>
                   <VBox fx:id="attrBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                      <children>
-                        <HBox alignment="CENTER_LEFT" spacing="5.0">
+                        <FlowPane fx:id="buttonsPane" alignment="CENTER_LEFT" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
                            <children>
-                              <Button fx:id="clearAttributesButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#clearAttributes">
+                              <Button fx:id="moveUpButton" mnemonicParsing="false" onAction="#moveUpAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconUp.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="moveDownButton" mnemonicParsing="false" onAction="#moveDownAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconDown.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="moveTopButton" layoutX="336.0" layoutY="10.0" mnemonicParsing="false" onAction="#moveTopAction">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconDoubleUp.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Label fx:id="titleLabel" minHeight="-Infinity" wrapText="true" />
+                              <Button fx:id="clearDataButton" mnemonicParsing="false" onAction="#clearAction">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -129,7 +158,7 @@ License:    Apache License Version 2.0
                                     </ImageView>
                                  </graphic>
                               </Button>
-                              <Button fx:id="deleteAttributesButton" mnemonicParsing="false" onAction="#deleteAttributes">
+                              <Button fx:id="deleteDataButton" mnemonicParsing="false" onAction="#deleteAction">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -138,7 +167,7 @@ License:    Apache License Version 2.0
                                     </ImageView>
                                  </graphic>
                               </Button>
-                              <Button fx:id="addAttributeButton" mnemonicParsing="false" onAction="#addAttribute">
+                              <Button fx:id="addDataButton" mnemonicParsing="false" onAction="#addAction">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -147,9 +176,18 @@ License:    Apache License Version 2.0
                                     </ImageView>
                                  </graphic>
                               </Button>
+                              <CheckBox fx:id="lostFocusCommitCheck" mnemonicParsing="false" onAction="#autoCommitCheck">
+                                 <graphic>
+                                    <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/red/iconInput.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </CheckBox>
                            </children>
-                        </HBox>
-                        <TableView fx:id="attributesTable" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                        </FlowPane>
+                        <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                            <columns>
                               <TableColumn fx:id="attrColumn" prefWidth="120.0" text="%Attribute" />
                               <TableColumn fx:id="valueColumn" prefWidth="200.0" text="%Value" />
