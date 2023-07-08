@@ -6,6 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableView;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppVariables;
@@ -30,7 +31,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             super.initValues();
 
             tableData = FXCollections.observableArrayList();
-            tableView.setItems(tableData);
+
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -51,8 +52,8 @@ public abstract class BaseTableViewController<P> extends BaseController {
             if (tableView == null) {
                 return;
             }
-
             tableView.setItems(tableData);
+            tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());

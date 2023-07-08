@@ -272,25 +272,14 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             rightCenterHandler.setWidth(anchorWidth);
             rightCenterHandler.setHeight(anchorWidth);
 
-            if (UserConfig.getBoolean("AnchorSolid", true)) {
-                topLeftHandler.setFill(anchorColor);
-                topCenterHandler.setFill(anchorColor);
-                topRightHandler.setFill(anchorColor);
-                bottomLeftHandler.setFill(anchorColor);
-                bottomCenterHandler.setFill(anchorColor);
-                bottomRightHandler.setFill(anchorColor);
-                leftCenterHandler.setFill(anchorColor);
-                rightCenterHandler.setFill(anchorColor);
-            } else {
-                topLeftHandler.setFill(null);
-                topCenterHandler.setFill(null);
-                topRightHandler.setFill(null);
-                bottomLeftHandler.setFill(null);
-                bottomCenterHandler.setFill(null);
-                bottomRightHandler.setFill(null);
-                leftCenterHandler.setFill(null);
-                rightCenterHandler.setFill(null);
-            }
+            topLeftHandler.setFill(anchorColor);
+            topCenterHandler.setFill(anchorColor);
+            topRightHandler.setFill(anchorColor);
+            bottomLeftHandler.setFill(anchorColor);
+            bottomCenterHandler.setFill(anchorColor);
+            bottomRightHandler.setFill(anchorColor);
+            leftCenterHandler.setFill(anchorColor);
+            rightCenterHandler.setFill(anchorColor);
 
         }
 
@@ -301,13 +290,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             polygonP1.setWidth(anchorWidth);
             polygonP2.setWidth(anchorWidth);
 
-            if (UserConfig.getBoolean("AnchorSolid", true)) {
-                polygonP1.setFill(anchorColor);
-                polygonP2.setFill(anchorColor);
-            } else {
-                polygonP1.setFill(null);
-                polygonP2.setFill(null);
-            }
+            polygonP1.setFill(anchorColor);
+            polygonP2.setFill(anchorColor);
         }
 
     }
@@ -561,7 +545,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             circleDrawnNotify.set(!circleDrawnNotify.get());
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }

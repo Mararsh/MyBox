@@ -21,7 +21,6 @@ import mara.mybox.bufferedimage.PixelsOperationFactory;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -117,8 +116,7 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
 
     @Override
     protected void popImageMenu(double x, double y) {
-        if (!UserConfig.getBoolean(baseName + "ContextMenu", true)
-                || imageView == null || imageView.getImage() == null) {
+        if (imageView == null || imageView.getImage() == null) {
             return;
         }
         MenuImageScopeController.open((ImageManufactureScopeController) this, x, y);

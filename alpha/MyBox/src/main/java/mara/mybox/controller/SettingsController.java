@@ -73,7 +73,7 @@ public class SettingsController extends BaseController {
     protected ToggleGroup langGroup, pdfMemGroup, controlColorGroup, derbyGroup, splitPanesGroup;
     @FXML
     protected CheckBox closeCurrentCheck, recordWindowsSizeLocationCheck, clearExpiredCheck,
-            anchorSolidCheck, controlsTextCheck, shortcutsCanNotOmitCheck, icons40pxCheck,
+            controlsTextCheck, shortcutsCanNotOmitCheck, icons40pxCheck,
             commitLoseFocusCheck, copyCurrentDataPathCheck, clearCurrentRootCheck, splitPaneSensitiveCheck,
             mousePassControlPanesCheck, popColorSetCheck, stopAlarmCheck;
     @FXML
@@ -950,18 +950,6 @@ public class SettingsController extends BaseController {
                     popSuccessful();
                 }
             });
-
-            anchorSolidCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> ov,
-                        Boolean old_toggle, Boolean new_toggle) {
-                    UserConfig.setBoolean("AnchorSolid", new_toggle);
-                    if (parentController instanceof BaseImageController) {
-                        ((BaseImageController) parentController).setMaskStyles();
-                    }
-                }
-            });
-            anchorSolidCheck.setSelected(UserConfig.getBoolean("AnchorSolid", true));
 
             gridColorSetController.init(this, "GridLinesColor", Color.LIGHTGRAY);
             gridColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {

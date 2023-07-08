@@ -236,9 +236,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
             vbox.setOnMouseClicked((MouseEvent event) -> {
                 File clickedFile = imageFileList.get(index);
                 if (event.getButton() == MouseButton.SECONDARY) {
-                    if (contextMenuCheck.isSelected()) {
-                        popImageMenu(index, iView, event);
-                    }
+                    popImageMenu(index, iView, event);
                     return;
                 } else if (event.getClickCount() > 1) {
                     ImageViewerController.openFile(clickedFile);
@@ -524,7 +522,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
                 @Override
                 public void handle(MouseEvent event) {
                     if (event.getButton() == MouseButton.SECONDARY) {
-                        if (isSettingValues || !contextMenuCheck.isSelected()) {
+                        if (isSettingValues) {
                             return;
                         }
                         int index = tableView.getSelectionModel().getSelectedIndex();

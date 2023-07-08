@@ -73,7 +73,7 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
     protected Button imageSizeButton, paneSizeButton, zoomInButton, zoomOutButton,
             rotateLeftButton, rotateRightButton, turnOverButton;
     @FXML
-    protected CheckBox pickColorCheck, rulerXCheck, gridCheck, coordinateCheck, contextMenuCheck,
+    protected CheckBox pickColorCheck, rulerXCheck, gridCheck, coordinateCheck,
             selectAreaCheck;
     @FXML
     protected ComboBox<String> zoomStepSelector, loadWidthBox;
@@ -220,16 +220,6 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
                 });
             }
 
-            if (contextMenuCheck != null) {
-                contextMenuCheck.setSelected(UserConfig.getBoolean(baseName + "ContextMenu", true));
-                contextMenuCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        UserConfig.setBoolean(baseName + "ContextMenu", contextMenuCheck.isSelected());
-                    }
-                });
-            }
-
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }
@@ -240,8 +230,7 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
     }
 
     protected void popImageMenu(double x, double y) {
-        if (imageView == null || imageView.getImage() == null
-                || !UserConfig.getBoolean(baseName + "ContextMenu", true)) {
+        if (imageView == null || imageView.getImage() == null) {
             return;
         }
         MenuImageBaseController.open((BaseImageController) this, x, y);

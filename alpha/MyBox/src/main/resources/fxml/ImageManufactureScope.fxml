@@ -552,15 +552,6 @@ License:    Apache License Version 2.0
                             <children>
                                 <Label minWidth="-Infinity" text="%Opacity" wrapText="true" />
                                 <ComboBox fx:id="opacitySelector" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                                <CheckBox fx:id="contextMenuCheck" mnemonicParsing="false" selected="true">
-                                    <graphic>
-                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../buttons/Red/iconMenu.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </CheckBox>
                                 <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#refreshAction">
                                     <graphic>
                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

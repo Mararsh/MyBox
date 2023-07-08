@@ -16,7 +16,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.SelectionMode;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.image.Image;
@@ -121,9 +120,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
                 tableChanged();
             });
 
-            tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
             tableView.getSelectionModel().getSelectedIndices().addListener(new ListChangeListener<Integer>() {
-
                 @Override
                 public void onChanged(ListChangeListener.Change c) {
                     checkSelected();

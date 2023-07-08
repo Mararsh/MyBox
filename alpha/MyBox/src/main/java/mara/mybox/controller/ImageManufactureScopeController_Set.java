@@ -8,8 +8,8 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tooltip;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.tools.DateTools;
 import static mara.mybox.value.Languages.message;
 
@@ -55,7 +55,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     break;
 
                 case Rectangle:
-                    tips = message("ScopeRectangleTips");
+                    tips = message("ShapeDragMoveComments");
                     tabPane.getTabs().addAll(areaTab, optionsTab, saveTab);
                     tabPane.getSelectionModel().select(areaTab);
                     areaBox.getChildren().clear();
@@ -64,7 +64,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     break;
 
                 case Circle:
-                    tips = message("ScopeCircleTips");
+                    tips = message("ShapeDragMoveComments");
                     tabPane.getTabs().addAll(areaTab, optionsTab, saveTab);
                     tabPane.getSelectionModel().select(areaTab);
                     areaBox.getChildren().clear();
@@ -72,7 +72,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     break;
 
                 case Ellipse:
-                    tips = message("ScopeEllipseTips");
+                    tips = message("ShapeDragMoveComments");
                     tabPane.getTabs().addAll(areaTab, optionsTab, saveTab);
                     tabPane.getSelectionModel().select(areaTab);
                     areaBox.getChildren().clear();
@@ -81,7 +81,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     break;
 
                 case Polygon:
-                    tips = message("ScopePolygonTips");
+                    tips = message("ShapePointsMoveComments");
                     tabPane.getTabs().addAll(pointsTab, optionsTab, saveTab);
                     tabPane.getSelectionModel().select(pointsTab);
                     break;

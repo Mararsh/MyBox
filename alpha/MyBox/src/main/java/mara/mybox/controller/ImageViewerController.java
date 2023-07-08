@@ -732,8 +732,7 @@ public class ImageViewerController extends BaseImageController {
 
     @Override
     protected void popImageMenu(double x, double y) {
-        if (!UserConfig.getBoolean(baseName + "ContextMenu", true)
-                || imageView == null || imageView.getImage() == null) {
+        if (imageView == null || imageView.getImage() == null) {
             return;
         }
         MenuImageViewController.open(this, x, y);

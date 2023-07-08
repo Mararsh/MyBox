@@ -400,15 +400,6 @@ License:    Apache License Version 2.0
                                                     <children>
                                                         <FlowPane alignment="CENTER_RIGHT" hgap="2.0" vgap="2.0">
                                                             <children>
-                                                                <CheckBox fx:id="contextMenuCheck" mnemonicParsing="false" selected="true">
-                                                                    <graphic>
-                                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                            <image>
-                                                                                <Image url="@../buttons/Red/iconMenu.png" />
-                                                                            </image>
-                                                                        </ImageView>
-                                                                    </graphic>
-                                                                </CheckBox>
                                                                 <CheckBox fx:id="pickColorCheck" mnemonicParsing="false">
                                                                     <graphic>
                                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

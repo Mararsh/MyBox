@@ -183,8 +183,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
 
     @Override
     protected void popImageMenu(double x, double y) {
-        if (!UserConfig.getBoolean(baseName + "ContextMenu", true)
-                || imageView == null || imageView.getImage() == null) {
+        if (imageView == null || imageView.getImage() == null) {
             return;
         }
         MenuImageManufactureController.open((ImageManufactureController) this, x, y);
