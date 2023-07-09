@@ -232,9 +232,9 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
     }
 
     @Override
-    public void imageClicked(MouseEvent event, DoublePoint p) {
-        super.imageClicked(event, p);
-        operationsController.imageClicked(event, p);
+    public void paneClicked(MouseEvent event, DoublePoint p) {
+        super.paneClicked(event, p);
+        operationsController.paneClicked(event, p);
     }
 
     @FXML

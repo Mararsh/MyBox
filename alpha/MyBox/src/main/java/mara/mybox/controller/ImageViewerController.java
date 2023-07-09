@@ -430,7 +430,7 @@ public class ImageViewerController extends BaseImageController {
             protected void whenSucceeded() {
                 imageView.setImage(areaImage);
                 setImageChanged(true);
-                resetMaskShapes();
+                redrawMaskShapes();
             }
 
         };
@@ -447,7 +447,7 @@ public class ImageViewerController extends BaseImageController {
                 || getImageHeight() != image.getHeight();
         imageView.setImage(image);
         if (sizeChanged) {
-            resetMaskShapes();
+            redrawMaskShapes();
         }
         setImageChanged(false);
         popInformation(message("Recovered"));

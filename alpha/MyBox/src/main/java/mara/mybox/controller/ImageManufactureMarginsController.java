@@ -169,11 +169,10 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
 
     private void initDragging() {
         try {
-            imageController.setMaskRectangleVisible(true);
             imageController.maskRectangleData = new DoubleRectangle(0, 0,
                     imageView.getImage().getWidth() - 1,
                     imageView.getImage().getHeight() - 1);
-            imageController.drawMaskRectangle();
+            imageController.showMaskRectangle();
             commentsLabel.setText(Languages.message("DragMarginsComments"));
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
@@ -212,7 +211,7 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
     }
 
     @Override
-    public void imageClicked(MouseEvent event, DoublePoint p) {
+    public void paneClicked(MouseEvent event, DoublePoint p) {
         if (opType != OperationType.SetMarginsByDragging
                 || imageController.maskRectangleData == null) {
             return;

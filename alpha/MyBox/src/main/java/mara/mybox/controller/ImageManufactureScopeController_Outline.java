@@ -210,8 +210,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
         }
         outlineSource = bufferedImage;
         maskRectangleData = rect.cloneValues();
-        setMaskRectangleVisible(true);
-        drawMaskRectangle();
+        showMaskRectangle();
 
         makeOutline();
     }

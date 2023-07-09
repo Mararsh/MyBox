@@ -301,8 +301,8 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
             setPercent(percent);
         }
         refinePane();
-        setMaskStyles();
         checkSelect();
+        redrawMaskShapes();
         setImageChanged(false);
         updateLabelsTitle();
         imageView.requestFocus();

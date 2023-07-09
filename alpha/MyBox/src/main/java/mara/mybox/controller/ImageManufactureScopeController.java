@@ -291,7 +291,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
     }
 
     @Override
-    public void imageClicked(MouseEvent event, DoublePoint p) {
+    public void paneClicked(MouseEvent event, DoublePoint p) {
         if (p == null || imageView.getImage() == null) {
             imageView.setCursor(Cursor.OPEN_HAND);
             return;
@@ -312,7 +312,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
             pointsList.getSelectionModel().selectLast();
             indicateScope();
         } else {
-            super.imageClicked(event, p);
+            super.paneClicked(event, p);
             switch (scope.getScopeType()) {
                 case Rectangle:
                 case RectangleColor:

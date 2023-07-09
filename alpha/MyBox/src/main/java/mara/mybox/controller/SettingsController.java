@@ -898,7 +898,7 @@ public class SettingsController extends BaseController {
                             if (v > 0) {
                                 UserConfig.setInt("StrokeWidth", v);
                                 ValidationTools.setEditorNormal(strokeWidthBox);
-                                BaseImageController.updateMaskStroke();
+                                BaseImageController.updateMaskStrokes();
                             } else {
                                 ValidationTools.setEditorBadStyle(strokeWidthBox);
                             }
@@ -914,7 +914,7 @@ public class SettingsController extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends Paint> observable,
                         Paint oldValue, Paint newValue) {
-                    BaseImageController.updateMaskStroke();
+                    BaseImageController.updateMaskStrokes();
                     popSuccessful();
                 }
             });
@@ -930,7 +930,7 @@ public class SettingsController extends BaseController {
                             if (v > 0) {
                                 UserConfig.setInt("AnchorWidth", v);
                                 ValidationTools.setEditorNormal(anchorWidthBox);
-                                BaseImageController.updateMaskStroke();
+                                BaseImageController.updateMaskAnchors();
                             } else {
                                 ValidationTools.setEditorBadStyle(anchorWidthBox);
                             }
@@ -946,7 +946,7 @@ public class SettingsController extends BaseController {
                 @Override
                 public void changed(ObservableValue<? extends Paint> observable,
                         Paint oldValue, Paint newValue) {
-                    BaseImageController.updateMaskStroke();
+                    BaseImageController.updateMaskAnchors();
                     popSuccessful();
                 }
             });

@@ -147,7 +147,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
             isSettingValues = false;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -163,25 +163,25 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     break;
 
                 case Rectangle:
-                    resetMaskRectangle(true);
+                    showMaskRectangle();
                     scope.setRectangle(maskRectangleData.cloneValues());
                     indicateScope();
                     break;
 
                 case Circle:
-                    resetMaskCircle(true);
+                    showMaskCircle();
                     scope.setCircle(maskCircleData.cloneValues());
                     indicateScope();
                     break;
 
                 case Ellipse:
-                    resetMaskEllipse(true);
+                    showMaskEllipse();
                     scope.setEllipse(maskEllipseData.cloneValues());
                     indicateScope();
                     break;
 
                 case Polygon:
-                    resetMaskPolygon(true);
+                    showMaskPolygon();
                     scope.setPolygon(maskPolygonData.cloneValues());
                     indicateScope();
                     break;
@@ -191,25 +191,25 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     break;
 
                 case RectangleColor:
-                    resetMaskRectangle(true);
+                    showMaskRectangle();
                     scope.setRectangle(maskRectangleData.cloneValues());
                     checkMatchType();
                     break;
 
                 case CircleColor:
-                    resetMaskCircle(true);
+                    showMaskCircle();
                     scope.setCircle(maskCircleData.cloneValues());
                     checkMatchType();
                     break;
 
                 case EllipseColor:
-                    resetMaskEllipse(true);
+                    showMaskEllipse();
                     scope.setEllipse(maskEllipseData.cloneValues());
                     checkMatchType();
                     break;
 
                 case PolygonColor:
-                    resetMaskPolygon(true);
+                    showMaskPolygon();
                     scope.setPolygon(maskPolygonData.cloneValues());
                     checkMatchType();
                     break;
@@ -224,7 +224,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -254,7 +254,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
             outlinesList.getSelectionModel().select(null);
             pickColorCheck.setSelected(false);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -309,7 +309,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
             setScopeControls();
             setScopeValues();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -370,7 +370,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     }
 
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                 }
             }
         });

@@ -43,7 +43,7 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
     }
 
     @Override
-    public void imageClicked(MouseEvent event, DoublePoint p) {
+    public void paneClicked(MouseEvent event, DoublePoint p) {
         sizeController.imageClicked();
     }
 

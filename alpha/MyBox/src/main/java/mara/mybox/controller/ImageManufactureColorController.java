@@ -420,7 +420,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
     }
 
     @Override
-    public void imageClicked(MouseEvent event, DoublePoint p) {
+    public void paneClicked(MouseEvent event, DoublePoint p) {
         if (imageController.isPickingColor) {
             Color color = ImageViewTools.imagePixel(p, imageView);
             if (color != null) {

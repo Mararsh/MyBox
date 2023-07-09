@@ -288,7 +288,6 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             } else {
                 setImageChanged(imageInformation.isIsScaled());
             }
-            setMaskStyles();
 
             isPickingColor = false;
             checkPickingColor();
@@ -311,7 +310,6 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             imageView.setImage(image);
             refinePane();
 //            fitSize();
-            redrawMaskShapes();
             setImageChanged(true);
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
@@ -354,7 +352,11 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
         if (selectAllButton != null) {
             selectAllButton.setDisable(!selected);
         }
-        resetMaskRectangle(selected);
+        if (selected) {
+            showMaskRectangle();
+        } else {
+            clearMaskRectangle();
+        }
         updateLabelsTitle();
     }
 

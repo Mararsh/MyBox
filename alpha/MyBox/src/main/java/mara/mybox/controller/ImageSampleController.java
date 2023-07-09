@@ -227,11 +227,6 @@ public class ImageSampleController extends ImageViewerController {
 
     @Override
     public boolean drawMaskRectangle() {
-        if (maskRectangleLine == null || !maskPane.getChildren().contains(maskRectangleLine)
-                || maskRectangleData == null
-                || imageView == null || imageView.getImage() == null) {
-            return false;
-        }
         if (!super.drawMaskRectangle()) {
             return false;
         }
@@ -253,7 +248,7 @@ public class ImageSampleController extends ImageViewerController {
                 return false;
             }
             fitSize();
-            resetMaskRectangle(true);
+            showMaskRectangle();
             checkScales();
             return true;
         } catch (Exception e) {

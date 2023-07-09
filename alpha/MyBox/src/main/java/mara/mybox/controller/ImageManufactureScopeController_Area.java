@@ -132,11 +132,6 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
 
     @Override
     public boolean drawMaskRectangle() {
-        if (maskRectangleLine == null || !maskPane.getChildren().contains(maskRectangleLine)
-                || maskRectangleData == null
-                || imageView == null || imageView.getImage() == null) {
-            return false;
-        }
         if (!super.drawMaskRectangle()) {
             return false;
         }
@@ -149,11 +144,6 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
 
     @Override
     public boolean drawMaskCircle() {
-        if (maskCircleLine == null || !maskCircleLine.isVisible()
-                || maskCircleData == null
-                || imageView == null || imageView.getImage() == null) {
-            return false;
-        }
         if (!super.drawMaskCircle()) {
             return false;
         }
@@ -165,11 +155,6 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
 
     @Override
     public boolean drawMaskEllipse() {
-        if (maskEllipseLine == null || !maskEllipseLine.isVisible()
-                || maskEllipseData == null
-                || imageView == null || imageView.getImage() == null) {
-            return false;
-        }
         if (!super.drawMaskEllipse()) {
             return false;
         }

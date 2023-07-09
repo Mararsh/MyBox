@@ -887,9 +887,6 @@ public class ImageAnalyseController extends ImageViewerController {
     public void refreshAction() {
         try {
             fitSize();
-            drawMaskRulerXY();
-            checkCoordinate();
-            setMaskStyles();
             loadData();
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());

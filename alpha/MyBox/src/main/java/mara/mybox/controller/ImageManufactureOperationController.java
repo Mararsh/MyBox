@@ -83,7 +83,7 @@ public class ImageManufactureOperationController extends ImageViewerController {
         events passed from image pane
      */
     @Override
-    public void imageClicked(MouseEvent event, DoublePoint p) {
+    public void paneClicked(MouseEvent event, DoublePoint p) {
 
     }
 

@@ -257,9 +257,9 @@ public class ImageManufactureOperationsController extends ImageViewerController 
         events passed from image pane
      */
     @Override
-    public void imageClicked(MouseEvent event, DoublePoint p) {
+    public void paneClicked(MouseEvent event, DoublePoint p) {
         if (currentController != null) {
-            currentController.imageClicked(event, p);
+            currentController.paneClicked(event, p);
         }
     }
 

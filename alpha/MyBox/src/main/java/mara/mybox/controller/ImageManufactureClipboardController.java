@@ -291,13 +291,12 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                 if (enlarged) {
                     imageController.setImage(ImageOperation.Margins, bgImage);
                 }
-                imageController.setMaskRectangleVisible(true);
                 imageController.maskRectangleData = new DoubleRectangle(
                         imageController.maskRectangleData.getSmallX(),
                         imageController.maskRectangleData.getSmallY(),
                         imageController.maskRectangleData.getSmallX() + finalClip.getWidth() - 1,
                         imageController.maskRectangleData.getSmallY() + finalClip.getHeight() - 1);
-                imageController.drawMaskRectangle();
+                imageController.showMaskRectangle();
                 imageController.scope.setRectangle(imageController.maskRectangleData.cloneValues());
                 maskView.setImage(blendedImage);
                 maskView.setOpacity(1.0);
@@ -328,7 +327,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
     }
 
     @Override
-    public void imageClicked(MouseEvent event, DoublePoint p) {
+    public void paneClicked(MouseEvent event, DoublePoint p) {
         if (imageController.scope == null || imageController.maskRectangleData == null) {
             return;
         }

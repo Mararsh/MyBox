@@ -59,7 +59,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
 
     @FXML
     @Override
-    public void imageClicked(MouseEvent event, DoublePoint p) {
+    public void paneClicked(MouseEvent event, DoublePoint p) {
         if (imageView.getImage() == null || p == null) {
             imageView.setCursor(Cursor.OPEN_HAND);
             return;

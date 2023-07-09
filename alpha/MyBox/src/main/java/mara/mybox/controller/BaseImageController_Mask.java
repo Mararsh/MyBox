@@ -13,8 +13,10 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Text;
 import javafx.stage.Window;
+import static mara.mybox.controller.BaseImageController_ImageView.DefaultStrokeColor;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.IntPoint;
 import mara.mybox.dev.MyBoxLog;
@@ -88,6 +90,77 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
         }
     }
 
+    /*
+        values
+     */
+    public Color strokeColor() {
+        try {
+            return Color.web(UserConfig.getString("StrokeColor", DefaultStrokeColor));
+        } catch (Exception e) {
+            return Color.web(DefaultStrokeColor);
+        }
+    }
+
+    public double strokeWidth() {
+        double strokeWidth = UserConfig.getInt("StrokeWidth", 2);
+        if (strokeWidth <= 0) {
+            strokeWidth = 2.0d;
+        }
+        return strokeWidth;
+    }
+
+    public List<Double> strokeDash() {
+        double strokeWidth = strokeWidth();
+        List<Double> dash = new ArrayList<>();
+        dash.add(strokeWidth);
+        dash.add(strokeWidth * 3);
+        return dash;
+    }
+
+    public StrokeLineCap strokeLineCap() {
+        return StrokeLineCap.BUTT;
+    }
+
+    public float shapeOpacity() {
+        return 1.0f;
+    }
+
+    public Color shapeFill() {
+        return Color.TRANSPARENT;
+    }
+
+    public Color anchorColor() {
+        try {
+            return Color.web(UserConfig.getString("AnchorColor", DefaultAnchorColor));
+        } catch (Exception e) {
+            return Color.web(DefaultAnchorColor);
+        }
+    }
+
+    public int anchorWidth() {
+        int anchorWidth = UserConfig.getInt("AnchorWidth", 10);
+        if (anchorWidth <= 0) {
+            anchorWidth = 10;
+        }
+        return anchorWidth;
+    }
+
+    public double viewXRatio() {
+        return imageView.getBoundsInParent().getWidth() / getImageWidth();
+    }
+
+    public double viewYRatio() {
+        return imageView.getBoundsInParent().getHeight() / getImageHeight();
+    }
+
+    public double imageXRatio() {
+        return getImageWidth() / imageView.getBoundsInParent().getWidth();
+    }
+
+    public double imageYRatio() {
+        return getImageHeight() / imageView.getBoundsInParent().getHeight();
+    }
+
     @FXML
     public void paneClicked(MouseEvent event) {
         if (imageView.getImage() == null) {
@@ -95,7 +168,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
             return;
         }
         DoublePoint p = ImageViewTools.getImageXY(event, imageView);
-        imageClicked(event, p);
+        paneClicked(event, p);
         event.consume();
     }
 
@@ -104,7 +177,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
 //        MyBoxLog.debug("imageClicked");
     }
 
-    public void imageClicked(MouseEvent event, DoublePoint p) {
+    public void paneClicked(MouseEvent event, DoublePoint p) {
     }
 
     @FXML
@@ -465,12 +538,10 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
     protected void checkCoordinate() {
         if (xyText != null) {
             xyText.setText("");
+            xyText.setFill(strokeColor());
         }
     }
 
-    public void clear() {
-
-    }
 
     /*
         static

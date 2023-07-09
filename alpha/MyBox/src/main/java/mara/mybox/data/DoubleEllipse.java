@@ -109,7 +109,10 @@ public class DoubleEllipse implements DoubleShape {
     }
 
     public boolean same(DoubleEllipse ellipse) {
-        return rectangle.same(ellipse.getRectangle());
+        return centerX == ellipse.getCenterX()
+                && centerY == ellipse.getCenterY()
+                && radiusX == ellipse.getRadiusX()
+                && radiusY == ellipse.getRadiusY();
     }
 
     @Override
