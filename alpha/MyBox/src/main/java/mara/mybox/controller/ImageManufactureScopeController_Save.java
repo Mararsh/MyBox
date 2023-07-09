@@ -7,6 +7,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.ColorConvertTools;
 import mara.mybox.bufferedimage.ImageScope;
+import mara.mybox.data.DoublePoint;
 import mara.mybox.data.IntPoint;
 import mara.mybox.db.table.TableImageScope;
 import mara.mybox.dev.MyBoxLog;
@@ -110,26 +111,14 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
             case Rectangle:
                 scopeRectangleRadio.setSelected(true);
                 break;
-            case RectangleColor:
-                scopeRectangleColorRadio.setSelected(true);
-                break;
             case Circle:
                 scopeCircleRadio.setSelected(true);
-                break;
-            case CircleColor:
-                scopeCircleColorRadio.setSelected(true);
                 break;
             case Ellipse:
                 scopeEllipseRadio.setSelected(true);
                 break;
-            case EllipseColor:
-                scopeEllipseColorRadio.setSelected(true);
-                break;
             case Polygon:
                 scopePolygonRadio.setSelected(true);
-                break;
-            case PolygonColor:
-                scopePolygonColorRadio.setSelected(true);
                 break;
             case Outline:
                 scopeOutlineRadio.setSelected(true);
@@ -149,34 +138,32 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
                 case Matting: {
                     List<IntPoint> points = scope.getPoints();
                     if (points != null) {
+                        pointsController.isSettingValues = true;
                         for (IntPoint p : points) {
-                            pointsList.getItems().add(p.getX() + "," + p.getY());
+                            pointsController.tableData.add(new DoublePoint(p.getX(), p.getY()));
                         }
-                        pointsList.getSelectionModel().selectLast();
+                        pointsController.isSettingValues = true;
                     }
                     return true;
                 }
                 case Rectangle:
-                case RectangleColor:
                 case Outline:
                     maskRectangleData = scope.getRectangle();
                     return showMaskRectangle();
                 case Circle:
-                case CircleColor:
                     maskCircleData = scope.getCircle();
                     return showMaskCircle();
                 case Ellipse:
-                case EllipseColor:
                     maskEllipseData = scope.getEllipse();
                     return showMaskEllipse();
-                case Polygon:
-                case PolygonColor: {
+                case Polygon: {
                     List<IntPoint> points = scope.getPoints();
                     if (points != null) {
+                        pointsController.isSettingValues = true;
                         for (IntPoint p : points) {
-                            pointsList.getItems().add(p.getX() + "," + p.getY());
+                            pointsController.tableData.add(new DoublePoint(p.getX(), p.getY()));
                         }
-                        pointsList.getSelectionModel().selectLast();
+                        pointsController.isSettingValues = true;
                     }
                     maskPolygonData = scope.getPolygon();
                     return showMaskPolygon();
@@ -197,10 +184,10 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
             colorExcludedCheck.setSelected(scope.isColorExcluded());
             switch (scope.getScopeType()) {
                 case Color:
-                case RectangleColor:
-                case CircleColor:
-                case EllipseColor:
-                case PolygonColor:
+                case Rectangle:
+                case Circle:
+                case Ellipse:
+                case Polygon:
                     List<java.awt.Color> colors = scope.getColors();
                     if (colors != null) {
                         List<Color> list = new ArrayList<>();

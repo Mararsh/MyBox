@@ -13,10 +13,11 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Window;
-import static mara.mybox.controller.BaseImageController_ImageView.DefaultStrokeColor;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.IntPoint;
 import mara.mybox.dev.MyBoxLog;
@@ -145,6 +146,14 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
         return anchorWidth;
     }
 
+    public Font shapePointFont() {
+        return new Font(anchorWidth());
+    }
+
+    public boolean shapePointDragging() {
+        return false;
+    }
+
     public double viewXRatio() {
         return imageView.getBoundsInParent().getWidth() / getImageWidth();
     }
@@ -159,6 +168,16 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
 
     public double imageYRatio() {
         return getImageHeight() / imageView.getBoundsInParent().getHeight();
+    }
+
+    public double maskHandlerX(Shape shape, MouseEvent event) {
+        return (shape.getLayoutX() + event.getX() - imageView.getLayoutX())
+                * imageXRatio();
+    }
+
+    public double maskHandlerY(Shape shape, MouseEvent event) {
+        return (shape.getLayoutY() + event.getY() - imageView.getLayoutY())
+                * imageYRatio();
     }
 
     @FXML

@@ -37,8 +37,6 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
             tabPane.getTabs().clear();
             scopeTips.setText("");
             NodeStyleTools.removeTooltip(scopeTips);
-            NodeStyleTools.setTooltip(scopeTipsView, "");
-            scopeTipsView.setVisible(false);
             if (image == null || scope == null) {
                 return;
             }
@@ -55,53 +53,16 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     break;
 
                 case Rectangle:
-                    tips = message("ShapeDragMoveComments");
-                    tabPane.getTabs().addAll(areaTab, optionsTab, saveTab);
-                    tabPane.getSelectionModel().select(areaTab);
-                    areaBox.getChildren().clear();
-                    areaBox.getChildren().add(rectangleBox);
-                    rectangleLabel.setText(message("Rectangle"));
-                    break;
-
-                case Circle:
-                    tips = message("ShapeDragMoveComments");
-                    tabPane.getTabs().addAll(areaTab, optionsTab, saveTab);
-                    tabPane.getSelectionModel().select(areaTab);
-                    areaBox.getChildren().clear();
-                    areaBox.getChildren().add(circleBox);
-                    break;
-
-                case Ellipse:
-                    tips = message("ShapeDragMoveComments");
-                    tabPane.getTabs().addAll(areaTab, optionsTab, saveTab);
-                    tabPane.getSelectionModel().select(areaTab);
-                    areaBox.getChildren().clear();
-                    areaBox.getChildren().add(rectangleBox);
-                    rectangleLabel.setText(message("Ellipse"));
-                    break;
-
-                case Polygon:
-                    tips = message("ShapePointsMoveComments");
-                    tabPane.getTabs().addAll(pointsTab, optionsTab, saveTab);
-                    tabPane.getSelectionModel().select(pointsTab);
-                    break;
-
-                case Color:
-                    tips = message("ScopeColorTips");
-                    tabPane.getTabs().addAll(colorsTab, matchTab, optionsTab, saveTab);
-                    tabPane.getSelectionModel().select(colorsTab);
-                    break;
-
-                case RectangleColor:
                     tips = message("ScopeRectangleColorsTips");
                     tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab, saveTab);
                     tabPane.getSelectionModel().select(areaTab);
                     areaBox.getChildren().clear();
                     areaBox.getChildren().add(rectangleBox);
                     rectangleLabel.setText(message("Rectangle"));
+
                     break;
 
-                case CircleColor:
+                case Circle:
                     tips = message("ScopeCircleColorsTips");
                     tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab, saveTab);
                     tabPane.getSelectionModel().select(areaTab);
@@ -109,7 +70,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     areaBox.getChildren().add(circleBox);
                     break;
 
-                case EllipseColor:
+                case Ellipse:
                     tips = message("ScopeEllipseColorsTips");
                     tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab, saveTab);
                     tabPane.getSelectionModel().select(areaTab);
@@ -118,10 +79,16 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     rectangleLabel.setText(message("Ellipse"));
                     break;
 
-                case PolygonColor:
+                case Polygon:
                     tips = message("ScopePolygonColorsTips");
                     tabPane.getTabs().addAll(pointsTab, colorsTab, matchTab, optionsTab, saveTab);
                     tabPane.getSelectionModel().select(pointsTab);
+                    break;
+
+                case Color:
+                    tips = message("ScopeColorTips");
+                    tabPane.getTabs().addAll(colorsTab, matchTab, optionsTab, saveTab);
+                    tabPane.getSelectionModel().select(colorsTab);
                     break;
 
                 case Outline:
@@ -139,8 +106,6 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
             scopeTips.setText(tips);
             if (!tips.isBlank()) {
                 NodeStyleTools.setTooltip(scopeTips, tips);
-                NodeStyleTools.setTooltip(scopeTipsView, tips);
-                scopeTipsView.setVisible(true);
             }
             setScopeName();
             refreshStyle(tabPane);
@@ -165,52 +130,28 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                 case Rectangle:
                     showMaskRectangle();
                     scope.setRectangle(maskRectangleData.cloneValues());
-                    indicateScope();
+                    checkMatchType();
                     break;
 
                 case Circle:
                     showMaskCircle();
                     scope.setCircle(maskCircleData.cloneValues());
-                    indicateScope();
+                    checkMatchType();
                     break;
 
                 case Ellipse:
                     showMaskEllipse();
                     scope.setEllipse(maskEllipseData.cloneValues());
-                    indicateScope();
+                    checkMatchType();
                     break;
 
                 case Polygon:
                     showMaskPolygon();
                     scope.setPolygon(maskPolygonData.cloneValues());
-                    indicateScope();
+                    checkMatchType();
                     break;
 
                 case Color:
-                    checkMatchType();
-                    break;
-
-                case RectangleColor:
-                    showMaskRectangle();
-                    scope.setRectangle(maskRectangleData.cloneValues());
-                    checkMatchType();
-                    break;
-
-                case CircleColor:
-                    showMaskCircle();
-                    scope.setCircle(maskCircleData.cloneValues());
-                    checkMatchType();
-                    break;
-
-                case EllipseColor:
-                    showMaskEllipse();
-                    scope.setEllipse(maskEllipseData.cloneValues());
-                    checkMatchType();
-                    break;
-
-                case PolygonColor:
-                    showMaskPolygon();
-                    scope.setPolygon(maskPolygonData.cloneValues());
                     checkMatchType();
                     break;
 
@@ -244,7 +185,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
             scopeView.setImage(null);
             outlineSource = null;
 
-            pointsList.getItems().clear();
+            pointsController.clearAction();
             colorsList.getItems().clear();
             scopeDistanceSelector.getItems().clear();
             areaExcludedCheck.setSelected(false);
@@ -253,6 +194,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
             scopeDistanceSelector.getEditor().setStyle(null);
             outlinesList.getSelectionModel().select(null);
             pickColorCheck.setSelected(false);
+            isSettingValues = false;
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -288,18 +230,6 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
 
                 } else if (selected.equals(scopeColorRadio)) {
                     scope.setScopeType(ImageScope.ScopeType.Color);
-
-                } else if (selected.equals(scopeRectangleColorRadio)) {
-                    scope.setScopeType(ImageScope.ScopeType.RectangleColor);
-
-                } else if (selected.equals(scopeCircleColorRadio)) {
-                    scope.setScopeType(ImageScope.ScopeType.CircleColor);
-
-                } else if (selected.equals(scopeEllipseColorRadio)) {
-                    scope.setScopeType(ImageScope.ScopeType.EllipseColor);
-
-                } else if (selected.equals(scopePolygonColorRadio)) {
-                    scope.setScopeType(ImageScope.ScopeType.PolygonColor);
 
                 } else if (selected.equals(scopeOutlineRadio)) {
                     scope.setScopeType(ImageScope.ScopeType.Outline);

@@ -88,18 +88,6 @@ public class ImageManufactureScopesSavedController extends BaseSysTableControlle
                                     case Polygon:
                                         icon = "iconStar.png";
                                         break;
-                                    case RectangleColor:
-                                        icon = "iconRectangleFilled.png";
-                                        break;
-                                    case CircleColor:
-                                        icon = "iconCircleFilled.png";
-                                        break;
-                                    case EllipseColor:
-                                        icon = "iconEllipseFilled.png";
-                                        break;
-                                    case PolygonColor:
-                                        icon = "iconStarFilled.png";
-                                        break;
                                     case Color:
                                         icon = "iconColorWheel.png";
                                         break;

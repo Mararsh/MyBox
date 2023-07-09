@@ -58,13 +58,11 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
             }
             switch (scope.getScopeType()) {
                 case Rectangle:
-                case RectangleColor:
                     maskRectangleData = rect;
                     scope.setRectangle(maskRectangleData.cloneValues());
                     drawMaskRectangle();
                     break;
                 case Ellipse:
-                case EllipseColor:
                     maskEllipseData = new DoubleEllipse(x1, y1, x2, y2);
                     scope.setEllipse(maskEllipseData.cloneValues());
                     drawMaskEllipse();
@@ -115,7 +113,6 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
             }
             switch (scope.getScopeType()) {
                 case Circle:
-                case CircleColor:
                     maskCircleData = circle;
                     scope.setCircle(maskCircleData.cloneValues());
                     drawMaskCircle();

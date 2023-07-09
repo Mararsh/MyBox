@@ -9,6 +9,7 @@ import java.util.List;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.bufferedimage.ImageScope.ColorScopeType;
 import mara.mybox.bufferedimage.ImageScope.ScopeType;
+import mara.mybox.bufferedimage.ImageScopeTools;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.data.ColumnDefinition;
 import static mara.mybox.db.table.BaseTable.FilenameMaxLength;
@@ -69,11 +70,11 @@ public class TableImageScope extends BaseTable<ImageScope> {
         if (imageLocation == null || imageLocation.trim().isEmpty()) {
             imageLocation = "Unknown";
         }
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection();
+                Statement statement = conn.createStatement()) {
             conn.setReadOnly(true);
             String sql = " SELECT * FROM image_scope WHERE image_location='" + imageLocation + "' ORDER BY modify_time DESC";
-            try ( ResultSet results = statement.executeQuery(sql)) {
+            try (ResultSet results = statement.executeQuery(sql)) {
                 while (results.next()) {
                     ImageScope scope = decode(results);
                     if (scope != null) {
@@ -101,11 +102,11 @@ public class TableImageScope extends BaseTable<ImageScope> {
         if (imageLocation == null || imageLocation.trim().isEmpty()) {
             imageLocation = "Unknown";
         }
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection();
+                Statement statement = conn.createStatement()) {
             String sql = " SELECT * FROM image_scope WHERE image_location='" + imageLocation
                     + "' AND name='" + DerbyBase.stringValue(name) + "'";
-            try ( ResultSet results = statement.executeQuery(sql)) {
+            try (ResultSet results = statement.executeQuery(sql)) {
                 if (results.next()) {
                     return decode(results);
                 }
@@ -122,7 +123,7 @@ public class TableImageScope extends BaseTable<ImageScope> {
         }
         ImageScope scope = new ImageScope();
         try {
-            ScopeType type = ScopeType.valueOf(results.getString("scope_type"));
+            ScopeType type = ImageScopeTools.scopeType(results.getString("scope_type"));
             if (decodeAreaData(type, results, scope)
                     && decodeColorData(type, results, scope)
                     && decodeOutline(type, results, scope)) {
@@ -194,15 +195,15 @@ public class TableImageScope extends BaseTable<ImageScope> {
             scope.setFile("Unknown");
         }
         int count = 0;
-        try ( Connection conn = DerbyBase.getConnection();
-                 Statement statement = conn.createStatement()) {
+        try (Connection conn = DerbyBase.getConnection();
+                Statement statement = conn.createStatement()) {
             String areaData = ImageScope.encodeAreaData(scope);
             String colorData = ImageScope.encodeColorData(scope);
             String outline = ImageScope.encodeOutline(scope);
             String sql = " SELECT * FROM image_scope WHERE image_location='" + scope.getFile()
                     + "' AND name='" + DerbyBase.stringValue(scope.getName()) + "'";
             boolean exist = false;
-            try ( ResultSet results = statement.executeQuery(sql)) {
+            try (ResultSet results = statement.executeQuery(sql)) {
                 if (results.next()) {
                     exist = true;
                 }

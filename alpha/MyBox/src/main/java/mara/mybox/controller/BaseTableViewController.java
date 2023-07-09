@@ -2,7 +2,9 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -20,6 +22,7 @@ import static mara.mybox.value.Languages.message;
 public abstract class BaseTableViewController<P> extends BaseController {
 
     protected ObservableList<P> tableData;
+    protected SimpleBooleanProperty tableDataChangedNotify;
 
     @FXML
     protected TableView<P> tableView;
@@ -31,6 +34,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
         try {
             super.initValues();
 
+            tableDataChangedNotify = new SimpleBooleanProperty(false);
             tableData = FXCollections.observableArrayList();
 
         } catch (Exception e) {
@@ -56,8 +60,25 @@ public abstract class BaseTableViewController<P> extends BaseController {
             tableView.setItems(tableData);
             tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
+            tableData.addListener((ListChangeListener.Change<? extends P> change) -> {
+                tableChanged();
+            });
+
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
+        }
+    }
+
+    protected void tableChanged() {
+        tableChanged(true);
+    }
+
+    public void tableChanged(boolean changed) {
+        if (isSettingValues) {
+            return;
+        }
+        if (changed) {
+            tableDataChangedNotify.set(!tableDataChangedNotify.get());
         }
     }
 
@@ -66,9 +87,6 @@ public abstract class BaseTableViewController<P> extends BaseController {
         if (lostFocusCommitCheck != null) {
             AppVariables.lostFocusCommitData(lostFocusCommitCheck.isSelected());
         }
-    }
-
-    public void tableChanged(boolean changed) {
     }
 
     protected List<P> selectedItems() {

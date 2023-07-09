@@ -48,7 +48,7 @@ public class ControlColorPaletteSelector extends BaseController {
     protected ColorsManageController manageController;
     protected TableColorPaletteName tableColorPaletteName;
     protected TableColorPalette tableColorPalette;
-    protected ColorPaletteName allColors, defaultPalette, currentPalette;
+    protected ColorPaletteName allColors, currentPalette;
     protected boolean isManager;
     protected String ignore;
     protected SimpleBooleanProperty selectedNotify, doubleClickedNotify, renamedNotify;
@@ -175,7 +175,7 @@ public class ControlColorPaletteSelector extends BaseController {
             @Override
             protected boolean handle() {
                 try (Connection conn = DerbyBase.getConnection()) {
-                    defaultPalette = PaletteTools.defaultPalette(conn);
+                    PaletteTools.defaultPalette(conn);
                     palettes = tableColorPaletteName.readAll(conn);
                 } catch (Exception e) {
                     error = e.toString();

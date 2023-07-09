@@ -65,11 +65,6 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                 });
             }
 
-            if (leftPaneCheck != null) {
-                leftPaneCheck.setSelected(true);
-            } else {
-                showLeftPane();
-            }
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
         }

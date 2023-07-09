@@ -24,8 +24,38 @@ import mara.mybox.value.AppVariables;
  */
 public class ImageScopeTools {
 
-    public static ImageScope.ScopeType type(String type) {
-        return ImageScope.ScopeType.valueOf(type);
+    public static ImageScope.ScopeType scopeType(String type) {
+        if (type == null) {
+            return ImageScope.ScopeType.Invalid;
+        }
+        if ("All".equalsIgnoreCase(type)) {
+            return ImageScope.ScopeType.All;
+        }
+        if ("Matting".equalsIgnoreCase(type)) {
+            return ImageScope.ScopeType.Matting;
+        }
+        if ("Rectangle".equalsIgnoreCase(type) || "RectangleColor".equalsIgnoreCase(type)) {
+            return ImageScope.ScopeType.Rectangle;
+        }
+        if ("Circle".equalsIgnoreCase(type) || "CircleColor".equalsIgnoreCase(type)) {
+            return ImageScope.ScopeType.Circle;
+        }
+        if ("Ellipse".equalsIgnoreCase(type) || "EllipseColor".equalsIgnoreCase(type)) {
+            return ImageScope.ScopeType.Ellipse;
+        }
+        if ("Polygon".equalsIgnoreCase(type) || "PolygonColor".equalsIgnoreCase(type)) {
+            return ImageScope.ScopeType.Polygon;
+        }
+        if ("Color".equalsIgnoreCase(type)) {
+            return ImageScope.ScopeType.Color;
+        }
+        if ("Outline".equalsIgnoreCase(type)) {
+            return ImageScope.ScopeType.Outline;
+        }
+        if ("Operate".equalsIgnoreCase(type)) {
+            return ImageScope.ScopeType.Operate;
+        }
+        return ImageScope.ScopeType.Invalid;
     }
 
     public static void cloneValues(ImageScope targetScope, ImageScope sourceScope) {

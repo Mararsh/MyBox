@@ -336,6 +336,8 @@ public class ControlSvgImage extends BaseImageController {
                 svgPath = new SVGPath();
             }
             svgPath.setContent(shape.getAttribute("d"));
+            svgPath.setLayoutX(imageView.getLayoutX());
+            svgPath.setLayoutY(imageView.getLayoutY());
             setShapeStyle(svgPath);
             maskPane.getChildren().add(svgPath);
             return true;

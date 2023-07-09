@@ -16,8 +16,12 @@ public class ImageScopeFactory {
 
     public static ImageScope create(ImageScope sourceScope) {
         try {
-            ImageScope newScope = ImageScopeFactory.create(sourceScope.getImage(),
-                    sourceScope.getScopeType(), sourceScope.getColorScopeType());
+
+            ImageScope newScope = ImageScopeFactory.create(
+                    sourceScope.getImage(),
+                    sourceScope.getScopeType(),
+                    sourceScope.getColors() == null || sourceScope.getColors().isEmpty()
+                    ? ImageScope.ColorScopeType.AllColor : sourceScope.getColorScopeType());
             ImageScopeTools.cloneValues(newScope, sourceScope);
             return newScope;
         } catch (Exception e) {
@@ -27,18 +31,11 @@ public class ImageScopeFactory {
     }
 
     public static ImageScope create(Image image,
-            ImageScope.ScopeType scopeType, ImageScope.ColorScopeType colorScopeType) {
+            ImageScope.ScopeType scopeType,
+            ImageScope.ColorScopeType colorScopeType) {
         switch (scopeType) {
             case All:
                 return new All(image);
-            case Rectangle:
-                return new Rectangle(image);
-            case Circle:
-                return new Circle(image);
-            case Ellipse:
-                return new Ellipse(image);
-            case Polygon:
-                return new Polygon(image);
             case Color:
                 switch (colorScopeType) {
                     case AllColor:
@@ -60,7 +57,7 @@ public class ImageScopeFactory {
                     default:
                         return new All(image);
                 }
-            case RectangleColor:
+            case Rectangle:
                 switch (colorScopeType) {
                     case AllColor:
                         return new Rectangle(image);
@@ -81,7 +78,7 @@ public class ImageScopeFactory {
                     default:
                         return new Rectangle(image);
                 }
-            case CircleColor:
+            case Circle:
                 switch (colorScopeType) {
                     case AllColor:
                         return new Circle(image);
@@ -102,7 +99,7 @@ public class ImageScopeFactory {
                     default:
                         return new Circle(image);
                 }
-            case EllipseColor:
+            case Ellipse:
                 switch (colorScopeType) {
                     case AllColor:
                         return new Ellipse(image);
@@ -123,7 +120,7 @@ public class ImageScopeFactory {
                     default:
                         return new ImageScope(image, scopeType);
                 }
-            case PolygonColor:
+            case Polygon:
                 switch (colorScopeType) {
                     case AllColor:
                         return new Polygon(image);

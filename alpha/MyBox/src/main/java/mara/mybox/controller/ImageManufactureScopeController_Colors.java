@@ -90,8 +90,6 @@ public abstract class ImageManufactureScopeController_Colors extends ImageManufa
         scopeTips.setText(tips);
         scopeTips.setStyle(NodeStyleTools.darkRedTextStyle());
         NodeStyleTools.setTooltip(scopeTips, tips);
-        NodeStyleTools.setTooltip(scopeTipsView, tips);
-        scopeTipsView.setVisible(!tips.isBlank());
         popInformation(tips);
     }
 
@@ -101,13 +99,10 @@ public abstract class ImageManufactureScopeController_Colors extends ImageManufa
             String tips = imageLabelOriginal.getText();
             scopeTips.setText(tips);
             scopeTips.setStyle(imageLabelOriginal.getStyle());
-            NodeStyleTools.setTooltip(scopeTipsView, tips);
             NodeStyleTools.setTooltip(scopeTips, tips);
-            scopeTipsView.setVisible(!tips.isBlank());
             imageLabelOriginal = null;
         } else {
             scopeTips.setText("");
-            scopeTipsView.setVisible(false);
             NodeStyleTools.setTooltip(scopeTips, "");
         }
 
@@ -121,10 +116,10 @@ public abstract class ImageManufactureScopeController_Colors extends ImageManufa
         }
         switch (scope.getScopeType()) {
             case Color:
-            case RectangleColor:
-            case CircleColor:
-            case EllipseColor:
-            case PolygonColor:
+            case Rectangle:
+            case Circle:
+            case Ellipse:
+            case Polygon:
                 scope.addColor(ColorConvertTools.converColor(color));
                 colorsList.getItems().add(color);
                 indicateScope();

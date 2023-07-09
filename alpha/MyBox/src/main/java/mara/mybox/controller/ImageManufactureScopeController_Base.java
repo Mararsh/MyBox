@@ -36,7 +36,7 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     protected BufferedImage outlineSource;
 
     @FXML
-    protected ImageView scopeView, scopeTipsView;
+    protected ImageView scopeView;
     @FXML
     protected ToggleGroup scopeTypeGroup, matchGroup;
     @FXML
@@ -52,7 +52,7 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     @FXML
     protected ListView<Color> colorsList;
     @FXML
-    protected ListView<String> pointsList;
+    protected ControlPoints pointsController;
     @FXML
     protected CheckBox areaExcludedCheck, colorExcludedCheck, scopeOutlineKeepRatioCheck, eightNeighborCheck,
             ignoreTransparentCheck, squareRootCheck;
@@ -60,13 +60,11 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     protected TextField scopeNameInput, rectLeftTopXInput, rectLeftTopYInput, rightBottomXInput, rightBottomYInput,
             circleCenterXInput, circleCenterYInput, circleRadiusInput;
     @FXML
-    protected Button saveScopeButton, deletePointsButton, clearPointsButton,
-            scopeOutlineFileButton, scopeOutlineShrinkButton, scopeOutlineExpandButton,
+    protected Button saveScopeButton, scopeOutlineFileButton, scopeOutlineShrinkButton, scopeOutlineExpandButton,
             clearColorsButton, deleteColorsButton, saveColorsButton;
     @FXML
     protected RadioButton scopeAllRadio, scopeMattingRadio, scopeRectangleRadio, scopeCircleRadio,
-            scopePolygonRadio, scopeColorRadio, scopeRectangleColorRadio, scopeCircleColorRadio,
-            scopeEllipseColorRadio, scopePolygonColorRadio, scopeOutlineRadio, scopeEllipseRadio,
+            scopeEllipseRadio, scopePolygonRadio, scopeColorRadio, scopeOutlineRadio,
             colorRGBRadio, colorGreenRadio, colorRedRadio, colorBlueRadio,
             colorSaturationRadio, colorHueRadio, colorBrightnessRadio;
     @FXML

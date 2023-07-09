@@ -4,7 +4,6 @@ import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.shape.Shape;
 import mara.mybox.data.DoubleEllipse;
 import mara.mybox.data.DoublePoint;
 
@@ -76,15 +75,21 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             }
 
         } else if (maskPolyline != null && maskPolyline.isVisible()) {
-            if (singleClickedPolyline(event, p)) {
-                maskPolylineChangedByEvent();
-                return;
+            if (!maskPointDragged) {
+                maskPointDragged = false;
+                if (singleClickedPolyline(event, p)) {
+                    maskPolylineChangedByEvent();
+                    return;
+                }
             }
 
         } else if (maskPolygonLine != null && maskPolygonLine.isVisible()) {
-            if (singleClickedPolygonLine(event, p)) {
-                maskPolygonChangedByEvent();
-                return;
+            if (!maskPointDragged) {
+                maskPointDragged = false;
+                if (singleClickedPolygonLine(event, p)) {
+                    maskPolygonChangedByEvent();
+                    return;
+                }
             }
 
         } else if (maskPenData != null && maskPenLines != null) {
@@ -98,6 +103,8 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             }
 
         }
+
+        maskPointDragged = false;
         if (event.getButton() == MouseButton.SECONDARY) {
             popImageMenu(event.getScreenX(), event.getScreenY());
         }
@@ -385,16 +392,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         maskPolygonChangedByEvent();
     }
 
-    public double maskHandlerX(Shape shape, MouseEvent event) {
-        return (shape.getLayoutX() + event.getX() - imageView.getLayoutX())
-                * imageXRatio();
-    }
-
-    public double maskHandlerY(Shape shape, MouseEvent event) {
-        return (shape.getLayoutY() + event.getY() - imageView.getLayoutY())
-                * imageYRatio();
-    }
-
     @FXML
     public void topLeftHandlerReleased(MouseEvent event) {
         scrollPane.setPannable(true);
@@ -668,30 +665,6 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                 maskEllipseChangedByEvent();
             }
         }
-
-    }
-
-    public void maskRectChangedByEvent() {
-
-    }
-
-    public void maskCircleChangedByEvent() {
-
-    }
-
-    public void maskEllipseChangedByEvent() {
-
-    }
-
-    public void maskLineChangedByEvent() {
-
-    }
-
-    public void maskPolylineChangedByEvent() {
-
-    }
-
-    public void maskPolygonChangedByEvent() {
 
     }
 

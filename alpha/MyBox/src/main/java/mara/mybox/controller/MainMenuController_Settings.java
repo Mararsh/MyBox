@@ -88,6 +88,7 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
         popRecentCheck.setSelected(AppVariables.fileRecentNumber > 0);
         popColorSetCheck.setSelected(UserConfig.getBoolean("PopColorSetWhenMouseHovering", true));
         shortcutsCanNotOmitCheck.setSelected(AppVariables.ShortcutsCanNotOmitCtrlAlt);
+        loseFocusCommitDataCheck.setSelected(AppVariables.commitModificationWhenDataCellLoseFocus);
         clearExpiredDataCheck.setSelected(UserConfig.getBoolean("ClearExpiredDataBeforeExit", true));
         controlPanesCheck.setSelected(UserConfig.getBoolean("MousePassControlPanes", true));
         checkControlColor();

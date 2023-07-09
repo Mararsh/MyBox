@@ -422,8 +422,7 @@ License:    Apache License Version 2.0
                                             <children>
                                                 <FlowPane hgap="2.0" vgap="2.0">
                                                     <children>
-                                                        <Label text="%Stroke" />
-                                                        <Label text="%Color" />
+                                                        <Label text="%StrokeColor" />
                                                         <fx:include fx:id="strokeColorSet" source="ControlColorSet.fxml" />
                                                         <Label text="%Width" />
                                                         <ComboBox fx:id="strokeWidthBox" editable="true" prefWidth="100.0" />
@@ -431,8 +430,7 @@ License:    Apache License Version 2.0
                                                 </FlowPane>
                                                 <FlowPane hgap="2.0" vgap="2.0">
                                                     <children>
-                                                        <Label text="%Anchor" />
-                                                        <Label text="%Color" />
+                                                        <Label text="%AnchorColor" />
                                                         <fx:include fx:id="anchorColorSet" source="ControlColorSet.fxml" />
                                                         <Label text="%Width" />
                                                         <ComboBox fx:id="anchorWidthBox" editable="true" prefWidth="100.0" />

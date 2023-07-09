@@ -3,8 +3,10 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Ellipse;
@@ -48,7 +50,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
     protected List<List<Line>> maskPenLines;
     protected final SimpleBooleanProperty rectDrawnNotify, circleDrawnNotify, ellipseDrawnNotify,
             lineDrawnNotify, polylineDrawnNotify, polygonDrawnNotify;
-    protected boolean isDrawing;
+    public boolean maskPointDragged;
 
     @FXML
     protected Rectangle maskRectangleLine, leftCenterHandler, topLeftHandler, topCenterHandler, topRightHandler,
@@ -139,7 +141,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
     }
 
     public void setMaskAnchorsStyle() {
-        if (isSettingValues || maskPane == null || topLeftHandler == null) {
+        if (isSettingValues || maskPane == null) {
             return;
         }
         try {
@@ -149,40 +151,54 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                 anchorWidth = 10;
             }
 
-            topLeftHandler.setStroke(anchorColor);
-            topCenterHandler.setStroke(anchorColor);
-            topRightHandler.setStroke(anchorColor);
-            bottomLeftHandler.setStroke(anchorColor);
-            bottomCenterHandler.setStroke(anchorColor);
-            bottomRightHandler.setStroke(anchorColor);
-            leftCenterHandler.setStroke(anchorColor);
-            rightCenterHandler.setStroke(anchorColor);
+            if (topLeftHandler != null) {
+                topLeftHandler.setStroke(anchorColor);
+                topCenterHandler.setStroke(anchorColor);
+                topRightHandler.setStroke(anchorColor);
+                bottomLeftHandler.setStroke(anchorColor);
+                bottomCenterHandler.setStroke(anchorColor);
+                bottomRightHandler.setStroke(anchorColor);
+                leftCenterHandler.setStroke(anchorColor);
+                rightCenterHandler.setStroke(anchorColor);
 
-            topLeftHandler.setWidth(anchorWidth);
-            topLeftHandler.setHeight(anchorWidth);
-            topCenterHandler.setWidth(anchorWidth);
-            topCenterHandler.setHeight(anchorWidth);
-            topRightHandler.setWidth(anchorWidth);
-            topRightHandler.setHeight(anchorWidth);
-            bottomLeftHandler.setWidth(anchorWidth);
-            bottomLeftHandler.setHeight(anchorWidth);
-            bottomCenterHandler.setWidth(anchorWidth);
-            bottomCenterHandler.setHeight(anchorWidth);
-            bottomRightHandler.setWidth(anchorWidth);
-            bottomRightHandler.setHeight(anchorWidth);
-            leftCenterHandler.setWidth(anchorWidth);
-            leftCenterHandler.setHeight(anchorWidth);
-            rightCenterHandler.setWidth(anchorWidth);
-            rightCenterHandler.setHeight(anchorWidth);
+                topLeftHandler.setWidth(anchorWidth);
+                topLeftHandler.setHeight(anchorWidth);
+                topCenterHandler.setWidth(anchorWidth);
+                topCenterHandler.setHeight(anchorWidth);
+                topRightHandler.setWidth(anchorWidth);
+                topRightHandler.setHeight(anchorWidth);
+                bottomLeftHandler.setWidth(anchorWidth);
+                bottomLeftHandler.setHeight(anchorWidth);
+                bottomCenterHandler.setWidth(anchorWidth);
+                bottomCenterHandler.setHeight(anchorWidth);
+                bottomRightHandler.setWidth(anchorWidth);
+                bottomRightHandler.setHeight(anchorWidth);
+                leftCenterHandler.setWidth(anchorWidth);
+                leftCenterHandler.setHeight(anchorWidth);
+                rightCenterHandler.setWidth(anchorWidth);
+                rightCenterHandler.setHeight(anchorWidth);
 
-            topLeftHandler.setFill(anchorColor);
-            topCenterHandler.setFill(anchorColor);
-            topRightHandler.setFill(anchorColor);
-            bottomLeftHandler.setFill(anchorColor);
-            bottomCenterHandler.setFill(anchorColor);
-            bottomRightHandler.setFill(anchorColor);
-            leftCenterHandler.setFill(anchorColor);
-            rightCenterHandler.setFill(anchorColor);
+                topLeftHandler.setFill(anchorColor);
+                topCenterHandler.setFill(anchorColor);
+                topRightHandler.setFill(anchorColor);
+                bottomLeftHandler.setFill(anchorColor);
+                bottomCenterHandler.setFill(anchorColor);
+                bottomRightHandler.setFill(anchorColor);
+                leftCenterHandler.setFill(anchorColor);
+                rightCenterHandler.setFill(anchorColor);
+            }
+
+            Font font = shapePointFont();
+            for (Node node : maskPane.getChildren()) {
+                if (node == null || !(node instanceof Text) || node.getId() == null) {
+                    continue;
+                }
+                if (node.getId().startsWith("PolylinePoint") || node.getId().startsWith("PolygonPoint")) {
+                    Text text = (Text) node;
+                    text.setFill(anchorColor);
+                    text.setFont(font);
+                }
+            }
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -619,22 +635,39 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         }
     }
 
-    public void addMaskPolylinePoint(int index, DoublePoint p, double x, double y) {
+    public void addMaskPolylinePoint(int index, DoublePoint p, double x, double y,
+            Color color, Font font) {
         try {
             maskPolyline.getPoints().add(x);
             maskPolyline.getPoints().add(y);
 
             Text text = new Text(index + "");
-            text.setFill(Color.BLUE);
-            text.setFont(new Font(10));
+            text.setFill(color);
+            text.setFont(font);
             text.setLayoutX(imageView.getLayoutX() + x);
             text.setLayoutY(imageView.getLayoutY() + y);
             text.setId("PolylinePoint" + index);
+            text.setOnMouseReleased(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    maskPointDragged = true;
+                    scrollPane.setPannable(true);
+                    double nx = maskHandlerX(text, event);
+                    double ny = maskHandlerY(text, event);
+                    maskPolygonData.getPoints().set(index - 1, new DoublePoint(nx, ny));
+                    drawMaskPolygon();
+                    maskPolygonChangedByEvent();
+                }
+            });
             NodeStyleTools.setTooltip(text, message("Point") + " " + index + "\n" + p.text(2));
             maskPane.getChildren().add(text);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public void addMaskPolylinePoint(int index, DoublePoint p, double x, double y) {
+        addMaskPolylinePoint(index, p, x, y, anchorColor(), shapePointFont());
     }
 
     public void clearPolylinePoints() {
@@ -644,7 +677,10 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         List<Node> nodes = new ArrayList<>();
         nodes.addAll(maskPane.getChildren());
         for (Node node : nodes) {
-            if (node.getId() != null && node.getId().startsWith("PolylinePoint")) {
+            if (node == null || !(node instanceof Text) || node.getId() == null) {
+                continue;
+            }
+            if (node.getId().startsWith("PolylinePoint")) {
                 maskPane.getChildren().remove(node);
                 node = null;
             }
@@ -704,11 +740,13 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             maskPolygonLine.getPoints().clear();
             maskPolygonLine.setLayoutX(imageView.getLayoutX());
             maskPolygonLine.setLayoutY(imageView.getLayoutY());
+            Color color = anchorColor();
+            Font font = shapePointFont();
             for (int i = 0; i < maskPolygonData.getSize(); ++i) {
                 DoublePoint p = maskPolygonData.get(i);
                 double x = p.getX() * xRatio;
                 double y = p.getY() * yRatio;
-                addMaskPolygonPoint(i + 1, p, x, y);
+                addMaskPolygonPoint(i + 1, p, x, y, color, font);
             }
 
             setShapeStyle(maskPolygonLine);
@@ -721,22 +759,40 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         }
     }
 
-    public void addMaskPolygonPoint(int index, DoublePoint p, double x, double y) {
+    public void addMaskPolygonPoint(int index, DoublePoint p,
+            double x, double y, Color color, Font font) {
         try {
             maskPolygonLine.getPoints().add(x);
             maskPolygonLine.getPoints().add(y);
 
             Text text = new Text(index + "");
-            text.setFill(Color.BLUE);
-            text.setFont(new Font(10));
+            text.setFill(color);
+            text.setFont(font);
             text.setLayoutX(imageView.getLayoutX() + x);
             text.setLayoutY(imageView.getLayoutY() + y);
             text.setId("PolygonPoint" + index);
+
+            text.setOnMouseReleased(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    maskPointDragged = true;
+                    scrollPane.setPannable(true);
+                    double nx = maskHandlerX(text, event);
+                    double ny = maskHandlerY(text, event);
+                    maskPolygonData.getPoints().set(index - 1, new DoublePoint(nx, ny));
+                    drawMaskPolygon();
+                    maskPolygonChangedByEvent();
+                }
+            });
             NodeStyleTools.setTooltip(text, message("Point") + " " + index + "\n" + p.text(2));
             maskPane.getChildren().add(text);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public void addMaskPolygonPoint(int index, DoublePoint p, double x, double y) {
+        addMaskPolygonPoint(index, p, x, y, anchorColor(), shapePointFont());
     }
 
     public void clearPolygonPoints() {
@@ -746,7 +802,10 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         List<Node> nodes = new ArrayList<>();
         nodes.addAll(maskPane.getChildren());
         for (Node node : nodes) {
-            if (node.getId() != null && node.getId().startsWith("PolygonPoint")) {
+            if (node == null || !(node instanceof Text) || node.getId() == null) {
+                continue;
+            }
+            if (node.getId().startsWith("PolygonPoint")) {
                 maskPane.getChildren().remove(node);
                 node = null;
             }
@@ -904,6 +963,33 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             maskPenData.clear();
             maskPenData = null;
         }
+    }
+
+    /*
+        noitify
+     */
+    public void maskRectChangedByEvent() {
+
+    }
+
+    public void maskCircleChangedByEvent() {
+
+    }
+
+    public void maskEllipseChangedByEvent() {
+
+    }
+
+    public void maskLineChangedByEvent() {
+
+    }
+
+    public void maskPolylineChangedByEvent() {
+
+    }
+
+    public void maskPolygonChangedByEvent() {
+
     }
 
     /*

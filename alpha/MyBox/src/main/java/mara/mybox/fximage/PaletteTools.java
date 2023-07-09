@@ -180,7 +180,6 @@ public class PaletteTools {
                         colors.add(new ColorData(color(style, true).getRGB(), message("MyBoxColor" + style.name() + "Dark")));
                         colors.add(new ColorData(color(style, false).getRGB(), message("MyBoxColor" + style.name() + "Light")));
                     }
-                    colors.addAll(speicalColors());
 
                 } else if ((message("ArtHuesWheel") + "-" + message("Colors12")).equals(paletteName)) {
                     String lang = Languages.getLangName();
@@ -213,6 +212,7 @@ public class PaletteTools {
                 if (colors == null || colors.isEmpty()) {
                     return false;
                 }
+                colors.addAll(speicalColors());
                 try (Connection conn = DerbyBase.getConnection()) {
                     ColorPaletteName palette = new TableColorPaletteName().findAndCreate(conn, paletteName);
                     if (palette == null) {
@@ -330,10 +330,10 @@ public class PaletteTools {
     public static List<ColorData> speicalColors() {
         try {
             List<ColorData> colors = new ArrayList<>();
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.WHITE), message("White")));
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.BLACK), message("Black")));
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.GRAY), message("Gray")));
-            colors.add(new ColorData(0, message("Transparent")));
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.WHITE), message("White")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.BLACK), message("Black")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.GRAY), message("Gray")).calculate());
+            colors.add(new ColorData(0, message("Transparent")).calculate());
             return colors;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -348,19 +348,18 @@ public class PaletteTools {
     public static List<ColorData> defaultColors() {
         try {
             List<ColorData> colors = new ArrayList<>();
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.RED), message("Red")));
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.ORANGE), message("Orange")));
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.YELLOW), message("Yellow")));
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.GREENYELLOW), message("GreenYellow")));
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.GREEN), message("Green")));
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.LIGHTSEAGREEN), message("SeaGreen")));
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.DODGERBLUE), message("Blue")));
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.BLUE), message("MediumBlue")));
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.PURPLE), message("Purple")));
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.PINK), message("Pink")));
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.DEEPSKYBLUE), message("SkyBlue")));
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.GOLD), message("GoldColor")));
-            colors.addAll(speicalColors());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.RED), message("Red")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.ORANGE), message("Orange")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.YELLOW), message("Yellow")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.GREENYELLOW), message("GreenYellow")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.GREEN), message("Green")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.LIGHTSEAGREEN), message("SeaGreen")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.DODGERBLUE), message("Blue")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.BLUE), message("MediumBlue")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.PURPLE), message("Purple")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.PINK), message("Pink")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.DEEPSKYBLUE), message("SkyBlue")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.GOLD), message("GoldColor")).calculate());
             return colors;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -384,7 +383,9 @@ public class PaletteTools {
             long paletteid = palette.getCpnid();
             TableColorPalette tableColorPalette = new TableColorPalette();
             if (tableColorPalette.size(conn, paletteid) == 0) {
-                tableColorPalette.write(conn, palette.getCpnid(), defaultColors(), true, false);
+                List<ColorData> colors = defaultColors();
+                colors.addAll(speicalColors());
+                tableColorPalette.write(conn, palette.getCpnid(), colors, true, false);
                 conn.commit();
             }
             conn.setAutoCommit(ac);

@@ -116,9 +116,6 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
             if (tableView == null) {
                 return;
             }
-            tableData.addListener((ListChangeListener.Change<? extends P> change) -> {
-                tableChanged();
-            });
 
             tableView.getSelectionModel().getSelectedIndices().addListener(new ListChangeListener<Integer>() {
                 @Override
@@ -147,6 +144,27 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
 
         } catch (Exception e) {
             MyBoxLog.error(e.toString());
+        }
+    }
+
+    @Override
+    public void tableChanged(boolean changed) {
+        if (isSettingValues) {
+            return;
+        }
+        super.tableChanged(changed);
+        updateStatus();
+    }
+
+    public void updateStatus() {
+        checkSelected();
+        if (dataSizeLabel != null) {
+            int tsize = tableData == null ? 0 : tableData.size();
+            long start = startRowOfCurrentPage + 1;
+            long end = start + tsize - 1;
+            dataSizeLabel.setText(message("Rows") + ": "
+                    + "[" + start + "-" + end + "]" + tsize
+                    + (dataSize > 0 ? "/" + dataSize : ""));
         }
     }
 
@@ -260,32 +278,6 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
 
     public List<P> readPageData(Connection conn) {
         return null;
-    }
-
-    protected void tableChanged() {
-        if (isSettingValues) {
-            return;
-        }
-        tableChanged(true);
-    }
-
-    public void tableChanged(boolean changed) {
-        if (isSettingValues) {
-            return;
-        }
-        updateStatus();
-    }
-
-    public void updateStatus() {
-        checkSelected();
-        if (dataSizeLabel != null) {
-            int tsize = tableData == null ? 0 : tableData.size();
-            long start = startRowOfCurrentPage + 1;
-            long end = start + tsize - 1;
-            dataSizeLabel.setText(message("Rows") + ": "
-                    + "[" + start + "-" + end + "]" + tsize
-                    + (dataSize > 0 ? "/" + dataSize : ""));
-        }
     }
 
     protected void checkSelected() {

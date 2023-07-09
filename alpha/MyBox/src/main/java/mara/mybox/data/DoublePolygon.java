@@ -17,16 +17,13 @@ import javafx.scene.shape.Polygon;
 public class DoublePolygon implements DoubleShape {
 
     private List<DoublePoint> points;
-    private Polygon polygon;
 
     public DoublePolygon() {
         points = new ArrayList<>();
-        polygon = new Polygon();
     }
 
     public boolean add(double x, double y) {
         points.add(new DoublePoint(x, y));
-        getPolygon();
         return true;
     }
 
@@ -35,7 +32,6 @@ public class DoublePolygon implements DoubleShape {
             return false;
         }
         points.addAll(ps);
-        getPolygon();
         return true;
     }
 
@@ -63,7 +59,6 @@ public class DoublePolygon implements DoubleShape {
                 break;
             }
         }
-        getPolygon();
         return true;
     }
 
@@ -72,13 +67,11 @@ public class DoublePolygon implements DoubleShape {
             return false;
         }
         points.remove(i);
-        getPolygon();
         return true;
     }
 
     public boolean removeLast() {
         if (remove(points.size() - 1)) {
-            getPolygon();
             return true;
         } else {
             return false;
@@ -120,24 +113,23 @@ public class DoublePolygon implements DoubleShape {
 
     @Override
     public boolean contains(double x, double y) {
-        return isValid() && polygon.contains(x, y);
+        return isValid() && makePolygon().contains(x, y);
     }
 
     @Override
     public DoubleRectangle getBound() {
-        Bounds bound = polygon.getBoundsInLocal();
+        Bounds bound = makePolygon().getBoundsInLocal();
         return new DoubleRectangle(bound.getMinX(), bound.getMinY(), bound.getMaxX(), bound.getMaxY());
     }
 
-    public Polygon getPolygon() {
-        polygon = new Polygon();
+    public Polygon makePolygon() {
+        Polygon polygon = new Polygon();
         polygon.getPoints().addAll(getData());
         return polygon;
     }
 
     public void clear() {
         points.clear();
-        polygon = new Polygon();
     }
 
     public List<DoublePoint> getPoints() {
@@ -205,10 +197,6 @@ public class DoublePolygon implements DoubleShape {
 
     public void setPoints(List<DoublePoint> points) {
         this.points = points;
-    }
-
-    public void setPolygon(Polygon polygon) {
-        this.polygon = polygon;
     }
 
 }

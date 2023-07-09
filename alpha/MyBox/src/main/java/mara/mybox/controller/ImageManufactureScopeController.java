@@ -305,43 +305,43 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
             return;
         }
         if (scope.getScopeType() == ScopeType.Matting) {
-            int ix = (int) Math.round(p.getX());
-            int iy = (int) Math.round(p.getY());
-            scope.addPoint(ix, iy);
-            pointsList.getItems().add(ix + "," + iy);
-            pointsList.getSelectionModel().selectLast();
+            int x = (int) Math.round(p.getX());
+            int y = (int) Math.round(p.getY());
+            pointsController.isSettingValues = true;
+            pointsController.tableData.add(new DoublePoint(x, y));
+            pointsController.isSettingValues = false;
+            scope.addPoint(x, y);
             indicateScope();
         } else {
             super.paneClicked(event, p);
             switch (scope.getScopeType()) {
                 case Rectangle:
-                case RectangleColor:
                     if (!scope.getRectangle().same(maskRectangleData)) {
                         scope.setRectangle(maskRectangleData.cloneValues());
                         indicateScope();
                     }
                     break;
                 case Circle:
-                case CircleColor:
                     if (!scope.getCircle().same(maskCircleData)) {
                         scope.setCircle(maskCircleData.cloneValues());
                         indicateScope();
                     }
                     break;
                 case Ellipse:
-                case EllipseColor:
                     if (!scope.getEllipse().same(maskEllipseData)) {
                         scope.setEllipse(maskEllipseData.cloneValues());
                         indicateScope();
                     }
                     break;
                 case Polygon:
-                case PolygonColor:
                     if (!scope.getPolygon().same(maskPolygonData)) {
-                        pointsList.getItems().clear();
-                        for (DoublePoint mp : maskPolygonData.getPoints()) {
-                            pointsList.getItems().add((int) mp.getX() + "," + (int) mp.getY());
+                        pointsController.isSettingValues = true;
+                        pointsController.tableData.clear();
+                        for (DoublePoint d : maskPolygonData.getPoints()) {
+                            pointsController.tableData.add(
+                                    new DoublePoint(Math.round(d.getX()), Math.round(d.getY())));
                         }
+                        pointsController.isSettingValues = false;
                         scope.setPolygon(maskPolygonData.cloneValues());
                         indicateScope();
                     }
