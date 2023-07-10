@@ -502,7 +502,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
 
     @Override
     public void setMaskRectangleDefaultValues() {
-        if (imageView == null || maskPane == null || maskRectangleLine == null) {
+        if (imageView == null || maskPane == null || maskRectangle == null) {
             return;
         }
         if (maskRectangleData == null

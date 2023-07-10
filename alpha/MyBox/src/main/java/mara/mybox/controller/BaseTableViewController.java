@@ -3,16 +3,21 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.cell.TableRowSelectionCell;
 import mara.mybox.value.AppVariables;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -27,7 +32,9 @@ public abstract class BaseTableViewController<P> extends BaseController {
     @FXML
     protected TableView<P> tableView;
     @FXML
-    protected CheckBox lostFocusCommitCheck;
+    protected TableColumn<P, Boolean> rowsSelectionColumn;
+    @FXML
+    protected CheckBox allRowsCheck, lostFocusCommitCheck;
 
     @Override
     public void initValues() {
@@ -64,11 +71,52 @@ public abstract class BaseTableViewController<P> extends BaseController {
                 tableChanged();
             });
 
+            initColumns();
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
+    protected void initColumns() {
+        try {
+            if (allRowsCheck != null) {
+                allRowsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        if (isSettingValues) {
+                            return;
+                        }
+                        if (newValue) {
+                            tableView.getSelectionModel().selectAll();
+                        } else {
+                            tableView.getSelectionModel().clearSelection();
+                        }
+                    }
+                });
+            }
+
+            if (rowsSelectionColumn != null) {
+                tableView.setEditable(true);
+                rowsSelectionColumn.setCellFactory(TableRowSelectionCell.create(tableView));
+
+                rowsSelectionColumn.setPrefWidth(UserConfig.getInt("RowsSelectionColumnWidth", 100));
+                rowsSelectionColumn.widthProperty().addListener(new ChangeListener<Number>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Number> o, Number ov, Number nv) {
+                        UserConfig.setInt("RowsSelectionColumnWidth", nv.intValue());
+                    }
+                });
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e.toString());
+        }
+    }
+
+    /*
+        data
+     */
     protected void tableChanged() {
         tableChanged(true);
     }
@@ -87,6 +135,29 @@ public abstract class BaseTableViewController<P> extends BaseController {
         if (lostFocusCommitCheck != null) {
             AppVariables.lostFocusCommitData(lostFocusCommitCheck.isSelected());
         }
+    }
+
+    /*
+        selection
+     */
+    public void selectNone() {
+        if (allRowsCheck != null) {
+            allRowsCheck.setSelected(false);
+        } else {
+            tableView.getSelectionModel().clearSelection();
+        }
+    }
+
+    public void selectAll() {
+        if (allRowsCheck != null) {
+            allRowsCheck.setSelected(true);
+        } else {
+            tableView.getSelectionModel().selectAll();
+        }
+    }
+
+    protected boolean isNoneSelected() {
+        return tableView.getSelectionModel().getSelectedIndices().isEmpty();
     }
 
     protected List<P> selectedItems() {
@@ -109,6 +180,37 @@ public abstract class BaseTableViewController<P> extends BaseController {
         return null;
     }
 
+    protected int selectedIndix() {
+        try {
+            int index = tableView.getSelectionModel().getSelectedIndex();
+            if (index >= 0 && index < tableData.size()) {
+                return index;
+            }
+            List<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
+            if (selected != null && !selected.isEmpty()) {
+                return selected.get(0);
+            }
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+        }
+        return -1;
+    }
+
+    protected P selectedItem() {
+        try {
+            int index = selectedIndix();
+            if (index >= 0 && index < tableData.size()) {
+                return tableData.get(index);
+            }
+        } catch (Exception e) {
+            MyBoxLog.console(e);
+        }
+        return null;
+    }
+
+    /*
+        actions
+     */
     @FXML
     @Override
     public void deleteAction() {

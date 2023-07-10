@@ -88,6 +88,11 @@ License:    Apache License Version 2.0
       </FlowPane>
       <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
          <columns>
+            <TableColumn fx:id="rowsSelectionColumn" maxWidth="1.7976931348623157E308" prefWidth="-1.0">
+               <graphic>
+                  <CheckBox fx:id="allRowsCheck" mnemonicParsing="false" text="%TableRow" />
+               </graphic>
+            </TableColumn>
             <TableColumn fx:id="indexColumn" editable="false" text="%Index" />
             <TableColumn prefWidth="160.0" text="x" fx:id="xColumn" />
             <TableColumn fx:id="yColumn" prefWidth="160.0" text="y" />

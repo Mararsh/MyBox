@@ -180,6 +180,18 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
                 * imageYRatio();
     }
 
+    public double imageOffsetX(MouseEvent event) {
+        return (event.getX() - mouseX) * imageXRatio();
+    }
+
+    public double imageOffsetY(MouseEvent event) {
+        return (event.getY() - mouseY) * imageYRatio();
+    }
+
+    public boolean coordinateChanged(double offsetX, double offsetY) {
+        return Math.abs(offsetX) > 0.01 || Math.abs(offsetY) > 0.01;
+    }
+
     @FXML
     public void paneClicked(MouseEvent event) {
         if (imageView.getImage() == null) {

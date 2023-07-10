@@ -41,7 +41,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                 return;
             }
             isSettingValues = true;
-            String tips = "";
+            String tips;
             switch (scope.getScopeType()) {
                 case All:
                     tips = message("WholeImage");
@@ -59,7 +59,6 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     areaBox.getChildren().clear();
                     areaBox.getChildren().add(rectangleBox);
                     rectangleLabel.setText(message("Rectangle"));
-
                     break;
 
                 case Circle:
@@ -186,7 +185,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
             outlineSource = null;
 
             pointsController.clearAction();
-            colorsList.getItems().clear();
+//            colorsList.getItems().clear();
             scopeDistanceSelector.getItems().clear();
             areaExcludedCheck.setSelected(false);
             colorExcludedCheck.setSelected(false);
@@ -238,6 +237,9 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
 
             setScopeControls();
             setScopeValues();
+
+            indicateScope();
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -284,7 +286,6 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     }
 
                     NodeStyleTools.setTooltip(scopeDistanceSelector, new Tooltip("0~" + max));
-                    String value = scopeDistanceSelector.getValue();
                     List<String> vList = new ArrayList<>();
                     for (int i = 0; i <= max; i += step) {
                         vList.add(i + "");
@@ -292,12 +293,10 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     isSettingValues = true;
                     scopeDistanceSelector.getItems().clear();
                     scopeDistanceSelector.getItems().addAll(vList);
-                    scopeDistanceSelector.getSelectionModel().select(value);
+                    scopeDistanceSelector.setValue("20");
                     isSettingValues = false;
 
-                    if (checkDistanceValue()) {
-                        indicateScope();
-                    }
+                    checkDistanceValue();
 
                 } catch (Exception e) {
                     MyBoxLog.error(e);
@@ -346,7 +345,6 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
             valid = false;
         }
         if (valid) {

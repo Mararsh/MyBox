@@ -76,7 +76,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             if (inImage == null) {
                 return null;
             }
-            if (maskRectangleLine != null && maskRectangleLine.isVisible()) {
+            if (maskRectangle != null && maskRectangle.isVisible()) {
                 if (maskRectangleData.getSmallX() == 0
                         && maskRectangleData.getSmallY() == 0
                         && maskRectangleData.getBigX() == (int) inImage.getWidth() - 1
@@ -85,13 +85,13 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                 }
                 return CropTools.cropOutsideFx(inImage, maskRectangleData, bgColor);
 
-            } else if (maskCircleLine != null && maskCircleLine.isVisible()) {
+            } else if (maskCircle != null && maskCircle.isVisible()) {
                 return CropTools.cropOutsideFx(inImage, maskCircleData, bgColor);
 
-            } else if (maskEllipseLine != null && maskEllipseLine.isVisible()) {
+            } else if (maskEllipse != null && maskEllipse.isVisible()) {
                 return CropTools.cropOutsideFx(inImage, maskEllipseData, bgColor);
 
-            } else if (maskPolygonLine != null && maskPolygonLine.isVisible()) {
+            } else if (maskPolygon != null && maskPolygon.isVisible()) {
                 return CropTools.cropOutsideFx(inImage, maskPolygonData, bgColor);
 
             } else {
@@ -269,7 +269,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
     @FXML
     @Override
     public void selectAllAction() {
-        if (imageView.getImage() == null || maskRectangleLine == null || !maskRectangleLine.isVisible()) {
+        if (imageView.getImage() == null || maskRectangle == null || !maskRectangle.isVisible()) {
             return;
         }
         maskRectangleData = new DoubleRectangle(0, 0, getImageWidth() - 1, getImageHeight() - 1);
@@ -298,7 +298,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             return;
         }
         imageController.requestMouse();
-        if (maskRectangleLine == null || !maskRectangleLine.isVisible()) {
+        if (maskRectangle == null || !maskRectangle.isVisible()) {
             if (imageChanged) {
                 imageController.loadImage(imageView.getImage());
 

@@ -11,13 +11,11 @@ import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.TableColumn;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -32,7 +30,6 @@ import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.SingletonTask;
-import mara.mybox.fxml.cell.TableRowSelectionCell;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.NumberTools;
 import static mara.mybox.value.Languages.message;
@@ -54,11 +51,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
     protected SimpleBooleanProperty loadedNotify, selectedNotify;
 
     @FXML
-    protected TableColumn<P, Boolean> rowsSelectionColumn;
-    @FXML
     protected Label dataSizeLabel, selectedLabel, pageLabel;
-    @FXML
-    protected CheckBox allRowsCheck;
     @FXML
     protected Button moveUpButton, moveDownButton, moveTopButton, refreshButton,
             deleteItemsButton, editItemButton, copyItemButton;
@@ -137,8 +130,6 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
                     itemDoubleClicked();
                 }
             });
-
-            initColumns();
 
             checkSelected();
 
@@ -452,98 +443,6 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
     public boolean isDataSizeLoaded() {
         return dataSizeLoaded;
     }
-
-    /*
-        columns
-     */
-    protected void initColumns() {
-        try {
-            if (allRowsCheck != null) {
-                allRowsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        if (isSettingValues) {
-                            return;
-                        }
-                        if (newValue) {
-                            tableView.getSelectionModel().selectAll();
-                        } else {
-                            tableView.getSelectionModel().clearSelection();
-                        }
-                    }
-                });
-            }
-
-            if (rowsSelectionColumn != null) {
-                tableView.setEditable(true);
-                rowsSelectionColumn.setCellFactory(TableRowSelectionCell.create(tableView));
-
-                rowsSelectionColumn.setPrefWidth(UserConfig.getInt("RowsSelectionColumnWidth", 100));
-                rowsSelectionColumn.widthProperty().addListener(new ChangeListener<Number>() {
-                    @Override
-                    public void changed(ObservableValue<? extends Number> o, Number ov, Number nv) {
-                        UserConfig.setInt("RowsSelectionColumnWidth", nv.intValue());
-                    }
-                });
-
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e.toString());
-        }
-    }
-
-    /*
-        selection
-     */
-    public void selectNone() {
-        if (allRowsCheck != null) {
-            allRowsCheck.setSelected(false);
-        } else {
-            tableView.getSelectionModel().clearSelection();
-        }
-    }
-
-    public void selectAll() {
-        if (allRowsCheck != null) {
-            allRowsCheck.setSelected(true);
-        } else {
-            tableView.getSelectionModel().selectAll();
-        }
-    }
-
-    protected boolean isNoneSelected() {
-        return tableView.getSelectionModel().getSelectedIndices().isEmpty();
-    }
-
-    protected int selectedIndix() {
-        try {
-            int index = tableView.getSelectionModel().getSelectedIndex();
-            if (index >= 0 && index < tableData.size()) {
-                return index;
-            }
-            List<Integer> selected = tableView.getSelectionModel().getSelectedIndices();
-            if (selected != null && !selected.isEmpty()) {
-                return selected.get(0);
-            }
-        } catch (Exception e) {
-            MyBoxLog.console(e);
-        }
-        return -1;
-    }
-
-    protected P selectedItem() {
-        try {
-            int index = selectedIndix();
-            if (index >= 0 && index < tableData.size()) {
-                return tableData.get(index);
-            }
-        } catch (Exception e) {
-            MyBoxLog.console(e);
-        }
-        return null;
-    }
-
 
     /*
         data

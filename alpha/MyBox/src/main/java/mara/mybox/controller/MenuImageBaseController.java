@@ -102,7 +102,7 @@ public class MenuImageBaseController extends MenuController {
             }
 
             if (selectAreaCheck != null) {
-                if (imageController.maskRectangleLine == null) {
+                if (imageController.maskRectangle == null) {
                     selectAreaCheck.setDisable(true);
                 } else if (imageController.selectAreaCheck != null) {
                     selectAreaCheck.setSelected(imageController.selectAreaCheck.isSelected());
