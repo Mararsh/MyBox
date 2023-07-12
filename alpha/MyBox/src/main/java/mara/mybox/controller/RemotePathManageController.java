@@ -559,7 +559,7 @@ public class RemotePathManageController extends FilesTreeController {
             controller.openPath(profile);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

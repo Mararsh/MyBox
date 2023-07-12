@@ -89,7 +89,7 @@ public class ColorPalettePopupController extends BaseChildController {
             tableColor = new TableColor();
             tableColorPalette.setTableColor(tableColor);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -127,7 +127,7 @@ public class ColorPalettePopupController extends BaseChildController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -140,7 +140,7 @@ public class ColorPalettePopupController extends BaseChildController {
             parentRect = rect;
             loadColors();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -242,7 +242,7 @@ public class ColorPalettePopupController extends BaseChildController {
             popEventMenu(mouseEvent, items);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -265,7 +265,7 @@ public class ColorPalettePopupController extends BaseChildController {
             popEventMenu(mouseEvent, items);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -329,7 +329,7 @@ public class ColorPalettePopupController extends BaseChildController {
             controller.load(parent, rect);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

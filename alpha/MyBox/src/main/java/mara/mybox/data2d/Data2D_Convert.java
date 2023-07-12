@@ -69,7 +69,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             if (task != null) {
                 task.setError(e.toString());
             } else {
-                MyBoxLog.error(e.toString());
+                MyBoxLog.error(e);
             }
         }
         return dataTable;
@@ -94,7 +94,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             if (task != null) {
                 task.setError(e.toString());
             } else {
-                MyBoxLog.error(e.toString());
+                MyBoxLog.error(e);
             }
             return null;
         }
@@ -135,7 +135,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             if (task != null) {
                 task.setError(e.toString());
             }
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return -5;
         }
     }
@@ -176,7 +176,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             if (task != null) {
                 task.setError(e.toString());
             } else {
-                MyBoxLog.error(e.toString());
+                MyBoxLog.error(e);
             }
             return null;
         }
@@ -233,7 +233,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             if (task != null) {
                 task.setError(e.toString());
             } else {
-                MyBoxLog.error(e.toString());
+                MyBoxLog.error(e);
             }
             return null;
         }
@@ -277,7 +277,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             if (task != null) {
                 task.setError(e.toString());
             }
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -320,7 +320,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             if (task != null) {
                 task.setError(e.toString());
             } else {
-                MyBoxLog.error(e.toString());
+                MyBoxLog.error(e);
             }
             return null;
         }
@@ -409,7 +409,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             if (task != null) {
                 task.setError(e.toString());
             } else {
-                MyBoxLog.error(e.toString());
+                MyBoxLog.error(e);
             }
             return null;
         }
@@ -459,7 +459,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             if (task != null) {
                 task.setError(e.toString());
             } else {
-                MyBoxLog.error(e.toString());
+                MyBoxLog.error(e);
             }
             return null;
         }
@@ -558,7 +558,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                 if (task != null) {
                     task.setError(e.toString());
                 } else {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                 }
                 return null;
             }
@@ -576,7 +576,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             if (task != null) {
                 task.setError(e.toString());
             } else {
-                MyBoxLog.error(e.toString());
+                MyBoxLog.error(e);
             }
             return null;
         }
@@ -665,7 +665,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
             if (task != null) {
                 task.setError(e.toString());
             } else {
-                MyBoxLog.error(e.toString());
+                MyBoxLog.error(e);
             }
             return null;
         }
@@ -724,7 +724,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                 if (task != null) {
                     task.setError(e.toString());
                 } else {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                 }
                 return null;
             }
@@ -758,7 +758,7 @@ public abstract class Data2D_Convert extends Data2D_Edit {
                 if (task != null) {
                     task.setError(e.toString());
                 } else {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                 }
                 return null;
             }

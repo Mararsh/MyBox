@@ -43,7 +43,7 @@ public class DataQueryController extends BaseController {
             queryController.setControls(dataController, initCondition, tableDefinition, prefixEditable, supportTop);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

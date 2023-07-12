@@ -84,7 +84,7 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
             });
             angleBox.getSelectionModel().select(0);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }

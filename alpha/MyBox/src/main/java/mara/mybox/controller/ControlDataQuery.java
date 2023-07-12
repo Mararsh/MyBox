@@ -105,7 +105,7 @@ public class ControlDataQuery extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -142,7 +142,7 @@ public class ControlDataQuery extends BaseController {
             titleInput.requestFocus();
             getMyStage().setTitle(dataController.baseTitle + " " + baseTitle);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -162,7 +162,7 @@ public class ControlDataQuery extends BaseController {
                 listView.getItems().add(node);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -293,7 +293,7 @@ public class ControlDataQuery extends BaseController {
             MenuController controller = MenuController.open(this, textArea, mouseEvent.getScreenX(), mouseEvent.getScreenY());
             controller.addFlowPane(buttons);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -398,7 +398,7 @@ public class ControlDataQuery extends BaseController {
             popEventMenu(mouseEvent, items);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -436,7 +436,7 @@ public class ControlDataQuery extends BaseController {
             popEventMenu(mouseEvent, items);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

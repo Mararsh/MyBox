@@ -37,7 +37,7 @@ public class WebFavoritesController extends TreeManageController {
             goButton.disableProperty().bind(Bindings.isEmpty(nodeController.nameInput.textProperty()));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

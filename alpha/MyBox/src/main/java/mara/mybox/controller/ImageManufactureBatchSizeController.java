@@ -125,7 +125,7 @@ public class ImageManufactureBatchSizeController extends BaseImageManufactureBat
             scaleBox.getSelectionModel().select(0);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -249,7 +249,7 @@ public class ImageManufactureBatchSizeController extends BaseImageManufactureBat
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -272,7 +272,7 @@ public class ImageManufactureBatchSizeController extends BaseImageManufactureBat
 
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
 

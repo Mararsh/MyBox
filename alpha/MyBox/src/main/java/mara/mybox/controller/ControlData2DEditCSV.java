@@ -76,7 +76,7 @@ public class ControlData2DEditCSV extends BaseController {
             textArea.setWrapText(wrapCheck.isSelected());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -88,7 +88,7 @@ public class ControlData2DEditCSV extends BaseController {
             baseTitle = dataController.baseTitle;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -97,7 +97,7 @@ public class ControlData2DEditCSV extends BaseController {
             data2D = data;
             checkData();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -265,7 +265,7 @@ public class ControlData2DEditCSV extends BaseController {
             isSettingValues = false;
             okAction();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

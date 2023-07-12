@@ -140,7 +140,7 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
             updateStatus();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -160,7 +160,7 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
             validateData();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -388,7 +388,7 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
             notifyLoaded();
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -544,7 +544,7 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
             tableChanged(true);
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -670,7 +670,7 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
             String text = TextTools.dataText(data, ",", names, null);
             TextClipboardTools.copyToSystemClipboard(this, text);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -682,7 +682,7 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
             }
             toMyBoxClipboard(null, data2D.toColumns(names), data);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -712,7 +712,7 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
             };
             start(copyTask, false);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

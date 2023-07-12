@@ -122,7 +122,7 @@ public class FilesCompareController extends BaseController {
             );
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -144,7 +144,7 @@ public class FilesCompareController extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -157,7 +157,7 @@ public class FilesCompareController extends BaseController {
             }
             file1Input.setText(file.getAbsolutePath());
         } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
+//            MyBoxLog.error(e);
         }
     }
 
@@ -170,7 +170,7 @@ public class FilesCompareController extends BaseController {
             }
             file2Input.setText(file.getAbsolutePath());
         } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
+//            MyBoxLog.error(e);
         }
     }
 
@@ -193,7 +193,7 @@ public class FilesCompareController extends BaseController {
             }
             openLink(link);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

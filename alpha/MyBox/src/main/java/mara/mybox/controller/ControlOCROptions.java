@@ -114,7 +114,7 @@ public class ControlOCROptions extends BaseController {
                     .baseName(baseName).savedName(OCRTools.TessDataPath).init();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -480,7 +480,7 @@ public class ControlOCROptions extends BaseController {
             openHtml(htmFile);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -640,7 +640,7 @@ public class ControlOCROptions extends BaseController {
             return pb.start();
         } catch (Exception e) {
             popError(e.toString());
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

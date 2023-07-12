@@ -42,7 +42,7 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -77,7 +77,7 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -95,7 +95,7 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
             backupController.setParameters(this, baseName);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -146,7 +146,7 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -154,7 +154,7 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
         try {
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -162,7 +162,7 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
         try {
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -180,7 +180,7 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -243,7 +243,7 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
             objectsRange = null;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -259,7 +259,7 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -294,7 +294,7 @@ public abstract class BaseFileEditorController_Left extends BaseFileEditorContro
                 }
             });
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

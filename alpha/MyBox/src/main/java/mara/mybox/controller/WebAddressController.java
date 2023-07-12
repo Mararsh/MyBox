@@ -53,7 +53,7 @@ public class WebAddressController extends BaseWebViewController {
                 tableWebHistory = new TableWebHistory();
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -175,7 +175,7 @@ public class WebAddressController extends BaseWebViewController {
             }
             super.pageLoaded();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

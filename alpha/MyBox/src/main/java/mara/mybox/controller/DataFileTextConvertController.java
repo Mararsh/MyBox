@@ -46,7 +46,7 @@ public class DataFileTextConvertController extends BaseDataConvertController {
             readOptionsController.setControls(baseName + "Read", true, true);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

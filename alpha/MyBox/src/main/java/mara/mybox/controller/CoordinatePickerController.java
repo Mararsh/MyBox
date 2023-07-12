@@ -51,7 +51,7 @@ public class CoordinatePickerController extends LocationInMapController {
             controller.loadCoordinate(longitude, latitude);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

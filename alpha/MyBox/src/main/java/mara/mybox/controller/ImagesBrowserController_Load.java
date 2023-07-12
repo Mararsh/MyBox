@@ -95,7 +95,7 @@ public abstract class ImagesBrowserController_Load extends ImageViewerController
 
             loadImages(files);
         } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
+//            MyBoxLog.error(e);
         }
     }
 
@@ -108,7 +108,7 @@ public abstract class ImagesBrowserController_Load extends ImageViewerController
             }
             loadImages(files);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -131,7 +131,7 @@ public abstract class ImagesBrowserController_Load extends ImageViewerController
             }
             loadImages();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -152,7 +152,7 @@ public abstract class ImagesBrowserController_Load extends ImageViewerController
             }
             loadImages();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -179,7 +179,7 @@ public abstract class ImagesBrowserController_Load extends ImageViewerController
             }
             loadImages();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -245,7 +245,7 @@ public abstract class ImagesBrowserController_Load extends ImageViewerController
             makeImagesNevigator(false);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

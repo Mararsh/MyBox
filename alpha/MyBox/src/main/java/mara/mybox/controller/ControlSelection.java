@@ -43,7 +43,7 @@ public class ControlSelection extends BaseTablePagesController<List<String>> {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -54,7 +54,7 @@ public class ControlSelection extends BaseTablePagesController<List<String>> {
             setName(name);
             setTitle(title);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

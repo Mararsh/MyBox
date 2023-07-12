@@ -94,7 +94,7 @@ public class ControlMap extends BaseController {
                 mapOptionsController.setParameters(this);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -119,7 +119,7 @@ public class ControlMap extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -250,7 +250,7 @@ public class ControlMap extends BaseController {
                 webEngine.executeScript("setLanguage(\"" + mapOptions.getLanguage() + "\");");
             });
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -264,7 +264,7 @@ public class ControlMap extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -292,7 +292,7 @@ public class ControlMap extends BaseController {
                 webEngine.executeScript("hideStandardLayer();");
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -310,7 +310,7 @@ public class ControlMap extends BaseController {
                 webEngine.executeScript("hideSatelliteLayer();");
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -328,7 +328,7 @@ public class ControlMap extends BaseController {
                 webEngine.executeScript("hideRoadLayer();");
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -346,7 +346,7 @@ public class ControlMap extends BaseController {
                 webEngine.executeScript("hideTrafficLayer();");
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -639,7 +639,7 @@ public class ControlMap extends BaseController {
                     return true;
                 } catch (Exception e) {
                     error = e.toString();
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                     return false;
                 }
 

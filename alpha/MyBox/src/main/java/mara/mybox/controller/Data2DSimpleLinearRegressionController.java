@@ -87,7 +87,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
             initResidualPane();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -122,7 +122,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -145,7 +145,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -181,7 +181,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
 
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -225,7 +225,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
             makeResidualData();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -421,7 +421,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
                     .setDisplayFittedLine(fittedLineCheck.isSelected())
                     .displayControls();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -435,7 +435,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
                     + " = " + DoubleTools.percentage(residualInside, residualData.size(), 2) + "%")
                     .displayControls(residualColumns.size() - 2);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -462,7 +462,7 @@ public class Data2DSimpleLinearRegressionController extends BaseData2DRegression
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

@@ -81,7 +81,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
             chartTypesController.thisPane.disableProperty().bind(chartController.buttonsPane.disableProperty());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -104,7 +104,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
             changeChartAsType();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -168,7 +168,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
 
             return initChart();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -207,7 +207,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -236,7 +236,7 @@ public class Data2DChartXYController extends BaseData2DChartController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

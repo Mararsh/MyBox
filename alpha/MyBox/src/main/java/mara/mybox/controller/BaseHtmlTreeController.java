@@ -46,7 +46,7 @@ public class BaseHtmlTreeController extends BaseTreeTableViewController<HtmlNode
             rvalueColumn.setCellFactory(new TreeTableTextTrimCell());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

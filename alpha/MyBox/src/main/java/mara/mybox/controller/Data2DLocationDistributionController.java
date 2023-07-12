@@ -86,7 +86,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             linkCheck.visibleProperty().bind(accumulateCheck.selectedProperty());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -158,7 +158,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -247,7 +247,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             frameid = -1;
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -543,7 +543,7 @@ public class Data2DLocationDistributionController extends BaseData2DChartControl
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

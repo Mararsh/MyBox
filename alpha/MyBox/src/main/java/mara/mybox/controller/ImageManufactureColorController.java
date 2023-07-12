@@ -185,7 +185,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
 
             checkDistance();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -374,7 +374,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
             refreshStyle(setBox);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -406,7 +406,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
             valueSelector.getSelectionModel().select(valueList.size() / 2);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -711,7 +711,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                                     = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);
                             controller.loadFiles(files);
                         } catch (Exception e) {
-                            MyBoxLog.error(e.toString());
+                            MyBoxLog.error(e);
                         }
                     }
                 });

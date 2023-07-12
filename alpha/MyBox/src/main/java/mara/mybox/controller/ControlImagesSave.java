@@ -141,7 +141,7 @@ public class ControlImagesSave extends BaseController {
             imageInfosChanged();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -529,7 +529,7 @@ public class ControlImagesSave extends BaseController {
                         updateLabel(msg, i + 1);
                     }
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                 }
                 return !fileNames.isEmpty();
             }
@@ -799,7 +799,7 @@ public class ControlImagesSave extends BaseController {
                     }
                     ppt.write(tmpFile);
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                     return false;
                 }
                 return FileTools.rename(tmpFile, targetFile);

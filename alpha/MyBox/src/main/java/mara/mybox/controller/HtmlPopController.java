@@ -161,7 +161,7 @@ public class HtmlPopController extends BaseWebViewController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -180,7 +180,7 @@ public class HtmlPopController extends BaseWebViewController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -194,7 +194,7 @@ public class HtmlPopController extends BaseWebViewController {
             controller.openAddress(parent.baseName, address);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -209,7 +209,7 @@ public class HtmlPopController extends BaseWebViewController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

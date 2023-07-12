@@ -203,7 +203,7 @@ public class MyBoxLoadingController implements Initializable {
             thread.start();
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -249,7 +249,7 @@ public class MyBoxLoadingController implements Initializable {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -307,7 +307,7 @@ public class MyBoxLoadingController implements Initializable {
 
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }

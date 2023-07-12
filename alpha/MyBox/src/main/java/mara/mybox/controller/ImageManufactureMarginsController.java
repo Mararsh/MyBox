@@ -113,7 +113,7 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
             );
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -175,7 +175,7 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
             imageController.showMaskRectangle();
             commentsLabel.setText(Languages.message("DragMarginsComments"));
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }

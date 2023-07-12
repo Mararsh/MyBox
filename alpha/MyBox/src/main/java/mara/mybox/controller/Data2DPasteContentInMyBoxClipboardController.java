@@ -44,7 +44,7 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
             super.initValues();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -84,7 +84,7 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -101,7 +101,7 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

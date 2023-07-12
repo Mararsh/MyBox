@@ -63,7 +63,7 @@ public class HtmlSnapController extends WebAddressController {
             super.initValues();
             lastCodesLen = lastHtmlLen = 0;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -97,7 +97,7 @@ public class HtmlSnapController extends WebAddressController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -154,7 +154,7 @@ public class HtmlSnapController extends WebAddressController {
                             startSnap();
 
                         } catch (Exception e) {
-                            MyBoxLog.error(e.toString());
+                            MyBoxLog.error(e);
                             stopSnap();
                         }
                     });
@@ -163,7 +163,7 @@ public class HtmlSnapController extends WebAddressController {
             }, 0, delay);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -209,7 +209,7 @@ public class HtmlSnapController extends WebAddressController {
             }, 2000);    // make sure page is loaded before snapping
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -308,7 +308,7 @@ public class HtmlSnapController extends WebAddressController {
                     myStage.setHeight(orginalStageHeight);
                 }
             } catch (Exception e) {
-                MyBoxLog.error(e.toString());
+                MyBoxLog.error(e);
             }
         });
     }

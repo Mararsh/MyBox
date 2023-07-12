@@ -38,7 +38,7 @@ public abstract class MainMenuController_Base extends BaseController {
                 return parentController.openStage(newFxml);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

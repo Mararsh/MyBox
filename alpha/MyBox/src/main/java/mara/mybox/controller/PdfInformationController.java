@@ -41,7 +41,7 @@ public class PdfInformationController extends HtmlTableController {
 
             displayHtml();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

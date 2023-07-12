@@ -99,7 +99,7 @@ public class ImageAnalyseController extends ImageViewerController {
 
             dominantController.analyseController = this;
 
-            rectDrawnNotify.addListener(new ChangeListener<Boolean>() {
+            maskShapeChangedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     loadData();
@@ -118,7 +118,7 @@ public class ImageAnalyseController extends ImageViewerController {
             showRightPane();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -132,7 +132,7 @@ public class ImageAnalyseController extends ImageViewerController {
 
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -216,7 +216,7 @@ public class ImageAnalyseController extends ImageViewerController {
             if (task != null) {
                 task.setError(e.toString());
             } else {
-                MyBoxLog.error(e.toString());
+                MyBoxLog.error(e);
             }
             return null;
         }
@@ -267,7 +267,7 @@ public class ImageAnalyseController extends ImageViewerController {
             statisticController.loadContents(html);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -290,7 +290,7 @@ public class ImageAnalyseController extends ImageViewerController {
             s.append("</TR>\n");
             return s.toString();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return "";
         }
     }
@@ -306,7 +306,7 @@ public class ImageAnalyseController extends ImageViewerController {
                     + rgb + "; \">&nbsp;</DIV></DIV>\n"
                     + "</DIV></TD>\n";
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return value + "";
         }
     }
@@ -463,7 +463,7 @@ public class ImageAnalyseController extends ImageViewerController {
             componentsLegendCheck.setSelected(UserConfig.getBoolean("ImageHistLegend", true));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -628,7 +628,7 @@ public class ImageAnalyseController extends ImageViewerController {
             barchart.setLegendVisible(false);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -878,7 +878,7 @@ public class ImageAnalyseController extends ImageViewerController {
             start(task);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

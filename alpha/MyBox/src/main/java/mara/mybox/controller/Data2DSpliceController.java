@@ -63,7 +63,7 @@ public class Data2DSpliceController extends BaseData2DController {
 
             checkButtons();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -89,7 +89,7 @@ public class Data2DSpliceController extends BaseData2DController {
             targetController.setParameters(this, null);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -213,7 +213,7 @@ public class Data2DSpliceController extends BaseData2DController {
             if (task != null) {
                 task.setError(e.toString());
             }
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         if (columns == null || columns.isEmpty()) {
             return null;
@@ -248,7 +248,7 @@ public class Data2DSpliceController extends BaseData2DController {
                 if (task != null) {
                     task.setError(e.toString());
                 }
-                MyBoxLog.error(e.toString());
+                MyBoxLog.error(e);
             }
             try (CSVParser parser = CSVParser.parse(csvB.getFile(), csvB.getCharset(), csvB.cvsFormat())) {
                 for (CSVRecord record : parser) {
@@ -270,14 +270,14 @@ public class Data2DSpliceController extends BaseData2DController {
                 if (task != null) {
                     task.setError(e.toString());
                 }
-                MyBoxLog.error(e.toString());
+                MyBoxLog.error(e);
             }
 
         } catch (Exception e) {
             if (task != null) {
                 task.setError(e.toString());
             }
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         targetCSV.setColumns(columns).setColsNumber(columns.size()).setRowsNumber(rowCount);
         targetCSV.saveAttributes();
@@ -315,7 +315,7 @@ public class Data2DSpliceController extends BaseData2DController {
             if (task != null) {
                 task.setError(e.toString());
             }
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         int colLen = columns.size(), colLenA = columnsA.size(), colLenB = columnsB.size();
         if (size <= 0 || colLen == 0) {
@@ -379,7 +379,7 @@ public class Data2DSpliceController extends BaseData2DController {
             if (task != null) {
                 task.setError(e.toString());
             }
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         targetCSV.setColumns(columns).setColsNumber(columns.size()).setRowsNumber(rowCount);
         targetCSV.saveAttributes();

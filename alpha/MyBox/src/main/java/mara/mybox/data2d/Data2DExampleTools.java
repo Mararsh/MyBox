@@ -49,7 +49,7 @@ public class Data2DExampleTools {
 
             return items;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -193,7 +193,7 @@ public class Data2DExampleTools {
 
             return myMenu;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -485,7 +485,7 @@ public class Data2DExampleTools {
 
             return chinaMenu;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -864,7 +864,7 @@ public class Data2DExampleTools {
 
             return regressionMenu;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -951,7 +951,7 @@ public class Data2DExampleTools {
 
             return locationMenu;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -1190,7 +1190,7 @@ public class Data2DExampleTools {
 
             return pmMenu;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -1234,7 +1234,7 @@ public class Data2DExampleTools {
                 }
                 writer.flush();
             } catch (Exception e) {
-                MyBoxLog.error(e.toString());
+                MyBoxLog.error(e);
                 return false;
             }
             targetData.setFile(targetFile).setHasHeader(true).setCharset(charset).setDelimiter(",");
@@ -1242,7 +1242,7 @@ public class Data2DExampleTools {
             FileDeleteTools.delete(srcFile);
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }

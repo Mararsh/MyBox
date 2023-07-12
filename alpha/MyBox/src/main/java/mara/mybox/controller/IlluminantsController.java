@@ -47,7 +47,7 @@ public class IlluminantsController extends ChromaticityBaseController {
             initData();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -131,7 +131,7 @@ public class IlluminantsController extends ChromaticityBaseController {
                     + (String) run.get("procedure");
             webView.getEngine().loadContent("<pre>" + s + "</pre>");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

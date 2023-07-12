@@ -136,7 +136,7 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
             toColumn.getStyleClass().add("editable-column");
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -180,7 +180,7 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
             );
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

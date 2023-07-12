@@ -36,7 +36,7 @@ public class ControlSvgHtml extends ControlSvgOptions {
             webEngine.setJavaScriptEnabled(true);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

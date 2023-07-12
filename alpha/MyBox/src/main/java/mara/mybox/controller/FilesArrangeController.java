@@ -275,7 +275,7 @@ public class FilesArrangeController extends BaseBatchFileController {
             return true;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -405,7 +405,7 @@ public class FilesArrangeController extends BaseBatchFileController {
                     }
 
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                 }
             }
         });
@@ -475,7 +475,7 @@ public class FilesArrangeController extends BaseBatchFileController {
         try {
             browseURI(targetPathInputController.file.toURI());
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -617,7 +617,7 @@ public class FilesArrangeController extends BaseBatchFileController {
 
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
 

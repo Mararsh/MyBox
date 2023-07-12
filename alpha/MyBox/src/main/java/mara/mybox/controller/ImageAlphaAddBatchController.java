@@ -103,7 +103,7 @@ public class ImageAlphaAddBatchController extends BaseImageManufactureBatchContr
             checkOpacityAdd();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -182,7 +182,7 @@ public class ImageAlphaAddBatchController extends BaseImageManufactureBatchContr
             }
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
 

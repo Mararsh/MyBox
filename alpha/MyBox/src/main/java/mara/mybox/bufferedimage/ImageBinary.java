@@ -139,7 +139,7 @@ public class ImageBinary extends PixelsOperation {
             g.dispose();
             return binImage;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return srcImage;
         }
     }
@@ -165,7 +165,7 @@ public class ImageBinary extends PixelsOperation {
             }
             return binImage;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return image;
         }
     }
@@ -176,7 +176,7 @@ public class ImageBinary extends PixelsOperation {
             bm = byteBinary(bm);
             return SwingFXUtils.toFXImage(bm, null);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return image;
         }
     }
@@ -238,7 +238,7 @@ public class ImageBinary extends PixelsOperation {
             return threshold;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return -1;
         }
     }
@@ -248,7 +248,7 @@ public class ImageBinary extends PixelsOperation {
             BufferedImage bufferImage = ImageFileReaders.readImage(file);
             return OTSU(ImageGray.byteGray(bufferImage));
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return -1;
         }
     }
@@ -258,7 +258,7 @@ public class ImageBinary extends PixelsOperation {
             BufferedImage grayImage = ImageGray.byteGray(image);
             return OTSU(grayImage);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return -1;
         }
     }
@@ -268,7 +268,7 @@ public class ImageBinary extends PixelsOperation {
             BufferedImage bm = SwingFXUtils.fromFXImage(image, null);
             return calculateThreshold(bm);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return -1;
         }
     }

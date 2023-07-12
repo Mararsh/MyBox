@@ -44,7 +44,7 @@ public class MarkdownToPdfController extends BaseBatchFileController {
             optionsController.setControls(baseName, false);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -56,7 +56,7 @@ public class MarkdownToPdfController extends BaseBatchFileController {
             htmlRender = HtmlRenderer.builder(htmlOptions).build();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
         return super.makeMoreParameters();

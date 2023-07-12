@@ -51,7 +51,7 @@ public class RGB2RGBConversionMatrixController extends ChromaticityBaseControlle
             initAdaptation();
             initMatrices();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -211,7 +211,7 @@ public class RGB2RGBConversionMatrixController extends ChromaticityBaseControlle
                     + (String) rgb2rgb.get("procedure");
             webView.getEngine().loadContent("<pre>" + s + "</pre>");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

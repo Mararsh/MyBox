@@ -175,7 +175,7 @@ public class ControlMathFunctionEditor extends TreeNodeEditor {
             ), 4, menuName);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -219,7 +219,7 @@ public class ControlMathFunctionEditor extends TreeNodeEditor {
             ), 4, menuName);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

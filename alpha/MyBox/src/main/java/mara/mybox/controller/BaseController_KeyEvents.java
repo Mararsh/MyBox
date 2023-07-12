@@ -31,7 +31,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
                 });
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -55,7 +55,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
 
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         return false;
     }

@@ -64,7 +64,7 @@ public class BaseInfoTreeController extends BaseTreeTableViewController<InfoNode
                 okButton.disableProperty().bind(treeView.getSelectionModel().selectedItemProperty().isNull());
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -77,7 +77,7 @@ public class BaseInfoTreeController extends BaseTreeTableViewController<InfoNode
             timeColumn.setCellFactory(new TreeTableDateCell());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }

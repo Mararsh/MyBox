@@ -215,7 +215,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
             textFiles = new ArrayList<>();
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
 
@@ -252,7 +252,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
                 return message("Failed");
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return message("Failed");
         }
     }
@@ -360,7 +360,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
             }
             return lastImage;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -463,7 +463,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -539,7 +539,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
             namePrefix = namePrefix.replace(" ", "_");
             return makeTargetFile(namePrefix, ".txt", targetPath);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

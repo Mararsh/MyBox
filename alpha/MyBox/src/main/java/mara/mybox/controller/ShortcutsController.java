@@ -64,7 +64,7 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -144,7 +144,7 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
             tableData.add(new ShortCut("f / F", "", message("FullScreen"), "", "iconExpand.png"));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

@@ -56,7 +56,7 @@ public class WebBrowserController extends BaseController {
             super.initValues();
             tabControllers = new HashMap();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -81,7 +81,7 @@ public class WebBrowserController extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -141,7 +141,7 @@ public class WebBrowserController extends BaseController {
             });
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

@@ -94,7 +94,7 @@ public class ImageViewerController extends BaseImageController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -140,7 +140,7 @@ public class ImageViewerController extends BaseImageController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -175,7 +175,7 @@ public class ImageViewerController extends BaseImageController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -192,7 +192,7 @@ public class ImageViewerController extends BaseImageController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -213,7 +213,7 @@ public class ImageViewerController extends BaseImageController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -230,7 +230,7 @@ public class ImageViewerController extends BaseImageController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -258,7 +258,7 @@ public class ImageViewerController extends BaseImageController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -272,7 +272,7 @@ public class ImageViewerController extends BaseImageController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -323,7 +323,7 @@ public class ImageViewerController extends BaseImageController {
             refinePane();
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             if (imageView != null) {
                 imageView.setImage(null);
             }
@@ -355,7 +355,7 @@ public class ImageViewerController extends BaseImageController {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -705,7 +705,7 @@ public class ImageViewerController extends BaseImageController {
                 });
             });
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             popError(e.toString());
         }
     }
@@ -725,7 +725,7 @@ public class ImageViewerController extends BaseImageController {
             }
             notifyLoad();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             popError(e.toString());
         }
     }
@@ -762,7 +762,7 @@ public class ImageViewerController extends BaseImageController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -775,7 +775,7 @@ public class ImageViewerController extends BaseImageController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

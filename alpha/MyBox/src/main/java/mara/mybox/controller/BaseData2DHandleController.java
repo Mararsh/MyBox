@@ -144,7 +144,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -183,7 +183,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -201,7 +201,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             checkOptions();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -221,7 +221,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             }
             sortController.loadNames(names);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -478,7 +478,7 @@ public abstract class BaseData2DHandleController extends BaseData2DSourceControl
             if (task != null) {
                 task.setError(e.toString());
             }
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

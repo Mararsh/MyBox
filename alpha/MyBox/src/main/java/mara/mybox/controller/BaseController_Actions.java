@@ -48,7 +48,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
             Hyperlink link = (Hyperlink) event.getSource();
             openLink(link.getText());
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -71,7 +71,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         try {
             browseURI(new File(AppVariables.MyboxDataPath).toURI());
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -385,7 +385,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         try {
             browseURI(file.toURI());
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -393,7 +393,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
         try {
             browseURI(new URI(url));
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -447,7 +447,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

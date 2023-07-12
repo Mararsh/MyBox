@@ -91,7 +91,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -300,7 +300,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
             addLink(address);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -323,7 +323,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
             VisitHistoryTools.visitStreamMedia(address);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

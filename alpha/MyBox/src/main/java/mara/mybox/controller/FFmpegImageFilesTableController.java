@@ -50,7 +50,7 @@ public class FFmpegImageFilesTableController extends ControlFilesTable {
                 }
             });
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -65,7 +65,7 @@ public class FFmpegImageFilesTableController extends ControlFilesTable {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -114,7 +114,7 @@ public class FFmpegImageFilesTableController extends ControlFilesTable {
             durationColumn.getStyleClass().add("editable-column");
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -137,7 +137,7 @@ public class FFmpegImageFilesTableController extends ControlFilesTable {
             tableView.refresh();
             updateLabel();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }

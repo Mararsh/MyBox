@@ -65,12 +65,20 @@ public class ControlPoints extends BaseTableViewController<DoublePoint> {
             yColumn.getStyleClass().add("editable-column");
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
-    public void load(String values) {
+    public void loadText(String values) {
         List<DoublePoint> list = DoublePoint.parseList(values, DoublePoint.Separator);
+        if (list == null || list.isEmpty()) {
+            tableData.clear();
+        } else {
+            tableData.setAll(list);
+        }
+    }
+
+    public void loadList(List<DoublePoint> list) {
         if (list == null || list.isEmpty()) {
             tableData.clear();
         } else {

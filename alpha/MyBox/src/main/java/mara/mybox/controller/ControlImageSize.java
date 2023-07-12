@@ -115,7 +115,7 @@ public class ControlImageSize extends BaseController {
             buttonsBox.setVisible(false);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -131,14 +131,7 @@ public class ControlImageSize extends BaseController {
     public void setParameters(ImageViewerController imageController) {
         this.imageController = imageController;
         buttonsBox.setVisible(imageController != null);
-        imageController.loadNotify.addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                loadImage();
-            }
-        });
-
-        imageController.rectDrawnNotify.addListener(new ChangeListener<Boolean>() {
+        imageController.maskShapeChangedNotify.addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                 loadImage();
@@ -148,6 +141,9 @@ public class ControlImageSize extends BaseController {
     }
 
     protected void loadImage() {
+        if (isSettingValues) {
+            return;
+        }
         image = imageController.scopeImage();
         originalSize();
         checkScaleType();
@@ -245,7 +241,7 @@ public class ControlImageSize extends BaseController {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -304,7 +300,7 @@ public class ControlImageSize extends BaseController {
             }
             labelSize();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -371,7 +367,7 @@ public class ControlImageSize extends BaseController {
                 }
             });
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

@@ -104,7 +104,7 @@ public class MessageDigestController extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -127,7 +127,7 @@ public class MessageDigestController extends BaseController {
             refreshStyle(handleBox);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -138,7 +138,7 @@ public class MessageDigestController extends BaseController {
             algorithm = ((RadioButton) algorithmGroup.getSelectedToggle()).getText();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -182,7 +182,7 @@ public class MessageDigestController extends BaseController {
             }
             openLink(link);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

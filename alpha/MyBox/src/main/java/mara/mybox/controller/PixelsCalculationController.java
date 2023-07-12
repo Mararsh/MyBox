@@ -98,7 +98,7 @@ public class PixelsCalculationController extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -745,7 +745,7 @@ public class PixelsCalculationController extends BaseController {
                 useButton.setDisable(true);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -817,7 +817,7 @@ public class PixelsCalculationController extends BaseController {
 
         } catch (Exception e) {
             cp_density = 0;
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -872,7 +872,7 @@ public class PixelsCalculationController extends BaseController {
 
         } catch (Exception e) {
             cs_density = 0;
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

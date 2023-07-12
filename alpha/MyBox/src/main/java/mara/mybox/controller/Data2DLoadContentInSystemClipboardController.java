@@ -43,7 +43,7 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
             boardController.load(text);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -107,7 +107,7 @@ public class Data2DLoadContentInSystemClipboardController extends BaseChildContr
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

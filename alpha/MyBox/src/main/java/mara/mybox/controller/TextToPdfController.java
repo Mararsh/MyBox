@@ -36,7 +36,7 @@ public class TextToPdfController extends BaseBatchFileController {
             optionsController.setControls(baseName, false);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

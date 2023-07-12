@@ -269,7 +269,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -294,7 +294,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
             orderByList.getSelectionModel().select(0);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -326,7 +326,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -344,7 +344,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -423,7 +423,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
             infoViewController.loadContents​(html);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -587,7 +587,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
 
             popEventMenu(mouseEvent, items);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -652,7 +652,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
 
             popEventMenu(mouseEvent, items);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -855,7 +855,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
 
             popEventMenu(mouseEvent, items);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

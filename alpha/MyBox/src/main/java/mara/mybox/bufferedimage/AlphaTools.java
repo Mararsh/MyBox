@@ -77,7 +77,7 @@ public class AlphaTools {
             }
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -115,7 +115,7 @@ public class AlphaTools {
             bfs[1] = alphaImage;
             return bfs;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -141,7 +141,7 @@ public class AlphaTools {
             }
             return alphaImage;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -178,7 +178,7 @@ public class AlphaTools {
             }
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return source;
         }
     }
@@ -216,7 +216,7 @@ public class AlphaTools {
             }
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -245,7 +245,7 @@ public class AlphaTools {
             }
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -262,7 +262,7 @@ public class AlphaTools {
             }
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return source;
         }
     }
@@ -320,7 +320,7 @@ public class AlphaTools {
             ret[1] = target;
             return ret;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

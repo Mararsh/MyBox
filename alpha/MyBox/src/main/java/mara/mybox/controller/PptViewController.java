@@ -81,7 +81,7 @@ public class PptViewController extends BaseFileImagesViewController {
             checkMore();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -305,7 +305,7 @@ public class PptViewController extends BaseFileImagesViewController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

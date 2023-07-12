@@ -98,7 +98,7 @@ public class JShellPathsController extends BaseController {
             }
             selectJar(file);
         } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
+//            MyBoxLog.error(e);
         }
     }
 
@@ -162,7 +162,7 @@ public class JShellPathsController extends BaseController {
             }
             selectPath(directory);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -252,7 +252,7 @@ public class JShellPathsController extends BaseController {
 
             popEventMenu(event, items);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

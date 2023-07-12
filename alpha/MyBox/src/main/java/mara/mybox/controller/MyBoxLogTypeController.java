@@ -28,7 +28,7 @@ public class MyBoxLogTypeController extends ControlConditionTree {
             s.add(Languages.message("Type"));
             treeView.setSelectedTitles(s);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

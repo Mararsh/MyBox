@@ -53,7 +53,7 @@ public class ControlRowFilterRefer extends BaseInfoTreeController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -121,7 +121,7 @@ public class ControlRowFilterRefer extends BaseInfoTreeController {
             MenuController controller = PopTools.popJavaScriptExamples(this, event, scriptInput, interfaceName + "Examples");
             moreExampleButtons(controller);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

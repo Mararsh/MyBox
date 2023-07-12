@@ -44,7 +44,7 @@ public class HtmlExtractTablesController extends BaseBatchFileController {
             }
             return message("Successful");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return message("Failed");
         }
     }

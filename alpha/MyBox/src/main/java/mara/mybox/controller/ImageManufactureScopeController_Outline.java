@@ -104,7 +104,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
             }
             loadOutlineSource(file);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -182,7 +182,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
                     bufferedImage = ImageFileReaders.readImage(file);
                     return bufferedImage != null;
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                     return false;
                 }
             }
@@ -246,7 +246,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
                     }
                     return outline != null;
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                     return false;
                 }
             }
@@ -287,7 +287,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
                     outlineImage = SwingFXUtils.toFXImage(bufferedImage, null);
                     return outlineImage != null;
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                     return false;
                 }
             }

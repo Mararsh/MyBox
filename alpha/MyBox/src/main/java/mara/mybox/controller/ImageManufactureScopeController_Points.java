@@ -5,6 +5,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.data.DoublePoint;
+import mara.mybox.data.DoublePolygon;
 import mara.mybox.dev.MyBoxLog;
 
 /**
@@ -24,7 +25,7 @@ public abstract class ImageManufactureScopeController_Points extends ImageManufa
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -33,17 +34,22 @@ public abstract class ImageManufactureScopeController_Points extends ImageManufa
         if (isSettingValues) {
             return;
         }
+        pickPoints();
+        indicateScope();
+    }
+
+    public void pickPoints() {
         if (scope.getScopeType() == ImageScope.ScopeType.Matting) {
             scope.clearPoints();
             for (DoublePoint p : pointsController.tableData) {
                 scope.addPoint((int) Math.round(p.getX()), (int) Math.round(p.getY()));
             }
         } else if (scope.getScopeType() == ImageScope.ScopeType.Polygon) {
+            maskPolygonData = new DoublePolygon();
             maskPolygonData.setAll(pointsController.tableData);
             drawMaskPolygon();
             scope.setPolygon(maskPolygonData.cloneValues());
         }
-        indicateScope();
     }
 
 }

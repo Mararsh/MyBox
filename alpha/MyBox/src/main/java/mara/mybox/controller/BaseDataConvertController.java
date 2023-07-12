@@ -32,7 +32,7 @@ public abstract class BaseDataConvertController extends BaseBatchFileController 
             convertController.setControls(this);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

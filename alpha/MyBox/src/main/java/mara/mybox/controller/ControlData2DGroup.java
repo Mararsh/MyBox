@@ -98,7 +98,7 @@ public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
             maxColumn.setCellValueFactory(new PropertyValueFactory<>("maxPassed"));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -107,7 +107,7 @@ public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
             this.handleController = handleController;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -136,7 +136,7 @@ public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
 
             expressionController.setData2D(handleController.data2D);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -198,7 +198,7 @@ public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -536,7 +536,7 @@ public class ControlData2DGroup extends BaseTablePagesController<DataFilter> {
             }
             tableData.removeAll(selected);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

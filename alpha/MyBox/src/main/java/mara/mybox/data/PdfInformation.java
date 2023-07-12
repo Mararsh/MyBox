@@ -55,7 +55,7 @@ public class PdfInformation extends FileInformation {
             }
             infoLoaded = false;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -67,7 +67,7 @@ public class PdfInformation extends FileInformation {
             doc = null;
             infoLoaded = false;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -130,7 +130,7 @@ public class PdfInformation extends FileInformation {
             outline = doc.getDocumentCatalog().getDocumentOutline();
             infoLoaded = true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -143,7 +143,7 @@ public class PdfInformation extends FileInformation {
             loadInformation(task);
             closeDocument();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

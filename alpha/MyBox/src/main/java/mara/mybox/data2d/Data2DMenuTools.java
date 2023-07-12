@@ -136,7 +136,7 @@ public class Data2DMenuTools {
 
             return dataMenu;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -206,7 +206,7 @@ public class Data2DMenuTools {
 
             return modifyMenu;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -266,7 +266,7 @@ public class Data2DMenuTools {
 
             return trimMenu;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -345,7 +345,7 @@ public class Data2DMenuTools {
 
             return calMenu;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -410,7 +410,7 @@ public class Data2DMenuTools {
 
             return chartMenu;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -467,7 +467,7 @@ public class Data2DMenuTools {
 //            chartMenu.getItems().add(menu);
             return chartMenu;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -527,7 +527,7 @@ public class Data2DMenuTools {
 
             return items;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

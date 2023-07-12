@@ -134,7 +134,7 @@ public class ControlImageRender extends BaseController {
             checkApply();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

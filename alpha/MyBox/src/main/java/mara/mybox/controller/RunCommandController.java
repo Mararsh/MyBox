@@ -39,7 +39,7 @@ public class RunCommandController extends HtmlPopController {
             webViewController.scrollType = ControlWebView.ScrollType.Bottom;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -149,7 +149,7 @@ public class RunCommandController extends HtmlPopController {
             controller.run(cmd);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

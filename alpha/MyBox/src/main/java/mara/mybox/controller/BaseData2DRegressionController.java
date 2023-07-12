@@ -85,7 +85,7 @@ public class BaseData2DRegressionController extends BaseData2DChartController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

@@ -64,7 +64,7 @@ public class ControlColorsPane extends BaseController {
             rectSize = AppVariables.iconSize * 0.8;
             canDragDrop = false;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

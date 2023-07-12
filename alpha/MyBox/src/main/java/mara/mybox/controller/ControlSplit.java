@@ -95,7 +95,7 @@ public class ControlSplit extends BaseController {
             checkSplitType();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }

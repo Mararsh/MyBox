@@ -120,7 +120,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
             );
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -266,7 +266,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                 }
             });
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -411,7 +411,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -425,7 +425,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
                 subordinateInput.setText("");
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -542,7 +542,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
             }
             closeStage();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -581,7 +581,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
             commentsArea.clear();
             codeSelected(null);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

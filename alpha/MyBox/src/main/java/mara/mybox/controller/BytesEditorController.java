@@ -102,7 +102,7 @@ public class BytesEditorController extends BaseFileEditorController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -132,7 +132,7 @@ public class BytesEditorController extends BaseFileEditorController {
             checkBytesNumber();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -225,7 +225,7 @@ public class BytesEditorController extends BaseFileEditorController {
                 super.makeEditContextMenu(node);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -349,7 +349,7 @@ public class BytesEditorController extends BaseFileEditorController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

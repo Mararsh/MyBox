@@ -20,8 +20,7 @@ public class ImageScopeFactory {
             ImageScope newScope = ImageScopeFactory.create(
                     sourceScope.getImage(),
                     sourceScope.getScopeType(),
-                    sourceScope.getColors() == null || sourceScope.getColors().isEmpty()
-                    ? ImageScope.ColorScopeType.AllColor : sourceScope.getColorScopeType());
+                    sourceScope.getColorScopeType());
             ImageScopeTools.cloneValues(newScope, sourceScope);
             return newScope;
         } catch (Exception e) {

@@ -90,7 +90,7 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
             initPageBar();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

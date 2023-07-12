@@ -41,7 +41,7 @@ public class WeiboSnapingInfoController extends BaseController {
             progressIndicator.setProgress(-1F);
             progressIndicator.progressProperty().bind(task.progressProperty());
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

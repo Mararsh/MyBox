@@ -3,7 +3,6 @@ package mara.mybox.fximage;
 import java.awt.image.BufferedImage;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.ImageMosaic;
 import mara.mybox.bufferedimage.PixelsBlend;
 import mara.mybox.data.DoubleCircle;
@@ -12,7 +11,6 @@ import mara.mybox.data.DoubleLines;
 import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoublePolyline;
 import mara.mybox.data.DoubleRectangle;
-import static mara.mybox.fximage.FxColorTools.toAwtColor;
 
 /**
  * @Author Mara
@@ -20,6 +18,76 @@ import static mara.mybox.fximage.FxColorTools.toAwtColor;
  * @License Apache License Version 2.0
  */
 public class PenTools {
+
+    public static Image drawRectangle(Image image, DoubleRectangle rect, PixelsBlend blender) {
+        if (rect == null) {
+            return image;
+        }
+        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
+        BufferedImage target = mara.mybox.bufferedimage.PenTools.drawRectangle(source, rect, blender);
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
+    }
+
+    public static Image drawCircle(Image image, DoubleCircle circle, PixelsBlend blender) {
+        if (circle == null) {
+            return image;
+        }
+        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
+        BufferedImage target = mara.mybox.bufferedimage.PenTools.drawCircle(source, circle, blender);
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
+    }
+
+    public static Image drawEllipse(Image image, DoubleEllipse ellipse, PixelsBlend blender) {
+        if (ellipse == null) {
+            return image;
+        }
+        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
+        BufferedImage target = mara.mybox.bufferedimage.PenTools.drawEllipse(source, ellipse, blender);
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
+    }
+
+    public static Image drawPolyline(Image image, DoublePolyline polyline, PixelsBlend blender) {
+        if (polyline == null) {
+            return image;
+        }
+        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
+        BufferedImage target = mara.mybox.bufferedimage.PenTools.drawPolyline(source, polyline, blender);
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
+    }
+
+    public static Image drawPolyLines(Image image, DoublePolyline polyline, PixelsBlend blender) {
+        if (polyline == null) {
+            return image;
+        }
+        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
+        BufferedImage target = mara.mybox.bufferedimage.PenTools.drawPolyLines(source, polyline, blender);
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
+    }
+
+    public static Image drawLines(Image image, DoubleLines penData, PixelsBlend blender) {
+        if (penData == null) {
+            return image;
+        }
+        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
+        BufferedImage target = mara.mybox.bufferedimage.PenTools.drawLines(source, penData, blender);
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
+    }
+
+    public static Image drawPolygon(Image image, DoublePolygon polygon, PixelsBlend blender) {
+        if (polygon == null) {
+            return image;
+        }
+        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
+        BufferedImage target = mara.mybox.bufferedimage.PenTools.drawPolygon(source, polygon, blender);
+        Image newImage = SwingFXUtils.toFXImage(target, null);
+        return newImage;
+    }
 
     public static Image drawErase(Image image, DoubleLines penData, int strokeWidth) {
         if (penData == null) {
@@ -31,20 +99,6 @@ public class PenTools {
         return newImage;
     }
 
-    public static Image drawCircle(Image image, DoubleCircle circle,
-            Color strokeColor, int strokeWidth, boolean dotted, boolean isFill, Color fillColor,
-            float opacity, PixelsBlend blender) {
-        if (circle == null || strokeColor == null) {
-            return image;
-        }
-        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = mara.mybox.bufferedimage.PenTools.drawCircle(
-                source, circle, toAwtColor(strokeColor), strokeWidth, dotted, isFill, toAwtColor(fillColor),
-                opacity, blender);
-        Image newImage = SwingFXUtils.toFXImage(target, null);
-        return newImage;
-    }
-
     public static Image drawMosaic(Image image, DoubleLines penData,
             ImageMosaic.MosaicType mosaicType, int strokeWidth) {
         if (penData == null || mosaicType == null || strokeWidth < 1) {
@@ -52,87 +106,6 @@ public class PenTools {
         }
         BufferedImage source = SwingFXUtils.fromFXImage(image, null);
         BufferedImage target = mara.mybox.bufferedimage.PenTools.drawMosaic(source, penData, mosaicType, strokeWidth);
-        Image newImage = SwingFXUtils.toFXImage(target, null);
-        return newImage;
-    }
-
-    public static Image drawLines(Image image, DoublePolyline polyline,
-            Color strokeColor, int strokeWidth, boolean dotted,
-            float opacity, PixelsBlend blender) {
-        if (polyline == null || strokeColor == null) {
-            return image;
-        }
-        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = mara.mybox.bufferedimage.PenTools.drawLines(source, polyline,
-                toAwtColor(strokeColor), strokeWidth, dotted, opacity, blender);
-        Image newImage = SwingFXUtils.toFXImage(target, null);
-        return newImage;
-    }
-
-    public static Image drawLines(Image image, DoubleLines penData,
-            Color strokeColor, int strokeWidth, boolean dotted,
-            float opacity, PixelsBlend blender) {
-        if (penData == null || strokeColor == null) {
-            return image;
-        }
-        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = mara.mybox.bufferedimage.PenTools.drawLines(source, penData,
-                toAwtColor(strokeColor), strokeWidth, dotted, opacity, blender);
-        Image newImage = SwingFXUtils.toFXImage(target, null);
-        return newImage;
-    }
-
-    public static Image drawPolyline(Image image, DoublePolyline polyline,
-            Color strokeColor, int strokeWidth, boolean dotted,
-            float opacity, PixelsBlend blender) {
-        if (polyline == null || strokeColor == null) {
-            return image;
-        }
-        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = mara.mybox.bufferedimage.PenTools.drawPolyline(source, polyline,
-                toAwtColor(strokeColor), strokeWidth, dotted, opacity, blender);
-        Image newImage = SwingFXUtils.toFXImage(target, null);
-        return newImage;
-    }
-
-    public static Image drawRectangle(Image image, DoubleRectangle rect,
-            Color strokeColor, int strokeWidth, int arcWidth, boolean dotted, boolean isFill, Color fillColor,
-            float opacity, PixelsBlend blender) {
-        if (rect == null || strokeColor == null) {
-            return image;
-        }
-        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = mara.mybox.bufferedimage.PenTools.drawRectangle(source, rect,
-                toAwtColor(strokeColor), strokeWidth, arcWidth, dotted, isFill, toAwtColor(fillColor),
-                opacity, blender);
-        Image newImage = SwingFXUtils.toFXImage(target, null);
-        return newImage;
-    }
-
-    public static Image drawEllipse(Image image, DoubleEllipse ellipse,
-            Color strokeColor, int strokeWidth, boolean dotted, boolean isFill, Color fillColor,
-            float opacity, PixelsBlend blender) {
-        if (ellipse == null || strokeColor == null) {
-            return image;
-        }
-        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = mara.mybox.bufferedimage.PenTools.drawEllipse(source, ellipse,
-                toAwtColor(strokeColor), strokeWidth, dotted, isFill, toAwtColor(fillColor),
-                opacity, blender);
-        Image newImage = SwingFXUtils.toFXImage(target, null);
-        return newImage;
-    }
-
-    public static Image drawPolygon(Image image, DoublePolygon polygon,
-            Color strokeColor, int strokeWidth, boolean dotted, boolean isFill, Color fillColor,
-            float opacity, PixelsBlend blender) {
-        if (polygon == null || strokeColor == null) {
-            return image;
-        }
-        BufferedImage source = SwingFXUtils.fromFXImage(image, null);
-        BufferedImage target = mara.mybox.bufferedimage.PenTools.drawPolygon(source, polygon,
-                toAwtColor(strokeColor), strokeWidth, dotted, isFill, toAwtColor(fillColor),
-                opacity, blender);
         Image newImage = SwingFXUtils.toFXImage(target, null);
         return newImage;
     }

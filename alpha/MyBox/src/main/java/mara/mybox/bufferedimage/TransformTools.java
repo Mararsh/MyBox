@@ -92,7 +92,7 @@ public class TransformTools {
             target = MarginTools.cutMargins(target, bgColor, true, true, true, true);
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -117,7 +117,7 @@ public class TransformTools {
             }
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -142,7 +142,7 @@ public class TransformTools {
             }
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

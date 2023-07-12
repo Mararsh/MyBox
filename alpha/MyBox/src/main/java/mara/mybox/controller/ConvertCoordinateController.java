@@ -347,7 +347,7 @@ public class ConvertCoordinateController extends BaseController {
             csConvert();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -552,7 +552,7 @@ public class ConvertCoordinateController extends BaseController {
             popEventMenu(mouseEvent, items);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -569,7 +569,7 @@ public class ConvertCoordinateController extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -590,7 +590,7 @@ public class ConvertCoordinateController extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

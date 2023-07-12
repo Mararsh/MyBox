@@ -113,7 +113,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
             checkEnhanceType();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -186,7 +186,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
             refreshStyle(setBox);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -261,7 +261,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
 
             checkSmoothAlgorithm();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -297,7 +297,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
 
             checkSharpenAlgorithm();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -309,7 +309,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
             checkContrastAlgorithm();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -373,7 +373,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
                         }
                     }
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                 }
             }
         };

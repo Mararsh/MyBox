@@ -52,7 +52,7 @@ public class ImageSampleController extends ImageViewerController {
             operateOriginalSize = true;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -127,7 +127,7 @@ public class ImageSampleController extends ImageViewerController {
             saveButton.disableProperty().bind(okButton.disabledProperty());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -204,7 +204,7 @@ public class ImageSampleController extends ImageViewerController {
             return rect;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -272,7 +272,7 @@ public class ImageSampleController extends ImageViewerController {
             isSettingValues = false;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

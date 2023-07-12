@@ -145,7 +145,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             backupController.setParameters(this, baseName);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -188,7 +188,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
 //            saveAsButton.disableProperty().bind(saveButton.disableProperty()
 //            );
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -548,7 +548,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
                 }
             });
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -691,7 +691,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             profile = new IccProfile(data);
             displayProfileData();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

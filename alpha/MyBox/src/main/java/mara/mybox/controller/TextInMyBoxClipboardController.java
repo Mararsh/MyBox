@@ -72,7 +72,7 @@ public class TextInMyBoxClipboardController extends BaseSysTableController<TextC
             timeColumn.setCellFactory(new TableDateCell());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

@@ -100,7 +100,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -134,7 +134,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             inputtedColorSetController.init(this, baseName + "InputtedColor", Color.WHITE);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -144,7 +144,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             super.afterSceneLoaded();
             mapController.dataController = this;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -257,7 +257,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             controller.load(this, null);
             controller.getMyStage().requestFocus();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -273,7 +273,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             controller.load(this, selected);
             controller.getMyStage().requestFocus();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -298,7 +298,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             LocationInMapController.load(code.getLongitude(), code.getLatitude());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -368,7 +368,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             popEventMenu(mouseEvent, items);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -437,7 +437,7 @@ public class GeographyCodeController extends BaseDataManageController<GeographyC
             popEventMenu(mouseEvent, items);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

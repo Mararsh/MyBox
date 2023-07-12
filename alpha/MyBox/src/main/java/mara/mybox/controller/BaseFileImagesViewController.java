@@ -156,7 +156,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
                 });
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -266,7 +266,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
             mainPane.applyCss();
             mainPane.layout();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

@@ -115,7 +115,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
             initBoxOptions();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -133,7 +133,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -330,7 +330,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
                     });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -409,7 +409,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
 
             return calculation.prepare();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -545,7 +545,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
             chartMaker.setIsXY(!xyReverseCheck.isSelected());
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -701,7 +701,7 @@ public class Data2DChartBoxWhiskerController extends BaseData2DChartController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

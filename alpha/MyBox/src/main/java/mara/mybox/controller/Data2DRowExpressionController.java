@@ -49,7 +49,7 @@ public class Data2DRowExpressionController extends BaseData2DTargetsController {
             nameInput.setText(UserConfig.getString(interfaceName + "Name", message("Value")));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -92,7 +92,7 @@ public class Data2DRowExpressionController extends BaseData2DTargetsController {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -201,7 +201,7 @@ public class Data2DRowExpressionController extends BaseData2DTargetsController {
             if (task != null) {
                 task.setError(e.toString());
             }
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -236,7 +236,7 @@ public class Data2DRowExpressionController extends BaseData2DTargetsController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

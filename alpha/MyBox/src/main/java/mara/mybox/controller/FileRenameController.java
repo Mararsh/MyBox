@@ -59,7 +59,7 @@ public class FileRenameController extends BaseController {
             myStage.setAlwaysOnTop(true);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             popError(e.toString());
         }
     }
@@ -90,7 +90,7 @@ public class FileRenameController extends BaseController {
                 popFailed();
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             popError(e.toString());
         }
     }

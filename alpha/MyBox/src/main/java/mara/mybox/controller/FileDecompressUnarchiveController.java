@@ -468,7 +468,7 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
                 checkSelection(child);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -550,7 +550,7 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

@@ -119,7 +119,7 @@ public class ImageManufactureBatchMarginsController extends BaseImageManufacture
             colorSetController.init(this, baseName + "Color");
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -220,7 +220,7 @@ public class ImageManufactureBatchMarginsController extends BaseImageManufacture
 
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
 

@@ -37,7 +37,7 @@ public abstract class BaseController extends BaseController_MouseEvents implemen
             initControls();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -57,7 +57,7 @@ public abstract class BaseController extends BaseController_MouseEvents implemen
             isPop = false;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

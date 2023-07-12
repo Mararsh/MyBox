@@ -68,7 +68,7 @@ public class TextReplaceBatchController extends FindReplaceBatchController {
                 return message("NotFound");
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return message("Failed");
         }
     }

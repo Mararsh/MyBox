@@ -122,7 +122,7 @@ public class FilesRedundancyController extends BaseBatchFileController {
             }
             return done;
         } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
+//            MyBoxLog.error(e);
             return done;
         }
     }

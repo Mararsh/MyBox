@@ -62,7 +62,7 @@ public class ImageManufactureShadowController extends ImageManufactureOperationC
             shadowBox.getSelectionModel().select(UserConfig.getInt("ImageShadowSize", 10) + "");
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }

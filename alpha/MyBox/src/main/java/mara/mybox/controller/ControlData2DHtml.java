@@ -28,7 +28,7 @@ public class ControlData2DHtml extends BaseController {
             webViewController.setParent(parent);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

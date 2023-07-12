@@ -80,7 +80,7 @@ public abstract class FindBatchController extends FindReplaceBatchController {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -138,7 +138,7 @@ public abstract class FindBatchController extends FindReplaceBatchController {
             }
             return message("Found") + ": " + count;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return message("Failed");
         }
     }
@@ -160,7 +160,7 @@ public abstract class FindBatchController extends FindReplaceBatchController {
             }
             super.afterTask();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -174,7 +174,7 @@ public abstract class FindBatchController extends FindReplaceBatchController {
                 super.openTarget();
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

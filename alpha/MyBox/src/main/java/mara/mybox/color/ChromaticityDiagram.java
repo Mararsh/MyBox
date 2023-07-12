@@ -113,7 +113,7 @@ public class ChromaticityDiagram {
             g.dispose();
             return image;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -157,7 +157,7 @@ public class ChromaticityDiagram {
             g.drawString("1.0", 10, margins);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -195,7 +195,7 @@ public class ChromaticityDiagram {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -265,7 +265,7 @@ public class ChromaticityDiagram {
             double y1 = d1.getNormalizedY(), y2 = d2.getNormalizedY();
             colorLine(x1, y1, x2, y2);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

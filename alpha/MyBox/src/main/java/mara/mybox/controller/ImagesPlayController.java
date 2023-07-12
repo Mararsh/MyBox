@@ -156,7 +156,7 @@ public class ImagesPlayController extends BaseImagesListController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -281,7 +281,7 @@ public class ImagesPlayController extends BaseImagesListController {
             if (task != null) {
                 task.setError(e.toString());
             }
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
         return task != null && !task.isCancelled();
@@ -302,7 +302,7 @@ public class ImagesPlayController extends BaseImagesListController {
             if (task != null) {
                 task.setError(e.toString());
             }
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -321,7 +321,7 @@ public class ImagesPlayController extends BaseImagesListController {
             if (task != null) {
                 task.setError(e.toString());
             }
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
         return task != null && !task.isCancelled();
@@ -367,7 +367,7 @@ public class ImagesPlayController extends BaseImagesListController {
             if (task != null) {
                 task.setError(e.toString());
             }
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -507,7 +507,7 @@ public class ImagesPlayController extends BaseImagesListController {
             playController.play(framesNumber, start, end);
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -615,7 +615,7 @@ public class ImagesPlayController extends BaseImagesListController {
             thumb = info.getThumbnail();
             return thumb;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -648,7 +648,7 @@ public class ImagesPlayController extends BaseImagesListController {
                 viewAction();
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -693,7 +693,7 @@ public class ImagesPlayController extends BaseImagesListController {
 
         } catch (Exception e) {
             playController.pauseAction();
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -718,7 +718,7 @@ public class ImagesPlayController extends BaseImagesListController {
 
         } catch (Exception e) {
             playController.clear();
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -749,7 +749,7 @@ public class ImagesPlayController extends BaseImagesListController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

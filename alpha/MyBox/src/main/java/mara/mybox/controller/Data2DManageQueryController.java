@@ -119,7 +119,7 @@ public class Data2DManageQueryController extends BaseChildController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -172,7 +172,7 @@ public class Data2DManageQueryController extends BaseChildController {
             listController.orderColumns = orderColumns;
             listController.refreshAction();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -187,7 +187,7 @@ public class Data2DManageQueryController extends BaseChildController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

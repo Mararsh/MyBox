@@ -35,7 +35,7 @@ public class MapOptions {
             baseName = mapController.getBaseName();
             initValues();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -83,7 +83,7 @@ public class MapOptions {
             v = UserConfig.getString(baseName + "CoordinateSystem", null);
             coordinateSystem = new GeoCoordinateSystem(v);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -98,7 +98,7 @@ public class MapOptions {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

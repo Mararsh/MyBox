@@ -56,7 +56,7 @@ public class Data2DTableCreateController extends BaseTaskController {
             refreshControls();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -77,7 +77,7 @@ public class Data2DTableCreateController extends BaseTaskController {
                 attributesController.setColumns(indices);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -90,7 +90,7 @@ public class Data2DTableCreateController extends BaseTaskController {
             }
             return ok;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -135,7 +135,7 @@ public class Data2DTableCreateController extends BaseTaskController {
                 editController.dataSaved();
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -147,7 +147,7 @@ public class Data2DTableCreateController extends BaseTaskController {
             optionsBox.setDisable(successed);
             startButton.setDisable(successed);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -176,7 +176,7 @@ public class Data2DTableCreateController extends BaseTaskController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

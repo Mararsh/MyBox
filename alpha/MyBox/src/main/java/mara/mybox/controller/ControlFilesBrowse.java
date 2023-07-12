@@ -93,7 +93,7 @@ public class ControlFilesBrowse extends ControlFileBrowse {
             setCurrentFile(parentController.sourceFile());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

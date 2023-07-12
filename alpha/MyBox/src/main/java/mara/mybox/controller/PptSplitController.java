@@ -55,7 +55,7 @@ public class PptSplitController extends BaseBatchFileController {
             );
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -66,7 +66,7 @@ public class PptSplitController extends BaseBatchFileController {
             try (SlideShow ppt = SlideShowFactory.create(srcFile)) {
                 total = ppt.getSlides().size();
             } catch (Exception e) {
-                MyBoxLog.error(e.toString());
+                MyBoxLog.error(e);
                 return e.toString();
             }
             targetFilesCount = 0;
@@ -91,7 +91,7 @@ public class PptSplitController extends BaseBatchFileController {
             return MessageFormat.format(Languages.message("HandlePagesGenerateNumber"),
                     totalItemsHandled, targetFilesCount);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return e.toString();
         }
     }
@@ -118,7 +118,7 @@ public class PptSplitController extends BaseBatchFileController {
                 start = end;
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -147,7 +147,7 @@ public class PptSplitController extends BaseBatchFileController {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -163,7 +163,7 @@ public class PptSplitController extends BaseBatchFileController {
             }
             return makeTargetFile(splitPrefix, splitSuffix, slidePath);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -201,7 +201,7 @@ public class PptSplitController extends BaseBatchFileController {
             ppt.write(targetFile);
             return targetFile.exists();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -221,7 +221,7 @@ public class PptSplitController extends BaseBatchFileController {
             }
             ppt.write(out);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
         return targetFile != null && targetFile.exists();

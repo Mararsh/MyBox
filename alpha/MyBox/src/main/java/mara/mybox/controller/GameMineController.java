@@ -653,7 +653,7 @@ public class GameMineController extends BaseWebViewController {
             popEventMenu(mouseEvent, items);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

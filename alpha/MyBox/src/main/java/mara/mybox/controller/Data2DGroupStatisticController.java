@@ -120,7 +120,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -535,7 +535,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

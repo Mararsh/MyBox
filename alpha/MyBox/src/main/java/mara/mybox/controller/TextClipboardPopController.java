@@ -99,7 +99,7 @@ public class TextClipboardPopController extends TextInMyBoxClipboardController {
             PopTools.setWindowStyle(thisPane, baseName, baseStyle);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -172,7 +172,7 @@ public class TextClipboardPopController extends TextInMyBoxClipboardController {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -187,7 +187,7 @@ public class TextClipboardPopController extends TextInMyBoxClipboardController {
             controller.setParameters(parent, node, x, y);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

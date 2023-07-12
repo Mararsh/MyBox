@@ -59,7 +59,7 @@ public class MenuTextBaseController extends MenuController {
             }
             super.setParameters(parent, node, x, y);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

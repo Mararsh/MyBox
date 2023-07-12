@@ -62,7 +62,7 @@ public class Data2DSetStylesController extends BaseController {
             rightPaneControl = listController.rightPaneControl;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -97,7 +97,7 @@ public class Data2DSetStylesController extends BaseController {
             editController.showLabel = idLabel;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -119,7 +119,7 @@ public class Data2DSetStylesController extends BaseController {
             sourceChanged();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -140,7 +140,7 @@ public class Data2DSetStylesController extends BaseController {
             loadStyle(currentStyle);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -420,7 +420,7 @@ public class Data2DSetStylesController extends BaseController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

@@ -44,7 +44,7 @@ public class SvgToImageController extends BaseBatchFileController {
             formatController.setParameters(this, false);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -87,7 +87,7 @@ public class SvgToImageController extends BaseBatchFileController {
             }
             return makeTargetFile(namePrefix, nameSuffix, targetPath);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

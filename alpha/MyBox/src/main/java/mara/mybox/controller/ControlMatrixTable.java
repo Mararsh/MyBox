@@ -51,7 +51,7 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
             loadTableData();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -67,7 +67,7 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
             modifyColumn.setCellFactory(new TableDateCell());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -104,7 +104,7 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
             manageController.dataAController.loadDef(selected);
             manageController.tabPane.getSelectionModel().select(manageController.dataATab);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -118,7 +118,7 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
             manageController.dataBController.loadDef(selected);
             manageController.tabPane.getSelectionModel().select(manageController.dataBTab);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -213,7 +213,7 @@ public class ControlMatrixTable extends BaseSysTableController<Data2DDefinition>
             return items;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

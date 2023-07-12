@@ -358,7 +358,7 @@ public class MenuImageBaseController extends MenuController {
             imageController.loadNotify.addListener(loadListener);
             updateImage();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -537,7 +537,7 @@ public class MenuImageBaseController extends MenuController {
             controller.setParameters(imageController, x, y);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

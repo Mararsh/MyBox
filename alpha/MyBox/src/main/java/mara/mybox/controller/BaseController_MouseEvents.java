@@ -30,7 +30,7 @@ public abstract class BaseController_MouseEvents extends BaseController_KeyEvent
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

@@ -152,7 +152,7 @@ public abstract class PixelsOperation {
             thisLine = nextLine = null;
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return image;
         }
     }
@@ -256,7 +256,7 @@ public abstract class PixelsOperation {
             }
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

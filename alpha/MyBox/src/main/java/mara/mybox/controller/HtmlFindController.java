@@ -108,7 +108,7 @@ public class HtmlFindController extends WebAddressController {
             examplePopFindButton.disableProperty().bind(regCheck.selectedProperty().not());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -165,7 +165,7 @@ public class HtmlFindController extends WebAddressController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

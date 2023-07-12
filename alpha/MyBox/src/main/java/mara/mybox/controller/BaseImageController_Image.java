@@ -296,7 +296,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             notifyLoad();
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             if (imageView != null) {
                 imageView.setImage(null);
             }
@@ -356,6 +356,7 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
             showMaskRectangle();
         } else {
             clearMaskRectangle();
+            maskShapeChanged();
         }
         updateLabelsTitle();
     }

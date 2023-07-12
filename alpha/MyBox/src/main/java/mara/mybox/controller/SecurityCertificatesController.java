@@ -66,7 +66,7 @@ public class SecurityCertificatesController extends BaseTablePagesController<Cer
             backupController.setParameters(this, baseName);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -80,7 +80,7 @@ public class SecurityCertificatesController extends BaseTablePagesController<Cer
             timeColumn.setCellFactory(new TableTimeCell());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -314,7 +314,7 @@ public class SecurityCertificatesController extends BaseTablePagesController<Cer
                     = (SecurityCertificatesAddController) openStage(Fxmls.SecurityCertificateAddFxml);
             controller.setCertController(this);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

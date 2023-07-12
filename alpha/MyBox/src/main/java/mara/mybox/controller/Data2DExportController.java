@@ -50,7 +50,7 @@ public class Data2DExportController extends BaseData2DHandleController {
             okButton = startButton;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -63,7 +63,7 @@ public class Data2DExportController extends BaseData2DHandleController {
             super.setParameters(editController);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -88,7 +88,7 @@ public class Data2DExportController extends BaseData2DHandleController {
             }
             return convertController.initParameters();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -130,7 +130,7 @@ public class Data2DExportController extends BaseData2DHandleController {
             if (taskController.task != null) {
                 taskController.task.setError(e.toString());
             }
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -158,7 +158,7 @@ public class Data2DExportController extends BaseData2DHandleController {
                 popInformation(message("NoFileGenerated"));
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -173,7 +173,7 @@ public class Data2DExportController extends BaseData2DHandleController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

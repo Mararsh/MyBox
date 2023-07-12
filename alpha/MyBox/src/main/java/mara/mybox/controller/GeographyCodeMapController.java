@@ -50,7 +50,7 @@ public class GeographyCodeMapController extends ControlMap {
             geoTable = new TableGeographyCode();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -70,7 +70,7 @@ public class GeographyCodeMapController extends ControlMap {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

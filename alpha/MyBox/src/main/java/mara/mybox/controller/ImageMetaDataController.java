@@ -157,7 +157,7 @@ public class ImageMetaDataController extends BaseController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -173,7 +173,7 @@ public class ImageMetaDataController extends BaseController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

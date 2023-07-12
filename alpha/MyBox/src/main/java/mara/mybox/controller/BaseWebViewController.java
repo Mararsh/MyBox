@@ -40,7 +40,7 @@ public class BaseWebViewController extends BaseFileController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -82,7 +82,7 @@ public class BaseWebViewController extends BaseFileController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

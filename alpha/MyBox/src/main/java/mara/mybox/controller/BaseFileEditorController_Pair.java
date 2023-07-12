@@ -80,7 +80,7 @@ public abstract class BaseFileEditorController_Pair extends BaseFileEditorContro
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -182,7 +182,7 @@ public abstract class BaseFileEditorController_Pair extends BaseFileEditorContro
 
             popEventMenu(event, items);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

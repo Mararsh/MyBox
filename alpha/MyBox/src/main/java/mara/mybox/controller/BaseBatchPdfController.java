@@ -36,7 +36,7 @@ public abstract class BaseBatchPdfController extends BaseBatchController<PdfInfo
             super.initValues();
             pdfsTableController = (ControlPdfsTable) tableController;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

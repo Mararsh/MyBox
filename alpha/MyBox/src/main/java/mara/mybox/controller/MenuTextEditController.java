@@ -81,7 +81,7 @@ public class MenuTextEditController extends MenuTextBaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -394,7 +394,7 @@ public class MenuTextEditController extends MenuTextBaseController {
             controller.setParameters(parent, node, x, y);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -407,7 +407,7 @@ public class MenuTextEditController extends MenuTextBaseController {
             Point2D localToScreen = node.localToScreen(node.getWidth() - 80, 80);
             return MenuTextEditController.open(parent, node, localToScreen.getX(), localToScreen.getY());
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

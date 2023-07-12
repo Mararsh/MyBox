@@ -112,7 +112,7 @@ public class ImageManufactureBatchTransformController extends BaseImageManufactu
             angleBox.getSelectionModel().select(0);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -182,7 +182,7 @@ public class ImageManufactureBatchTransformController extends BaseImageManufactu
 
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
 

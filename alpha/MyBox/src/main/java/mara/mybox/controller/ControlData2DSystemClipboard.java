@@ -81,7 +81,7 @@ public class ControlData2DSystemClipboard extends BaseController {
                     .or(textArea.textProperty().isEmpty()));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -111,7 +111,7 @@ public class ControlData2DSystemClipboard extends BaseController {
             delimiterName = null;  // guess at first 
             refreshAction();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -139,7 +139,7 @@ public class ControlData2DSystemClipboard extends BaseController {
             }
             load(text);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

@@ -111,7 +111,7 @@ public class TreeNodeEditor extends TreeTagsController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -152,7 +152,7 @@ public class TreeNodeEditor extends TreeTagsController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

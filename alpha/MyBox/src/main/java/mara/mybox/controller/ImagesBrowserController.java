@@ -42,7 +42,7 @@ public class ImagesBrowserController extends ImagesBrowserController_Pane {
             thumbWidth = thumbWidth > 0 ? thumbWidth : 100;
             
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
     
@@ -158,7 +158,7 @@ public class ImagesBrowserController extends ImagesBrowserController_Pane {
             rightPane.disableProperty().bind(Bindings.isEmpty(imageFileList));
             
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
     
@@ -190,7 +190,7 @@ public class ImagesBrowserController extends ImagesBrowserController_Pane {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

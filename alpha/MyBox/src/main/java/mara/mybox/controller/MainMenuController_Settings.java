@@ -371,7 +371,7 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
             UserConfig.setString("InterfaceStyle", style);
             styleAll(style);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

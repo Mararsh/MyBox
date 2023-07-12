@@ -62,7 +62,7 @@ public abstract class BaseData2DChartFx extends BaseController {
             palette = new HashMap<>();
             buttonsPane.setDisable(true);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -107,7 +107,7 @@ public abstract class BaseData2DChartFx extends BaseController {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         return palette;
     }
@@ -127,7 +127,7 @@ public abstract class BaseData2DChartFx extends BaseController {
             }
             redraw();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -142,7 +142,7 @@ public abstract class BaseData2DChartFx extends BaseController {
             AnchorPane.setLeftAnchor(chart, 2d);
             AnchorPane.setRightAnchor​(chart, 2d);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -156,7 +156,7 @@ public abstract class BaseData2DChartFx extends BaseController {
             AnchorPane.clearConstraints(chart);
             chart.setPrefSize(bounds.getWidth() + 40, bounds.getHeight() + 40);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

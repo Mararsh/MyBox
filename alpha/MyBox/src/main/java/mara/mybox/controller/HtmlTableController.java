@@ -74,7 +74,7 @@ public class HtmlTableController extends BaseWebViewController {
             html = HtmlWriteTools.html(title, HtmlStyles.styleValue("Default"), body);
             displayHtml(html);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -210,7 +210,7 @@ public class HtmlTableController extends BaseWebViewController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -228,7 +228,7 @@ public class HtmlTableController extends BaseWebViewController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

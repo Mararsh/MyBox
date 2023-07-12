@@ -86,16 +86,7 @@ public class ImageRepeatController extends ImageViewerController {
 
             colorSetController.init(this, baseName + "Color");
 
-            loadNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    recoverSize();
-                    repeatController.loadImage(null);
-                    tabPane.getSelectionModel().select(scaleTab);
-                }
-            });
-
-            rectDrawnNotify.addListener(new ChangeListener<Boolean>() {
+            maskShapeChangedNotify.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     recoverSize();
@@ -103,7 +94,7 @@ public class ImageRepeatController extends ImageViewerController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -133,6 +124,9 @@ public class ImageRepeatController extends ImageViewerController {
 
     @FXML
     public void recoverSize() {
+        if (isSettingValues) {
+            return;
+        }
         scaleController.loadImage(scopeImage());
     }
 

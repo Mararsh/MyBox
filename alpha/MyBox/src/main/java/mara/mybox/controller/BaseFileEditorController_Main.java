@@ -134,7 +134,7 @@ public abstract class BaseFileEditorController_Main extends BaseFileEditorContro
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

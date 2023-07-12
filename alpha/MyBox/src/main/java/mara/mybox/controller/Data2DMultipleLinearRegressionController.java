@@ -73,7 +73,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
 
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -253,7 +253,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
                 alertError(message("InvalidData") + "\n" + message("RegressionFailedNotice"));
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -278,7 +278,7 @@ public class Data2DMultipleLinearRegressionController extends BaseData2DRegressi
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

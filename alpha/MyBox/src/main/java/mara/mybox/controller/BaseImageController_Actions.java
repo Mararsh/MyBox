@@ -66,7 +66,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -77,10 +77,10 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                 return null;
             }
             if (maskRectangle != null && maskRectangle.isVisible()) {
-                if (maskRectangleData.getSmallX() == 0
-                        && maskRectangleData.getSmallY() == 0
-                        && maskRectangleData.getBigX() == (int) inImage.getWidth() - 1
-                        && maskRectangleData.getBigY() == (int) inImage.getHeight() - 1) {
+                if ((int) maskRectangleData.getSmallX() == 0
+                        && (int) maskRectangleData.getSmallY() == 0
+                        && (int) maskRectangleData.getBigX() == (int) inImage.getWidth() - 1
+                        && (int) maskRectangleData.getBigY() == (int) inImage.getHeight() - 1) {
                     return inImage;
                 }
                 return CropTools.cropOutsideFx(inImage, maskRectangleData, bgColor);
@@ -499,7 +499,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
 
             popEventMenu(fevent, items);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -563,7 +563,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
             ImagesPlayController controller = (ImagesPlayController) openStage(Fxmls.ImagesPlayFxml);
             controller.sourceFileChanged(sourceFile);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

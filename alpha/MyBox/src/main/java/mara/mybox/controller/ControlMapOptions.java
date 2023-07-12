@@ -87,7 +87,7 @@ public class ControlMapOptions extends BaseController {
             mapTypeChanged();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -404,7 +404,7 @@ public class ControlMapOptions extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -483,7 +483,7 @@ public class ControlMapOptions extends BaseController {
             isSettingValues = false;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -545,7 +545,7 @@ public class ControlMapOptions extends BaseController {
             mapSizeSelector.getSelectionModel().select(mapOptions.getMapSize() + "");
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         optionsBox.setDisable(false);
         isSettingValues = false;
@@ -587,7 +587,7 @@ public class ControlMapOptions extends BaseController {
                 mapOptions.setStandardLayer(false);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -609,7 +609,7 @@ public class ControlMapOptions extends BaseController {
                 mapOptions.setSatelliteLayer(false);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -631,7 +631,7 @@ public class ControlMapOptions extends BaseController {
                 mapOptions.setRoadLayer(false);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -654,7 +654,7 @@ public class ControlMapOptions extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -670,7 +670,7 @@ public class ControlMapOptions extends BaseController {
             isSettingValues = false;
             mapOptions.setMarkerImageFile(file);
         } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
+//            MyBoxLog.error(e);
         }
     }
 
@@ -682,7 +682,7 @@ public class ControlMapOptions extends BaseController {
             }
             selectMarkerImage(FxFileTools.selectFile(this));
         } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
+//            MyBoxLog.error(e);
         }
     }
 
@@ -694,7 +694,7 @@ public class ControlMapOptions extends BaseController {
             markerImageInput.setText(file.getAbsolutePath());
             recordFileOpened(file);
         } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
+//            MyBoxLog.error(e);
         }
     }
 

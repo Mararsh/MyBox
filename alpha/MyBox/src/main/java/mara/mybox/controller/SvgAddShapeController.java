@@ -45,7 +45,7 @@ public class SvgAddShapeController extends BaseChildController {
             shapeController.setParameters(editor, hierarchyNumber);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -58,11 +58,11 @@ public class SvgAddShapeController extends BaseChildController {
                 return;
             }
             shapeController.synchronizeAction();
-            if (shapeController.imageController.shape == null) {
+            if (shapeController.showController.element == null) {
                 popError(message("NoData"));
                 return;
             }
-            Node newNode = editor.treeController.doc.importNode(shapeController.imageController.shape, true);
+            Node newNode = editor.treeController.doc.importNode(shapeController.showController.element, true);
             treeItem.getValue().getNode().appendChild(newNode);
             TreeItem<XmlTreeNode> newItem = new TreeItem(new XmlTreeNode(newNode));
             treeItem.getChildren().add(newItem);

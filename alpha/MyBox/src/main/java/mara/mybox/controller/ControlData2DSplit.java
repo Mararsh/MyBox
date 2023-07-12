@@ -94,7 +94,7 @@ public class ControlData2DSplit extends BaseTablePagesController<ValueRange> {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -109,7 +109,7 @@ public class ControlData2DSplit extends BaseTablePagesController<ValueRange> {
             includeEndColumn.setCellValueFactory(new PropertyValueFactory<>("includeEnd"));
             includeEndColumn.setCellFactory(new TableBooleanCell());
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -144,7 +144,7 @@ public class ControlData2DSplit extends BaseTablePagesController<ValueRange> {
             checkSplitType();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -155,7 +155,7 @@ public class ControlData2DSplit extends BaseTablePagesController<ValueRange> {
             checkSplitType();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -319,7 +319,7 @@ public class ControlData2DSplit extends BaseTablePagesController<ValueRange> {
             }
             tableData.removeAll(selected);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

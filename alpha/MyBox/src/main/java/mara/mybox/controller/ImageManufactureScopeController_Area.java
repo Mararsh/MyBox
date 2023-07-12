@@ -74,7 +74,7 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
             indicateScope();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -123,7 +123,7 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
             indicateScope();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

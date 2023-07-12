@@ -53,7 +53,7 @@ public class DataTableQueryEditor extends TreeNodeEditor {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -73,7 +73,7 @@ public class DataTableQueryEditor extends TreeNodeEditor {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -91,7 +91,7 @@ public class DataTableQueryEditor extends TreeNodeEditor {
             namesList.getItems().addAll(dataTable.columnNames());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

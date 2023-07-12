@@ -500,12 +500,12 @@ public class WeiboSnapRunController extends BaseController {
 //                                                                MyBoxLog.debug(DateTools.datetimeToString(firstMonth));
                                                                 loadCompleted = true;
                                                             } catch (Exception e) {
-                                                                MyBoxLog.error(e.toString());
+                                                                MyBoxLog.error(e);
                                                             }
                                                         }
                                                     }
                                                 } catch (Exception e) {
-                                                    MyBoxLog.error(e.toString());
+                                                    MyBoxLog.error(e);
                                                 }
                                             }
                                         }
@@ -518,13 +518,13 @@ public class WeiboSnapRunController extends BaseController {
                                 } catch (Exception e) {
 //                                    loadFailed = loadCompleted = true;
 //                                    errorString = e.toString();
-                                    MyBoxLog.error(e.toString());
+                                    MyBoxLog.error(e);
                                 }
                             }
                         });
                     } catch (Exception e) {
                         loadFailed = loadCompleted = true;
-                        MyBoxLog.error(e.toString());
+                        MyBoxLog.error(e);
                         errorString = e.toString();
                         quit();
                     }
@@ -975,7 +975,7 @@ public class WeiboSnapRunController extends BaseController {
                         });
 
                     } catch (Exception e) {
-                        MyBoxLog.error(e.toString());
+                        MyBoxLog.error(e);
 //                        loadFailed = loadCompleted = true;
 //                        errorString = e.toString();
 //                        quit();
@@ -1024,7 +1024,7 @@ public class WeiboSnapRunController extends BaseController {
                         windowHeight = (Integer) webEngine.executeScript("document.documentElement.clientHeight || document.body.clientHeight;");
                         showBaseInfo();
                     } catch (Exception e) {
-                        MyBoxLog.error(e.toString());
+                        MyBoxLog.error(e);
 //                        loadFailed = loadCompleted = true;
 //                        errorString = e.toString();
 //                        quit();
@@ -1153,7 +1153,7 @@ public class WeiboSnapRunController extends BaseController {
 //                                    File f = new File(fname);
 //                                    f.setLastModified(currentMonth.getTime());
 //                                } catch (Exception e) {
-//                                    MyBoxLog.error(e.toString());
+//                                    MyBoxLog.error(e);
 //                                }
                                 }
                             }
@@ -1161,7 +1161,7 @@ public class WeiboSnapRunController extends BaseController {
                         }
                     }
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                 }
                 return true;
             }
@@ -1348,7 +1348,7 @@ public class WeiboSnapRunController extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             errorString = e.toString();
             pageFailed(loadingController);
         }
@@ -1373,7 +1373,7 @@ public class WeiboSnapRunController extends BaseController {
                         }
                     }
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                 }
                 return true;
             }
@@ -1450,13 +1450,13 @@ public class WeiboSnapRunController extends BaseController {
                                 FileDeleteTools.delete(file);
                                 savedPagePdfCount--;
                             } catch (Exception e) {
-                                MyBoxLog.error(e.toString());
+                                MyBoxLog.error(e);
                             }
                         }
                     }
                     pdfs.remove(month);
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                 }
                 return true;
             }

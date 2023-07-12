@@ -102,7 +102,7 @@ public class AlarmClockTableController extends BaseController {
             refreshAction();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

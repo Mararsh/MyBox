@@ -35,7 +35,7 @@ public class HtmlToMarkdownController extends BaseBatchFileController {
             mdConverter = FlexmarkHtmlConverter.builder(new MutableDataSet()).build();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
 
@@ -60,7 +60,7 @@ public class HtmlToMarkdownController extends BaseBatchFileController {
                 return message("Failed");
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return Languages.message("Failed");
         }
     }

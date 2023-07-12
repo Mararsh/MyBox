@@ -42,7 +42,7 @@ public class WebFavoriteAddController extends BaseInfoTreeController {
             loadTree();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

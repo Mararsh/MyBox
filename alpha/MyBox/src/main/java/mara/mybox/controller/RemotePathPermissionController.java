@@ -62,7 +62,7 @@ public class RemotePathPermissionController extends RemotePathHandleFilesControl
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             popError(e.toString());
         }
     }
@@ -218,7 +218,7 @@ public class RemotePathPermissionController extends RemotePathHandleFilesControl
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

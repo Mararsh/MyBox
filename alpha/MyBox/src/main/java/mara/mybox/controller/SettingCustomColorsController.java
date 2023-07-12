@@ -108,7 +108,7 @@ public class SettingCustomColorsController extends BaseChildController {
             controller.setParameters(parent);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

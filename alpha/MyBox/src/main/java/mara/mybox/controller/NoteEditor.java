@@ -37,7 +37,7 @@ public class NoteEditor extends ControlHtmlEditor {
             webViewController.linkInNewTab = true;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

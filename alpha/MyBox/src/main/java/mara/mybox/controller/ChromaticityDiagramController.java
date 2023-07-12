@@ -120,7 +120,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
             initDiagram();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -292,7 +292,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
             fontSelector.getSelectionModel().select(0);
             isSettingValues = false;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -334,7 +334,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -458,7 +458,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

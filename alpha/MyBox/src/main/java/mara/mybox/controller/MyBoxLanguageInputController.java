@@ -107,7 +107,7 @@ public class MyBoxLanguageInputController extends BaseChildController {
             controller.setParameters(parent, item);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

@@ -107,7 +107,7 @@ public class ImageManufactureBatchArcController extends BaseImageManufactureBatc
             colorSetController.init(this, baseName + "Color");
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -172,7 +172,7 @@ public class ImageManufactureBatchArcController extends BaseImageManufactureBatc
                     FxColorTools.toAwtColor((Color) colorSetController.rect.getFill()));
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
 

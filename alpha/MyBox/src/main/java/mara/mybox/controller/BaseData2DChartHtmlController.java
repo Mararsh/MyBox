@@ -132,7 +132,7 @@ public abstract class BaseData2DChartHtmlController extends BaseData2DChartContr
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

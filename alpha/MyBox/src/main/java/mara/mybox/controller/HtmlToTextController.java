@@ -38,7 +38,7 @@ public class HtmlToTextController extends BaseBatchFileController {
             targetFileGenerated(target);
             return Languages.message("Successful");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return Languages.message("Failed");
         }
     }

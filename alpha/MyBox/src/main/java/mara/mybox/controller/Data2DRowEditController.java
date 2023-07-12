@@ -33,7 +33,7 @@ public class Data2DRowEditController extends BaseChildController {
                     + message("TableRowNumber") + " " + (index + 1));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -53,7 +53,7 @@ public class Data2DRowEditController extends BaseChildController {
             close();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -67,7 +67,7 @@ public class Data2DRowEditController extends BaseChildController {
             controller.setParameters(tableViewController, index);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

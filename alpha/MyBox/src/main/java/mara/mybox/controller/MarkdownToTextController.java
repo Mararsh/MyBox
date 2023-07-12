@@ -46,7 +46,7 @@ public class MarkdownToTextController extends BaseBatchFileController {
             textCollectingVisitor = new TextCollectingVisitor();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
 
@@ -70,7 +70,7 @@ public class MarkdownToTextController extends BaseBatchFileController {
             targetFileGenerated(target);
             return Languages.message("Successful");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return Languages.message("Failed");
         }
     }

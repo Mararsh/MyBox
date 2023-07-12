@@ -45,7 +45,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             tableData = FXCollections.observableArrayList();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -55,7 +55,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             super.initControls();
             initTable();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -110,7 +110,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

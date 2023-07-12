@@ -327,7 +327,7 @@ public class JShellEditorController extends TreeNodeEditor {
             controller.addNode(blink);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

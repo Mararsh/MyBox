@@ -64,7 +64,7 @@ public class ColorQueryController extends BaseController {
             );
             paletteButton.disableProperty().bind(queryButton.disableProperty());
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -102,7 +102,7 @@ public class ColorQueryController extends BaseController {
             color = c;
             htmlController.displayHtml(color.html());
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -179,7 +179,7 @@ public class ColorQueryController extends BaseController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

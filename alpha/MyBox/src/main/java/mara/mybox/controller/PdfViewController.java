@@ -70,7 +70,7 @@ public class PdfViewController extends PdfViewController_Html {
             super.initValues();
             infoLoaded = new SimpleBooleanProperty(false);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -112,7 +112,7 @@ public class PdfViewController extends PdfViewController_Html {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -209,7 +209,7 @@ public class PdfViewController extends PdfViewController_Html {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -492,7 +492,7 @@ public class PdfViewController extends PdfViewController_Html {
             PdfInformationController controller = (PdfInformationController) openStage(Fxmls.PdfInformationFxml);
             controller.setInformation(pdfInformation);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -554,7 +554,7 @@ public class PdfViewController extends PdfViewController_Html {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

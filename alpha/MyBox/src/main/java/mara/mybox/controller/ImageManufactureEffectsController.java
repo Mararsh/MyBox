@@ -75,7 +75,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
             optionsController.setValues(this);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -393,7 +393,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
                                     = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);
                             controller.loadFiles(files);
                         } catch (Exception e) {
-                            MyBoxLog.error(e.toString());
+                            MyBoxLog.error(e);
                         }
                     }
                 });

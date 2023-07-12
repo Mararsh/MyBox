@@ -60,7 +60,7 @@ public class ImagesEditorController extends BaseImagesListController {
             playButton.disableProperty().bind(Bindings.isEmpty(imageInfos));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -88,7 +88,7 @@ public class ImagesEditorController extends BaseImagesListController {
             ImagesPlayController controller = (ImagesPlayController) openStage(Fxmls.ImagesPlayFxml);
             controller.loadImages(imageInfos);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -101,7 +101,7 @@ public class ImagesEditorController extends BaseImagesListController {
             controller.tableController.addFiles(0, files);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

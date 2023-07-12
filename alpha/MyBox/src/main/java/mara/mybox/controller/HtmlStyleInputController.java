@@ -18,7 +18,7 @@ public class HtmlStyleInputController extends TextInputController {
             controller.setParameters(parent, title, initValue);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

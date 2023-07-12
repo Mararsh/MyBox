@@ -48,7 +48,7 @@ public class MediaListController extends BaseTablePagesController<MediaList> {
             loadList(null);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -70,7 +70,7 @@ public class MediaListController extends BaseTablePagesController<MediaList> {
             nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

@@ -38,7 +38,7 @@ public class Data2DChartGroupBoxWhiskerController extends Data2DChartBoxWhiskerC
             statistic = new DataTableGroupStatistic().setCountChart(false);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -115,7 +115,7 @@ public class Data2DChartGroupBoxWhiskerController extends Data2DChartBoxWhiskerC
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

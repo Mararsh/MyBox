@@ -224,7 +224,7 @@ public class ControlWebView extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -416,7 +416,7 @@ public class ControlWebView extends BaseController {
         try {
             return PopTools.askSure(getTitle(), message);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -630,7 +630,7 @@ public class ControlWebView extends BaseController {
 
             setDocListeners(frame);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -979,7 +979,7 @@ public class ControlWebView extends BaseController {
             Robot robot = new Robot();
             MenuWebviewController.pop(this, element, robot.getMouseX() + 10, robot.getMouseY() + 10);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -1108,7 +1108,7 @@ public class ControlWebView extends BaseController {
             return items;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -1150,7 +1150,7 @@ public class ControlWebView extends BaseController {
             popEventMenu(event, items);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -1215,7 +1215,7 @@ public class ControlWebView extends BaseController {
             return clickMenu;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -1474,7 +1474,7 @@ public class ControlWebView extends BaseController {
             popEventMenu(fevent, items);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

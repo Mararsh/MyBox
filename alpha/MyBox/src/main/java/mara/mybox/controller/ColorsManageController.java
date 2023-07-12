@@ -113,7 +113,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
             tableColorPalette.setTableColor(tableColor);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -159,7 +159,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
             infoController.initStyle(HtmlStyles.styleValue("Table") + "\n body { width: 400px; } \n");
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -254,7 +254,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
             descColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -288,7 +288,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
             checkColumns();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -325,7 +325,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
             isSettingValues = false;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -434,7 +434,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
             popEventMenu(event, items);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -552,7 +552,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -648,7 +648,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
             WebBrowserController.openHtml(html, HtmlStyles.styleValue("Table"), true);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

@@ -223,7 +223,7 @@ public class ControlMathFunctionCalculator extends BaseController {
             }
             return vars + script;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -338,7 +338,7 @@ public class ControlMathFunctionCalculator extends BaseController {
                 TableStringValues.add("FunctionDomainHistories", domain);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -357,7 +357,7 @@ public class ControlMathFunctionCalculator extends BaseController {
             }
             return vars + script;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -503,7 +503,7 @@ public class ControlMathFunctionCalculator extends BaseController {
             }
             return vars + script;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -657,7 +657,7 @@ public class ControlMathFunctionCalculator extends BaseController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

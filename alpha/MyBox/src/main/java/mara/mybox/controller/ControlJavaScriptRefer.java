@@ -56,7 +56,7 @@ public class ControlJavaScriptRefer extends BaseInfoTreeController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -121,7 +121,7 @@ public class ControlJavaScriptRefer extends BaseInfoTreeController {
                     = PopTools.popJavaScriptExamples(this, event, scriptInput, interfaceName + "Examples");
             moreExampleButtons(controller, interfaceName + "Examples");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

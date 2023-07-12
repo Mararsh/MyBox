@@ -40,7 +40,7 @@ public class MessageAuthorController extends BaseController {
             osInput.setText(SystemTools.os());
             nameInput.setText(System.getProperty("user.name"));
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

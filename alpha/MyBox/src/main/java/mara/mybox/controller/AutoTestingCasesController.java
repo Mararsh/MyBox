@@ -41,7 +41,7 @@ public class AutoTestingCasesController extends BaseTablePagesController<TestCas
             stageColumn.setCellValueFactory(new PropertyValueFactory<>("stage"));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -52,7 +52,7 @@ public class AutoTestingCasesController extends BaseTablePagesController<TestCas
             tableData.setAll(TestCase.testCases());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

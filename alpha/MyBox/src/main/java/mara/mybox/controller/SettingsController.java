@@ -31,6 +31,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
 import mara.mybox.MyBox;
+import mara.mybox.data.ShapeStyle;
 import mara.mybox.db.Database;
 import mara.mybox.db.DerbyBase;
 import mara.mybox.db.DerbyBase.DerbyStatus;
@@ -463,7 +464,7 @@ public class SettingsController extends BaseController {
                 StyleTools.setConfigStyleColor(this, "Red");
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -473,7 +474,7 @@ public class SettingsController extends BaseController {
             UserConfig.setString("InterfaceStyle", style);
             styleAll(style);
         } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
+//            MyBoxLog.error(e);
         }
     }
 
@@ -718,7 +719,7 @@ public class SettingsController extends BaseController {
             recordFileWritten(directory);
             dataDirInput.setText(directory.getPath());
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -743,7 +744,7 @@ public class SettingsController extends BaseController {
                         try {
                             FileDeleteTools.delete(lckFile);
                         } catch (Exception e) {
-                            MyBoxLog.error(e.toString());
+                            MyBoxLog.error(e);
                         }
                     }
 
@@ -888,15 +889,15 @@ public class SettingsController extends BaseController {
     public void initImageTab() {
         try {
             strokeWidthBox.getItems().addAll(Arrays.asList("2", "1", "3", "4", "5", "6", "7", "8", "9", "10"));
-            strokeWidthBox.getSelectionModel().select(UserConfig.getInt("StrokeWidth", 2) + "");
+            strokeWidthBox.getSelectionModel().select(UserConfig.getFloat("StrokeWidth", 2) + "");
             strokeWidthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     if (newValue != null && !newValue.isEmpty()) {
                         try {
-                            int v = Integer.parseInt(newValue);
+                            float v = Float.parseFloat(newValue);
                             if (v > 0) {
-                                UserConfig.setInt("StrokeWidth", v);
+                                UserConfig.setFloat("StrokeWidth", v);
                                 ValidationTools.setEditorNormal(strokeWidthBox);
                                 BaseImageController.updateMaskStrokes();
                             } else {
@@ -909,26 +910,25 @@ public class SettingsController extends BaseController {
                 }
             });
 
-            strokeColorSetController.init(this, "StrokeColor", Color.web(BaseImageController.DefaultStrokeColor));
+            strokeColorSetController.init(this, "StrokeColor", Color.web(ShapeStyle.DefaultStrokeColor));
             strokeColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
-                public void changed(ObservableValue<? extends Paint> observable,
-                        Paint oldValue, Paint newValue) {
+                public void changed(ObservableValue v, Paint oldValue, Paint newValue) {
                     BaseImageController.updateMaskStrokes();
                     popSuccessful();
                 }
             });
 
             anchorWidthBox.getItems().addAll(Arrays.asList("10", "15", "20", "25", "30", "40", "50"));
-            anchorWidthBox.getSelectionModel().select(UserConfig.getInt("AnchorWidth", 10) + "");
+            anchorWidthBox.getSelectionModel().select(UserConfig.getFloat("AnchorSize", 10) + "");
             anchorWidthBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     if (newValue != null && !newValue.isEmpty()) {
                         try {
-                            int v = Integer.parseInt(newValue);
+                            float v = Float.parseFloat(newValue);
                             if (v > 0) {
-                                UserConfig.setInt("AnchorWidth", v);
+                                UserConfig.setFloat("AnchorSize", v);
                                 ValidationTools.setEditorNormal(anchorWidthBox);
                                 BaseImageController.updateMaskAnchors();
                             } else {
@@ -941,7 +941,7 @@ public class SettingsController extends BaseController {
                 }
             });
 
-            anchorColorSetController.init(this, "AnchorColor", Color.web(BaseImageController.DefaultAnchorColor));
+            anchorColorSetController.init(this, "AnchorColor", Color.web(ShapeStyle.DefaultAnchorColor));
             anchorColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> observable,

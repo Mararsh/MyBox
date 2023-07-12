@@ -123,7 +123,7 @@ public class ControlFileBackup extends BaseTablePagesController<FileBackup> {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -162,7 +162,7 @@ public class ControlFileBackup extends BaseTablePagesController<FileBackup> {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

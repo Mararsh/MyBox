@@ -96,7 +96,7 @@ public class JsonEditorController extends BaseFileController {
             backupController.setParameters(this, baseName);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -383,7 +383,7 @@ public class JsonEditorController extends BaseFileController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -395,7 +395,7 @@ public class JsonEditorController extends BaseFileController {
             textsArea.setText(json);
             textsChanged(updated);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -633,7 +633,7 @@ public class JsonEditorController extends BaseFileController {
 
             popEventMenu(event, items);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -647,7 +647,7 @@ public class JsonEditorController extends BaseFileController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -659,7 +659,7 @@ public class JsonEditorController extends BaseFileController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

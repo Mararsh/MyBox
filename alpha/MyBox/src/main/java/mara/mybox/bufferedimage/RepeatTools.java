@@ -48,7 +48,7 @@ public class RepeatTools {
             }
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return source;
         }
     }
@@ -102,7 +102,7 @@ public class RepeatTools {
 
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return source;
         }
     }

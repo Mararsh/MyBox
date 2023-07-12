@@ -107,7 +107,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
             sourceColumn.setCellFactory(new TableMessageCell());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

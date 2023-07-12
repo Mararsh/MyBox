@@ -87,7 +87,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
             resultMatrix = (DataMatrix) resultController.data2D;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -174,7 +174,7 @@ public class MatrixUnaryCalculationController extends MatricesManageController {
             checkMatrix();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

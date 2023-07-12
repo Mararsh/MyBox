@@ -386,7 +386,7 @@ public class JexlEditorController extends JShellEditorController {
             controller.addNode(jlink);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -514,7 +514,7 @@ public class JexlEditorController extends JShellEditorController {
             controller.addNode(jlink);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

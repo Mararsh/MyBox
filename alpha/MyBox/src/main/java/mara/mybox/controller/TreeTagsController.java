@@ -133,7 +133,7 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
             checkButtons();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -153,7 +153,7 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
             pageSize = Integer.MAX_VALUE;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -278,7 +278,7 @@ public class TreeTagsController extends BaseSysTableController<Tag> {
             isSettingValues = false;
             saveAction();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

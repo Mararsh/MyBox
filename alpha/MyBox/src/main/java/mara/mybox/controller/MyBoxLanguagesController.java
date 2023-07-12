@@ -86,7 +86,7 @@ public class MyBoxLanguagesController extends BaseController {
 
             changed = false;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -110,7 +110,7 @@ public class MyBoxLanguagesController extends BaseController {
             loadList();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -212,7 +212,7 @@ public class MyBoxLanguagesController extends BaseController {
             tableView.setItems(tableData);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -246,7 +246,7 @@ public class MyBoxLanguagesController extends BaseController {
             listView.getItems().addAll(Languages.userLanguages());
             isSettingValues = false;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }

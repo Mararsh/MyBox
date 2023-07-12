@@ -113,7 +113,7 @@ public class Data2DGroupController extends BaseData2DHandleController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

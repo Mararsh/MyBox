@@ -37,7 +37,7 @@ public class MenuImageViewController extends MenuImageBaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -155,11 +155,11 @@ public class MenuImageViewController extends MenuImageBaseController {
                 controller.setParameters(imageViewerController, x, y);
                 return controller;
             } catch (Exception e) {
-                MyBoxLog.error(e.toString());
+                MyBoxLog.error(e);
                 return null;
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

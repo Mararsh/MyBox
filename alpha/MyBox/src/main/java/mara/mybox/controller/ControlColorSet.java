@@ -49,7 +49,7 @@ public class ControlColorSet extends BaseController {
             tableColor = new TableColor();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -82,7 +82,7 @@ public class ControlColorSet extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         return this;
     }

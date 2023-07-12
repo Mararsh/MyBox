@@ -116,7 +116,7 @@ public class ImageConvertTools {
             targetImage = ImageBinary.byteBinary(targetImage);
             return targetImage;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return srcImage;
         }
     }
@@ -169,7 +169,7 @@ public class ImageConvertTools {
             BufferedImage targetImage = c.filter(tmpImage, null);
             return targetImage;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -244,7 +244,7 @@ public class ImageConvertTools {
             writer.dispose();
             return FileTools.rename(tmpFile, targetFile);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -262,7 +262,7 @@ public class ImageConvertTools {
             BufferedImage targetImage = c.filter(srcImage, null);
             return targetImage;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -307,7 +307,7 @@ public class ImageConvertTools {
             ICOEncoder.write(images, targetFile);
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -321,7 +321,7 @@ public class ImageConvertTools {
             ICOEncoder.write(icoImage, targetFile);
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -341,7 +341,7 @@ public class ImageConvertTools {
             BufferedImage icoImage = ScaleTools.scaleImageWidthKeep(bufferedImage, width);
             return icoImage;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -394,7 +394,7 @@ public class ImageConvertTools {
             return FileTools.rename(tmpFile, targetFile);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }

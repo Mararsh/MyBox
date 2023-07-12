@@ -1,14 +1,9 @@
 package mara.mybox.controller;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
-import javafx.scene.shape.StrokeLineCap;
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
 import mara.mybox.data.DoubleLine;
@@ -31,18 +26,9 @@ import org.w3c.dom.Element;
 public class ControlSvgImage extends BaseImageController {
 
     protected ControlSvgShape svgShapeControl;
-    protected Element shape;
-    protected ShapeType shapeType;
-    protected SVGPath svgPath;
-
+    protected Element element;
     protected DoublePoint lastPoint;
 
-    public enum ShapeType {
-        Rectangle, Circle, Ellipse, Line, Polyline, Polygon, Path
-    }
-
-    @FXML
-    protected CheckBox displayAnchorsCheck, pickPointCheck;
     @FXML
     protected Label infoLabel;
 
@@ -82,8 +68,8 @@ public class ControlSvgImage extends BaseImageController {
 
     public void loadShape(Element element) {
         try {
-            shapeType = null;
-            shape = element;
+            isSettingValues = true;
+            this.element = element;
             clearMaskShapes();
             if (svgPath != null && maskPane.getChildren().contains(svgPath)) {
                 maskPane.getChildren().remove(svgPath);
@@ -91,65 +77,62 @@ public class ControlSvgImage extends BaseImageController {
             }
             infoLabel.setText("");
             if (element == null) {
+                isSettingValues = false;
                 return;
             }
             switch (element.getNodeName().toLowerCase()) {
                 case "rect":
-                    shapeType = ShapeType.Rectangle;
-                    double x = Double.parseDouble(shape.getAttribute("x"));
-                    double y = Double.parseDouble(shape.getAttribute("y"));
-                    double width = Double.parseDouble(shape.getAttribute("width"));
-                    double height = Double.parseDouble(shape.getAttribute("height"));
+                    double x = Double.parseDouble(this.element.getAttribute("x"));
+                    double y = Double.parseDouble(this.element.getAttribute("y"));
+                    double width = Double.parseDouble(this.element.getAttribute("width"));
+                    double height = Double.parseDouble(this.element.getAttribute("height"));
                     maskRectangleData = new DoubleRectangle(x, y, x + width - 1, y + height - 1);
                     showMaskRectangle();
                     infoLabel.setText(message("ShapeDragMoveComments"));
                     break;
                 case "circle":
-                    shapeType = ShapeType.Circle;
-                    double cx = Double.parseDouble(shape.getAttribute("cx"));
-                    double cy = Double.parseDouble(shape.getAttribute("cy"));
-                    double r = Double.parseDouble(shape.getAttribute("r"));
+                    double cx = Double.parseDouble(this.element.getAttribute("cx"));
+                    double cy = Double.parseDouble(this.element.getAttribute("cy"));
+                    double r = Double.parseDouble(this.element.getAttribute("r"));
                     maskCircleData = new DoubleCircle(cx, cy, r);
                     showMaskCircle();
                     infoLabel.setText(message("ShapeDragMoveComments"));
                     break;
                 case "ellipse":
-                    shapeType = ShapeType.Ellipse;
-                    double ex = Double.parseDouble(shape.getAttribute("cx"));
-                    double ey = Double.parseDouble(shape.getAttribute("cy"));
-                    double erx = Double.parseDouble(shape.getAttribute("rx"));
-                    double ery = Double.parseDouble(shape.getAttribute("ry"));
+                    double ex = Double.parseDouble(this.element.getAttribute("cx"));
+                    double ey = Double.parseDouble(this.element.getAttribute("cy"));
+                    double erx = Double.parseDouble(this.element.getAttribute("rx"));
+                    double ery = Double.parseDouble(this.element.getAttribute("ry"));
                     maskEllipseData = new DoubleEllipse(ex - erx, ey - ery, ex + erx, ey + ery);
                     showMaskEllipse();
                     infoLabel.setText(message("ShapeDragMoveComments"));
                     break;
                 case "line":
-                    shapeType = ShapeType.Line;
-                    double x1 = Double.parseDouble(shape.getAttribute("x1"));
-                    double y1 = Double.parseDouble(shape.getAttribute("y1"));
-                    double x2 = Double.parseDouble(shape.getAttribute("x2"));
-                    double y2 = Double.parseDouble(shape.getAttribute("y2"));
+                    double x1 = Double.parseDouble(this.element.getAttribute("x1"));
+                    double y1 = Double.parseDouble(this.element.getAttribute("y1"));
+                    double x2 = Double.parseDouble(this.element.getAttribute("x2"));
+                    double y2 = Double.parseDouble(this.element.getAttribute("y2"));
                     maskLineData = new DoubleLine(x1, y1, x2, y2);
                     showMaskLine();
                     infoLabel.setText(message("ShapeDragMoveComments"));
                     break;
                 case "polyline":
-                    shapeType = ShapeType.Polyline;
                     maskPolylineData = new DoublePolyline();
-                    maskPolylineData.addAll(shape.getAttribute("points"));
+                    maskPolylineData.addAll(this.element.getAttribute("points"));
                     showMaskPolyline();
                     infoLabel.setText(message("ShapePointsMoveComments"));
                     break;
                 case "polygon":
-                    shapeType = ShapeType.Polygon;
                     maskPolygonData = new DoublePolygon();
-                    maskPolygonData.addAll(shape.getAttribute("points"));
+                    maskPolygonData.addAll(this.element.getAttribute("points"));
                     showMaskPolygon();
                     infoLabel.setText(message("ShapePointsMoveComments"));
                     break;
                 case "path":
-                    shapeType = ShapeType.Path;
-                    drawPath();
+                    if (svgPath == null) {
+                        svgPath = new SVGPath();
+                    }
+                    svgPath.setContent(this.element.getAttribute("d"));
                     break;
                 default:
                     popError(message("InvalidData"));
@@ -158,79 +141,12 @@ public class ControlSvgImage extends BaseImageController {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    @Override
-    public Color strokeColor() {
-        Color strokeColor = svgShapeControl.strokeColorController.color();
-        if (strokeColor == null) {
-            strokeColor = Color.RED;
-        }
-        return strokeColor;
-    }
-
-    @Override
-    public double strokeWidth() {
-        float strokeWidth = svgShapeControl.strokeWidth;
-        if (strokeWidth <= 0) {
-            strokeWidth = 2.0f;
-        }
-        return strokeWidth;
-    }
-
-    @Override
-    public StrokeLineCap strokeLineCap() {
-        if (svgShapeControl.linecapSquareRadio.isSelected()) {
-            return StrokeLineCap.SQUARE;
-        } else if (svgShapeControl.linecapRoundRadio.isSelected()) {
-            return StrokeLineCap.ROUND;
-        } else {
-            return StrokeLineCap.BUTT;
-        }
-    }
-
-    @Override
-    public List<Double> strokeDash() {
-        try {
-            String text = svgShapeControl.dashInput.getText();
-            if (text == null || text.isBlank()) {
-                return null;
-            }
-            String[] values = text.split("\\s+");
-            if (values == null || values.length == 0) {
-                return null;
-            }
-            List<Double> dash = new ArrayList<>();
-            for (String v : values) {
-                dash.add(Double.valueOf(v));
-            }
-            return dash;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    @Override
-    public float shapeOpacity() {
-        if (svgShapeControl.fillCheck.isSelected()) {
-            return svgShapeControl.fillOpacity;
-        } else {
-            return 1.0f;
-        }
-    }
-
-    @Override
-    public Color shapeFill() {
-        if (svgShapeControl.fillCheck.isSelected()) {
-            return svgShapeControl.fillColorController.color();
-        } else {
-            return Color.TRANSPARENT;
-        }
+        isSettingValues = false;
     }
 
     public void updateSvgShape() {
-        svgShapeControl.loadShape(shape);
-        svgShapeControl.loadXml(shape);
+        svgShapeControl.loadShape(element);
+        svgShapeControl.loadXml(element);
     }
 
     public String scaleValue(double d) {
@@ -238,112 +154,47 @@ public class ControlSvgImage extends BaseImageController {
     }
 
     @Override
-    public void maskRectChangedByEvent() {
+    public void maskShapeChanged() {
+        if (isSettingValues || element == null) {
+            return;
+        }
         try {
-            if (shape == null) {
-                return;
+            switch (element.getTagName().toLowerCase()) {
+                case "rect":
+                    element.setAttribute("x", scaleValue(maskRectangleData.getSmallX()));
+                    element.setAttribute("y", scaleValue(maskRectangleData.getSmallY()));
+                    element.setAttribute("width", scaleValue(maskRectangleData.getWidth()));
+                    element.setAttribute("height", scaleValue(maskRectangleData.getHeight()));
+                    break;
+                case "circle":
+                    element.setAttribute("cx", scaleValue(maskCircleData.getCenterX()));
+                    element.setAttribute("cy", scaleValue(maskCircleData.getCenterY()));
+                    element.setAttribute("r", scaleValue(maskCircleData.getRadius()));
+                    break;
+                case "ellipse":
+                    element.setAttribute("cx", scaleValue(maskEllipseData.getCenterX()));
+                    element.setAttribute("cy", scaleValue(maskEllipseData.getCenterY()));
+                    element.setAttribute("rx", scaleValue(maskEllipseData.getRadiusX()));
+                    element.setAttribute("ry", scaleValue(maskEllipseData.getRadiusY()));
+                    break;
+                case "line":
+                    element.setAttribute("x1", scaleValue(maskLineData.getStartX()));
+                    element.setAttribute("y1", scaleValue(maskLineData.getStartY()));
+                    element.setAttribute("x2", scaleValue(maskLineData.getEndX()));
+                    element.setAttribute("y2", scaleValue(maskLineData.getEndY()));
+                    break;
+                case "polyline":
+                    element.setAttribute("points", DoublePoint.toText(maskPolylineData.getPoints(), 2));
+                    break;
+                case "polygon":
+                    element.setAttribute("points", DoublePoint.toText(maskPolygonData.getPoints(), 2));
+                    break;
+                default:
+                    return;
             }
-            shape.setAttribute("x", scaleValue(maskRectangleData.getSmallX()));
-            shape.setAttribute("y", scaleValue(maskRectangleData.getSmallY()));
-            shape.setAttribute("width", scaleValue(maskRectangleData.getWidth()));
-            shape.setAttribute("height", scaleValue(maskRectangleData.getHeight()));
             updateSvgShape();
         } catch (Exception e) {
             MyBoxLog.error(e);
-        }
-    }
-
-    @Override
-    public void maskCircleChangedByEvent() {
-        try {
-            if (shape == null) {
-                return;
-            }
-            shape.setAttribute("cx", scaleValue(maskCircleData.getCenterX()));
-            shape.setAttribute("cy", scaleValue(maskCircleData.getCenterY()));
-            shape.setAttribute("r", scaleValue(maskCircleData.getRadius()));
-            updateSvgShape();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @Override
-    public void maskEllipseChangedByEvent() {
-        try {
-            if (shape == null) {
-                return;
-            }
-            shape.setAttribute("cx", scaleValue(maskEllipseData.getCenterX()));
-            shape.setAttribute("cy", scaleValue(maskEllipseData.getCenterY()));
-            shape.setAttribute("rx", scaleValue(maskEllipseData.getRadiusX()));
-            shape.setAttribute("ry", scaleValue(maskEllipseData.getRadiusY()));
-            updateSvgShape();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @Override
-    public void maskLineChangedByEvent() {
-        try {
-            if (shape == null) {
-                return;
-            }
-            shape.setAttribute("x1", scaleValue(maskLineData.getStartX()));
-            shape.setAttribute("y1", scaleValue(maskLineData.getStartY()));
-            shape.setAttribute("x2", scaleValue(maskLineData.getEndX()));
-            shape.setAttribute("y2", scaleValue(maskLineData.getEndY()));
-            updateSvgShape();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @Override
-    public void maskPolylineChangedByEvent() {
-        try {
-            if (shape == null) {
-                return;
-            }
-            shape.setAttribute("points", DoublePoint.toText(maskPolylineData.getPoints(), 2));
-            updateSvgShape();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @Override
-    public void maskPolygonChangedByEvent() {
-        try {
-            if (shape == null) {
-                return;
-            }
-            shape.setAttribute("points", DoublePoint.toText(maskPolygonData.getPoints(), 2));
-            updateSvgShape();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public boolean drawPath() {
-        try {
-            if (shape == null) {
-                return false;
-            }
-            if (svgPath == null) {
-                svgPath = new SVGPath();
-            }
-            svgPath.setContent(shape.getAttribute("d"));
-            svgPath.setLayoutX(imageView.getLayoutX());
-            svgPath.setLayoutY(imageView.getLayoutY());
-            setShapeStyle(svgPath);
-            maskPane.getChildren().add(svgPath);
-            return true;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return false;
         }
     }
 

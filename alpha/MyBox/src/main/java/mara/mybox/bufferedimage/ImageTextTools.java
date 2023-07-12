@@ -12,7 +12,8 @@ import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import mara.mybox.controller.ControlImageText;
-import mara.mybox.data.DoubleRectangle;
+import mara.mybox.data.DoubleText;
+import mara.mybox.data.ShapeStyle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Colors;
@@ -47,15 +48,19 @@ public class ImageTextTools {
             BufferedImage backImage = sourceImage;
             if (optionsController.showBorders()) {
                 int m = optionsController.getBordersMargin();
-                backImage = PenTools.drawRectangle(sourceImage,
-                        new DoubleRectangle(optionsController.getBaseX() - m,
-                                optionsController.getBaseY() - m,
-                                optionsController.getBaseX() + optionsController.getTextWidth() + m - 1,
-                                optionsController.getBaseY() + optionsController.getTextHeight() + m - 1),
-                        optionsController.bordersStrokeColor(),
-                        optionsController.getBordersStrokeWidth(), optionsController.getBordersArc(),
-                        optionsController.bordersDotted(), optionsController.bordersFilled(),
-                        optionsController.bordersFillColor(), opacity,
+                DoubleText textRect = new DoubleText(
+                        optionsController.getBaseX() - m,
+                        optionsController.getBaseY() - m,
+                        optionsController.getBaseX() + optionsController.getTextWidth() + m - 1,
+                        optionsController.getBaseY() + optionsController.getTextHeight() + m - 1);
+                ShapeStyle.setStrokeColor(textRect, optionsController.bordersStrokeColor());
+                ShapeStyle.setStrokeWidth(textRect, optionsController.getBordersStrokeWidth());
+                ShapeStyle.setIsFillColor(textRect, optionsController.bordersFilled());
+                ShapeStyle.setFillColor(textRect, optionsController.bordersFillColor());
+                ShapeStyle.setRoundArc(textRect, optionsController.getBordersArc());
+                ShapeStyle.setFillOpacity(textRect, opacity);
+                ShapeStyle.setStrokeDashed(textRect, optionsController.bordersDotted());
+                backImage = PenTools.drawRectangle(sourceImage, textRect,
                         PixelsBlend.blender(PixelsBlend.ImagesBlendMode.NORMAL, opacity, false, true));
             }
             Color textColor = optionsController.textColor();
@@ -121,7 +126,7 @@ public class ImageTextTools {
                 return PixelsBlend.blend(foreImage, backImage, 0, 0, optionsController.blender());
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -152,7 +157,7 @@ public class ImageTextTools {
                 g.drawString(text, x + shadow, y + shadow);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

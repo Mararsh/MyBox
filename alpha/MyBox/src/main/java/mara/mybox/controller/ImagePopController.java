@@ -59,7 +59,7 @@ public class ImagePopController extends BaseImageController {
             paneSize();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -141,7 +141,7 @@ public class ImagePopController extends BaseImageController {
             controller.setImage(parent, image);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -155,7 +155,7 @@ public class ImagePopController extends BaseImageController {
             controller.setSourceImageView(parent, imageView);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

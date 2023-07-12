@@ -255,7 +255,7 @@ public class ControlSynchronizeOptions extends BaseController {
             }
             return copyAttr;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

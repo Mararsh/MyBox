@@ -109,7 +109,7 @@ public class ImageManufactureBatchShadowController extends BaseImageManufactureB
             colorSetController.init(this, baseName + "Color", Color.BLACK);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -175,7 +175,7 @@ public class ImageManufactureBatchShadowController extends BaseImageManufactureB
             target = ShadowTools.addShadowAlpha(source, value, FxColorTools.toAwtColor(color));
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
 

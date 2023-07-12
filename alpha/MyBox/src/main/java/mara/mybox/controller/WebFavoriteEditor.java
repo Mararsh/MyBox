@@ -34,7 +34,7 @@ public class WebFavoriteEditor extends TreeNodeEditor {
 
             moreInput = iconController.fileInput;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -53,7 +53,7 @@ public class WebFavoriteEditor extends TreeNodeEditor {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

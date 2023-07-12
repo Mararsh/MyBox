@@ -374,7 +374,7 @@ public class PdfAttributesController extends BaseController {
             controller.setInformation(pdfInfo);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -535,7 +535,7 @@ public class PdfAttributesController extends BaseController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

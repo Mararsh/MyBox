@@ -150,7 +150,7 @@ public class StringTable {
             }
             return s.toString();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return "";
         }
     }
@@ -178,7 +178,7 @@ public class StringTable {
             s.append("</TR>\n");
             return s.toString();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return "";
         }
     }
@@ -213,7 +213,7 @@ public class StringTable {
             s.append(indent).append(indent).append("</DIV>\n");
             return s.toString();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return "";
         }
     }
@@ -233,7 +233,7 @@ public class StringTable {
             s.append(tableSuffix(table));
             return s.toString();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return "";
         }
     }
@@ -249,7 +249,7 @@ public class StringTable {
             s.append(indent).append("</BODY>\n");
             return s.toString();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return "";
         }
     }

@@ -41,7 +41,7 @@ public class Data2DChartGroupComparisonBarsController extends Data2DChartCompari
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

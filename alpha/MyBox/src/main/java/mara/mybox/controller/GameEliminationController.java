@@ -848,7 +848,7 @@ public class GameEliminationController extends BaseController {
             }
             selectSoundFile(file);
         } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
+//            MyBoxLog.error(e);
         }
     }
 

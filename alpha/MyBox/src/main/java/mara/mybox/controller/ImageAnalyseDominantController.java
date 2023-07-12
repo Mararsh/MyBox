@@ -199,7 +199,7 @@ public class ImageAnalyseDominantController extends BaseController {
             kmeansLoopSelector.getSelectionModel().select(0);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -262,7 +262,7 @@ public class ImageAnalyseDominantController extends BaseController {
                     html = StringTable.tableHtml(table);
                     return true;
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                     return false;
                 }
             }

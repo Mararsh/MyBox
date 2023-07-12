@@ -90,7 +90,7 @@ public class Base64Controller extends BaseController {
             checkConvert();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -113,7 +113,7 @@ public class Base64Controller extends BaseController {
             }
             refreshStyle(inputBox);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

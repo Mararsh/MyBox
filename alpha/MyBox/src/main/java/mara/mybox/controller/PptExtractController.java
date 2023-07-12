@@ -88,7 +88,7 @@ public class PptExtractController extends BaseBatchFileController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -317,7 +317,7 @@ public class PptExtractController extends BaseBatchFileController {
             }
             return makeTargetFile(filePrefix, fileSuffix, slidePath);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

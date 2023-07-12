@@ -88,7 +88,7 @@ public abstract class FindReplaceBatchController extends BaseBatchFileController
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
         return super.makeMoreParameters();

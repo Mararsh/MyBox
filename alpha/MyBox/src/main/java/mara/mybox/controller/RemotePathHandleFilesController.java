@@ -74,7 +74,7 @@ public abstract class RemotePathHandleFilesController extends BaseTaskController
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             popError(e.toString());
         }
     }
@@ -179,7 +179,7 @@ public abstract class RemotePathHandleFilesController extends BaseTaskController
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

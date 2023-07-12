@@ -75,7 +75,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -165,7 +165,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             cancelButton.disableProperty().bind(okButton.disableProperty());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -224,7 +224,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
             imageController.scope.setRectangle(imageController.maskRectangleData.cloneValues());
             pasteClip(0);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -280,7 +280,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                     }
                     return blendedImage != null;
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                     return false;
                 }
             }

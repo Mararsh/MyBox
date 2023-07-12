@@ -70,7 +70,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
 
             initTree();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -154,7 +154,7 @@ public abstract class BaseTreeTableViewController<NodeP> extends BaseController 
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

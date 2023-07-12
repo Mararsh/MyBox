@@ -25,7 +25,7 @@ public class MenuImageScopeController extends MenuImageViewController {
                     || !scopeController.tabPane.getTabs().contains(scopeController.colorsTab));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -57,11 +57,11 @@ public class MenuImageScopeController extends MenuImageViewController {
                 controller.setParameters(scopeController, x, y);
                 return controller;
             } catch (Exception e) {
-                MyBoxLog.error(e.toString());
+                MyBoxLog.error(e);
                 return null;
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

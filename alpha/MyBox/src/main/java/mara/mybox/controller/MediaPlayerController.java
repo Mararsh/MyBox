@@ -879,7 +879,7 @@ public class MediaPlayerController extends BaseController {
                         }
                     });
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                     popMediaError(e.toString());
                 }
             }
@@ -975,7 +975,7 @@ public class MediaPlayerController extends BaseController {
             controller.setPlayerController(this);
             controller.loadList(tableController.mediaListName);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -1011,7 +1011,7 @@ public class MediaPlayerController extends BaseController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

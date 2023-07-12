@@ -52,7 +52,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
             optionsController.setValues(this);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -290,7 +290,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
                                     = (ImagesBrowserController) WindowTools.openStage(Fxmls.ImagesBrowserFxml);
                             controller.loadFiles(files);
                         } catch (Exception e) {
-                            MyBoxLog.error(e.toString());
+                            MyBoxLog.error(e);
                         }
                     }
                 });

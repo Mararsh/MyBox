@@ -131,7 +131,7 @@ public abstract class PixelsBlend {
             }
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return foreImage;
         }
     }
@@ -211,7 +211,7 @@ public abstract class PixelsBlend {
             }
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return foreImage;
         }
     }

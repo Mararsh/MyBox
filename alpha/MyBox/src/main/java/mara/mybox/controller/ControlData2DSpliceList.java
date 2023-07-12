@@ -34,7 +34,7 @@ public class ControlData2DSpliceList extends ControlData2DList {
             super.setParameters(manageController);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -57,7 +57,7 @@ public class ControlData2DSpliceList extends ControlData2DList {
             }
             Data2DDefinition.open(selected);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -83,7 +83,7 @@ public class ControlData2DSpliceList extends ControlData2DList {
             spliceController.dataAController.loadDef(selected);
             spliceController.dataAController.setLabel(selected.displayName());
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -97,7 +97,7 @@ public class ControlData2DSpliceList extends ControlData2DList {
             spliceController.dataBController.loadDef(selected);
             spliceController.dataBController.setLabel(selected.displayName());
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -127,7 +127,7 @@ public class ControlData2DSpliceList extends ControlData2DList {
             return items;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

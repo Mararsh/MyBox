@@ -59,7 +59,7 @@ public class ExtractTextsFromMSController extends BaseBatchFileController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

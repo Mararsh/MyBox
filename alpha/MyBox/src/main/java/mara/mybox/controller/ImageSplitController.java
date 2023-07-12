@@ -73,7 +73,7 @@ public class ImageSplitController extends BaseImagesListController {
             splitValid = new SimpleBooleanProperty(false);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -87,7 +87,7 @@ public class ImageSplitController extends BaseImagesListController {
             initSplitPane();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -133,7 +133,7 @@ public class ImageSplitController extends BaseImagesListController {
             );
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -149,7 +149,7 @@ public class ImageSplitController extends BaseImagesListController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -609,7 +609,7 @@ public class ImageSplitController extends BaseImagesListController {
             splitValid.set(true);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             splitValid.set(false);
         }
         makeList();

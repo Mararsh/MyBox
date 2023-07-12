@@ -32,7 +32,7 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
             sizeController.setParameters(this);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }

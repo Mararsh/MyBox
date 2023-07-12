@@ -167,7 +167,7 @@ public class ControlData2DSetValue extends BaseController {
             scalePane.disableProperty().bind(scaleRadio.selectedProperty().not());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -177,7 +177,7 @@ public class ControlData2DSetValue extends BaseController {
             expressionController.calculator = handleController.filterController.calculator;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -302,7 +302,7 @@ public class ControlData2DSetValue extends BaseController {
             UserConfig.setString(baseName + "ValueType", setValue.getType().name());
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }

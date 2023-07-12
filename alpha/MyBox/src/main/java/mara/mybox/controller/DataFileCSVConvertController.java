@@ -41,7 +41,7 @@ public class DataFileCSVConvertController extends BaseDataConvertController {
 
             csvReadController.setControls(baseName + "Read", true, false);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

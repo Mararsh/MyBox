@@ -28,7 +28,7 @@ public class Data2DConvertToDataBaseTask extends Data2DTableCreateController {
             attributesController.setParameters(this);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -57,7 +57,7 @@ public class Data2DConvertToDataBaseTask extends Data2DTableCreateController {
                 invalidAs = Data2D_Attributes.InvalidAs.Blank;
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -93,7 +93,7 @@ public class Data2DConvertToDataBaseTask extends Data2DTableCreateController {
             DataTablesController c = DataTablesController.open(attributesController.dataTable);
             c.refreshAction();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -106,7 +106,7 @@ public class Data2DConvertToDataBaseTask extends Data2DTableCreateController {
             convertController.attributesBox.setDisable(false);
             convertController.optionsBox.setDisable(false);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

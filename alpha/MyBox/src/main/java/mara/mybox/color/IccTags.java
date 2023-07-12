@@ -29,7 +29,7 @@ public class IccTags {
             this.data = data;
             this.normalizeLut = normalizeLut;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

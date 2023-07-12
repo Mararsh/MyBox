@@ -53,7 +53,7 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
             );
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -103,7 +103,7 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
                 doc.close();
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         updateInterface("CompleteFile");
         return MessageFormat.format(Languages.message("HandlePagesGenerateNumber"),
@@ -122,7 +122,7 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
             splitter.setSplitAtPage(size);
             return splitter;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -136,7 +136,7 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
             List<PDDocument> docs = splitter.split(source);
             return writeFiles(docs);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return 0;
         }
     }
@@ -151,7 +151,7 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
             int size = splitController.size(total, splitController.number);
             return split(source, currentParameters.fromPage, currentParameters.toPage, size);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return 0;
         }
     }
@@ -177,7 +177,7 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
             }
             return writeFiles(docs);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return 0;
         }
     }
@@ -215,7 +215,7 @@ public class PdfSplitBatchController extends BaseBatchPdfController {
                 targetFileGenerated(tFile);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         return index - 1;
     }

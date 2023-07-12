@@ -96,7 +96,7 @@ public class TableAddRowsController extends BaseChildController {
                     .or(numberInput.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -113,7 +113,7 @@ public class TableAddRowsController extends BaseChildController {
                     tableSelect >= 0 ? tableSelect : (thisSelect >= 0 ? thisSelect : 0));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -157,7 +157,7 @@ public class TableAddRowsController extends BaseChildController {
 
 //            setSelector();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -172,7 +172,7 @@ public class TableAddRowsController extends BaseChildController {
             controller.setParameters(tableViewController);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

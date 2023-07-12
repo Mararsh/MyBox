@@ -527,7 +527,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             popEventMenu(event, items);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -542,7 +542,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

@@ -3,7 +3,6 @@ package mara.mybox.controller;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javafx.application.Platform;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tooltip;
 import mara.mybox.bufferedimage.ImageScope;
@@ -20,15 +19,50 @@ import static mara.mybox.value.Languages.message;
  */
 public abstract class ImageManufactureScopeController_Set extends ImageManufactureScopeController_Outline {
 
-    protected void setScopeName() {
-        if (scope == null) {
+    public void checkScopeType() {
+        if (isSettingValues) {
             return;
         }
-        String name = scope.getName();
-        if (name == null || name.isEmpty()) {
-            name = scope.getScopeType() + "_" + DateTools.datetimeToString(new Date());
+        try {
+            clearScope();
+            if (scopeTypeGroup.getSelectedToggle() == null) {
+                scope.setScopeType(ImageScope.ScopeType.All);
+            } else {
+                RadioButton selected = (RadioButton) scopeTypeGroup.getSelectedToggle();
+                if (selected.equals(scopeAllRadio)) {
+                    scope.setScopeType(ImageScope.ScopeType.All);
+
+                } else if (selected.equals(scopeMattingRadio)) {
+                    scope.setScopeType(ImageScope.ScopeType.Matting);
+
+                } else if (selected.equals(scopeRectangleRadio)) {
+                    scope.setScopeType(ImageScope.ScopeType.Rectangle);
+
+                } else if (selected.equals(scopeCircleRadio)) {
+                    scope.setScopeType(ImageScope.ScopeType.Circle);
+
+                } else if (selected.equals(scopeEllipseRadio)) {
+                    scope.setScopeType(ImageScope.ScopeType.Ellipse);
+
+                } else if (selected.equals(scopePolygonRadio)) {
+                    scope.setScopeType(ImageScope.ScopeType.Polygon);
+
+                } else if (selected.equals(scopeColorRadio)) {
+                    scope.setScopeType(ImageScope.ScopeType.Color);
+
+                } else if (selected.equals(scopeOutlineRadio)) {
+                    scope.setScopeType(ImageScope.ScopeType.Outline);
+                }
+            }
+
+            setScopeControls();
+            setScopeValues();
+
+            indicateScope();
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
         }
-        scopeNameInput.setText(name);
     }
 
     protected void setScopeControls() {
@@ -116,13 +150,15 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
 
     }
 
-    protected void setScopeValues() {
+    private void setScopeValues() {
         try {
             if (image == null || scope == null) {
                 return;
             }
+            pickColors();
             switch (scope.getScopeType()) {
                 case Matting:
+                    pickPoints();
                     checkMatchType();
                     break;
 
@@ -145,6 +181,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     break;
 
                 case Polygon:
+                    pickPoints();
                     showMaskPolygon();
                     scope.setPolygon(maskPolygonData.cloneValues());
                     checkMatchType();
@@ -169,10 +206,10 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
 
     }
 
-    protected void clearScope() {
+    public void clearScope() {
         try {
-            clearMaskShapes();
             isSettingValues = true;
+            clearMaskShapes();
             if (imageView.getImage() != null) {
                 scope = new ImageScope(imageView.getImage());
                 if (sourceFile != null) {
@@ -184,13 +221,12 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
             scopeView.setImage(null);
             outlineSource = null;
 
-            pointsController.clearAction();
+//            pointsController.clearAction();
 //            colorsList.getItems().clear();
             scopeDistanceSelector.getItems().clear();
+            scopeDistanceSelector.getEditor().setStyle(null);
             areaExcludedCheck.setSelected(false);
             colorExcludedCheck.setSelected(false);
-            pickColorCheck.setSelected(false);
-            scopeDistanceSelector.getEditor().setStyle(null);
             outlinesList.getSelectionModel().select(null);
             pickColorCheck.setSelected(false);
             isSettingValues = false;
@@ -199,110 +235,60 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
         }
     }
 
-    public void checkScopeType() {
-        if (isSettingValues) {
-            return;
+    protected boolean checkMatchType() {
+        if (isSettingValues || scope == null || matchGroup.getSelectedToggle() == null) {
+            return false;
         }
         try {
-            clearScope();
-            if (scopeTypeGroup.getSelectedToggle() == null) {
-                scope.setScopeType(ImageScope.ScopeType.All);
-            } else {
-                RadioButton selected = (RadioButton) scopeTypeGroup.getSelectedToggle();
-                if (selected.equals(scopeAllRadio)) {
-                    scope.setScopeType(ImageScope.ScopeType.All);
-
-                } else if (selected.equals(scopeMattingRadio)) {
-                    scope.setScopeType(ImageScope.ScopeType.Matting);
-
-                } else if (selected.equals(scopeRectangleRadio)) {
-                    scope.setScopeType(ImageScope.ScopeType.Rectangle);
-
-                } else if (selected.equals(scopeCircleRadio)) {
-                    scope.setScopeType(ImageScope.ScopeType.Circle);
-
-                } else if (selected.equals(scopeEllipseRadio)) {
-                    scope.setScopeType(ImageScope.ScopeType.Ellipse);
-
-                } else if (selected.equals(scopePolygonRadio)) {
-                    scope.setScopeType(ImageScope.ScopeType.Polygon);
-
-                } else if (selected.equals(scopeColorRadio)) {
-                    scope.setScopeType(ImageScope.ScopeType.Color);
-
-                } else if (selected.equals(scopeOutlineRadio)) {
-                    scope.setScopeType(ImageScope.ScopeType.Outline);
+            int max = 255, step = 10;
+            RadioButton selected = (RadioButton) matchGroup.getSelectedToggle();
+            if (selected.equals(colorRGBRadio)) {
+                scope.setColorScopeType(ImageScope.ColorScopeType.Color);
+                if (squareRootCheck.isSelected()) {
+                    max = 255 * 255;
+                    step = 100;
                 }
+
+            } else if (selected.equals(colorRedRadio)) {
+                scope.setColorScopeType(ImageScope.ColorScopeType.Red);
+
+            } else if (selected.equals(colorGreenRadio)) {
+                scope.setColorScopeType(ImageScope.ColorScopeType.Green);
+
+            } else if (selected.equals(colorBlueRadio)) {
+                scope.setColorScopeType(ImageScope.ColorScopeType.Blue);
+
+            } else if (selected.equals(colorSaturationRadio)) {
+                scope.setColorScopeType(ImageScope.ColorScopeType.Saturation);
+                max = 100;
+
+            } else if (selected.equals(colorHueRadio)) {
+                scope.setColorScopeType(ImageScope.ColorScopeType.Hue);
+                max = 360;
+
+            } else if (selected.equals(colorBrightnessRadio)) {
+                scope.setColorScopeType(ImageScope.ColorScopeType.Brightness);
+                max = 100;
+
             }
 
-            setScopeControls();
-            setScopeValues();
+            NodeStyleTools.setTooltip(scopeDistanceSelector, new Tooltip("0~" + max));
+            List<String> vList = new ArrayList<>();
+            for (int i = 0; i <= max; i += step) {
+                vList.add(i + "");
+            }
+            isSettingValues = true;
+            scopeDistanceSelector.getItems().clear();
+            scopeDistanceSelector.getItems().addAll(vList);
+            scopeDistanceSelector.setValue("20");
+            isSettingValues = false;
 
-            indicateScope();
+            return checkDistanceValue();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return false;
         }
-    }
-
-    protected void checkMatchType() {
-        if (isSettingValues || scope == null || matchGroup.getSelectedToggle() == null) {
-            return;
-        }
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    int max = 255, step = 10;
-                    RadioButton selected = (RadioButton) matchGroup.getSelectedToggle();
-                    if (selected.equals(colorRGBRadio)) {
-                        scope.setColorScopeType(ImageScope.ColorScopeType.Color);
-                        if (squareRootCheck.isSelected()) {
-                            max = 255 * 255;
-                            step = 100;
-                        }
-
-                    } else if (selected.equals(colorRedRadio)) {
-                        scope.setColorScopeType(ImageScope.ColorScopeType.Red);
-
-                    } else if (selected.equals(colorGreenRadio)) {
-                        scope.setColorScopeType(ImageScope.ColorScopeType.Green);
-
-                    } else if (selected.equals(colorBlueRadio)) {
-                        scope.setColorScopeType(ImageScope.ColorScopeType.Blue);
-
-                    } else if (selected.equals(colorSaturationRadio)) {
-                        scope.setColorScopeType(ImageScope.ColorScopeType.Saturation);
-                        max = 100;
-
-                    } else if (selected.equals(colorHueRadio)) {
-                        scope.setColorScopeType(ImageScope.ColorScopeType.Hue);
-                        max = 360;
-
-                    } else if (selected.equals(colorBrightnessRadio)) {
-                        scope.setColorScopeType(ImageScope.ColorScopeType.Brightness);
-                        max = 100;
-
-                    }
-
-                    NodeStyleTools.setTooltip(scopeDistanceSelector, new Tooltip("0~" + max));
-                    List<String> vList = new ArrayList<>();
-                    for (int i = 0; i <= max; i += step) {
-                        vList.add(i + "");
-                    }
-                    isSettingValues = true;
-                    scopeDistanceSelector.getItems().clear();
-                    scopeDistanceSelector.getItems().addAll(vList);
-                    scopeDistanceSelector.setValue("20");
-                    isSettingValues = false;
-
-                    checkDistanceValue();
-
-                } catch (Exception e) {
-                    MyBoxLog.error(e);
-                }
-            }
-        });
     }
 
     protected boolean checkDistanceValue() {
@@ -353,6 +339,17 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
             ValidationTools.setEditorBadStyle(scopeDistanceSelector);
         }
         return valid;
+    }
+
+    protected void setScopeName() {
+        if (scope == null) {
+            return;
+        }
+        String name = scope.getName();
+        if (name == null || name.isEmpty()) {
+            name = scope.getScopeType() + "_" + DateTools.datetimeToString(new Date());
+        }
+        scopeNameInput.setText(name);
     }
 
 }

@@ -54,7 +54,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
             stopping = new SimpleBooleanProperty(false);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -95,7 +95,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
             checkExt();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -121,7 +121,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
             }
             return pickTarget();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -137,7 +137,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
             targetPath.mkdirs();
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -247,7 +247,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
                 });
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         return true;
     }
@@ -276,7 +276,7 @@ public class FFmpegScreenRecorderController extends BaseTaskController {
                     new OutputStreamWriter(process.getOutputStream(), Charset.forName("UTF-8")));) {
                 writer.append('q');
             } catch (Exception e) {
-                MyBoxLog.error(e.toString());
+                MyBoxLog.error(e);
             }
         }
     }

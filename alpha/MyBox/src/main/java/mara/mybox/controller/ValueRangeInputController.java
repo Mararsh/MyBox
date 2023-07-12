@@ -122,7 +122,7 @@ public class ValueRangeInputController extends BaseInputController {
             controller.setParameters(parent, column, range);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

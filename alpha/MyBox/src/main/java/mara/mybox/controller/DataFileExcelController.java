@@ -58,7 +58,7 @@ public class DataFileExcelController extends BaseData2DFileController {
             setDataType(Data2D.Type.Excel);
             dataFileExcel = (DataFileExcel) dataController.data2D;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -101,7 +101,7 @@ public class DataFileExcelController extends BaseData2DFileController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -164,7 +164,7 @@ public class DataFileExcelController extends BaseData2DFileController {
             dataFileExcel.initFile(dataFileExcel.getFile(), name);
             dataController.readDefinition();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -330,7 +330,7 @@ public class DataFileExcelController extends BaseData2DFileController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

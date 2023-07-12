@@ -85,7 +85,7 @@ public class MarkdownEditorController extends TextEditorController {
                 super.makeEditContextMenu(node);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -130,7 +130,7 @@ public class MarkdownEditorController extends TextEditorController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -175,7 +175,7 @@ public class MarkdownEditorController extends TextEditorController {
             htmlRenderer = HtmlRenderer.builder(htmlOptions).build();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -359,7 +359,7 @@ public class MarkdownEditorController extends TextEditorController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -372,7 +372,7 @@ public class MarkdownEditorController extends TextEditorController {
             }
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

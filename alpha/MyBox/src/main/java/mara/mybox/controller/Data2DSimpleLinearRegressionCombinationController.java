@@ -38,7 +38,7 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
             resultsController.setParameters(this);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -142,7 +142,7 @@ public class Data2DSimpleLinearRegressionCombinationController extends BaseData2
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

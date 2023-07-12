@@ -61,7 +61,7 @@ public class ImageManufactureOperationsController extends ImageViewerController 
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -178,7 +178,7 @@ public class ImageManufactureOperationsController extends ImageViewerController 
             imageController.adjustRightPane();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -202,7 +202,7 @@ public class ImageManufactureOperationsController extends ImageViewerController 
                 return controller;
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         return null;
     }

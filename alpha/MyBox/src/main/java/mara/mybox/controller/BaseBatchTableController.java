@@ -208,7 +208,7 @@ public abstract class BaseBatchTableController<P> extends BaseTablePagesControll
             return items;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -275,7 +275,7 @@ public abstract class BaseBatchTableController<P> extends BaseTablePagesControll
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -606,7 +606,7 @@ public abstract class BaseBatchTableController<P> extends BaseTablePagesControll
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -698,7 +698,7 @@ public abstract class BaseBatchTableController<P> extends BaseTablePagesControll
             }
             addFiles(index, files);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -791,7 +791,7 @@ public abstract class BaseBatchTableController<P> extends BaseTablePagesControll
             }
             return infos;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -815,7 +815,7 @@ public abstract class BaseBatchTableController<P> extends BaseTablePagesControll
             }
             addDirectory(index, directory);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -844,7 +844,7 @@ public abstract class BaseBatchTableController<P> extends BaseTablePagesControll
             }
             recordFileOpened(directory);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }

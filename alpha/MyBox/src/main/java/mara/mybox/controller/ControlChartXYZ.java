@@ -90,7 +90,7 @@ public class ControlChartXYZ extends BaseController {
             pointSelector.setValue(pointSize + "");
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -161,7 +161,7 @@ public class ControlChartXYZ extends BaseController {
 
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }

@@ -39,7 +39,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
             recoverButton.setDisable(true);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -89,7 +89,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
             );
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

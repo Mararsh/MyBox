@@ -120,7 +120,7 @@ public class ImageManufactureScopesSavedController extends BaseSysTableControlle
             createColumn.setCellFactory(new TableDateCell());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -160,7 +160,7 @@ public class ImageManufactureScopesSavedController extends BaseSysTableControlle
             checkQueryConditions();
             loadTableData();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

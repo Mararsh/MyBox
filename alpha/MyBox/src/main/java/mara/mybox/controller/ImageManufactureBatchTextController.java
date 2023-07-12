@@ -56,7 +56,7 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
             BufferedImage target = ImageTextTools.addText(source, optionsController);
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

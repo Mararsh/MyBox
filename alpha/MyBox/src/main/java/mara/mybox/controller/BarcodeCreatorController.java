@@ -109,7 +109,7 @@ public class BarcodeCreatorController extends ImageViewerController {
             initDataMatrixParaBox();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -202,7 +202,7 @@ public class BarcodeCreatorController extends ImageViewerController {
                     UserConfig.getString("BarcodeType", BarcodeType.QR_Code.name()));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -357,7 +357,7 @@ public class BarcodeCreatorController extends ImageViewerController {
             quietWidthInput.setText(UserConfig.getString("BarcodeQuietWdith", "0.25"));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -453,7 +453,7 @@ public class BarcodeCreatorController extends ImageViewerController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -561,7 +561,7 @@ public class BarcodeCreatorController extends ImageViewerController {
             pdf417ErrorCorrectionSelecor.getSelectionModel().select(UserConfig.getString("PDF417ErrorCorrection", Languages.message("PDF417ErrorCorrection3")));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -608,7 +608,7 @@ public class BarcodeCreatorController extends ImageViewerController {
             dmHeightInput.setText(UserConfig.getInt("DataMatrixHeight", 100) + "");
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

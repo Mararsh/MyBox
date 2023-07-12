@@ -191,7 +191,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -261,7 +261,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -364,7 +364,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }

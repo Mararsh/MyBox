@@ -35,7 +35,7 @@ public class ControlSvgTree extends ControlXmlTree {
             nodeController = svgNodeController;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

@@ -77,7 +77,7 @@ public class LocationInMapController extends GeographyCodeMapController {
                 multipleCheck.setSelected(UserConfig.getBoolean(baseName + "MultiplePoints", true));
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -170,7 +170,7 @@ public class LocationInMapController extends GeographyCodeMapController {
                         code = GeographyCodeTools.geoCode(mapOptions.getCoordinateSystem(),
                                 longitude, latitude, true);
                     } catch (Exception e) {
-                        MyBoxLog.error(e.toString());
+                        MyBoxLog.error(e);
                         return false;
                     }
                 } else {
@@ -274,7 +274,7 @@ public class LocationInMapController extends GeographyCodeMapController {
             controller.loadCoordinate(longitude, latitude);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

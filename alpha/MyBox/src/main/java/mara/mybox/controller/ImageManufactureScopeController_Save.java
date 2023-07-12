@@ -31,7 +31,7 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
             );
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -94,7 +94,7 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
         }
     }
 
-    public boolean showScopeType(ImageScope scope) {
+    private boolean showScopeType(ImageScope scope) {
         if (scope == null || scope.getScopeType() == null) {
             return false;
         }
@@ -128,11 +128,14 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
 
     }
 
-    public boolean showAreaData(ImageScope scope) {
+    private boolean showAreaData(ImageScope scope) {
         if (scope == null || scope.getScopeType() == null) {
             return false;
         }
         try {
+            pointsController.isSettingValues = true;
+            pointsController.clearAction();
+            pointsController.isSettingValues = true;
             areaExcludedCheck.setSelected(scope.isAreaExcluded());
             switch (scope.getScopeType()) {
                 case Matting: {
@@ -176,11 +179,12 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
         }
     }
 
-    public boolean showColorData(ImageScope scope) {
+    private boolean showColorData(ImageScope scope) {
         if (scope == null || scope.getScopeType() == null) {
             return false;
         }
         try {
+            colorsList.getItems().clear();
             colorExcludedCheck.setSelected(scope.isColorExcluded());
             switch (scope.getScopeType()) {
                 case Color:
@@ -194,7 +198,6 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
                         for (java.awt.Color color : colors) {
                             list.add(ColorConvertTools.converColor(color));
                         }
-                        colorsList.getItems().clear();
                         colorsList.getItems().addAll(list);
                         colorsList.getSelectionModel().selectLast();
                     }
@@ -206,7 +209,7 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
         }
     }
 
-    protected void showMatchType(ImageScope scope) {
+    private void showMatchType(ImageScope scope) {
         try {
             if (scope == null) {
                 return;
@@ -241,7 +244,7 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
 
     }
 
-    protected void showDistanceValue(ImageScope scope) {
+    private void showDistanceValue(ImageScope scope) {
         try {
             int distance, max = 255;
             switch (scope.getColorScopeType()) {

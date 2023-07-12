@@ -45,7 +45,7 @@ public class MarkdownTypesettingController extends BaseBatchFileController {
             htmlRenderer = HtmlRenderer.builder(htmlOptions).build();
             mdConverter = FlexmarkHtmlConverter.builder(htmlOptions).build();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
         return super.makeMoreParameters();

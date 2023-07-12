@@ -54,7 +54,7 @@ public class ControlData2DPaste extends BaseController {
             makeControls(0, 0);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -82,7 +82,7 @@ public class ControlData2DPaste extends BaseController {
                 colSelector.getItems().clear();
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

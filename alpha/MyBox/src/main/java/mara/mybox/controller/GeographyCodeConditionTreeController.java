@@ -40,7 +40,7 @@ public class GeographyCodeConditionTreeController extends ControlConditionTree {
             treeView.setSelectedTitles(s);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

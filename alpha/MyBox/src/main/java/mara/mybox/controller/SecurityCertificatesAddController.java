@@ -58,7 +58,7 @@ public class SecurityCertificatesAddController extends BaseController {
             saveCloseCheck.setSelected(UserConfig.getBoolean(interfaceName + "SaveClose", false));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

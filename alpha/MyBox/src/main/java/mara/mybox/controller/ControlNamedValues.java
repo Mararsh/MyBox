@@ -64,7 +64,7 @@ public class ControlNamedValues extends BaseSysTableController<NamedValues> {
             modifyColumn.setCellFactory(new TableDateCell());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -74,7 +74,7 @@ public class ControlNamedValues extends BaseSysTableController<NamedValues> {
             queryConditions = "key_name='" + key + "'";
             loadTableData();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -198,7 +198,7 @@ public class ControlNamedValues extends BaseSysTableController<NamedValues> {
 
             return items;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

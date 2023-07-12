@@ -44,7 +44,7 @@ public abstract class BaseSysTableController<P> extends BaseTablePagesController
             setTableDefinition(tableDefinition);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

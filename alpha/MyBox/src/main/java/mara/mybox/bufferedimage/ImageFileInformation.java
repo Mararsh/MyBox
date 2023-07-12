@@ -64,7 +64,7 @@ public class ImageFileInformation extends FileInformation {
                 return readImageFile(file);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -107,7 +107,7 @@ public class ImageFileInformation extends FileInformation {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         return fileInfo;
     }
@@ -148,7 +148,7 @@ public class ImageFileInformation extends FileInformation {
             }
             doc.close();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         return fileInfo;
     }
@@ -187,7 +187,7 @@ public class ImageFileInformation extends FileInformation {
                 fileInfo.setImageInformation(imagesInfo.get(0));
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         return fileInfo;
     }

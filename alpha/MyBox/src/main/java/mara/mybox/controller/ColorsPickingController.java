@@ -75,7 +75,7 @@ public class ColorsPickingController extends BaseChildController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

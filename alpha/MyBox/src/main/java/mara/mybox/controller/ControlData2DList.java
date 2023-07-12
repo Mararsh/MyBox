@@ -83,7 +83,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
             modifyColumn.setCellFactory(new TableDateCell());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -127,7 +127,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
             loadList();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -250,7 +250,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
 
             return items;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -383,7 +383,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
         try {
             load(selectedItem());
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -395,7 +395,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
             }
             manageController.loadDef(source);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -465,7 +465,7 @@ public class ControlData2DList extends BaseSysTableController<Data2DDefinition> 
 
             popEventMenu(mouseEvent, items);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

@@ -40,7 +40,7 @@ public class WordToPdfController extends BaseBatchFileController {
             optionsController.setControls(baseName, true);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

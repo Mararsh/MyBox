@@ -74,7 +74,7 @@ public class MatricesBinaryCalculationController extends BaseController {
             resultMatrix = (DataMatrix) resultController.data2D;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -127,7 +127,7 @@ public class MatricesBinaryCalculationController extends BaseController {
             checkMatrices();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

@@ -101,7 +101,7 @@ public class AutoTestingExecutionController extends BaseTablePagesController<Tes
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -128,7 +128,7 @@ public class AutoTestingExecutionController extends BaseTablePagesController<Tes
             };
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -145,7 +145,7 @@ public class AutoTestingExecutionController extends BaseTablePagesController<Tes
             startAction();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -274,7 +274,7 @@ public class AutoTestingExecutionController extends BaseTablePagesController<Tes
             controller.setParameters(parent, testCases);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

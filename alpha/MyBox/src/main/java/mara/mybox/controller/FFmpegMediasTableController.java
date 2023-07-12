@@ -29,7 +29,7 @@ public class FFmpegMediasTableController extends ControlMediaTable {
             examples.add("http://download.oracle.com/otndocs/products/javafx/JavaRap/prog_index.m3u8");
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

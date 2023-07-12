@@ -46,7 +46,7 @@ public abstract class BaseBatchHtmlController extends BaseBatchFileController {
             targetFileGenerated(target);
             return message("Successful");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return message("Failed");
         }
     }

@@ -47,7 +47,7 @@ public class ControlChartXYSelection extends BaseController {
                     });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -80,7 +80,7 @@ public class ControlChartXYSelection extends BaseController {
             typeNodify.set(!typeNodify.get());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         return chartType;
     }

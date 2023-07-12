@@ -93,7 +93,7 @@ public class XmlEditorController extends BaseFileController {
             tabChanged();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -394,7 +394,7 @@ public class XmlEditorController extends BaseFileController {
             typesettingCheck.selectedProperty().bindBidirectional(optionsController.indentCheck.selectedProperty());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -403,7 +403,7 @@ public class XmlEditorController extends BaseFileController {
             textsArea.setText(xml);
             textsChanged(updated);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -627,7 +627,7 @@ public class XmlEditorController extends BaseFileController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -639,7 +639,7 @@ public class XmlEditorController extends BaseFileController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

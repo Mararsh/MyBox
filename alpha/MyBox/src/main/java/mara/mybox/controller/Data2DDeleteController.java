@@ -75,7 +75,7 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
                     tabPane.getSelectionModel().select(dataTab);
                     alertInformation(message("DeletedRowsNumber") + ": " + filteredRowsIndices.size());
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                 }
             }
 
@@ -157,7 +157,7 @@ public class Data2DDeleteController extends BaseData2DTargetsController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

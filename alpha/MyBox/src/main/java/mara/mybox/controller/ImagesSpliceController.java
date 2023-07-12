@@ -98,7 +98,7 @@ public class ImagesSpliceController extends ImageViewerController {
             leftPaneCheck.setSelected(true);
             rightPaneCheck.setSelected(true);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -214,7 +214,7 @@ public class ImagesSpliceController extends ImageViewerController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -327,7 +327,7 @@ public class ImagesSpliceController extends ImageViewerController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -406,7 +406,7 @@ public class ImagesSpliceController extends ImageViewerController {
             );
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -476,7 +476,7 @@ public class ImagesSpliceController extends ImageViewerController {
             Image newImage = CombineTools.combineSingleColumn(imageCombine, rows, false, true);
             return newImage;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -535,7 +535,7 @@ public class ImagesSpliceController extends ImageViewerController {
             controller.load(imageInfos);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

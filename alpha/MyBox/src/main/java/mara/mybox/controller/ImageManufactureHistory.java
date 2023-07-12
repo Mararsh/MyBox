@@ -129,7 +129,7 @@ public class ImageManufactureHistory extends BaseTablePagesController<ImageEditH
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -186,7 +186,7 @@ public class ImageManufactureHistory extends BaseTablePagesController<ImageEditH
             setHistoryIndex(-1);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }

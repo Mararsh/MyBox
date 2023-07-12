@@ -63,7 +63,7 @@ public class Data2DPercentageController extends BaseData2DTargetsController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -76,7 +76,7 @@ public class Data2DPercentageController extends BaseData2DTargetsController {
             outputColumns = data2D.makePercentageColumns(checkedColsIndices, otherColsIndices, objectType);
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -350,7 +350,7 @@ public class Data2DPercentageController extends BaseData2DTargetsController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

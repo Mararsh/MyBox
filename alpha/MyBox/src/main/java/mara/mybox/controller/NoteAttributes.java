@@ -19,7 +19,7 @@ public class NoteAttributes extends TreeNodeEditor {
             attributesTab = editorController.attributesTab;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

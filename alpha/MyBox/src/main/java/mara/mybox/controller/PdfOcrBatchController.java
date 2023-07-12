@@ -283,7 +283,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -302,7 +302,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
             renderer = new PDFRenderer(doc);
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -333,7 +333,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
                     = renderer.renderImageWithDPI(currentParameters.currentPage - 1, dpi, ImageType.RGB);    // 0-based
             text = ocr(bufferedImage);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         if (text != null) {
             String s = message("Page") + ":" + currentParameters.currentPage + "   "
@@ -381,7 +381,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         if (!text.isBlank()) {
             String s = message("Page") + ":" + currentParameters.currentPage + "   "
@@ -495,7 +495,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
             return lastImage;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -556,7 +556,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
                 targetFileGenerated(tFile);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

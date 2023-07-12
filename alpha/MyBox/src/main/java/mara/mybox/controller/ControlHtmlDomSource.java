@@ -46,7 +46,7 @@ public class ControlHtmlDomSource extends BaseHtmlTreeController {
             selectColumn.setCellFactory(CheckBoxTreeTableCell.forTreeTableColumn(selectColumn));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -62,7 +62,7 @@ public class ControlHtmlDomSource extends BaseHtmlTreeController {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -93,7 +93,7 @@ public class ControlHtmlDomSource extends BaseHtmlTreeController {
                 checkSelected(child);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }

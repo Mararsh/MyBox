@@ -94,7 +94,7 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
                     }
                     return scopedImage != null;
                 } catch (Exception e) {
-                    MyBoxLog.error(e.toString());
+                    MyBoxLog.error(e);
                     return false;
                 }
             }

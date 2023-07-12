@@ -40,7 +40,7 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -73,7 +73,7 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -100,7 +100,7 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
             super.refreshControls();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -235,7 +235,7 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
             if (task != null) {
                 task.setError(e.toString());
             }
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -292,7 +292,7 @@ public abstract class BaseData2DTargetsController extends BaseData2DHandleContro
             return true;
         } catch (Exception e) {
             popError(e.toString());
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }

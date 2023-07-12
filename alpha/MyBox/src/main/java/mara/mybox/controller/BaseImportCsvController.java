@@ -73,7 +73,7 @@ public abstract class BaseImportCsvController<D> extends BaseBatchFileController
                 NodeStyleTools.removeTooltip(csvEditController.inputButton);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -188,7 +188,7 @@ public abstract class BaseImportCsvController<D> extends BaseBatchFileController
                 return Languages.message("Failed");
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return Languages.message("Failed");
         }
     }

@@ -60,7 +60,7 @@ public class ImageManufactureArcController extends ImageManufactureOperationCont
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }

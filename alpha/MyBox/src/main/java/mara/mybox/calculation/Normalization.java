@@ -87,7 +87,7 @@ public class Normalization {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         return resultVector;
     }
@@ -166,7 +166,7 @@ public class Normalization {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -232,7 +232,7 @@ public class Normalization {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -280,7 +280,7 @@ public class Normalization {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -332,7 +332,7 @@ public class Normalization {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -351,7 +351,7 @@ public class Normalization {
             resultMatrix = StringTools.transpose(resultMatrix);
             sourceMatrix = orignalSource;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         return resultMatrix;
     }
@@ -374,7 +374,7 @@ public class Normalization {
                 values[i] = this.cloneValues();
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         return resultMatrix;
     }
@@ -392,7 +392,7 @@ public class Normalization {
             }
             resultMatrix = StringTools.array2Matrix(resultVector, w);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         return resultMatrix;
     }

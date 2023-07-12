@@ -78,7 +78,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
             editingIndex = viewingIndex = -1;
             dataSizeLoaded = false;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -91,7 +91,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
             initPagination();
             initMore();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -134,7 +134,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
             checkSelected();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -421,7 +421,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
             return items;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -532,7 +532,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
             }
             return data;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -545,7 +545,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         try {
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -642,7 +642,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
 
             popEventMenu(mouseEvent, items);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -999,7 +999,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

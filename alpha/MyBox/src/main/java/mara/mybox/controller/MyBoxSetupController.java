@@ -70,7 +70,7 @@ public class MyBoxSetupController implements Initializable {
             makeEditBox();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -108,14 +108,14 @@ public class MyBoxSetupController implements Initializable {
                             }
                         }
                     } catch (Exception e) {
-                        MyBoxLog.error(e.toString());
+                        MyBoxLog.error(e);
                     }
                 }
             });
             listView.getSelectionModel().select(0);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -129,7 +129,7 @@ public class MyBoxSetupController implements Initializable {
             );
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -159,7 +159,7 @@ public class MyBoxSetupController implements Initializable {
             }
             dataDirInput.setText(directory.getPath());
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -187,7 +187,7 @@ public class MyBoxSetupController implements Initializable {
             }
             MainApp.MyBoxLoading(getMyStage());
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

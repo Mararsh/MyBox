@@ -77,7 +77,7 @@ public class ControlData2DEditTable extends ControlData2DLoad {
             initPagination();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -196,7 +196,7 @@ public class ControlData2DEditTable extends ControlData2DLoad {
             }
             Data2DPasteContentInSystemClipboardController.open(this, text);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -208,7 +208,7 @@ public class ControlData2DEditTable extends ControlData2DLoad {
             }
             Data2DPasteContentInMyBoxClipboardController.open(this);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -305,7 +305,7 @@ public class ControlData2DEditTable extends ControlData2DLoad {
             }
             dataController.columnsController.setNames(names);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

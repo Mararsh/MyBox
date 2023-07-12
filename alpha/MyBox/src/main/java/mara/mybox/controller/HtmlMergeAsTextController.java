@@ -36,7 +36,7 @@ public class HtmlMergeAsTextController extends HtmlToTextController {
             writer = new FileWriter(targetFile, Charset.forName("utf-8"));
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -48,7 +48,7 @@ public class HtmlMergeAsTextController extends HtmlToTextController {
             writer.write(text + "\n");
             return Languages.message("Successful");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return Languages.message("Failed");
         }
     }
@@ -72,7 +72,7 @@ public class HtmlMergeAsTextController extends HtmlToTextController {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

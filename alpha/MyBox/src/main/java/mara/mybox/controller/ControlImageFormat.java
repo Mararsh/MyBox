@@ -477,7 +477,7 @@ public class ControlImageFormat extends BaseController {
             attributes.setIsDithering(binaryController.dither());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -558,7 +558,7 @@ public class ControlImageFormat extends BaseController {
             }
             iccFileSelected(file);
         } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
+//            MyBoxLog.error(e);
         }
     }
 

@@ -48,7 +48,7 @@ public class RGBColorSpacesController extends ChromaticityBaseController {
             initAdaptation();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -158,7 +158,7 @@ public class RGBColorSpacesController extends ChromaticityBaseController {
                     + (String) adapted.get("procedure");
             webView.getEngine().loadContent("<pre>" + s + "</pre>");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

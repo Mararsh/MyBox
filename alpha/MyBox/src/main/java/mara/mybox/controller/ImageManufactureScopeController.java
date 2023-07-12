@@ -46,7 +46,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
             initSaveTab();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -73,7 +73,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
                     });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -120,7 +120,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
             opacitySelector.getSelectionModel().select(UserConfig.getString(baseName + "ScopeTransparency", message("ScopeTransparency0.5")));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -163,7 +163,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -172,7 +172,12 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
             matchGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    checkMatchType();
+                    if (isSettingValues) {
+                        return;
+                    }
+                    if (checkMatchType()) {
+                        indicateScope();
+                    }
                 }
             });
 
@@ -198,7 +203,9 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
                         return;
                     }
                     scope.setEightNeighbor(eightNeighborCheck.isSelected());
-                    indicateScope();
+                    if (checkMatchType()) {
+                        indicateScope();
+                    }
                 }
             });
 
@@ -211,11 +218,12 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
                         return;
                     }
                     checkMatchType();
+                    indicateScope();
                 }
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

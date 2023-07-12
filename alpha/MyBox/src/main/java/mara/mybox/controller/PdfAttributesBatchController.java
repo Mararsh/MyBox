@@ -212,7 +212,7 @@ public class PdfAttributesBatchController extends BaseBatchPdfController {
                             .or(ownerPasswordInput2.styleProperty().isEqualTo(UserConfig.badStyle()))
             );
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

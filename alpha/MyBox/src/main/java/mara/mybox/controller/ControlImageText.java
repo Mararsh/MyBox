@@ -101,7 +101,7 @@ public class ControlImageText extends BaseController {
 
             checkPositionType();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -163,7 +163,7 @@ public class ControlImageText extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }
@@ -817,12 +817,12 @@ public class ControlImageText extends BaseController {
         return bordersFillCheck.isSelected();
     }
 
-    public java.awt.Color bordersStrokeColor() {
-        return bordersStrokeColorSetController.awtColor();
+    public Color bordersStrokeColor() {
+        return bordersStrokeColorSetController.color();
     }
 
-    public java.awt.Color bordersFillColor() {
-        return bordersFillColorSetController.awtColor();
+    public Color bordersFillColor() {
+        return bordersFillColorSetController.color();
     }
 
     /*

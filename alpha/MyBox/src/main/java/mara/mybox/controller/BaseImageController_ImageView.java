@@ -43,7 +43,6 @@ import mara.mybox.value.UserConfig;
  */
 public abstract class BaseImageController_ImageView extends BaseFileController {
 
-    public static final String DefaultStrokeColor = "#c94d58", DefaultAnchorColor = "#0066cc";
     protected ImageInformation imageInformation;
     protected Image image;
     protected ImageAttributes attributes;
@@ -117,7 +116,7 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -221,7 +220,7 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -450,7 +449,7 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
             ImageViewTools.paneSize(scrollPane, imageView);
             refinePane();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -463,7 +462,7 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
             ImageViewTools.imageSize(scrollPane, imageView);
             refinePane();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -479,7 +478,7 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
                 loadedSize();
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

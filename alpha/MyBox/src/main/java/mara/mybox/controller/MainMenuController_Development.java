@@ -141,7 +141,7 @@ public abstract class MainMenuController_Development extends MainMenuController_
                 }
             }, 0, memoryMonitorInterval);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -234,7 +234,7 @@ public abstract class MainMenuController_Development extends MainMenuController_
                 }
             }, 0, cpuMonitorInterval);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

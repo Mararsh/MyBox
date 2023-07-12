@@ -62,7 +62,7 @@ public class PdfExtractImagesBatchController extends BaseBatchPdfController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         return index;
     }

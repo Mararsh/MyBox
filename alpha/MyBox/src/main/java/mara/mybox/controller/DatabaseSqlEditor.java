@@ -255,7 +255,7 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
             }
             controller.addFlowPane(valueButtons);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -317,7 +317,7 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
             }
             controller.addFlowPane(valueButtons);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

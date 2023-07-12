@@ -30,7 +30,7 @@ public class ControlData2DMultipleLinearRegressionTable extends ControlData2DSim
 
             return cols;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -61,7 +61,7 @@ public class ControlData2DMultipleLinearRegressionTable extends ControlData2DSim
                 controller.okAction();
                 controller.requestMouse();
             } catch (Exception e) {
-                MyBoxLog.error(e.toString());
+                MyBoxLog.error(e);
             }
         }
     }

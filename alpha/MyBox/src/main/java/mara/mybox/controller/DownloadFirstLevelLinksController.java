@@ -461,7 +461,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

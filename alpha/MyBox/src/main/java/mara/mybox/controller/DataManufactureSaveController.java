@@ -31,7 +31,7 @@ public class DataManufactureSaveController extends BaseChildController {
             targetController.setParameters(this, tableController);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -100,7 +100,7 @@ public class DataManufactureSaveController extends BaseChildController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

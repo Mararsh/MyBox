@@ -93,7 +93,7 @@ public class ControlData2D extends BaseController {
             csvController = editController.csvController;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -111,7 +111,7 @@ public class ControlData2D extends BaseController {
         try {
             this.manageController = topController;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -136,7 +136,7 @@ public class ControlData2D extends BaseController {
             loadNull();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -178,7 +178,7 @@ public class ControlData2D extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -209,7 +209,7 @@ public class ControlData2D extends BaseController {
             data2D.initFile(file);
             readDefinition();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -554,7 +554,7 @@ public class ControlData2D extends BaseController {
             }
             Data2DLoadContentInSystemClipboardController.open(tableController, text);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -566,7 +566,7 @@ public class ControlData2D extends BaseController {
             setData(Data2D.create(type));
             tableController.loadTmpData(null, data2D.tmpColumns(3), data2D.tmpData(3, 3));
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -578,7 +578,7 @@ public class ControlData2D extends BaseController {
             setData(Data2D.create(type));
             tableController.loadTmpData(name, cols, data);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -594,7 +594,7 @@ public class ControlData2D extends BaseController {
             setData(Data2D.create(type));
             tableController.loadCSVData(csvData);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -720,7 +720,7 @@ public class ControlData2D extends BaseController {
 
             popEventMenu(event, items);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

@@ -57,7 +57,7 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -83,7 +83,7 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
             isSettingValues = false;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -322,7 +322,7 @@ public class Data2DStatisticController extends BaseData2DTargetsController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

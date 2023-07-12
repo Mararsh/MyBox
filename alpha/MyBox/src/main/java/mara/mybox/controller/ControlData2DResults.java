@@ -32,7 +32,7 @@ public class ControlData2DResults extends ControlData2DLoad {
             notUpdateTitle = true;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

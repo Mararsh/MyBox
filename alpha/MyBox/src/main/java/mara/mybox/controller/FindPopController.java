@@ -30,7 +30,7 @@ public class FindPopController extends MenuTextBaseController {
             findController.setEditInput(parent, textInput);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -49,7 +49,7 @@ public class FindPopController extends MenuTextBaseController {
             controller.setParameters(parent, node, x, y);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

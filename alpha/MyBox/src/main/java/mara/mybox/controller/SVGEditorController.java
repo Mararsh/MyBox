@@ -55,7 +55,7 @@ public class SvgEditorController extends XmlEditorController {
             treeController.svgNodeController.editor = this;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -77,7 +77,7 @@ public class SvgEditorController extends XmlEditorController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -197,7 +197,7 @@ public class SvgEditorController extends XmlEditorController {
 
             popEventMenu(event, items);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -248,7 +248,7 @@ public class SvgEditorController extends XmlEditorController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

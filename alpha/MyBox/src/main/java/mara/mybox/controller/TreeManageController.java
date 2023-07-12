@@ -168,7 +168,7 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -191,7 +191,7 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
             timeColumn.setText(timeMsg);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -614,7 +614,7 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
             return items;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -773,7 +773,7 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
 
             refreshTimes();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -804,7 +804,7 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
             findNameRadio.setText(nameMsg);
             findValueRadio.setText(valueMsg);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

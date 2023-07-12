@@ -51,7 +51,7 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
             clearTree();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

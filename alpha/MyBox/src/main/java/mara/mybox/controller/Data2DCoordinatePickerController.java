@@ -69,7 +69,7 @@ public class Data2DCoordinatePickerController extends CoordinatePickerController
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -115,7 +115,7 @@ public class Data2DCoordinatePickerController extends CoordinatePickerController
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -148,7 +148,7 @@ public class Data2DCoordinatePickerController extends CoordinatePickerController
             }
             close();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -163,7 +163,7 @@ public class Data2DCoordinatePickerController extends CoordinatePickerController
             controller.setParameters(dataControl, rowIndex);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -176,7 +176,7 @@ public class Data2DCoordinatePickerController extends CoordinatePickerController
             controller.setParameters(editControl);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

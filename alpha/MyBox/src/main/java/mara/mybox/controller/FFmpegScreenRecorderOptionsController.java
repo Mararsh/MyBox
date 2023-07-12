@@ -154,7 +154,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
                     .init(baseName + "Duration", 5);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -303,7 +303,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
             process.waitFor();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -356,7 +356,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
             process.waitFor();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -406,7 +406,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -426,7 +426,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -594,7 +594,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         return true;
     }
@@ -645,7 +645,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         return true;
     }
@@ -709,7 +709,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         return true;
     }

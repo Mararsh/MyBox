@@ -288,7 +288,7 @@ public class ControlDataConvert extends BaseController {
                     UserConfig.getString(baseName + "ExportMaxLines", message("NotSplit")));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -370,7 +370,7 @@ public class ControlDataConvert extends BaseController {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }

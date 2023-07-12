@@ -48,7 +48,7 @@ public class ChromaticAdaptationMatrixController extends ChromaticityBaseControl
             initCalculation();
             initAll();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
 
     }

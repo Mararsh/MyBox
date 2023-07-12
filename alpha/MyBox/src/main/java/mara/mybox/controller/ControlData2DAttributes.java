@@ -138,7 +138,7 @@ public class ControlData2DAttributes extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -155,7 +155,7 @@ public class ControlData2DAttributes extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -164,7 +164,7 @@ public class ControlData2DAttributes extends BaseController {
             data2D = data;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

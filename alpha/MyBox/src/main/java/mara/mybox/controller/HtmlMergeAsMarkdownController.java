@@ -41,7 +41,7 @@ public class HtmlMergeAsMarkdownController extends FilesMergeController {
             mdConverter = FlexmarkHtmlConverter.builder(new MutableDataSet()).build();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -75,7 +75,7 @@ public class HtmlMergeAsMarkdownController extends FilesMergeController {
             writer.write(md + "\n");
             return message("Successful");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return message("Failed");
         }
     }

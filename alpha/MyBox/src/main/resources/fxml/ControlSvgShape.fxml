@@ -49,17 +49,21 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                                <RadioButton fx:id="rectRadio" mnemonicParsing="false" selected="true" text="%Rectangle">
-                                                    <toggleGroup>
-                                                        <ToggleGroup fx:id="elementType" />
-                                                    </toggleGroup>
-                                                </RadioButton>
-                                                <RadioButton fx:id="circleRadio" layoutX="58.0" layoutY="10.0" mnemonicParsing="false" text="%Circle" toggleGroup="$elementType" />
-                                                <RadioButton fx:id="ellipseRadio" mnemonicParsing="false" text="%Ellipse" toggleGroup="$elementType" />
-                                                <RadioButton fx:id="lineRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%StraightLine" toggleGroup="$elementType" />
-                                                <RadioButton fx:id="polylineRadio" layoutX="153.0" layoutY="10.0" mnemonicParsing="false" text="%Polyline" toggleGroup="$elementType" />
-                                                <RadioButton fx:id="polygonRadio" layoutX="58.0" layoutY="10.0" mnemonicParsing="false" text="%Polygon" toggleGroup="$elementType" />
-                                                <RadioButton fx:id="pathRadio" layoutX="105.0" layoutY="10.0" mnemonicParsing="false" text="%SvgPath" toggleGroup="$elementType" />
+                                    <RadioButton fx:id="rectangleRadio" mnemonicParsing="false" selected="true" text="%Rectangle">
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="typeGroup" />
+                                       </toggleGroup>
+                                    </RadioButton>
+                                    <RadioButton fx:id="circleRadio" mnemonicParsing="false" text="%Circle" toggleGroup="$typeGroup" />
+                                    <RadioButton fx:id="ellipseRadio" mnemonicParsing="false" text="%Ellipse" toggleGroup="$typeGroup" />
+                                    <RadioButton fx:id="lineRadio" mnemonicParsing="false" text="%StraightLine">
+                                       <toggleGroup>
+                                          <ToggleGroup fx:id="typeGroup" />
+                                       </toggleGroup>
+                                    </RadioButton>
+                                    <RadioButton fx:id="polylineRadio" mnemonicParsing="false" text="%Polyline" toggleGroup="$typeGroup" />
+                                    <RadioButton fx:id="polygonRadio" mnemonicParsing="false" text="%Polygon" toggleGroup="$typeGroup" />
+                                    <RadioButton fx:id="pathRadio" layoutX="286.0" layoutY="16.0" mnemonicParsing="false" text="%SvgPath" toggleGroup="$typeGroup" />
                                             </children>
                                         </FlowPane>
                                     </children>
@@ -396,7 +400,7 @@ License:    Apache License Version 2.0
                                 <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                             </padding>
                             <children>
-                                <fx:include fx:id="image" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlSvgImage.fxml" VBox.vgrow="ALWAYS" />
+                                <fx:include fx:id="show" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlSvgImage.fxml" VBox.vgrow="ALWAYS" />
                             </children>
                         </VBox>
                     </content>

@@ -90,7 +90,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             }
             selectSourceFileDo(file);
         } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
+//            MyBoxLog.error(e);
         }
     }
 
@@ -147,7 +147,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
         try (Connection conn = DerbyBase.getConnection()) {
             recordFileRead(conn, file, pathType, fileType);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -295,7 +295,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             }
             selectSourcePath(directory);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

@@ -43,7 +43,7 @@ public class Data2DPasteContentInSystemClipboardController extends BaseChildCont
             pasteController.setParameters(sourceController, target);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -63,7 +63,7 @@ public class Data2DPasteContentInSystemClipboardController extends BaseChildCont
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

@@ -74,7 +74,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
             TextFileTools.writeFile(imagesListFile, imageFileString.toString(), Charset.forName("utf-8"));
             return imagesListFile;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -100,7 +100,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
             }
             return message("Done");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return message("Failed");
         }
     }
@@ -122,7 +122,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
                 totalFilesHandled++;
                 return message("Done");
             } catch (Exception e) {
-                MyBoxLog.error(e.toString());
+                MyBoxLog.error(e);
                 return message("Failed");
             }
         }
@@ -161,7 +161,7 @@ public class FFmpegMergeImageFilesController extends FFmpegMergeImagesController
             totalFilesHandled++;
             return message("Done");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return message("Failed");
         }
     }

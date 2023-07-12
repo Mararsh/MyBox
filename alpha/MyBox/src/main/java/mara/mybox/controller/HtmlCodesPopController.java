@@ -168,7 +168,7 @@ public class HtmlCodesPopController extends TextPopController {
             controller.setSourceInput(parent.baseName, textInput);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -182,7 +182,7 @@ public class HtmlCodesPopController extends TextPopController {
             controller.setWebView(parent.baseName, srcWebView);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

@@ -46,7 +46,7 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
             resultsController.setParameters(this);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -75,7 +75,7 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
             regression = null;
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -226,7 +226,7 @@ public class Data2DMultipleLinearRegressionCombinationController extends BaseDat
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

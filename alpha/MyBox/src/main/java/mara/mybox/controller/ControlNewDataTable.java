@@ -54,7 +54,7 @@ public class ControlNewDataTable extends BaseController {
             columnsController.setParameters(this, message("Column"), "");
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -71,7 +71,7 @@ public class ControlNewDataTable extends BaseController {
             columnsController.loadNames(data2D.columnNames());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -91,7 +91,7 @@ public class ControlNewDataTable extends BaseController {
             }
             columnsController.loadNames(names);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

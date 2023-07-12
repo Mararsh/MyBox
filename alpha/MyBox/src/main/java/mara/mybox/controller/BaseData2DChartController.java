@@ -103,7 +103,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -128,7 +128,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -138,7 +138,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             super.refreshControls();
             makeOptions();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -169,7 +169,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             }
             isSettingValues = false;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -210,7 +210,7 @@ public abstract class BaseData2DChartController extends BaseData2DHandleControll
             groupParameters = null;
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }

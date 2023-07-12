@@ -63,7 +63,7 @@ public abstract class ImageManufactureScopeController_Colors extends ImageManufa
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -172,6 +172,17 @@ public abstract class ImageManufactureScopeController_Colors extends ImageManufa
 
         };
         start(task);
+    }
+
+    public void pickColors() {
+        List<Color> colors = colorsList.getItems();
+        if (colors == null || colors.isEmpty()) {
+            scope.getColors().clear();
+            return;
+        }
+        for (Color color : colors) {
+            scope.addColor(ColorConvertTools.converColor(color));
+        }
     }
 
 }

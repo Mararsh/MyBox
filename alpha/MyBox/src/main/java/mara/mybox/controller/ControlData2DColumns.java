@@ -335,7 +335,7 @@ public class ControlData2DColumns extends BaseTablePagesController<Data2DColumn>
             checkButtons();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -344,7 +344,7 @@ public class ControlData2DColumns extends BaseTablePagesController<Data2DColumn>
             this.dataController = dataController;
             tableController = dataController.tableController;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -354,7 +354,7 @@ public class ControlData2DColumns extends BaseTablePagesController<Data2DColumn>
             tableController = convertController.tableController;
             buttonsPane.getChildren().removeAll(cancelButton, okButton);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -365,7 +365,7 @@ public class ControlData2DColumns extends BaseTablePagesController<Data2DColumn>
             tableData2DColumn = tableController.tableData2DColumn;
             setColumns();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -466,7 +466,7 @@ public class ControlData2DColumns extends BaseTablePagesController<Data2DColumn>
             checkButtons();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -602,7 +602,7 @@ public class ControlData2DColumns extends BaseTablePagesController<Data2DColumn>
             popDone();
             status(Status.Modified);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -619,7 +619,7 @@ public class ControlData2DColumns extends BaseTablePagesController<Data2DColumn>
             popDone();
             status(Status.Modified);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -673,7 +673,7 @@ public class ControlData2DColumns extends BaseTablePagesController<Data2DColumn>
             data2D.setColumns(columns);
             return tableController.updateData(newTableData, true);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -715,7 +715,7 @@ public class ControlData2DColumns extends BaseTablePagesController<Data2DColumn>
             status = Status.Modified;
             okAction();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

@@ -71,7 +71,7 @@ public class BufferedImageTools {
             return new BufferedImage(cm, source.copyData(null), cm.isAlphaPremultiplied(), properties)
                     .getSubimage(0, 0, source.getWidth(), source.getHeight());
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -104,7 +104,7 @@ public class BufferedImageTools {
             }
             return encoder.encodeToString(bytes);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -116,7 +116,7 @@ public class BufferedImageTools {
             }
             return base64(ImageFileReaders.readImage(file), format == null ? "jpg" : format);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

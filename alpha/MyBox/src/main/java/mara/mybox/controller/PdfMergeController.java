@@ -48,7 +48,7 @@ public class PdfMergeController extends BaseBatchPdfController {
             );
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -96,7 +96,7 @@ public class PdfMergeController extends BaseBatchPdfController {
 
             updateInterface("CompleteFile");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         return MessageFormat.format(Languages.message("HandlePagesGenerateNumber"),
                 currentParameters.toPage - currentParameters.fromPage, generated);
@@ -124,7 +124,7 @@ public class PdfMergeController extends BaseBatchPdfController {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         targetDoc = null;
         super.afterTask();

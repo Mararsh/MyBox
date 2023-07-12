@@ -137,7 +137,7 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
             checkColorActionType();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -333,7 +333,7 @@ public class ImageManufactureBatchColorController extends BaseImageManufactureBa
             BufferedImage target = pixelsOperation.operate();
             return target;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
 

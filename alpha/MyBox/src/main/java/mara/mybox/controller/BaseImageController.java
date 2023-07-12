@@ -25,7 +25,7 @@ public abstract class BaseImageController extends BaseImageController_Actions {
             clearMaskShapes();
             initCheckboxs();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

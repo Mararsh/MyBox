@@ -196,7 +196,7 @@ public class TextPopController extends BaseChildController {
             controller.setSourceInput(parent.baseName, textInput);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }
@@ -207,7 +207,7 @@ public class TextPopController extends BaseChildController {
             controller.setText(text);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

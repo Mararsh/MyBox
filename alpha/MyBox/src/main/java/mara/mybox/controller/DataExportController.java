@@ -110,7 +110,7 @@ public class DataExportController extends BaseTaskController {
             startButton.disableProperty().bind(targetPathController.valid.not());
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

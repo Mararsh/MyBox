@@ -19,7 +19,7 @@ public class Data2DExportTask extends BaseTaskController {
             logsTab = exportController.logsTab;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -34,7 +34,7 @@ public class Data2DExportTask extends BaseTaskController {
             exportController.targetVBox.setDisable(true);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -58,7 +58,7 @@ public class Data2DExportTask extends BaseTaskController {
             exportController.targetVBox.setDisable(false);
             exportController.data2D.stopTask();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

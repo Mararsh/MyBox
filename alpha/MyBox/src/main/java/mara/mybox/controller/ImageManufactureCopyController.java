@@ -56,7 +56,7 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
             marginsCheck.setSelected(UserConfig.getBoolean(baseName + "CopyCutMargins", true));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

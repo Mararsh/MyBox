@@ -70,7 +70,7 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -120,7 +120,7 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
             isSettingValues = false;
             adjustColumnsPane();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -153,7 +153,7 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
             }
             isSettingValues = false;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -218,7 +218,7 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return false;
         }
     }
@@ -278,7 +278,7 @@ public class Data2DChartXYZController extends BaseData2DHandleController {
             controller.requestMouse();
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

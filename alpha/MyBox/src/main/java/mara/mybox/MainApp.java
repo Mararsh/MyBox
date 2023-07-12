@@ -37,7 +37,7 @@ public class MainApp extends Application {
                 MyBoxLoading(stage);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             stage.close();
         }
     }
@@ -60,7 +60,7 @@ public class MainApp extends Application {
             stage.show();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             stage.close();
         }
     }
@@ -84,7 +84,7 @@ public class MainApp extends Application {
             MyBoxLoadingController loadController = (MyBoxLoadingController) fxmlLoader.getController();
             loadController.run();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             stage.close();
         }
     }

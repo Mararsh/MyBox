@@ -71,7 +71,7 @@ public abstract class BaseData2DController extends BaseFileController {
             initData();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -89,7 +89,7 @@ public abstract class BaseData2DController extends BaseFileController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -113,7 +113,7 @@ public abstract class BaseData2DController extends BaseFileController {
             loadController.baseTitle = baseTitle;
             checkButtons();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -132,7 +132,7 @@ public abstract class BaseData2DController extends BaseFileController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -257,7 +257,7 @@ public abstract class BaseData2DController extends BaseFileController {
 
             popEventMenu(event, items);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

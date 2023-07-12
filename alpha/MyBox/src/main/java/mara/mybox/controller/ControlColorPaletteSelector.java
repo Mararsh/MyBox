@@ -78,7 +78,7 @@ public class ControlColorPaletteSelector extends BaseController {
             isManager = false;
             ignore = null;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -155,7 +155,7 @@ public class ControlColorPaletteSelector extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -555,7 +555,7 @@ public class ControlColorPaletteSelector extends BaseController {
             items.add(new SeparatorMenuItem());
             popEventMenu(event, items);
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

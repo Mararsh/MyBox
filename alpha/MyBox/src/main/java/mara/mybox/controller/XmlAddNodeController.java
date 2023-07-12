@@ -64,7 +64,7 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
             VBox.setVgrow(setBox, Priority.ALWAYS);
             checkType();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -89,7 +89,7 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
 
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -134,7 +134,7 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
             indexInput.setText((treeItem.getChildren().size() + 1) + "");
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

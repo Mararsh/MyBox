@@ -110,6 +110,14 @@ public class DoubleRectangle implements DoubleShape {
         this.height = height;
     }
 
+    public double getCenterX() {
+        return (bigX + smallX) / 2;
+    }
+
+    public double getCenterY() {
+        return (bigY + smallY) / 2;
+    }
+
     public double getSmallX() {
         return smallX;
     }

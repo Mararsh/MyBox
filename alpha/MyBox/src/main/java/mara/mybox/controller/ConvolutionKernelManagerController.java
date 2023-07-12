@@ -91,7 +91,7 @@ public class ConvolutionKernelManagerController extends BaseTablePagesController
             initEditFields();
             loadList();
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -108,7 +108,7 @@ public class ConvolutionKernelManagerController extends BaseTablePagesController
             desColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -205,7 +205,7 @@ public class ConvolutionKernelManagerController extends BaseTablePagesController
             actionBox.setDisable(true);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -236,7 +236,7 @@ public class ConvolutionKernelManagerController extends BaseTablePagesController
 
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -254,7 +254,7 @@ public class ConvolutionKernelManagerController extends BaseTablePagesController
                 edge_Op = ConvolutionKernel.Edge_Op.FILL_ZERO;
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 

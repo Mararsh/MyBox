@@ -49,7 +49,7 @@ public class HtmlFramesetController extends FilesMergeController {
             validFiles.add(file);
             return message("Successful");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return message("Failed");
         }
     }

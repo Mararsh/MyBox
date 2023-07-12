@@ -56,7 +56,7 @@ public class MenuController extends BaseChildController {
                 baseStyle = "";
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -72,7 +72,7 @@ public class MenuController extends BaseChildController {
             PopTools.setWindowStyle(thisPane, baseName, baseStyle);
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -112,7 +112,7 @@ public class MenuController extends BaseChildController {
             setControlsStyle();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -125,7 +125,7 @@ public class MenuController extends BaseChildController {
 
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -177,7 +177,7 @@ public class MenuController extends BaseChildController {
                 addNode(flowPane);
             }
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -236,7 +236,7 @@ public class MenuController extends BaseChildController {
             controller.setParameters(parent, node, x, y);
             return controller;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return null;
         }
     }

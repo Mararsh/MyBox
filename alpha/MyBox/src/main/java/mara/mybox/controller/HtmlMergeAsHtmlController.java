@@ -78,7 +78,7 @@ public class HtmlMergeAsHtmlController extends FilesMergeController {
             super.initControls();
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -109,7 +109,7 @@ public class HtmlMergeAsHtmlController extends FilesMergeController {
             writer.write(body + "\n");
             return message("Successful");
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
             return message("Failed");
         }
     }

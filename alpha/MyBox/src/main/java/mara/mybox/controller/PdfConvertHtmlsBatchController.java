@@ -98,7 +98,7 @@ public class PdfConvertHtmlsBatchController extends BaseBatchPdfController {
             imageSaveType = SaveType.File;
 
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
     }
 
@@ -168,7 +168,7 @@ public class PdfConvertHtmlsBatchController extends BaseBatchPdfController {
             }
             currentParameters.startPage = 1;
         } catch (Exception e) {
-            MyBoxLog.error(e.toString());
+            MyBoxLog.error(e);
         }
         updateInterface("CompleteFile");
         return MessageFormat.format(Languages.message("HandlePagesGenerateNumber"),
@@ -215,7 +215,7 @@ public class PdfConvertHtmlsBatchController extends BaseBatchPdfController {
                 return null;
             }
         } catch (Exception e) {
-//            MyBoxLog.error(e.toString());
+//            MyBoxLog.error(e);
             return null;
         }
     }
