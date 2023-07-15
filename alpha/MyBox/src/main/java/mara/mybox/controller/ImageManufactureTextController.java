@@ -52,9 +52,9 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
 
     @Override
     protected void paneExpanded() {
-        imageController.showRightPane();
-        imageController.resetImagePane();
-        imageController.imageTab();
+        editor.showRightPane();
+        editor.resetImagePane();
+        editor.imageTab();
     }
 
     @FXML
@@ -64,7 +64,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
             imageView.setCursor(Cursor.OPEN_HAND);
             return;
         }
-        if (imageController.isPickingColor || scopeController.isPickingColor
+        if (editor.isPickingColor || scopeController.isPickingColor
                 || event.getButton() == MouseButton.SECONDARY) {
             return;
         }
@@ -107,8 +107,8 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
                     imageView.toBack();
 
                 } else {
-                    imageController.popSuccessful();
-                    imageController.updateImage(ImageOperation.Text, null, null, newImage, cost);
+                    editor.popSuccessful();
+                    editor.updateImage(ImageOperation.Text, null, null, newImage, cost);
                 }
             }
 
@@ -135,7 +135,7 @@ public class ImageManufactureTextController extends ImageManufactureOperationCon
     @FXML
     @Override
     public void cancelAction() {
-        imageController.resetImagePane();
+        editor.resetImagePane();
     }
 
 }

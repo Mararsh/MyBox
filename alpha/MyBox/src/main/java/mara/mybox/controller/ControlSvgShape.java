@@ -29,7 +29,7 @@ import org.w3c.dom.Node;
  * @CreateDate 2023-6-29
  * @License Apache License Version 2.0
  */
-public class ControlSvgShape extends ControlShape {
+public class ControlSvgShape extends ControlShapeOptions {
 
     protected SvgEditorController editor;
     protected SVG svg;
@@ -64,7 +64,7 @@ public class ControlSvgShape extends ControlShape {
             elementType.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
                 public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    createShape();
+                    showShape();
                 }
             });
 
@@ -99,7 +99,7 @@ public class ControlSvgShape extends ControlShape {
             svg = new SVG(doc);
             parentNode = svg.getSvgNode();
             optionsController.loadDoc(doc, null);
-            createShape();
+            showShape();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -178,7 +178,7 @@ public class ControlSvgShape extends ControlShape {
                 return;
             }
             element.setAttribute("stroke", strokeColorController.css());
-            element.setAttribute("stroke-width", strokeWidth + "");
+            element.setAttribute("stroke-width", style.getStrokeWidth() + "");
             String dash = dashInput.getText();
             if (dash != null && !dash.isBlank()) {
                 element.setAttribute("stroke-dasharray", dash);
@@ -192,7 +192,7 @@ public class ControlSvgShape extends ControlShape {
             }
             if (fillCheck.isSelected()) {
                 element.setAttribute("fill", fillColorController.css());
-                element.setAttribute("fill-opacity", fillOpacity + "");
+                element.setAttribute("fill-opacity", style.getFillOpacity() + "");
             } else {
                 element.setAttribute("fill", "none");
             }

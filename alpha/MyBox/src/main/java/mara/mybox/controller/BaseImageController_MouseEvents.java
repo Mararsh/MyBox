@@ -4,8 +4,14 @@ import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
+import mara.mybox.data.DoubleLine;
 import mara.mybox.data.DoublePoint;
+import mara.mybox.data.DoublePolygon;
+import mara.mybox.data.DoublePolyline;
+import mara.mybox.data.DoubleRectangle;
+import mara.mybox.data.DoubleShape;
 
 /**
  * @Author Mara
@@ -52,42 +58,46 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         }
         if (maskRectangle != null && maskRectangle.isVisible()) {
             if (singleClickedRectangle(event, p)) {
+                maskShapeDataChanged();
                 return;
             }
 
         } else if (maskCircle != null && maskCircle.isVisible()) {
             if (singleClickedCircle(event, p)) {
+                maskShapeDataChanged();
                 return;
             }
 
         } else if (maskEllipse != null && maskEllipse.isVisible()) {
             if (singleClickedEllipse(event, p)) {
+                maskShapeDataChanged();
                 return;
             }
 
         } else if (maskLine != null && maskLine.isVisible()) {
             if (singleClickedLine(event, p)) {
+                maskShapeDataChanged();
                 return;
             }
 
         } else if (maskPolyline != null && maskPolyline.isVisible()) {
             if (!maskPointDragged) {
-                maskPointDragged = false;
                 if (singleClickedPolyline(event, p)) {
+                    maskShapeDataChanged();
                     return;
                 }
             }
 
         } else if (maskPolygon != null && maskPolygon.isVisible()) {
             if (!maskPointDragged) {
-                maskPointDragged = false;
-                if (singleClickedPolygonLine(event, p)) {
+                if (singleClickedPolygon(event, p)) {
+                    maskShapeDataChanged();
                     return;
                 }
             }
 
-        } else if (maskPenData != null && maskPenLines != null) {
-            if (singleClickedPenLines(event, p)) {
+        } else if (maskLinesData != null) {
+            if (singleClickedLines(event, p)) {
                 return;
             }
 
@@ -104,11 +114,9 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             return false;
         }
         if (event.getButton() == MouseButton.SECONDARY) {
-            double offsetX = p.getX() - maskRectangleData.getCenterX();
-            double offsetY = p.getY() - maskRectangleData.getCenterY();
-
-            if (coordinateChanged(offsetX, offsetY)) {
-                maskRectangleData = maskRectangleData.move(offsetX, offsetY);
+            DoubleRectangle moved = maskRectangleData.moveTo(p.getX(), p.getY());
+            if (moved != null) {
+                maskRectangleData = moved;
                 drawMaskRectangle();
                 return true;
             }
@@ -121,11 +129,9 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             return false;
         }
         if (event.getButton() == MouseButton.SECONDARY) {
-            double offsetX = p.getX() - maskCircleData.getCenterX();
-            double offsetY = p.getY() - maskCircleData.getCenterY();
-
-            if (coordinateChanged(offsetX, offsetY)) {
-                maskCircleData = maskCircleData.move(offsetX, offsetY);
+            DoubleCircle moved = maskCircleData.moveTo(p.getX(), p.getY());
+            if (moved != null) {
+                maskCircleData = moved;
                 drawMaskCircle();
                 return true;
             }
@@ -138,11 +144,9 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             return false;
         }
         if (event.getButton() == MouseButton.SECONDARY) {
-            double offsetX = p.getX() - maskEllipseData.getCenterX();
-            double offsetY = p.getY() - maskEllipseData.getCenterY();
-
-            if (coordinateChanged(offsetX, offsetY)) {
-                maskEllipseData = maskEllipseData.move(offsetX, offsetY);
+            DoubleEllipse moved = maskEllipseData.moveTo(p.getX(), p.getY());
+            if (moved != null) {
+                maskEllipseData = moved;
                 drawMaskEllipse();
                 return true;
             }
@@ -155,11 +159,9 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             return false;
         }
         if (event.getButton() == MouseButton.SECONDARY) {
-            double offsetX = p.getX() - maskLineData.getStartX();
-            double offsetY = p.getY() - maskLineData.getStartY();
-
-            if (coordinateChanged(offsetX, offsetY)) {
-                maskLineData = maskLineData.move(offsetX, offsetY);
+            DoubleLine moved = maskLineData.moveTo(p.getX(), p.getY());
+            if (moved != null) {
+                maskLineData = moved;
                 drawMaskLine();
                 return true;
             }
@@ -180,12 +182,9 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             return true;
 
         } else if (event.getButton() == MouseButton.SECONDARY && maskPolylineData.getSize() > 0) {
-            DoublePoint p0 = maskPolylineData.getPoints().get(0);
-            double offsetX = p.getX() - p0.getX();
-            double offsetY = p.getY() - p0.getY();
-
-            if (coordinateChanged(offsetX, offsetY)) {
-                maskPolylineData = maskPolylineData.move(offsetX, offsetY);
+            DoublePolyline moved = maskPolylineData.moveTo(p.getX(), p.getY());
+            if (moved != null) {
+                maskPolylineData = moved;
                 drawMaskPolyline();
                 return true;
             }
@@ -193,7 +192,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         return false;
     }
 
-    protected boolean singleClickedPolygonLine(MouseEvent event, DoublePoint p) {
+    protected boolean singleClickedPolygon(MouseEvent event, DoublePoint p) {
         if (p == null || maskPolygon == null || !maskPolygon.isVisible()) {
             return false;
         }
@@ -206,12 +205,9 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             return true;
 
         } else if (event.getButton() == MouseButton.SECONDARY && maskPolygonData.getSize() > 0) {
-            DoublePoint p0 = maskPolygonData.getPoints().get(0);
-            double offsetX = p.getX() - p0.getX();
-            double offsetY = p.getY() - p0.getY();
-
-            if (coordinateChanged(offsetX, offsetY)) {
-                maskPolygonData = maskPolygonData.move(offsetX, offsetY);
+            DoublePolygon moved = maskPolygonData.moveTo(p.getX(), p.getY());
+            if (moved != null) {
+                maskPolygonData = moved;
                 drawMaskPolygon();
                 return true;
             }
@@ -219,21 +215,11 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         return false;
     }
 
-    protected boolean singleClickedPenLines(MouseEvent event, DoublePoint p) {
-        if (p == null || maskPenData == null || maskPenLines == null) {
+    protected boolean singleClickedLines(MouseEvent event, DoublePoint p) {
+        if (p == null || maskLinesData == null) {
             return false;
         }
-        if (event.getButton() == MouseButton.SECONDARY && maskPenData.getLinesSize() > 0) {
-            DoublePoint p0 = maskPenData.getPoint(0);
-            double offsetX = p.getX() - p0.getX();
-            double offsetY = p.getY() - p0.getY();
-
-            if (coordinateChanged(offsetX, offsetY)) {
-                maskPenData = maskPenData.move(offsetX, offsetY);
-                return true;
-            }
-        }
-        return false;
+        return true;
     }
 
     @FXML
@@ -254,11 +240,12 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         scrollPane.setPannable(true);
         double offsetX = imageOffsetX(event);
         double offsetY = imageOffsetY(event);
-        if (!coordinateChanged(offsetX, offsetY)) {
+        if (!DoubleShape.changed(offsetX, offsetY)) {
             return;
         }
         maskRectangleData = maskRectangleData.move(offsetX, offsetY);
         drawMaskRectangle();
+        maskShapeDataChanged();
     }
 
     @FXML
@@ -271,11 +258,12 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         scrollPane.setPannable(true);
         double offsetX = imageOffsetX(event);
         double offsetY = imageOffsetY(event);
-        if (!coordinateChanged(offsetX, offsetY)) {
+        if (!DoubleShape.changed(offsetX, offsetY)) {
             return;
         }
         maskCircleData = maskCircleData.move(offsetX, offsetY);
         drawMaskCircle();
+        maskShapeDataChanged();
     }
 
     @FXML
@@ -288,11 +276,12 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         scrollPane.setPannable(true);
         double offsetX = imageOffsetX(event);
         double offsetY = imageOffsetY(event);
-        if (!coordinateChanged(offsetX, offsetY)) {
+        if (!DoubleShape.changed(offsetX, offsetY)) {
             return;
         }
         maskEllipseData = maskEllipseData.move(offsetX, offsetY);
         drawMaskEllipse();
+        maskShapeDataChanged();
     }
 
     @FXML
@@ -305,11 +294,12 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         scrollPane.setPannable(true);
         double offsetX = imageOffsetX(event);
         double offsetY = imageOffsetY(event);
-        if (!coordinateChanged(offsetX, offsetY)) {
+        if (!DoubleShape.changed(offsetX, offsetY)) {
             return;
         }
         maskLineData = maskLineData.move(offsetX, offsetY);
         drawMaskLine();
+        maskShapeDataChanged();
     }
 
     @FXML
@@ -322,11 +312,12 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         scrollPane.setPannable(true);
         double offsetX = imageOffsetX(event);
         double offsetY = imageOffsetY(event);
-        if (!coordinateChanged(offsetX, offsetY)) {
+        if (!DoubleShape.changed(offsetX, offsetY)) {
             return;
         }
         maskPolylineData = maskPolylineData.move(offsetX, offsetY);
         drawMaskPolyline();
+        maskShapeDataChanged();
     }
 
     @FXML
@@ -339,11 +330,12 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         scrollPane.setPannable(true);
         double offsetX = imageOffsetX(event);
         double offsetY = imageOffsetY(event);
-        if (!coordinateChanged(offsetX, offsetY)) {
+        if (!DoubleShape.changed(offsetX, offsetY)) {
             return;
         }
         maskPolygonData = maskPolygonData.move(offsetX, offsetY);
         drawMaskPolygon();
+        maskShapeDataChanged();
     }
 
     @FXML
@@ -362,6 +354,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             maskLineData.setStartX(x);
             maskLineData.setStartY(y);
             drawMaskLine();
+            maskShapeDataChanged();
 
         } else if (maskRectangle != null && maskRectangle.isVisible()) {
 
@@ -375,6 +368,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                 maskRectangleData.setSmallX(x);
                 maskRectangleData.setSmallY(y);
                 drawMaskRectangle();
+                maskShapeDataChanged();
             }
         }
     }
@@ -393,6 +387,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                 }
                 maskRectangleData.setSmallY(y);
                 drawMaskRectangle();
+                maskShapeDataChanged();
             }
 
         } else if (maskCircle != null && maskCircle.isVisible()) {
@@ -400,6 +395,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             if (r > 0) {
                 maskCircleData.setRadius(r * imageYRatio() / 2);
                 drawMaskCircle();
+                maskShapeDataChanged();
             }
 
         } else if (maskEllipse != null && maskEllipse.isVisible()) {
@@ -411,6 +407,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                 double cy = maskEllipseData.getCenterY();
                 maskEllipseData = new DoubleEllipse(cx - rx, cy - ry, cx + rx, cy + ry);
                 drawMaskEllipse();
+                maskShapeDataChanged();
             }
         }
 
@@ -436,6 +433,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             maskRectangleData.setBigX(x);
             maskRectangleData.setSmallY(y);
             drawMaskRectangle();
+            maskShapeDataChanged();
         }
     }
 
@@ -458,6 +456,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             maskRectangleData.setSmallX(x);
             maskRectangleData.setBigY(y);
             drawMaskRectangle();
+            maskShapeDataChanged();
         }
     }
 
@@ -476,6 +475,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                 }
                 maskRectangleData.setBigY(y);
                 drawMaskRectangle();
+                maskShapeDataChanged();
             }
 
         } else if (maskCircle != null && maskCircle.isVisible()) {
@@ -483,6 +483,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             if (r > 0) {
                 maskCircleData.setRadius(r * imageYRatio() / 2);
                 drawMaskCircle();
+                maskShapeDataChanged();
             }
 
         } else if (maskEllipse != null && maskEllipse.isVisible()) {
@@ -494,6 +495,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                 double cy = maskEllipseData.getCenterY();
                 maskEllipseData = new DoubleEllipse(cx - rx, cy - ry, cx + rx, cy + ry);
                 drawMaskEllipse();
+                maskShapeDataChanged();
             }
         }
 
@@ -513,6 +515,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             maskLineData.setEndX(x);
             maskLineData.setEndY(y);
             drawMaskLine();
+            maskShapeDataChanged();
 
         } else if (x > maskRectangleData.getSmallX() && y > maskRectangleData.getSmallY()) {
             if (x <= 0) {
@@ -524,6 +527,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             maskRectangleData.setBigX(x);
             maskRectangleData.setBigY(y);
             drawMaskRectangle();
+            maskShapeDataChanged();
         }
     }
 
@@ -542,6 +546,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                 }
                 maskRectangleData.setSmallX(x);
                 drawMaskRectangle();
+                maskShapeDataChanged();
             }
 
         } else if (maskCircle != null && maskCircle.isVisible()) {
@@ -549,6 +554,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             if (r > 0) {
                 maskCircleData.setRadius(r * imageXRatio() / 2);
                 drawMaskCircle();
+                maskShapeDataChanged();
             }
 
         } else if (maskEllipse != null && maskEllipse.isVisible()) {
@@ -560,6 +566,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                 double cy = maskEllipseData.getCenterY();
                 maskEllipseData = new DoubleEllipse(cx - rx, cy - ry, cx + rx, cy + ry);
                 drawMaskEllipse();
+                maskShapeDataChanged();
             }
         }
 
@@ -581,6 +588,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                 }
                 maskRectangleData.setBigX(x);
                 drawMaskRectangle();
+                maskShapeDataChanged();
             }
 
         } else if (maskCircle != null && maskCircle.isVisible()) {
@@ -588,6 +596,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             if (r > 0) {
                 maskCircleData.setRadius(r * imageXRatio() / 2);
                 drawMaskCircle();
+                maskShapeDataChanged();
             }
 
         } else if (maskEllipse != null && maskEllipse.isVisible()) {
@@ -599,6 +608,7 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
                 double cy = maskEllipseData.getCenterY();
                 maskEllipseData = new DoubleEllipse(cx - rx, cy - ry, cx + rx, cy + ry);
                 drawMaskEllipse();
+                maskShapeDataChanged();
             }
         }
 

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
+import static javafx.scene.shape.StrokeLineCap.ROUND;
+import static javafx.scene.shape.StrokeLineCap.SQUARE;
 import static mara.mybox.fximage.FxColorTools.toAwtColor;
 import mara.mybox.value.UserConfig;
 
@@ -14,76 +16,74 @@ import mara.mybox.value.UserConfig;
  */
 public class ShapeStyle {
 
-    public static final String DefaultStrokeColor = "#c94d58", DefaultAnchorColor = "#0066cc";
+    public final static String DefaultStrokeColor = "#c94d58", DefaultAnchorColor = "#0066cc";
 
+    private String name;
+    private Color strokeColor, fillColor, anchorColor;
+    private float strokeWidth, strokeOpacity, fillOpacity, anchorSize;
+    private int roundArc;
+    private boolean isFillColor, isStrokeDash;
+    private List<Double> strokeDash;
+    private StrokeLineCap lineCap;
+
+    public ShapeStyle() {
+        init("");
+    }
+
+    public ShapeStyle(String name) {
+        init(name);
+    }
+
+    final public void init(String name) {
+        this.name = name != null ? name : "";
+        try {
+            strokeColor = Color.web(UserConfig.getString(name + "StrokeColor", DefaultStrokeColor));
+        } catch (Exception e) {
+            strokeColor = Color.web(DefaultStrokeColor);
+        }
+        try {
+            fillColor = Color.web(UserConfig.getString(name + "FillColor", "0xFFFFFFFF"));
+        } catch (Exception e) {
+            fillColor = Color.TRANSPARENT;
+        }
+        try {
+            anchorColor = Color.web(UserConfig.getString(name + "AnchorColor", DefaultAnchorColor));
+        } catch (Exception e) {
+            anchorColor = Color.web(DefaultAnchorColor);
+        }
+        strokeWidth = UserConfig.getFloat(name + "StrokeWidth", 2);
+        if (strokeWidth < 0) {
+            strokeWidth = 2f;
+        }
+        strokeOpacity = UserConfig.getFloat(name + "StrokeOpacity", 1);
+        if (strokeOpacity < 0) {
+            strokeOpacity = 1;
+        }
+        fillOpacity = UserConfig.getFloat(name + "FillOpacity", 1f);
+        if (fillOpacity < 0) {
+            fillOpacity = 1f;
+        }
+        isFillColor = UserConfig.getBoolean(name + "IsFillColor", false);
+        isStrokeDash = UserConfig.getBoolean(name + "IsStrokeDash", false);
+        anchorSize = UserConfig.getFloat(name + "AnchorSize", 10);
+        if (anchorSize < 0) {
+            anchorSize = 10;
+        }
+        roundArc = UserConfig.getInt(name + "RoundArc", 0);
+        if (roundArc < 0) {
+            roundArc = 0;
+        }
+        String text = UserConfig.getString(name + "StrokeDash", null);
+        strokeDash = text2StrokeDash(text);
+        text = UserConfig.getString(name + "StrokeLineCap", "BUTT");
+        lineCap = lineCap(text);
+    }
 
     /*
-        get
+        static
      */
-    public static String name(DoubleShape shape) {
-        return shape != null ? shape.getClass().getSimpleName() : "";
-    }
-
-    public static float strokeWidth(DoubleShape shape) {
-        float v = UserConfig.getFloat(name(shape) + "StrokeWidth", 2);
-        if (v < 0) {
-            v = 2f;
-        }
-        return v;
-    }
-
-    public static Color strokeColor(DoubleShape shape) {
-        return Color.web(UserConfig.getString(name(shape) + "StrokeColor", DefaultStrokeColor));
-    }
-
-    public static java.awt.Color strokeColorAwt(DoubleShape shape) {
-        return toAwtColor(strokeColor(shape));
-    }
-
-    public static float strokeOpacity(DoubleShape shape) {
-        float v = UserConfig.getFloat(name(shape) + "StrokeOpacity", 1f);
-        if (v < 0) {
-            v = 1f;
-        }
-        return v;
-    }
-
-    public static boolean isFillColor(DoubleShape shape) {
-        return UserConfig.getBoolean(name(shape) + "IsFillColor", false);
-    }
-
-    public static Color fillColor(DoubleShape shape) {
-        return Color.web(UserConfig.getString(name(shape) + "FillColor", "0xFFFFFFFF"));
-    }
-
-    public static java.awt.Color fillColorAwt(DoubleShape shape) {
-        return toAwtColor(fillColor(shape));
-    }
-
-    public static float fillOpacity(DoubleShape shape) {
-        float v = UserConfig.getFloat(name(shape) + "FillOpacity", 0.3f);
-        if (v < 0) {
-            v = 0.3f;
-        }
-        return v;
-    }
-
-    public static Color anchorColor(DoubleShape shape) {
-        return Color.web(UserConfig.getString(name(shape) + "AnchorColor", DefaultStrokeColor));
-    }
-
-    public static float anchorSize(DoubleShape shape) {
-        float v = UserConfig.getFloat(name(shape) + "AnchorSize", 10);
-        if (v < 0) {
-            v = 10f;
-        }
-        return v;
-    }
-
-    public static List<Float> strokeDash(DoubleShape shape) {
+    public static List<Double> text2StrokeDash(String text) {
         try {
-            double strokeWidth = strokeWidth(shape);
-            String text = UserConfig.getString(name(shape) + "StrokeDash", strokeWidth + " " + strokeWidth * 3);
             if (text == null || text.isBlank()) {
                 return null;
             }
@@ -91,9 +91,9 @@ public class ShapeStyle {
             if (values == null || values.length == 0) {
                 return null;
             }
-            List<Float> dash = new ArrayList<>();
+            List<Double> dash = new ArrayList<>();
             for (String v : values) {
-                dash.add(Float.valueOf(v));
+                dash.add(Double.valueOf(v));
             }
             return dash;
         } catch (Exception e) {
@@ -101,15 +101,29 @@ public class ShapeStyle {
         }
     }
 
-    public static float[] strokeDashAwt(DoubleShape shape) {
+    public static String strokeDash2Text(List<Double> dash) {
         try {
-            List<Float> vs = strokeDash(shape);
+            if (dash == null || dash.isEmpty()) {
+                return null;
+            }
+            String text = "";
+            for (Double v : dash) {
+                text += v + " ";
+            }
+            return text;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static float[] strokeDashAwt(List<Double> vs) {
+        try {
             if (vs == null || vs.isEmpty()) {
                 return null;
             }
             float[] values = new float[vs.size()];
             for (int i = 0; i < vs.size(); i++) {
-                values[i] = vs.get(i);
+                values[i] = vs.get(i).floatValue();
             }
             return values;
         } catch (Exception e) {
@@ -117,31 +131,14 @@ public class ShapeStyle {
         }
     }
 
-    public static String strokeDashString(DoubleShape shape) {
+    public static StrokeLineCap lineCap(String text) {
         try {
-            List<Float> vs = strokeDash(shape);
-            if (vs == null || vs.isEmpty()) {
-                return null;
-            }
-            String s = "";
-            for (int i = 0; i < vs.size(); i++) {
-                s += vs.get(i) + " ";
-            }
-            return s;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public static StrokeLineCap lineCap(DoubleShape shape) {
-        try {
-            String v = UserConfig.getString(name(shape) + "LineCap", "BUTT");
-            if (v == null || v.isBlank()) {
+            if (text == null || text.isBlank()) {
                 return StrokeLineCap.BUTT;
             }
-            if ("BUTT".equalsIgnoreCase(v)) {
+            if ("BUTT".equalsIgnoreCase(text)) {
                 return StrokeLineCap.ROUND;
-            } else if ("SQUARE".equalsIgnoreCase(v)) {
+            } else if ("SQUARE".equalsIgnoreCase(text)) {
                 return StrokeLineCap.SQUARE;
             } else {
                 return StrokeLineCap.BUTT;
@@ -151,9 +148,8 @@ public class ShapeStyle {
         }
     }
 
-    public static int lineCapAwt(DoubleShape shape) {
+    public static int lineCapAwt(StrokeLineCap v) {
         try {
-            StrokeLineCap v = lineCap(shape);
             if (null == v) {
                 return java.awt.BasicStroke.CAP_BUTT;
             } else {
@@ -171,81 +167,178 @@ public class ShapeStyle {
         }
     }
 
-    public static int roundArc(DoubleShape shape) {
-        return UserConfig.getInt(name(shape) + "RoundArc", 0);
-    }
-
     /*
         set
      */
-    public static void setStrokeColor(DoubleShape shape, Color strokeColor) {
-        UserConfig.setString(name(shape) + "StrokeColor", strokeColor != null ? strokeColor.toString() : null);
+    public ShapeStyle setName(String name) {
+        this.name = name;
+        return this;
     }
 
-    public static void setAnchorColor(DoubleShape shape, Color anchorColor) {
-        UserConfig.setString(name(shape) + "AnchorColor", anchorColor != null ? anchorColor.toString() : null);
+    public ShapeStyle setStrokeColor(Color strokeColor) {
+        this.strokeColor = strokeColor;
+        UserConfig.setString(name + "StrokeColor", strokeColor != null ? strokeColor.toString() : null);
+        return this;
     }
 
-    public static void setIsFillColor(DoubleShape shape, boolean fillColor) {
-        UserConfig.setBoolean(name(shape) + "IsFillColor", fillColor);
+    public ShapeStyle setAnchorColor(Color anchorColor) {
+        this.anchorColor = anchorColor;
+        UserConfig.setString(name + "AnchorColor", anchorColor != null ? anchorColor.toString() : null);
+        return this;
     }
 
-    public static void setFillColor(DoubleShape shape, Color fillColor) {
-        UserConfig.setString(name(shape) + "FillColor", fillColor != null ? fillColor.toString() : null);
+    public ShapeStyle setIsFillColor(boolean isFillColor) {
+        this.isFillColor = isFillColor;
+        UserConfig.setBoolean(name + "IsFillColor", isFillColor);
+        return this;
     }
 
-    public static void setStrokeWidth(DoubleShape shape, float strokeWidth) {
-        UserConfig.setFloat(name(shape) + "StrokeWidth", strokeWidth);
+    public ShapeStyle setFillColor(Color fillColor) {
+        this.fillColor = fillColor;
+        UserConfig.setString(name + "FillColor", fillColor != null ? fillColor.toString() : null);
+        return this;
     }
 
-    public static void setAnchorSize(DoubleShape shape, float anchorSize) {
-        UserConfig.setFloat(name(shape) + "AnchorSize", anchorSize);
+    public ShapeStyle setStrokeWidth(float strokeWidth) {
+        this.strokeWidth = strokeWidth;
+        UserConfig.setFloat(name + "StrokeWidth", strokeWidth);
+        return this;
     }
 
-    public static void setStrokeOpacity(DoubleShape shape, float strokeOpacity) {
-        UserConfig.setFloat(name(shape) + "StrokeOpacity", strokeOpacity);
+    public ShapeStyle setAnchorSize(float anchorSize) {
+        this.anchorSize = anchorSize;
+        UserConfig.setFloat(name + "AnchorSize", anchorSize);
+        return this;
     }
 
-    public static void setFillOpacity(DoubleShape shape, float fillOpacity) {
-        UserConfig.setFloat(name(shape) + "FillOpacity", fillOpacity);
+    public ShapeStyle setStrokeOpacity(float strokeOpacity) {
+        this.strokeOpacity = strokeOpacity;
+        UserConfig.setFloat(name + "StrokeOpacity", strokeOpacity);
+        return this;
     }
 
-    public static void setStrokeDashed(DoubleShape shape, boolean strokeDashed) {
-        if (strokeDashed) {
-            double strokeWidth = strokeWidth(shape);
-            UserConfig.setString(name(shape) + "StrokeDash", strokeWidth + " " + strokeWidth * 3);
+    public ShapeStyle setFillOpacity(float fillOpacity) {
+        this.fillOpacity = fillOpacity;
+        UserConfig.setFloat(name + "FillOpacity", fillOpacity);
+        return this;
+    }
+
+    public ShapeStyle setIsStrokeDash(boolean isStrokeDash) {
+        this.isStrokeDash = isStrokeDash;
+        UserConfig.setBoolean(name + "IsStrokeDash", isStrokeDash);
+        return this;
+    }
+
+    public ShapeStyle setStrokeDashed(boolean dashed) {
+        if (dashed) {
+            isStrokeDash = true;
+            setStrokeDash(text2StrokeDash(strokeWidth + " " + strokeWidth * 3));
         } else {
-            UserConfig.setString(name(shape) + "StrokeDash", null);
+            isStrokeDash = false;
         }
+        return this;
     }
 
-    public static void setStrokeDashString(DoubleShape shape, String strokeDash) {
-        if (strokeDash == null || strokeDash.isEmpty()) {
-            UserConfig.setString(name(shape) + "StrokeDash", null);
-
-        } else {
-            UserConfig.setString(name(shape) + "StrokeDash", strokeDash);
-        }
+    public ShapeStyle setStrokeDash(List<Double> strokeDash) {
+        this.strokeDash = strokeDash;
+        UserConfig.setString(name + "StrokeDash", strokeDash2Text(strokeDash));
+        return this;
     }
 
-    public static void setStrokeDash(DoubleShape shape, List<Float> strokeDash) {
-        if (strokeDash == null || strokeDash.isEmpty()) {
-            UserConfig.setString(name(shape) + "StrokeDash", null);
-        } else {
-            String s = "";
-            for (Float v : strokeDash) {
-                s += v + " ";
-            }
-            UserConfig.setString(name(shape) + "StrokeDash", s);
-        }
+    public ShapeStyle setStrokeDashText(String text) {
+        setStrokeDash(text2StrokeDash(text));
+        return this;
     }
 
-    public static void setLineCap(DoubleShape shape, StrokeLineCap lineCap) {
-        UserConfig.setString(name(shape) + "StrokeLineCap", lineCap != null ? lineCap.name() : null);
+    public ShapeStyle setLineCap(StrokeLineCap lineCap) {
+        this.lineCap = lineCap;
+        UserConfig.setString(name + "StrokeLineCap", lineCap != null ? lineCap.name() : null);
+        return this;
     }
 
-    public static void setRoundArc(DoubleShape shape, int arc) {
-        UserConfig.setInt(name(shape) + "RoundArc", arc);
+    public ShapeStyle setRoundArc(int arc) {
+        roundArc = arc;
+        UserConfig.setInt(name + "RoundArc", arc);
+        return this;
+    }
+
+    /*
+        get
+     */
+    public String getName() {
+        return name;
+    }
+
+    public Color getStrokeColor() {
+        return strokeColor;
+    }
+
+    public java.awt.Color getStrokeColorAwt() {
+        return toAwtColor(getStrokeColor());
+    }
+
+    public Color getFillColor() {
+        return fillColor;
+    }
+
+    public java.awt.Color getFillColorAwt() {
+        return toAwtColor(getFillColor());
+    }
+
+    public Color getAnchorColor() {
+        return anchorColor;
+    }
+
+    public java.awt.Color getAnchorColorAwt() {
+        return toAwtColor(getAnchorColor());
+    }
+
+    public float getStrokeWidth() {
+        return strokeWidth;
+    }
+
+    public float getStrokeOpacity() {
+        return strokeOpacity;
+    }
+
+    public float getFillOpacity() {
+        return fillOpacity;
+    }
+
+    public float getAnchorSize() {
+        return anchorSize;
+    }
+
+    public int getRoundArc() {
+        return roundArc;
+    }
+
+    public boolean isIsFillColor() {
+        return isFillColor;
+    }
+
+    public boolean isIsStrokeDash() {
+        return isStrokeDash;
+    }
+
+    public List<Double> getStrokeDash() {
+        return strokeDash;
+    }
+
+    public float[] getStrokeDashAwt() {
+        return strokeDashAwt(strokeDash);
+    }
+
+    public String getStrokeDashText() {
+        return strokeDash2Text(strokeDash);
+    }
+
+    public StrokeLineCap getLineCap() {
+        return lineCap;
+    }
+
+    public int getLineCapAwt() {
+        return lineCapAwt(lineCap);
     }
 
 }

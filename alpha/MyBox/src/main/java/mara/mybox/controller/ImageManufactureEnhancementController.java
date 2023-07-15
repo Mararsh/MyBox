@@ -59,14 +59,14 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
 
     @Override
     protected void paneExpanded() {
-        imageController.showRightPane();
+        editor.showRightPane();
         optionsController.checkEnhanceType();
     }
 
     @FXML
     @Override
     public void okAction() {
-        if (imageController == null || optionsController.enhanceType == null) {
+        if (editor == null || optionsController.enhanceType == null) {
             return;
         }
         if (task != null) {
@@ -151,8 +151,8 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
 
             @Override
             protected void whenSucceeded() {
-                imageController.popSuccessful();
-                imageController.updateImage(ImageOperation.Effects, optionsController.enhanceType.name(), value, newImage, cost);
+                editor.popSuccessful();
+                editor.updateImage(ImageOperation.Effects, optionsController.enhanceType.name(), value, newImage, cost);
             }
         };
         start(task);
@@ -163,7 +163,7 @@ public class ImageManufactureEnhancementController extends ImageManufactureOpera
         if (imageView.getImage() == null) {
             return;
         }
-        imageController.popInformation(message("WaitAndHandling"));
+        editor.popInformation(message("WaitAndHandling"));
         demoButton.setDisable(true);
         Task demoTask = new Task<Void>() {
             private List<String> files;

@@ -91,9 +91,9 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
     @Override
     protected void paneExpanded() {
-        imageController.showRightPane();
-        imageController.resetImagePane();
-        imageController.imageTab();
+        editor.showRightPane();
+        editor.resetImagePane();
+        editor.imageTab();
     }
 
     @FXML
@@ -117,8 +117,8 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
             @Override
             protected void whenSucceeded() {
-                imageController.popSuccessful();
-                imageController.updateImage(ImageOperation.Transform, "rotateRight", rotateAngle + "",
+                editor.popSuccessful();
+                editor.updateImage(ImageOperation.Transform, "rotateRight", rotateAngle + "",
                         newImage, cost);
             }
         };
@@ -146,8 +146,8 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
             @Override
             protected void whenSucceeded() {
-                imageController.popSuccessful();
-                imageController.updateImage(ImageOperation.Transform, "rotateLeft", (360 - rotateAngle) + "",
+                editor.popSuccessful();
+                editor.updateImage(ImageOperation.Transform, "rotateLeft", (360 - rotateAngle) + "",
                         newImage, cost);
             }
 
@@ -175,8 +175,8 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
             @Override
             protected void whenSucceeded() {
-                imageController.popSuccessful();
-                imageController.updateImage(ImageOperation.Transform, "horizontal", null, newImage, cost);
+                editor.popSuccessful();
+                editor.updateImage(ImageOperation.Transform, "horizontal", null, newImage, cost);
             }
 
         };
@@ -203,8 +203,8 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
             @Override
             protected void whenSucceeded() {
-                imageController.popSuccessful();
-                imageController.updateImage(ImageOperation.Transform, "vertical", null, newImage, cost);
+                editor.popSuccessful();
+                editor.updateImage(ImageOperation.Transform, "vertical", null, newImage, cost);
             }
 
         };
@@ -231,8 +231,8 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
             @Override
             protected void whenSucceeded() {
-                imageController.popSuccessful();
-                imageController.updateImage(ImageOperation.Transform, "shear", shearX + "", newImage, cost);
+                editor.popSuccessful();
+                editor.updateImage(ImageOperation.Transform, "shear", shearX + "", newImage, cost);
             }
 
         };
@@ -267,8 +267,8 @@ public class ImageManufactureTransformController extends ImageManufactureOperati
 
             @Override
             protected void whenSucceeded() {
-                imageController.popSuccessful();
-                imageController.updateImage(ImageOperation.Transform, "rotate", angle + "", newImage, cost);
+                editor.popSuccessful();
+                editor.updateImage(ImageOperation.Transform, "rotate", angle + "", newImage, cost);
             }
         };
         start(task);

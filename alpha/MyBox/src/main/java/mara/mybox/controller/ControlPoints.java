@@ -17,6 +17,8 @@ import mara.mybox.fxml.cell.TableRowIndexCell;
  */
 public class ControlPoints extends BaseTableViewController<DoublePoint> {
 
+    public final int Scale = 2;
+
     @FXML
     protected TableColumn<DoublePoint, Double> indexColumn, xColumn, yColumn;
 
@@ -70,7 +72,7 @@ public class ControlPoints extends BaseTableViewController<DoublePoint> {
     }
 
     public void loadText(String values) {
-        List<DoublePoint> list = DoublePoint.parseList(values, DoublePoint.Separator);
+        List<DoublePoint> list = DoublePoint.parseList(values);
         if (list == null || list.isEmpty()) {
             tableData.clear();
         } else {
@@ -82,12 +84,12 @@ public class ControlPoints extends BaseTableViewController<DoublePoint> {
         if (list == null || list.isEmpty()) {
             tableData.clear();
         } else {
-            tableData.setAll(list);
+            tableData.setAll(DoublePoint.scaleList(list, Scale));
         }
     }
 
     public String toText() {
-        return DoublePoint.toText(tableData, 2);
+        return DoublePoint.toText(tableData, Scale);
     }
 
     @FXML

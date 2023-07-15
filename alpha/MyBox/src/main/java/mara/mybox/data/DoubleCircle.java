@@ -45,6 +45,11 @@ public class DoubleCircle implements DoubleShape {
     }
 
     @Override
+    public DoublePoint getCenter() {
+        return new DoublePoint(centerX, centerY);
+    }
+
+    @Override
     public DoubleCircle move(double offset) {
         DoubleCircle nCircle = new DoubleCircle(
                 centerX + offset, centerY + offset, radius);
@@ -56,6 +61,12 @@ public class DoubleCircle implements DoubleShape {
         DoubleCircle nCircle = new DoubleCircle(
                 centerX + offsetX, centerY + offsetY, radius);
         return nCircle;
+    }
+
+    @Override
+    public DoubleCircle moveTo(double x, double y) {
+        DoubleShape moved = DoubleShape.moveTo(this, x, y);
+        return moved != null ? (DoubleCircle) moved : null;
     }
 
     @Override

@@ -69,9 +69,9 @@ public class ImageManufactureShadowController extends ImageManufactureOperationC
 
     @Override
     protected void paneExpanded() {
-        imageController.showRightPane();
-        imageController.resetImagePane();
-        imageController.imageTab();
+        editor.showRightPane();
+        editor.resetImagePane();
+        editor.imageTab();
     }
 
     @FXML
@@ -99,8 +99,8 @@ public class ImageManufactureShadowController extends ImageManufactureOperationC
 
             @Override
             protected void whenSucceeded() {
-                imageController.popSuccessful();
-                imageController.updateImage(ImageOperation.Shadow, shadow + "", null, newImage, cost);
+                editor.popSuccessful();
+                editor.updateImage(ImageOperation.Shadow, shadow + "", null, newImage, cost);
             }
 
         };

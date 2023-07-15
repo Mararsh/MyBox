@@ -70,7 +70,7 @@ public class ControlSvgImage extends BaseImageController {
         try {
             isSettingValues = true;
             this.element = element;
-            clearMaskShapes();
+            clearMask();
             if (svgPath != null && maskPane.getChildren().contains(svgPath)) {
                 maskPane.getChildren().remove(svgPath);
                 svgPath.setContent("");

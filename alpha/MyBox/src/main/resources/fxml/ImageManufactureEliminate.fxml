@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureEliminateController">
+    <children>
+          <HBox alignment="CENTER_LEFT" spacing="5.0">
+              <children>
+                  <RadioButton fx:id="eraserRadio" mnemonicParsing="false" selected="true">
+                      <graphic>
+                          <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                  <Image url="@../buttons/Red/iconEraser.png" />
+                              </image>
+                          </ImageView>
+                      </graphic>
+               <toggleGroup>
+                          <ToggleGroup fx:id="typeGroup" />
+               </toggleGroup>
+                  </RadioButton>
+                  <RadioButton fx:id="frostedRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                      <graphic>
+                          <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                  <Image url="@../buttons/iconFrosted.png" />
+                              </image>
+                          </ImageView>
+                      </graphic>
+                  </RadioButton>
+                  <RadioButton fx:id="mosaicRadio" mnemonicParsing="false" toggleGroup="$typeGroup">
+                      <graphic>
+                          <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                              <image>
+                                  <Image url="@../buttons/iconMosaic.png" />
+                              </image>
+                          </ImageView>
+                      </graphic>
+                  </RadioButton>
+              </children>
+          </HBox>
+      <FlowPane hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
+         <children>
+            <Label minHeight="-Infinity" text="%StrokeWidth" wrapText="true" />
+            <ComboBox fx:id="strokeWidthSelector" editable="true" prefWidth="120.0" />
+         </children>
+      </FlowPane>
+        <VBox fx:id="setBox" spacing="10.0" VBox.vgrow="NEVER">
+            <children>
+                <FlowPane fx:id="intensityPane" hgap="5.0" layoutX="10.0" layoutY="161.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
+                    <children>
+                        <Label text="%Intensity" />
+                        <ComboBox fx:id="intensitySelector" editable="true" prefWidth="80.0" />
+                    </children>
+                </FlowPane>
+                <FlowPane fx:id="shapePane" hgap="5.0" layoutX="10.0" layoutY="201.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
+                    <children>
+                        <Label text="%Shape" />
+                        <RadioButton fx:id="shapeCircleRadio" mnemonicParsing="false" selected="true">
+                            <graphic>
+                                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconCircle.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                            <toggleGroup>
+                                <ToggleGroup fx:id="shapeGroup" />
+                            </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="shapeRectangleRadio" mnemonicParsing="false" toggleGroup="$shapeGroup">
+                            <graphic>
+                                <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../buttons/Red/iconRectangle.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </RadioButton>
+                    </children>
+                </FlowPane>
+            </children>
+        </VBox>
+        <FlowPane hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
+            <children>
+                <Button fx:id="clearButton" mnemonicParsing="false" onAction="#clearAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconClear.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="withdrawButton" mnemonicParsing="false" onAction="#withdrawAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconWithdraw.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </children>
+        </FlowPane>
+        <FlowPane alignment="CENTER_LEFT" hgap="5.0" prefWidth="200.0" vgap="5.0">
+            <children>
+                <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
+                    <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconOK.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                    <VBox.margin>
+                        <Insets top="10.0" />
+                    </VBox.margin>
+                </Button>
+                <CheckBox fx:id="coordinatePenCheck" mnemonicParsing="false">
+                    <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../buttons/Red/iconLocation.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </CheckBox>
+            </children>
+        </FlowPane>
+        <Label fx:id="commentsLabel" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" VBox.vgrow="NEVER" />
+    </children>
+</VBox>

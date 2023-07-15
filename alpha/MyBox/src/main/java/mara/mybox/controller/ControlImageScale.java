@@ -24,7 +24,7 @@ public class ControlImageScale extends ControlImageSize {
 
     public void setParameters(ImageManufactureScaleController scaleController) {
         this.scaleController = scaleController;
-        manuController = scaleController.imageController;
+        manuController = scaleController.editor;
         infoLabel = scaleController.commentsLabel;
         super.setParameters(manuController);
     }
@@ -38,8 +38,8 @@ public class ControlImageScale extends ControlImageSize {
     @Override
     protected void initScaleType() {
         try {
-            scaleController.imageController.resetImagePane();
-            scaleController.imageController.imageTab();
+            scaleController.editor.resetImagePane();
+            scaleController.editor.imageTab();
             infoLabel.setText("");
             super.initScaleType();
         } catch (Exception e) {

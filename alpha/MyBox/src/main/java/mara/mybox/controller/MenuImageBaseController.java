@@ -208,7 +208,7 @@ public class MenuImageBaseController extends MenuController {
                     @Override
                     public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                         UserConfig.setBoolean("ImageRulerXY", newValue);
-                        imageController.drawMaskRulerXY();
+                        imageController.drawMaskRulers();
                     }
                 });
             }

@@ -63,6 +63,11 @@ public class DoubleLine implements DoubleShape {
     }
 
     @Override
+    public DoublePoint getCenter() {
+        return new DoublePoint((startX + endX) / 2, (startY + endY) / 2);
+    }
+
+    @Override
     public DoubleLine move(double offset) {
         return move(offset, offset);
     }
@@ -73,6 +78,12 @@ public class DoubleLine implements DoubleShape {
                 startX + offsetX, startY + offsetY,
                 endX + offsetX, endY + offsetY);
         return nline;
+    }
+
+    @Override
+    public DoubleLine moveTo(double x, double y) {
+        DoubleShape moved = DoubleShape.moveTo(this, x, y);
+        return moved != null ? (DoubleLine) moved : null;
     }
 
     @Override

@@ -34,8 +34,9 @@ public class DoubleEllipse implements DoubleShape {
         }
         rectangle = rect;
         focalsOnX = rect.getWidth() >= rect.getHeight();
-        centerX = rect.getCenterX();
-        centerY = rect.getCenterY();
+        DoublePoint center = rect.getCenter();
+        centerX = center.getX();
+        centerY = center.getY();
         if (focalsOnX) {
             longAxis = rect.getWidth() / 2;
             shortAxis = rect.getHeight() / 2;
@@ -108,13 +109,13 @@ public class DoubleEllipse implements DoubleShape {
     }
 
     @Override
+    public DoublePoint getCenter() {
+        return new DoublePoint(centerX, centerY);
+    }
+
+    @Override
     public DoubleEllipse move(double offset) {
-        DoubleEllipse nEllipse = new DoubleEllipse(
-                centerX - radiusX + offset,
-                centerY - radiusY + offset,
-                centerX + radiusX + offset,
-                centerY + radiusY + offset);
-        return nEllipse;
+        return move(offset, offset);
     }
 
     @Override
@@ -125,6 +126,12 @@ public class DoubleEllipse implements DoubleShape {
                 centerX + radiusX + offsetX,
                 centerY + radiusY + offsetY);
         return nEllipse;
+    }
+
+    @Override
+    public DoubleEllipse moveTo(double x, double y) {
+        DoubleShape moved = DoubleShape.moveTo(this, x, y);
+        return moved != null ? (DoubleEllipse) moved : null;
     }
 
     public DoubleRectangle getRectangle() {

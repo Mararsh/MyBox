@@ -120,13 +120,13 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
 
     @Override
     protected void paneExpanded() {
-        imageController.showRightPane();
+        editor.showRightPane();
         checkOperationType();
     }
 
     private void checkOperationType() {
-        imageController.resetImagePane();
-        imageController.imageTab();
+        editor.resetImagePane();
+        editor.imageTab();
         setBox.getChildren().clear();
         ValidationTools.setEditorNormal(marginWidthBox);
         distanceInput.setStyle(null);
@@ -169,10 +169,10 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
 
     private void initDragging() {
         try {
-            imageController.maskRectangleData = new DoubleRectangle(0, 0,
+            editor.maskRectangleData = new DoubleRectangle(0, 0,
                     imageView.getImage().getWidth() - 1,
                     imageView.getImage().getHeight() - 1);
-            imageController.showMaskRectangle();
+            editor.showMaskRectangle();
             commentsLabel.setText(Languages.message("DragMarginsComments"));
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -213,15 +213,15 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
     @Override
     public void paneClicked(MouseEvent event, DoublePoint p) {
         if (opType != OperationType.SetMarginsByDragging
-                || imageController.maskRectangleData == null) {
+                || editor.maskRectangleData == null) {
             return;
         }
-        String info = Languages.message("OriginalSize") + ": " + (int) Math.round(imageController.image.getWidth())
-                + "x" + (int) Math.round(imageController.image.getHeight()) + "\n"
+        String info = Languages.message("OriginalSize") + ": " + (int) Math.round(editor.image.getWidth())
+                + "x" + (int) Math.round(editor.image.getHeight()) + "\n"
                 + Languages.message("CurrentSize") + ": " + (int) Math.round(imageView.getImage().getWidth())
                 + "x" + (int) Math.round(imageView.getImage().getHeight()) + "\n"
-                + Languages.message("AfterChange") + ": " + (int) Math.round(imageController.maskRectangleData.getWidth())
-                + "x" + (int) Math.round(imageController.maskRectangleData.getHeight());
+                + Languages.message("AfterChange") + ": " + (int) Math.round(editor.maskRectangleData.getWidth())
+                + "x" + (int) Math.round(editor.maskRectangleData.getHeight());
         commentsLabel.setText(info);
 
     }
@@ -251,7 +251,7 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
                 switch (opType) {
                     case SetMarginsByDragging:
                         newImage = MarginTools.dragMarginsFx(imageView.getImage(),
-                                (Color) colorSetController.rect.getFill(), imageController.maskRectangleData);
+                                (Color) colorSetController.rect.getFill(), editor.maskRectangleData);
                         break;
                     case CutMarginsByWidth:
                         newImage = MarginTools.cutMarginsByWidth(imageView.getImage(), addedWidth,
@@ -290,10 +290,10 @@ public class ImageManufactureMarginsController extends ImageManufactureOperation
 
             @Override
             protected void whenSucceeded() {
-                imageController.popSuccessful();
-                imageController.updateImage(ImageOperation.Margins, opType.name(), value, newImage, cost);
-                String info = Languages.message("OriginalSize") + ": " + (int) Math.round(imageController.image.getWidth())
-                        + "x" + (int) Math.round(imageController.image.getHeight()) + "\n"
+                editor.popSuccessful();
+                editor.updateImage(ImageOperation.Margins, opType.name(), value, newImage, cost);
+                String info = Languages.message("OriginalSize") + ": " + (int) Math.round(editor.image.getWidth())
+                        + "x" + (int) Math.round(editor.image.getHeight()) + "\n"
                         + Languages.message("CurrentSize") + ": " + Math.round(newImage.getWidth())
                         + "x" + Math.round(newImage.getHeight());
                 commentsLabel.setText(info);

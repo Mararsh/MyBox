@@ -4,67 +4,64 @@
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="5.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureOperationsController">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureOperationsController">
     <children>
-        <Accordion fx:id="accordionPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" VBox.vgrow="ALWAYS">
+        <Accordion fx:id="accordionPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
             <panes>
-                <TitledPane fx:id="copyPane" expanded="false" text="%Copy" />
-                <TitledPane fx:id="clipboardPane" expanded="false" text="%Clipboard">
+                <TitledPane fx:id="copyPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Copy" />
+                <TitledPane fx:id="clipboardPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Clipboard">
                     <content>
                         <!--<fx:include fx:id="clipboard" source="ImageManufactureClipboard.fxml" />-->
                     </content>
                 </TitledPane>
-                <TitledPane fx:id="cropPane" expanded="false" text="%Crop">
+                <TitledPane fx:id="cropPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Crop">
                     <content>
                         <!--<fx:include fx:id="crop" source="ImageManufactureCrop.fxml" />-->
                     </content>
                 </TitledPane>
-                <TitledPane fx:id="scalePane" expanded="false" text="%Scale2">
+                <TitledPane fx:id="scalePane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Scale2">
                     <content>
                         <!--<fx:include fx:id="scale" source="ImageManufactureScale.fxml" />-->
                     </content>
                 </TitledPane>
-                <TitledPane fx:id="marginsPane" expanded="false" text="%Margins">
+                <TitledPane fx:id="marginsPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Margins">
                     <content>
                         <!--<fx:include fx:id="margins" source="ImageManufactureMargins.fxml" />-->
                     </content>
                 </TitledPane>
-                <TitledPane fx:id="colorPane" expanded="false" text="%Color">
+                <TitledPane fx:id="colorPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Color">
                     <content>
                         <!--<fx:include fx:id="color" source="ImageManufactureColor.fxml" />-->
                     </content>
                 </TitledPane>
-                <TitledPane fx:id="effectPane" expanded="false" text="%Effects">
+                <TitledPane fx:id="effectPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Effects">
                     <content>
                         <!--<fx:include fx:id="effect" source="ImageManufactureEffects.fxml" />-->
                     </content>
                 </TitledPane>
-                <TitledPane fx:id="enhancementPane" expanded="false" text="%Enhancement">
+                <TitledPane fx:id="enhancementPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Enhancement">
                     <content>
                         <!--<fx:include fx:id="enhancement" source="ImageManufactureEnhancement.fxml" />-->
                     </content>
                 </TitledPane>
-                <TitledPane fx:id="textPane" expanded="false" text="%Text">
+                <TitledPane fx:id="textPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Text">
                     <content>
                         <!--<fx:include fx:id="text" source="ImageManufactureText.fxml" />-->
                     </content>
                 </TitledPane>
-                <TitledPane fx:id="penPane" expanded="false" text="%Pen">
-                    <content>
-                        <!--<fx:include fx:id="pen" source="ImageManufacturePen.fxml" />-->
-                    </content>
-                </TitledPane>
-                <TitledPane fx:id="transformPane" expanded="false" text="%Transform">
+                <TitledPane fx:id="shapePane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Shape" />
+                <TitledPane fx:id="eliminatePane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Eliminate" />
+                <TitledPane fx:id="transformPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Transform">
                     <content>
                         <!--<fx:include fx:id="transform" source="ImageManufactureTransform.fxml" />-->
                     </content>
                 </TitledPane>
-                <TitledPane fx:id="arcPane" expanded="false" text="%Arc">
+                <TitledPane fx:id="arcPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Arc">
                     <content>
                         <!--<fx:include fx:id="arc" source="ImageManufactureArc.fxml" />-->
                     </content>
                 </TitledPane>
-                <TitledPane fx:id="shadowPane" expanded="false" text="%Shadow">
+                <TitledPane fx:id="shadowPane" expanded="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Shadow">
                     <content>
                         <!--<fx:include fx:id="shadow" source="ImageManufactureShadow.fxml" />-->
                     </content>

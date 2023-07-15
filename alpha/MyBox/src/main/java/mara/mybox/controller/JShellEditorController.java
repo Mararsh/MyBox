@@ -273,7 +273,7 @@ public class JShellEditorController extends TreeNodeEditor {
 
             PopTools.addButtonsPane(controller, valueInput, Arrays.asList(
                     "int maxInt = Integer.MAX_VALUE, minInt = Integer.MIN_VALUE;",
-                    "double maxDouble = Double.MAX_VALUE, minDouble = Double.MIN_VALUE;",
+                    "double maxDouble = Double.MAX_VALUE, minDouble = -Double.MAX_VALUE;",
                     "float maxFloat = Float.MAX_VALUE, minFloat = Float.MIN_VALUE;",
                     "long maxLong = Long.MAX_VALUE, minLong = Long.MIN_VALUE;",
                     "short maxShort = Short.MAX_VALUE, minShort = Short.MIN_VALUE;",

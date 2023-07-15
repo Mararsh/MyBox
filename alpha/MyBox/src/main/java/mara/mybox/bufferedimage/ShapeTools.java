@@ -4,9 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import javafx.scene.shape.Line;
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
@@ -26,16 +24,17 @@ import mara.mybox.value.Colors;
  * @CreateDate 2018-6-27 18:58:57
  * @License Apache License Version 2.0
  */
-public class PenTools {
+public class ShapeTools {
 
-    public static BasicStroke stroke(DoubleShape shape, float strokeWidth) {
-        return new BasicStroke(strokeWidth,
-                ShapeStyle.lineCapAwt(shape),
+    public static BasicStroke stroke(DoubleShape shape, ShapeStyle style) {
+        return new BasicStroke(style.getStrokeWidth(),
+                style.getLineCapAwt(),
                 BasicStroke.JOIN_MITER, 1.0F,
-                ShapeStyle.strokeDashAwt(shape), 0.0F);
+                style.getStrokeDashAwt(), 0.0F);
     }
 
-    public static BufferedImage drawRectangle(BufferedImage srcImage, DoubleRectangle rect, PixelsBlend blender) {
+    public static BufferedImage drawRectangle(BufferedImage srcImage, DoubleRectangle rect,
+            ShapeStyle style, PixelsBlend blender) {
         try {
             if (rect == null || !rect.isValid()) {
                 return srcImage;
@@ -48,10 +47,10 @@ public class PenTools {
             int y2 = (int) Math.round(rect.getBigY());
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = srcImage;
-            Color strokeColor = ShapeStyle.strokeColorAwt(rect);
-            float strokeWidth = ShapeStyle.strokeWidth(rect);
-            float opacity = ShapeStyle.fillOpacity(rect);
-            int arcWidth = ShapeStyle.roundArc(rect);
+            Color strokeColor = style.getStrokeColorAwt();
+            float strokeWidth = style.getStrokeWidth();
+            float opacity = blender.getOpacity();
+            int arcWidth = style.getRoundArc();
             if (arcWidth > 0) {
                 arcWidth = Math.min(height - 1, arcWidth);
             }
@@ -68,7 +67,7 @@ public class PenTools {
                     g.setBackground(Colors.TRANSPARENT);
                     g.setColor(strokeColor);
                 }
-                g.setStroke(stroke(rect, strokeWidth));
+                g.setStroke(stroke(rect, style));
                 if (arcWidth > 0) {
                     g.drawRoundRect(x1, y1, x2 - x1, y2 - y1, arcWidth, arcWidth);
                 } else {
@@ -92,13 +91,13 @@ public class PenTools {
                     target = PixelsBlend.blend(foreImage, srcImage, 0, 0, blender);
                 }
             }
-            if (ShapeStyle.isFillColor(rect)) {
+            if (style.isIsFillColor()) {
                 BufferedImage foreImage = new BufferedImage(width, height, imageType);
                 Graphics2D g = foreImage.createGraphics();
                 if (AppVariables.imageRenderHints != null) {
                     g.addRenderingHints(AppVariables.imageRenderHints);
                 }
-                Color fillColor = ShapeStyle.fillColorAwt(rect);
+                Color fillColor = style.getFillColorAwt();
                 if (fillColor.getRGB() == 0) {
                     g.setBackground(Color.WHITE);
                     g.setColor(Color.BLACK);
@@ -138,7 +137,8 @@ public class PenTools {
         }
     }
 
-    public static BufferedImage drawEllipse(BufferedImage srcImage, DoubleEllipse ellipse, PixelsBlend blender) {
+    public static BufferedImage drawEllipse(BufferedImage srcImage, DoubleEllipse ellipse,
+            ShapeStyle style, PixelsBlend blender) {
         try {
             if (ellipse == null || !ellipse.isValid()) {
                 return srcImage;
@@ -151,9 +151,9 @@ public class PenTools {
             int ry = (int) Math.round(ellipse.getRadiusY());
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = srcImage;
-            Color strokeColor = ShapeStyle.strokeColorAwt(ellipse);
-            float strokeWidth = ShapeStyle.strokeWidth(ellipse);
-            float opacity = ShapeStyle.fillOpacity(ellipse);
+            Color strokeColor = style.getStrokeColorAwt();
+            float strokeWidth = style.getStrokeWidth();
+            float opacity = blender.getOpacity();
             if (strokeWidth > 0) {
                 BufferedImage foreImage = new BufferedImage(width, height, imageType);
                 Graphics2D g = foreImage.createGraphics();
@@ -167,7 +167,7 @@ public class PenTools {
                     g.setBackground(Colors.TRANSPARENT);
                     g.setColor(strokeColor);
                 }
-                g.setStroke(stroke(ellipse, strokeWidth));
+                g.setStroke(stroke(ellipse, style));
                 g.drawOval(x - rx, y - ry, 2 * rx, 2 * ry);
                 g.dispose();
                 if (strokeColor.getRGB() == 0) {
@@ -187,13 +187,13 @@ public class PenTools {
                     target = PixelsBlend.blend(foreImage, srcImage, 0, 0, blender);
                 }
             }
-            if (ShapeStyle.isFillColor(ellipse)) {
+            if (style.isIsFillColor()) {
                 BufferedImage foreImage = new BufferedImage(width, height, imageType);
                 Graphics2D g = foreImage.createGraphics();
                 if (AppVariables.imageRenderHints != null) {
                     g.addRenderingHints(AppVariables.imageRenderHints);
                 }
-                Color fillColor = ShapeStyle.fillColorAwt(ellipse);
+                Color fillColor = style.getFillColorAwt();
                 if (fillColor.getRGB() == 0) {
                     g.setBackground(Color.WHITE);
                     g.setColor(Color.BLACK);
@@ -228,7 +228,8 @@ public class PenTools {
         }
     }
 
-    public static BufferedImage drawCircle(BufferedImage srcImage, DoubleCircle circle, PixelsBlend blender) {
+    public static BufferedImage drawCircle(BufferedImage srcImage, DoubleCircle circle,
+            ShapeStyle style, PixelsBlend blender) {
         try {
             if (circle == null || !circle.isValid()) {
                 return srcImage;
@@ -240,9 +241,9 @@ public class PenTools {
             int r = (int) Math.round(circle.getRadius());
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = srcImage;
-            Color strokeColor = ShapeStyle.strokeColorAwt(circle);
-            float strokeWidth = ShapeStyle.strokeWidth(circle);
-            float opacity = ShapeStyle.fillOpacity(circle);
+            Color strokeColor = style.getStrokeColorAwt();
+            float strokeWidth = style.getStrokeWidth();
+            float opacity = blender.getOpacity();;
             if (strokeWidth > 0) {
                 BufferedImage foreImage = new BufferedImage(width, height, imageType);
                 Graphics2D g = foreImage.createGraphics();
@@ -256,7 +257,7 @@ public class PenTools {
                     g.setBackground(Colors.TRANSPARENT);
                     g.setColor(strokeColor);
                 }
-                g.setStroke(stroke(circle, strokeWidth));
+                g.setStroke(stroke(circle, style));
                 g.drawOval(x - r, y - r, 2 * r, 2 * r);
                 g.dispose();
                 if (strokeColor.getRGB() == 0) {
@@ -276,13 +277,13 @@ public class PenTools {
                     target = PixelsBlend.blend(foreImage, srcImage, 0, 0, blender);
                 }
             }
-            if (ShapeStyle.isFillColor(circle)) {
+            if (style.isIsFillColor()) {
                 BufferedImage foreImage = new BufferedImage(width, height, imageType);
                 Graphics2D g = foreImage.createGraphics();
                 if (AppVariables.imageRenderHints != null) {
                     g.addRenderingHints(AppVariables.imageRenderHints);
                 }
-                Color fillColor = ShapeStyle.fillColorAwt(circle);
+                Color fillColor = style.getFillColorAwt();
                 if (fillColor.getRGB() == 0) {
                     g.setBackground(Color.WHITE);
                     g.setColor(Color.BLACK);
@@ -317,7 +318,8 @@ public class PenTools {
         }
     }
 
-    public static BufferedImage drawPolyline(BufferedImage srcImage, DoublePolyline polyline, PixelsBlend blender) {
+    public static BufferedImage drawPolyline(BufferedImage srcImage, DoublePolyline polyline,
+            ShapeStyle style, PixelsBlend blender) {
         try {
             if (polyline == null || polyline.getSize() < 2) {
                 return srcImage;
@@ -331,9 +333,8 @@ public class PenTools {
             if (AppVariables.imageRenderHints != null) {
                 g.addRenderingHints(AppVariables.imageRenderHints);
             }
-            Color strokeColor = ShapeStyle.strokeColorAwt(polyline);
-            float strokeWidth = ShapeStyle.strokeWidth(polyline);
-            float opacity = ShapeStyle.fillOpacity(polyline);
+            Color strokeColor = style.getStrokeColorAwt();
+            float opacity = blender.getOpacity();;
             if (strokeColor.getRGB() == 0) {
                 g.setBackground(Color.WHITE);
                 g.setColor(Color.BLACK);
@@ -341,7 +342,7 @@ public class PenTools {
                 g.setBackground(Colors.TRANSPARENT);
                 g.setColor(strokeColor);
             }
-            g.setStroke(stroke(polyline, strokeWidth));
+            g.setStroke(stroke(polyline, style));
             g.drawPolyline(xy.get("x"), xy.get("y"), polyline.getSize());
             g.dispose();
             if (strokeColor.getRGB() == 0) {
@@ -367,7 +368,8 @@ public class PenTools {
         }
     }
 
-    public static BufferedImage drawPolyLines(BufferedImage srcImage, DoublePolyline polyline, PixelsBlend blender) {
+    public static BufferedImage drawPolyLines(BufferedImage srcImage, DoublePolyline polyline,
+            ShapeStyle style, PixelsBlend blender) {
         try {
             if (polyline == null || polyline.getSize() < 2) {
                 return srcImage;
@@ -377,9 +379,8 @@ public class PenTools {
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage foreImage = new BufferedImage(width, height, imageType);
             Graphics2D g = foreImage.createGraphics();
-            Color strokeColor = ShapeStyle.strokeColorAwt(polyline);
-            float strokeWidth = ShapeStyle.strokeWidth(polyline);
-            float opacity = ShapeStyle.fillOpacity(polyline);
+            Color strokeColor = style.getStrokeColorAwt();
+            float opacity = blender.getOpacity();;
             if (AppVariables.imageRenderHints != null) {
                 g.addRenderingHints(AppVariables.imageRenderHints);
             }
@@ -390,7 +391,7 @@ public class PenTools {
                 g.setBackground(Colors.TRANSPARENT);
                 g.setColor(strokeColor);
             }
-            g.setStroke(stroke(polyline, strokeWidth));
+            g.setStroke(stroke(polyline, style));
             int lastx = -1;
             int lasty = -1;
             int thisx;
@@ -429,7 +430,8 @@ public class PenTools {
         }
     }
 
-    public static BufferedImage drawPolygon(BufferedImage srcImage, DoublePolygon polygon, PixelsBlend blender) {
+    public static BufferedImage drawPolygon(BufferedImage srcImage, DoublePolygon polygon,
+            ShapeStyle style, PixelsBlend blender) {
         try {
             if (polygon == null || polygon.getSize() <= 2) {
                 return srcImage;
@@ -439,9 +441,9 @@ public class PenTools {
             int height = srcImage.getHeight();
             int imageType = BufferedImage.TYPE_INT_ARGB;
             BufferedImage target = srcImage;
-            Color strokeColor = ShapeStyle.strokeColorAwt(polygon);
-            float strokeWidth = ShapeStyle.strokeWidth(polygon);
-            float opacity = ShapeStyle.fillOpacity(polygon);
+            Color strokeColor = style.getStrokeColorAwt();
+            float strokeWidth = style.getStrokeWidth();
+            float opacity = blender.getOpacity();;
             if (strokeWidth > 0) {
                 BufferedImage foreImage = new BufferedImage(width, height, imageType);
                 Graphics2D g = foreImage.createGraphics();
@@ -455,7 +457,7 @@ public class PenTools {
                     g.setBackground(Colors.TRANSPARENT);
                     g.setColor(strokeColor);
                 }
-                g.setStroke(stroke(polygon, strokeWidth));
+                g.setStroke(stroke(polygon, style));
                 g.drawPolygon(xy.get("x"), xy.get("y"), polygon.getSize());
                 g.dispose();
                 if (strokeColor.getRGB() == 0) {
@@ -476,13 +478,13 @@ public class PenTools {
                     target = PixelsBlend.blend(foreImage, srcImage, 0, 0, blender);
                 }
             }
-            if (ShapeStyle.isFillColor(polygon)) {
+            if (style.isIsFillColor()) {
                 BufferedImage foreImage = new BufferedImage(width, height, imageType);
                 Graphics2D g = foreImage.createGraphics();
                 if (AppVariables.imageRenderHints != null) {
                     g.addRenderingHints(AppVariables.imageRenderHints);
                 }
-                Color fillColor = ShapeStyle.fillColorAwt(polygon);
+                Color fillColor = style.getFillColorAwt();
                 if (fillColor.getRGB() == 0) {
                     g.setBackground(Color.WHITE);
                     g.setColor(Color.BLACK);
@@ -517,9 +519,10 @@ public class PenTools {
         }
     }
 
-    public static BufferedImage drawLines(BufferedImage srcImage, DoubleLines penData, PixelsBlend blender) {
+    public static BufferedImage drawLines(BufferedImage srcImage, DoubleLines linesData,
+            ShapeStyle style, PixelsBlend blender) {
         try {
-            if (penData == null || penData.getPointsSize() == 0) {
+            if (linesData == null || linesData.getPointsSize() == 0) {
                 return srcImage;
             }
             int width = srcImage.getWidth();
@@ -530,9 +533,8 @@ public class PenTools {
             if (AppVariables.imageRenderHints != null) {
                 g.addRenderingHints(AppVariables.imageRenderHints);
             }
-            Color strokeColor = ShapeStyle.strokeColorAwt(penData);
-            float strokeWidth = ShapeStyle.strokeWidth(penData);
-            float opacity = ShapeStyle.fillOpacity(penData);
+            Color strokeColor = style.getStrokeColorAwt();
+            float opacity = blender.getOpacity();;
             if (strokeColor.getRGB() == 0) {
                 g.setBackground(Color.WHITE);
                 g.setColor(Color.BLACK);
@@ -540,22 +542,13 @@ public class PenTools {
                 g.setBackground(Colors.TRANSPARENT);
                 g.setColor(strokeColor);
             }
-            g.setStroke(stroke(penData, strokeWidth));
-            int lastx;
-            int lasty = -1;
-            int thisx;
-            int thisy;
-            for (List<DoublePoint> lineData : penData.getLines()) {
-                lastx = -1;
-                for (DoublePoint p : lineData) {
-                    thisx = (int) Math.round(p.getX());
-                    thisy = (int) Math.round(p.getY());
-                    if (lastx >= 0) {
-                        g.drawLine(lastx, lasty, thisx, thisy);
-                    }
-                    lastx = thisx;
-                    lasty = thisy;
-                }
+            g.setStroke(stroke(linesData, style));
+            for (Line line : linesData.lines()) {
+                int x1 = Math.min(width, Math.max(0, (int) line.getStartX()));
+                int y1 = Math.min(height, Math.max(0, (int) line.getStartY()));
+                int x2 = Math.min(width, Math.max(0, (int) line.getEndX()));
+                int y2 = Math.min(height, Math.max(0, (int) line.getEndY()));
+                g.drawLine(x1, y1, x2, y2);
             }
             g.dispose();
             if (strokeColor.getRGB() == 0) {
@@ -579,138 +572,6 @@ public class PenTools {
             MyBoxLog.error(e);
             return srcImage;
         }
-    }
-
-    public static BufferedImage drawErase(BufferedImage srcImage, DoubleLines penData, int strokeWidth) {
-        try {
-            if (penData == null || penData.getPointsSize() == 0 || strokeWidth < 1) {
-                return srcImage;
-            }
-            int width = srcImage.getWidth();
-            int height = srcImage.getHeight();
-            int imageType = BufferedImage.TYPE_INT_ARGB;
-            BufferedImage linesImage = new BufferedImage(width, height, imageType);
-            Graphics2D linesg = linesImage.createGraphics();
-            if (AppVariables.imageRenderHints != null) {
-                linesg.addRenderingHints(AppVariables.imageRenderHints);
-            }
-            linesg.setBackground(Color.WHITE);
-            linesg.setColor(Color.BLACK);
-            linesg.setStroke(new BasicStroke(strokeWidth));
-            int lastx;
-            int lasty = -1;
-            int thisx;
-            int thisy;
-            for (List<DoublePoint> lineData : penData.getLines()) {
-                lastx = -1;
-                for (DoublePoint p : lineData) {
-                    thisx = (int) Math.round(p.getX());
-                    thisy = (int) Math.round(p.getY());
-                    if (lastx >= 0) {
-                        linesg.drawLine(lastx, lasty, thisx, thisy);
-                    }
-                    lastx = thisx;
-                    lasty = thisy;
-                }
-            }
-            linesg.dispose();
-            BufferedImage target = new BufferedImage(width, height, imageType);
-            int black = Color.BLACK.getRGB();
-            for (int j = 0; j < height; ++j) {
-                for (int i = 0; i < width; ++i) {
-                    if (linesImage.getRGB(i, j) == black) {
-                        target.setRGB(i, j, 0);
-                    } else {
-                        target.setRGB(i, j, srcImage.getRGB(i, j));
-                    }
-                }
-            }
-            return target;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return srcImage;
-        }
-    }
-
-    public static BufferedImage drawMosaic(BufferedImage source, DoubleLines penData,
-            ImageMosaic.MosaicType mosaicType, int strokeWidth) {
-        try {
-            if (penData == null || mosaicType == null || penData.getPointsSize() == 0 || strokeWidth < 1) {
-                return source;
-            }
-            int width = source.getWidth();
-            int height = source.getHeight();
-            int imageType = BufferedImage.TYPE_INT_ARGB;
-            BufferedImage target = new BufferedImage(width, height, imageType);
-            Graphics2D gt = target.createGraphics();
-            if (AppVariables.imageRenderHints != null) {
-                gt.addRenderingHints(AppVariables.imageRenderHints);
-            }
-            gt.drawImage(source, 0, 0, width, height, null);
-            gt.dispose();
-            List<Line> dlines = penData.directLines();
-            int pixel;
-            for (Line line : dlines) {
-                int x1 = Math.min(width, Math.max(0, (int) line.getStartX()));
-                int y1 = Math.min(height, Math.max(0, (int) line.getStartY()));
-                int x2 = Math.min(width, Math.max(0, (int) line.getEndX()));
-                int y2 = Math.min(height, Math.max(0, (int) line.getEndY()));
-                if (x1 == x2) {
-                    if (y2 > y1) {
-                        for (int x = Math.max(0, x1 - strokeWidth); x <= Math.min(width, x1 + strokeWidth); x++) {
-                            for (int y = y1; y <= y2; y++) {
-                                pixel = mosaic(source, width, height, x, y, mosaicType, strokeWidth);
-                                target.setRGB(x, y, pixel);
-                            }
-                        }
-                    } else {
-                        for (int x = Math.max(0, x1 - strokeWidth); x <= Math.min(width, x1 + strokeWidth); x++) {
-                            for (int y = y2; y <= y1; y++) {
-                                pixel = mosaic(source, width, height, x, y, mosaicType, strokeWidth);
-                                target.setRGB(x, y, pixel);
-                            }
-                        }
-                    }
-                } else if (x2 > x1) {
-                    for (int x = x1; x <= x2; x++) {
-                        int y0 = (x - x1) * (y2 - y1) / (x2 - x1) + y1;
-                        int offset = (int) (x / (strokeWidth * Math.sqrt(x * x + y0 * y0)));
-                        for (int y = Math.max(0, y0 - offset); y <= Math.min(height, y0 + offset); y++) {
-                            pixel = mosaic(source, width, height, x, y, mosaicType, strokeWidth);
-                            target.setRGB(x, y, pixel);
-                        }
-                    }
-                } else {
-                    for (int x = x2; x <= x1; x++) {
-                        int y0 = (x - x2) * (y1 - y2) / (x1 - x2) + y2;
-                        int offset = (int) (x / (strokeWidth * Math.sqrt(x * x + y0 * y0)));
-                        for (int y = Math.max(0, y0 - offset); y <= Math.min(height, y0 + offset); y++) {
-                            pixel = mosaic(source, width, height, x, y, mosaicType, strokeWidth);
-                            target.setRGB(x, y, pixel);
-                        }
-                    }
-                }
-            }
-            return target;
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return source;
-        }
-    }
-
-    protected static int mosaic(BufferedImage source, int imageWidth, int imageHeight, int x, int y,
-            ImageMosaic.MosaicType type, int intensity) {
-        int newColor;
-        if (type == ImageMosaic.MosaicType.Mosaic) {
-            int mx = Math.max(0, Math.min(imageWidth - 1, x - x % intensity));
-            int my = Math.max(0, Math.min(imageHeight - 1, y - y % intensity));
-            newColor = source.getRGB(mx, my);
-        } else {
-            int fx = Math.max(0, Math.min(imageWidth - 1, x - new Random().nextInt(intensity)));
-            int fy = Math.max(0, Math.min(imageHeight - 1, y - new Random().nextInt(intensity)));
-            newColor = source.getRGB(fx, fy);
-        }
-        return newColor;
     }
 
     public static boolean inLine(Line line, int x, int y) {

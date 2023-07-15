@@ -67,9 +67,9 @@ public class ImageManufactureArcController extends ImageManufactureOperationCont
 
     @Override
     protected void paneExpanded() {
-        imageController.showRightPane();
-        imageController.resetImagePane();
-        imageController.imageTab();
+        editor.showRightPane();
+        editor.resetImagePane();
+        editor.imageTab();
     }
 
     @FXML
@@ -96,8 +96,8 @@ public class ImageManufactureArcController extends ImageManufactureOperationCont
 
             @Override
             protected void whenSucceeded() {
-                imageController.popSuccessful();
-                imageController.updateImage(ImageOperation.Arc, arc + "", null, newImage, cost);
+                editor.popSuccessful();
+                editor.updateImage(ImageOperation.Arc, arc + "", null, newImage, cost);
             }
 
         };

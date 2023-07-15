@@ -239,13 +239,13 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
 
     @Override
     protected void paneExpanded() {
-        imageController.showRightPane();
+        editor.showRightPane();
         checkColorType();
     }
 
     private void checkColorType() {
         try {
-            imageController.resetImagePane();
+            editor.resetImagePane();
             setBox.getChildren().clear();
             opBox.getChildren().clear();
             valueBox.getChildren().clear();
@@ -259,7 +259,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                 return;
             }
             if (colorReplaceRadio.isSelected()) {
-                imageController.imageTab();
+                editor.imageTab();
                 colorOperationType = OperationType.ReplaceColor;
                 setBox.getChildren().addAll(colorMatchBox, newColorBox, opBox);
                 opBox.getChildren().addAll(goButton);
@@ -271,7 +271,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
                 commentsLabel.setText(message("DefineScopeAndManufacture"));
                 scopeCheck.setDisable(false);
                 if (!scopeController.scopeWhole()) {
-                    imageController.scopeTab();
+                    editor.scopeTab();
                     scopeCheck.setSelected(true);
                 }
 
@@ -421,7 +421,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
 
     @Override
     public void paneClicked(MouseEvent event, DoublePoint p) {
-        if (imageController.isPickingColor) {
+        if (editor.isPickingColor) {
             Color color = ImageViewTools.imagePixel(p, imageView);
             if (color != null) {
                 if (colorReplaceRadio.isSelected()) {
@@ -473,7 +473,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
     }
 
     private void applyChange() {
-        if (imageController == null || colorOperationType == null || colorActionType == null) {
+        if (editor == null || colorOperationType == null || colorActionType == null) {
             return;
         }
         if (task != null) {
@@ -558,8 +558,8 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
 
             @Override
             protected void whenSucceeded() {
-                imageController.popSuccessful();
-                imageController.updateImage(ImageOperation.Color,
+                editor.popSuccessful();
+                editor.updateImage(ImageOperation.Color,
                         colorOperationType.name(), colorActionType.name(), newImage, cost);
             }
         };
@@ -571,7 +571,7 @@ public class ImageManufactureColorController extends ImageManufactureOperationCo
         if (imageView.getImage() == null) {
             return;
         }
-        imageController.popInformation(message("WaitAndHandling"));
+        editor.popInformation(message("WaitAndHandling"));
         demoButton.setDisable(true);
         Task demoTask = new Task<Void>() {
             private List<String> files;

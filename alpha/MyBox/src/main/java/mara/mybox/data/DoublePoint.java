@@ -102,6 +102,10 @@ public class DoublePoint {
         }
     }
 
+    public static List<DoublePoint> parseList(String string) {
+        return DoublePoint.parseList(string, DoublePoint.Separator);
+    }
+
     public static List<DoublePoint> parseList(String string, String separator) {
         try {
             if (string == null || string.isBlank()) {
@@ -137,7 +141,7 @@ public class DoublePoint {
     }
 
     public static String toText(List<DoublePoint> points, int scale) {
-        if (points.isEmpty()) {
+        if (points == null || points.isEmpty()) {
             return null;
         }
         String s = null;
@@ -151,6 +155,39 @@ public class DoublePoint {
                     + DoubleTools.scale(p.getY(), scale);
         }
         return s;
+    }
+
+    public static DoublePoint scale(DoublePoint p, int scale) {
+        try {
+            if (p == null || scale < 0) {
+                return p;
+            }
+            return new DoublePoint(DoubleTools.scale(p.getX(), scale), DoubleTools.scale(p.getY(), scale));
+        } catch (Exception e) {
+            return p;
+        }
+    }
+
+    public static List<DoublePoint> scaleList(List<DoublePoint> points, int scale) {
+        if (points == null || points.isEmpty()) {
+            return points;
+        }
+        List<DoublePoint> scaled = new ArrayList<>();
+        for (DoublePoint p : points) {
+            scaled.add(scale(p, scale));
+        }
+        return scaled;
+    }
+
+    public static List<List<DoublePoint>> scaleLists(List<List<DoublePoint>> list, int scale) {
+        if (list == null || list.isEmpty()) {
+            return list;
+        }
+        List<List<DoublePoint>> scaled = new ArrayList<>();
+        for (List<DoublePoint> points : list) {
+            scaled.add(scaleList(points, scale));
+        }
+        return scaled;
     }
 
     /*

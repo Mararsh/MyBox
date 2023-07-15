@@ -108,7 +108,7 @@ public class ImageSampleController extends ImageViewerController {
                 }
             });
 
-            clearMaskShapes();
+            clearMask();
 
             okButton.disableProperty().bind(
                     widthScaleSelector.getEditor().styleProperty().isEqualTo(UserConfig.badStyle())

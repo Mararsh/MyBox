@@ -103,7 +103,7 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
         }
         if (parentController instanceof ImageManufactureEffectsController) {
             ImageManufactureEffectsController pController = (ImageManufactureEffectsController) parentController;
-            imageController = pController.imageController;
+            editor = pController.editor;
             scopeController = pController.scopeController;
             okButton = pController.okButton;
             imageView = pController.imageView;
@@ -117,10 +117,10 @@ public class ImageManufactureEffectsOptionsController extends ImageManufactureOp
 
     protected void checkEffectType() {
         try {
-            if (imageController != null) {
-                imageController.resetImagePane();
+            if (editor != null) {
+                editor.resetImagePane();
                 if (scopeController != null && !scopeController.scopeWhole()) {
-                    imageController.scopeTab();
+                    editor.scopeTab();
                 }
             }
 

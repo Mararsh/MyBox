@@ -75,9 +75,9 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
 
     @Override
     protected void paneExpanded() {
-        imageController.showRightPane();
-        imageController.resetImagePane();
-        imageController.scopeTab();
+        editor.showRightPane();
+        editor.resetImagePane();
+        editor.scopeTab();
         if (scopeController.scopeWhole()
                 || scopeController.scope.getScopeType() == ImageScope.ScopeType.Operate) {
             scopeController.scopeRectangleRadio.setSelected(true);
@@ -132,11 +132,11 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
 
             @Override
             protected void whenSucceeded() {
-                imageController.popSuccessful();
+                editor.popSuccessful();
                 if (excludeRadio.isSelected() && imageMarginsCheck.isSelected()) {
                     scopeController.scopeAllRadio.setSelected(true);
                 }
-                imageController.updateImage(ImageOperation.Crop, newImage, cost);
+                editor.updateImage(ImageOperation.Crop, newImage, cost);
                 if (cuttedClip != null) {
                     if (operationsController.clipboardController != null) {
                         operationsController.clipboardController.clipsController.refreshAction();

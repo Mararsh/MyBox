@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import javafx.application.Platform;
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -30,6 +28,7 @@ import mara.mybox.fxml.cell.TableBooleanCell;
 import mara.mybox.fxml.cell.TableCheckboxCell;
 import mara.mybox.fxml.cell.TableColorEditCell;
 import mara.mybox.fxml.cell.TableDataColumnCell;
+import mara.mybox.fxml.cell.TableRowIndexCell;
 import mara.mybox.fxml.cell.TableTextAreaEditCell;
 import mara.mybox.fxml.style.NodeStyleTools;
 import static mara.mybox.value.Languages.message;
@@ -84,22 +83,8 @@ public class ControlData2DColumns extends BaseTablePagesController<Data2DColumn>
         try {
             super.initColumns();
 
-            indexColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Data2DColumn, Integer>, ObservableValue<Integer>>() {
-                @Override
-                public ObservableValue<Integer> call(TableColumn.CellDataFeatures<Data2DColumn, Integer> param) {
-                    try {
-                        Data2DColumn row = (Data2DColumn) param.getValue();
-                        Integer v = row.getIndex();
-                        if (v < 0) {
-                            return null;
-                        }
-                        return new ReadOnlyObjectWrapper(v);
-                    } catch (Exception e) {
-                        return null;
-                    }
-                }
-            });
-            indexColumn.setEditable(false);
+            indexColumn.setCellValueFactory(new PropertyValueFactory<>("columnName"));
+            indexColumn.setCellFactory(new TableRowIndexCell());
 
             nameColumn.setCellValueFactory(new PropertyValueFactory<>("columnName"));
             nameColumn.setCellFactory(TableAutoCommitCell.forStringColumn());

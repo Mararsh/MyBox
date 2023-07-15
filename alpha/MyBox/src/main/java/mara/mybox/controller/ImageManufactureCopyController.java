@@ -62,10 +62,10 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
 
     @Override
     protected void paneExpanded() {
-        imageController.showRightPane();
-        imageController.resetImagePane();
+        editor.showRightPane();
+        editor.resetImagePane();
         if (scopeController != null && !scopeController.scopeWhole()) {
-            imageController.scopeTab();
+            editor.scopeTab();
         }
     }
 
@@ -119,8 +119,8 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
 
             @Override
             protected void whenSucceeded() {
-                imageController.popSuccessful();
-                imageController.updateLabel(ImageOperation.Copy);
+                editor.popSuccessful();
+                editor.updateLabel(ImageOperation.Copy);
                 if (clipboardCheck.isSelected()) {
                     if (operationsController.clipboardController != null) {
                         operationsController.clipboardController.clipsController.refreshAction();

@@ -125,7 +125,7 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
         }
         if (parentController instanceof ImageManufactureEnhancementController) {
             enhancementController = (ImageManufactureEnhancementController) parentController;
-            imageController = enhancementController.imageController;
+            editor = enhancementController.editor;
             scopeController = enhancementController.scopeController;
             imageView = enhancementController.imageView;
             commentsLabel = enhancementController.commentsLabel;
@@ -137,8 +137,8 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
 
     protected void checkEnhanceType() {
         try {
-            if (imageController != null) {
-                imageController.resetImagePane();
+            if (editor != null) {
+                editor.resetImagePane();
             }
             clearValues();
             if (okButton != null && enhancementGroup.getSelectedToggle() == null) {
@@ -147,9 +147,9 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
             }
             RadioButton selected = (RadioButton) enhancementGroup.getSelectedToggle();
             if (ContrastRadio.equals(selected)) {
-                if (imageController != null) {
+                if (editor != null) {
                     commentsLabel.setText(Languages.message("ManufactureWholeImage"));
-                    imageController.imageTab();
+                    editor.imageTab();
                 }
                 enhanceType = OperationType.Contrast;
                 makeContrastBox();
@@ -161,10 +161,10 @@ public class ImageManufactureEnhancementOptionsController extends ImageManufactu
                 if (enhancementController != null) {
                     enhancementController.scopeCheck.setDisable(false);
                 }
-                if (imageController != null) {
+                if (editor != null) {
                     commentsLabel.setText(Languages.message("DefineScopeAndManufacture"));
                     if (scopeController != null && !scopeController.scopeWhole()) {
-                        imageController.scopeTab();
+                        editor.scopeTab();
                     }
                 }
 

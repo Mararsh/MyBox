@@ -36,7 +36,7 @@ public class DoublePolygon implements DoubleShape {
     }
 
     public boolean addAll(String values) {
-        return addAll(DoublePoint.parseList(values, DoublePoint.Separator));
+        return addAll(DoublePoint.parseList(values));
     }
 
     public boolean setAll(List<DoublePoint> ps) {
@@ -122,6 +122,12 @@ public class DoublePolygon implements DoubleShape {
         return new DoubleRectangle(bound.getMinX(), bound.getMinY(), bound.getMaxX(), bound.getMaxY());
     }
 
+    @Override
+    public DoublePoint getCenter() {
+        DoubleRectangle bound = getBound();
+        return bound != null ? bound.getCenter() : null;
+    }
+
     public Polygon makePolygon() {
         Polygon polygon = new Polygon();
         polygon.getPoints().addAll(getData());
@@ -186,6 +192,12 @@ public class DoublePolygon implements DoubleShape {
             np.add(p.getX() + offsetX, p.getY() + offsetY);
         }
         return np;
+    }
+
+    @Override
+    public DoublePolygon moveTo(double x, double y) {
+        DoubleShape moved = DoubleShape.moveTo(this, x, y);
+        return moved != null ? (DoublePolygon) moved : null;
     }
 
     public DoublePoint get(int i) {

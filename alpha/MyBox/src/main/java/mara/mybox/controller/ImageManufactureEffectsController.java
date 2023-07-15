@@ -81,7 +81,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
 
     @Override
     protected void paneExpanded() {
-        imageController.showRightPane();
+        editor.showRightPane();
         optionsController.checkEffectType();
         paletteAddButton.setVisible(false);
         htmlButton.setVisible(false);
@@ -96,7 +96,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
         htmlButton.setVisible(false);
         quanTable = null;
         optionsController.actualLoopLabel.setText("");
-        if (imageController == null || optionsController.effectType == null) {
+        if (editor == null || optionsController.effectType == null) {
             return;
         }
         if (task != null) {
@@ -212,12 +212,12 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
 
             @Override
             protected void whenSucceeded() {
-                imageController.popSuccessful();
-                imageController.updateImage(ImageOperation.Effects, optionsController.effectType.name(), value, newImage, cost);
+                editor.popSuccessful();
+                editor.updateImage(ImageOperation.Effects, optionsController.effectType.name(), value, newImage, cost);
                 if (quantization != null) {
                     String name = null;
-                    if (imageController.sourceFile != null) {
-                        name = imageController.sourceFile.getName();
+                    if (editor.sourceFile != null) {
+                        name = editor.sourceFile.getName();
                     }
                     quanTable = quantization.countTable(name);
                     if (quanTable != null) {
@@ -260,7 +260,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
         if (imageView.getImage() == null) {
             return;
         }
-        imageController.popInformation(message("WaitAndHandling"));
+        editor.popInformation(message("WaitAndHandling"));
         demoButton.setDisable(true);
         Task demoTask = new Task<Void>() {
             private List<String> files;

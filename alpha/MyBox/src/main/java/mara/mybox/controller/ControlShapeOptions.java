@@ -1,6 +1,7 @@
 package mara.mybox.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
@@ -17,15 +18,21 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.SVGPath;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeLineCap;
+import mara.mybox.controller.BaseImageController_Shapes.ShapeType;
+import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Circle;
+import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Ellipse;
+import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Line;
+import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Lines;
+import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Path;
+import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Polygon;
+import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Polyline;
+import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Rectangle;
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
 import mara.mybox.data.DoubleLine;
-import mara.mybox.data.DoubleLines;
-import mara.mybox.data.DoublePath;
-import mara.mybox.data.DoublePolygon;
-import mara.mybox.data.DoublePolyline;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
 import mara.mybox.data.ShapeStyle;
@@ -33,6 +40,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.ValidationTools;
+import mara.mybox.tools.DoubleTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -41,18 +49,19 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2023-6-29
  * @License Apache License Version 2.0
  */
-public abstract class ControlShape extends BaseController {
+public abstract class ControlShapeOptions extends BaseController {
 
     protected BaseImageController imageController;
-    protected float strokeWidth, strokeOpacity, fillOpacity, anchorSize, arcSize;
     protected DoubleShape currentShape;
+    protected ShapeStyle style;
+    protected ChangeListener<Boolean> shapeChangeListener;
 
     @FXML
     protected RadioButton rectangleRadio, circleRadio, ellipseRadio,
             lineRadio, polylineRadio, polygonRadio, linesRadio, pathRadio,
             linecapSquareRadio, linecapRoundRadio, linecapButtRadio;
     @FXML
-    protected VBox shapeBox, shapeOutBox, pointsBox,
+    protected VBox shapeBox, shapeOutBox, pointsBox, linesBox,
             rectangleBox, circleBox, ellipseBox, lineBox, pathBox;
     @FXML
     protected TabPane shapesPane;
@@ -69,37 +78,35 @@ public abstract class ControlShape extends BaseController {
     @FXML
     protected ControlPoints pointsController;
     @FXML
+    protected ControlLines linesController;
+    @FXML
     protected ComboBox<String> strokeWidthSelector, strokeOpacitySelector, fillOpacitySelector,
             anchorSizeSelector, arcSizeSelector;
     @FXML
-    protected CheckBox fillCheck;
+    protected CheckBox fillCheck, dashCheck;
     @FXML
     protected ControlColorSet strokeColorController, anchorColorController, fillColorController;
 
     public void setParameters(BaseImageController imageController) {
         try {
             this.imageController = imageController;
-            this.baseName = imageController.baseName;
 
-            imageController.maskShapeChangedNotify.addListener(new ChangeListener<Boolean>() {
+            shapeChangeListener = new ChangeListener<Boolean>() {
                 @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    if (!isSettingValues) {
-                        loadShape();
-                        drawShape();
-                    }
+                public void changed(ObservableValue v, Boolean ov, Boolean nv) {
+                    shapeChangedByUser();
                 }
-            });
+            };
 
-            initStyle();
-            initShapes();
+            initStyleControls();
+            initShapeControls();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public void initShapes() {
+    public void initShapeControls() {
         try {
             if (shapeOutBox != null) {
                 shapeOutBox.getChildren().remove(shapesPane);
@@ -120,10 +127,10 @@ public abstract class ControlShape extends BaseController {
         }
     }
 
-    public void initStyle() {
+    public void initStyleControls() {
         try {
+            style = new ShapeStyle(interfaceName);
 
-            strokeWidth = 2;
             if (strokeWidthSelector != null) {
                 strokeWidthSelector.getItems().addAll(Arrays.asList(
                         "3", "0", "1", "2", "5", "8", "10", "15", "25", "30", "50", "80"));
@@ -134,7 +141,6 @@ public abstract class ControlShape extends BaseController {
                         try {
                             float v = Float.parseFloat(newValue);
                             if (v >= 0) {
-                                strokeWidth = v;
                                 ValidationTools.setEditorNormal(strokeWidthSelector);
                             } else {
                                 ValidationTools.setEditorBadStyle(strokeWidthSelector);
@@ -157,7 +163,6 @@ public abstract class ControlShape extends BaseController {
                 fillCheck.setSelected(false);
             }
 
-            fillOpacity = 0.3f;
             if (fillOpacitySelector != null) {
                 fillOpacitySelector.getItems().addAll(
                         "0.3", "0.5", "0", "1.0", "0.05", "0.02", "0.1", "0.2", "0.8", "0.6", "0.4", "0.7", "0.9"
@@ -169,16 +174,16 @@ public abstract class ControlShape extends BaseController {
                         try {
                             float v = Float.parseFloat(newValue);
                             if (v >= 0) {
-                                fillOpacity = v;
+                                fillOpacitySelector.getEditor().setStyle(null);
+                            } else {
+                                fillOpacitySelector.getEditor().setStyle(UserConfig.badStyle());
                             }
-                            fillOpacitySelector.getEditor().setStyle(null);
                         } catch (Exception e) {
                             fillOpacitySelector.getEditor().setStyle(UserConfig.badStyle());
                         }
                     }
                 });
             }
-            strokeOpacity = 1f;
             if (strokeOpacitySelector != null) {
                 strokeOpacitySelector.getItems().addAll(
                         "1.0", "0.3", "0.5", "0", "0.05", "0.02", "0.1", "0.2", "0.8", "0.6", "0.4", "0.7", "0.9"
@@ -190,9 +195,10 @@ public abstract class ControlShape extends BaseController {
                         try {
                             float v = Float.parseFloat(newValue);
                             if (v >= 0) {
-                                strokeOpacity = v;
+                                strokeOpacitySelector.getEditor().setStyle(null);
+                            } else {
+                                strokeOpacitySelector.getEditor().setStyle(UserConfig.badStyle());
                             }
-                            strokeOpacitySelector.getEditor().setStyle(null);
                         } catch (Exception e) {
                             strokeOpacitySelector.getEditor().setStyle(UserConfig.badStyle());
                         }
@@ -200,7 +206,6 @@ public abstract class ControlShape extends BaseController {
                 });
             }
 
-            anchorSize = 10;
             if (anchorSizeSelector != null) {
                 anchorSizeSelector.getItems().setAll(Arrays.asList("10", "15", "20", "25", "30", "40", "50"));
                 anchorSizeSelector.setValue("10");
@@ -208,9 +213,8 @@ public abstract class ControlShape extends BaseController {
                     @Override
                     public void changed(ObservableValue ov, String oldValue, String newValue) {
                         try {
-                            int v = Integer.parseInt(newValue);
-                            if (v > 0) {
-                                anchorSize = v;
+                            float v = Float.parseFloat(newValue);
+                            if (v >= 0) {
                                 ValidationTools.setEditorNormal(anchorSizeSelector);
                             } else {
                                 ValidationTools.setEditorBadStyle(anchorSizeSelector);
@@ -222,7 +226,6 @@ public abstract class ControlShape extends BaseController {
                 });
             }
 
-            arcSize = 0;
             if (arcSizeSelector != null) {
                 arcSizeSelector.getItems().setAll(Arrays.asList("0", "2", "5", "10", "15", "30", "40", "50"));
                 arcSizeSelector.setValue("0");
@@ -232,7 +235,6 @@ public abstract class ControlShape extends BaseController {
                         try {
                             int v = Integer.parseInt(newValue);
                             if (v > 0) {
-                                arcSize = v;
                                 ValidationTools.setEditorNormal(arcSizeSelector);
                             } else {
                                 ValidationTools.setEditorBadStyle(arcSizeSelector);
@@ -249,6 +251,15 @@ public abstract class ControlShape extends BaseController {
         }
     }
 
+    public void switchShape() {
+        imageController.clearMask();
+        if (!showShape()) {
+            return;
+        }
+        setShapeControls();
+        setStyleControls();
+    }
+
 
     /*
         values
@@ -257,169 +268,136 @@ public abstract class ControlShape extends BaseController {
         return imageController != null ? imageController.image : null;
     }
 
-    /*
-        loadText
-     */
-    public void switchShape() {
-        if (!createShape()) {
-            return;
+    public Shape currentShape() {
+        if (imageController == null || imageController.shapeType == null) {
+            return null;
         }
-        loadShape();
-        loadStyle();
-        drawShape();
+        switch (imageController.shapeType) {
+            case Rectangle:
+                return imageController.maskRectangle;
+            case Circle:
+                return imageController.maskCircle;
+            case Ellipse:
+                return imageController.maskEllipse;
+            case Line:
+                return imageController.maskLine;
+            case Polyline:
+                return imageController.maskPolyline;
+            case Polygon:
+                return imageController.maskPolygon;
+            case Lines:
+                return null;
+            case Path:
+                return imageController.svgPath;
+            default:
+                return null;
+        }
     }
 
-    public boolean createShape() {
+    public double scale(double v) {
+        return DoubleTools.scale(v, 2);
+    }
+
+    /*
+        load
+     */
+    public boolean showShape() {
         try {
             if (imageController == null) {
                 return false;
             }
-            imageController.clearMaskShapes();
-
-            double width, height;
-            Image image = currentImage();
-            if (image != null) {
-                width = image.getWidth();
-                height = image.getHeight();
-            } else {
-                width = 500;
-                height = 500;
-            }
-            double min = Math.min(width, height);
-
+            imageController.shapeType = null;
             if (rectangleRadio != null && rectangleRadio.isSelected()) {
-                if (imageController.maskRectangleData == null) {
-                    imageController.maskRectangleData = new DoubleRectangle(
-                            (int) (width / 4), (int) (height / 4), (int) (width * 3 / 4), (int) (height * 3 / 4));
-                }
-                imageController.maskShape = imageController.maskRectangleData;
+                imageController.showMaskRectangle();
 
             } else if (circleRadio != null && circleRadio.isSelected()) {
-                if (imageController.maskCircleData == null) {
-                    imageController.maskCircleData = new DoubleCircle(
-                            (int) (width / 2), (int) (height / 2), (int) (min / 4));
-                }
-                imageController.maskShape = imageController.maskCircleData;
+                imageController.showMaskCircle();
 
             } else if (ellipseRadio != null && ellipseRadio.isSelected()) {
-                if (imageController.maskEllipseData == null) {
-                    imageController.maskEllipseData = new DoubleEllipse(
-                            (int) (width / 4), (int) (height / 4), (int) (width * 3 / 4), (int) (height * 3 / 4));
-                }
-                imageController.maskShape = imageController.maskEllipseData;
+                imageController.showMaskEllipse();
 
             } else if (lineRadio != null && lineRadio.isSelected()) {
-                if (imageController.maskLineData == null) {
-                    imageController.maskLineData = new DoubleLine(
-                            (int) (width / 4), (int) (height / 4), (int) (width * 3 / 4), (int) (height * 3 / 4));
-                }
-                imageController.maskShape = imageController.maskLineData;
+                imageController.showMaskLine();
 
             } else if (polylineRadio != null && polylineRadio.isSelected()) {
-                if (imageController.maskPolylineData == null) {
-                    imageController.maskPolylineData = new DoublePolyline();
-                    imageController.maskPolylineData.add(10, 10);
-                    imageController.maskPolylineData.add(width / 2, 10);
-                    imageController.maskPolylineData.add(width / 4, height / 2);
-                    imageController.maskPolylineData.add(width - 30, height / 2);
-                }
-                imageController.maskShape = imageController.maskPolylineData;
+                imageController.showMaskPolyline();
 
             } else if (polygonRadio != null && polygonRadio.isSelected()) {
-                if (imageController.maskPolygonData == null) {
-                    imageController.maskPolygonData = new DoublePolygon();
-                    imageController.maskPolygonData.add(10, 10);
-                    imageController.maskPolygonData.add(width / 2, 10);
-                    imageController.maskPolygonData.add(width / 4, height / 2);
-                    imageController.maskPolygonData.add(width - 30, height / 2);
-                }
-                imageController.maskShape = imageController.maskPolygonData;
+                imageController.showMaskPolygon();
 
             } else if (linesRadio != null && linesRadio.isSelected()) {
-                if (imageController.maskPenData == null) {
-                    imageController.maskPenData = new DoubleLines();
-                }
-                imageController.maskShape = imageController.maskPenData;
+                imageController.showMaskLines();
 
             } else if (pathRadio != null && pathRadio.isSelected()) {
-                if (imageController.svgPath == null) {
-                    imageController.svgPath = new SVGPath();
-                    imageController.svgPath.setContent("M 10,30\n"
-                            + "           A 20,20 0,0,1 50,30\n"
-                            + "           A 20,20 0,0,1 90,30\n"
-                            + "           Q 90,60 50,90\n"
-                            + "           Q 10,60 10,30 z");
-                }
-                if (imageController.pathData == null) {
-                    imageController.pathData = new DoublePath();
-                }
-                imageController.maskShape = imageController.pathData;
+                imageController.drawPath();
 
             } else {
                 popError(message("InvalidData"));
                 return false;
             }
-            return imageController.maskShape != null;
+            return imageController.shapeType != null;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
         }
     }
 
-    public void loadShape() {
+    public void setShapeControls() {
         try {
             shapeBox.getChildren().clear();
-
-            if (imageController == null || imageController.maskShape == null) {
+            if (imageController == null || imageController.shapeType == null) {
                 return;
             }
-
-            if (imageController.maskShape instanceof DoubleRectangle) {
-                shapeBox.getChildren().add(rectangleBox);
-                rectXInput.setText(imageController.maskRectangleData.getSmallX() + "");
-                rectYInput.setText(imageController.maskRectangleData.getSmallY() + "");
-                rectWidthInput.setText(imageController.maskRectangleData.getWidth() + "");
-                rectHeightInput.setText(imageController.maskRectangleData.getHeight() + "");
-
-            } else if (imageController.maskShape instanceof DoubleCircle) {
-                shapeBox.getChildren().add(circleBox);
-                circleXInput.setText(imageController.maskCircleData.getCenterX() + "");
-                circleYInput.setText(imageController.maskCircleData.getCenterY() + "");
-                circleRadiusInput.setText(imageController.maskCircleData.getRadius() + "");
-
-            } else if (imageController.maskShape instanceof DoubleEllipse) {
-                shapeBox.getChildren().add(ellipseBox);
-                ellipseXInput.setText(imageController.maskEllipseData.getCenterX() + "");
-                ellipseYInput.setText(imageController.maskEllipseData.getCenterY() + "");
-                ellipseXRadiusInput.setText(imageController.maskEllipseData.getRadiusX() + "");
-                ellipseYRadiusInput.setText(imageController.maskEllipseData.getRadiusY() + "");
-
-            } else if (imageController.maskShape instanceof DoubleLine) {
-                shapeBox.getChildren().add(lineBox);
-                lineX1Input.setText(imageController.maskLineData.getStartX() + "");
-                lineY1Input.setText(imageController.maskLineData.getStartY() + "");
-                lineX2Input.setText(imageController.maskLineData.getEndX() + "");
-                lineY2Input.setText(imageController.maskLineData.getEndY() + "");
-
-            } else if (imageController.maskShape instanceof DoublePolyline) {
-                shapeBox.getChildren().add(pointsBox);
-                VBox.setVgrow(pointsBox, Priority.ALWAYS);
-                pointsController.loadList(imageController.maskPolylineData.getPoints());
-
-            } else if (imageController.maskShape instanceof DoublePolygon) {
-                shapeBox.getChildren().add(pointsBox);
-                VBox.setVgrow(pointsBox, Priority.ALWAYS);
-                pointsController.loadList(imageController.maskPolygonData.getPoints());
-
-            } else if (imageController.maskShape instanceof DoubleLines) {
-
-            } else if (imageController.maskShape instanceof DoublePath) {
-                shapeBox.getChildren().add(pathBox);
-                pathArea.setText(imageController.svgPath.getContent());
-
-            } else {
-                popError(message("InvalidData"));
-                return;
+            switch (imageController.shapeType) {
+                case Rectangle:
+                    shapeBox.getChildren().add(rectangleBox);
+                    rectXInput.setText(scale(imageController.maskRectangleData.getSmallX()) + "");
+                    rectYInput.setText(scale(imageController.maskRectangleData.getSmallY()) + "");
+                    rectWidthInput.setText(scale(imageController.maskRectangleData.getWidth()) + "");
+                    rectHeightInput.setText(scale(imageController.maskRectangleData.getHeight()) + "");
+                    break;
+                case Circle:
+                    shapeBox.getChildren().add(circleBox);
+                    circleXInput.setText(scale(imageController.maskCircleData.getCenterX()) + "");
+                    circleYInput.setText(scale(imageController.maskCircleData.getCenterY()) + "");
+                    circleRadiusInput.setText(scale(imageController.maskCircleData.getRadius()) + "");
+                    break;
+                case Ellipse:
+                    shapeBox.getChildren().add(ellipseBox);
+                    ellipseXInput.setText(scale(imageController.maskEllipseData.getCenterX()) + "");
+                    ellipseYInput.setText(scale(imageController.maskEllipseData.getCenterY()) + "");
+                    ellipseXRadiusInput.setText(scale(imageController.maskEllipseData.getRadiusX()) + "");
+                    ellipseYRadiusInput.setText(scale(imageController.maskEllipseData.getRadiusY()) + "");
+                    break;
+                case Line:
+                    shapeBox.getChildren().add(lineBox);
+                    lineX1Input.setText(scale(imageController.maskLineData.getStartX()) + "");
+                    lineY1Input.setText(scale(imageController.maskLineData.getStartY()) + "");
+                    lineX2Input.setText(scale(imageController.maskLineData.getEndX()) + "");
+                    lineY2Input.setText(scale(imageController.maskLineData.getEndY()) + "");
+                    break;
+                case Polyline:
+                    shapeBox.getChildren().add(pointsBox);
+                    VBox.setVgrow(pointsBox, Priority.ALWAYS);
+                    pointsController.loadList(imageController.maskPolylineData.getPoints());
+                    break;
+                case Polygon:
+                    shapeBox.getChildren().add(pointsBox);
+                    VBox.setVgrow(pointsBox, Priority.ALWAYS);
+                    pointsController.loadList(imageController.maskPolygonData.getPoints());
+                    break;
+                case Lines:
+                    shapeBox.getChildren().add(linesBox);
+                    VBox.setVgrow(linesBox, Priority.ALWAYS);
+                    linesController.loadList(imageController.maskLinesData.getLinePoints());
+                    break;
+                case Path:
+                    shapeBox.getChildren().add(pathBox);
+                    pathArea.setText(imageController.svgPath.getContent());
+                    break;
+                default:
+                    popError(message("InvalidData"));
+                    return;
             }
 
             refreshStyle(shapeBox);
@@ -429,48 +407,52 @@ public abstract class ControlShape extends BaseController {
         }
     }
 
-    public void loadStyle() {
+    public void setStyleControls() {
         try {
-            if (imageController == null || imageController.maskShape == null) {
+            if (imageController == null || style == null) {
                 return;
             }
             if (strokeColorController != null) {
-                strokeColorController.setColor(ShapeStyle.strokeColor(imageController.maskShape));
+                strokeColorController.setColor(style.getStrokeColor());
             }
             if (strokeWidthSelector != null) {
-                strokeWidthSelector.setValue(ShapeStyle.strokeWidth(imageController.maskShape) + "");
+                strokeWidthSelector.setValue(style.getStrokeWidth() + "");
             }
             if (strokeOpacitySelector != null) {
-                strokeOpacitySelector.setValue(ShapeStyle.strokeOpacity(imageController.maskShape) + "");
+                strokeOpacitySelector.setValue(style.getStrokeOpacity() + "");
             }
 
             if (fillCheck != null) {
-                fillCheck.setSelected(ShapeStyle.isFillColor(imageController.maskShape));
+                fillCheck.setSelected(style.isIsFillColor());
             }
             if (fillColorController != null) {
-                fillColorController.setColor(ShapeStyle.fillColor(imageController.maskShape));
+                fillColorController.setColor(style.getFillColor());
             }
             if (fillOpacitySelector != null) {
-                fillOpacitySelector.setValue(ShapeStyle.fillOpacity(imageController.maskShape) + "");
+                fillOpacitySelector.setValue(style.getFillOpacity() + "");
             }
 
             if (anchorColorController != null) {
-                anchorColorController.setColor(ShapeStyle.anchorColor(imageController.maskShape));
+                anchorColorController.setColor(style.getAnchorColor());
             }
             if (anchorSizeSelector != null) {
-                anchorSizeSelector.setValue(ShapeStyle.anchorSize(imageController.maskShape) + "");
+                anchorSizeSelector.setValue(style.getAnchorSize() + "");
             }
 
             if (arcSizeSelector != null) {
-                arcSizeSelector.setValue(ShapeStyle.roundArc(imageController.maskShape) + "");
+                arcSizeSelector.setValue(style.getRoundArc() + "");
+            }
+
+            if (dashCheck != null) {
+                dashCheck.setSelected(style.isIsStrokeDash());
             }
 
             if (dashInput != null) {
-                dashInput.setText(ShapeStyle.strokeDashString(imageController.maskShape));
+                dashInput.setText(style.getStrokeDashText());
             }
 
             if (linecapSquareRadio != null) {
-                StrokeLineCap lineCap = ShapeStyle.lineCap(imageController.maskShape);
+                StrokeLineCap lineCap = style.getLineCap();
                 if (null == lineCap) {
                     linecapButtRadio.setSelected(true);
                 } else {
@@ -493,43 +475,49 @@ public abstract class ControlShape extends BaseController {
         }
     }
 
+    public void shapeChangedByUser() {
+        setShapeControls();
+    }
+
+    public void addListener() {
+        imageController.maskShapeDataChanged.addListener(shapeChangeListener);
+    }
+
+    public void removeListener() {
+        imageController.maskShapeDataChanged.removeListener(shapeChangeListener);
+    }
+
     /*
         pick
      */
     public boolean pickShape() {
         try {
-            if (imageController == null) {
-                return false;
-            }
-            if (imageController.maskShape instanceof DoubleRectangle) {
-                return pickRect();
-
-            } else if (imageController.maskShape instanceof DoubleCircle) {
-                return pickCircle();
-
-            } else if (imageController.maskShape instanceof DoubleEllipse) {
-                return pickEllipse();
-
-            } else if (imageController.maskShape instanceof DoubleLine) {
-                return pickLine();
-
-            } else if (imageController.maskShape instanceof DoublePolyline) {
-                return pickPolyline();
-
-            } else if (imageController.maskShape instanceof DoublePolygon) {
-                return pickPolygon();
-
-            } else if (imageController.maskShape instanceof DoubleLines) {
-                return pickLines();
-
-            } else if (imageController.maskShape instanceof DoublePath) {
-                return pickPath();
-
-            } else {
-                imageController.maskShape = null;
+            if (imageController == null || imageController.shapeType == null) {
                 popError(message("InvalidData"));
                 return false;
             }
+            switch (imageController.shapeType) {
+                case Rectangle:
+                    return pickRect();
+                case Circle:
+                    return pickCircle();
+                case Ellipse:
+                    return pickEllipse();
+                case Line:
+                    return pickLine();
+                case Polyline:
+                    return pickPolyline();
+                case Polygon:
+                    return pickPolygon();
+                case Lines:
+                    return pickLines();
+                case Path:
+                    return pickPath();
+                default:
+                    break;
+            }
+            popError(message("InvalidData"));
+            return false;
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
@@ -570,7 +558,6 @@ public abstract class ControlShape extends BaseController {
                 return false;
             }
             imageController.maskRectangleData = new DoubleRectangle(x, y, x + w - 1, y + h - 1);
-            imageController.maskShape = imageController.maskRectangleData;
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -603,7 +590,6 @@ public abstract class ControlShape extends BaseController {
                 return false;
             }
             imageController.maskCircleData = new DoubleCircle(x, y, r);
-            imageController.maskShape = imageController.maskCircleData;
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -645,7 +631,6 @@ public abstract class ControlShape extends BaseController {
                 return false;
             }
             imageController.maskEllipseData = new DoubleEllipse(x, y, x + rx * 2 - 1, y + ry * 2 - 1);
-            imageController.maskShape = imageController.maskEllipseData;
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -682,7 +667,6 @@ public abstract class ControlShape extends BaseController {
             }
 
             imageController.maskLineData = new DoubleLine(x1, y1, x2, y2);
-            imageController.maskShape = imageController.maskLineData;
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -693,7 +677,6 @@ public abstract class ControlShape extends BaseController {
     public boolean pickPolyline() {
         try {
             imageController.maskPolylineData.setAll(pointsController.tableData);
-            imageController.maskShape = imageController.maskPolylineData;
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -704,7 +687,6 @@ public abstract class ControlShape extends BaseController {
     public boolean pickPolygon() {
         try {
             imageController.maskPolygonData.setAll(pointsController.tableData);
-            imageController.maskShape = imageController.maskPolygonData;
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -714,6 +696,7 @@ public abstract class ControlShape extends BaseController {
 
     public boolean pickLines() {
         try {
+            imageController.maskLinesData.setLinePoints(linesController.tableData);
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -729,7 +712,6 @@ public abstract class ControlShape extends BaseController {
                 return false;
             }
             imageController.svgPath.setContent(d);
-            imageController.maskShape = imageController.pathData;
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -737,58 +719,120 @@ public abstract class ControlShape extends BaseController {
         }
     }
 
-    public void pickStyle() {
+    public boolean pickStyle() {
         try {
-            if (imageController == null || imageController.maskShape == null) {
-                return;
+            if (imageController == null || style == null) {
+                popError(message("InvalidParameter"));
+                return false;
             }
             if (strokeColorController != null) {
-                ShapeStyle.setStrokeColor(imageController.maskShape, strokeColorController.color());
+                style.setStrokeColor(strokeColorController.color());
             }
             if (strokeWidthSelector != null) {
-                ShapeStyle.setStrokeWidth(imageController.maskShape, strokeWidth);
+                try {
+                    float v = Float.parseFloat(strokeWidthSelector.getValue());
+                    if (v >= 0) {
+                        strokeWidthSelector.getEditor().setStyle(null);
+                        style.setStrokeWidth(v);
+                    } else {
+                        popError(message("InvalidParameter") + ": " + message("StrokeWidth"));
+                        return false;
+                    }
+                } catch (Exception e) {
+                    popError(message("InvalidParameter") + ": " + message("StrokeWidth"));
+                    return false;
+                }
             }
             if (strokeOpacitySelector != null) {
-                ShapeStyle.setStrokeOpacity(imageController.maskShape, strokeOpacity);
+                try {
+                    float v = Float.parseFloat(strokeOpacitySelector.getValue());
+                    if (v >= 0) {
+                        style.setStrokeOpacity(v);
+                    } else {
+                        popError(message("InvalidParameter") + ": " + message("Opacity"));
+                        return false;
+                    }
+                } catch (Exception e) {
+                    popError(message("InvalidParameter") + ": " + message("Opacity"));
+                    return false;
+                }
             }
 
             if (fillCheck != null) {
-                ShapeStyle.setIsFillColor(imageController.maskShape, fillCheck.isSelected());
+                style.setIsFillColor(fillCheck.isSelected());
             }
             if (fillColorController != null) {
-                ShapeStyle.setFillColor(imageController.maskShape, fillColorController.color());
+                style.setFillColor(fillColorController.color());
             }
             if (fillOpacitySelector != null) {
-                ShapeStyle.setFillOpacity(imageController.maskShape, fillOpacity);
+                try {
+                    float v = Float.parseFloat(fillOpacitySelector.getValue());
+                    if (v >= 0) {
+                        style.setFillOpacity(v);
+                    } else {
+                        popError(message("InvalidParameter") + ": " + message("Opacity"));
+                        return false;
+                    }
+                } catch (Exception e) {
+                    popError(message("InvalidParameter") + ": " + message("Opacity"));
+                    return false;
+                }
             }
 
             if (anchorColorController != null) {
-                ShapeStyle.setAnchorColor(imageController.maskShape, anchorColorController.color());
+                style.setAnchorColor(anchorColorController.color());
             }
             if (anchorSizeSelector != null) {
-                ShapeStyle.setAnchorSize(imageController.maskShape, anchorSize);
+                try {
+                    float v = Float.parseFloat(anchorSizeSelector.getValue());
+                    if (v >= 0) {
+                        style.setAnchorSize(v);
+                    } else {
+                        popError(message("InvalidParameter") + ": " + message("AnchorSize"));
+                        return false;
+                    }
+                } catch (Exception e) {
+                    popError(message("InvalidParameter") + ": " + message("AnchorSize"));
+                    return false;
+                }
             }
 
             if (arcSizeSelector != null) {
-                ShapeStyle.setRoundArc(imageController.maskShape, (int) arcSize);
+                try {
+                    int v = Integer.parseInt(arcSizeSelector.getValue());
+                    if (v >= 0) {
+                        style.setRoundArc(v);
+                    } else {
+                        popError(message("InvalidParameter") + ": " + message("Arc"));
+                        return false;
+                    }
+                } catch (Exception e) {
+                    popError(message("InvalidParameter") + ": " + message("Arc"));
+                    return false;
+                }
+            }
+
+            if (dashCheck != null) {
+                style.setIsStrokeDash(dashCheck.isSelected());
             }
 
             if (dashInput != null) {
-                ShapeStyle.setStrokeDashString(imageController.maskShape, dashInput.getText());
+                style.setStrokeDashText(dashInput.getText());
             }
 
             if (linecapSquareRadio != null) {
                 if (linecapSquareRadio.isSelected()) {
-                    ShapeStyle.setLineCap(imageController.maskShape, StrokeLineCap.SQUARE);
+                    style.setLineCap(StrokeLineCap.SQUARE);
                 } else if (linecapRoundRadio.isSelected()) {
-                    ShapeStyle.setLineCap(imageController.maskShape, StrokeLineCap.ROUND);
+                    style.setLineCap(StrokeLineCap.ROUND);
                 } else {
-                    ShapeStyle.setLineCap(imageController.maskShape, StrokeLineCap.BUTT);
+                    style.setLineCap(StrokeLineCap.BUTT);
                 }
             }
-
+            return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return false;
         }
     }
 
@@ -796,34 +840,39 @@ public abstract class ControlShape extends BaseController {
     /*
         draw
      */
-    public void drawShape() {
-        if (imageController == null || imageController.maskShape == null) {
+    public void redrawShape() {
+        if (imageController == null || imageController.shapeType == null) {
             return;
         }
-        if (imageController.maskShape instanceof DoubleRectangle) {
-            drawRectangle();
-
-        } else if (imageController.maskShape instanceof DoubleCircle) {
-            drawCircle();
-
-        } else if (imageController.maskShape instanceof DoubleEllipse) {
-            drawEllipse();
-
-        } else if (imageController.maskShape instanceof DoubleLine) {
-            drawLine();
-
-        } else if (imageController.maskShape instanceof DoublePolyline) {
-            drawPolyline();
-
-        } else if (imageController.maskShape instanceof DoublePolygon) {
-            drawPolygon();
-
-        } else if (imageController.maskShape instanceof DoubleLines) {
-            drawLines();
-
-        } else if (imageController.maskShape instanceof DoublePath) {
-            drawPath();
+        switch (imageController.shapeType) {
+            case Rectangle:
+                drawRectangle();
+                break;
+            case Circle:
+                drawCircle();
+                break;
+            case Ellipse:
+                drawEllipse();
+                break;
+            case Line:
+                drawLine();
+                break;
+            case Polyline:
+                drawPolyline();
+                break;
+            case Polygon:
+                drawPolygon();
+                break;
+            case Lines:
+                drawLines();
+                break;
+            case Path:
+                drawPath();
+                break;
+            default:
+                return;
         }
+        applyStyle();
     }
 
     public void drawRectangle() {
@@ -851,11 +900,51 @@ public abstract class ControlShape extends BaseController {
     }
 
     public void drawLines() {
-        imageController.showMaskPenlines();
+        imageController.showMaskLines();
     }
 
     public void drawPath() {
         imageController.drawPath();
+    }
+
+    public void applyStyle() {
+        if (imageController == null || imageController.shapeType == null || style == null) {
+            return;
+        }
+        if (imageController.shapeType == ShapeType.Lines) {
+            if (imageController.maskLines != null && !imageController.maskLines.isEmpty()) {
+                for (List<Line> lines : imageController.maskLines) {
+                    for (Line line : lines) {
+                        setStyle(line);
+                    }
+                }
+            }
+        } else {
+            setStyle(currentShape());
+        }
+        imageController.setMaskAnchorsStyle(style.getAnchorColor(), style.getAnchorSize());
+    }
+
+    public void setStyle(Shape shape) {
+        if (imageController == null || shape == null || style == null) {
+            return;
+        }
+        shape.setStroke(style.getStrokeColor());
+        shape.setStrokeWidth(style.getStrokeWidth());
+
+        if (style.isIsFillColor()) {
+            shape.setFill(style.getFillColor());
+            shape.setOpacity(style.getFillOpacity());
+            MyBoxLog.console(style.getFillOpacity());
+        } else {
+            shape.setFill(Color.TRANSPARENT);
+            shape.setOpacity(1);
+        }
+        shape.getStrokeDashArray().clear();
+        if (style.isIsStrokeDash()) {
+            shape.getStrokeDashArray().addAll(style.getStrokeDash());
+        }
+        shape.setStrokeLineCap(style.getLineCap());
     }
 
     /*
@@ -863,15 +952,9 @@ public abstract class ControlShape extends BaseController {
      */
     @FXML
     public void goShape() {
-        if (pickShape()) {
-            pickStyle();
-            drawShape();
+        if (pickShape() && pickStyle()) {
+            redrawShape();
         }
-    }
-
-    @FXML
-    public void goStyle() {
-        goShape();
     }
 
     /*

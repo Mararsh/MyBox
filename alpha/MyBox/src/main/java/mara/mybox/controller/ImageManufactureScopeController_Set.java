@@ -209,7 +209,7 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
     public void clearScope() {
         try {
             isSettingValues = true;
-            clearMaskShapes();
+            clearMask();
             if (imageView.getImage() != null) {
                 scope = new ImageScope(imageView.getImage());
                 if (sourceFile != null) {

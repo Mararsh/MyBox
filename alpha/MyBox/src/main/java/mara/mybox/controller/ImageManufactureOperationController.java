@@ -18,7 +18,7 @@ import mara.mybox.value.Languages;
  */
 public class ImageManufactureOperationController extends ImageViewerController {
 
-    protected ImageManufactureController imageController;
+    protected ImageManufactureController editor;
     protected ImageManufactureScopeController scopeController;
     protected ImageManufactureOperationsController operationsController;
     protected ImageView maskView;
@@ -34,7 +34,7 @@ public class ImageManufactureOperationController extends ImageViewerController {
     protected void initPane() {
         try {
             if (scopeCheck != null) {
-                scopeCheck.setSelected(imageController.isScopeTabSelected());
+                scopeCheck.setSelected(editor.isScopeTabSelected());
                 scopeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
                     public void changed(ObservableValue v, Boolean ov, Boolean nv) {
@@ -42,17 +42,17 @@ public class ImageManufactureOperationController extends ImageViewerController {
                             return;
                         }
                         if (scopeCheck.isSelected()) {
-                            imageController.scopeTab();
+                            editor.scopeTab();
                         } else {
-                            imageController.imageTab();
+                            editor.imageTab();
                         }
                     }
                 });
-                imageController.tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+                editor.tabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
                     @Override
                     public void changed(ObservableValue v, Tab ov, Tab nv) {
                         isTabbing = true;
-                        scopeCheck.setSelected(imageController.isScopeTabSelected());
+                        scopeCheck.setSelected(editor.isScopeTabSelected());
                         isTabbing = false;
                     }
                 });
@@ -63,6 +63,10 @@ public class ImageManufactureOperationController extends ImageViewerController {
     }
 
     protected void paneExpanded() {
+
+    }
+
+    protected void paneUnexpanded() {
     }
 
     protected void resetOperationPane() {
@@ -71,7 +75,11 @@ public class ImageManufactureOperationController extends ImageViewerController {
 
     public void initOperation() {
         resetOperationPane();
-        imageController.resetImagePane();
+        editor.resetImagePane();
+    }
+
+    public boolean isCurrentOperation() {
+        return operationsController.currentController == this;
     }
 
     @Override

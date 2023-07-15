@@ -53,14 +53,15 @@ public class ImageTextTools {
                         optionsController.getBaseY() - m,
                         optionsController.getBaseX() + optionsController.getTextWidth() + m - 1,
                         optionsController.getBaseY() + optionsController.getTextHeight() + m - 1);
-                ShapeStyle.setStrokeColor(textRect, optionsController.bordersStrokeColor());
-                ShapeStyle.setStrokeWidth(textRect, optionsController.getBordersStrokeWidth());
-                ShapeStyle.setIsFillColor(textRect, optionsController.bordersFilled());
-                ShapeStyle.setFillColor(textRect, optionsController.bordersFillColor());
-                ShapeStyle.setRoundArc(textRect, optionsController.getBordersArc());
-                ShapeStyle.setFillOpacity(textRect, opacity);
-                ShapeStyle.setStrokeDashed(textRect, optionsController.bordersDotted());
-                backImage = PenTools.drawRectangle(sourceImage, textRect,
+                ShapeStyle style = new ShapeStyle("Text");
+                style.setStrokeColor(optionsController.bordersStrokeColor());
+                style.setStrokeWidth(optionsController.getBordersStrokeWidth());
+                style.setIsFillColor(optionsController.bordersFilled());
+                style.setFillColor(optionsController.bordersFillColor());
+                style.setRoundArc(optionsController.getBordersArc());
+                style.setFillOpacity(opacity);
+                style.setStrokeDashed(optionsController.bordersDotted());
+                backImage = ShapeTools.drawRectangle(sourceImage, textRect, style,
                         PixelsBlend.blender(PixelsBlend.ImagesBlendMode.NORMAL, opacity, false, true));
             }
             Color textColor = optionsController.textColor();

@@ -128,7 +128,8 @@ public class Fxmls {
     public static final String ImageManufactureEnhancementFxml = "/fxml/ImageManufactureEnhancement.fxml";
     public static final String ImageManufactureTextFxml = "/fxml/ImageManufactureText.fxml";
     public static final String ImageManufactureArcFxml = "/fxml/ImageManufactureArc.fxml";
-    public static final String ImageManufacturePenFxml = "/fxml/ImageManufacturePen.fxml";
+    public static final String ImageManufactureShapeFxml = "/fxml/ImageManufactureShape.fxml";
+    public static final String ImageManufactureEliminateFxml = "/fxml/ImageManufactureEliminate.fxml";
     public static final String ImageManufactureShadowFxml = "/fxml/ImageManufactureShadow.fxml";
     public static final String ImageManufactureTransformFxml = "/fxml/ImageManufactureTransform.fxml";
     public static final String ImageManufactureMarginsFxml = "/fxml/ImageManufactureMargins.fxml";

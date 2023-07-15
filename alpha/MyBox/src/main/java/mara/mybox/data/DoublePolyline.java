@@ -41,7 +41,7 @@ public class DoublePolyline implements DoubleShape {
     }
 
     public boolean addAll(String values) {
-        return addAll(DoublePoint.parseList(values, DoublePoint.Separator));
+        return addAll(DoublePoint.parseList(values));
     }
 
     public boolean setAll(List<DoublePoint> ps) {
@@ -176,6 +176,12 @@ public class DoublePolyline implements DoubleShape {
     }
 
     @Override
+    public DoublePoint getCenter() {
+        DoubleRectangle bound = getBound();
+        return bound != null ? bound.getCenter() : null;
+    }
+
+    @Override
     public DoublePolyline move(double offset) {
         return move(offset, offset);
     }
@@ -190,6 +196,12 @@ public class DoublePolyline implements DoubleShape {
         DoublePolyline np = new DoublePolyline();
         np.addAll(moved);
         return np;
+    }
+
+    @Override
+    public DoublePolyline moveTo(double x, double y) {
+        DoubleShape moved = DoubleShape.moveTo(this, x, y);
+        return moved != null ? (DoublePolyline) moved : null;
     }
 
     public DoublePoint get(int i) {

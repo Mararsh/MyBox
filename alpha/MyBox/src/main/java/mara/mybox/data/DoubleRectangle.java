@@ -50,8 +50,7 @@ public class DoubleRectangle implements DoubleShape {
 
     @Override
     public boolean isValid() {
-        return bigX > smallX && bigY > smallY
-                && bigX < maxX && bigY < maxY;
+        return isValid(maxX, maxY);
     }
 
     public boolean isValid(double maxX, double maxY) {
@@ -71,6 +70,11 @@ public class DoubleRectangle implements DoubleShape {
     }
 
     @Override
+    public DoublePoint getCenter() {
+        return new DoublePoint((bigX + smallX) / 2, (bigY + smallY) / 2);
+    }
+
+    @Override
     public DoubleRectangle move(double offset) {
         return move(offset, offset);
     }
@@ -81,6 +85,12 @@ public class DoubleRectangle implements DoubleShape {
                 smallX + offsetX, smallY + offsetY,
                 bigX + offsetX, bigY + offsetY);
         return nRectangle;
+    }
+
+    @Override
+    public DoubleRectangle moveTo(double x, double y) {
+        DoubleShape moved = DoubleShape.moveTo(this, x, y);
+        return moved != null ? (DoubleRectangle) moved : null;
     }
 
     @Override
@@ -108,14 +118,6 @@ public class DoubleRectangle implements DoubleShape {
 
     public void setHeight(double height) {
         this.height = height;
-    }
-
-    public double getCenterX() {
-        return (bigX + smallX) / 2;
-    }
-
-    public double getCenterY() {
-        return (bigY + smallY) / 2;
     }
 
     public double getSmallX() {

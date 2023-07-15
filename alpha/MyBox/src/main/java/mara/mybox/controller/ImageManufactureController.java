@@ -2,15 +2,10 @@ package mara.mybox.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.List;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Shape;
 import mara.mybox.bufferedimage.ImageInformation;
-import mara.mybox.data.DoubleShape;
-import mara.mybox.data.ShapeStyle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.SingletonCurrentTask;
 import mara.mybox.fxml.WindowTools;
@@ -157,41 +152,6 @@ public class ImageManufactureController extends ImageManufactureController_Actio
         super.setImageChanged(imageChanged);
         recoverButton.setDisable(!imageChanged);
     }
-
-    @Override
-    public void setShapeStyle(DoubleShape shapeData, Shape shape) {
-        if (shapeData == null || shape == null) {
-            return;
-        }
-        Color strokeColor = ShapeStyle.strokeColor(shapeData);
-        if (strokeColor.equals(Color.TRANSPARENT)) {
-            // Have not found how to make line as transparent. For display only.
-            strokeColor = Color.WHITE;
-        }
-        shape.setStroke(strokeColor);
-        shape.setStrokeWidth(ShapeStyle.strokeWidth(shapeData));
-        shape.setStrokeLineCap(ShapeStyle.lineCap(shapeData));
-        shape.getStrokeDashArray().clear();
-        List<Float> dash = ShapeStyle.strokeDash(shapeData);
-        if (dash != null) {
-            for (Float v : dash) {
-                shape.getStrokeDashArray().add(v + 0d);
-            }
-        }
-        shape.setOpacity(ShapeStyle.fillOpacity(shapeData));
-        shape.setFill(ShapeStyle.fillColor(shapeData));
-    }
-
-    @Override
-    public Color anchorColor(DoubleShape shapeData) {
-        return ShapeStyle.anchorColor(shapeData);
-    }
-
-    @Override
-    public float anchorSize(DoubleShape shapeData) {
-        return ShapeStyle.anchorSize(shapeData);
-    }
-
 
     /*
         static methods

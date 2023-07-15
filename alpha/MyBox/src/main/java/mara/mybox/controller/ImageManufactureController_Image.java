@@ -32,8 +32,8 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
 
     public static enum ImageOperation {
         Load, History, Saved, Recover, Clipboard, Paste, Arc, Color, Crop, Copy,
-        Text, RichText, Mosaic, Convolution,
-        Effects, Enhancement, Shadow, Scale2, Picture, Transform, Pen, Margins
+        Text, RichText, Convolution,
+        Effects, Enhancement, Shadow, Scale2, Picture, Transform, Shape, Eliminate, Margins
     }
 
     @FXML
@@ -77,7 +77,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
         maskView.setImage(null);
         maskView.setVisible(false);
         maskView.toBack();
-        clearMaskShapes();
+        clearMask();
     }
 
     public void imageTab() {

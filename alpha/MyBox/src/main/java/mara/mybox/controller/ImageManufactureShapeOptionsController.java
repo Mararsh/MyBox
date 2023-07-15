@@ -2,23 +2,18 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import mara.mybox.controller.ImageManufactureController_Image.ImageOperation;
-import mara.mybox.data.DoubleLines;
 import mara.mybox.data.DoublePoint;
-import mara.mybox.data.DoublePolygon;
-import mara.mybox.data.DoublePolyline;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fximage.FxImageTools;
-import mara.mybox.fximage.PenTools;
+import mara.mybox.fximage.ShapeTools;
 import mara.mybox.fxml.SingletonCurrentTask;
 import static mara.mybox.value.Languages.message;
 
@@ -27,11 +22,12 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2019-9-6
  * @License Apache License Version 2.0
  */
-public class ImageManufacturePenOptionsController extends ControlShape {
+public class ImageManufactureShapeOptionsController extends ControlShapeOptions {
 
+    protected ImageManufactureShapeController penController;
     protected ImageManufactureController editor;
     protected ImageView maskView, imageView;
-    protected List<Line> penLines;
+    protected List<Line> currentLine;
     protected DoublePoint lastPoint;
 
     @FXML
@@ -41,9 +37,10 @@ public class ImageManufacturePenOptionsController extends ControlShape {
     @FXML
     protected CheckBox coordinatePenCheck;
 
-    public void setParameters(ImageManufactureController imageController) {
+    public void setParameters(ImageManufactureShapeController penController) {
         try {
-            editor = imageController;
+            this.penController = penController;
+            editor = penController.editor;
             maskView = editor.maskView;
             imageView = editor.imageView;
 
@@ -55,17 +52,19 @@ public class ImageManufacturePenOptionsController extends ControlShape {
     }
 
     @Override
-    public void initShapes() {
+    public void switchShape() {
+        super.switchShape();
+        redrawShape();
+    }
+
+    @Override
+    public void initShapeControls() {
         try {
-            super.initShapes();
+            super.initShapeControls();
 
             blendController.setParameters(this);
-            blendController.optionChangedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    loadShape();
-                }
-            });
+            blendController.ignoreTransparentCheck.setSelected(true);
+            blendController.ignoreTransparentCheck.setDisable(true);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -74,48 +73,59 @@ public class ImageManufacturePenOptionsController extends ControlShape {
     }
 
     @Override
-    public void loadShape() {
+    public void setShapeControls() {
         try {
+            super.setShapeControls();
+
             maskView.setImage(imageView.getImage());
             maskView.setOpacity(1);
             maskView.setVisible(true);
             imageView.setVisible(false);
             imageView.toBack();
-            withdrawButton.setVisible(false);
             setBlender();
-            RadioButton selected = (RadioButton) typeGroup.getSelectedToggle();
-            if (rectangleRadio.equals(selected)) {
-                imageController.maskRectangle.setOpacity(0);
+            if (rectangleRadio.isSelected()) {
+                withdrawButton.setDisable(true);
                 commentsLabel.setText(message("PenRectangleTips"));
 
-            } else if (circleRadio.equals(selected)) {
-                imageController.maskCircle.setOpacity(0);
+            } else if (circleRadio.isSelected()) {
+                withdrawButton.setDisable(true);
                 commentsLabel.setText(message("PenCircleTips"));
 
-            } else if (ellipseRadio.equals(selected)) {
-                imageController.maskEllipse.setOpacity(0);
+            } else if (ellipseRadio.isSelected()) {
+                withdrawButton.setDisable(true);
                 commentsLabel.setText(message("PenEllipseTips"));
 
-            } else if (polygonRadio.equals(selected)) {
-                imageController.maskPolygon.setOpacity(0);
-                withdrawButton.setVisible(true);
+            } else if (polygonRadio.isSelected()) {
+                withdrawButton.setDisable(false);
                 commentsLabel.setText(message("PenPolygonTips"));
 
-            } else if (polylineRadio.equals(selected)) {
-                withdrawButton.setVisible(true);
+            } else if (polylineRadio.isSelected()) {
+                withdrawButton.setDisable(false);
                 commentsLabel.setText(message("PenPolylineTips"));
 
-            } else if (linesRadio.equals(selected)) {
-                withdrawButton.setVisible(true);
+            } else if (linesRadio.isSelected()) {
+                withdrawButton.setDisable(false);
                 commentsLabel.setText(message("PenLinesTips"));
 
             }
 
-            super.loadShape();
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    protected void setBlender() {
+        blendController.backImage = imageView.getImage();
+        blendController.foreImage = FxImageTools.createImage(
+                (int) (imageView.getImage().getWidth() / 2), (int) (imageView.getImage().getHeight() / 2),
+                strokeColorController.color());
+        blendController.x = (int) (blendController.backImage.getWidth() - blendController.foreImage.getWidth()) / 2;
+        blendController.y = (int) (blendController.backImage.getHeight() - blendController.foreImage.getHeight()) / 2;
+    }
+
+    @Override
+    public void applyStyle() {
+        imageController.setMaskAnchorsStyle(style.getAnchorColor(), style.getAnchorSize());
     }
 
     @Override
@@ -132,18 +142,16 @@ public class ImageManufacturePenOptionsController extends ControlShape {
 
             @Override
             protected boolean handle() {
-                newImage = PenTools.drawRectangle(imageView.getImage(),
-                        imageController.maskRectangleData, blendController.blender());
+                newImage = ShapeTools.drawRectangle(imageView.getImage(),
+                        imageController.maskRectangleData, style,
+                        blendController.blender());
                 return newImage != null;
             }
 
             @Override
             protected void whenSucceeded() {
-                editor.isSettingValues = true;
-                editor.maskView.setImage(newImage);
-                editor.showMaskRectangle();
+                maskView.setImage(newImage);
                 editor.maskRectangle.setOpacity(0);
-                editor.isSettingValues = false;
             }
 
         };
@@ -164,18 +172,16 @@ public class ImageManufacturePenOptionsController extends ControlShape {
 
             @Override
             protected boolean handle() {
-                newImage = PenTools.drawCircle(imageView.getImage(),
-                        imageController.maskCircleData, blendController.blender());
+                newImage = ShapeTools.drawCircle(imageView.getImage(),
+                        imageController.maskCircleData, style,
+                        blendController.blender());
                 return newImage != null;
             }
 
             @Override
             protected void whenSucceeded() {
-                editor.isSettingValues = true;
                 maskView.setImage(newImage);
-                editor.showMaskCircle();
                 editor.maskCircle.setOpacity(0);
-                editor.isSettingValues = false;
             }
 
         };
@@ -196,18 +202,16 @@ public class ImageManufacturePenOptionsController extends ControlShape {
 
             @Override
             protected boolean handle() {
-                newImage = PenTools.drawEllipse(imageView.getImage(),
-                        imageController.maskEllipseData, blendController.blender());
+                newImage = ShapeTools.drawEllipse(imageView.getImage(),
+                        imageController.maskEllipseData, style,
+                        blendController.blender());
                 return newImage != null;
             }
 
             @Override
             protected void whenSucceeded() {
-                editor.isSettingValues = true;
                 maskView.setImage(newImage);
-                editor.showMaskEllipse();
                 editor.maskEllipse.setOpacity(0);
-                editor.isSettingValues = false;
             }
 
         };
@@ -228,18 +232,16 @@ public class ImageManufacturePenOptionsController extends ControlShape {
 
             @Override
             protected boolean handle() {
-                newImage = PenTools.drawPolygon(imageView.getImage(),
-                        imageController.maskPolygonData, blendController.blender());
+                newImage = ShapeTools.drawPolygon(imageView.getImage(),
+                        imageController.maskPolygonData, style,
+                        blendController.blender());
                 return newImage != null;
             }
 
             @Override
             protected void whenSucceeded() {
-                editor.isSettingValues = true;
                 maskView.setImage(newImage);
-                editor.showMaskPolygon();
                 editor.maskPolygon.setOpacity(0);
-                editor.isSettingValues = false;
             }
 
         };
@@ -260,18 +262,16 @@ public class ImageManufacturePenOptionsController extends ControlShape {
 
             @Override
             protected boolean handle() {
-                newImage = PenTools.drawPolyLines(imageView.getImage(),
-                        imageController.maskPolylineData, blendController.blender());
+                newImage = ShapeTools.drawPolyLines(imageView.getImage(),
+                        imageController.maskPolylineData, style,
+                        blendController.blender());
                 return newImage != null;
             }
 
             @Override
             protected void whenSucceeded() {
-                editor.isSettingValues = true;
                 maskView.setImage(newImage);
-                editor.showMaskPolyline();
                 editor.maskPolyline.setOpacity(0);
-                editor.isSettingValues = false;
             }
 
         };
@@ -281,7 +281,7 @@ public class ImageManufacturePenOptionsController extends ControlShape {
     @Override
     public void drawLines() {
         if (isSettingValues || imageView == null || imageView.getImage() == null
-                || imageController.maskPenData == null) {
+                || imageController.maskLinesData == null) {
             return;
         }
         if (task != null) {
@@ -292,8 +292,9 @@ public class ImageManufacturePenOptionsController extends ControlShape {
 
             @Override
             protected boolean handle() {
-                newImage = PenTools.drawLines(imageView.getImage(),
-                        imageController.maskPenData, blendController.blender());
+                newImage = ShapeTools.drawLines(imageView.getImage(),
+                        imageController.maskLinesData, style,
+                        blendController.blender());
                 return newImage != null;
             }
 
@@ -302,83 +303,71 @@ public class ImageManufacturePenOptionsController extends ControlShape {
                 if (isCancelled()) {
                     return;
                 }
-                editor.isSettingValues = true;
                 maskView.setImage(newImage);
                 maskView.setOpacity(1);
                 maskView.setVisible(true);
                 imageView.setVisible(false);
                 imageView.toBack();
-                clearPenLines();
-                editor.isSettingValues = false;
+
+                if (currentLine != null) {
+                    for (Line line : currentLine) {
+                        imageController.maskPane.getChildren().remove(line);
+                    }
+                    currentLine = null;
+                }
+                lastPoint = null;
+
+                updateLinesList();
             }
 
         };
         start(task);
     }
 
-    protected void setBlender() {
-        blendController.backImage = imageView.getImage();
-        blendController.foreImage = FxImageTools.createImage((int) (imageView.getImage().getWidth() / 2), (int) (imageView.getImage().getHeight() / 2),
-                strokeColorController.color());
-        blendController.x = (int) (blendController.backImage.getWidth() - blendController.foreImage.getWidth()) / 2;
-        blendController.y = (int) (blendController.backImage.getHeight() - blendController.foreImage.getHeight()) / 2;
+    public void updateLinesList() {
+        linesController.loadList(imageController.maskLinesData.getLinePoints());
     }
 
-    public Line drawLine(DoublePoint thisPoint) {
-        Line penLine = imageController.drawMaskPenLine(lastPoint, thisPoint);
-        if (penLine != null) {
-            if (penLines == null) {
-                penLines = new ArrayList<>();
+    public void drawLinePoint(DoublePoint thisPoint) {
+        Line line = imageController.drawMaskLinesLine(lastPoint, thisPoint);
+        if (line != null) {
+            if (currentLine == null) {
+                currentLine = new ArrayList<>();
             }
-            penLines.add(penLine);
-            lastPoint = thisPoint;
+            line.setStroke(Color.RED);
+            line.setStrokeWidth(10);
+            line.getStrokeDashArray().clear();
+            currentLine.add(line);
         }
-        return penLine;
+        editor.maskLinesData.addPoint(thisPoint);
+        updateLinesList();
     }
 
-    public void drawLine(DoublePoint lastPoint, DoublePoint thisPoint) {
-        Line penLine;
-        penLine = imageController.drawMaskPenLine(lastPoint, thisPoint);
-
-        if (penLine != null) {
-            if (penLines == null) {
-                penLines = new ArrayList<>();
-            }
-            penLines.add(penLine);
-        }
-    }
-
-    public void clearPenLines() {
-        if (null == imageController.maskShape || imageController.maskPane == null) {
-            return;
-        }
-        if (penLines != null) {
-            for (Line line : penLines) {
-                imageController.maskPane.getChildren().remove(line);
-            }
-            penLines = null;
-        }
-        lastPoint = null;
+    @Override
+    public void shapeChangedByUser() {
+        setShapeControls();
+        redrawShape();
     }
 
     @FXML
     @Override
     public void withdrawAction() {
-        if (null == imageController.maskShape || imageView == null || imageView.getImage() == null) {
+        if (null == imageController.shapeType || imageView == null || imageView.getImage() == null) {
             return;
         }
-        if (imageController.maskShape instanceof DoublePolyline) {
-            imageController.removeMaskPolylineLastPoint();
-            drawPolyline();
-
-        } else if (imageController.maskShape instanceof DoublePolygon) {
-            imageController.removeMaskPolygonLastPoint();
-            drawPolygon();
-
-        } else if (imageController.maskShape instanceof DoubleLines) {
-            imageController.maskPenData.removeLastLine();
-            drawLines();
-
+        switch (imageController.shapeType) {
+            case Polyline:
+                imageController.removeMaskPolylineLastPoint();
+                drawPolyline();
+                break;
+            case Polygon:
+                imageController.removeMaskPolygonLastPoint();
+                drawPolygon();
+                break;
+            case Lines:
+                imageController.maskLinesData.removeLastLine();
+                drawLines();
+                break;
         }
     }
 
@@ -397,13 +386,11 @@ public class ImageManufacturePenOptionsController extends ControlShape {
     @FXML
     @Override
     public void okAction() {
-        if (okButton.isDisabled() || editor.maskShape == null) {
+        if (okButton.isDisabled() || editor.shapeType == null) {
             return;
         }
         editor.popSuccessful();
-        editor.updateImage(ImageOperation.Pen,
-                imageController.maskShape.getClass().getSimpleName(),
-                null, maskView.getImage(), 0);
+        editor.updateImage(ImageOperation.Shape, editor.shapeType.name(), null, maskView.getImage(), 0);
     }
 
 }
