@@ -192,7 +192,7 @@ public class ControlSvgImage extends BaseImageController {
                 default:
                     return;
             }
-            updateSvgShape();
+//            updateSvgShape();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

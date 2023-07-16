@@ -134,7 +134,7 @@ License:    Apache License Version 2.0
                                                 </HBox>
                                                 <CheckBox fx:id="closeCurrentCheck" mnemonicParsing="false" text="%CloseCurrentWhenOpenTool" />
                                                 <CheckBox fx:id="controlsTextCheck" mnemonicParsing="false" text="%DisplayControlText" />
-                                                <CheckBox fx:id="commitLoseFocusCheck" layoutX="20.0" layoutY="251.0" mnemonicParsing="false" text="%CommitModificationWhenDataCellLoseFocus" />
+                                                <CheckBox fx:id="lostFocusCommitCheck" layoutX="20.0" layoutY="251.0" mnemonicParsing="false" text="%CommitModificationWhenDataCellLoseFocus" />
                                                 <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="66.0" spacing="10.0">
                                                     <children>
                                                         <Label text="%SelectorScrollSize">

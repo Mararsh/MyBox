@@ -28,6 +28,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
     protected ObservableList<P> tableData;
     protected SimpleBooleanProperty tableDataChangedNotify;
+    protected boolean isSettingTable;
 
     @FXML
     protected TableView<P> tableView;
@@ -54,6 +55,19 @@ public abstract class BaseTableViewController<P> extends BaseController {
         try {
             super.initControls();
             initTable();
+
+            if (lostFocusCommitCheck != null) {
+                isSettingTable = true;
+                lostFocusCommitCheck.setSelected(AppVariables.commitModificationWhenDataCellLoseFocus);
+                isSettingTable = false;
+                thisPane.hoverProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        hovering(newValue);
+                    }
+                });
+            }
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -115,6 +129,17 @@ public abstract class BaseTableViewController<P> extends BaseController {
     }
 
     /*
+        tableview
+     */
+    protected void hovering(boolean isHovering) {
+        if (isHovering && lostFocusCommitCheck != null) {
+            isSettingTable = true;
+            lostFocusCommitCheck.setSelected(AppVariables.commitModificationWhenDataCellLoseFocus);
+            isSettingTable = false;
+        }
+    }
+
+    /*
         data
      */
     protected void tableChanged() {
@@ -132,7 +157,7 @@ public abstract class BaseTableViewController<P> extends BaseController {
 
     @FXML
     public void autoCommitCheck() {
-        if (lostFocusCommitCheck != null) {
+        if (!isSettingTable && lostFocusCommitCheck != null) {
             AppVariables.lostFocusCommitData(lostFocusCommitCheck.isSelected());
         }
     }

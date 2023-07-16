@@ -230,11 +230,9 @@ public class ShapeStyle {
     }
 
     public ShapeStyle setStrokeDashed(boolean dashed) {
+        setIsStrokeDash(dashed);
         if (dashed) {
-            isStrokeDash = true;
             setStrokeDash(text2StrokeDash(strokeWidth + " " + strokeWidth * 3));
-        } else {
-            isStrokeDash = false;
         }
         return this;
     }

@@ -63,8 +63,6 @@ public class ImageManufactureShapeOptionsController extends ControlShapeOptions 
             super.initShapeControls();
 
             blendController.setParameters(this);
-            blendController.ignoreTransparentCheck.setSelected(true);
-            blendController.ignoreTransparentCheck.setDisable(true);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -83,28 +81,30 @@ public class ImageManufactureShapeOptionsController extends ControlShapeOptions 
             imageView.setVisible(false);
             imageView.toBack();
             setBlender();
+            withdrawButton.setDisable(true);
+            clearButton.setDisable(true);
             if (rectangleRadio.isSelected()) {
-                withdrawButton.setDisable(true);
                 commentsLabel.setText(message("PenRectangleTips"));
 
             } else if (circleRadio.isSelected()) {
-                withdrawButton.setDisable(true);
                 commentsLabel.setText(message("PenCircleTips"));
 
             } else if (ellipseRadio.isSelected()) {
-                withdrawButton.setDisable(true);
                 commentsLabel.setText(message("PenEllipseTips"));
 
             } else if (polygonRadio.isSelected()) {
                 withdrawButton.setDisable(false);
+                clearButton.setDisable(false);
                 commentsLabel.setText(message("PenPolygonTips"));
 
             } else if (polylineRadio.isSelected()) {
                 withdrawButton.setDisable(false);
+                clearButton.setDisable(false);
                 commentsLabel.setText(message("PenPolylineTips"));
 
             } else if (linesRadio.isSelected()) {
                 withdrawButton.setDisable(false);
+                clearButton.setDisable(false);
                 commentsLabel.setText(message("PenLinesTips"));
 
             }
@@ -151,6 +151,7 @@ public class ImageManufactureShapeOptionsController extends ControlShapeOptions 
             @Override
             protected void whenSucceeded() {
                 maskView.setImage(newImage);
+                editor.drawMaskRectangle();
                 editor.maskRectangle.setOpacity(0);
             }
 
@@ -181,6 +182,7 @@ public class ImageManufactureShapeOptionsController extends ControlShapeOptions 
             @Override
             protected void whenSucceeded() {
                 maskView.setImage(newImage);
+                editor.drawMaskCircle();
                 editor.maskCircle.setOpacity(0);
             }
 
@@ -211,6 +213,7 @@ public class ImageManufactureShapeOptionsController extends ControlShapeOptions 
             @Override
             protected void whenSucceeded() {
                 maskView.setImage(newImage);
+                editor.drawMaskEllipse();
                 editor.maskEllipse.setOpacity(0);
             }
 
@@ -241,6 +244,7 @@ public class ImageManufactureShapeOptionsController extends ControlShapeOptions 
             @Override
             protected void whenSucceeded() {
                 maskView.setImage(newImage);
+                editor.drawMaskPolygon();
                 editor.maskPolygon.setOpacity(0);
             }
 
@@ -271,6 +275,7 @@ public class ImageManufactureShapeOptionsController extends ControlShapeOptions 
             @Override
             protected void whenSucceeded() {
                 maskView.setImage(newImage);
+                editor.drawMaskPolyline();
                 editor.maskPolyline.setOpacity(0);
             }
 
@@ -344,7 +349,7 @@ public class ImageManufactureShapeOptionsController extends ControlShapeOptions 
     }
 
     @Override
-    public void shapeChangedByUser() {
+    public void shapeDataChanged() {
         setShapeControls();
         redrawShape();
     }
@@ -380,7 +385,17 @@ public class ImageManufactureShapeOptionsController extends ControlShapeOptions 
     @FXML
     @Override
     public void clearAction() {
-        switchShape();
+        if (polygonRadio.isSelected()) {
+            editor.maskPolygonData.clear();
+
+        } else if (polylineRadio.isSelected()) {
+            editor.maskPolylineData.clear();
+
+        } else if (linesRadio.isSelected()) {
+            editor.maskLinesData.clear();
+
+        }
+        redrawShape();
     }
 
     @FXML

@@ -94,9 +94,8 @@ License:    Apache License Version 2.0
                </graphic>
             </TableColumn>
             <TableColumn fx:id="indexColumn" editable="false" text="%Index" />
-            <TableColumn fx:id="pointsColumn" maxWidth="1.7976931348623157E308" prefWidth="500.0" text="%PointsList" />
+            <TableColumn fx:id="pointsColumn" maxWidth="1.7976931348623157E308" prefWidth="300.0" text="%PointsList" />
          </columns>
       </TableView>
-      <Label minHeight="-Infinity" text="%LinePointsFormat" wrapText="true" />
     </children>
 </VBox>

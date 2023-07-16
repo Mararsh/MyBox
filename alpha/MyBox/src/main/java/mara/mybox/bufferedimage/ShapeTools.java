@@ -30,7 +30,8 @@ public class ShapeTools {
         return new BasicStroke(style.getStrokeWidth(),
                 style.getLineCapAwt(),
                 BasicStroke.JOIN_MITER, 1.0F,
-                style.getStrokeDashAwt(), 0.0F);
+                style.isIsStrokeDash() ? style.getStrokeDashAwt() : null,
+                0.0F);
     }
 
     public static BufferedImage drawRectangle(BufferedImage srcImage, DoubleRectangle rect,

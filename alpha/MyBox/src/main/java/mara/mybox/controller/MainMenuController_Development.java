@@ -322,6 +322,11 @@ public abstract class MainMenuController_Development extends MainMenuController_
     }
 
     @FXML
+    public void makeShortcuts() {
+        ShortcutsController.html();
+    }
+
+    @FXML
     public void makeInterfaceTips() {
         openHtml(HelpTools.makeInterfaceTips());
     }

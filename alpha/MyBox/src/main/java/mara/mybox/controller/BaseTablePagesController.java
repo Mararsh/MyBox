@@ -893,58 +893,8 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
 
             @Override
             protected boolean handle() {
-                try {
-                    List<String> names = new ArrayList<>();
-                    int rowsSelectionColumnIndex = -1;
-                    if (rowsSelectionColumn != null) {
-                        rowsSelectionColumnIndex = tableView.getColumns().indexOf(rowsSelectionColumn);
-                    }
-                    int colsNumber = tableView.getColumns().size();
-                    for (int c = 0; c < colsNumber; c++) {
-                        if (c == rowsSelectionColumnIndex) {
-                            continue;
-                        }
-                        names.add(tableView.getColumns().get(c).getText());
-                    }
-                    table = new StringTable(names, baseTitle);
-                    for (int r = 0; r < tableData.size(); r++) {
-                        List<String> row = new ArrayList<>();
-                        for (int c = 0; c < colsNumber; c++) {
-                            if (c == rowsSelectionColumnIndex) {
-                                continue;
-                            }
-                            String s = null;
-                            try {
-                                Object cellData = tableView.getColumns().get(c).getCellData(r);
-                                Image image = null;
-                                int width = 20;
-                                if (cellData instanceof ImageView) {
-                                    image = ((ImageView) cellData).getImage();
-                                    width = (int) ((ImageView) cellData).getFitWidth();
-                                } else if (cellData instanceof Image) {
-                                    image = (Image) cellData;
-                                    width = (int) image.getWidth();
-                                }
-                                if (image != null) {
-                                    String base64 = FxImageTools.base64(image, "png");
-                                    if (base64 != null) {
-                                        s = "<img src=\"data:image/png;base64," + base64 + "\" width=" + width + " >";
-                                    }
-                                }
-                                if (s == null) {
-                                    s = cellData.toString();
-                                }
-                            } catch (Exception e) {
-                            }
-                            row.add(s);
-                        }
-                        table.add(row);
-                    }
-                    return true;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
+                table = makeStringTable();
+                return table != null;
             }
 
             @Override
@@ -953,6 +903,61 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
             }
         };
         start(htmlTask, false, message("LoadingTableData"));
+    }
+
+    protected StringTable makeStringTable() {
+        try {
+            List<String> names = new ArrayList<>();
+            int rowsSelectionColumnIndex = -1;
+            if (rowsSelectionColumn != null) {
+                rowsSelectionColumnIndex = tableView.getColumns().indexOf(rowsSelectionColumn);
+            }
+            int colsNumber = tableView.getColumns().size();
+            for (int c = 0; c < colsNumber; c++) {
+                if (c == rowsSelectionColumnIndex) {
+                    continue;
+                }
+                names.add(tableView.getColumns().get(c).getText());
+            }
+            StringTable table = new StringTable(names, baseTitle);
+            for (int r = 0; r < tableData.size(); r++) {
+                List<String> row = new ArrayList<>();
+                for (int c = 0; c < colsNumber; c++) {
+                    if (c == rowsSelectionColumnIndex) {
+                        continue;
+                    }
+                    String s = null;
+                    try {
+                        Object cellData = tableView.getColumns().get(c).getCellData(r);
+                        Image image = null;
+                        int width = 20;
+                        if (cellData instanceof ImageView) {
+                            image = ((ImageView) cellData).getImage();
+                            width = (int) ((ImageView) cellData).getFitWidth();
+                        } else if (cellData instanceof Image) {
+                            image = (Image) cellData;
+                            width = (int) image.getWidth();
+                        }
+                        if (image != null) {
+                            String base64 = FxImageTools.base64(image, "png");
+                            if (base64 != null) {
+                                s = "<img src=\"data:image/png;base64," + base64 + "\" width=" + width + " >";
+                            }
+                        }
+                        if (s == null) {
+                            s = cellData.toString();
+                        }
+                    } catch (Exception e) {
+                    }
+                    row.add(s);
+                }
+                table.add(row);
+            }
+            return table;
+        } catch (Exception e) {
+            displayError(e.toString());
+            return null;
+        }
     }
 
     @FXML

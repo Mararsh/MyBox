@@ -75,7 +75,7 @@ public class SettingsController extends BaseController {
     @FXML
     protected CheckBox closeCurrentCheck, recordWindowsSizeLocationCheck, clearExpiredCheck,
             controlsTextCheck, shortcutsCanNotOmitCheck, icons40pxCheck,
-            commitLoseFocusCheck, copyCurrentDataPathCheck, clearCurrentRootCheck, splitPaneSensitiveCheck,
+            lostFocusCommitCheck, copyCurrentDataPathCheck, clearCurrentRootCheck, splitPaneSensitiveCheck,
             mousePassControlPanesCheck, popColorSetCheck, stopAlarmCheck;
     @FXML
     protected TextField jvmInput, dataDirInput, batchInput, fileRecentInput, thumbnailWidthInput,
@@ -195,7 +195,7 @@ public class SettingsController extends BaseController {
             mousePassControlPanesCheck.setSelected(UserConfig.getBoolean("MousePassControlPanes", true));
             popColorSetCheck.setSelected(UserConfig.getBoolean("PopColorSetWhenMouseHovering", true));
             shortcutsCanNotOmitCheck.setSelected(AppVariables.ShortcutsCanNotOmitCtrlAlt);
-            commitLoseFocusCheck.setSelected(AppVariables.commitModificationWhenDataCellLoseFocus);
+            lostFocusCommitCheck.setSelected(AppVariables.commitModificationWhenDataCellLoseFocus);
 
             checkLanguage();
             checkPdfMem();
@@ -301,13 +301,13 @@ public class SettingsController extends BaseController {
                 }
             });
 
-            commitLoseFocusCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            lostFocusCommitCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
                     if (isSettingValues) {
                         return;
                     }
-                    AppVariables.lostFocusCommitData(commitLoseFocusCheck.isSelected());
+                    AppVariables.lostFocusCommitData(lostFocusCommitCheck.isSelected());
                 }
             });
 

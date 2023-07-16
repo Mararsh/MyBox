@@ -112,7 +112,8 @@ License:    Apache License Version 2.0
                 </Button>
             </children>
         </FlowPane>
-        <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" />
+        <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" minHeight="-Infinity" wrapText="true" 
+               styleClass="blue-label" stylesheets="@../styles/MyBox.css" />
         <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
             <content>
                 <AnchorPane fx:id="maskPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#paneClicked" onMouseDragged="#mouseDragged" onMouseMoved="#showXY" onMousePressed="#mousePressed" onMouseReleased="#mouseReleased" VBox.vgrow="ALWAYS">

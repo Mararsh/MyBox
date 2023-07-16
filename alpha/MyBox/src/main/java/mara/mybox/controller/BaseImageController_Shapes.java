@@ -338,7 +338,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             if (maskRectangleData == null) {
                 setMaskRectangleDefaultValues();
             }
-            float anchorHW = anchorSize() / 2;
             double xRatio = viewXRatio();
             double yRatio = viewYRatio();
             double x1 = maskRectangleData.getSmallX() * xRatio;
@@ -350,24 +349,25 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             maskRectangle.setWidth(x2 - x1 + 1);
             maskRectangle.setHeight(y2 - y1 + 1);
 
-            double lineX = maskRectangle.getLayoutX();
-            double lineY = maskRectangle.getLayoutY();
-            topLeftHandler.setLayoutX(lineX - anchorHW);
-            topLeftHandler.setLayoutY(lineY - anchorHW);
-            topCenterHandler.setLayoutX(lineX + maskRectangle.getWidth() / 2 - anchorHW);
-            topCenterHandler.setLayoutY(lineY - anchorHW);
-            topRightHandler.setLayoutX(lineX + maskRectangle.getWidth() - anchorHW);
-            topRightHandler.setLayoutY(lineY - anchorHW);
-            bottomLeftHandler.setLayoutX(lineX - anchorHW);
-            bottomLeftHandler.setLayoutY(lineY + maskRectangle.getHeight() - anchorHW);
-            bottomCenterHandler.setLayoutX(lineX + maskRectangle.getWidth() / 2 - anchorHW);
-            bottomCenterHandler.setLayoutY(lineY + maskRectangle.getHeight() - anchorHW);
-            bottomRightHandler.setLayoutX(lineX + maskRectangle.getWidth() - anchorHW);
-            bottomRightHandler.setLayoutY(lineY + maskRectangle.getHeight() - anchorHW);
-            leftCenterHandler.setLayoutX(lineX - anchorHW);
-            leftCenterHandler.setLayoutY(lineY + maskRectangle.getHeight() / 2 - anchorHW);
-            rightCenterHandler.setLayoutX(lineX + maskRectangle.getWidth() - anchorHW);
-            rightCenterHandler.setLayoutY(lineY + maskRectangle.getHeight() / 2 - anchorHW);
+            float anchorHW = anchorSize() / 2;
+            double layoutX = maskRectangle.getLayoutX();
+            double layoutY = maskRectangle.getLayoutY();
+            topLeftHandler.setLayoutX(layoutX - anchorHW);
+            topLeftHandler.setLayoutY(layoutY - anchorHW);
+            topCenterHandler.setLayoutX(layoutX + maskRectangle.getWidth() / 2 - anchorHW);
+            topCenterHandler.setLayoutY(layoutY - anchorHW);
+            topRightHandler.setLayoutX(layoutX + maskRectangle.getWidth() - anchorHW);
+            topRightHandler.setLayoutY(layoutY - anchorHW);
+            bottomLeftHandler.setLayoutX(layoutX - anchorHW);
+            bottomLeftHandler.setLayoutY(layoutY + maskRectangle.getHeight() - anchorHW);
+            bottomCenterHandler.setLayoutX(layoutX + maskRectangle.getWidth() / 2 - anchorHW);
+            bottomCenterHandler.setLayoutY(layoutY + maskRectangle.getHeight() - anchorHW);
+            bottomRightHandler.setLayoutX(layoutX + maskRectangle.getWidth() - anchorHW);
+            bottomRightHandler.setLayoutY(layoutY + maskRectangle.getHeight() - anchorHW);
+            leftCenterHandler.setLayoutX(layoutX - anchorHW);
+            leftCenterHandler.setLayoutY(layoutY + maskRectangle.getHeight() / 2 - anchorHW);
+            rightCenterHandler.setLayoutX(layoutX + maskRectangle.getWidth() - anchorHW);
+            rightCenterHandler.setLayoutY(layoutY + maskRectangle.getHeight() / 2 - anchorHW);
 
             setShapeStyle(maskRectangle);
             setMaskAnchorsStyle();
@@ -993,11 +993,13 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         }
         clearMaskLines();
         maskLines = new ArrayList<>();
-        maskLinesData = new DoubleLines();
         drawMaskLines();
     }
 
     public boolean drawMaskLines() {
+        if (maskLinesData == null) {
+            maskLinesData = new DoubleLines();
+        }
         shapeType = ShapeType.Lines;
         return true;
     }
@@ -1075,7 +1077,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             if (!maskPane.getChildren().contains(svgPath)) {
                 maskPane.getChildren().add(svgPath);
             }
-            svgPath.setVisible(false);
+            svgPath.setVisible(true);
 
             shapeType = ShapeType.Path;
 

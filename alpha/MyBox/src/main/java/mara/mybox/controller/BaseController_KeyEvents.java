@@ -216,6 +216,9 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
             case U:
                 return controlAltU();
 
+            case L:
+                return controlAltL();
+
             case MINUS:
                 setSceneFontSize(AppVariables.sceneFontSize - 1);
                 return true;
@@ -309,20 +312,28 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean controlAltE() {
-        if (startButton != null) {
-            if (!startButton.isDisabled() && startButton.isVisible()) {
-                startAction();
-            }
+        if (startButton != null && !startButton.isDisabled() && startButton.isVisible()) {
+            startAction();
             return true;
-        } else if (okButton != null) {
-            if (!okButton.isDisabled() && okButton.isVisible()) {
-                okAction();
-            }
+        } else if (okButton != null && !okButton.isDisabled() && okButton.isVisible()) {
+            okAction();
             return true;
-        } else if (goButton != null) {
-            if (!goButton.isDisabled() && goButton.isVisible()) {
-                goAction();
-            }
+        } else if (setButton != null && !setButton.isDisabled() && setButton.isVisible()) {
+            setAction();
+            return true;
+        } else if (playButton != null && !playButton.isDisabled() && playButton.isVisible()) {
+            playAction();
+            return true;
+        } else if (goButton != null && !goButton.isDisabled() && goButton.isVisible()) {
+            goAction();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean controlAltL() {
+        if (clearButton != null && !clearButton.isDisabled() && clearButton.isVisible()) {
+            clearAction();
             return true;
         }
         return false;
@@ -420,10 +431,8 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean controlAltG() {
-        if (clearButton != null) {
-            if (!clearButton.isDisabled() && clearButton.isVisible()) {
-                clearAction();
-            }
+        if (goButton != null && !goButton.isDisabled() && goButton.isVisible()) {
+            goAction();
             return true;
         }
         return false;
@@ -628,7 +637,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
         if (AppVariables.ShortcutsCanNotOmitCtrlAlt || isPopup() || targetIsTextInput()) {
             return false;
         }
-        if (code == KeyCode.S || code == KeyCode.D || code == KeyCode.G) {  // to avoid accidents
+        if (code == KeyCode.S || code == KeyCode.D || code == KeyCode.L) {  // to avoid accidents
             return false;
         }
         return controlAltFilter(event);
@@ -671,23 +680,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean keyF1() {
-        if (startButton != null && !startButton.isDisabled() && startButton.isVisible()) {
-            startAction();
-            return true;
-        } else if (okButton != null && !okButton.isDisabled() && okButton.isVisible()) {
-            okAction();
-            return true;
-        } else if (setButton != null && !setButton.isDisabled() && setButton.isVisible()) {
-            setAction();
-            return true;
-        } else if (playButton != null && !playButton.isDisabled() && playButton.isVisible()) {
-            playAction();
-            return true;
-        } else if (goButton != null && !goButton.isDisabled() && goButton.isVisible()) {
-            goAction();
-            return true;
-        }
-        return false;
+        return controlAltE();
     }
 
     public boolean keyF2() {
@@ -733,7 +726,7 @@ public abstract class BaseController_KeyEvents extends BaseController_Actions {
     }
 
     public boolean keyF9() {
-        return false;
+        return controlAltG();
     }
 
     public boolean keyF10() {

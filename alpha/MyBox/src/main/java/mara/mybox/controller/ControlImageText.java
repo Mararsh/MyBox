@@ -22,7 +22,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -47,7 +46,6 @@ public class ControlImageText extends BaseController {
     protected ImageView imageView;
     protected int margin, lineHeight, x, y, fontSize, shadow, angle, baseX, baseY, textY,
             textWidth, textHeight, bordersStrokeWidth, bordersArc, bordersMargin;
-    protected float bordersOpacity;
     protected String text, fontFamily, fontName;
     protected FontPosture fontPosture;
     protected FontWeight fontWeight;
@@ -61,7 +59,7 @@ public class ControlImageText extends BaseController {
     @FXML
     protected ComboBox<String> lineHeightSelector, fontSizeSelector, fontStyleSelector,
             fontFamilySelector, angleSelector, shadowSelector,
-            bordersStrokeWidthSelector, bordersArcSelector, bordersOpacitySelector;
+            bordersStrokeWidthSelector, bordersArcSelector;
     @FXML
     protected CheckBox outlineCheck, verticalCheck, rightToLeftCheck,
             bordersCheck, bordersFillCheck, bordersStrokeDottedCheck;
@@ -74,13 +72,11 @@ public class ControlImageText extends BaseController {
     @FXML
     protected ControlImagesBlend blendController;
     @FXML
-    protected VBox baseBox, bordersBox;
+    protected VBox bordersBox;
     @FXML
     protected Label sizeLabel;
     @FXML
-    protected HBox goBox;
-    @FXML
-    protected Button goBordersButton;
+    protected Button goTextButton, goLocationButton, goBordersButton;
 
     public ControlImageText() {
         changeNotify = new SimpleBooleanProperty(false);
@@ -95,9 +91,17 @@ public class ControlImageText extends BaseController {
             parentController = parent;
             this.imageView = imageView;
 
-            initBase();
+            initText();
             initStyle();
             initBorders();
+
+            checkBaseAtOnce = !(parentController instanceof ImageManufactureTextController);
+            if (checkBaseAtOnce) {
+                sizeLabel.setVisible(false);
+                goTextButton.setVisible(false);
+                goLocationButton.setVisible(false);
+                goBordersButton.setVisible(false);
+            }
 
             checkPositionType();
         } catch (Exception e) {
@@ -105,9 +109,9 @@ public class ControlImageText extends BaseController {
         }
     }
 
-    public void initBase() {
+    public void initText() {
         try {
-            checkBaseAtOnce = !(parentController instanceof ImageManufactureTextController);
+
             textArea.setText(UserConfig.getString(baseName + "TextValue", "MyBox"));
             margin = UserConfig.getInt(baseName + "Margin", 20);
             marginInput.setText(margin + "");
@@ -123,7 +127,6 @@ public class ControlImageText extends BaseController {
             });
 
             if (checkBaseAtOnce) {
-                baseBox.getChildren().removeAll(sizeLabel, goBox);
 
                 textArea.focusedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
@@ -457,34 +460,10 @@ public class ControlImageText extends BaseController {
                 }
             });
 
-            bordersOpacity = UserConfig.getInt(baseName + "BordersOpacity", 50) / 100f;
-            bordersOpacity = (bordersOpacity >= 0.0f && bordersOpacity <= 1.0f) ? bordersOpacity : 0.5f;
-            bordersOpacitySelector.getItems().addAll(Arrays.asList("0.5", "1.0", "0.3", "0.1", "0.8", "0.2", "0.9", "0.0"));
-            bordersOpacitySelector.setValue(bordersOpacity + "");
-            bordersOpacitySelector.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue ov, String oldValue, String newValue) {
-                    bordersOpacity = 0.5f;
-                    try {
-                        bordersOpacity = Float.parseFloat(newValue);
-                        if (bordersOpacity < 0.0f || bordersOpacity > 1.0f) {
-                            bordersOpacity = 0.5f;
-                        }
-                    } catch (Exception e) {
-                        bordersOpacity = 0.5f;
-                    }
-                    UserConfig.setInt(baseName + "BordersOpacity", (int) (bordersOpacity * 100));
-                    if (showBorders()) {
-                        notifyChanged();
-                    }
-                }
-            });
-
             bordersMargin = UserConfig.getInt(baseName + "BordersMargin", 10);
             bordersMarginInput.setText(bordersMargin + "");
 
             if (checkBaseAtOnce) {
-                goBordersButton.setVisible(false);
                 bordersMarginInput.textProperty().addListener(new ChangeListener<String>() {
                     @Override
                     public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -693,8 +672,16 @@ public class ControlImageText extends BaseController {
     }
 
     @FXML
-    @Override
-    public void goAction() {
+    public void goLocation() {
+        apply();
+    }
+
+    @FXML
+    public void goText() {
+        apply();
+    }
+
+    public void apply() {
         if (!checkParameters()) {
             popError(Languages.message("InvalidParameters"));
             return;
@@ -894,10 +881,6 @@ public class ControlImageText extends BaseController {
 
     public int getBordersMargin() {
         return bordersMargin;
-    }
-
-    public float getBordersOpacity() {
-        return bordersOpacity;
     }
 
     public boolean isCheckBaseAtOnce() {

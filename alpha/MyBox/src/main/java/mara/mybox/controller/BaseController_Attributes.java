@@ -498,16 +498,24 @@ public abstract class BaseController_Attributes {
     }
 
     public void displayInfo(String text) {
-        if (task != null && !task.isQuit() && this instanceof BaseLogs) {
-            ((BaseLogs) this).updateLogs(text);
+        if (task != null && !task.isQuit()) {
+            if (this instanceof BaseLogs) {
+                ((BaseLogs) this).updateLogs(text);
+            } else {
+                task.setInfo(text);
+            }
         } else {
             popInformation(text);
         }
     }
 
     public void displayError(String text) {
-        if (task != null && !task.isQuit() && this instanceof BaseLogs) {
-            ((BaseLogs) this).updateLogs(text, true, true);
+        if (task != null && !task.isQuit()) {
+            if (this instanceof BaseLogs) {
+                ((BaseLogs) this).updateLogs(text, true, true);
+            } else {
+                task.setError(text);
+            }
         } else {
             popError(text);
         }

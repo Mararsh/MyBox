@@ -63,7 +63,7 @@ public class ControlData2DColumns extends BaseTablePagesController<Data2DColumn>
     @FXML
     protected FlowPane buttonsPane;
     @FXML
-    protected Button renameColumnsButton, randomColorsButton;
+    protected Button numberColumnsButton, randomColorsButton;
 
     public ControlData2DColumns() {
     }
@@ -72,7 +72,7 @@ public class ControlData2DColumns extends BaseTablePagesController<Data2DColumn>
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            NodeStyleTools.setTooltip(renameColumnsButton, new Tooltip(message("RenameAllColumns")));
+            NodeStyleTools.setTooltip(numberColumnsButton, new Tooltip(message("RenameAllColumns")));
         } catch (Exception e) {
             MyBoxLog.debug(e.toString());
         }
@@ -502,7 +502,7 @@ public class ControlData2DColumns extends BaseTablePagesController<Data2DColumn>
     @Override
     public void checkButtons() {
         super.checkButtons();
-        renameColumnsButton.setDisable(data2D == null || data2D.isTable() || tableData.isEmpty());
+        numberColumnsButton.setDisable(data2D == null || data2D.isTable() || tableData.isEmpty());
         addRowsButton.setDisable(data2D == null || data2D.isInternalTable());
         deleteRowsButton.setDisable(data2D == null || data2D.isInternalTable() || isNoneSelected());
         randomColorsButton.setDisable(tableData.isEmpty());
@@ -575,7 +575,7 @@ public class ControlData2DColumns extends BaseTablePagesController<Data2DColumn>
     }
 
     @FXML
-    public void renameColumns() {
+    public void numberColumns() {
         try {
             String prefix = message(data2D.colPrefix());
             isSettingValues = true;

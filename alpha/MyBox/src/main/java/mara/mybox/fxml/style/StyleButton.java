@@ -106,7 +106,7 @@ public class StyleButton {
             switch (id) {
                 case "clearButton":
                 case "clearCodesButton":
-                    return new StyleData(id, message("Clear"), "CTRL+g", "iconClear.png");
+                    return new StyleData(id, message("Clear"), "CTRL+l(lowercase of 'L')", "iconClear.png");
                 default:
                     return new StyleData(id, message("Clear"), "", "iconClear.png");
             }
@@ -455,7 +455,7 @@ public class StyleButton {
         if (id.startsWith("go")) {
             switch (id) {
                 case "goButton":
-                    return new StyleData(id, message("Go"), "F1 / CTRL+e / ALT+e", "iconGo.png");
+                    return new StyleData(id, message("Go"), "F9 / CTRL+g / ALT+g", "iconGo.png");
                 default:
                     return new StyleData(id, message("Go"), "", "iconGo.png");
             }
@@ -580,7 +580,7 @@ public class StyleButton {
         if (id.startsWith("play")) {
             switch (id) {
                 case "playButton":
-                    return new StyleData(id, message("Play"), "F1", "iconPlay.png");
+                    return new StyleData(id, message("Play"), "F1 / CTRL+e / ALT+e", "iconPlay.png");
                 default:
                     return new StyleData(id, message("Play"), "", "iconPlay.png");
             }
@@ -600,7 +600,7 @@ public class StyleButton {
         if (id.startsWith("set")) {
             switch (id) {
                 case "setButton":
-                    return new StyleData(id, message("Set"), "F1", "iconEqual.png");
+                    return new StyleData(id, message("Set"), "F1 / CTRL+e / ALT+e", "iconEqual.png");
                 case "setAllOrSelectedButton":
                     return new StyleData(id, message("SetAllOrSelected"), "", "iconEqual.png");
                 case "setValuesButton":

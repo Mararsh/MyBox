@@ -54,7 +54,7 @@ public abstract class ControlShapeOptions extends BaseController {
     protected BaseImageController imageController;
     protected DoubleShape currentShape;
     protected ShapeStyle style;
-    protected ChangeListener<Boolean> shapeChangeListener;
+    protected ChangeListener<Boolean> shapeDataChangeListener;
 
     @FXML
     protected RadioButton rectangleRadio, circleRadio, ellipseRadio,
@@ -91,10 +91,10 @@ public abstract class ControlShapeOptions extends BaseController {
         try {
             this.imageController = imageController;
 
-            shapeChangeListener = new ChangeListener<Boolean>() {
+            shapeDataChangeListener = new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue v, Boolean ov, Boolean nv) {
-                    shapeChangedByUser();
+                    shapeDataChanged();
                 }
             };
 
@@ -252,6 +252,9 @@ public abstract class ControlShapeOptions extends BaseController {
     }
 
     public void switchShape() {
+        if (isSettingValues) {
+            return;
+        }
         imageController.clearMask();
         if (!showShape()) {
             return;
@@ -475,16 +478,16 @@ public abstract class ControlShapeOptions extends BaseController {
         }
     }
 
-    public void shapeChangedByUser() {
+    public void shapeDataChanged() {
         setShapeControls();
     }
 
     public void addListener() {
-        imageController.maskShapeDataChanged.addListener(shapeChangeListener);
+        imageController.maskShapeDataChanged.addListener(shapeDataChangeListener);
     }
 
     public void removeListener() {
-        imageController.maskShapeDataChanged.removeListener(shapeChangeListener);
+        imageController.maskShapeDataChanged.removeListener(shapeDataChangeListener);
     }
 
     /*
@@ -935,23 +938,23 @@ public abstract class ControlShapeOptions extends BaseController {
         if (style.isIsFillColor()) {
             shape.setFill(style.getFillColor());
             shape.setOpacity(style.getFillOpacity());
-            MyBoxLog.console(style.getFillOpacity());
         } else {
             shape.setFill(Color.TRANSPARENT);
             shape.setOpacity(1);
         }
+        shape.setStrokeLineCap(style.getLineCap());
         shape.getStrokeDashArray().clear();
-        if (style.isIsStrokeDash()) {
+        if (style.isIsStrokeDash() && style.getStrokeDash() != null) {
             shape.getStrokeDashArray().addAll(style.getStrokeDash());
         }
-        shape.setStrokeLineCap(style.getLineCap());
     }
 
     /*
         action
      */
     @FXML
-    public void goShape() {
+    @Override
+    public void goAction() {
         if (pickShape() && pickStyle()) {
             redrawShape();
         }

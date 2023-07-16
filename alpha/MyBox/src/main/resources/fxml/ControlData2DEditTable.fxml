@@ -29,8 +29,22 @@ License:    Apache License Version 2.0
                   </ImageView>
                </graphic>
             </Button>
+            <ImageView fx:id="tipsView" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../buttons/Red/iconTips.png" />
+               </image>
+            </ImageView>
                 <FlowPane fx:id="buttonsPane" alignment="CENTER_RIGHT" hgap="2.0" maxWidth="1.7976931348623157E308" vgap="2.0" HBox.hgrow="ALWAYS">
                     <children>
+                  <CheckBox fx:id="lostFocusCommitCheck" mnemonicParsing="false" onAction="#autoCommitCheck">
+                     <graphic>
+                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../buttons/red/iconInput.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </CheckBox>
                         <Button fx:id="verifyButton" layoutX="68.0" layoutY="10.0" mnemonicParsing="false" onAction="#verifyAction">
                             <graphic>
                                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

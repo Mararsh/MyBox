@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.io.File;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableCell;
@@ -8,9 +9,17 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.util.Callback;
 import mara.mybox.data.ShortCut;
+import mara.mybox.data.StringTable;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.NodeTools;
+import mara.mybox.fxml.WindowTools;
+import mara.mybox.fxml.style.HtmlStyles;
+import mara.mybox.tools.FileTmpTools;
+import mara.mybox.tools.HtmlWriteTools;
+import mara.mybox.tools.TextFileTools;
 import mara.mybox.value.AppVariables;
+import mara.mybox.value.Fxmls;
+import mara.mybox.value.Languages;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 
@@ -69,9 +78,9 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
     }
 
     @Override
-    public void afterSceneLoaded() {
+    public void initControls() {
         try {
-            super.afterSceneLoaded();
+            super.initControls();
 
             omitCheck.setSelected(AppVariables.ShortcutsCanNotOmitCtrlAlt);
 
@@ -79,12 +88,13 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
                     message("Start") + " / " + message("OK") + " / " + message("Synchronize") + " / " + message("Set") + " / " + message("Query"),
                     "CTRL+e / ALT+e, CTRL+q / ALT+q", "iconStart.png"));
             tableData.add(new ShortCut("F2", "", message("Save"), "CTRL+s / ALT+s", "iconSave.png"));
-            tableData.add(new ShortCut("F3", "", message("Recover") + " / " + message("Export"), "CTRL+r / ALT+r, CTRL+e / ALT+e ", "iconRecover.png"));
+            tableData.add(new ShortCut("F3", "", message("Recover"), "CTRL+r / ALT+r", "iconRecover.png"));
             tableData.add(new ShortCut("F4", "", message("ControlLeftPane"), "", "iconDoubleLeft.png"));
             tableData.add(new ShortCut("F5", "", message("ControlRightPane"), "", "iconDoubleRight.png"));
             tableData.add(new ShortCut("F6", "", message("ClosePopup"), "", "iconCancel.png"));
             tableData.add(new ShortCut("F7", "", message("CloseStage"), "", "iconClose.png"));
             tableData.add(new ShortCut("F8", "", message("RefreshStage"), "", "iconRefresh.png"));
+            tableData.add(new ShortCut("F9", "", message("Go"), "CTRL+g / ALT+g", "iconGo.png"));
             tableData.add(new ShortCut("F10", "", message("Synchronize"), "", "iconSynchronize.png"));
             tableData.add(new ShortCut("F11", "", message("SaveAs"), "CTRL+b / ALT+b", "iconSaveAs.png"));
             tableData.add(new ShortCut("F12", "", message("Menu"), "", "iconMenu.png"));
@@ -108,12 +118,13 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
             tableData.add(new ShortCut("CTRL", "b", message("SaveAs"), "F11 / ALT+b", "iconSaveAs.png"));
             tableData.add(new ShortCut("CTRL", "f", message("Find"), "ALT+f", "iconFind.png"));
             tableData.add(new ShortCut("CTRL", "h", message("Replace") + " / " + message("CopyHtml"), "ALT+h", "iconReplace.png"));
-            tableData.add(new ShortCut("CTRL", "r", message("Recover") + " / " + message("Clear"), "ALT+r", "iconRecover.png"));
+            tableData.add(new ShortCut("CTRL", "r", message("Recover"), "F3 / ALT+r", "iconRecover.png"));
+            tableData.add(new ShortCut("CTRL", "g", message("Go"), "F9 / ALT+g", "iconGo.png"));
             tableData.add(new ShortCut("CTRL", "n", message("Create"), "", "iconAdd.png"));
             tableData.add(new ShortCut("CTRL", "a", message("SelectAll"), "ALT+a", "iconSelectAll.png"));
             tableData.add(new ShortCut("CTRL", "o", message("SelectNone"), "ALT+o", "iconSelectNone.png"));
             tableData.add(new ShortCut("CTRL", "u", message("Select"), "ALT+u", "iconSelect.png"));
-            tableData.add(new ShortCut("CTRL", "g", message("Clear"), "ALT+g", "iconClear.png"));
+            tableData.add(new ShortCut("CTRL", "l", message("Clear"), "ALT+l(lowercase of 'L')", "iconClear.png"));
             tableData.add(new ShortCut("CTRL", "w", message("Cancel") + " / " + message("Withdraw") + " / " + message("ReplaceAll"), "ESCAPE", "iconCancel.png"));
             tableData.add(new ShortCut("CTRL", "p", message("Pop"), "ALT+p", "iconPop.png"));
             tableData.add(new ShortCut("CTRL", "q", message("Query"), "ALT+q", "iconQuery.png"));
@@ -158,6 +169,36 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
     @Override
     public void snapAction() {
         ImageViewerController.openImage(NodeTools.snap(tableView));
+    }
+
+    public void makeHelp() {
+        StringTable table = makeStringTable();
+        if (table == null) {
+            return;
+        }
+        String html = HtmlWriteTools.html(message("Shortcuts"), HtmlStyles.DefaultStyle, table.body());
+        File file = new File(FileTmpTools.generatePath("html")
+                + "/mybox_shortcuts_" + Languages.getLangName() + ".html");
+
+        file = TextFileTools.writeFile(file, html);
+        openHtml(file);
+        close();
+    }
+
+    /*
+        static
+     */
+    public static ShortcutsController html() {
+        try {
+            ShortcutsController controller = (ShortcutsController) WindowTools.openStage(Fxmls.ShortcutsFxml);
+            if (controller != null) {
+                controller.makeHelp();
+            }
+            return controller;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
     }
 
 }

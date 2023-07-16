@@ -8,10 +8,17 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
+import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Circle;
+import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Ellipse;
+import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Line;
+import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Lines;
+import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Polygon;
+import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Polyline;
+import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Rectangle;
+import mara.mybox.data.DoubleCircle;
+import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.SVG;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
@@ -40,8 +47,6 @@ public class ControlSvgShape extends ControlShapeOptions {
     @FXML
     protected Label parentLabel;
     @FXML
-    protected ToggleGroup elementType;
-    @FXML
     protected Tab shapeTab, styleTab, xmlTab;
     @FXML
     protected TextArea styleArea, xmlArea;
@@ -60,13 +65,6 @@ public class ControlSvgShape extends ControlShapeOptions {
             super.initControls();
 
             showController.svgShapeControl = this;
-
-            elementType.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-                @Override
-                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
-                    showShape();
-                }
-            });
 
             initXML();
             initOptions();
@@ -88,6 +86,9 @@ public class ControlSvgShape extends ControlShapeOptions {
             optionsController.loadDoc(doc, null);
 
             super.setParameters(showController);
+
+            switchShape();
+            addListener();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -105,27 +106,51 @@ public class ControlSvgShape extends ControlShapeOptions {
         }
     }
 
+    /*
+        shape
+     */
+    @Override
+    public void setShapeControls() {
+        try {
+            super.setShapeControls();
+            showController.infoLabel.setText("");
+            if (imageController == null || imageController.shapeType == null) {
+                return;
+            }
+            switch (imageController.shapeType) {
+                case Circle:
+                case Rectangle:
+                case Ellipse:
+                case Line:
+                    showController.infoLabel.setText(message("ShapeDragMoveComments"));
+                    break;
+                case Polyline:
+                case Polygon:
+                case Lines:
+                    showController.infoLabel.setText(message("ShapePointsMoveComments"));
+                    break;
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     public void loadShape(Element element) {
         try {
-            shapeBox.getChildren().clear();
             if (element == null) {
                 return;
             }
+            isSettingValues = true;
             switch (element.getNodeName().toLowerCase()) {
                 case "rect":
-
-                    shapeBox.getChildren().add(rectangleBox);
-                    rectXInput.setText(element.getAttribute("x"));
-                    rectYInput.setText(element.getAttribute("y"));
-                    rectWidthInput.setText(element.getAttribute("width"));
-                    rectHeightInput.setText(element.getAttribute("height"));
+                    if (loadRect(element)) {
+                        rectangleRadio.setSelected(true);
+                    }
                     break;
                 case "circle":
-                    circleRadio.setSelected(true);
-                    shapeBox.getChildren().add(circleBox);
-                    circleXInput.setText(element.getAttribute("cx"));
-                    circleYInput.setText(element.getAttribute("cy"));
-                    circleRadiusInput.setText(element.getAttribute("r"));
+                    if (loadRect(element)) {
+                        circleRadio.setSelected(true);
+                    }
                     break;
                 case "ellipse":
                     ellipseRadio.setSelected(true);
@@ -162,11 +187,91 @@ public class ControlSvgShape extends ControlShapeOptions {
                     popError(message("InvalidData"));
                     return;
             }
-            refreshStyle(shapeOutBox);
+            isSettingValues = true;
+
+            switchShape();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    public boolean loadRect(Element element) {
+        try {
+            float x, y, w, h;
+            try {
+                x = Float.parseFloat(element.getAttribute("x"));
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": x");
+                return false;
+            }
+            try {
+                y = Float.parseFloat(element.getAttribute("y"));
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": y");
+                return false;
+            }
+            try {
+                w = Float.parseFloat(element.getAttribute("width"));
+            } catch (Exception e) {
+                w = -1f;
+            }
+            if (w <= 0) {
+                popError(message("InvalidParameter") + ": " + message("Width"));
+                return false;
+            }
+            try {
+                h = Float.parseFloat(element.getAttribute("height"));
+            } catch (Exception e) {
+                h = -1f;
+            }
+            if (h <= 0) {
+                popError(message("InvalidParameter") + ": " + message("Height"));
+                return false;
+            }
+            imageController.maskRectangleData = new DoubleRectangle(x, y, x + w - 1, y + h - 1);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public boolean loadCircle(Element element) {
+        try {
+            float x, y, r;
+            try {
+                x = Float.parseFloat(element.getAttribute("cx"));
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": x");
+                return false;
+            }
+            try {
+                y = Float.parseFloat(element.getAttribute("cy"));
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": y");
+                return false;
+            }
+            try {
+                r = Float.parseFloat(element.getAttribute("r"));
+            } catch (Exception e) {
+                r = -1f;
+            }
+            if (r <= 0) {
+                popError(message("InvalidParameter") + ": " + message("Radius"));
+                return false;
+            }
+            imageController.maskCircleData = new DoubleCircle(x, y, r);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    @FXML
+    public void goShape() {
+        goAction();
     }
 
     /*
@@ -240,6 +345,11 @@ public class ControlSvgShape extends ControlShapeOptions {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    @FXML
+    public void goStyle() {
+        goAction();
     }
 
     /*
