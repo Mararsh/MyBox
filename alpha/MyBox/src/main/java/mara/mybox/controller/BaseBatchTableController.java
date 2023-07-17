@@ -103,7 +103,7 @@ public abstract class BaseBatchTableController<P> extends BaseTablePagesControll
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -996,7 +996,7 @@ public abstract class BaseBatchTableController<P> extends BaseTablePagesControll
             controller.startAction();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

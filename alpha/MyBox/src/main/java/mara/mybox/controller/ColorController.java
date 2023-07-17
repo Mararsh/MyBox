@@ -167,7 +167,7 @@ public class ColorController extends BaseController {
             colorPicker.setValue(Color.RED);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
 
         }
     }

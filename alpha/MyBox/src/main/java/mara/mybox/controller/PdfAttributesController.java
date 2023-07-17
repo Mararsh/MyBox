@@ -205,7 +205,7 @@ public class PdfAttributesController extends BaseController {
             NodeStyleTools.setTooltip(versionInput, Languages.message("PdfVersionComments"));
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -516,7 +516,7 @@ public class PdfAttributesController extends BaseController {
             }
             return FileTools.rename(tmpFile, file, true);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }

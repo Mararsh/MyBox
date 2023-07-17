@@ -140,7 +140,7 @@ public class FileTools {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return size;
     }
@@ -186,7 +186,7 @@ public class FileTools {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
         File tmpFile = FileTmpTools.getTempFile();
@@ -201,7 +201,7 @@ public class FileTools {
             }
             outputStream.flush();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
         return tmpFile;

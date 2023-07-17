@@ -44,7 +44,7 @@ public class ColorCopyController extends BaseChildController {
             }
             loadPalettes();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -58,7 +58,7 @@ public class ColorCopyController extends BaseChildController {
             palettesController.setParameter(colorsManager, false);
             loadPalettes();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -73,7 +73,7 @@ public class ColorCopyController extends BaseChildController {
             });
             okButton.disableProperty().bind(palettesController.palettesList.getSelectionModel().selectedItemProperty().isNull());
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

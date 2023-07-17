@@ -67,7 +67,7 @@ public class AutoTestingCasesController extends BaseTablePagesController<TestCas
             }
             AutoTestingExecutionController.open(this, selected);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

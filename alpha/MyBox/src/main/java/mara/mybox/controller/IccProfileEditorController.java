@@ -156,7 +156,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(maxDecodeInput, new Tooltip(message("MaxDecodeComments")));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -892,7 +892,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             summaryArea.setText(s);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
 
         }
 
@@ -939,7 +939,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             subclassVersionInput.setText(header.value("ProfileSubclassVersion") + "");
             isSettingValues = false;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -952,7 +952,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             tagsTable.addAll(tags.getTags());
             tagsTableView.refresh();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
 
         }
     }
@@ -1036,7 +1036,7 @@ public class IccProfileEditorController extends ChromaticityBaseController {
             refreshStyle(tagDataBox);
             isSettingValues = false;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
 
         }
     }

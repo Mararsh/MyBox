@@ -166,7 +166,7 @@ public class ImagesPlayController extends BaseImagesListController {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(toInput, new Tooltip(message("ToPageComments")));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

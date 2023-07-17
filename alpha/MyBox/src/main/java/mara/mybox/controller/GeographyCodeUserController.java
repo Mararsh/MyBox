@@ -34,7 +34,7 @@ public class GeographyCodeUserController extends BaseController {
             locationController.loadTree(this);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

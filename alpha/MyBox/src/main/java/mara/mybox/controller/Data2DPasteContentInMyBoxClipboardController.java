@@ -53,7 +53,7 @@ public class Data2DPasteContentInMyBoxClipboardController extends DataInMyBoxCli
             sourceController.setParameters(this);
             pasteController.setParameters(sourceController, target);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

@@ -81,7 +81,7 @@ public class JShellSnippets extends BaseTablePagesController<JShellSnippet> {
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

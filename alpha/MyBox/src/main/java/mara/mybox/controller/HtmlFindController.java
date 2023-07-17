@@ -119,7 +119,7 @@ public class HtmlFindController extends WebAddressController {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(queryButton, new Tooltip(message("Query") + "\nF1"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

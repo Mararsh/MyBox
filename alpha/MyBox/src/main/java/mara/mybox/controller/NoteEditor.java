@@ -51,7 +51,7 @@ public class NoteEditor extends ControlHtmlEditor {
             menuButton.setDisable(tab == richEditorTab || tab == attributesTab);
             synchronizeButton.setDisable(tab == attributesTab);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

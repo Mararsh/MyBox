@@ -61,7 +61,7 @@ public class ControlSvgOptions extends BaseController {
             NodeStyleTools.setTooltip(viewBoxInput, new Tooltip(message("BlankInvalidtoUseDefault")));
             NodeStyleTools.setTooltip(viewButton, new Tooltip(message("Image")));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
     

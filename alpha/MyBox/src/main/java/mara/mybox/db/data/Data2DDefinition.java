@@ -49,7 +49,7 @@ public class Data2DDefinition extends BaseData {
             newData.cloneAll(this);
             return newData;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -59,7 +59,7 @@ public class Data2DDefinition extends BaseData {
             cloneBase(d);
             cloneDefinitionAttributes(d);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -78,7 +78,7 @@ public class Data2DDefinition extends BaseData {
             hasHeader = d.isHasHeader();
             comments = d.getComments();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

@@ -68,7 +68,7 @@ public class FilesDecompressUnarchiveBatchController extends BaseBatchFileContro
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -78,7 +78,7 @@ public class FilesDecompressUnarchiveBatchController extends BaseBatchFileContro
             aFactory = new ArchiveStreamFactory();
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }

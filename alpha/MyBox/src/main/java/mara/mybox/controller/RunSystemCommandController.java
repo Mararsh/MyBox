@@ -70,7 +70,7 @@ public class RunSystemCommandController extends RunCommandController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

@@ -124,7 +124,7 @@ public class PptViewController extends BaseFileImagesViewController {
             }
             loadInformation();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

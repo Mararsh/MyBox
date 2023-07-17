@@ -448,7 +448,7 @@ public class XmlEditorController extends BaseFileController {
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -469,7 +469,7 @@ public class XmlEditorController extends BaseFileController {
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -526,7 +526,7 @@ public class XmlEditorController extends BaseFileController {
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -540,7 +540,7 @@ public class XmlEditorController extends BaseFileController {
                 TextClipboardPopController.open(this, textsArea);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -556,7 +556,7 @@ public class XmlEditorController extends BaseFileController {
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -568,7 +568,7 @@ public class XmlEditorController extends BaseFileController {
             TextClipboardPopController.closeAll();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

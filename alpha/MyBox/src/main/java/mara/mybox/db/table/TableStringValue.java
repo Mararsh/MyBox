@@ -182,7 +182,7 @@ public class TableStringValue extends BaseTable<StringValue> {
             return readWithPrefix(conn, prefix);
         } catch (Exception e) {
             MyBoxLog.error(e);
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -201,7 +201,7 @@ public class TableStringValue extends BaseTable<StringValue> {
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
         }
         return keyValues;
     }

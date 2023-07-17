@@ -150,7 +150,7 @@ public class ControlFileBrowse extends BaseController {
             FileSortTools.sortFiles(files, sortMode);
             return files;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -193,7 +193,7 @@ public class ControlFileBrowse extends BaseController {
             info += "  " + message("DoubleClickToOpen");
             infoLabel.setText(info);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

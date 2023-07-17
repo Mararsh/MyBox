@@ -65,7 +65,7 @@ public class MenuWebviewController extends MenuController {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(editableCheck, new Tooltip(message("Editable") + "\n" + message("HtmlEditableComments")));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

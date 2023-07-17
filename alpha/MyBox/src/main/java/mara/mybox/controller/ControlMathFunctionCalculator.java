@@ -89,7 +89,7 @@ public class ControlMathFunctionCalculator extends BaseController {
             splits = new ArrayList<>();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -121,7 +121,7 @@ public class ControlMathFunctionCalculator extends BaseController {
             xyzController.colorGradientRadio.setSelected(true);
             xyzController.colorColumnsRadio.setDisable(true);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -133,7 +133,7 @@ public class ControlMathFunctionCalculator extends BaseController {
             xyChartButton.setVisible(false);
             xyzChartBox.setVisible(false);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
 
     }
@@ -175,7 +175,7 @@ public class ControlMathFunctionCalculator extends BaseController {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

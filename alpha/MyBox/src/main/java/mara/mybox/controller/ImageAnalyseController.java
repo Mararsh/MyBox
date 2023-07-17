@@ -99,7 +99,7 @@ public class ImageAnalyseController extends ImageViewerController {
 
             dominantController.analyseController = this;
 
-            maskShapeChangedNotify.addListener(new ChangeListener<Boolean>() {
+            maskShapeChanged.addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     loadData();
@@ -889,7 +889,7 @@ public class ImageAnalyseController extends ImageViewerController {
             fitSize();
             loadData();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

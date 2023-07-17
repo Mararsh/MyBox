@@ -622,7 +622,7 @@ public class PopTools {
             controller.addFlowPane(buttons);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

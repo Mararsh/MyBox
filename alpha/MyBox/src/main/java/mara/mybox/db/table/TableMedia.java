@@ -141,7 +141,7 @@ public class TableMedia extends BaseTable<MediaInformation> {
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -154,7 +154,7 @@ public class TableMedia extends BaseTable<MediaInformation> {
             return write(conn, medias);
         } catch (Exception e) {
             MyBoxLog.error(e);
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -192,7 +192,7 @@ public class TableMedia extends BaseTable<MediaInformation> {
             return delete(conn, addresses);
         } catch (Exception e) {
             MyBoxLog.error(e);
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -212,7 +212,7 @@ public class TableMedia extends BaseTable<MediaInformation> {
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -225,7 +225,7 @@ public class TableMedia extends BaseTable<MediaInformation> {
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             return false;
         }
     }

@@ -178,7 +178,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -527,7 +527,7 @@ public class ImageOCRBatchController extends BaseBatchImageController {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }

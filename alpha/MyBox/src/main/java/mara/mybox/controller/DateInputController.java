@@ -37,7 +37,7 @@ public class DateInputController extends BaseInputController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
 
         }
     }

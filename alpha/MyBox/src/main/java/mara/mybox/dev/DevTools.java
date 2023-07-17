@@ -25,7 +25,7 @@ public class DevTools {
                 versions.add(myboxVersion(v));
             }
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
         }
         return versions;
     }
@@ -38,7 +38,7 @@ public class DevTools {
                 return versions.get(versions.size() - 1);
             }
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
         }
         return 0;
     }
@@ -55,7 +55,7 @@ public class DevTools {
                     return Integer.parseInt(vs[0]) * 1000000 + Integer.parseInt(vs[1]) * 1000 + Integer.parseInt(vs[2]);
             }
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
         }
         return 0;
     }
@@ -72,7 +72,7 @@ public class DevTools {
                 return v1 + "." + v2 + "." + v3;
             }
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
         }
         return i + "";
     }

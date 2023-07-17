@@ -285,7 +285,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             initTargetSection();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -508,7 +508,7 @@ public abstract class BaseBatchController<T> extends BaseTaskController {
             fileStartTime = new Date();
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }

@@ -78,7 +78,7 @@ public class HtmlMergeAsPDFController extends BaseBatchFileController {
             mergedHtml.append(head);
             return super.makeMoreParameters();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }

@@ -337,7 +337,7 @@ public class StringTools {
             Matcher matcher = pattern.matcher(string);
             return matcher.matches();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -356,7 +356,7 @@ public class StringTools {
             Matcher matcher = pattern.matcher(string);
             return matcher.matches();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -371,7 +371,7 @@ public class StringTools {
             Matcher matcher = pattern.matcher(string);
             return matcher.find();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }

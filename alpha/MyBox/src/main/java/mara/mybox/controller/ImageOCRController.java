@@ -106,7 +106,7 @@ public class ImageOCRController extends ImageViewerController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -197,7 +197,7 @@ public class ImageOCRController extends ImageViewerController {
 
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -307,7 +307,7 @@ public class ImageOCRController extends ImageViewerController {
                     });
 
                 } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
+                    MyBoxLog.debug(e);
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -342,7 +342,7 @@ public class ImageOCRController extends ImageViewerController {
                     return ocrOptionsController.imageOCR(this, selected, true);
                 } catch (Exception e) {
                     error = e.toString();
-                    MyBoxLog.debug(e.toString());
+                    MyBoxLog.debug(e);
                     return false;
                 }
             }

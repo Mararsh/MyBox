@@ -87,7 +87,7 @@ public class TextClipboardPopController extends TextInMyBoxClipboardController {
                 baseStyle = "";
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

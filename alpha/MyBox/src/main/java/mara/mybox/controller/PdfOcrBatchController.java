@@ -107,7 +107,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(separatorInput, message("InsertPageSeparatorComments"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -118,7 +118,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
             ocrOptionsController.setParameters(this, false, false);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -221,7 +221,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
             deskewCheck.setSelected(UserConfig.getBoolean("ImageOCRDeskew", false));
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -541,7 +541,7 @@ public class PdfOcrBatchController extends BaseBatchPdfController {
                 updateLogs(message("Failed" + ":" + outputs), true, true);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return null;
     }

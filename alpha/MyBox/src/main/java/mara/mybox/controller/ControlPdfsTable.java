@@ -61,7 +61,7 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
             NodeStyleTools.setTooltip(passwordInput, new Tooltip(Languages.message("UserPassword")));
             NodeStyleTools.setTooltip(toInput, new Tooltip(Languages.message("ToPageComments")));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

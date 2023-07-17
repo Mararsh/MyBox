@@ -189,7 +189,7 @@ public class FileDeleteTools {
             System.gc();
             clearDir(FileTools.javaIOTmpPath());
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
         }
     }
 

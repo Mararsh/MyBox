@@ -448,7 +448,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
             NodeStyleTools.setTooltip(htmlButton, message("AddressHtml"));
             NodeStyleTools.removeTooltip(equalButton);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -1261,7 +1261,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
                 }
                 checkData();
             } catch (Exception e) {
-                MyBoxLog.debug(e.toString());
+                MyBoxLog.debug(e);
             }
         }
 
@@ -1535,7 +1535,7 @@ public class DownloadFirstLevelLinksController extends BaseTablePagesController<
                 }
                 logsTextArea.setScrollTop(0);
             } catch (Exception e) {
-                MyBoxLog.debug(e.toString());
+                MyBoxLog.debug(e);
             }
         });
     }

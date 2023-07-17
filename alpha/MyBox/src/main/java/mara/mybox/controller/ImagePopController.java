@@ -85,7 +85,7 @@ public class ImagePopController extends BaseImageController {
             setControls();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -99,7 +99,7 @@ public class ImagePopController extends BaseImageController {
 
             setControls();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

@@ -47,7 +47,7 @@ public class MyBoxIconsController extends BaseBatchFileController {
                     .baseName(baseName).savedName(baseName + "SourceCodesPath").init();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -126,7 +126,7 @@ public class MyBoxIconsController extends BaseBatchFileController {
             }
             return super.makeMoreParameters();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }

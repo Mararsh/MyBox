@@ -39,7 +39,7 @@ public class FFmpegConvertMediaFilesController extends BaseBatchFFmpegController
             );
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

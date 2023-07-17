@@ -168,7 +168,7 @@ public class ImagesBrowserController extends ImagesBrowserController_Pane {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(selectFileButton, new Tooltip(message("SelectMultipleFilesBrowse")));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
     

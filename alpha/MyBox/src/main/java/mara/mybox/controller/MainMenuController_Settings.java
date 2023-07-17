@@ -62,7 +62,7 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
             checkSettings();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -74,7 +74,7 @@ public abstract class MainMenuController_Settings extends MainMenuController_Med
             checkSettings();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

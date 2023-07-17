@@ -202,7 +202,7 @@ public class TreeManageController extends BaseSysTableController<InfoNode> {
 
             loadTree();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

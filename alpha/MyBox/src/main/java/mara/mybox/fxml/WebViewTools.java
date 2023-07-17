@@ -60,7 +60,7 @@ public class WebViewTools {
                     + "selection.addRange(range);";
             webEngine.executeScript(js);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -69,7 +69,7 @@ public class WebViewTools {
             String js = "window.getSelection().removeAllRanges(); ";
             webEngine.executeScript(js);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -82,7 +82,7 @@ public class WebViewTools {
                     + "selection.addRange(range);";
             webEngine.executeScript(js);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -101,7 +101,7 @@ public class WebViewTools {
                 element.removeAttribute("id");
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -113,7 +113,7 @@ public class WebViewTools {
             }
             return ((String) ret);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -132,7 +132,7 @@ public class WebViewTools {
             }
             return ((String) ret);
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -285,7 +285,7 @@ public class WebViewTools {
             }
             return m;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -325,7 +325,7 @@ public class WebViewTools {
             }
             return ((int) c);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return -1;
         }
     }
@@ -346,7 +346,7 @@ public class WebViewTools {
             rect.setHeight(Double.parseDouble(values[3]));
             return rect;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }

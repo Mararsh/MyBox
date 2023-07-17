@@ -174,7 +174,6 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
         editor.showRightPane();
         editor.resetImagePane();
         editor.imageTab();
-
     }
 
     public void selectClip() {
@@ -280,7 +279,7 @@ public class ImageManufactureClipboardController extends ImageManufactureOperati
                     }
                     return blendedImage != null;
                 } catch (Exception e) {
-                    MyBoxLog.error(e);
+                    error = e.toString();
                     return false;
                 }
             }

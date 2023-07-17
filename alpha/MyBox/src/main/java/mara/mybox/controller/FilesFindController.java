@@ -55,7 +55,7 @@ public class FilesFindController extends BaseBatchFileController {
             done = message("Done");
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
 
     }

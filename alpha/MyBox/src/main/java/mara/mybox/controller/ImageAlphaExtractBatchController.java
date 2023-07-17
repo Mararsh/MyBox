@@ -40,7 +40,7 @@ public class ImageAlphaExtractBatchController extends BaseImageManufactureBatchC
             );
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

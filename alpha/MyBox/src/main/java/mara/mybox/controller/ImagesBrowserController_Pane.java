@@ -77,7 +77,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
             }
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         makeImagesPane();
     }
@@ -113,7 +113,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
             refreshStyle(thisPane);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -329,7 +329,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
             };
             start(backgroundTask, false);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -546,7 +546,7 @@ public abstract class ImagesBrowserController_Pane extends ImagesBrowserControll
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

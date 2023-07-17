@@ -126,7 +126,7 @@ public class TextInMyBoxClipboardController extends BaseSysTableController<TextC
             refreshAction();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

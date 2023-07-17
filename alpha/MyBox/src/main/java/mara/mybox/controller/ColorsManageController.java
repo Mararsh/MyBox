@@ -337,7 +337,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
             NodeStyleTools.setTooltip(trimButton, message("TrimOrderInPalette"));
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

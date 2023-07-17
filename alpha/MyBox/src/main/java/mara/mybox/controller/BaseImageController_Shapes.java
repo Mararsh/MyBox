@@ -53,8 +53,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
     protected SVGPath svgPath;
     public boolean maskPointDragged;
     public ShapeType shapeType = null;
-    public final SimpleBooleanProperty maskShapeChangedNotify = new SimpleBooleanProperty(false);
-    public final SimpleBooleanProperty maskShapeDataChanged = new SimpleBooleanProperty(false);
+    public SimpleBooleanProperty maskShapeChanged = new SimpleBooleanProperty(false);
+    public SimpleBooleanProperty maskShapeDataChanged = new SimpleBooleanProperty(false);
 
     public enum ShapeType {
         Rectangle, Circle, Ellipse, Line, Polygon, Polyline, Lines, Path, Text;
@@ -284,7 +284,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
 
     public void maskShapeChanged() {
         if (!isSettingValues) {
-            maskShapeChangedNotify.set(!maskShapeChangedNotify.get());
+            maskShapeChanged.set(!maskShapeChanged.get());
         }
     }
 
@@ -1065,11 +1065,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
 
     public boolean drawPath() {
         try {
-            if (imageView == null || maskPane == null) {
+            if (imageView == null || maskPane == null || svgPath == null) {
                 return false;
-            }
-            if (svgPath == null) {
-                setPathDefaultValues();
             }
             svgPath.setLayoutX(imageView.getLayoutX());
             svgPath.setLayoutY(imageView.getLayoutY());

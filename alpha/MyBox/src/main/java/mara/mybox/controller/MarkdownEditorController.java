@@ -311,7 +311,7 @@ public class MarkdownEditorController extends TextEditorController {
             MenuMarkdownEditController.open(myController, mainArea, localToScreen.getX(), localToScreen.getY());
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -328,7 +328,7 @@ public class MarkdownEditorController extends TextEditorController {
             MenuHtmlCodesController.open(this, codesArea, localToScreen.getX(), localToScreen.getY());
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }

@@ -37,7 +37,7 @@ public abstract class MainMenuController_Window extends MainMenuController_Base 
             checkTop();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

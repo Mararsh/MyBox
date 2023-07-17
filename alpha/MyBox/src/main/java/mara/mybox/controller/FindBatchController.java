@@ -55,7 +55,7 @@ public abstract class FindBatchController extends FindReplaceBatchController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

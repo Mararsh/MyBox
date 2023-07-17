@@ -76,7 +76,7 @@ public class Data2DColumn extends ColumnDefinition {
             newData.cloneFrom(this);
             return newData;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -91,7 +91,7 @@ public class Data2DColumn extends ColumnDefinition {
             d2cid = c.d2cid;
             d2id = c.d2id;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -260,7 +260,7 @@ public class Data2DColumn extends ColumnDefinition {
                     return true;
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }

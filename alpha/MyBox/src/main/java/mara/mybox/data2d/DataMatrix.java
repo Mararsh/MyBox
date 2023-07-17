@@ -43,7 +43,7 @@ public class DataMatrix extends Data2D {
             super.cloneAll(d);
             tableData2DCell = d.tableData2DCell;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

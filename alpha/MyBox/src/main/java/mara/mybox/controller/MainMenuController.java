@@ -27,7 +27,7 @@ public class MainMenuController extends MainMenuController_Help {
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

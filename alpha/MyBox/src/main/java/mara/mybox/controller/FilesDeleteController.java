@@ -33,7 +33,7 @@ public class FilesDeleteController extends BaseBatchFileController {
             operationBarController.deleteOpenControls();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -46,7 +46,7 @@ public class FilesDeleteController extends BaseBatchFileController {
                     Bindings.isEmpty(tableView.getItems())
             );
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

@@ -39,7 +39,7 @@ public class NetworkQueryDNSBatchController extends BaseController {
             hostsList.setText(UserConfig.getString(baseName + "Hosts", ""));
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

@@ -388,7 +388,7 @@ public class ChromaticAdaptation {
                 return M;
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }

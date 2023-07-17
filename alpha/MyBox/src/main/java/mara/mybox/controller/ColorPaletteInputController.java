@@ -55,7 +55,7 @@ public class ColorPaletteInputController extends BaseChildController {
             myStage.setX(paletteManager.getMyWindow().getX());
             myStage.setY(paletteManager.getMyWindow().getY() + 60);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

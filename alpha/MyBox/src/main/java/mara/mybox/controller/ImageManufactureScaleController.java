@@ -44,7 +44,7 @@ public class ImageManufactureScaleController extends ImageManufactureOperationCo
 
     @Override
     public void paneClicked(MouseEvent event, DoublePoint p) {
-        sizeController.imageClicked();
+        sizeController.paneClicked();
     }
 
     @FXML

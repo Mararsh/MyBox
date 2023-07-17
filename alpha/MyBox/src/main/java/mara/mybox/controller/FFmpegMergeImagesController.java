@@ -79,7 +79,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
             );
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -221,7 +221,7 @@ public class FFmpegMergeImagesController extends BaseBatchFFmpegController {
                         s.append("duration  ").append(info.getDuration() / 1000.00f).append("\n");
                     }
                 } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
+                    MyBoxLog.debug(e);
                 }
             }
             if (lastFile == null) {

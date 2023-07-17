@@ -111,7 +111,7 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
                     }
                     return ImageClipboard.add(newImage, ImageClipboard.ImageSource.Copy) != null;
                 } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
+                    MyBoxLog.debug(e);
                     error = e.toString();
                     return false;
                 }

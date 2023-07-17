@@ -146,7 +146,7 @@ public class IccXML {
             return s.toString();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
 
@@ -402,7 +402,7 @@ public class IccXML {
             return s.toString();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
 

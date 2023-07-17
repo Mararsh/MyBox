@@ -317,7 +317,7 @@ public abstract class ImagesBrowserController_Action extends ImagesBrowserContro
                     ImageInformation newInfo = loadInfo(file);
                     return newInfo;
                 } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
+                    MyBoxLog.debug(e);
                     return null;
                 }
             }

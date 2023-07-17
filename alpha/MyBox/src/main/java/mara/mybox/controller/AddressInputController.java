@@ -34,7 +34,7 @@ public class AddressInputController extends BaseController {
             notify = new SimpleBooleanProperty();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
 
         }
     }

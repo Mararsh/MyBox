@@ -50,7 +50,7 @@ public class ControlSvgTranscode extends BaseController {
             height = inputHeight > 0 ? inputHeight : docHeight;
             area = inputArea == null ? inputArea : docArea;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

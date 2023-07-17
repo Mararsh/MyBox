@@ -220,7 +220,7 @@ public class ControlColorsPane extends BaseController {
                             dragboard.setContent(content);
                             event.consume();
                         } catch (Exception e) {
-                            MyBoxLog.debug(e.toString());
+                            MyBoxLog.debug(e);
                         }
                     }
                 });
@@ -232,7 +232,7 @@ public class ControlColorsPane extends BaseController {
                             event.acceptTransferModes(TransferMode.ANY);
                             event.consume();
                         } catch (Exception e) {
-                            MyBoxLog.debug(e.toString());
+                            MyBoxLog.debug(e);
                         }
                     }
                 });
@@ -269,7 +269,7 @@ public class ControlColorsPane extends BaseController {
             rect.setStroke(Color.RED);
             clickedRect = rect;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         isSettingValues = false;
         clickNotify.set(!clickNotify.get());

@@ -52,7 +52,7 @@ public class MathFunctionXYChartController extends ControlData2DChartXY {
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -64,7 +64,7 @@ public class MathFunctionXYChartController extends ControlData2DChartXY {
             setTitle(baseTitle + " - " + title);
             drawScatterChart();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -84,7 +84,7 @@ public class MathFunctionXYChartController extends ControlData2DChartXY {
             chartMaker.setIsXY(true);
             writeXYChart(columns, data);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -104,7 +104,7 @@ public class MathFunctionXYChartController extends ControlData2DChartXY {
             chartMaker.setIsXY(true);
             writeXYChart(columns, data);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

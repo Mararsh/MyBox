@@ -74,7 +74,7 @@ public class ControlData2DColumns extends BaseTablePagesController<Data2DColumn>
             super.setControlsStyle();
             NodeStyleTools.setTooltip(numberColumnsButton, new Tooltip(message("RenameAllColumns")));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

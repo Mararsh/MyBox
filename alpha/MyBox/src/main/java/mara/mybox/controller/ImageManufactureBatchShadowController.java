@@ -56,7 +56,7 @@ public class ImageManufactureBatchShadowController extends BaseImageManufactureB
             );
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -66,7 +66,7 @@ public class ImageManufactureBatchShadowController extends BaseImageManufactureB
             super.setControlsStyle();
             NodeStyleTools.setTooltip(perBox, new Tooltip("1~100"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

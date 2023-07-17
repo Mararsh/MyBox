@@ -139,7 +139,7 @@ public class NetworkTools {
             InetAddress a = InetAddress.getByName(host);
             return a.getHostAddress();
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             return host;
         }
     }
@@ -172,7 +172,7 @@ public class NetworkTools {
             }
             return data.substring(0, end);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -185,7 +185,7 @@ public class NetworkTools {
             InetAddress a = InetAddress.getByName(ip);
             return a.getHostName();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }

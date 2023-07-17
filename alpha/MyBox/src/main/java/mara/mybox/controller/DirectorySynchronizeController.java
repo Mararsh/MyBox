@@ -59,7 +59,7 @@ public class DirectorySynchronizeController extends BaseTaskController {
             strHandled = message("Handled") + ": ";
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
 
     }
@@ -75,7 +75,7 @@ public class DirectorySynchronizeController extends BaseTaskController {
             );
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

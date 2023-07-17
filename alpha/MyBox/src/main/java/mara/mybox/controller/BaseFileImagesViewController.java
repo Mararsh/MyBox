@@ -206,7 +206,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -345,7 +345,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
             }
             getMyStage().setTitle(getBaseTitle() + " " + sourceFile.getAbsolutePath());
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -534,7 +534,7 @@ public abstract class BaseFileImagesViewController extends ImageViewerController
                 loading = null;
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         super.cleanPane();
     }

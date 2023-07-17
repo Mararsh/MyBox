@@ -49,7 +49,7 @@ public class TextEditInformation extends FileEditInformation {
                 lineIndex++;
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
         linesNumber = lineIndex;
@@ -100,7 +100,7 @@ public class TextEditInformation extends FileEditInformation {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
         currentPage = lineStart / pageSize;
@@ -146,7 +146,7 @@ public class TextEditInformation extends FileEditInformation {
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
         currentPage = lineStart / pageSize;;
@@ -181,7 +181,7 @@ public class TextEditInformation extends FileEditInformation {
             }
             return targetFile;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
 
@@ -205,7 +205,7 @@ public class TextEditInformation extends FileEditInformation {
             }
             writer.flush();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
         return true;
@@ -257,7 +257,7 @@ public class TextEditInformation extends FileEditInformation {
                 }
                 writer.flush();
             } catch (Exception e) {
-                MyBoxLog.debug(e.toString());
+                MyBoxLog.debug(e);
                 return false;
             }
             if (sourceInfo.getFile().equals(file)) {
@@ -265,7 +265,7 @@ public class TextEditInformation extends FileEditInformation {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }

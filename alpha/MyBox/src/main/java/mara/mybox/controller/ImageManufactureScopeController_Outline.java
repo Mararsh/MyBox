@@ -89,7 +89,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

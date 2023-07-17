@@ -177,7 +177,7 @@ public class MicrosoftDocumentTools {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -213,7 +213,7 @@ public class MicrosoftDocumentTools {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
 

@@ -142,7 +142,7 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
                 NodeStyleTools.setTooltip(loadWidthBox, new Tooltip(message("ImageLoadWidthCommnets")));
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -335,7 +335,7 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
             updateStageTitle();
             updateLabels();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -361,7 +361,7 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
             }
             getMyStage().setTitle(title);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -432,7 +432,7 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

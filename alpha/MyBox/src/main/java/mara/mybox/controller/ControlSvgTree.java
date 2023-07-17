@@ -46,7 +46,7 @@ public class ControlSvgTree extends ControlXmlTree {
 
             StyleTools.setIconTooltips(addShapeButton, "iconNewItem.png", message("SvgAddShape"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

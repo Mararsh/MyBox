@@ -57,7 +57,7 @@ public class FileSplitTools {
             }
             return splittedFiles;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -76,7 +76,7 @@ public class FileSplitTools {
             }
             return splittedFiles;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -115,7 +115,7 @@ public class FileSplitTools {
             }
             return splittedFiles;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -154,7 +154,7 @@ public class FileSplitTools {
                 return null;
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }

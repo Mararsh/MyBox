@@ -76,7 +76,7 @@ public class ColorQueryController extends BaseController {
             NodeStyleTools.setTooltip(queryButton, message("Query") + "\nF1 / ENTER");
             NodeStyleTools.setTooltip(paletteButton, message("AddInColorPalette"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

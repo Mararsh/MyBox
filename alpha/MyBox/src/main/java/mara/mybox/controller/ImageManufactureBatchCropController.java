@@ -53,7 +53,7 @@ public class ImageManufactureBatchCropController extends BaseImageManufactureBat
             );
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

@@ -13,12 +13,4 @@ public class SingletonBackgroundTask<Void> extends SingletonTask<Void> {
         this.controller = controller;
     }
 
-    @Override
-    protected void finalAction() {
-        if (controller != null) {
-            controller.setBackgroundTask(null);
-        }
-        super.finalAction();
-    }
-
 }

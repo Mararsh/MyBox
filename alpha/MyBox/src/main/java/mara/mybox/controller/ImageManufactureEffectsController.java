@@ -63,7 +63,7 @@ public class ImageManufactureEffectsController extends ImageManufactureOperation
             NodeStyleTools.setTooltip(paletteAddButton, message("AddInColorPalette"));
             NodeStyleTools.setTooltip(htmlButton, message("ShowData"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

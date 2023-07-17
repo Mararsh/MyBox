@@ -434,7 +434,7 @@ public class ControlFileBackup extends BaseTablePagesController<FileBackup> {
             popSuccessful();
             loadBackups();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

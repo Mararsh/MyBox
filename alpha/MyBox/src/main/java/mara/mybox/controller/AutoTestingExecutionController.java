@@ -203,7 +203,7 @@ public class AutoTestingExecutionController extends BaseTablePagesController<Tes
             tableView.scrollTo(currentCase);
             runCurrentCase();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
 
     }
@@ -240,7 +240,7 @@ public class AutoTestingExecutionController extends BaseTablePagesController<Tes
                 return;
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             if (currentCase != null) {
                 currentCase.setStatus(Status.Fail);
                 tableData.set(currentIndex, currentCase);

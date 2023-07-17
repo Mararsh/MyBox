@@ -69,7 +69,7 @@ public class NetworkQueryAddressController extends BaseController {
             headerController.setParent(this);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

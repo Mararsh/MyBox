@@ -94,7 +94,7 @@ public class WeiboSnapController extends BaseController {
             initTargetOptions();
             
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
     
@@ -105,7 +105,7 @@ public class WeiboSnapController extends BaseController {
             NodeStyleTools.setTooltip(startMonthInput, new Tooltip(Languages.message("WeiboEarlestMonth")));
             NodeStyleTools.setTooltip(keepPageCheck, new Tooltip(Languages.message("MergePDFComments")));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
     
@@ -981,7 +981,7 @@ public class WeiboSnapController extends BaseController {
 //                }
 //            }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
     
@@ -1087,7 +1087,7 @@ public class WeiboSnapController extends BaseController {
             return parameters;
         } catch (Exception e) {
             parameters = null;
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }

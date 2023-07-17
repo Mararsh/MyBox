@@ -153,7 +153,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
             openPathButton.disableProperty().bind(targetPathInputController.valid.not());
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
 
     }
@@ -172,7 +172,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
             NodeStyleTools.setTooltip(clearButton, new Tooltip(message("DeleteJavaIOTemporaryPathFiles")));
             NodeStyleTools.setTooltip(clearBoardButton, new Tooltip(message("ClearSystemClipboard")));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -196,7 +196,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
             imageClipboardMonitor = new ImageClipboardMonitor()
                     .start(ImageClipboardTools.getMonitorInterval(), formatController.getAttributes(), filePrefix);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -224,7 +224,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
                 imageClipboardMonitor.setFilePrefix(filePrefix);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -239,7 +239,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
             }
             updateStatus();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -262,7 +262,7 @@ public class ImageInSystemClipboardController extends ImageViewerController {
             checkTargetPath();
             updateNumbers();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

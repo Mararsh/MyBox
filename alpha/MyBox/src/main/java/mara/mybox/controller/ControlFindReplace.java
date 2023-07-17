@@ -79,7 +79,7 @@ public class ControlFindReplace extends BaseController {
                 NodeStyleTools.removeTooltip(historyStringButton);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -118,7 +118,7 @@ public class ControlFindReplace extends BaseController {
             editType = Edit_Type.Text;
             setControls();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -128,7 +128,7 @@ public class ControlFindReplace extends BaseController {
             this.editType = editType;
             setControls();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

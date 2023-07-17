@@ -32,7 +32,7 @@ public abstract class BaseInputController extends BaseChildController {
             notify = new SimpleBooleanProperty();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
 
         }
     }

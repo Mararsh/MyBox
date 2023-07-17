@@ -268,7 +268,7 @@ public class DerbyBase {
                 started = true;
             } catch (Exception e) {
 //                MyBoxLog.error(e);
-//                MyBoxLog.debug(e.toString());
+//                MyBoxLog.debug(e);
                 try {
                     Thread.currentThread().sleep(wait);
                 } catch (Exception ex) {

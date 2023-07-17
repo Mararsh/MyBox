@@ -254,7 +254,7 @@ public class NodeTools {
                     MouseButton.PRIMARY, 1,
                     true, true, true, true, true, true, true, true, true, true, null));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -290,7 +290,7 @@ public class NodeTools {
             WritableImage snapshot = node.snapshot(snapPara, null);
             return snapshot;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }

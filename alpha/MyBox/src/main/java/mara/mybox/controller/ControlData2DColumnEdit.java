@@ -76,7 +76,7 @@ public class ControlData2DColumnEdit extends BaseChildController {
             NodeStyleTools.setTooltip(tipsView, message("ColumnComments"));
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

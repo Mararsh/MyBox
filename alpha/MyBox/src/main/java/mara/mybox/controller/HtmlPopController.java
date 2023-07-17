@@ -47,7 +47,7 @@ public class HtmlPopController extends BaseWebViewController {
             setControls();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -84,7 +84,7 @@ public class HtmlPopController extends BaseWebViewController {
             setAsPop(baseName);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -100,7 +100,7 @@ public class HtmlPopController extends BaseWebViewController {
             setControls();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -116,7 +116,7 @@ public class HtmlPopController extends BaseWebViewController {
             setControls();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

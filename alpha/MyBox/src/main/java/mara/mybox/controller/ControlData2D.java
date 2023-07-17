@@ -103,7 +103,7 @@ public class ControlData2D extends BaseController {
             super.setControlsStyle();
             StyleTools.setIconTooltips(functionsButton, "iconFunction.png", "");
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

@@ -628,7 +628,7 @@ public class BarcodeCreatorController extends ImageViewerController {
             NodeStyleTools.setTooltip(dmHeightInput, Languages.message("Pixels"));
             NodeStyleTools.setTooltip(dmWidthInput, Languages.message("Pixels"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

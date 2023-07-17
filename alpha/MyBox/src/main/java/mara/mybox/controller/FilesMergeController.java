@@ -42,7 +42,7 @@ public class FilesMergeController extends BaseBatchFileController {
             }
             return super.makeMoreParameters();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }

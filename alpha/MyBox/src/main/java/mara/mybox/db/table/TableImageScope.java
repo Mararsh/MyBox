@@ -182,7 +182,7 @@ public class TableImageScope extends BaseTable<ImageScope> {
             return ImageScope.decodeOutline(type, results.getString("outline"), scope);
         } catch (Exception e) {
             MyBoxLog.error(e);
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             return false;
         }
     }

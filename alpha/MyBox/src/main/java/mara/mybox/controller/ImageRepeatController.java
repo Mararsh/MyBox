@@ -86,16 +86,14 @@ public class ImageRepeatController extends ImageViewerController {
 
             colorSetController.init(this, baseName + "Color");
 
-            maskShapeChangedNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    recoverSize();
-                }
-            });
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    @Override
+    public void maskShapeChanged() {
+        recoverSize();
     }
 
     public Image sourceImage() {
@@ -124,7 +122,7 @@ public class ImageRepeatController extends ImageViewerController {
 
     @FXML
     public void recoverSize() {
-        if (isSettingValues) {
+        if (isSettingValues || imageView.getImage() == null) {
             return;
         }
         scaleController.loadImage(scopeImage());

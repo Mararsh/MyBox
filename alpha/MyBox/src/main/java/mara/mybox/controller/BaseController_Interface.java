@@ -651,7 +651,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
             }
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
 
     }
@@ -775,7 +775,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
             }
             getMyStage().setTitle(title);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -794,7 +794,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
             leaveScene();
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -904,7 +904,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
                 thisPane.setUserData(null);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
 
     }
@@ -929,7 +929,7 @@ public abstract class BaseController_Interface extends BaseController_Files {
             myWindow = null;
             System.gc();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

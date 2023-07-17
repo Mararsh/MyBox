@@ -130,7 +130,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(YInput, new Tooltip(Languages.message("1-based")));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -900,7 +900,7 @@ public class ChromaticityDiagramController extends ImageViewerController {
 
                 } catch (Exception e) {
                     error = e.toString();
-                    MyBoxLog.debug(e.toString());
+                    MyBoxLog.debug(e);
                 }
                 return image != null;
             }

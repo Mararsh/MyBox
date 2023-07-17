@@ -193,7 +193,7 @@ public class FilesCompressBatchController extends BaseBatchFileController {
                 return Languages.message("Failed");
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return Languages.message("Failed");
         }
     }

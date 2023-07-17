@@ -475,7 +475,7 @@ public class XYChartMaker<X, Y> extends XYChartOptions<X, Y> {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -546,7 +546,7 @@ public class XYChartMaker<X, Y> extends XYChartOptions<X, Y> {
                 return null;
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }

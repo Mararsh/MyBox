@@ -1010,7 +1010,7 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
             }
             super.setPagination();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
 
     }

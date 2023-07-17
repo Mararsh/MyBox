@@ -58,7 +58,7 @@ public class MediaListController extends BaseTablePagesController<MediaList> {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(supportTipsView, new Tooltip(Languages.message("MediaPlayerSupports")));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

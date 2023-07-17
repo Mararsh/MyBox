@@ -81,7 +81,7 @@ public class IccTags {
                 tags.add(tag);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return tags;
     }
@@ -141,7 +141,7 @@ public class IccTags {
 
             return data;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }

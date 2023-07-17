@@ -126,7 +126,7 @@ public class SettingsController extends BaseController {
             initMapTab();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -150,7 +150,7 @@ public class SettingsController extends BaseController {
 
             colorCustomizeRect.setFill(Colors.customizeColorDark());
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -201,7 +201,7 @@ public class SettingsController extends BaseController {
             checkPdfMem();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -431,7 +431,7 @@ public class SettingsController extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -565,7 +565,7 @@ public class SettingsController extends BaseController {
             webReadTimeoutInput.setText(UserConfig.getInt("WebReadTimeout", 10000) + "");
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -583,7 +583,7 @@ public class SettingsController extends BaseController {
                     }
                     MyBox.restart();
                 } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
+                    MyBoxLog.debug(e);
                 }
             }
         });
@@ -703,7 +703,7 @@ public class SettingsController extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -841,7 +841,7 @@ public class SettingsController extends BaseController {
         try {
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -1051,7 +1051,7 @@ public class SettingsController extends BaseController {
             renderController.setParentController(this);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -1090,7 +1090,7 @@ public class SettingsController extends BaseController {
             gaodeWebKeyInput.setText(UserConfig.getString("GaoDeMapWebKey", AppValues.GaoDeMapWebKey));
             gaodeServiceKeyInput.setText(UserConfig.getString("GaoDeMapServiceKey", AppValues.GaoDeMapServiceKey));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

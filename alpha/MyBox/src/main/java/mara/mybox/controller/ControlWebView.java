@@ -1919,7 +1919,7 @@ public class ControlWebView extends BaseController {
             MenuWebviewController.pop(this, null, localToScreen.getX(), localToScreen.getY());
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }

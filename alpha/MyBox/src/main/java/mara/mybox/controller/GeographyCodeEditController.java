@@ -143,7 +143,7 @@ public class GeographyCodeEditController extends GeographyCodeUserController {
             NodeStyleTools.setTooltip(subordinateInput, Languages.message("ClickNodePickValue"));
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

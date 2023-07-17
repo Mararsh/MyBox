@@ -89,7 +89,7 @@ public abstract class Data2D_Attributes extends Data2DDefinition {
             error = d.error;
             options = d.options;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

@@ -88,7 +88,7 @@ public class ControlColorPaletteSelector extends BaseController {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(customizeButton, message("CustomizeColorPalette"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

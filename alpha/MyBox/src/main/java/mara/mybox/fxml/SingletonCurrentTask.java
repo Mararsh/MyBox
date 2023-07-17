@@ -13,12 +13,4 @@ public class SingletonCurrentTask<Void> extends SingletonTask<Void> {
         this.controller = controller;
     }
 
-    @Override
-    protected void finalAction() {
-        if (controller != null) {
-            controller.setTask(null);
-        }
-        super.finalAction();
-    }
-
 }

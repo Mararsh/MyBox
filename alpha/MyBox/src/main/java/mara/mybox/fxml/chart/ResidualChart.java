@@ -70,7 +70,7 @@ public class ResidualChart<X, Y> extends LabeledScatterChart<X, Y> {
             text.setLayoutY(10);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

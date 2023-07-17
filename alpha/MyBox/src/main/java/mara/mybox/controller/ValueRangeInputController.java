@@ -43,7 +43,7 @@ public class ValueRangeInputController extends BaseInputController {
             this.valueRange = range;
             setRange(range);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
 
         }
     }

@@ -174,7 +174,7 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -204,7 +204,7 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -239,7 +239,7 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
             }
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
 
     }
@@ -269,7 +269,7 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
             scopeDistanceSelector.getItems().addAll(vList);
             scopeDistanceSelector.getSelectionModel().select(distance + "");
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

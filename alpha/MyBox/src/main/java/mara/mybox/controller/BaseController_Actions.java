@@ -356,7 +356,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
                     UserConfig.clear();
                     return true;
                 } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
+                    MyBoxLog.debug(e);
                     return false;
                 }
             }
@@ -540,7 +540,7 @@ public abstract class BaseController_Actions extends BaseController_Interface {
             }
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
 
     }

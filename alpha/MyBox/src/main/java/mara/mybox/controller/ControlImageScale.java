@@ -4,10 +4,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.image.Image;
 import mara.mybox.bufferedimage.BufferedImageTools;
-import mara.mybox.bufferedimage.ScaleTools;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.value.Languages;
+import static mara.mybox.value.Languages.message;
 
 /**
  * @Author Mara
@@ -17,112 +16,114 @@ import mara.mybox.value.Languages;
 public class ControlImageScale extends ControlImageSize {
 
     protected ImageManufactureScaleController scaleController;
-    protected ImageManufactureController manuController;
+    protected ImageManufactureController editor;
 
     @FXML
     protected RadioButton dragRadio;
 
     public void setParameters(ImageManufactureScaleController scaleController) {
         this.scaleController = scaleController;
-        manuController = scaleController.editor;
+        editor = scaleController.editor;
+        imageController = editor;
         infoLabel = scaleController.commentsLabel;
-        super.setParameters(manuController);
+        image = editor.imageView.getImage();
+        checkScaleType();
     }
 
     @Override
-    protected void loadImage() {
-        image = imageController.imageView.getImage();
-        originalSize();
-    }
-
-    @Override
-    protected void initScaleType() {
+    protected void resetControls() {
         try {
-            scaleController.editor.resetImagePane();
-            scaleController.editor.imageTab();
-            infoLabel.setText("");
-            super.initScaleType();
+            if (editor != null) {
+                editor.resetImagePane();
+                editor.imageTab();
+            }
+            if (infoLabel != null) {
+                infoLabel.setText("");
+            }
+            super.resetControls();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
     @Override
-    protected void makeScaleType() {
+    protected void switchType() {
         try {
             if (dragRadio.isSelected()) {
                 scaleType = ScaleType.Dragging;
                 setBox.getChildren().addAll(keepBox);
-                infoLabel.setText(Languages.message("DragSizeComments"));
+                if (infoLabel != null) {
+                    infoLabel.setText(message("DragSizeComments"));
+                }
                 initDrag();
-                checkKeepType();
-                checkRatio();
+                adjustRadio();
 
             } else {
 
-                super.makeScaleType();
+                super.switchType();
             }
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
     protected void initDrag() {
         try {
-            if (imageController == null) {
+            if (image == null || !dragRadio.isSelected()) {
                 return;
             }
-            width = imageController.imageView.getImage().getWidth();
-            height = imageController.imageView.getImage().getHeight();
-            imageController.maskRectangleData = new DoubleRectangle(0, 0, width - 1, height - 1);
-            imageController.showMaskRectangle();
+            width = image.getWidth();
+            height = image.getHeight();
+            editor.maskRectangleData = new DoubleRectangle(0, 0, width - 1, height - 1);
+            editor.showMaskRectangle();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
-    }
-
-    public void imageClicked() {
-        if (imageController == null || !isDrag() || imageController.maskRectangleData == null) {
-            return;
-        }
-        if (keepRatioType != BufferedImageTools.KeepRatioType.None) {
-            int[] wh = ScaleTools.scaleValues(
-                    (int) imageController.imageView.getImage().getWidth(),
-                    (int) imageController.imageView.getImage().getHeight(),
-                    (int) imageController.maskRectangleData.getWidth(),
-                    (int) imageController.maskRectangleData.getHeight(),
-                    keepRatioType);
-            width = wh[0];
-            height = wh[1];
-
-            imageController.maskRectangleData = new DoubleRectangle(
-                    imageController.maskRectangleData.getSmallX(),
-                    imageController.maskRectangleData.getSmallY(),
-                    imageController.maskRectangleData.getSmallX() + width - 1,
-                    imageController.maskRectangleData.getSmallY() + height - 1);
-            imageController.drawMaskRectangle();
-
-        } else {
-            width = imageController.maskRectangleData.getWidth();
-            height = imageController.maskRectangleData.getHeight();
-        }
-        labelSize();
     }
 
     @Override
-    public void scale(Image newImage, long cost) {
-        manuController.popSuccessful();
+    protected void adjustRadio() {
+        super.adjustRadio();
+        if (editor == null || !dragRadio.isSelected()
+                || editor.maskRectangleData == null) {
+            return;
+        }
+        editor.maskRectangleData = new DoubleRectangle(
+                editor.maskRectangleData.getSmallX(),
+                editor.maskRectangleData.getSmallY(),
+                editor.maskRectangleData.getSmallX() + width - 1,
+                editor.maskRectangleData.getSmallY() + height - 1);
+        editor.drawMaskRectangle();
+    }
+
+    public void paneClicked() {
+        if (editor == null || !dragRadio.isSelected() || editor.maskRectangleData == null) {
+            return;
+        }
+        width = editor.maskRectangleData.getWidth();
+        height = editor.maskRectangleData.getHeight();
+        if (keepRatioType != BufferedImageTools.KeepRatioType.None) {
+            adjustRadio();
+
+        } else {
+            labelSize();
+        }
+    }
+
+    @Override
+    public void afterScaled(Image newImage, long cost) {
+        editor.popSuccessful();
         String newSize = (int) Math.round(newImage.getWidth()) + "x" + (int) Math.round(newImage.getHeight());
         if (scaleType == ScaleType.Scale) {
-            manuController.updateImage(ImageManufactureController_Image.ImageOperation.Scale2, scale + "", newSize, newImage, cost);
+            editor.updateImage(ImageManufactureController_Image.ImageOperation.Scale2, scale + "", newSize, newImage, cost);
         } else if (scaleType == ScaleType.Dragging || scaleType == ScaleType.Pixels) {
-            manuController.updateImage(ImageManufactureController_Image.ImageOperation.Scale2, "Pixels", newSize, newImage, cost);
+            editor.updateImage(ImageManufactureController_Image.ImageOperation.Scale2, "Pixels", newSize, newImage, cost);
         }
 
-        String info = Languages.message("OriginalSize") + ": " + (int) Math.round(manuController.image.getWidth())
-                + "x" + (int) Math.round(manuController.image.getHeight()) + "\n"
-                + Languages.message("CurrentSize") + ": " + Math.round(newImage.getWidth())
+        String info = message("OriginalSize") + ": " + (int) Math.round(editor.image.getWidth())
+                + "x" + (int) Math.round(editor.image.getHeight()) + "\n"
+                + message("CurrentSize") + ": " + Math.round(newImage.getWidth())
                 + "x" + Math.round(newImage.getHeight());
         infoLabel.setText(info);
 

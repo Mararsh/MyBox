@@ -24,7 +24,7 @@ public class ImageScopeFactory {
             ImageScopeTools.cloneValues(newScope, sourceScope);
             return newScope;
         } catch (Exception e) {
-            //            MyBoxLog.debug(e.toString());
+            //            MyBoxLog.debug(e);
             return sourceScope;
         }
     }

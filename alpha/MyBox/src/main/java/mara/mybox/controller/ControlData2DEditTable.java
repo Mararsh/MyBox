@@ -53,7 +53,7 @@ public class ControlData2DEditTable extends ControlData2DLoad {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(verifyButton, new Tooltip(message("VerifyPageData")));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

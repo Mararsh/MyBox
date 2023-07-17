@@ -78,7 +78,7 @@ public class DatabaseSqlEditor extends TreeNodeEditor {
             outputArea.setWrapText(wrapOutputsCheck.isSelected());
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

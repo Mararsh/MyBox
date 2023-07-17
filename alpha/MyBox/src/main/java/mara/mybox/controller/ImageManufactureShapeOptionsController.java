@@ -153,6 +153,7 @@ public class ImageManufactureShapeOptionsController extends ControlShapeOptions 
                 maskView.setImage(newImage);
                 editor.drawMaskRectangle();
                 editor.maskRectangle.setOpacity(0);
+                applyStyle();
             }
 
         };
@@ -184,6 +185,7 @@ public class ImageManufactureShapeOptionsController extends ControlShapeOptions 
                 maskView.setImage(newImage);
                 editor.drawMaskCircle();
                 editor.maskCircle.setOpacity(0);
+                applyStyle();
             }
 
         };
@@ -215,6 +217,7 @@ public class ImageManufactureShapeOptionsController extends ControlShapeOptions 
                 maskView.setImage(newImage);
                 editor.drawMaskEllipse();
                 editor.maskEllipse.setOpacity(0);
+                applyStyle();
             }
 
         };
@@ -246,6 +249,7 @@ public class ImageManufactureShapeOptionsController extends ControlShapeOptions 
                 maskView.setImage(newImage);
                 editor.drawMaskPolygon();
                 editor.maskPolygon.setOpacity(0);
+                applyStyle();
             }
 
         };
@@ -277,6 +281,7 @@ public class ImageManufactureShapeOptionsController extends ControlShapeOptions 
                 maskView.setImage(newImage);
                 editor.drawMaskPolyline();
                 editor.maskPolyline.setOpacity(0);
+                applyStyle();
             }
 
         };

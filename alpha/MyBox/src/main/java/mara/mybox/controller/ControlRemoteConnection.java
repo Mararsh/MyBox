@@ -77,7 +77,7 @@ public class ControlRemoteConnection extends BaseSysTableController<PathConnecti
             pathColumn.setCellValueFactory(new PropertyValueFactory<>("path"));
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

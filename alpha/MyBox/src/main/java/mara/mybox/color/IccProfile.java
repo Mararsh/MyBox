@@ -157,7 +157,7 @@ public class IccProfile {
             System.arraycopy(digest, 0, data, 84, 16);
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }

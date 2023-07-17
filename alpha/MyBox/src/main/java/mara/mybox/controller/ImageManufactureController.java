@@ -65,7 +65,7 @@ public class ImageManufactureController extends ImageManufactureController_Actio
             NodeStyleTools.setTooltip(popButton, message("PopTabImage"));
             NodeStyleTools.setTooltip(viewImageButton, message("PopManufacturedImage"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -114,7 +114,7 @@ public class ImageManufactureController extends ImageManufactureController_Actio
 
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }

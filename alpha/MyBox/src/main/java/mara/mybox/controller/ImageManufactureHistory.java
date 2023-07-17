@@ -396,7 +396,7 @@ public class ImageManufactureHistory extends BaseTablePagesController<ImageEditH
                 his.setThumbnail(SwingFXUtils.toFXImage(thumb, null));
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -579,7 +579,7 @@ public class ImageManufactureHistory extends BaseTablePagesController<ImageEditH
             popSuccessful();
             refreshHistories();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

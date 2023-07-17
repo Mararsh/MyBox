@@ -53,7 +53,7 @@ public class HtmlCodesPopController extends TextPopController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -66,7 +66,7 @@ public class HtmlCodesPopController extends TextPopController {
             setControls();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

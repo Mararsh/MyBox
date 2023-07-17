@@ -1082,7 +1082,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
             pageSelector.getEditor().setStyle(null);
             isSettingValues = false;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
 
     }

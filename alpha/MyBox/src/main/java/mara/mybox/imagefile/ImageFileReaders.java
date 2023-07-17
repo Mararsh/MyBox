@@ -53,7 +53,7 @@ public class ImageFileReaders {
             }
             return getReader(readers);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -63,7 +63,7 @@ public class ImageFileReaders {
             Iterator<ImageReader> readers = ImageIO.getImageReadersByFormatName(format.toLowerCase());
             return getReader(readers);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -83,7 +83,7 @@ public class ImageFileReaders {
             }
             return reader;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }

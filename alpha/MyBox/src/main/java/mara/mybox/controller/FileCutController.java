@@ -86,7 +86,7 @@ public class FileCutController extends BaseBatchFileController {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(listInput, new Tooltip(Languages.message("StartEndByteComments")));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

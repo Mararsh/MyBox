@@ -98,7 +98,7 @@ public class FilesArrangeController extends BaseBatchFileController {
             );
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
 
     }

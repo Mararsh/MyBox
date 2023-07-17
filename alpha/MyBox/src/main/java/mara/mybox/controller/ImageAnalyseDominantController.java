@@ -82,7 +82,7 @@ public class ImageAnalyseDominantController extends BaseController {
             NodeStyleTools.setTooltip(paletteButton, message("AddInColorPalette"));
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

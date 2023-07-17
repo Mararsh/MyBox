@@ -107,7 +107,7 @@ public class LabeledScatterChart<X, Y> extends ScatterChart<X, Y> {
             line.setEndX(endX);
             line.setEndY(endY);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

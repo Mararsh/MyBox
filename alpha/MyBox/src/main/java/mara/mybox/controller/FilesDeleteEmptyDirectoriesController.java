@@ -33,7 +33,7 @@ public class FilesDeleteEmptyDirectoriesController extends BaseBatchFileControll
             operationBarController.deleteOpenControls();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -65,7 +65,7 @@ public class FilesDeleteEmptyDirectoriesController extends BaseBatchFileControll
             totalItemsHandled++;
             tableController.markFileHandled(currentParameters.currentIndex, result);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

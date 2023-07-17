@@ -127,7 +127,7 @@ public class TextTools {
             info.setCharset(Charset.forName(setName));
             return true;
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -211,7 +211,7 @@ public class TextTools {
             }
             return text.toString();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -227,7 +227,7 @@ public class TextTools {
             return true;
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -260,7 +260,7 @@ public class TextTools {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -295,7 +295,7 @@ public class TextTools {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -393,7 +393,7 @@ public class TextTools {
                             writer.write(taregtLineBreak + line);
                         }
                     } catch (Exception e) {
-                        MyBoxLog.debug(e.toString());
+                        MyBoxLog.debug(e);
                         return null;
                     }
                     if (file.exists() && file.length() > 0) {
@@ -401,12 +401,12 @@ public class TextTools {
                     }
                 }
             } catch (Exception e) {
-                MyBoxLog.debug(e.toString());
+                MyBoxLog.debug(e);
                 return null;
             }
             return files;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }

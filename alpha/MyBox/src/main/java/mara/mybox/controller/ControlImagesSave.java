@@ -187,7 +187,7 @@ public class ControlImagesSave extends BaseController {
                 }
             });
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -236,7 +236,7 @@ public class ControlImagesSave extends BaseController {
             checkGifSizeType();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -293,7 +293,7 @@ public class ControlImagesSave extends BaseController {
                     });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

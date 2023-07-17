@@ -70,7 +70,7 @@ public class SimpleRegressionChart<X, Y> extends LabeledScatterChart<X, Y> {
             text.setVisible(displayText);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -86,7 +86,7 @@ public class SimpleRegressionChart<X, Y> extends LabeledScatterChart<X, Y> {
                 data1.get(i).getNode().setVisible(display);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -95,7 +95,7 @@ public class SimpleRegressionChart<X, Y> extends LabeledScatterChart<X, Y> {
             displayFittedLine = display;
             regressionLine.setVisible(display);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -104,7 +104,7 @@ public class SimpleRegressionChart<X, Y> extends LabeledScatterChart<X, Y> {
             displayText = display;
             text.setVisible(display);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

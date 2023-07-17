@@ -73,15 +73,46 @@ public class ImageTextTools {
             }
             int textBaseX = optionsController.getBaseX();
             int textBaseY = optionsController.getTextY();
+            int shadow = optionsController.getShadow();
+            float textOpacity = noBlend ? opacity : 1.0F;
+            fg.rotate(Math.toRadians(optionsController.getAngle()), textBaseX, textBaseY);
+            fg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, textOpacity));
+            fg.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            fg.setFont(font);
+            if (shadow > 0) {
+                fg.setColor(optionsController.shadowColor());
+                drawText(fg, optionsController, text, noBlend, shadow);
+            }
+            fg.setColor(textColor.equals(Colors.TRANSPARENT) ? null : textColor);
+            drawText(fg, optionsController, text, noBlend, 0);
+
+            fg.dispose();
+            if (noBlend) {
+                return foreImage;
+            } else {
+                return PixelsBlend.blend(foreImage, backImage, 0, 0, optionsController.blender());
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return null;
+        }
+    }
+
+    public static boolean drawText(Graphics2D g, ControlImageText optionsController,
+            String text, boolean noBlend, int shadow) {
+        try {
+            if (g == null) {
+                return false;
+            }
+            int textBaseX = optionsController.getBaseX();
+            int textBaseY = optionsController.getTextY();
             int linex = textBaseX, liney = textBaseY, lineHeight = optionsController.getLineHeight();
             String[] lines = text.split("\n", -1);
             int lend = lines.length - 1;
-            int shadow = optionsController.getShadow();
             boolean isOutline = optionsController.isOutline();
             boolean leftToRight = optionsController.isLeftToRight();
-            float textOpacity = noBlend ? opacity : 1.0F;
-            fg.rotate(Math.toRadians(optionsController.getAngle()), textBaseX, textBaseY);
-//            fg.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            Font font = optionsController.font();
+            FontMetrics metrics = g.getFontMetrics(font);
             if (optionsController.isVertical()) {
                 for (int r = (leftToRight ? 0 : lend); (leftToRight ? r <= lend : r >= 0);) {
                     String line = lines[r];
@@ -89,8 +120,8 @@ public class ImageTextTools {
                     double cWidthMax = 0;
                     for (int i = 0; i < line.length(); i++) {
                         String c = line.charAt(i) + "";
-                        addText(fg, c, font, textColor, linex, liney, textOpacity, shadow, isOutline);
-                        Rectangle2D cBound = metrics.getStringBounds(c, fg);
+                        drawText(g, c, font, linex, liney, shadow, isOutline);
+                        Rectangle2D cBound = metrics.getStringBounds(c, g);
                         liney += cBound.getHeight();
                         if (lineHeight <= 0) {
                             double cWidth = cBound.getWidth();
@@ -112,53 +143,44 @@ public class ImageTextTools {
                 }
             } else {
                 for (String line : lines) {
-                    addText(fg, line, font, textColor, linex, liney, textOpacity, shadow, isOutline);
+                    drawText(g, line, font, linex, liney, shadow, isOutline);
                     if (lineHeight > 0) {
                         liney += lineHeight;
                     } else {
-                        liney += fg.getFontMetrics(font).getStringBounds(line, fg).getHeight();
+                        liney += g.getFontMetrics(font).getStringBounds(line, g).getHeight();
                     }
                 }
             }
-            fg.dispose();
-            if (noBlend) {
-                return foreImage;
-            } else {
-                return PixelsBlend.blend(foreImage, backImage, 0, 0, optionsController.blender());
-            }
+            return true;
         } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
+            MyBoxLog.error(e.toString());
+            return false;
         }
     }
 
-    public static void addText(Graphics2D g, String text,
-            Font font, Color color, int x, int y, float opacity, int shadow, boolean isOutline) {
+    public static void drawText(Graphics2D g, String text,
+            Font font, int x, int y, int shadow, boolean isOutline) {
         try {
             if (text == null || text.isEmpty()) {
                 return;
             }
-            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
-            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-            g.setFont(font);
-            g.setColor(color.equals(Colors.TRANSPARENT) ? null : color);
-            if (isOutline) {
-                FontRenderContext frc = g.getFontRenderContext();
-                TextLayout textTl = new TextLayout(text, font, frc);
-                Shape outline = textTl.getOutline(null);
-                g.translate(x, y);
-                g.draw(outline);
-                g.translate(-x, -y);
-            } else {
-                g.drawString(text, x, y);
-            }
             if (shadow > 0) {
                 // Not blurred. Can improve
-                g.setColor(Color.GRAY);
                 g.drawString(text, x + shadow, y + shadow);
+            } else {
+                if (isOutline) {
+                    FontRenderContext frc = g.getFontRenderContext();
+                    TextLayout textTl = new TextLayout(text, font, frc);
+                    Shape outline = textTl.getOutline(null);
+                    g.translate(x, y);
+                    g.draw(outline);
+                    g.translate(-x, -y);
+                } else {
+                    g.drawString(text, x, y);
+                }
             }
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.error(e.toString());
         }
     }
 

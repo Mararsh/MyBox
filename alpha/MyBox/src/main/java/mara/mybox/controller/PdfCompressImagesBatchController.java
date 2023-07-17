@@ -64,7 +64,7 @@ public class PdfCompressImagesBatchController extends PdfImagesConvertBatchContr
                             .or(Bindings.isEmpty(tableView.getItems()))
             );
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

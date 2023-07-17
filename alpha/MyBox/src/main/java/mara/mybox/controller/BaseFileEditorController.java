@@ -115,7 +115,7 @@ public abstract class BaseFileEditorController extends BaseFileEditorController_
             }
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

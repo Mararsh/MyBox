@@ -60,7 +60,7 @@ public class Normalization {
             n.invalidAs = invalidAs;
             return n;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }

@@ -66,7 +66,7 @@ public class ImageAlphaAddBatchController extends BaseImageManufactureBatchContr
             );
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

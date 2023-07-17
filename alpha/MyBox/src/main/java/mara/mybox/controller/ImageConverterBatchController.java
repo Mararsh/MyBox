@@ -88,7 +88,7 @@ public class ImageConverterBatchController extends BaseBatchImageController {
             appendQualityCheck.setSelected(UserConfig.getBoolean("ImageConverterAppendQuality"));
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

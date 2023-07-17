@@ -145,13 +145,13 @@ public class TableMediaList extends BaseTable<MediaList> {
                     index++;
                 } catch (Exception e) {
                     MyBoxLog.error(e);
-//                    MyBoxLog.debug(e.toString());
+//                    MyBoxLog.debug(e);
                 }
             }
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -172,7 +172,7 @@ public class TableMediaList extends BaseTable<MediaList> {
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             return false;
         }
     }

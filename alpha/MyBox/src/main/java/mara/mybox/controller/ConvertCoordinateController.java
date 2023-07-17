@@ -270,7 +270,7 @@ public class ConvertCoordinateController extends BaseController {
                             decimalInput.setStyle(UserConfig.badStyle());
                         }
                     } catch (Exception e) {
-//                        MyBoxLog.debug(e.toString());
+//                        MyBoxLog.debug(e);
                         decimalInput.setStyle(UserConfig.badStyle());
                     }
                 }
@@ -332,7 +332,7 @@ public class ConvertCoordinateController extends BaseController {
             );
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -430,7 +430,7 @@ public class ConvertCoordinateController extends BaseController {
             webEngine.loadContent(table.html());
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

@@ -85,7 +85,7 @@ public class ImageScopeTools {
             targetScope.setOutline(sourceScope.getOutline());
             targetScope.setEightNeighbor(sourceScope.isEightNeighbor());
         } catch (Exception e) {
-            //            MyBoxLog.debug(e.toString());
+            //            MyBoxLog.debug(e);
         }
     }
 

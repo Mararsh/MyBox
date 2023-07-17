@@ -49,7 +49,7 @@ public class ListKMeans<T> {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -130,7 +130,7 @@ public class ListKMeans<T> {
 //            MyBoxLog.console("centers: " + centers.size() + "   clusters: " + clusters.length);
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }

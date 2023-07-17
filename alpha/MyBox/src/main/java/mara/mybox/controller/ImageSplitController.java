@@ -358,7 +358,7 @@ public class ImageSplitController extends BaseImagesListController {
 
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
 
@@ -643,7 +643,7 @@ public class ImageSplitController extends BaseImagesListController {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         imageInfos.setAll(infos);
     }

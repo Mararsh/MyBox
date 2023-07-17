@@ -64,7 +64,8 @@ public class ControlImageText extends BaseController {
     protected CheckBox outlineCheck, verticalCheck, rightToLeftCheck,
             bordersCheck, bordersFillCheck, bordersStrokeDottedCheck;
     @FXML
-    protected ControlColorSet colorSetController, bordersFillColorSetController, bordersStrokeColorSetController;
+    protected ControlColorSet fontColorController, shadowColorController,
+            bordersFillColorController, bordersStrokeColorController;
     @FXML
     protected ToggleGroup positionGroup;
     @FXML
@@ -201,8 +202,8 @@ public class ControlImageText extends BaseController {
                 }
             });
 
-            colorSetController.init(this, baseName + "TextColor", Color.ORANGE);
-            colorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            fontColorController.init(this, baseName + "TextColor", Color.ORANGE);
+            fontColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
                     notifyChanged();
@@ -304,6 +305,14 @@ public class ControlImageText extends BaseController {
                 }
             });
 
+            shadowColorController.init(this, baseName + "ShadowColor", Color.GREY);
+            shadowColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+                @Override
+                public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
+                    notifyChanged();
+                }
+            });
+
             angleSelector.getItems().addAll(Arrays.asList("0", "90", "180", "270", "45", "135", "225", "315",
                     "60", "150", "240", "330", "15", "105", "195", "285", "30", "120", "210", "300"));
             angle = UserConfig.getInt(baseName + "TextAngle", 0);
@@ -384,8 +393,8 @@ public class ControlImageText extends BaseController {
                 }
             });
 
-            bordersFillColorSetController.init(this, baseName + "BordersFillColor", Color.WHITE);
-            bordersFillColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            bordersFillColorController.init(this, baseName + "BordersFillColor", Color.WHITE);
+            bordersFillColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
                     if (showBorders()) {
@@ -394,8 +403,8 @@ public class ControlImageText extends BaseController {
                 }
             });
 
-            bordersStrokeColorSetController.init(this, baseName + "BordersStrokeColor", Color.WHITE);
-            bordersStrokeColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            bordersStrokeColorController.init(this, baseName + "BordersStrokeColor", Color.WHITE);
+            bordersStrokeColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
                     if (showBorders()) {
@@ -757,7 +766,11 @@ public class ControlImageText extends BaseController {
     }
 
     public java.awt.Color textColor() {
-        return colorSetController.awtColor();
+        return fontColorController.awtColor();
+    }
+
+    public java.awt.Color shadowColor() {
+        return shadowColorController.awtColor();
     }
 
     public boolean isVertical() {
@@ -805,11 +818,11 @@ public class ControlImageText extends BaseController {
     }
 
     public Color bordersStrokeColor() {
-        return bordersStrokeColorSetController.color();
+        return bordersStrokeColorController.color();
     }
 
     public Color bordersFillColor() {
-        return bordersFillColorSetController.color();
+        return bordersFillColorController.color();
     }
 
     /*

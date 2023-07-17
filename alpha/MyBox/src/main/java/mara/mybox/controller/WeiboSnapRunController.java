@@ -285,7 +285,7 @@ public class WeiboSnapRunController extends BaseController {
                             loadCompleted = true;
                         }
                     } catch (Exception e) {
-//                        MyBoxLog.debug(e.toString());
+//                        MyBoxLog.debug(e);
                     }
                 }
             });
@@ -323,7 +323,7 @@ public class WeiboSnapRunController extends BaseController {
 //                }
 //            });
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
 
     }
@@ -629,7 +629,7 @@ public class WeiboSnapRunController extends BaseController {
 
         } catch (Exception e) {
             alertError(e.toString());
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             closeStage();
             return false;
         }
@@ -884,7 +884,7 @@ public class WeiboSnapRunController extends BaseController {
                                                     totalLikeCount = Integer.parseInt(s1.substring(0, pos5));
                                                     showBaseInfo();
                                                 } catch (Exception e) {
-                                                    MyBoxLog.debug(e.toString());
+                                                    MyBoxLog.debug(e);
                                                 }
                                             }
                                         }
@@ -945,7 +945,7 @@ public class WeiboSnapRunController extends BaseController {
                                                             } catch (Exception e) {
 //                                                            loadFailed = loadCompleted = true;
 //                                                            errorString = e.toString();
-                                                                MyBoxLog.debug(e.toString());
+                                                                MyBoxLog.debug(e);
                                                             }
                                                         }
                                                     }
@@ -969,7 +969,7 @@ public class WeiboSnapRunController extends BaseController {
                                 } catch (Exception e) {
 //                                    loadFailed = loadCompleted = true;
 //                                    errorString = e.toString();
-//                                    MyBoxLog.debug(e.toString());
+//                                    MyBoxLog.debug(e);
                                 }
                             }
                         });
@@ -1291,7 +1291,7 @@ public class WeiboSnapRunController extends BaseController {
                 ImageFileWriters.writeImageFile(bufferedImage, "png", filename);
                 imageFiles.add(filename);
             } catch (Exception e) {
-                MyBoxLog.debug(e.toString());
+                MyBoxLog.debug(e);
             }
             snapHeight += snapStep;
             loadingController.addLine(Languages.message("CurrentPageHeight") + ": " + snapHeight);

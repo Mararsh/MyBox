@@ -114,7 +114,7 @@ public class WebHistoriesController extends BaseSysTableController<WebHistory> {
             refreshTimes();
             loadTableData();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

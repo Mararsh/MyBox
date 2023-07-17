@@ -56,7 +56,7 @@ public class ImageManufactureBatchArcController extends BaseImageManufactureBatc
             );
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -66,7 +66,7 @@ public class ImageManufactureBatchArcController extends BaseImageManufactureBatc
             super.setControlsStyle();
             NodeStyleTools.setTooltip(perBox, new Tooltip("1~100"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

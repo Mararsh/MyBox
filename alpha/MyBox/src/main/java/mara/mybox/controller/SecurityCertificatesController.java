@@ -107,7 +107,7 @@ public class SecurityCertificatesController extends BaseTablePagesController<Cer
             super.setControlsStyle();
             NodeStyleTools.setTooltip(recoverButton, Languages.message("RecoverKeyStore"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

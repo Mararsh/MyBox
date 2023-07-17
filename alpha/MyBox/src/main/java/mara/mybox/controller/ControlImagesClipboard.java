@@ -124,7 +124,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
             copyToSystemClipboardButton.disableProperty().bind(tableView.getSelectionModel().selectedItemProperty().isNull());
             refreshAction();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

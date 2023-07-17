@@ -125,7 +125,7 @@ public class PdfConvertImagesBatchController extends BaseBatchPdfController {
             appendDensityCheck.setSelected(UserConfig.getBoolean("PdfConverterAppendDensity"));
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

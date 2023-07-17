@@ -274,7 +274,7 @@ public class ControlData2DRowEdit extends BaseController {
                             popup.getContent().add(pane);
                             LocateTools.locateCenter(paletteButton, popup);
                         } catch (Exception e) {
-                            MyBoxLog.debug(e.toString());
+                            MyBoxLog.debug(e);
                         }
                     }
                 });

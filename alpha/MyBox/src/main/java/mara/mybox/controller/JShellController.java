@@ -41,7 +41,7 @@ public class JShellController extends TreeManageController {
             nodeController = editorController;
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -55,7 +55,7 @@ public class JShellController extends TreeManageController {
             editorController.setParameters(this);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

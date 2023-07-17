@@ -117,7 +117,7 @@
                                         <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
                                             <children>
                                                 <Label text="%FontColor" />
-                                                <fx:include fx:id="colorSet" source="ControlColorSet.fxml" />
+                                                <fx:include fx:id="fontColor" source="ControlColorSet.fxml" />
                                             </children>
                                         </FlowPane>
                                         <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
@@ -152,15 +152,21 @@
                                             <children>
                                                 <CheckBox fx:id="verticalCheck" mnemonicParsing="false" text="%VerticalSettingOfTypes" />
                                                 <CheckBox fx:id="rightToLeftCheck" mnemonicParsing="false" text="%RightToLeft" />
+                                              <CheckBox fx:id="outlineCheck" mnemonicParsing="false" text="%Outline" />
                                             </children>
                                         </FlowPane>
-                                        <CheckBox fx:id="outlineCheck" mnemonicParsing="false" text="%Outline" />
                                         <FlowPane hgap="5.0" layoutX="10.0" layoutY="59.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
                                             <children>
                                                 <Label text="%Shadow" />
                                                 <ComboBox fx:id="shadowSelector" editable="true" prefWidth="100.0" />
                                             </children>
                                         </FlowPane>
+                              <FlowPane hgap="5.0" prefWrapLength="0.0" vgap="5.0">
+                                 <children>
+                                    <Label text="%ShadowColor" />
+                                    <fx:include fx:id="shadowColor" source="ControlColorSet.fxml" />
+                                 </children>
+                              </FlowPane>
                                         <FlowPane hgap="5.0" layoutX="10.0" layoutY="81.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
                                             <children>
                                                 <Label text="%Angle" />
@@ -189,19 +195,22 @@
                                         <FlowPane hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
                                             <children>
                                                 <CheckBox fx:id="bordersFillCheck" mnemonicParsing="false" selected="true" text="%Fill" />
-                                                <fx:include fx:id="bordersFillColorSet" source="ControlColorSet.fxml" />
+                                                <fx:include fx:id="bordersFillColor" source="ControlColorSet.fxml" />
                                             </children>
                                         </FlowPane>
                                         <FlowPane hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
                                             <children>
-                                                <Label fx:id="strokeWidthLabel" text="%Stroke" />
-                                                <Label fx:id="strokeColorLabel" text="%Color" />
-                                                <fx:include fx:id="bordersStrokeColorSet" source="ControlColorSet.fxml" />
-                                                <Label fx:id="strokeWidthLabel1" text="%Width" />
-                                                <ComboBox fx:id="bordersStrokeWidthSelector" editable="true" prefWidth="100.0" />
-                                                <CheckBox fx:id="bordersStrokeDottedCheck" mnemonicParsing="false" text="%Dotted" />
+                                                <Label fx:id="strokeWidthLabel" text="%StrokeColor" />
+                                                <fx:include fx:id="bordersStrokeColor" source="ControlColorSet.fxml" />
                                             </children>
                                         </FlowPane>
+                              <FlowPane hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
+                                 <children>
+                                                <Label fx:id="strokeWidthLabel1" text="%StrokeWidth" />
+                                                <ComboBox fx:id="bordersStrokeWidthSelector" editable="true" prefWidth="100.0" />
+                                                <CheckBox fx:id="bordersStrokeDottedCheck" mnemonicParsing="false" text="%Dotted" />
+                                 </children>
+                              </FlowPane>
                                         <FlowPane fx:id="rectArcPane" hgap="5.0" prefWidth="200.0" prefWrapLength="0.0" vgap="5.0">
                                             <children>
                                                 <Label fx:id="arcLabel" text="%Arc" />

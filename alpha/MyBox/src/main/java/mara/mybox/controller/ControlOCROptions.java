@@ -197,7 +197,7 @@ public class ControlOCROptions extends BaseController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -299,7 +299,7 @@ public class ControlOCROptions extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -322,7 +322,7 @@ public class ControlOCROptions extends BaseController {
             checkEngine();
             setLanguages();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -360,7 +360,7 @@ public class ControlOCROptions extends BaseController {
             }
             dataPathController.checkFileInput();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -394,12 +394,12 @@ public class ControlOCROptions extends BaseController {
                     }
                 }
             } catch (Exception e) {
-                MyBoxLog.debug(e.toString());
+                MyBoxLog.debug(e);
             }
             process.waitFor();
         } catch (Exception e) {
             popError(e.toString());
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return -1;
     }
@@ -433,7 +433,7 @@ public class ControlOCROptions extends BaseController {
                 currentOCRFilesLabel.setStyle(UserConfig.badStyle());
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -547,7 +547,7 @@ public class ControlOCROptions extends BaseController {
             return texts != null;
         } catch (Exception e) {
             error = e.toString();
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -572,7 +572,7 @@ public class ControlOCROptions extends BaseController {
             return instance;
         } catch (Exception e) {
             error = e.toString();
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }

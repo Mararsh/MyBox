@@ -257,7 +257,7 @@ public class JsonEditorController extends BaseFileController {
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return null;
     }
@@ -441,7 +441,7 @@ public class JsonEditorController extends BaseFileController {
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -462,7 +462,7 @@ public class JsonEditorController extends BaseFileController {
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -496,7 +496,7 @@ public class JsonEditorController extends BaseFileController {
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -510,7 +510,7 @@ public class JsonEditorController extends BaseFileController {
                 TextClipboardPopController.open(this, textsArea);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -532,7 +532,7 @@ public class JsonEditorController extends BaseFileController {
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -543,7 +543,7 @@ public class JsonEditorController extends BaseFileController {
         try {
             TextClipboardPopController.closeAll();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

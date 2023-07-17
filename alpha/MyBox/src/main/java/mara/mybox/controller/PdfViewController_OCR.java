@@ -141,7 +141,7 @@ public abstract class PdfViewController_OCR extends BaseFileImagesViewController
                     });
 
                 } catch (Exception e) {
-                    MyBoxLog.debug(e.toString());
+                    MyBoxLog.debug(e);
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -175,7 +175,7 @@ public abstract class PdfViewController_OCR extends BaseFileImagesViewController
                     return ocrOptionsController.imageOCR(this, selected, false);
                 } catch (Exception e) {
                     error = e.toString();
-                    MyBoxLog.debug(e.toString());
+                    MyBoxLog.debug(e);
                     return false;
                 }
             }

@@ -69,7 +69,7 @@ public class FilesRedundancyController extends BaseBatchFileController {
             done = message("Done");
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
 
     }
@@ -181,7 +181,7 @@ public class FilesRedundancyController extends BaseBatchFileController {
             }
             filesList.clear();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

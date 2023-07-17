@@ -201,7 +201,7 @@ public class ControlSynchronizeOptions extends BaseController {
             deleteSourceCheck.setSelected(UserConfig.getBoolean(baseName + "DeleteSource", false));
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

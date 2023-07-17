@@ -178,7 +178,7 @@ public class ControlMap extends BaseController {
                 mouseMoved(longitude, latitude);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -464,7 +464,7 @@ public class ControlMap extends BaseController {
                     + ", " + isBold + ");");
             titleLabel.setText(label);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

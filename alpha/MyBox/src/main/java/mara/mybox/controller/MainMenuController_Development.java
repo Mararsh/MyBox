@@ -58,7 +58,7 @@ public abstract class MainMenuController_Development extends MainMenuController_
             checkDev();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

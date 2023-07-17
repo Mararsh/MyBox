@@ -48,7 +48,7 @@ public class ControlMathFunctionEditor extends TreeNodeEditor {
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

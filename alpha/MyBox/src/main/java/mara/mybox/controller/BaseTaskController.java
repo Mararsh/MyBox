@@ -69,7 +69,7 @@ public class BaseTaskController extends BaseLogs {
             }
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

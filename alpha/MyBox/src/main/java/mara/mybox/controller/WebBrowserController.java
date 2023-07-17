@@ -91,7 +91,7 @@ public class WebBrowserController extends BaseController {
             super.setControlsStyle();
             StyleTools.setIconTooltips(addTabButton, "iconAdd.png", message("Add"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -102,7 +102,7 @@ public class WebBrowserController extends BaseController {
 
             newTabAction();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

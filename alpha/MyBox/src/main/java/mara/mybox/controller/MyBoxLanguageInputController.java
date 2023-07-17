@@ -52,7 +52,7 @@ public class MyBoxLanguageInputController extends BaseChildController {
             inputArea.requestFocus();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
 
         }
     }

@@ -73,7 +73,7 @@ public class MarkdownToHtmlController extends BaseBatchFileController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

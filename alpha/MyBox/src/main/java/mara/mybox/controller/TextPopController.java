@@ -53,7 +53,7 @@ public class TextPopController extends BaseChildController {
 
             setControls();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -64,7 +64,7 @@ public class TextPopController extends BaseChildController {
             setControls();
             textArea.setText(text);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -93,7 +93,7 @@ public class TextPopController extends BaseChildController {
             textArea.setWrapText(wrapCheck.isSelected());
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

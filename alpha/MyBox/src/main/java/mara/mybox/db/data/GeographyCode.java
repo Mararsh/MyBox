@@ -90,7 +90,7 @@ public class GeographyCode extends BaseData {
             }
             return newCode;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -210,7 +210,7 @@ public class GeographyCode extends BaseData {
                     return true;
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }

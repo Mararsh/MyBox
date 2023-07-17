@@ -56,7 +56,7 @@ public class MessageDigestTools {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -79,7 +79,7 @@ public class MessageDigestTools {
             byte[] digest = md.digest(bytes);
             return digest;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -97,7 +97,7 @@ public class MessageDigestTools {
             byte[] digest = md.digest();
             return digest;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }

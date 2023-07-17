@@ -39,7 +39,7 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
             regionQuantization.operate();
             data = regionQuantization.regionColors;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return this;
     }
@@ -68,7 +68,7 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -80,7 +80,7 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
             }
             return ColorMatchTools.calculateColorDistanceSquare(p1, p2);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return Double.MAX_VALUE;
         }
     }
@@ -93,7 +93,7 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
             }
             return ColorMatchTools.isColorMatchSquare(p1, p2, equalDistance);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }
@@ -116,7 +116,7 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
             }
             return centerColor;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -141,7 +141,7 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
                     Math.min(255, (int) (totalb / size)));
             return centerColor;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -168,7 +168,7 @@ public class ImageRGBKMeans extends ListKMeans<Color> {
             }
             return mappedColor;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return color;
         }
     }

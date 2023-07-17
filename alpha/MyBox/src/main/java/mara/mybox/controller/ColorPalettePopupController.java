@@ -100,7 +100,7 @@ public class ColorPalettePopupController extends BaseChildController {
             NodeStyleTools.setTooltip(popCheck, message("PopColorSetWhenMouseHovering"));
             NodeStyleTools.setTooltip(cancelButton, message("PopupClose"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -204,7 +204,7 @@ public class ColorPalettePopupController extends BaseChildController {
             parentController.closePopup();
             setNotify.set(!setNotify.get());
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

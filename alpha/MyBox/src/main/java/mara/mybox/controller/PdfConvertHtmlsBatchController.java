@@ -211,7 +211,7 @@ public class PdfConvertHtmlsBatchController extends BaseBatchPdfController {
                 parser.writeText(doc, output);
                 return htmlFile;
             } catch (Exception e) {
-//                MyBoxLog.debug(e.toString());
+//                MyBoxLog.debug(e);
                 return null;
             }
         } catch (Exception e) {

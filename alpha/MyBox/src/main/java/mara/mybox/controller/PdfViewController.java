@@ -272,7 +272,7 @@ public class PdfViewController extends PdfViewController_Html {
             }
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -448,7 +448,7 @@ public class PdfViewController extends PdfViewController_Html {
             }
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }

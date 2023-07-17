@@ -55,7 +55,7 @@ public class NetworkConvertUrlController extends BaseController {
             equalButton.disableProperty().bind(valueInput.textProperty().isEmpty());
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -68,7 +68,7 @@ public class NetworkConvertUrlController extends BaseController {
                 resultInput.setText(URLEncoder.encode(valueInput.getText(), charsetsSelector.getValue()));
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

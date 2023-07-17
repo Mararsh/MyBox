@@ -72,11 +72,14 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
 
     public Image scopeImage() {
         try {
+            if (imageView == null) {
+                return null;
+            }
             Image inImage = imageView.getImage();
             if (inImage == null) {
                 return null;
             }
-            if (maskRectangle != null && maskRectangle.isVisible()) {
+            if (maskRectangle != null && maskRectangle.isVisible() && maskRectangleData != null) {
                 if ((int) maskRectangleData.getSmallX() == 0
                         && (int) maskRectangleData.getSmallY() == 0
                         && (int) maskRectangleData.getBigX() == (int) inImage.getWidth() - 1
@@ -85,20 +88,20 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
                 }
                 return CropTools.cropOutsideFx(inImage, maskRectangleData, bgColor);
 
-            } else if (maskCircle != null && maskCircle.isVisible()) {
+            } else if (maskCircle != null && maskCircle.isVisible() && maskCircle != null) {
                 return CropTools.cropOutsideFx(inImage, maskCircleData, bgColor);
 
-            } else if (maskEllipse != null && maskEllipse.isVisible()) {
+            } else if (maskEllipse != null && maskEllipse.isVisible() && maskEllipse != null) {
                 return CropTools.cropOutsideFx(inImage, maskEllipseData, bgColor);
 
-            } else if (maskPolygon != null && maskPolygon.isVisible()) {
+            } else if (maskPolygon != null && maskPolygon.isVisible() && maskPolygon != null) {
                 return CropTools.cropOutsideFx(inImage, maskPolygonData, bgColor);
 
             } else {
                 return inImage;
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return image;
         }
     }

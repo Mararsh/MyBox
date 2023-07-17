@@ -61,7 +61,7 @@ public class Data2DCell extends BaseData {
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -84,7 +84,7 @@ public class Data2DCell extends BaseData {
                     return data.getValue();
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return null;
     }

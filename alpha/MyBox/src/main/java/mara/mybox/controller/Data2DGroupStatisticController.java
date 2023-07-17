@@ -130,7 +130,7 @@ public class Data2DGroupStatisticController extends Data2DChartXYController {
             super.setControlsStyle();
             NodeStyleTools.setTooltip(displayAllCheck, new Tooltip(message("AllRowsLoadComments")));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

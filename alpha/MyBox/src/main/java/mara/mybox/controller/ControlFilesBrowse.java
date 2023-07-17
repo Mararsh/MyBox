@@ -151,7 +151,7 @@ public class ControlFilesBrowse extends ControlFileBrowse {
             }
             infoLabel.setText(info);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

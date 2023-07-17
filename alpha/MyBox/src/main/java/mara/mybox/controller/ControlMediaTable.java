@@ -105,7 +105,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
             }
             return info;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             popError(message("FailOpenMedia"));
             return null;
         }
@@ -120,7 +120,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
             return info;
         } catch (Exception e) {
             popError(e.toString());
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -176,7 +176,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
 
                             } catch (Exception e) {
                                 popError(message("FailOpenMedia"));
-                                MyBoxLog.debug(e.toString());
+                                MyBoxLog.debug(e);
                             }
                         }
                     });

@@ -258,7 +258,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -286,7 +286,7 @@ public abstract class ImageManufactureController_Actions extends ImageManufactur
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }

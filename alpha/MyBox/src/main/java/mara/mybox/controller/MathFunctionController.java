@@ -35,7 +35,7 @@ public class MathFunctionController extends TreeManageController {
             nodeController = editorController;
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -48,7 +48,7 @@ public class MathFunctionController extends TreeManageController {
             calculateController.setParameters(editorController);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

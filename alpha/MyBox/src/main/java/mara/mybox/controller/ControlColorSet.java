@@ -145,7 +145,7 @@ public class ControlColorSet extends BaseController {
             popup.getContent().add(pane);
             LocateTools.locateCenter(colorButton, popup);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

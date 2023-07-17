@@ -31,7 +31,7 @@ public class FilesDeleteNestedDirectoriesController extends BaseBatchFileControl
             operationBarController.deleteOpenControls();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -70,7 +70,7 @@ public class FilesDeleteNestedDirectoriesController extends BaseBatchFileControl
             totalItemsHandled++;
             tableController.markFileHandled(currentParameters.currentIndex, result);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

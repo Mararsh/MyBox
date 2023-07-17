@@ -65,7 +65,7 @@ public class ImageManufactureBatchPasteController extends BaseImageManufactureBa
             );
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

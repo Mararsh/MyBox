@@ -114,7 +114,7 @@ public class GameMineController extends BaseWebViewController {
             historiesNumber = UserConfig.getInt(baseName + "HistoriesNumber", 50);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -148,7 +148,7 @@ public class GameMineController extends BaseWebViewController {
             createAction();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -161,7 +161,7 @@ public class GameMineController extends BaseWebViewController {
             NodeStyleTools.setTooltip(createButton, message("NewGame") + "\nn / Ctrl+n");
             NodeStyleTools.setTooltip(helpMeButton, message("HelpMe") + "\nh / Ctrl+h");
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -296,7 +296,7 @@ public class GameMineController extends BaseWebViewController {
                 }
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

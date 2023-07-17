@@ -225,7 +225,7 @@ public class MediaPlayerController extends BaseController {
             checkSoundButton();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -242,7 +242,7 @@ public class MediaPlayerController extends BaseController {
             NodeStyleTools.setTooltip(catButton, new Tooltip(message("MiaoSounds")));
             NodeStyleTools.setTooltip(speedSelector, new Tooltip("0~8"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -324,7 +324,7 @@ public class MediaPlayerController extends BaseController {
             tableController.markFileHandling(-1);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -481,7 +481,7 @@ public class MediaPlayerController extends BaseController {
             isSettingValues = false;
             dataChanged();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -516,7 +516,7 @@ public class MediaPlayerController extends BaseController {
             }
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
 
     }

@@ -445,7 +445,7 @@ public class FileDecompressUnarchiveController extends FilesTreeController {
             isSettingValues = false;
             return rootItem;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             isSettingValues = false;
             return null;
         }

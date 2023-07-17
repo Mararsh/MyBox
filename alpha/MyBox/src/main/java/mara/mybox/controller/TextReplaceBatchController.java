@@ -34,7 +34,7 @@ public class TextReplaceBatchController extends FindReplaceBatchController {
             MyBoxLog.console(editType);
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

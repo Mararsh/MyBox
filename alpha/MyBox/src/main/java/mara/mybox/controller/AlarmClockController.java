@@ -208,7 +208,7 @@ public class AlarmClockController extends BaseController {
 
             NodeStyleTools.setTooltip(saveButton, new Tooltip("F2 / CTRL+s"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

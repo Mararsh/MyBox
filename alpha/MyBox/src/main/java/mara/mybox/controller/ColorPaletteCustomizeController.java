@@ -54,7 +54,7 @@ public class ColorPaletteCustomizeController extends BaseChildController {
             NodeStyleTools.setTooltip(saturationToInput, "1~100");
             NodeStyleTools.setTooltip(saturationStepInput, "1~100");
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

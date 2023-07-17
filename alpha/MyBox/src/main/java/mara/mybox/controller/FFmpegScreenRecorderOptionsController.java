@@ -165,7 +165,7 @@ public class FFmpegScreenRecorderOptionsController extends ControlFFmpegOptions 
             NodeStyleTools.setTooltip(tipsView, new Tooltip(message("FFmpegOptionsTips")
                     + "\n" + message("FFmpegScreenRecorderComments")));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

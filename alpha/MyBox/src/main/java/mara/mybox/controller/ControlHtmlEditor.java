@@ -273,7 +273,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
             }
             NodeStyleTools.setTooltip(menuButton, message("MenuButtonTips"));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -481,7 +481,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
             }
             return html;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return null;
     }
@@ -806,7 +806,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -846,7 +846,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -951,7 +951,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -978,7 +978,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
                 TextClipboardPopController.open(this, textsArea);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -1004,7 +1004,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -1019,7 +1019,7 @@ public class ControlHtmlEditor extends BaseWebViewController {
             popButton.setDisable(tab == domTab);
             menuButton.setDisable(tab == richEditorTab);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

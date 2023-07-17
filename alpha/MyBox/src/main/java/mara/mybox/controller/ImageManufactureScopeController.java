@@ -56,7 +56,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
             super.setControlsStyle();
             NodeStyleTools.setTooltip(eightNeighborCheck, new Tooltip(message("EightNeighborCheckComments")));
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -243,7 +243,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
             checkScopeType();
             scopeAllRadio.setSelected(true);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -294,7 +294,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
             }
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

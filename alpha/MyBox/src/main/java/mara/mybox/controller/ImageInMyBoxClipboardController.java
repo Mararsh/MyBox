@@ -42,7 +42,7 @@ public class ImageInMyBoxClipboardController extends ImageViewerController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

@@ -104,6 +104,8 @@ public abstract class BaseImageController extends BaseImageController_Actions {
                 paletteController.closeStage();
                 paletteController = null;
             }
+            maskShapeChanged = null;
+            maskShapeDataChanged = null;
         } catch (Exception e) {
         }
         super.cleanPane();

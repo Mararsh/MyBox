@@ -94,7 +94,7 @@ public class FilesRenameController extends BaseBatchFileController {
                             .or(tableController.addFilesButton.disableProperty())
             );
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

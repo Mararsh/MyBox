@@ -128,7 +128,7 @@ public class RGBColorSpace extends CIEData {
             }
             return table;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -460,7 +460,7 @@ public class RGBColorSpace extends CIEData {
                 return adaptedPrimaries;
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }

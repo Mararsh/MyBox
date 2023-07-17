@@ -318,7 +318,7 @@ public class FloatMatrixTools {
             }
             return result;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -582,7 +582,7 @@ public class FloatMatrixTools {
             }
             return minor;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -608,7 +608,7 @@ public class FloatMatrixTools {
             }
             return adjoint;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -639,7 +639,7 @@ public class FloatMatrixTools {
             }
             return v;
         } catch (Exception e) {
-//            MyBoxLog.debug(e.toString());
+//            MyBoxLog.debug(e);
             throw e;
         }
 
@@ -664,7 +664,7 @@ public class FloatMatrixTools {
             }
             return det;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             throw e;
         }
 
@@ -685,7 +685,7 @@ public class FloatMatrixTools {
             }
             return result;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -706,7 +706,7 @@ public class FloatMatrixTools {
             }
             return result;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -745,7 +745,7 @@ public class FloatMatrixTools {
             }
             return result;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -772,7 +772,7 @@ public class FloatMatrixTools {
 
             return result;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -815,7 +815,7 @@ public class FloatMatrixTools {
             }
             return i;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             throw e;
         }
 

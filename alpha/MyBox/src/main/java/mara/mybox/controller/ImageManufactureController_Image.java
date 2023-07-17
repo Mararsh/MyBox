@@ -141,7 +141,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -158,7 +158,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -175,7 +175,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -192,7 +192,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -209,7 +209,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -226,7 +226,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
 
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return false;
     }
@@ -279,7 +279,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
             }
             updateImage(newImage, info);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -292,7 +292,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
             popInformation(info);
             updateLabelString(info);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -305,7 +305,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
             updateLabelsTitle();
             updateLabel(operation);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
@@ -320,7 +320,7 @@ public abstract class ImageManufactureController_Image extends ImageViewerContro
             }
             imageLabel.setText(info);
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

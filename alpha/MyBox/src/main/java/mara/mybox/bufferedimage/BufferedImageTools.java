@@ -87,7 +87,7 @@ public class BufferedImageTools {
             ImageIO.write(tmpImage, format, stream);
             bytes = stream.toByteArray();
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
         return bytes;
     }

@@ -918,7 +918,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             String targetSuffix = FileNameTools.filter(nameSuffix);
             return targetPrefix + targetSuffix;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }
@@ -936,7 +936,7 @@ public abstract class BaseController_Files extends BaseController_Attributes {
             target.getParentFile().mkdirs();
             return target;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return null;
         }
     }

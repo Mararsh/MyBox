@@ -41,7 +41,7 @@ public class ImageManufactureBatchTextController extends BaseImageManufactureBat
             );
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

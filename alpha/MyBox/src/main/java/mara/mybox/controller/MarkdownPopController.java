@@ -42,7 +42,7 @@ public class MarkdownPopController extends TextPopController {
             });
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

@@ -164,7 +164,7 @@ public class FileSortTools {
                     break;
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

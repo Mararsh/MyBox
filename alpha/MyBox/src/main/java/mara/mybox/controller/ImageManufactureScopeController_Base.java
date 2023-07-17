@@ -128,7 +128,7 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
             MenuImageScopeController.open((ImageManufactureScopeController) this, localToScreen.getX(), localToScreen.getY());
             return true;
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
             return false;
         }
     }

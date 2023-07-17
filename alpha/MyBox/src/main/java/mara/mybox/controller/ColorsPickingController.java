@@ -91,7 +91,7 @@ public class ColorsPickingController extends BaseChildController {
             palettesController.loadPalettes();
 
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 

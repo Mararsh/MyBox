@@ -377,7 +377,7 @@ public abstract class BaseDataManageController<P> extends BaseSysTableController
                 NodeStyleTools.removeTooltip(csvEditController.inputButton);
             }
         } catch (Exception e) {
-            MyBoxLog.debug(e.toString());
+            MyBoxLog.debug(e);
         }
     }
 
