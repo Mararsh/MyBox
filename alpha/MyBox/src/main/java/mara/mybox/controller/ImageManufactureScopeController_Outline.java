@@ -238,7 +238,7 @@ public abstract class ImageManufactureScopeController_Outline extends ImageManuf
             protected boolean handle() {
                 try {
                     outline = AlphaTools.outline(outlineSource,
-                            maskRectangleData, (int) getImageWidth(), (int) getImageHeight(),
+                            maskRectangleData, (int) imageWidth(), (int) imageHeight(),
                             scopeOutlineKeepRatioCheck.isSelected(),
                             ColorConvertTools.converColor(Color.WHITE), areaExcludedCheck.isSelected());
                     if (task == null || isCancelled()) {

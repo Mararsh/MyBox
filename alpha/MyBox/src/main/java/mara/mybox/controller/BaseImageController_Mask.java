@@ -126,19 +126,19 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
     }
 
     public double viewXRatio() {
-        return imageView.getBoundsInParent().getWidth() / getImageWidth();
+        return viewWidth() / imageWidth();
     }
 
     public double viewYRatio() {
-        return imageView.getBoundsInParent().getHeight() / getImageHeight();
+        return viewHeight() / imageHeight();
     }
 
     public double imageXRatio() {
-        return getImageWidth() / imageView.getBoundsInParent().getWidth();
+        return imageWidth() / viewWidth();
     }
 
     public double imageYRatio() {
-        return getImageHeight() / imageView.getBoundsInParent().getHeight();
+        return imageHeight() / viewHeight();
     }
 
     public double maskHandlerX(Shape shape, MouseEvent event) {
@@ -282,8 +282,8 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
         clearMaskRulerX();
         if (UserConfig.getBoolean("ImageRulerXY", false)) {
             Color strokeColor = Color.web(UserConfig.getString("StrokeColor", "#FF0000"));
-            double imageWidth = getImageWidth() / widthRatio();
-            double ratio = imageView.getBoundsInParent().getWidth() / imageWidth;
+            double imageWidth = imageWidth() / widthRatio();
+            double ratio = viewWidth() / imageWidth;
             int step = getRulerStep(imageWidth);
             for (int i = step; i < imageWidth; i += step) {
                 double x = i * ratio;
@@ -338,8 +338,8 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
         clearMaskRulerY();
         if (UserConfig.getBoolean("ImageRulerXY", false)) {
             Color strokeColor = Color.web(UserConfig.getString("StrokeColor", "#FF0000"));
-            double imageHeight = getImageHeight() / heightRatio();
-            double ratio = imageView.getBoundsInParent().getHeight() / imageHeight;
+            double imageHeight = imageHeight() / heightRatio();
+            double ratio = viewHeight() / imageHeight;
             int step = getRulerStep(imageHeight);
             for (int j = step; j < imageHeight; j += step) {
                 double y = j * ratio;
@@ -400,10 +400,10 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
             Color lineColor = Color.web(UserConfig.getString("GridLinesColor", Color.LIGHTGRAY.toString()));
             int lineWidth = UserConfig.getInt("GridLinesWidth", 1);
             lineWidth = lineWidth <= 0 ? 1 : lineWidth;
-            double imageWidth = getImageWidth() / widthRatio();
-            double imageHeight = getImageHeight() / heightRatio();
-            double wratio = imageView.getBoundsInParent().getWidth() / imageWidth;
-            double hratio = imageView.getBoundsInParent().getHeight() / imageHeight;
+            double imageWidth = imageWidth() / widthRatio();
+            double imageHeight = imageHeight() / heightRatio();
+            double wratio = viewWidth() / imageWidth;
+            double hratio = viewHeight() / imageHeight;
             int istep = getRulerStep(imageWidth);
             int interval = UserConfig.getInt("GridLinesInterval", -1);
             interval = interval <= 0 ? istep : interval;
@@ -456,10 +456,10 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
         if (UserConfig.getBoolean("ImageGridLines", false)) {
             Color lineColor = Color.web(UserConfig.getString("GridLinesColor", Color.LIGHTGRAY.toString()));
             int lineWidth = UserConfig.getInt("GridLinesWidth", 1);
-            double imageWidth = getImageWidth() / widthRatio();
-            double imageHeight = getImageHeight() / heightRatio();
-            double wratio = imageView.getBoundsInParent().getWidth() / imageWidth;
-            double hratio = imageView.getBoundsInParent().getHeight() / imageHeight;
+            double imageWidth = imageWidth() / widthRatio();
+            double imageHeight = imageHeight() / heightRatio();
+            double wratio = viewWidth() / imageWidth;
+            double hratio = viewHeight() / imageHeight;
             int istep = getRulerStep(imageHeight);
             int interval = UserConfig.getInt("GridLinesInterval", -1);
             interval = interval <= 0 ? istep : interval;

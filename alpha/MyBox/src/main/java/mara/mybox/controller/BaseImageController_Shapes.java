@@ -319,8 +319,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         if (imageView == null || maskPane == null || maskRectangle == null) {
             return;
         }
-        double w = getImageWidth();
-        double h = getImageHeight();
+        double w = imageWidth();
+        double h = imageHeight();
         maskRectangleData = new DoubleRectangle(w / 4, h / 4, w * 3 / 4, h * 3 / 4);
     }
 
@@ -423,8 +423,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         if (imageView == null || maskPane == null || maskCircle == null) {
             return;
         }
-        double w = getImageWidth();
-        double h = getImageHeight();
+        double w = imageWidth();
+        double h = imageHeight();
         maskCircleData = new DoubleCircle(w / 2, h / 2, Math.min(w, h) / 4);
     }
 
@@ -506,8 +506,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         if (imageView == null || maskPane == null || maskEllipse == null) {
             return;
         }
-        double w = getImageWidth();
-        double h = getImageHeight();
+        double w = imageWidth();
+        double h = imageHeight();
         maskEllipseData = new DoubleEllipse(w / 4, h / 4, w * 3 / 4, h * 3 / 4);
     }
 
@@ -592,8 +592,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         if (imageView == null || maskPane == null || maskLine == null) {
             return;
         }
-        double w = getImageWidth();
-        double h = getImageHeight();
+        double w = imageWidth();
+        double h = imageHeight();
         maskLineData = new DoubleLine(w / 4, h / 4, w * 3 / 4, h * 3 / 4);
     }
 
@@ -674,8 +674,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         if (imageView == null || maskPane == null || maskPolyline == null) {
             return;
         }
-        double w = getImageWidth();
-        double h = getImageHeight();
+        double w = imageWidth();
+        double h = imageHeight();
         maskPolylineData = new DoublePolyline();
         maskPolylineData.add(10, 10);
         maskPolylineData.add(w / 2, 10);
@@ -837,8 +837,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         if (imageView == null || maskPane == null || maskPolygon == null) {
             return;
         }
-        double w = getImageWidth();
-        double h = getImageHeight();
+        double w = imageWidth();
+        double h = imageHeight();
         maskPolygonData = new DoublePolygon();
         maskPolygonData.add(10, 10);
         maskPolygonData.add(w / 2, 10);

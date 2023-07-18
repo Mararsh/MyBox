@@ -2,19 +2,16 @@ package mara.mybox.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.layout.FlowPane;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.cell.TableRowSelectionCell;
 import mara.mybox.value.AppVariables;
@@ -29,7 +26,6 @@ import mara.mybox.value.UserConfig;
 public abstract class BaseTableViewController<P> extends BaseController {
 
     protected ObservableList<P> tableData;
-    protected SimpleBooleanProperty tableDataChangedNotify;
     protected boolean isSettingTable;
 
     @FXML
@@ -44,7 +40,6 @@ public abstract class BaseTableViewController<P> extends BaseController {
         try {
             super.initValues();
 
-            tableDataChangedNotify = new SimpleBooleanProperty(false);
             tableData = FXCollections.observableArrayList();
 
         } catch (Exception e) {
@@ -149,12 +144,6 @@ public abstract class BaseTableViewController<P> extends BaseController {
     }
 
     public void tableChanged(boolean changed) {
-        if (isSettingValues) {
-            return;
-        }
-        if (changed) {
-            tableDataChangedNotify.set(!tableDataChangedNotify.get());
-        }
     }
 
     @FXML

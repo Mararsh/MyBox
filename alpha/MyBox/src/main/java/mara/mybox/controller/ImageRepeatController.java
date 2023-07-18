@@ -5,6 +5,7 @@ import java.util.Arrays;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -272,8 +273,14 @@ public class ImageRepeatController extends ImageViewerController {
 
     @FXML
     @Override
-    public void saveAsAction() {
-        repeatController.saveAsAction();
+    public void pickSaveAs(Event event) {
+        repeatController.pickSaveAs(event);
+    }
+
+    @FXML
+    @Override
+    public void popSaveAs(Event event) {
+        repeatController.popSaveAs(event);
     }
 
     @Override

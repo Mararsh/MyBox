@@ -7,11 +7,8 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureTextController">
+<VBox fx:id="thisPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mara.mybox.controller.ImageManufactureTextController">
     <children>
-        <Label fx:id="locationLabel" minHeight="-Infinity" text="%ImageTextLocationComments" wrapText="true" 
-               styleClass="blue-label" stylesheets="@../styles/MyBox.css"  />
-        <fx:include fx:id="options" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageText.fxml" VBox.vgrow="ALWAYS" />
         <HBox fx:id="opBox" alignment="CENTER_LEFT" spacing="5.0">
             <children>
                 <Button fx:id="okButton" mnemonicParsing="false" onAction="#okAction">
@@ -34,5 +31,7 @@
                 </Button>
             </children>
         </HBox>
+        <Label fx:id="locationLabel" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" text="%ImageTextLocationComments" wrapText="true" />
+        <fx:include fx:id="options" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageText.fxml" VBox.vgrow="ALWAYS" />
     </children>
 </VBox>

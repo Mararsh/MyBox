@@ -275,7 +275,7 @@ public abstract class BaseImageController_Actions extends BaseImageController_Im
         if (imageView.getImage() == null || maskRectangle == null || !maskRectangle.isVisible()) {
             return;
         }
-        maskRectangleData = new DoubleRectangle(0, 0, getImageWidth() - 1, getImageHeight() - 1);
+        maskRectangleData = new DoubleRectangle(0, 0, imageWidth() - 1, imageHeight() - 1);
         drawMaskRectangle();
     }
 

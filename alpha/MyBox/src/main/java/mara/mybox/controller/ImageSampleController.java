@@ -218,7 +218,7 @@ public class ImageSampleController extends ImageViewerController {
             return;
         }
         infoLabel.setText(Languages.message("ImageSize") + ": "
-                + getOperationWidth() + "x" + getOperationHeight()
+                + operationWidth() + "x" + operationHeight()
                 + "\n" + Languages.message("SamplingSize") + ": "
                 + (int) (maskRectangleData.getWidth() / (widthRatio() * widthScale))
                 + "x" + (int) (maskRectangleData.getHeight() / (heightRatio() * heightScale)));

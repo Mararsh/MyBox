@@ -306,9 +306,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
         if (scope.getScopeType() == ScopeType.Matting) {
             int x = (int) Math.round(p.getX());
             int y = (int) Math.round(p.getY());
-            pointsController.isSettingValues = true;
             pointsController.tableData.add(new DoublePoint(x, y));
-            pointsController.isSettingValues = false;
             scope.addPoint(x, y);
             indicateScope();
         } else {
@@ -334,13 +332,11 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
                     break;
                 case Polygon:
                     if (!scope.getPolygon().same(maskPolygonData)) {
-                        pointsController.isSettingValues = true;
                         pointsController.tableData.clear();
                         for (DoublePoint d : maskPolygonData.getPoints()) {
                             pointsController.tableData.add(
                                     new DoublePoint(Math.round(d.getX()), Math.round(d.getY())));
                         }
-                        pointsController.isSettingValues = false;
                         scope.setPolygon(maskPolygonData.cloneValues());
                         indicateScope();
                     }

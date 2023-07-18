@@ -224,17 +224,9 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
         }
     }
 
-    public File imageFile() {
-        return sourceFile();
-    }
-
-    protected void popImageMenu(double x, double y) {
-        if (imageView == null || imageView.getImage() == null) {
-            return;
-        }
-        MenuImageBaseController.open((BaseImageController) this, x, y);
-    }
-
+    /*
+        status
+     */
     protected void zoomStepChanged() {
     }
 
@@ -270,64 +262,6 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
         LocateTools.moveCenter(scrollPane, imageView);
         scrollPane.setVvalue(scrollPane.getVmin());
         updateLabelsTitle();
-    }
-
-    public double getImageWidth() {
-        if (imageView != null && imageView.getImage() != null) {
-            return imageView.getImage().getWidth();
-        } else if (image != null) {
-            return image.getWidth();
-        } else if (imageInformation != null) {
-            return imageInformation.getWidth();
-        } else {
-            return -1;
-        }
-    }
-
-    public double getImageHeight() {
-        if (imageView != null && imageView.getImage() != null) {
-            return imageView.getImage().getHeight();
-        } else if (image != null) {
-            return image.getHeight();
-        } else if (imageInformation != null) {
-            return imageInformation.getHeight();
-        } else {
-            return -1;
-        }
-    }
-
-    public double widthRatio() {
-        if (!operateOriginalSize || imageInformation == null || image == null) {
-            return 1;
-        }
-        double ratio = 1d * getImageWidth() / imageInformation.getWidth();
-        return ratio;
-    }
-
-    public double heightRatio() {
-        if (!operateOriginalSize || imageInformation == null || image == null) {
-            return 1;
-        }
-        double ratio = 1d * getImageHeight() / imageInformation.getHeight();
-        return ratio;
-    }
-
-    public int getOperationWidth() {
-        return (int) (getImageWidth() / widthRatio());
-    }
-
-    public int getOperationHeight() {
-        return (int) (getImageHeight() / heightRatio());
-    }
-
-    protected int getRulerStep(double width) {
-        if (width <= 1000) {
-            return 10;
-        } else if (width <= 10000) {
-            return (int) (width / 1000) * 10;
-        } else {
-            return (int) (width / 10000) * 10;
-        }
     }
 
     public synchronized void updateLabelsTitle() {
@@ -415,8 +349,8 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
                 if (borderLine != null) {
                     borderLine.setLayoutX(imageView.getLayoutX() - 1);
                     borderLine.setLayoutY(imageView.getLayoutY() - 1);
-                    borderLine.setWidth(imageView.getBoundsInParent().getWidth() + 2);
-                    borderLine.setHeight(imageView.getBoundsInParent().getHeight() + 2);
+                    borderLine.setWidth(viewWidth() + 2);
+                    borderLine.setHeight(viewHeight() + 2);
                 }
                 if (sizeText != null) {
                     sizeText.setText((int) (imageView.getImage().getWidth()) + "x" + (int) (imageView.getImage().getHeight()));
@@ -440,6 +374,83 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
         return "";
     }
 
+    /*
+        values
+     */
+    public File imageFile() {
+        return sourceFile();
+    }
+
+    public double imageWidth() {
+        if (imageView != null && imageView.getImage() != null) {
+            return imageView.getImage().getWidth();
+        } else if (image != null) {
+            return image.getWidth();
+        } else if (imageInformation != null) {
+            return imageInformation.getWidth();
+        } else {
+            return -1;
+        }
+    }
+
+    public double imageHeight() {
+        if (imageView != null && imageView.getImage() != null) {
+            return imageView.getImage().getHeight();
+        } else if (image != null) {
+            return image.getHeight();
+        } else if (imageInformation != null) {
+            return imageInformation.getHeight();
+        } else {
+            return -1;
+        }
+    }
+
+    public double viewWidth() {
+        return imageView.getBoundsInParent().getWidth();
+    }
+
+    public double viewHeight() {
+        return imageView.getBoundsInParent().getHeight();
+    }
+
+    public double widthRatio() {
+        if (!operateOriginalSize || imageInformation == null || image == null) {
+            return 1;
+        }
+        double ratio = imageWidth() / imageInformation.getWidth();
+        return ratio;
+    }
+
+    public double heightRatio() {
+        if (!operateOriginalSize || imageInformation == null || image == null) {
+            return 1;
+        }
+        double ratio = imageHeight() / imageInformation.getHeight();
+        return ratio;
+    }
+
+    public int operationWidth() {
+        return (int) (imageWidth() / widthRatio());
+    }
+
+    public int operationHeight() {
+        return (int) (imageHeight() / heightRatio());
+    }
+
+    protected int getRulerStep(double width) {
+        if (width <= 1000) {
+            return 10;
+        } else if (width <= 10000) {
+            return (int) (width / 1000) * 10;
+        } else {
+            return (int) (width / 10000) * 10;
+        }
+    }
+
+
+    /*
+        action
+     */
     @FXML
     public void paneSize() {
         if (imageView == null || imageView.getImage() == null || scrollPane == null) {
@@ -471,8 +482,8 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
             return;
         }
         try {
-            if (scrollPane.getHeight() < getImageHeight()
-                    || scrollPane.getWidth() < getImageWidth()) {
+            if (scrollPane.getHeight() < imageHeight()
+                    || scrollPane.getWidth() < imageWidth()) {
                 paneSize();
             } else {
                 loadedSize();
@@ -518,6 +529,13 @@ public abstract class BaseImageController_ImageView extends BaseFileController {
     @FXML
     public void moveDown() {
         NodeTools.setScrollPane(scrollPane, scrollPane.getHvalue(), -40);
+    }
+
+    protected void popImageMenu(double x, double y) {
+        if (imageView == null || imageView.getImage() == null) {
+            return;
+        }
+        MenuImageBaseController.open((BaseImageController) this, x, y);
     }
 
     /*

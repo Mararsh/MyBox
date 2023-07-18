@@ -133,19 +133,15 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
             return false;
         }
         try {
-            pointsController.isSettingValues = true;
             pointsController.clearAction();
-            pointsController.isSettingValues = true;
             areaExcludedCheck.setSelected(scope.isAreaExcluded());
             switch (scope.getScopeType()) {
                 case Matting: {
                     List<IntPoint> points = scope.getPoints();
                     if (points != null) {
-                        pointsController.isSettingValues = true;
                         for (IntPoint p : points) {
                             pointsController.tableData.add(new DoublePoint(p.getX(), p.getY()));
                         }
-                        pointsController.isSettingValues = true;
                     }
                     return true;
                 }
@@ -162,11 +158,9 @@ public abstract class ImageManufactureScopeController_Save extends ImageManufact
                 case Polygon: {
                     List<IntPoint> points = scope.getPoints();
                     if (points != null) {
-                        pointsController.isSettingValues = true;
                         for (IntPoint p : points) {
                             pointsController.tableData.add(new DoublePoint(p.getX(), p.getY()));
                         }
-                        pointsController.isSettingValues = true;
                     }
                     maskPolygonData = scope.getPolygon();
                     return showMaskPolygon();

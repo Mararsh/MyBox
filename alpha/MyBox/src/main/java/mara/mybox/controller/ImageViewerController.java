@@ -14,6 +14,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -65,6 +66,8 @@ public class ImageViewerController extends BaseImageController {
     protected ComboBox<String> frameSelector;
     @FXML
     protected Label framesLabel;
+    @FXML
+    protected Button nextFrameButton, previousFrameButton, playFramesButton;
     @FXML
     protected RadioButton saveAllFramesRadio;
     @FXML
@@ -313,6 +316,9 @@ public class ImageViewerController extends BaseImageController {
                 isSettingValues = true;
                 frameSelector.getItems().setAll(frames);
                 frameSelector.setValue((frameIndex + 1) + "");
+                nextFrameButton.setDisable(framesNumber < 2);
+                previousFrameButton.setDisable(framesNumber < 2);
+                playFramesButton.setDisable(framesNumber < 2);
                 isSettingValues = false;
             }
 
@@ -443,8 +449,8 @@ public class ImageViewerController extends BaseImageController {
         if (imageView == null) {
             return;
         }
-        boolean sizeChanged = getImageWidth() != image.getWidth()
-                || getImageHeight() != image.getHeight();
+        boolean sizeChanged = imageWidth() != image.getWidth()
+                || imageHeight() != image.getHeight();
         imageView.setImage(image);
         if (sizeChanged) {
             redrawMaskShapes();

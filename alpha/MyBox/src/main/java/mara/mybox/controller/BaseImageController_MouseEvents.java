@@ -359,11 +359,11 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         } else if (maskRectangle != null && maskRectangle.isVisible()) {
 
             if (x < maskRectangleData.getBigX() && y < maskRectangleData.getBigY()) {
-                if (x >= getImageWidth() - 1) {
-                    x = getImageWidth() - 2;
+                if (x >= imageWidth() - 1) {
+                    x = imageWidth() - 2;
                 }
-                if (y >= getImageHeight() - 1) {
-                    y = getImageHeight() - 2;
+                if (y >= imageHeight() - 1) {
+                    y = imageHeight() - 2;
                 }
                 maskRectangleData.setSmallX(x);
                 maskRectangleData.setSmallY(y);
@@ -382,8 +382,8 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         if (maskRectangle != null && maskRectangle.isVisible()) {
             double y = maskHandlerY(topCenterHandler, event);
             if (y < maskRectangleData.getBigY()) {
-                if (y >= getImageHeight() - 1) {
-                    y = getImageHeight() - 2;
+                if (y >= imageHeight() - 1) {
+                    y = imageHeight() - 2;
                 }
                 maskRectangleData.setSmallY(y);
                 drawMaskRectangle();
@@ -427,8 +427,8 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
             if (x <= 0) {
                 x = 1;
             }
-            if (y >= getImageHeight() - 1) {
-                y = getImageHeight() - 2;
+            if (y >= imageHeight() - 1) {
+                y = imageHeight() - 2;
             }
             maskRectangleData.setBigX(x);
             maskRectangleData.setSmallY(y);
@@ -447,8 +447,8 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         double y = maskHandlerY(bottomLeftHandler, event);
 
         if (x < maskRectangleData.getBigX() && y > maskRectangleData.getSmallY()) {
-            if (x >= getImageWidth() - 1) {
-                x = getImageWidth() - 2;
+            if (x >= imageWidth() - 1) {
+                x = imageWidth() - 2;
             }
             if (y <= 0) {
                 y = 1;
@@ -541,8 +541,8 @@ public abstract class BaseImageController_MouseEvents extends BaseImageControlle
         if (maskRectangle != null && maskRectangle.isVisible()) {
             double x = maskHandlerX(leftCenterHandler, event);
             if (x < maskRectangleData.getBigX()) {
-                if (x >= getImageWidth() - 1) {
-                    x = getImageWidth() - 2;
+                if (x >= imageWidth() - 1) {
+                    x = imageWidth() - 2;
                 }
                 maskRectangleData.setSmallX(x);
                 drawMaskRectangle();

@@ -219,6 +219,9 @@ public abstract class BaseImageController_Image extends BaseImageController_Mous
     }
 
     public void loadFrame(int index) {
+        if (index == frameIndex) {
+            return;
+        }
         loadImage(sourceFile, false, loadWidth, index);
     }
 
