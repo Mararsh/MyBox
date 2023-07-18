@@ -16,12 +16,34 @@ public class TableCheckboxCell<S, T> extends CheckBoxTableCell<S, T> {
 
     protected SimpleBooleanProperty checked;
     protected ChangeListener<Boolean> checkedListener;
+    protected boolean isChanging;
 
     public TableCheckboxCell() {
         checked = new SimpleBooleanProperty(false);
+
+        setSelectedStateCallback(new Callback<Integer, ObservableValue<Boolean>>() {
+            @Override
+            public synchronized ObservableValue<Boolean> call(Integer index) {
+                if (isChanging) {
+                    return checked;
+                }
+                int rowIndex = rowIndex();
+                if (rowIndex < 0) {
+                    return null;
+                }
+                isChanging = true;
+                checked.set(getCellValue(rowIndex));
+                isChanging = false;
+                return checked;
+            }
+        });
+
         checkedListener = new ChangeListener<Boolean>() {
             @Override
             public synchronized void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                if (isChanging) {
+                    return;
+                }
                 int rowIndex = rowIndex();
                 if (rowIndex < 0) {
                     return;
@@ -29,19 +51,9 @@ public class TableCheckboxCell<S, T> extends CheckBoxTableCell<S, T> {
                 setCellValue(rowIndex, newValue);
             }
         };
+
         checked.addListener(checkedListener);
 
-        setSelectedStateCallback(new Callback<Integer, ObservableValue<Boolean>>() {
-            @Override
-            public synchronized ObservableValue<Boolean> call(Integer index) {
-                int rowIndex = rowIndex();
-                if (rowIndex < 0) {
-                    return null;
-                }
-                checked.set(getCellValue(rowIndex));
-                return checked;
-            }
-        });
     }
 
     protected boolean getCellValue(int rowIndex) {

@@ -772,7 +772,7 @@ public class ControlData2DLoad extends BaseTablePagesController<List<String>> {
 
                 if (tableColumn.isEditable()) {
 
-                    if (dataColumn.isEnumType()) {
+                    if (type == ColumnType.Enumeration) {
                         tableColumn.setCellFactory(TableComboBoxCell.create(dataColumn.enumValues(), 12));
 
                     } else if (type == ColumnType.Boolean) {

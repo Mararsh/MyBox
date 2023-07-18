@@ -44,6 +44,7 @@ public class ControlPoints extends BaseTableViewController<DoublePoint> {
                     }
                     DoublePoint point = tableData.get(row);
                     point.setX(e.getNewValue());
+                    tableData.set(row, point);
                 }
             });
             xColumn.getStyleClass().add("editable-column");
@@ -62,6 +63,7 @@ public class ControlPoints extends BaseTableViewController<DoublePoint> {
                     }
                     DoublePoint point = tableData.get(row);
                     point.setY(e.getNewValue());
+                    tableData.set(row, point);
                 }
             });
             yColumn.getStyleClass().add("editable-column");
@@ -71,13 +73,12 @@ public class ControlPoints extends BaseTableViewController<DoublePoint> {
         }
     }
 
+    @Override
+    public void tableChanged(boolean changed) {
+    }
+
     public void loadText(String values) {
-        List<DoublePoint> list = DoublePoint.parseList(values);
-        if (list == null || list.isEmpty()) {
-            tableData.clear();
-        } else {
-            tableData.setAll(list);
-        }
+        loadList(DoublePoint.parseList(values));
     }
 
     public void loadList(List<DoublePoint> list) {

@@ -129,7 +129,7 @@ public class ControlData2DColumns extends BaseTablePagesController<Data2DColumn>
                             @Override
                             protected void setCellValue(int rowIndex, boolean value) {
                                 try {
-                                    if (rowIndex < 0) {
+                                    if (isChanging || rowIndex < 0) {
                                         return;
                                     }
                                     Data2DColumn column = tableData.get(rowIndex);
@@ -137,8 +137,10 @@ public class ControlData2DColumns extends BaseTablePagesController<Data2DColumn>
                                         return;
                                     }
                                     if (value != column.isEditable()) {
+                                        isChanging = true;
                                         column.setEditable(value);
                                         status(Status.Modified);
+                                        isChanging = false;
                                     }
                                 } catch (Exception e) {
                                     MyBoxLog.debug(e);
@@ -177,7 +179,7 @@ public class ControlData2DColumns extends BaseTablePagesController<Data2DColumn>
                             @Override
                             protected void setCellValue(int rowIndex, boolean value) {
                                 try {
-                                    if (rowIndex < 0) {
+                                    if (isChanging || rowIndex < 0) {
                                         return;
                                     }
                                     Data2DColumn column = tableData.get(rowIndex);
@@ -185,8 +187,10 @@ public class ControlData2DColumns extends BaseTablePagesController<Data2DColumn>
                                         return;
                                     }
                                     if (value != column.isNotNull()) {
+                                        isChanging = true;
                                         column.setNotNull(value);
                                         status(Status.Modified);
+                                        isChanging = false;
                                     }
                                 } catch (Exception e) {
                                     MyBoxLog.debug(e);
@@ -410,7 +414,7 @@ public class ControlData2DColumns extends BaseTablePagesController<Data2DColumn>
                                 @Override
                                 protected void setCellValue(int rowIndex, boolean value) {
                                     try {
-                                        if (rowIndex < 0) {
+                                        if (isChanging || rowIndex < 0) {
                                             return;
                                         }
                                         Data2DColumn column = tableData.get(rowIndex);
@@ -418,8 +422,10 @@ public class ControlData2DColumns extends BaseTablePagesController<Data2DColumn>
                                             return;
                                         }
                                         if (value != column.isNotNull()) {
+                                            isChanging = true;
                                             column.setNotNull(value);
                                             status(Status.Modified);
+                                            isChanging = false;
                                         }
                                     } catch (Exception e) {
                                         MyBoxLog.debug(e);

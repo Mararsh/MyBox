@@ -43,14 +43,18 @@ public class TableDataBooleanEditCell extends TableCheckboxCell<List<String>, St
     @Override
     protected void setCellValue(int rowIndex, boolean value) {
         try {
-            if (rowIndex < 0 || rowIndex >= dataControl.getTableData().size()) {
+            if (isChanging || rowIndex < 0
+                    || rowIndex >= dataControl.getTableData().size()) {
                 return;
             }
             List<String> row = dataControl.getTableData().get(rowIndex);
             if ((value + "").equalsIgnoreCase(getItem())) {
                 return;
             }
+            isChanging = true;
             row.set(colIndex, value + "");
+            dataControl.getTableData().set(rowIndex, row);
+            isChanging = false;
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }

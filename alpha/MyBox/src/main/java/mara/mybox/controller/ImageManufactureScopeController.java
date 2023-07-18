@@ -10,6 +10,10 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import mara.mybox.bufferedimage.ImageScope.ScopeType;
+import static mara.mybox.bufferedimage.ImageScope.ScopeType.Circle;
+import static mara.mybox.bufferedimage.ImageScope.ScopeType.Ellipse;
+import static mara.mybox.bufferedimage.ImageScope.ScopeType.Outline;
+import static mara.mybox.bufferedimage.ImageScope.ScopeType.Rectangle;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.db.table.TableColor;
 import mara.mybox.dev.MyBoxLog;
@@ -40,7 +44,6 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
             initSplitPane();
             initScopeView();
             initSetBox();
-            initPointsTab();
             initColorsTab();
             initMatchTab();
             initSaveTab();
@@ -250,22 +253,10 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
     @Override
     public void viewSizeChanged(double change) {
         super.viewSizeChanged(change);
-        if (isSettingValues || change < sizeChangeAware
-                || imageView == null || imageView.getImage() == null
-                || scope == null || scope.getScopeType() == null || !scopeView.isVisible()) {
+        if (change < sizeChangeAware) {
             return;
         }
-        // Following handlers can conflict with threads' status changes which must check variables carefully
-        switch (scope.getScopeType()) {
-            case Operate:
-                break;
-            case Outline:
-                makeOutline();
-                break;
-            default:
-                indicateScope();
-                break;
-        }
+        goScope();
     }
 
     @Override
@@ -372,6 +363,7 @@ public class ImageManufactureScopeController extends ImageManufactureScopeContro
         if (task != null) {
             task.cancel();
         }
-        viewSizeChanged(sizeChangeAware + 1);
+        goScope();
     }
+
 }

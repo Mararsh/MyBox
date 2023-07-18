@@ -42,7 +42,6 @@ public class ControlData2DEditTable extends ControlData2DLoad {
     protected Button verifyButton;
 
     public ControlData2DEditTable() {
-        TipsLabelKey = "DataCellComments";
         readOnly = false;
         columnChangedNotify = new SimpleBooleanProperty(false);
     }
@@ -79,10 +78,6 @@ public class ControlData2DEditTable extends ControlData2DLoad {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
-    }
-
-    public void notifyColumnChanged() {
-        columnChangedNotify.set(!columnChangedNotify.get());
     }
 
     public void dataSaved() {

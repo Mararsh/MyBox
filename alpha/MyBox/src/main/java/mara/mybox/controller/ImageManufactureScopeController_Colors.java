@@ -24,7 +24,7 @@ import static mara.mybox.value.Languages.message;
  * @CreateDate 2021-8-13
  * @License Apache License Version 2.0
  */
-public abstract class ImageManufactureScopeController_Colors extends ImageManufactureScopeController_Points {
+public abstract class ImageManufactureScopeController_Colors extends ImageManufactureScopeController_Area {
 
     public void initColorsTab() {
         try {

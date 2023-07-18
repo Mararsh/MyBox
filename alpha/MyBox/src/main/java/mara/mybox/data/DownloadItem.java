@@ -5,6 +5,7 @@ package mara.mybox.data;
 
 import java.io.File;
 import java.util.Date;
+import mara.mybox.fxml.DownloadTask;
 import mara.mybox.tools.FileTools;
 
 /**

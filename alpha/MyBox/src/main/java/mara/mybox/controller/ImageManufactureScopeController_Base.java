@@ -40,9 +40,9 @@ public abstract class ImageManufactureScopeController_Base extends ImageViewerCo
     @FXML
     protected ToggleGroup scopeTypeGroup, matchGroup;
     @FXML
-    protected Tab areaTab, pointsTab, colorsTab, matchTab, pixTab, optionsTab, saveTab;
+    protected Tab areaTab, colorsTab, matchTab, pixTab, optionsTab, saveTab;
     @FXML
-    protected VBox setBox, areaBox, rectangleBox, circleBox;
+    protected VBox setBox, areaBox, rectangleBox, circleBox, pointsBox;
     @FXML
     protected ComboBox<String> scopeDistanceSelector, opacitySelector;
     @FXML

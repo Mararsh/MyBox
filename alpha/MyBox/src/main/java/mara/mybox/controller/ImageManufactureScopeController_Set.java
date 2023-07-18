@@ -5,7 +5,11 @@ import java.util.Date;
 import java.util.List;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import mara.mybox.bufferedimage.ImageScope;
+import mara.mybox.data.DoublePoint;
+import mara.mybox.data.DoublePolygon;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.ValidationTools;
 import mara.mybox.fxml.style.NodeStyleTools;
@@ -69,28 +73,31 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
         try {
             setBox.setVisible(!scopeWhole());
             tabPane.getTabs().clear();
+            areaBox.getChildren().clear();
             scopeTips.setText("");
             NodeStyleTools.removeTooltip(scopeTips);
             if (image == null || scope == null) {
                 return;
             }
             isSettingValues = true;
-            String tips;
+            String tips = "";
             switch (scope.getScopeType()) {
                 case All:
                     tips = message("WholeImage");
                     break;
                 case Matting:
                     tips = message("ScopeMattingTips");
-                    tabPane.getTabs().addAll(pointsTab, matchTab, optionsTab, saveTab);
-                    tabPane.getSelectionModel().select(pointsTab);
+                    tabPane.getTabs().addAll(areaTab, matchTab, optionsTab, saveTab);
+                    tabPane.getSelectionModel().select(areaTab);
+                    areaBox.getChildren().add(pointsBox);
+                    VBox.setVgrow(areaBox, Priority.ALWAYS);
+                    VBox.setVgrow(pointsBox, Priority.ALWAYS);
                     break;
 
                 case Rectangle:
                     tips = message("ScopeRectangleColorsTips");
                     tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab, saveTab);
                     tabPane.getSelectionModel().select(areaTab);
-                    areaBox.getChildren().clear();
                     areaBox.getChildren().add(rectangleBox);
                     rectangleLabel.setText(message("Rectangle"));
                     break;
@@ -99,7 +106,6 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     tips = message("ScopeCircleColorsTips");
                     tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab, saveTab);
                     tabPane.getSelectionModel().select(areaTab);
-                    areaBox.getChildren().clear();
                     areaBox.getChildren().add(circleBox);
                     break;
 
@@ -107,15 +113,17 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     tips = message("ScopeEllipseColorsTips");
                     tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab, saveTab);
                     tabPane.getSelectionModel().select(areaTab);
-                    areaBox.getChildren().clear();
                     areaBox.getChildren().add(rectangleBox);
                     rectangleLabel.setText(message("Ellipse"));
                     break;
 
                 case Polygon:
                     tips = message("ScopePolygonColorsTips");
-                    tabPane.getTabs().addAll(pointsTab, colorsTab, matchTab, optionsTab, saveTab);
-                    tabPane.getSelectionModel().select(pointsTab);
+                    tabPane.getTabs().addAll(areaTab, colorsTab, matchTab, optionsTab, saveTab);
+                    tabPane.getSelectionModel().select(areaTab);
+                    areaBox.getChildren().add(pointsBox);
+                    VBox.setVgrow(areaBox, Priority.ALWAYS);
+                    VBox.setVgrow(pointsBox, Priority.ALWAYS);
                     break;
 
                 case Color:
@@ -133,14 +141,14 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     }
                     break;
 
-                default:
-                    return;
             }
             scopeTips.setText(tips);
             if (!tips.isBlank()) {
                 NodeStyleTools.setTooltip(scopeTips, tips);
             }
             setScopeName();
+            areaBox.applyCss();
+            areaBox.layout();
             refreshStyle(tabPane);
             isSettingValues = false;
 
@@ -158,7 +166,10 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
             pickColors();
             switch (scope.getScopeType()) {
                 case Matting:
-                    pickPoints();
+                    scope.clearPoints();
+                    for (DoublePoint p : pointsController.tableData) {
+                        scope.addPoint((int) Math.round(p.getX()), (int) Math.round(p.getY()));
+                    }
                     checkMatchType();
                     break;
 
@@ -181,7 +192,8 @@ public abstract class ImageManufactureScopeController_Set extends ImageManufactu
                     break;
 
                 case Polygon:
-                    pickPoints();
+                    maskPolygonData = new DoublePolygon();
+                    maskPolygonData.setAll(pointsController.tableData);
                     showMaskPolygon();
                     scope.setPolygon(maskPolygonData.cloneValues());
                     checkMatchType();

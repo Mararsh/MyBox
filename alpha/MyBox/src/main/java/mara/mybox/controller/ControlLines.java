@@ -10,8 +10,8 @@ import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fxml.cell.TableAutoCommitCell;
 import mara.mybox.fxml.cell.TableRowIndexCell;
+import mara.mybox.fxml.cell.TableTextAreaEditCell;
 
 /**
  * @Author Mara
@@ -52,7 +52,7 @@ public class ControlLines extends BaseTableViewController<List<DoublePoint>> {
                     }
                 }
             });
-            pointsColumn.setCellFactory(TableAutoCommitCell.forStringColumn());
+            pointsColumn.setCellFactory(TableTextAreaEditCell.create(myController, null));
             pointsColumn.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<List<DoublePoint>, String>>() {
                 @Override
                 public void handle(TableColumn.CellEditEvent<List<DoublePoint>, String> e) {
@@ -60,10 +60,11 @@ public class ControlLines extends BaseTableViewController<List<DoublePoint>> {
                         return;
                     }
                     int row = e.getTablePosition().getRow();
-                    if (row < 0) {
+                    String s = e.getNewValue();
+                    if (row < 0 || s == null || s.isBlank()) {
                         return;
                     }
-                    List<DoublePoint> points = DoublePoint.parseList(e.getNewValue());
+                    List<DoublePoint> points = DoublePoint.parseList(s.replaceAll("\n", " "));
                     if (points == null || points.isEmpty()) {
                         return;
                     }
@@ -76,6 +77,10 @@ public class ControlLines extends BaseTableViewController<List<DoublePoint>> {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+    }
+
+    @Override
+    public void tableChanged(boolean changed) {
     }
 
     public void loadList(List<List<DoublePoint>> list) {

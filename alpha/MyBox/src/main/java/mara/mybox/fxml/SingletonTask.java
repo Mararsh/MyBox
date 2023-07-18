@@ -52,6 +52,14 @@ public class SingletonTask<Void> extends BaseTask<Void> {
     }
 
     @Override
+    protected void taskQuit() {
+        if (controller != null) {
+            controller.setTask(null);
+        }
+        super.taskQuit();
+    }
+
+    @Override
     protected void whenSucceeded() {
         if (controller != null) {
             controller.popSuccessful();

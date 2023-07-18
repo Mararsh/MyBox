@@ -9,10 +9,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.FlowPane;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.cell.TableRowSelectionCell;
 import mara.mybox.value.AppVariables;
@@ -56,18 +58,6 @@ public abstract class BaseTableViewController<P> extends BaseController {
             super.initControls();
             initTable();
 
-            if (lostFocusCommitCheck != null) {
-                isSettingTable = true;
-                lostFocusCommitCheck.setSelected(AppVariables.commitModificationWhenDataCellLoseFocus);
-                isSettingTable = false;
-                thisPane.hoverProperty().addListener(new ChangeListener<Boolean>() {
-                    @Override
-                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                        hovering(newValue);
-                    }
-                });
-            }
-
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -86,6 +76,18 @@ public abstract class BaseTableViewController<P> extends BaseController {
             });
 
             initColumns();
+
+            if (lostFocusCommitCheck != null) {
+                isSettingTable = true;
+                lostFocusCommitCheck.setSelected(AppVariables.commitModificationWhenDataCellLoseFocus);
+                isSettingTable = false;
+                thisPane.hoverProperty().addListener(new ChangeListener<Boolean>() {
+                    @Override
+                    public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                        hovering(newValue);
+                    }
+                });
+            }
 
         } catch (Exception e) {
             MyBoxLog.error(e);

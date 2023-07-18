@@ -211,13 +211,9 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
     }
 
     public void clearMask() {
-        try {
-            drawMaskRulers();
-            clearMaskShapes();
-            clearMaskShapesData();
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
+        clearMaskShapes();
+        clearMaskShapesData();
+        shapeType = null;
     }
 
     public void clearMaskShapes() {

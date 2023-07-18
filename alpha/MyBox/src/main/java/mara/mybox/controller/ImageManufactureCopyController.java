@@ -5,6 +5,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -39,24 +40,39 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
 
             colorSetController.init(this, baseName + "CopyColor");
 
+            clipboardCheck.setSelected(UserConfig.getBoolean(baseName + "CopyOpenClipboard", true));
             clipboardCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "CopyOpenClipboard", clipboardCheck.isSelected());
                 }
             });
-            clipboardCheck.setSelected(UserConfig.getBoolean(baseName + "CopyOpenClipboard", true));
 
+            marginsCheck.setSelected(UserConfig.getBoolean(baseName + "CopyCutMargins", true));
             marginsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
                     UserConfig.setBoolean(baseName + "CopyCutMargins", marginsCheck.isSelected());
                 }
             });
-            marginsCheck.setSelected(UserConfig.getBoolean(baseName + "CopyCutMargins", true));
+
+            copyGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+                @Override
+                public void changed(ObservableValue ov, Toggle oldValue, Toggle newValue) {
+                    checkCopyType();
+                }
+            });
 
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    protected void checkCopyType() {
+        if (wholeRadio.isSelected()) {
+            editor.imageTab();
+        } else {
+            showScope(true);
         }
     }
 
@@ -64,9 +80,7 @@ public class ImageManufactureCopyController extends ImageManufactureOperationCon
     protected void paneExpanded() {
         editor.showRightPane();
         editor.resetImagePane();
-        if (scopeController != null && !scopeController.scopeWhole()) {
-            editor.scopeTab();
-        }
+        checkCopyType();
     }
 
     @FXML

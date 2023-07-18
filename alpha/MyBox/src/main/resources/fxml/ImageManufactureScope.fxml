@@ -42,13 +42,9 @@ License:    Apache License Version 2.0
                     <content>
                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
                             <children>
-                                <Label minWidth="-Infinity" text="%ScopeType" wrapText="true" VBox.vgrow="NEVER">
-                                    <VBox.margin>
-                                        <Insets top="5.0" />
-                                    </VBox.margin>
-                                </Label>
                                 <FlowPane hgap="5.0" prefWrapLength="800.0" vgap="5.0">
                                     <children>
+                                      <Label minWidth="-Infinity" text="%ScopeType" wrapText="true" />
                                         <RadioButton fx:id="scopeAllRadio" mnemonicParsing="false" selected="true">
                                             <toggleGroup>
                                                 <ToggleGroup fx:id="scopeTypeGroup" />
@@ -126,130 +122,116 @@ License:    Apache License Version 2.0
                                         </RadioButton>
                                     </children>
                                 </FlowPane>
-                                <HBox>
-                                    <VBox.margin>
-                                        <Insets top="10.0" />
-                                    </VBox.margin>
-                                    <children>
-                                        <Label fx:id="scopeTips" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" HBox.hgrow="ALWAYS" />
-                                    </children>
-                                </HBox>
                                 <VBox fx:id="setBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" VBox.vgrow="ALWAYS">
                                     <children>
                                         <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                                             <tabs>
                                                 <Tab fx:id="areaTab" text="%Area">
                                                     <content>
-                                                        <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="NEVER">
-                                                            <content>
-                                                                <VBox fx:id="areaBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                                                    <children>
-                                                                        <VBox fx:id="rectangleBox" minHeight="-Infinity" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                                                            <children>
-                                                                                <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                                                                                    <children>
-                                                                                        <Label fx:id="rectangleLabel" text="%Rectangle" />
-                                                                                        <Button fx:id="okRectangleButton" mnemonicParsing="false" onAction="#okRectangle">
-                                                                                            <graphic>
-                                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                                    <image>
-                                                                                                        <Image url="@../buttons/Red/iconOK.png" />
-                                                                                                    </image>
-                                                                                                </ImageView>
-                                                                                            </graphic>
-                                                                                        </Button>
-                                                                                    </children>
-                                                                                </HBox>
-                                                                                <Label text="%LeftTop" />
-                                                                                <FlowPane hgap="5.0" minHeight="-Infinity" vgap="5.0">
-                                                                                    <children>
-                                                                                        <Label text="x">
-                                                                                            <FlowPane.margin>
-                                                                                                <Insets />
-                                                                                            </FlowPane.margin>
-                                                                                        </Label>
-                                                                                        <TextField fx:id="rectLeftTopXInput" prefWidth="100.0" />
-                                                                                    </children>
-                                                                                </FlowPane>
-                                                                                <FlowPane hgap="5.0" layoutX="15.0" layoutY="48.0" minHeight="-Infinity" vgap="5.0">
-                                                                                    <children>
-                                                                                        <Label text="y" />
-                                                                                        <TextField fx:id="rectLeftTopYInput" prefWidth="100.0" />
-                                                                                    </children>
-                                                                                </FlowPane>
-                                                                                <Label text="%RightBottom" />
-                                                                                <FlowPane hgap="5.0" layoutX="15.0" layoutY="73.0" minHeight="-Infinity" vgap="5.0">
-                                                                                    <children>
-                                                                                        <Label text="x">
-                                                                                            <FlowPane.margin>
-                                                                                                <Insets />
-                                                                                            </FlowPane.margin>
-                                                                                        </Label>
-                                                                                        <TextField fx:id="rightBottomXInput" prefWidth="100.0" />
-                                                                                    </children>
-                                                                                </FlowPane>
-                                                                                <FlowPane hgap="5.0" layoutX="15.0" layoutY="104.0" minHeight="-Infinity" vgap="5.0">
-                                                                                    <children>
-                                                                                        <Label text="y" />
-                                                                                        <TextField fx:id="rightBottomYInput" prefWidth="100.0" />
-                                                                                    </children>
-                                                                                </FlowPane>
-                                                                            </children>
-                                                                        </VBox>
-                                                                        <VBox fx:id="circleBox" minHeight="-Infinity" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
-                                                                            <children>
-                                                                                <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
-                                                                                    <children>
-                                                                                        <Label text="%Circle" />
-                                                                                        <Button fx:id="okCircleButton" mnemonicParsing="false" onAction="#okCircle">
-                                                                                            <graphic>
-                                                                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                                    <image>
-                                                                                                        <Image url="@../buttons/Red/iconOK.png" />
-                                                                                                    </image>
-                                                                                                </ImageView>
-                                                                                            </graphic>
-                                                                                        </Button>
-                                                                                    </children>
-                                                                                </HBox>
-                                                                                <Label text="%Center" />
-                                                                                <FlowPane hgap="5.0" minHeight="-Infinity" vgap="5.0">
-                                                                                    <children>
-                                                                                        <Label text="x">
-                                                                                            <FlowPane.margin>
-                                                                                                <Insets />
-                                                                                            </FlowPane.margin>
-                                                                                        </Label>
-                                                                                        <TextField fx:id="circleCenterXInput" prefWidth="100.0" />
-                                                                                    </children>
-                                                                                </FlowPane>
-                                                                                <FlowPane hgap="5.0" minHeight="-Infinity" vgap="5.0">
-                                                                                    <children>
-                                                                                        <Label layoutX="96.0" layoutY="19.0" text="y" />
-                                                                                        <TextField fx:id="circleCenterYInput" layoutX="115.0" layoutY="10.0" prefWidth="100.0" />
-                                                                                    </children>
-                                                                                </FlowPane>
-                                                                                <FlowPane hgap="5.0" layoutX="15.0" layoutY="73.0" minHeight="-Infinity" vgap="5.0">
-                                                                                    <children>
-                                                                                        <Label text="%Radius" />
-                                                                                        <TextField fx:id="circleRadiusInput" prefWidth="100.0" />
-                                                                                    </children>
-                                                                                </FlowPane>
-                                                                            </children>
-                                                                        </VBox>
-                                                                    </children>
-                                                                </VBox>
-                                                            </content>
-                                                        </ScrollPane>
-                                                    </content>
-                                                </Tab>
-                                                <Tab fx:id="pointsTab" text="%Points">
-                                                    <content>
-                                                        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css" VBox.vgrow="NEVER">
-                                                            <children>
-                                                <fx:include fx:id="points" source="ControlPoints.fxml" />
-                                                            </children>
-                                                        </VBox>
+                                          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
+                                             <children>
+                                                <Button fx:id="goScopeButton" mnemonicParsing="false" onAction="#goScope">
+                                                   <graphic>
+                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../buttons/Red/iconGo.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </Button>
+                                                <ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
+                                                   <content>
+                                                                      <VBox fx:id="areaBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                         <children>
+                                                                              <VBox fx:id="rectangleBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                                                  <children>
+                                                                                      <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                                                                          <children>
+                                                                                              <Label fx:id="rectangleLabel" text="%Rectangle" />
+                                                                                          </children>
+                                                                                      </HBox>
+                                                                                      <Label text="%LeftTop" />
+                                                                                      <FlowPane hgap="5.0" minHeight="-Infinity" vgap="5.0">
+                                                                                          <children>
+                                                                                              <Label text="x">
+                                                                                                  <FlowPane.margin>
+                                                                                                      <Insets />
+                                                                                                  </FlowPane.margin>
+                                                                                              </Label>
+                                                                                              <TextField fx:id="rectLeftTopXInput" prefWidth="100.0" />
+                                                                                          </children>
+                                                                                      </FlowPane>
+                                                                                      <FlowPane hgap="5.0" layoutX="15.0" layoutY="48.0" minHeight="-Infinity" vgap="5.0">
+                                                                                          <children>
+                                                                                              <Label text="y" />
+                                                                                              <TextField fx:id="rectLeftTopYInput" prefWidth="100.0" />
+                                                                                          </children>
+                                                                                      </FlowPane>
+                                                                                      <Label text="%RightBottom" />
+                                                                                      <FlowPane hgap="5.0" layoutX="15.0" layoutY="73.0" minHeight="-Infinity" vgap="5.0">
+                                                                                          <children>
+                                                                                              <Label text="x">
+                                                                                                  <FlowPane.margin>
+                                                                                                      <Insets />
+                                                                                                  </FlowPane.margin>
+                                                                                              </Label>
+                                                                                              <TextField fx:id="rightBottomXInput" prefWidth="100.0" />
+                                                                                          </children>
+                                                                                      </FlowPane>
+                                                                                      <FlowPane hgap="5.0" layoutX="15.0" layoutY="104.0" minHeight="-Infinity" vgap="5.0">
+                                                                                          <children>
+                                                                                              <Label text="y" />
+                                                                                              <TextField fx:id="rightBottomYInput" prefWidth="100.0" />
+                                                                                          </children>
+                                                                                      </FlowPane>
+                                                                                  </children>
+                                                                              </VBox>
+                                                                              <VBox fx:id="circleBox" spacing="5.0" styleClass="focusBox" stylesheets="@../styles/MyBox.css">
+                                                                                  <children>
+                                                                                      <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+                                                                                          <children>
+                                                                                              <Label text="%Circle" />
+                                                                                          </children>
+                                                                                      </HBox>
+                                                                                      <Label text="%Center" />
+                                                                                      <FlowPane hgap="5.0" minHeight="-Infinity" vgap="5.0">
+                                                                                          <children>
+                                                                                              <Label text="x">
+                                                                                                  <FlowPane.margin>
+                                                                                                      <Insets />
+                                                                                                  </FlowPane.margin>
+                                                                                              </Label>
+                                                                                              <TextField fx:id="circleCenterXInput" prefWidth="100.0" />
+                                                                                          </children>
+                                                                                      </FlowPane>
+                                                                                      <FlowPane hgap="5.0" minHeight="-Infinity" vgap="5.0">
+                                                                                          <children>
+                                                                                              <Label layoutX="96.0" layoutY="19.0" text="y" />
+                                                                                              <TextField fx:id="circleCenterYInput" layoutX="115.0" layoutY="10.0" prefWidth="100.0" />
+                                                                                          </children>
+                                                                                      </FlowPane>
+                                                                                      <FlowPane hgap="5.0" layoutX="15.0" layoutY="73.0" minHeight="-Infinity" vgap="5.0">
+                                                                                          <children>
+                                                                                              <Label text="%Radius" />
+                                                                                              <TextField fx:id="circleRadiusInput" prefWidth="100.0" />
+                                                                                          </children>
+                                                                                      </FlowPane>
+                                                                                  </children>
+                                                                              </VBox>
+                                                            <VBox fx:id="pointsBox">
+                                                               <children>
+                                                                  <fx:include fx:id="points" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlPoints.fxml" VBox.vgrow="ALWAYS" />
+                                                               </children>
+                                                            </VBox>
+                                                         </children>
+                                                      </VBox>
+                                                   </content>
+                                                </ScrollPane>
+                                             </children>
+                                             <padding>
+                                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                             </padding>
+                                          </VBox>
                                                     </content>
                                                 </Tab>
                                                 <Tab fx:id="colorsTab" text="%Colors">
@@ -504,6 +486,7 @@ License:    Apache License Version 2.0
                                 </Button>
                             </children>
                         </HBox>
+                            <Label fx:id="scopeTips" maxWidth="1.7976931348623157E308" minHeight="-Infinity" styleClass="blue-label" stylesheets="@../styles/MyBox.css" wrapText="true" />
                         <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" VBox.vgrow="ALWAYS">
                             <content>
                                 <AnchorPane fx:id="maskPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#paneClicked" onMouseDragged="#mouseDragged" onMouseMoved="#showXY" onMousePressed="#mousePressed" onMouseReleased="#mouseReleased" VBox.vgrow="ALWAYS">

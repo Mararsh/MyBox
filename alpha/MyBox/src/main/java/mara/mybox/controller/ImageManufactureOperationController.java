@@ -7,6 +7,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Tab;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import mara.mybox.bufferedimage.ImageScope;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.value.Languages;
@@ -85,6 +86,22 @@ public class ImageManufactureOperationController extends ImageViewerController {
     @Override
     public BaseImageController refreshInterfaceAndFile() {
         return null;  //Bypass since this is part of frame
+    }
+
+    public void showScope(boolean noWhole) {
+
+        isTabbing = true;
+        if (scopeCheck != null) {
+            scopeCheck.setDisable(false);
+            scopeCheck.setSelected(true);
+        }
+        editor.scopeTab();
+        isTabbing = false;
+        if (noWhole
+                && (scopeController.scopeWhole()
+                || scopeController.scope.getScopeType() == ImageScope.ScopeType.Operate)) {
+            scopeController.scopeRectangleRadio.setSelected(true);
+        }
     }
 
     /*

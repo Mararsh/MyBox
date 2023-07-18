@@ -1,8 +1,16 @@
 package mara.mybox.controller;
 
 import javafx.fxml.FXML;
+import mara.mybox.bufferedimage.ImageScope.ScopeType;
+import static mara.mybox.bufferedimage.ImageScope.ScopeType.Circle;
+import static mara.mybox.bufferedimage.ImageScope.ScopeType.Ellipse;
+import static mara.mybox.bufferedimage.ImageScope.ScopeType.Matting;
+import static mara.mybox.bufferedimage.ImageScope.ScopeType.Polygon;
+import static mara.mybox.bufferedimage.ImageScope.ScopeType.Rectangle;
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
+import mara.mybox.data.DoublePoint;
+import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.dev.MyBoxLog;
 import static mara.mybox.tools.DoubleTools.scale;
@@ -17,71 +25,118 @@ import mara.mybox.value.UserConfig;
 public abstract class ImageManufactureScopeController_Area extends ImageManufactureScopeController_Base {
 
     @FXML
-    public void okRectangle() {
+    public void goScope() {
         try {
-            if (scope == null) {
+            if (isSettingValues || imageView == null || imageView.getImage() == null
+                    || scope == null || scope.getScopeType() == null || !scopeView.isVisible()) {
                 return;
             }
+            switch (scope.getScopeType()) {
+                case Matting:
+                    pickMatting();
+                    break;
+                case Rectangle:
+                    pickRectangle();
+                    break;
+                case Ellipse:
+                    pickEllipse();
+                    break;
+                case Circle:
+                    pickCircle();
+                    break;
+                case Polygon:
+                    pickPolygon();
+                    break;
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void pickRectangle() {
+        try {
+            if (scope == null || scope.getScopeType() != ScopeType.Rectangle) {
+                return;
+            }
+            DoubleRectangle rect = pickRectValues();
+            if (rect == null) {
+                return;
+            }
+            maskRectangleData = rect;
+            scope.setRectangle(maskRectangleData.cloneValues());
+            drawMaskRectangle();
+            indicateScope();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void pickEllipse() {
+        try {
+            if (scope == null || scope.getScopeType() != ScopeType.Ellipse) {
+                return;
+            }
+            DoubleRectangle rect = pickRectValues();
+            if (rect == null) {
+                return;
+            }
+            maskEllipseData = new DoubleEllipse(rect);
+            scope.setEllipse(maskEllipseData.cloneValues());
+            drawMaskEllipse();
+            indicateScope();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public DoubleRectangle pickRectValues() {
+        try {
             double x1, y1, x2, y2;
             try {
                 x1 = Double.parseDouble(rectLeftTopXInput.getText());
                 rectLeftTopXInput.setStyle(null);
             } catch (Exception e) {
                 rectLeftTopXInput.setStyle(UserConfig.badStyle());
-                return;
+                return null;
             }
             try {
                 y1 = Double.parseDouble(rectLeftTopYInput.getText());
                 rectLeftTopYInput.setStyle(null);
             } catch (Exception e) {
                 rectLeftTopYInput.setStyle(UserConfig.badStyle());
-                return;
+                return null;
             }
             try {
                 x2 = Double.parseDouble(rightBottomXInput.getText());
                 rightBottomXInput.setStyle(null);
             } catch (Exception e) {
                 rightBottomXInput.setStyle(UserConfig.badStyle());
-                return;
+                return null;
             }
             try {
                 y2 = Double.parseDouble(rightBottomYInput.getText());
                 rightBottomYInput.setStyle(null);
             } catch (Exception e) {
                 rightBottomYInput.setStyle(UserConfig.badStyle());
-                return;
+                return null;
             }
             DoubleRectangle rect = new DoubleRectangle(x1, y1, x2, y2);
             if (!rect.isValid()) {
                 popError(Languages.message("InvalidData"));
-                return;
-            }
-            switch (scope.getScopeType()) {
-                case Rectangle:
-                    maskRectangleData = rect;
-                    scope.setRectangle(maskRectangleData.cloneValues());
-                    drawMaskRectangle();
-                    break;
-                case Ellipse:
-                    maskEllipseData = new DoubleEllipse(x1, y1, x2, y2);
-                    scope.setEllipse(maskEllipseData.cloneValues());
-                    drawMaskEllipse();
-                    break;
-                default:
-                    return;
+                return null;
             }
 
-            indicateScope();
-
+            return rect;
         } catch (Exception e) {
             MyBoxLog.error(e);
+            return null;
         }
     }
 
     @FXML
-    public void okCircle() {
+    public void pickCircle() {
         try {
-            if (scope == null) {
+            if (scope == null || scope.getScopeType() != ScopeType.Circle) {
                 return;
             }
             double x, y, r;
@@ -111,17 +166,40 @@ public abstract class ImageManufactureScopeController_Area extends ImageManufact
                 popError(Languages.message("InvalidData"));
                 return;
             }
-            switch (scope.getScopeType()) {
-                case Circle:
-                    maskCircleData = circle;
-                    scope.setCircle(maskCircleData.cloneValues());
-                    drawMaskCircle();
-                    break;
-                default:
-                    return;
+            maskCircleData = circle;
+            scope.setCircle(maskCircleData.cloneValues());
+            drawMaskCircle();
+            indicateScope();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void pickMatting() {
+        try {
+            if (scope == null || scope.getScopeType() != ScopeType.Matting) {
+                return;
+            }
+            scope.clearPoints();
+            for (DoublePoint p : pointsController.tableData) {
+                scope.addPoint((int) Math.round(p.getX()), (int) Math.round(p.getY()));
             }
             indicateScope();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
 
+    public void pickPolygon() {
+        try {
+            if (scope == null || scope.getScopeType() != ScopeType.Polygon) {
+                return;
+            }
+            maskPolygonData = new DoublePolygon();
+            maskPolygonData.setAll(pointsController.tableData);
+            drawMaskPolygon();
+            scope.setPolygon(maskPolygonData.cloneValues());
+            indicateScope();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

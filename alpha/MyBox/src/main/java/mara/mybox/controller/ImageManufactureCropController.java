@@ -77,11 +77,7 @@ public class ImageManufactureCropController extends ImageManufactureOperationCon
     protected void paneExpanded() {
         editor.showRightPane();
         editor.resetImagePane();
-        editor.scopeTab();
-        if (scopeController.scopeWhole()
-                || scopeController.scope.getScopeType() == ImageScope.ScopeType.Operate) {
-            scopeController.scopeRectangleRadio.setSelected(true);
-        }
+        showScope(true);
     }
 
     @FXML
