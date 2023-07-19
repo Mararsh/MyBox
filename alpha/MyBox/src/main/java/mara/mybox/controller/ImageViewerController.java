@@ -55,7 +55,7 @@ public class ImageViewerController extends BaseImageController {
     protected ImageScope scope;
 
     @FXML
-    protected TitledPane filePane, framePane, viewPane, saveAsPane, editPane, renderPane, browsePane;
+    protected TitledPane filePane, framePane, viewPane, saveAsPane, editPane, browsePane;
     @FXML
     protected VBox panesBox, contentBox, fileBox, saveAsBox;
     @FXML
@@ -90,7 +90,6 @@ public class ImageViewerController extends BaseImageController {
             initSaveAsPane();
             initEditPane();
             initBrowsePane();
-            initRenderPane();
 
             if (imageView != null && rightPane != null) {
                 rightPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
@@ -258,20 +257,6 @@ public class ImageViewerController extends BaseImageController {
             }
             if (scrollPane != null) {
                 scrollPane.disableProperty().bind(Bindings.isNull(imageView.imageProperty()));
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    protected void initRenderPane() {
-        try {
-            if (renderPane != null) {
-                renderPane.setExpanded(UserConfig.getBoolean(baseName + "RenderPane", true));
-                renderPane.expandedProperty().addListener((ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) -> {
-                    UserConfig.setBoolean(baseName + "RenderPane", renderPane.isExpanded());
-                });
             }
 
         } catch (Exception e) {

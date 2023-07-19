@@ -21,7 +21,6 @@ License:    Apache License Version 2.0
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
@@ -420,35 +419,7 @@ License:    Apache License Version 2.0
                                     <content>
                                         <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0">
                                             <children>
-                                                <FlowPane hgap="2.0" vgap="2.0">
-                                                    <children>
-                                                        <Label text="%StrokeColor" />
-                                                        <fx:include fx:id="strokeColorSet" source="ControlColorSet.fxml" />
-                                                        <Label text="%Width" />
-                                                        <ComboBox fx:id="strokeWidthBox" editable="true" prefWidth="100.0" />
-                                                    </children>
-                                                </FlowPane>
-                                                <FlowPane hgap="2.0" vgap="2.0">
-                                                    <children>
-                                                        <Label text="%AnchorColor" />
-                                                        <fx:include fx:id="anchorColorSet" source="ControlColorSet.fxml" />
-                                                        <Label text="%Width" />
-                                                        <ComboBox fx:id="anchorWidthBox" editable="true" prefWidth="100.0" />
-                                                    </children>
-                                                </FlowPane>
-                                                <FlowPane hgap="2.0" vgap="2.0">
-                                                    <children>
-                                                        <Label text="%GridLines" />
-                                                        <Label text="%Color" />
-                                                        <fx:include fx:id="gridColorSet" source="ControlColorSet.fxml" />
-                                                        <Label text="%Width" />
-                                                        <ComboBox fx:id="gridWidthSelector" editable="true" prefWidth="100.0" />
-                                                        <Label text="%Interval" />
-                                                        <ComboBox fx:id="gridIntervalSelector" editable="true" prefWidth="100.0" />
-                                                        <Label layoutX="302.0" layoutY="17.0" text="%Opacity" />
-                                                        <ComboBox fx:id="gridOpacitySelector" editable="true" layoutX="348.0" layoutY="13.0" prefWidth="100.0" />
-                                                    </children>
-                                                </FlowPane>
+                                    <fx:include fx:id="ruler" source="ControlImageRulerOptions.fxml" />
                                                 <HBox alignment="CENTER_LEFT" spacing="5.0">
                                                     <children>
                                                         <Label text="%AlphaColor" wrapText="true" />

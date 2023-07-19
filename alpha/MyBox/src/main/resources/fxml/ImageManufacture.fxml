@@ -85,7 +85,7 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                                        <TitledPane fx:id="framePane" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" text="%Frame">
+                                        <TitledPane fx:id="framePane" expanded="false" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" text="%Frame">
                                             <content>
                                                 <VBox spacing="2.0" VBox.vgrow="NEVER">
                                                     <children>
@@ -177,7 +177,7 @@ License:    Apache License Version 2.0
                                                 </VBox>
                                             </content>
                                         </TitledPane>
-                                        <TitledPane fx:id="viewPane" maxWidth="1.7976931348623157E308" text="%View">
+                                        <TitledPane fx:id="viewPane" expanded="false" maxWidth="1.7976931348623157E308" text="%View">
                                             <content>
                                                 <VBox spacing="2.0">
                                                     <children>
@@ -187,6 +187,7 @@ License:    Apache License Version 2.0
                                                                 <ComboBox fx:id="zoomStepSelector" editable="true" prefWidth="120.0" />
                                                             </children>
                                                         </FlowPane>
+                                          <fx:include fx:id="ruler" source="ControlImageRulerOptions.fxml" />
                                                         <FlowPane alignment="CENTER_LEFT" hgap="2.0" layoutX="20.0" layoutY="20.0" prefWrapLength="800.0" vgap="2.0">
                                                             <children>
                                                                 <Button fx:id="myBoxClipboardButton" mnemonicParsing="false" onAction="#myBoxClipBoard">
@@ -218,15 +219,6 @@ License:    Apache License Version 2.0
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                                                     <children>
                                                         <fx:include fx:id="browse" source="ControlFileBrowse.fxml" />
-                                                    </children>
-                                                </VBox>
-                                            </content>
-                                        </TitledPane>
-                                        <TitledPane fx:id="renderPane" expanded="false" layoutX="10.0" layoutY="404.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="%Render">
-                                            <content>
-                                                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                                    <children>
-                                                        <fx:include fx:id="render" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlImageRender.fxml" VBox.vgrow="ALWAYS" />
                                                     </children>
                                                 </VBox>
                                             </content>

@@ -331,8 +331,9 @@ public class PaletteTools {
         try {
             List<ColorData> colors = new ArrayList<>();
             colors.add(new ColorData(FxColorTools.color2rgba(Color.WHITE), message("White")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.LIGHTGREY), message("LightGrey")).calculate());
+            colors.add(new ColorData(FxColorTools.color2rgba(Color.GREY), message("Grey")).calculate());
             colors.add(new ColorData(FxColorTools.color2rgba(Color.BLACK), message("Black")).calculate());
-            colors.add(new ColorData(FxColorTools.color2rgba(Color.GRAY), message("Gray")).calculate());
             colors.add(new ColorData(0, message("Transparent")).calculate());
             return colors;
         } catch (Exception e) {

@@ -194,7 +194,7 @@ public abstract class MyBoxController_Data extends MyBoxController_Network {
 
         Menu calculation = new Menu(message("ScriptAndExperssion"));
         calculation.getItems().addAll(
-                jshell, jexl, JavaScript
+                JavaScript, jshell, jexl
         );
 
         MenuItem MathFunction = new MenuItem(message("MathFunction"));

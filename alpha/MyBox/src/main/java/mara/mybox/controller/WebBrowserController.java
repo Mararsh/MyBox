@@ -7,13 +7,18 @@ import java.util.List;
 import java.util.Map;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Window;
 import mara.mybox.db.data.VisitHistory;
@@ -24,9 +29,11 @@ import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.FileNameTools;
 import mara.mybox.tools.FileTools;
 import mara.mybox.tools.HtmlReadTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.value.AppVariables;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import mara.mybox.value.UserConfig;
 
 /**
  * @Author Mara
@@ -39,7 +46,9 @@ public class WebBrowserController extends BaseController {
     protected Tab hisTab, favoriteTab;
 
     @FXML
-    protected Button addTabButton;
+    protected Tab initTab;
+    @FXML
+    protected Button functionsButton;
 
     public WebBrowserController() {
         baseTitle = message("WebBrowser");
@@ -89,26 +98,122 @@ public class WebBrowserController extends BaseController {
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            StyleTools.setIconTooltips(addTabButton, "iconAdd.png", message("Add"));
-        } catch (Exception e) {
-            MyBoxLog.debug(e);
-        }
-    }
-
-    @Override
-    public void afterSceneLoaded() {
-        try {
-            super.afterSceneLoaded();
-
-            newTabAction();
+            StyleTools.setIconTooltips(functionsButton, "iconFunction.png", message("Functions"));
         } catch (Exception e) {
             MyBoxLog.debug(e);
         }
     }
 
     @FXML
-    protected void newTabAction() {
-        newTab(true);
+    public void popFunctionsMenu(Event event) {
+        popFunctionsMenu(event, initTab, null);
+    }
+
+    @FXML
+    public void showFunctionsMenu(Event fevent) {
+        showFunctionsMenu(fevent, initTab, null);
+    }
+
+    public void popFunctionsMenu(Event event, Tab tab, String text) {
+        if (UserConfig.getBoolean("WebBrowserFunctionsPopWhenMouseHovering", true)) {
+            showFunctionsMenu(event, tab, text);
+        }
+    }
+
+    public void showFunctionsMenu(Event fevent, Tab tab, String text) {
+        try {
+            List<MenuItem> items = new ArrayList<>();
+
+            MenuItem menu;
+            if (text != null && !text.isBlank()) {
+                menu = new MenuItem(StringTools.menuPrefix(text));
+                menu.setStyle("-fx-text-fill: #2e598a;");
+                items.add(menu);
+                items.add(new SeparatorMenuItem());
+            }
+
+            menu = new MenuItem(message("Add"), StyleTools.getIconImageView("iconAdd.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                newTab(true);
+            });
+            items.add(menu);
+
+            if (tab != initTab) {
+                menu = new MenuItem(message("View"), StyleTools.getIconImageView("iconView.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    tabPane.getSelectionModel().select(tab);
+                });
+                items.add(menu);
+
+                menu = new MenuItem(message("Close"), StyleTools.getIconImageView("iconClose.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    tabPane.getTabs().remove(tab);
+                });
+                items.add(menu);
+
+                menu = new MenuItem(message("CloseOthers"), StyleTools.getIconImageView("iconClose.png"));
+                menu.setOnAction((ActionEvent menuItemEvent) -> {
+                    List<Tab> tabs = new ArrayList<>();
+                    tabs.addAll(tabPane.getTabs());
+                    for (Tab t : tabs) {
+                        if (t != initTab && t != tab) {
+                            tabPane.getTabs().remove(t);
+                        }
+                    }
+                });
+                items.add(menu);
+            }
+
+            menu = new MenuItem(message("CloseAll"), StyleTools.getIconImageView("iconClose.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                List<Tab> tabs = new ArrayList<>();
+                tabs.addAll(tabPane.getTabs());
+                for (Tab t : tabs) {
+                    if (t != initTab) {
+                        tabPane.getTabs().remove(t);
+                    }
+                }
+            });
+            items.add(menu);
+
+            items.add(new SeparatorMenuItem());
+
+            CheckMenuItem popItem = new CheckMenuItem(message("PopMenuWhenMouseHovering"), StyleTools.getIconImageView("iconPop.png"));
+            popItem.setSelected(UserConfig.getBoolean("WebBrowserFunctionsPopWhenMouseHovering", true));
+            popItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    UserConfig.setBoolean("WebBrowserFunctionsPopWhenMouseHovering", popItem.isSelected());
+                }
+            });
+            items.add(popItem);
+
+            popEventMenu(fevent, items);
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public void setHead(Tab tab, ImageView view, String texts) {
+        try {
+            Button button = new Button();
+            button.setGraphic(view);
+            tab.setGraphic(button);
+            button.setOnMouseEntered(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    popFunctionsMenu(event, tab, texts);
+                }
+            });
+            button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    showFunctionsMenu(event, tab, texts);
+                }
+            });
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
     }
 
     protected WebAddressController newTab(boolean focus) {
@@ -117,14 +222,13 @@ public class WebBrowserController extends BaseController {
                     Fxmls.WebAddressFxml), AppVariables.currentBundle);
             Pane pane = fxmlLoader.load();
             Tab tab = new Tab();
-            ImageView tabImage = StyleTools.getIconImageView("iconMyBox.png");
-            tab.setGraphic(tabImage);
             tab.setContent(pane);
-            tabPane.getTabs().add(tabPane.getTabs().size() - 1, tab);
+            tabPane.getTabs().add(tab);
             if (focus) {
                 getMyStage().setIconified(false);
                 tabPane.getSelectionModel().select(tab);
             }
+            setHead(tab, StyleTools.getIconImageView("iconMyBox.png"), null);
             refreshStyle(pane);
 
             WebAddressController controller = (WebAddressController) fxmlLoader.getController();

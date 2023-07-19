@@ -69,7 +69,7 @@ public class ControlColorSet extends BaseController {
             thisName = name;
             this.defaultColor = defaultColor;
 
-            resetRect();
+            asSaved();
 
             rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
@@ -116,9 +116,14 @@ public class ControlColorSet extends BaseController {
         return FxColorTools.color2css(color());
     }
 
-    public void resetRect() {
-        Color color = Color.web(UserConfig.getString(thisName, FxColorTools.color2rgba(defaultColor)));
-        setColor(color);
+    public Color saved() {
+        return Color.web(UserConfig.getString(thisName, FxColorTools.color2rgba(defaultColor)));
+    }
+
+    public void asSaved() {
+        isSettingValues = true;
+        setColor(saved());
+        isSettingValues = false;
     }
 
     @FXML

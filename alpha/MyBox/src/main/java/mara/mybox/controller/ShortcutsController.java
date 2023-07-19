@@ -179,9 +179,9 @@ public class ShortcutsController extends BaseTablePagesController<ShortCut> {
         String html = HtmlWriteTools.html(message("Shortcuts"), HtmlStyles.DefaultStyle, table.body());
         File file = new File(FileTmpTools.generatePath("html")
                 + "/mybox_shortcuts_" + Languages.getLangName() + ".html");
-
         file = TextFileTools.writeFile(file, html);
         openHtml(file);
+        browse(file.getParentFile());
         close();
     }
 

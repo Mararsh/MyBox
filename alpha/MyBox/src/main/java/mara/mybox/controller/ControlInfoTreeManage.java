@@ -70,6 +70,9 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
             return;
         }
         String clickAction = UserConfig.getString(baseName + "TreeWhenClickNode", "PopMenu");
+        if (clickAction == null) {
+            return;
+        }
         switch (clickAction) {
             case "PopMenu":
                 showItemMenu(item);
@@ -96,7 +99,12 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
 
     @Override
     public void doubleClicked(MouseEvent event, TreeItem<InfoNode> item) {
-        editNode(item);
+        String clickAction = UserConfig.getString(baseName + "TreeWhenClickNode", "PopMenu");
+        if (nodeExecutable && !"Execute".equals(clickAction)) {
+            executeNode(item);
+        } else if (!"Edit".equals(clickAction)) {
+            editNode(item);
+        }
     }
 
     @Override
@@ -282,6 +290,14 @@ public class ControlInfoTreeManage extends BaseInfoTreeController {
         items.add(menu);
 
         items.add(new SeparatorMenuItem());
+
+        if (nodeExecutable) {
+            menu = new MenuItem(message("Execute"), StyleTools.getIconImageView("iconGo.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                executeNode(treeItem);
+            });
+            items.add(menu);
+        }
 
         menu = new MenuItem(message("EditNode"), StyleTools.getIconImageView("iconEdit.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {

@@ -65,7 +65,10 @@ public class MenuImageBaseController extends MenuController {
             parentController = imageController;
             baseName = imageController.baseName;
 
-            if (imageController.pickColorCheck != null) {
+            if ((imageController instanceof ImageSplitController)
+                    || (imageController instanceof ImageSampleController)) {
+                pickColorCheck.setDisable(true);
+            } else if (imageController.pickColorCheck != null) {
                 pickColorCheck.setSelected(imageController.pickColorCheck.isSelected());
                 pickColorCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                     @Override
@@ -102,7 +105,7 @@ public class MenuImageBaseController extends MenuController {
             }
 
             if (selectAreaCheck != null) {
-                if (imageController.maskRectangle == null) {
+                if (imageController.maskRectangle == null || (imageController instanceof ImageSampleController)) {
                     selectAreaCheck.setDisable(true);
                 } else if (imageController.selectAreaCheck != null) {
                     selectAreaCheck.setSelected(imageController.selectAreaCheck.isSelected());

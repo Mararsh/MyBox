@@ -290,21 +290,21 @@ public class ImageSplitController extends BaseImagesListController {
         try {
             cols = new ArrayList<>();
             cols.add(0);
-            int v = width - 1;
+            int v = width;
             while (v < operationWidth()) {
                 cols.add(v);
-                v += width - 1;
+                v += width;
             }
-            cols.add(operationWidth() - 1);
+            cols.add(operationWidth());
 
             rows = new ArrayList<>();
             rows.add(0);
-            v = height - 1;
+            v = height;
             while (v < operationHeight()) {
                 rows.add(v);
-                v += height - 1;
+                v += height;
             }
-            rows.add(operationHeight() - 1);
+            rows.add(operationHeight());
 
             indicateSplit();
         } catch (Exception e) {
@@ -401,10 +401,10 @@ public class ImageSplitController extends BaseImagesListController {
             boolean isValidRows = true, isValidcols = true;
             rows = new ArrayList<>();
             rows.add(0);
-            rows.add(operationHeight() - 1);
+            rows.add(operationHeight());
             cols = new ArrayList<>();
             cols.add(0);
-            cols.add(operationWidth() - 1);
+            cols.add(operationWidth());
             customizedRowsInput.setStyle(null);
             customizedColsInput.setStyle(null);
 
