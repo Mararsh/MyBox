@@ -28,7 +28,7 @@ License:    Apache License Version 2.0
     <children>
         <FlowPane alignment="CENTER_LEFT" hgap="2.0" vgap="2.0">
             <children>
-            <Hyperlink onAction="#aboutGroupingRows" text="%AboutGroupingRows" />
+                <Hyperlink onAction="#aboutGroupingRows" text="%AboutGroupingRows" />
                 <RadioButton fx:id="valuesRadio" mnemonicParsing="false" selected="true" text="%EqualValues">
                     <toggleGroup>
                         <ToggleGroup fx:id="typeGroup" />
@@ -69,15 +69,15 @@ License:    Apache License Version 2.0
                                     <children>
                                         <HBox alignment="CENTER_LEFT" spacing="5.0">
                                             <children>
-                                    <Button fx:id="clearItemsButton" mnemonicParsing="false" onAction="#clearAction">
-                                       <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconClear.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
+                                                <Button fx:id="clearItemsButton" mnemonicParsing="false" onAction="#clearAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconClear.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                                 <Button fx:id="deleteItemsButton" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#deleteAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -87,7 +87,7 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                                <Button fx:id="editItemButton" layoutX="51.0" layoutY="10.0" mnemonicParsing="false" onAction="#editAction">
+                                                <Button fx:id="editButton" layoutX="51.0" layoutY="10.0" mnemonicParsing="false" onAction="#editAction">
                                                     <graphic>
                                                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                             <image>
@@ -96,15 +96,15 @@ License:    Apache License Version 2.0
                                                         </ImageView>
                                                     </graphic>
                                                 </Button>
-                                    <Button fx:id="newItemButton" mnemonicParsing="false" onAction="#addAction">
-                                       <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../buttons/Red/iconNewItem.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
+                                                <Button fx:id="newItemButton" mnemonicParsing="false" onAction="#addAction">
+                                                    <graphic>
+                                                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                            <image>
+                                                                <Image url="@../buttons/Red/iconNewItem.png" />
+                                                            </image>
+                                                        </ImageView>
+                                                    </graphic>
+                                                </Button>
                                             </children>
                                         </HBox>
                                         <TableView fx:id="tableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tableMenuButtonVisible="true" VBox.vgrow="ALWAYS">
@@ -115,9 +115,9 @@ License:    Apache License Version 2.0
                                             </columns>
                                         </TableView>
                                     </children>
-                           <padding>
-                              <Insets top="2.0" />
-                           </padding>
+                                    <padding>
+                                        <Insets top="2.0" />
+                                    </padding>
                                 </VBox>
                             </content>
                         </Tab>
@@ -142,7 +142,7 @@ License:    Apache License Version 2.0
                                         </HBox>
                                         <FlowPane fx:id="timePane" hgap="2.0" vgap="2.0">
                                             <children>
-                                    <Label text="%Same" />
+                                                <Label text="%Same" />
                                                 <RadioButton fx:id="centuryRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="%Century">
                                                     <toggleGroup>
                                                         <ToggleGroup fx:id="timeGroup" />
@@ -161,16 +161,17 @@ License:    Apache License Version 2.0
                             </content>
                         </Tab>
                         <Tab text="expression">
-                     <content>
-                        <VBox fx:id="expressionBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
-                           <padding>
-                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                           </padding>
-                           <children>
-                              <fx:include fx:id="expression" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DRowExpression.fxml" VBox.vgrow="ALWAYS" />
-                           </children>
-                        </VBox>
-                     </content></Tab>
+                            <content>
+                                <VBox fx:id="expressionBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0">
+                                    <padding>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                    </padding>
+                                    <children>
+                                        <fx:include fx:id="expression" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" source="ControlData2DRowExpression.fxml" VBox.vgrow="ALWAYS" />
+                                    </children>
+                                </VBox>
+                            </content>
+                        </Tab>
 
                     </tabs>
                 </TabPane>

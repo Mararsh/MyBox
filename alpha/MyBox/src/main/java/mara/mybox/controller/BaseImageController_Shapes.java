@@ -29,6 +29,7 @@ import mara.mybox.data.DoublePolygon;
 import mara.mybox.data.DoublePolyline;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.DoubleShape;
+import mara.mybox.data.ShapeStyle;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.style.NodeStyleTools;
 import mara.mybox.value.Languages;
@@ -53,6 +54,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
     protected SVGPath svgPath;
     public boolean maskPointDragged;
     public ShapeType shapeType = null;
+    protected ShapeStyle shapeStyle = null;
     public SimpleBooleanProperty maskShapeChanged = new SimpleBooleanProperty(false);
     public SimpleBooleanProperty maskShapeDataChanged = new SimpleBooleanProperty(false);
 
@@ -135,21 +137,49 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         if (shape == null) {
             return;
         }
-        Color strokeColor = strokeColor();
-        if (strokeColor.equals(Color.TRANSPARENT)) {
-            // Have not found how to make line as transparent. For display only.
-            strokeColor = Color.WHITE;
+        if (shapeStyle == null) {
+            Color strokeColor = strokeColor();
+            if (strokeColor.equals(Color.TRANSPARENT)) {
+                // Have not found how to make line as transparent. For display only.
+                strokeColor = Color.WHITE;
+            }
+            shape.setStroke(strokeColor);
+            double strokeWidth = strokeWidth();
+            shape.setStrokeWidth(strokeWidth);
+
+            shape.setFill(Color.TRANSPARENT);
+
+            shape.getStrokeDashArray().clear();
+            shape.getStrokeDashArray().addAll(strokeWidth, strokeWidth * 3);
+
+        } else {
+            shape.setStroke(shapeStyle.getStrokeColor());
+            shape.setStrokeWidth(shapeStyle.getStrokeWidth());
+
+            if (shapeStyle.isIsFillColor()) {
+                shape.setFill(shapeStyle.getFillColor());
+                shape.setOpacity(shapeStyle.getFillOpacity());
+            } else {
+                shape.setFill(Color.TRANSPARENT);
+                shape.setOpacity(1);
+            }
+
+            shape.setStrokeLineCap(shapeStyle.getLineCap());
+            shape.getStrokeDashArray().clear();
+
+            if (shapeStyle.isIsStrokeDash() && shapeStyle.getStrokeDash() != null) {
+                shape.getStrokeDashArray().addAll(shapeStyle.getStrokeDash());
+            }
+
         }
-        shape.setStroke(strokeColor);
-        double strokeWidth = strokeWidth();
-        shape.setStrokeWidth(strokeWidth);
-        shape.getStrokeDashArray().clear();
-        shape.getStrokeDashArray().addAll(strokeWidth, strokeWidth * 3);
-        shape.setFill(Color.TRANSPARENT);
     }
 
     public void setMaskAnchorsStyle() {
-        setMaskAnchorsStyle(anchorColor(), anchorSize());
+        if (shapeStyle == null) {
+            setMaskAnchorsStyle(shapeStyle.getAnchorColor(), shapeStyle.getAnchorSize());
+        } else {
+            setMaskAnchorsStyle(anchorColor(), anchorSize());
+        }
     }
 
     public void setMaskAnchorsStyle(Color anchorColor, float anchorSize) {
@@ -213,7 +243,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
     public void clearMask() {
         clearMaskShapes();
         clearMaskShapesData();
-        shapeType = null;
     }
 
     public void clearMaskShapes() {
@@ -227,6 +256,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             clearMaskPolygon();
             clearMaskLines();
             clearPath();
+            shapeType = null;
+            shapeStyle = null;
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -1089,7 +1120,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             }
             if (svgPath != null) {
                 maskPane.getChildren().remove(svgPath);
-                svgPath.setVisible(false);
+                svgPath = null;
             }
 
         } catch (Exception e) {
@@ -1098,9 +1129,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
     }
 
     public void clearPathData() {
-        if (pathData != null) {
-            pathData = null;
-        }
+        svgPath = null;
+        pathData = null;
     }
 
     /*

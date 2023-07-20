@@ -6,6 +6,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.XmlTreeNode;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.tools.XmlTools;
 import static mara.mybox.value.Languages.message;
@@ -127,7 +128,11 @@ public class ControlXmlNodeEdit extends ControlXmlNodeBase {
                 case Node.COMMENT_NODE:
                 case Node.ATTRIBUTE_NODE:
                 case Node.PROCESSING_INSTRUCTION_NODE:
-                    node.setNodeValue(valueArea.getText());
+                    String s = valueArea.getText();
+                    node.setNodeValue(s);
+                    if (s != null && !s.isBlank()) {
+                        TableStringValues.add("XmlNodeValueHistories", s);
+                    }
                     break;
                 case Node.ELEMENT_NODE:
                     NamedNodeMap attrs = node.getAttributes();

@@ -18,7 +18,7 @@ public class ShapeStyle {
 
     public final static String DefaultStrokeColor = "#c94d58", DefaultAnchorColor = "#0066cc";
 
-    private String name;
+    private String name, more;
     private Color strokeColor, fillColor, anchorColor;
     private float strokeWidth, strokeOpacity, fillOpacity, anchorSize;
     private int roundArc;
@@ -77,6 +77,7 @@ public class ShapeStyle {
         strokeDash = text2StrokeDash(text);
         text = UserConfig.getString(name + "StrokeLineCap", "BUTT");
         lineCap = lineCap(text);
+        more = null;
     }
 
     /*
@@ -260,6 +261,11 @@ public class ShapeStyle {
         return this;
     }
 
+    public ShapeStyle setMore(String more) {
+        this.more = more;
+        return this;
+    }
+
     /*
         get
      */
@@ -337,6 +343,10 @@ public class ShapeStyle {
 
     public int getLineCapAwt() {
         return lineCapAwt(lineCap);
+    }
+
+    public String getMore() {
+        return more;
     }
 
 }

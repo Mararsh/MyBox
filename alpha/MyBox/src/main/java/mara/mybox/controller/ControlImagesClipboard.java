@@ -234,6 +234,7 @@ public class ControlImagesClipboard extends BaseSysTableController<ImageClipboar
 
     @Override
     public void updateStatus() {
+        super.updateStatus();
         if (ImageClipboardTools.isMonitoring()) {
             bottomLabel.setText(message("MonitoringImageInSystemClipboard"));
         } else {

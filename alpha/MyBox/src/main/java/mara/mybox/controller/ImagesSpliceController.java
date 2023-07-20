@@ -18,6 +18,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -524,6 +525,18 @@ public class ImagesSpliceController extends ImageViewerController {
     @Override
     public void saveAction() {
         saveAsAction();
+    }
+
+    @Override
+    public boolean keyEventsFilter(KeyEvent event) {
+        if (!super.keyEventsFilter(event)) {
+            if (tableController != null) {
+                return tableController.keyEventsFilter(event);
+            }
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /*

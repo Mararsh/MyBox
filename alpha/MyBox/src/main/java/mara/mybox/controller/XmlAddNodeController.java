@@ -15,6 +15,7 @@ import javafx.scene.layout.VBox;
 import mara.mybox.data.XmlTreeNode;
 import mara.mybox.data.XmlTreeNode.NodeType;
 import static mara.mybox.data.XmlTreeNode.NodeType.Attribute;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.tools.XmlTools;
@@ -79,8 +80,8 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
                 nameInput.requestFocus();
 
             } else {
-                setBox.getChildren().addAll(valueArea);
-                VBox.setVgrow(valueArea, Priority.ALWAYS);
+                setBox.getChildren().addAll(valueBox);
+                VBox.setVgrow(valueBox, Priority.ALWAYS);
                 valueArea.requestFocus();
 
                 if (xmlRadio.isSelected()) {
@@ -88,6 +89,8 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
                 }
 
             }
+            refreshStyle(setBox);
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -203,6 +206,9 @@ public class XmlAddNodeController extends ControlXmlNodeBase {
 
             } else {
                 return;
+            }
+            if (value != null && !value.isBlank()) {
+                TableStringValues.add("XmlNodeValueHistories", value);
             }
             TreeItem<XmlTreeNode> newItem = new TreeItem(new XmlTreeNode(newNode));
             ObservableList<TreeItem<XmlTreeNode>> children = treeItem.getChildren();

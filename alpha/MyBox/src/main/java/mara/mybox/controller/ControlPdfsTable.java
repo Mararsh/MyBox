@@ -66,6 +66,50 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
     }
 
     @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            fromInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
+                    try {
+                        Integer.valueOf(newValue);
+                        fromInput.setStyle(null);
+                    } catch (Exception e) {
+                        fromInput.setStyle(UserConfig.badStyle());
+                    }
+                }
+            });
+
+            toInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable,
+                        String oldValue, String newValue) {
+                    try {
+                        if (newValue == null || newValue.trim().isEmpty()) {
+                            toInput.setStyle(null);
+                            return;
+                        }
+                        Integer.valueOf(newValue);
+                        toInput.setStyle(null);
+                    } catch (Exception e) {
+                        toInput.setStyle(UserConfig.badStyle());
+                    }
+                }
+            });
+
+            setAllOrSelectedButton.disableProperty().bind(fromInput.styleProperty().isEqualTo(UserConfig.badStyle())
+                    .or(toInput.styleProperty().isEqualTo(UserConfig.badStyle()))
+            );
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    @Override
     public void initColumns() {
         try {
             super.initColumns();
@@ -134,50 +178,6 @@ public class ControlPdfsTable extends BaseBatchTableController<PdfInformation> {
                 return cell;
             });
             toColumn.getStyleClass().add("editable-column");
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @Override
-    public void initMore() {
-        try {
-            super.initMore();
-
-            fromInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    try {
-                        Integer.parseInt(newValue);
-                        fromInput.setStyle(null);
-                    } catch (Exception e) {
-                        fromInput.setStyle(UserConfig.badStyle());
-                    }
-                }
-            });
-
-            toInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable,
-                        String oldValue, String newValue) {
-                    try {
-                        if (newValue == null || newValue.trim().isEmpty()) {
-                            toInput.setStyle(null);
-                            return;
-                        }
-                        Integer.parseInt(newValue);
-                        toInput.setStyle(null);
-                    } catch (Exception e) {
-                        toInput.setStyle(UserConfig.badStyle());
-                    }
-                }
-            });
-
-            setAllOrSelectedButton.disableProperty().bind(fromInput.styleProperty().isEqualTo(UserConfig.badStyle())
-                    .or(toInput.styleProperty().isEqualTo(UserConfig.badStyle()))
-            );
 
         } catch (Exception e) {
             MyBoxLog.error(e);

@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -9,7 +10,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.cell.TableAutoCommitCell;
+import mara.mybox.value.UserConfig;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Node;
 
@@ -102,6 +105,26 @@ public class ControlXmlNodeBase extends BaseTableViewController<Node> {
         Attr attr = treeController.doc.createAttribute("attr");
         attr.setValue("value");
         tableData.add(attr);
+    }
+
+    /*
+        value
+     */
+    @FXML
+    protected void popValueHistories(Event event) {
+        if (UserConfig.getBoolean("XmlNodeValueHistoriesPopWhenMouseHovering", false)) {
+            showValueHistories(event);
+        }
+    }
+
+    @FXML
+    protected void showValueHistories(Event event) {
+        PopTools.popStringValues(this, valueArea, event, "XmlNodeValueHistories", false, true);
+    }
+
+    @FXML
+    protected void clearValue() {
+        valueArea.clear();
     }
 
 }

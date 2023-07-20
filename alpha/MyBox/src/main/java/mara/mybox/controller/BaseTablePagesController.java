@@ -4,32 +4,21 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
-import mara.mybox.data.StringTable;
 import mara.mybox.db.DerbyBase;
-import mara.mybox.db.data.Data2DColumn;
 import mara.mybox.dev.MyBoxLog;
-import mara.mybox.fximage.FxImageTools;
-import mara.mybox.fxml.NodeTools;
 import mara.mybox.fxml.PopTools;
 import mara.mybox.fxml.SingletonCurrentTask;
-import mara.mybox.fxml.SingletonTask;
 import mara.mybox.fxml.style.StyleTools;
 import mara.mybox.tools.NumberTools;
 import static mara.mybox.value.Languages.message;
@@ -48,13 +37,9 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
     protected long pagesNumber, dataSize;
     protected long currentPage, startRowOfCurrentPage;  // 0-based
     protected boolean dataSizeLoaded, loadInBackground;
-    protected SimpleBooleanProperty loadedNotify, selectedNotify;
 
     @FXML
-    protected Label dataSizeLabel, selectedLabel, pageLabel;
-    @FXML
-    protected Button moveUpButton, moveDownButton, moveTopButton, refreshButton,
-            deleteItemsButton, editItemButton, copyItemButton;
+    protected Label pageLabel;
     @FXML
     protected FlowPane paginationPane;
     @FXML
@@ -62,9 +47,6 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
 
     public BaseTablePagesController() {
         tableName = "";
-        TipsLabelKey = "TableTips";
-        selectedNotify = new SimpleBooleanProperty(false);
-        loadedNotify = new SimpleBooleanProperty(false);
     }
 
     @Override
@@ -87,68 +69,19 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         try {
             super.initControls();
 
-            initButtons();
             initPagination();
-            initMore();
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public void initMore() {
-
-    }
 
     /*
         table
      */
-    @Override
-    protected void initTable() {
-        try {
-            super.initTable();
-            if (tableView == null) {
-                return;
-            }
-
-            tableView.getSelectionModel().getSelectedIndices().addListener(new ListChangeListener<Integer>() {
-                @Override
-                public void onChanged(ListChangeListener.Change c) {
-                    checkSelected();
-                    notifySelected();
-                }
-            });
-
-            tableView.setOnMouseClicked((MouseEvent event) -> {
-                if (popMenu != null && popMenu.isShowing()) {
-                    popMenu.hide();
-                }
-                if (event.getButton() == MouseButton.SECONDARY) {
-                    popTableMenu(event);
-                } else if (event.getClickCount() == 1) {
-                    itemClicked();
-                } else if (event.getClickCount() > 1) {
-                    itemDoubleClicked();
-                }
-            });
-
-            checkSelected();
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    @Override
-    public void tableChanged(boolean changed) {
-        if (isSettingValues) {
-            return;
-        }
-        super.tableChanged(changed);
-        updateStatus();
-    }
-
     public void updateStatus() {
-        checkSelected();
+        super.updateStatus();
         if (dataSizeLabel != null) {
             int tsize = tableData == null ? 0 : tableData.size();
             long start = startRowOfCurrentPage + 1;
@@ -157,13 +90,6 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
                     + "[" + start + "-" + end + "]" + tsize
                     + (dataSize > 0 ? "/" + dataSize : ""));
         }
-    }
-
-    public void notifySelected() {
-        if (isSettingValues) {
-            return;
-        }
-        selectedNotify.set(!selectedNotify.get());
     }
 
     public boolean checkBeforeLoadingTableData() {
@@ -253,12 +179,6 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         setPagination();
     }
 
-    public void notifyLoaded() {
-        if (loadedNotify != null) {
-            loadedNotify.set(!loadedNotify.get());
-        }
-    }
-
     public long readDataSize(Connection conn) {
         return 0;
     }
@@ -269,161 +189,6 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
 
     public List<P> readPageData(Connection conn) {
         return null;
-    }
-
-    protected void checkSelected() {
-        if (isSettingValues) {
-            return;
-        }
-        checkButtons();
-    }
-
-    public void itemClicked() {
-    }
-
-    public void itemDoubleClicked() {
-        editAction();
-    }
-
-    protected void popTableMenu(MouseEvent event) {
-        if (isSettingValues) {
-            return;
-        }
-        List<MenuItem> items = makeTableContextMenu();
-        if (items == null || items.isEmpty()) {
-            return;
-        }
-        items.add(new SeparatorMenuItem());
-
-        popEventMenu(event, items);
-    }
-
-    protected List<MenuItem> makeTableContextMenu() {
-        try {
-            List<MenuItem> items = new ArrayList<>();
-            MenuItem menu;
-
-            List<MenuItem> group = new ArrayList<>();
-
-            if (addButton != null && addButton.isVisible() && !addButton.isDisabled()) {
-                menu = new MenuItem(message("Add"), StyleTools.getIconImageView("iconNewItem.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    addAction();
-                });
-                group.add(menu);
-            }
-
-            if (viewButton != null && viewButton.isVisible() && !viewButton.isDisabled()) {
-                menu = new MenuItem(message("View"), StyleTools.getIconImageView("iconView.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    viewAction();
-                });
-                group.add(menu);
-            }
-
-            if (editButton != null && editButton.isVisible() && !editButton.isDisabled()) {
-                menu = new MenuItem(message("Edit"), StyleTools.getIconImageView("iconEdit.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    editAction();
-                });
-                group.add(menu);
-            }
-
-            if (deleteButton != null && deleteButton.isVisible() && !deleteButton.isDisabled()) {
-                menu = new MenuItem(message("Delete"), StyleTools.getIconImageView("iconDelete.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    deleteAction();
-                });
-                group.add(menu);
-            }
-
-            if (clearButton != null && clearButton.isVisible() && !clearButton.isDisabled()) {
-                menu = new MenuItem(message("Clear"), StyleTools.getIconImageView("iconClear.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    clearAction();
-                });
-                group.add(menu);
-            }
-
-            if (!group.isEmpty()) {
-                items.addAll(group);
-                items.add(new SeparatorMenuItem());
-            }
-
-            if (paginationPane == null || paginationPane.isVisible()) {
-                if (pageNextButton != null && pageNextButton.isVisible() && !pageNextButton.isDisabled()) {
-                    menu = new MenuItem(message("NextPage"), StyleTools.getIconImageView("iconNext.png"));
-                    menu.setOnAction((ActionEvent menuItemEvent) -> {
-                        pageNextAction();
-                    });
-                    items.add(menu);
-                }
-
-                if (pagePreviousButton != null && pagePreviousButton.isVisible() && !pagePreviousButton.isDisabled()) {
-                    menu = new MenuItem(message("PreviousPage"), StyleTools.getIconImageView("iconPrevious.png"));
-                    menu.setOnAction((ActionEvent menuItemEvent) -> {
-                        pagePreviousAction();
-                    });
-                    items.add(menu);
-                }
-            }
-
-            if (refreshButton != null && refreshButton.isVisible() && !refreshButton.isDisabled()) {
-                menu = new MenuItem(message("Refresh"), StyleTools.getIconImageView("iconRefresh.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    refreshAction();
-                });
-                items.add(menu);
-            }
-
-            if (moveUpButton != null && moveUpButton.isVisible() && !moveUpButton.isDisabled()) {
-                menu = new MenuItem(message("MoveUp"), StyleTools.getIconImageView("iconUp.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    moveUpAction();
-                });
-                items.add(menu);
-            }
-
-            if (moveTopButton != null && moveTopButton.isVisible() && !moveTopButton.isDisabled()) {
-                menu = new MenuItem(message("MoveTop"), StyleTools.getIconImageView("iconDoubleUp.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    moveTopAction();
-                });
-                items.add(menu);
-            }
-
-            if (moveDownButton != null && moveDownButton.isVisible() && !moveDownButton.isDisabled()) {
-                menu = new MenuItem(message("MoveDown"), StyleTools.getIconImageView("iconDown.png"));
-                menu.setOnAction((ActionEvent menuItemEvent) -> {
-                    moveDownAction();
-                });
-                items.add(menu);
-            }
-
-            menu = new MenuItem(message("Snapshot"), StyleTools.getIconImageView("iconSnapshot.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                snapAction();
-            });
-            items.add(menu);
-
-            menu = new MenuItem("Html", StyleTools.getIconImageView("iconHtml.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                htmlAction();
-            });
-            items.add(menu);
-
-            menu = new MenuItem(message("Data"), StyleTools.getIconImageView("iconData.png"));
-            menu.setOnAction((ActionEvent menuItemEvent) -> {
-                dataAction();
-            });
-            items.add(menu);
-
-            return items;
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-            return null;
-        }
     }
 
     public void resetView(boolean changed) {
@@ -537,66 +302,6 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         }
     }
 
-
-    /*
-        buttons
-     */
-    protected void initButtons() {
-        try {
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    protected void checkButtons() {
-        if (isSettingValues) {
-            return;
-        }
-        boolean isEmpty = tableData == null || tableData.isEmpty();
-        boolean none = isNoneSelected();
-        if (deleteButton != null) {
-            deleteButton.setDisable(none);
-        }
-        if (deleteRowsButton != null) {
-            deleteRowsButton.setDisable(none);
-        }
-        if (deleteItemsButton != null) {
-            deleteItemsButton.setDisable(none);
-        }
-        if (viewButton != null) {
-            viewButton.setDisable(none);
-        }
-        if (editButton != null) {
-            editButton.setDisable(none);
-        }
-        if (editItemButton != null) {
-            editItemButton.setDisable(none);
-        }
-        if (copyButton != null) {
-            copyButton.setDisable(none);
-        }
-        if (copyItemButton != null) {
-            copyItemButton.setDisable(none);
-        }
-        if (clearButton != null) {
-            clearButton.setDisable(isEmpty);
-        }
-        if (moveUpButton != null) {
-            moveUpButton.setDisable(none);
-        }
-        if (moveTopButton != null) {
-            moveTopButton.setDisable(none);
-        }
-        if (moveDownButton != null) {
-            moveDownButton.setDisable(none);
-        }
-        if (selectedLabel != null) {
-            selectedLabel.setText(message("Selected") + ": "
-                    + (none ? 0 : tableView.getSelectionModel().getSelectedIndices().size()));
-        }
-    }
-
     @FXML
     @Override
     public void addAction() {
@@ -647,6 +352,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
     }
 
     @FXML
+    @Override
     public void editAction() {
         edit(selectedIndix());
     }
@@ -664,6 +370,7 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
     }
 
     @FXML
+    @Override
     public void viewAction() {
         view(selectedIndix());
     }
@@ -826,144 +533,35 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
         loadPage(currentPage);
     }
 
-    @FXML
-    public void dataAction() {
-        if (tableData.isEmpty()) {
-            popError(message("NoData"));
-            return;
-        }
-        SingletonTask dataTask = new SingletonTask<Void>(this) {
-            private List<String> names;
-            private List<List<String>> data;
-
-            @Override
-            protected boolean handle() {
-                try {
-                    names = new ArrayList<>();
-                    int rowsSelectionColumnIndex = -1;
-                    if (rowsSelectionColumn != null) {
-                        rowsSelectionColumnIndex = tableView.getColumns().indexOf(rowsSelectionColumn);
-                    }
-                    int colsNumber = tableView.getColumns().size();
-                    for (int c = 0; c < colsNumber; c++) {
-                        if (c == rowsSelectionColumnIndex) {
-                            continue;
-                        }
-                        names.add(tableView.getColumns().get(c).getText());
-                    }
-                    data = new ArrayList<>();
-                    for (int r = 0; r < tableData.size(); r++) {
-                        List<String> row = new ArrayList<>();
-                        for (int c = 0; c < colsNumber; c++) {
-                            if (c == rowsSelectionColumnIndex) {
-                                continue;
-                            }
-                            String s = null;
-                            try {
-                                s = tableView.getColumns().get(c).getCellData(r).toString();
-                            } catch (Exception e) {
-                            }
-                            row.add(s);
-                        }
-                        data.add(row);
-                    }
-                    return true;
-                } catch (Exception e) {
-                    error = e.toString();
-                    return false;
-                }
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                DataFileCSVController.open(null, Data2DColumn.toColumns(names), data);
-            }
-        };
-        start(dataTask, false, message("LoadingTableData"));
-    }
-
-    @FXML
-    public void htmlAction() {
-        if (tableData.isEmpty()) {
-            popError(message("NoData"));
-            return;
-        }
-        SingletonTask htmlTask = new SingletonTask<Void>(this) {
-            private StringTable table;
-
-            @Override
-            protected boolean handle() {
-                table = makeStringTable();
-                return table != null;
-            }
-
-            @Override
-            protected void whenSucceeded() {
-                table.htmlTable();
-            }
-        };
-        start(htmlTask, false, message("LoadingTableData"));
-    }
-
-    protected StringTable makeStringTable() {
-        try {
-            List<String> names = new ArrayList<>();
-            int rowsSelectionColumnIndex = -1;
-            if (rowsSelectionColumn != null) {
-                rowsSelectionColumnIndex = tableView.getColumns().indexOf(rowsSelectionColumn);
-            }
-            int colsNumber = tableView.getColumns().size();
-            for (int c = 0; c < colsNumber; c++) {
-                if (c == rowsSelectionColumnIndex) {
-                    continue;
-                }
-                names.add(tableView.getColumns().get(c).getText());
-            }
-            StringTable table = new StringTable(names, baseTitle);
-            for (int r = 0; r < tableData.size(); r++) {
-                List<String> row = new ArrayList<>();
-                for (int c = 0; c < colsNumber; c++) {
-                    if (c == rowsSelectionColumnIndex) {
-                        continue;
-                    }
-                    String s = null;
-                    try {
-                        Object cellData = tableView.getColumns().get(c).getCellData(r);
-                        Image image = null;
-                        int width = 20;
-                        if (cellData instanceof ImageView) {
-                            image = ((ImageView) cellData).getImage();
-                            width = (int) ((ImageView) cellData).getFitWidth();
-                        } else if (cellData instanceof Image) {
-                            image = (Image) cellData;
-                            width = (int) image.getWidth();
-                        }
-                        if (image != null) {
-                            String base64 = FxImageTools.base64(image, "png");
-                            if (base64 != null) {
-                                s = "<img src=\"data:image/png;base64," + base64 + "\" width=" + width + " >";
-                            }
-                        }
-                        if (s == null) {
-                            s = cellData.toString();
-                        }
-                    } catch (Exception e) {
-                    }
-                    row.add(s);
-                }
-                table.add(row);
-            }
-            return table;
-        } catch (Exception e) {
-            displayError(e.toString());
+    @Override
+    protected List<MenuItem> moreContextMenu() {
+        if (paginationPane == null || !paginationPane.isVisible()) {
             return null;
         }
+        List<MenuItem> items = new ArrayList<>();
+        MenuItem menu;
+        if (pageNextButton != null && pageNextButton.isVisible() && !pageNextButton.isDisabled()) {
+            menu = new MenuItem(message("NextPage"), StyleTools.getIconImageView("iconNext.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                pageNextAction();
+            });
+            items.add(menu);
+        }
+
+        if (pagePreviousButton != null && pagePreviousButton.isVisible() && !pagePreviousButton.isDisabled()) {
+            menu = new MenuItem(message("PreviousPage"), StyleTools.getIconImageView("iconPrevious.png"));
+            menu.setOnAction((ActionEvent menuItemEvent) -> {
+                pagePreviousAction();
+            });
+            items.add(menu);
+        }
+        if (items.isEmpty()) {
+            return null;
+        }
+        items.add(0, new SeparatorMenuItem());
+        return items;
     }
 
-    @FXML
-    public void snapAction() {
-        ImageViewerController.openImage(NodeTools.snap(tableView));
-    }
 
     /*
         pagination
@@ -1114,16 +712,6 @@ public abstract class BaseTablePagesController<P> extends BaseTableViewControlle
     @Override
     public void pageLastAction() {
         loadPage(Integer.MAX_VALUE);
-    }
-
-    @Override
-    public void cleanPane() {
-        try {
-            selectedNotify = null;
-            loadedNotify = null;
-        } catch (Exception e) {
-        }
-        super.cleanPane();
     }
 
 }

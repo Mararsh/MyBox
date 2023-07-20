@@ -33,7 +33,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button fx:id="clearDataButton" mnemonicParsing="false" onAction="#clearAction">
+                  <Button fx:id="clearItemsButton" mnemonicParsing="false" onAction="#clearAction">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -42,7 +42,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button fx:id="deleteDataButton" disable="true" mnemonicParsing="false" onAction="#deleteAction">
+                  <Button fx:id="deleteItemsButton" disable="true" mnemonicParsing="false" onAction="#deleteAction">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -51,7 +51,7 @@ License:    Apache License Version 2.0
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button fx:id="renameDataButton" disable="true" mnemonicParsing="false" onAction="#renameAction">
+                  <Button fx:id="renameItemButton" disable="true" mnemonicParsing="false" onAction="#renameAction">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                            <image>

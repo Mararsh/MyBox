@@ -52,7 +52,7 @@ import mara.mybox.value.UserConfig;
  * @CreateDate 2018-11-28
  * @License Apache License Version 2.0
  */
-public abstract class BaseBatchTableController<P> extends BaseTablePagesController<P> {
+public abstract class BaseBatchTableController<P> extends BaseTableViewController<P> {
 
     protected long totalFilesNumber, totalFilesSize, fileSelectorSize, fileSelectorTime, currentIndex;
     protected FileSelectorType fileSelectorType;
@@ -106,6 +106,95 @@ public abstract class BaseBatchTableController<P> extends BaseTablePagesControll
             MyBoxLog.debug(e);
         }
     }
+
+    @Override
+    public void initControls() {
+        try {
+            super.initControls();
+
+            if (tableLabel != null) {
+                if (nameFiltersSelector != null) {
+                    tableLabel.setText(message("FilesSelectBasedTable"));
+                } else {
+                    tableLabel.setText("");
+                }
+            }
+
+            fileSelectorType = FileSelectorType.All;
+            if (nameFiltersSelector == null) {
+                return;
+            }
+            for (FileSelectorType type : FileSelectorType.values()) {
+                nameFiltersSelector.getItems().add(message(type.name()));
+            }
+            nameFiltersSelector.setVisibleRowCount(FileSelectorType.values().length);
+            nameFiltersSelector.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue ov, Number oldValue, Number newValue) {
+                    String selected = nameFiltersSelector.getSelectionModel().getSelectedItem();
+                    for (FileSelectorType type : FileSelectorType.values()) {
+                        if (message(type.name()).equals(selected)) {
+                            fileSelectorType = type;
+                            break;
+                        }
+                    }
+                    if (exampleRegexButton != null) {
+                        exampleRegexButton.setVisible(
+                                fileSelectorType == FileSelectorType.NameMatchRegularExpression
+                                || fileSelectorType == FileSelectorType.NameNotMatchRegularExpression
+                                || fileSelectorType == FileSelectorType.NameIncludeRegularExpression
+                                || fileSelectorType == FileSelectorType.NameNotIncludeRegularExpression
+                        );
+                    }
+
+                    tableFiltersInput.setText("");
+                    setControlsStyle();
+                }
+            });
+            nameFiltersSelector.getSelectionModel().select(0);
+
+            tableFiltersInput.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> ov, String oldv, String newv) {
+                    if (newv == null || newv.trim().isEmpty()) {
+                        tableFiltersInput.setStyle(null);
+                        fileSelectorSize = -1;
+                        fileSelectorTime = -1;
+                        return;
+                    }
+                    if (fileSelectorType == FileSelectorType.FileSizeLargerThan
+                            || fileSelectorType == FileSelectorType.FileSizeSmallerThan) {
+                        long v = ByteTools.checkBytesValue(newv);
+                        if (v >= 0) {
+                            fileSelectorSize = v;
+                            tableFiltersInput.setStyle(null);
+                        } else {
+                            tableFiltersInput.setStyle(UserConfig.badStyle());
+                            popError(message("FileSizeComments"));
+                        }
+
+                    } else if (fileSelectorType == FileSelectorType.ModifiedTimeEarlierThan
+                            || fileSelectorType == FileSelectorType.ModifiedTimeLaterThan) {
+                        Date d = DateTools.encodeDate(newv, -1);
+                        if (d != null) {
+                            fileSelectorTime = d.getTime();
+                        } else {
+                            fileSelectorTime = -1;
+                        }
+
+                    }
+                }
+            });
+
+            if (previewButton != null && tableView != null) {
+                previewButton.disableProperty().bind(tableView.itemsProperty().isNull());
+            }
+
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
 
     /*
         table
@@ -464,7 +553,7 @@ public abstract class BaseBatchTableController<P> extends BaseTablePagesControll
         tableLabel.setText(message("CountingFilesSize"));
         totalFilesNumber = totalFilesSize = 0;
         if (tableData == null || tableData.isEmpty()) {
-            updateLabel();
+            updateTableLabel();
             return;
         }
         backgroundTask = new SingletonBackgroundTask<Void>(this) {
@@ -502,7 +591,7 @@ public abstract class BaseBatchTableController<P> extends BaseTablePagesControll
                     if (canceled) {
                         tableLabel.setText("");
                     } else {
-                        updateLabel();
+                        updateTableLabel();
                     }
                 }
             }
@@ -522,94 +611,6 @@ public abstract class BaseBatchTableController<P> extends BaseTablePagesControll
     /*
         buttons
      */
-    @Override
-    public void initMore() {
-        try {
-            super.initMore();
-
-            if (tableLabel != null) {
-                if (nameFiltersSelector != null) {
-                    tableLabel.setText(message("FilesSelectBasedTable"));
-                } else {
-                    tableLabel.setText("");
-                }
-            }
-
-            fileSelectorType = FileSelectorType.All;
-            if (nameFiltersSelector == null) {
-                return;
-            }
-            for (FileSelectorType type : FileSelectorType.values()) {
-                nameFiltersSelector.getItems().add(message(type.name()));
-            }
-            nameFiltersSelector.setVisibleRowCount(FileSelectorType.values().length);
-            nameFiltersSelector.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-                @Override
-                public void changed(ObservableValue ov, Number oldValue, Number newValue) {
-                    String selected = nameFiltersSelector.getSelectionModel().getSelectedItem();
-                    for (FileSelectorType type : FileSelectorType.values()) {
-                        if (message(type.name()).equals(selected)) {
-                            fileSelectorType = type;
-                            break;
-                        }
-                    }
-                    if (exampleRegexButton != null) {
-                        exampleRegexButton.setVisible(
-                                fileSelectorType == FileSelectorType.NameMatchRegularExpression
-                                || fileSelectorType == FileSelectorType.NameNotMatchRegularExpression
-                                || fileSelectorType == FileSelectorType.NameIncludeRegularExpression
-                                || fileSelectorType == FileSelectorType.NameNotIncludeRegularExpression
-                        );
-                    }
-
-                    tableFiltersInput.setText("");
-                    setControlsStyle();
-                }
-            });
-            nameFiltersSelector.getSelectionModel().select(0);
-
-            tableFiltersInput.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> ov, String oldv, String newv) {
-                    if (newv == null || newv.trim().isEmpty()) {
-                        tableFiltersInput.setStyle(null);
-                        fileSelectorSize = -1;
-                        fileSelectorTime = -1;
-                        return;
-                    }
-                    if (fileSelectorType == FileSelectorType.FileSizeLargerThan
-                            || fileSelectorType == FileSelectorType.FileSizeSmallerThan) {
-                        long v = ByteTools.checkBytesValue(newv);
-                        if (v >= 0) {
-                            fileSelectorSize = v;
-                            tableFiltersInput.setStyle(null);
-                        } else {
-                            tableFiltersInput.setStyle(UserConfig.badStyle());
-                            popError(message("FileSizeComments"));
-                        }
-
-                    } else if (fileSelectorType == FileSelectorType.ModifiedTimeEarlierThan
-                            || fileSelectorType == FileSelectorType.ModifiedTimeLaterThan) {
-                        Date d = DateTools.encodeDate(newv, -1);
-                        if (d != null) {
-                            fileSelectorTime = d.getTime();
-                        } else {
-                            fileSelectorTime = -1;
-                        }
-
-                    }
-                }
-            });
-
-            if (previewButton != null && tableView != null) {
-                previewButton.disableProperty().bind(tableView.itemsProperty().isNull());
-            }
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
     @Override
     protected void checkButtons() {
         if (isSettingValues) {
@@ -639,7 +640,7 @@ public abstract class BaseBatchTableController<P> extends BaseTablePagesControll
 
     }
 
-    public void updateLabel() {
+    public void updateTableLabel() {
         if (tableLabel != null) {
             String s = MessageFormat.format(message("TotalFilesNumberSize"),
                     totalFilesNumber, FileTools.showFileSize(totalFilesSize));

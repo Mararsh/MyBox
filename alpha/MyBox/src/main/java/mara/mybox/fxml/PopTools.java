@@ -590,7 +590,7 @@ public class PopTools {
             List<String> values = TableStringValues.max(menuName, max);
             List<Node> buttons = new ArrayList<>();
             for (String value : values) {
-                Button button = new Button(StringTools.start(value, 200));
+                Button button = new Button(StringTools.start(value, 100));
                 button.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent aevent) {

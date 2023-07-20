@@ -44,6 +44,8 @@ public class ImageManufactureShapeController extends ImageManufactureOperationCo
     @Override
     protected void paneUnexpanded() {
         optionsController.removeListener();
+        editor.resetImagePane();
+        editor.clearMaskShapesData();
     }
 
     protected void refreshShape() {

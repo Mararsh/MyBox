@@ -109,7 +109,29 @@ License:    Apache License Version 2.0
                <content>
                   <VBox fx:id="valueBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="2.0">
                      <children>
-                        <Label text="%Value" />
+                        <HBox alignment="CENTER_LEFT" spacing="2.0">
+                           <children>
+                              <Label maxWidth="1.7976931348623157E308" text="%Value" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="cleartValueButton" mnemonicParsing="false" onAction="#clearValue">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconClear.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="historyValueButton" mnemonicParsing="false" onAction="#showValueHistories" onMouseEntered="#popValueHistories">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../buttons/Red/iconHistory.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </HBox>
                         <TextArea fx:id="valueArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
                      </children>
                   </VBox>
@@ -149,7 +171,7 @@ License:    Apache License Version 2.0
                                  </graphic>
                               </Button>
                               <Label fx:id="titleLabel" minHeight="-Infinity" wrapText="true" />
-                              <Button fx:id="clearDataButton" mnemonicParsing="false" onAction="#clearAction">
+                              <Button fx:id="clearItemsButton" mnemonicParsing="false" onAction="#clearAction">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -158,7 +180,7 @@ License:    Apache License Version 2.0
                                     </ImageView>
                                  </graphic>
                               </Button>
-                              <Button fx:id="deleteDataButton" mnemonicParsing="false" onAction="#deleteAction">
+                              <Button fx:id="deleteItemsButton" mnemonicParsing="false" onAction="#deleteAction">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                        <image>

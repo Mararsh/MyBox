@@ -166,7 +166,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
                                 row.setDuration(value);
                                 if (!isSettingValues) {
                                     Platform.runLater(() -> {
-                                        updateLabel();
+                                        updateTableLabel();
                                     });
                                 }
                                 return super.setCellValue(value);
@@ -219,7 +219,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
     }
 
     @Override
-    public void updateLabel() {
+    public void updateTableLabel() {
         if (tableLabel == null) {
             return;
         }
@@ -392,7 +392,7 @@ public class ControlImagesTable extends BaseBatchTableController<ImageInformatio
             }
             isSettingValues = false;
             tableView.refresh();
-            updateLabel();
+            updateTableLabel();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }

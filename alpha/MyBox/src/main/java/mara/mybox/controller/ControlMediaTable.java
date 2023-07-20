@@ -170,7 +170,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
                                     @Override
                                     public void run() {
                                         tableView.refresh();
-                                        updateLabel();
+                                        updateTableLabel();
                                     }
                                 });
 
@@ -194,7 +194,7 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
             protected void whenFailed() {
                 popError(error);
                 tableView.refresh();
-                updateLabel();
+                updateTableLabel();
             }
 
         };
@@ -246,11 +246,11 @@ public class ControlMediaTable extends BaseBatchTableController<MediaInformation
 
     @Override
     public void countSize(boolean reset) {
-        updateLabel();
+        updateTableLabel();
     }
 
     @Override
-    public void updateLabel() {
+    public void updateTableLabel() {
         long d = 0;
         totalFilesNumber = totalFilesSize = 0;
         for (MediaInformation m : tableData) {

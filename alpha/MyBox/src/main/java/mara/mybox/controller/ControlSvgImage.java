@@ -189,6 +189,9 @@ public class ControlSvgImage extends BaseImageController {
                 case "polygon":
                     element.setAttribute("points", DoublePoint.toText(maskPolygonData.getPoints(), 2));
                     break;
+                case "path":
+                    element.setAttribute("d", svgPath.getContent());
+                    break;
                 default:
                     return;
             }

@@ -7,6 +7,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.layout.VBox;
 import mara.mybox.data.XmlTreeNode;
 import static mara.mybox.data.XmlTreeNode.NodeType.Element;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
@@ -44,6 +45,7 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
                     } else {
                         setBox.getChildren().add(0, styleBox);
                     }
+                    refreshStyle(setBox);
                 }
             }
         }
@@ -93,14 +95,18 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
             Element element = (Element) node;
             String style = styleArea.getText();
             if (style != null && !style.isBlank()) {
-                element.setAttribute("style", StringTools.trimBlanks(style));
+                style = StringTools.trimBlanks(style);
+                element.setAttribute("style", style);
+                TableStringValues.add("SvgStyleHistories", style);
             } else {
                 element.removeAttribute("style");
             }
             if ("path".equalsIgnoreCase(node.getNodeName())) {
                 String path = pathArea.getText();
                 if (path != null && !path.isBlank()) {
-                    element.setAttribute("d", StringTools.trimBlanks(path));
+                    path = StringTools.trimBlanks(path);
+                    element.setAttribute("d", path);
+                    TableStringValues.add("SvgPathHistories", path);
                 } else {
                     element.removeAttribute("d");
                 }
@@ -119,6 +125,9 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
         styleArea.clear();
     }
 
+    /*
+        path
+     */
     @FXML
     public void popExamplesPathMenu(Event event) {
         if (UserConfig.getBoolean("SvgPathExamplesPopWhenMouseHovering", false)) {
@@ -132,6 +141,27 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
     }
 
     @FXML
+    protected void popPathHistories(Event event) {
+        if (UserConfig.getBoolean("SvgPathHistoriesPopWhenMouseHovering", false)) {
+            showPathHistories(event);
+        }
+    }
+
+    @FXML
+    protected void showPathHistories(Event event) {
+        PopTools.popStringValues(this, pathArea, event, "SvgPathHistories", false, true);
+    }
+
+    @FXML
+    protected void clearPath() {
+        pathArea.clear();
+    }
+
+
+    /*
+        style
+     */
+    @FXML
     public void popExamplesStyleMenu(Event event) {
         if (UserConfig.getBoolean("SvgStyleExamplesPopWhenMouseHovering", false)) {
             showExamplesStyleMenu(event);
@@ -141,6 +171,23 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
     @FXML
     public void showExamplesStyleMenu(Event event) {
         PopTools.popValues(this, styleArea, "SvgStyleExamples", HelpTools.svgStyleExamples(), event);
+    }
+
+    @FXML
+    protected void popStyleHistories(Event event) {
+        if (UserConfig.getBoolean("SvgStyleHistoriesPopWhenMouseHovering", false)) {
+            showStyleHistories(event);
+        }
+    }
+
+    @FXML
+    protected void showStyleHistories(Event event) {
+        PopTools.popStringValues(this, styleArea, event, "SvgStyleHistories", false, true);
+    }
+
+    @FXML
+    protected void clearStyle() {
+        styleArea.clear();
     }
 
 }

@@ -20,9 +20,11 @@ import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Rectang
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.SVG;
+import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.tools.StringTools;
 import mara.mybox.tools.SvgTools;
 import mara.mybox.tools.XmlTools;
 import static mara.mybox.value.Languages.message;
@@ -67,16 +69,13 @@ public class ControlSvgShape extends ControlShapeOptions {
             showController.svgShapeControl = this;
 
             initXML();
-            initOptions();
+            initSvgOptions();
 
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    /*
-        doc
-     */
     public void setParameters(SvgEditorController editorController, String hierarchyNumber) {
         try {
             editor = editorController;
@@ -89,6 +88,32 @@ public class ControlSvgShape extends ControlShapeOptions {
 
             switchShape();
             addListener();
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    /*
+        svg
+     */
+    public void initSvgOptions() {
+        try {
+            optionsController.noBgColor();
+
+            optionsController.sizeNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    showController.loadBackGround();
+                }
+            });
+
+            optionsController.opacityNotify.addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
+                    showController.setBackGroundOpacity();
+                }
+            });
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -271,7 +296,9 @@ public class ControlSvgShape extends ControlShapeOptions {
 
     @FXML
     public void goShape() {
-        goAction();
+        if (pickShape()) {
+            redrawShape();
+        }
     }
 
     /*
@@ -347,9 +374,59 @@ public class ControlSvgShape extends ControlShapeOptions {
         }
     }
 
+    @Override
+    public boolean pickStyle() {
+        try {
+            super.pickStyle();
+            String v = styleArea.getText();
+            if (v != null && !v.isBlank()) {
+                v = StringTools.trimBlanks(v);
+                style.setMore(v);
+                TableStringValues.add("SvgStyleHistories", v);
+            } else {
+                style.setMore(null);
+            }
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
     @FXML
     public void goStyle() {
-        goAction();
+        if (pickStyle()) {
+            redrawShape();
+        }
+    }
+
+    @FXML
+    public void popExamplesStyleMenu(Event event) {
+        if (UserConfig.getBoolean("SvgStyleExamplesPopWhenMouseHovering", false)) {
+            showExamplesStyleMenu(event);
+        }
+    }
+
+    @FXML
+    public void showExamplesStyleMenu(Event event) {
+        PopTools.popValues(this, styleArea, "SvgStyleExamples", HelpTools.svgStyleExamples(), event);
+    }
+
+    @FXML
+    protected void popStyleHistories(Event event) {
+        if (UserConfig.getBoolean("SvgStyleHistoriesPopWhenMouseHovering", false)) {
+            showStyleHistories(event);
+        }
+    }
+
+    @FXML
+    protected void showStyleHistories(Event event) {
+        PopTools.popStringValues(this, styleArea, event, "SvgStyleHistories", false, true);
+    }
+
+    @FXML
+    protected void clearStyle() {
+        styleArea.clear();
     }
 
     /*
@@ -400,46 +477,8 @@ public class ControlSvgShape extends ControlShapeOptions {
     }
 
     /*
-        options
-     */
-    public void initOptions() {
-        try {
-            optionsController.noBgColor();
-
-            optionsController.sizeNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    showController.loadBackGround();
-                }
-            });
-
-            optionsController.opacityNotify.addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue ov, Boolean oldValue, Boolean newValue) {
-                    showController.setBackGroundOpacity();
-                }
-            });
-
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    /*
         helps
      */
-    @FXML
-    public void popExamplesStyleMenu(Event event) {
-        if (UserConfig.getBoolean("SvgStyleExamplesPopWhenMouseHovering", false)) {
-            showExamplesStyleMenu(event);
-        }
-    }
-
-    @FXML
-    public void showExamplesStyleMenu(Event event) {
-        PopTools.popValues(this, styleArea, "SvgStyleExamples", HelpTools.svgStyleExamples(), event);
-    }
-
     @FXML
     protected void popHelps(Event event) {
         if (UserConfig.getBoolean("SvgHelpsPopWhenMouseHovering", false)) {
