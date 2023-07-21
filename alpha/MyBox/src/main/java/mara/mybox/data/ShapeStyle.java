@@ -6,6 +6,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
 import static javafx.scene.shape.StrokeLineCap.ROUND;
 import static javafx.scene.shape.StrokeLineCap.SQUARE;
+import mara.mybox.fximage.FxColorTools;
 import static mara.mybox.fximage.FxColorTools.toAwtColor;
 import mara.mybox.value.UserConfig;
 
@@ -137,7 +138,7 @@ public class ShapeStyle {
             if (text == null || text.isBlank()) {
                 return StrokeLineCap.BUTT;
             }
-            if ("BUTT".equalsIgnoreCase(text)) {
+            if ("ROUND".equalsIgnoreCase(text)) {
                 return StrokeLineCap.ROUND;
             } else if ("SQUARE".equalsIgnoreCase(text)) {
                 return StrokeLineCap.SQUARE;
@@ -277,6 +278,10 @@ public class ShapeStyle {
         return strokeColor;
     }
 
+    public String getStrokeColorCss() {
+        return FxColorTools.color2css(strokeColor);
+    }
+
     public java.awt.Color getStrokeColorAwt() {
         return toAwtColor(getStrokeColor());
     }
@@ -287,6 +292,10 @@ public class ShapeStyle {
 
     public java.awt.Color getFillColorAwt() {
         return toAwtColor(getFillColor());
+    }
+
+    public String getFilleColorCss() {
+        return FxColorTools.color2css(fillColor);
     }
 
     public Color getAnchorColor() {
@@ -343,6 +352,10 @@ public class ShapeStyle {
 
     public int getLineCapAwt() {
         return lineCapAwt(lineCap);
+    }
+
+    public String getLineCapText() {
+        return getLineCap().name();
     }
 
     public String getMore() {

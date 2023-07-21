@@ -96,6 +96,12 @@ public class ControlColorSet extends BaseController {
         NodeStyleTools.setTooltip(rect, FxColorTools.colorNameDisplay(tableColor, color));
     }
 
+    public void initColor(Color color) {
+        isSettingValues = true;
+        setColor(color);
+        isSettingValues = false;
+    }
+
     public Color color() {
         return (Color) rect.getFill();
     }

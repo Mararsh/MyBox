@@ -89,6 +89,20 @@ public class XmlTreeNode {
                 || "defs".equalsIgnoreCase(tag);
     }
 
+    public boolean isSvgShape() {
+        if (XmlTools.type(node) != NodeType.Element) {
+            return false;
+        }
+        String tag = node.getNodeName();
+        return "rect".equalsIgnoreCase(tag)
+                || "circle".equalsIgnoreCase(tag)
+                || "ellipse".equalsIgnoreCase(tag)
+                || "line".equalsIgnoreCase(tag)
+                || "polyline".equalsIgnoreCase(tag)
+                || "polygon".equalsIgnoreCase(tag)
+                || "path".equalsIgnoreCase(tag);
+    }
+
 
     /*
        custimized get

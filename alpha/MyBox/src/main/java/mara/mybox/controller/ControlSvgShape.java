@@ -1,5 +1,6 @@
 package mara.mybox.controller;
 
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
@@ -8,30 +9,34 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
 import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Circle;
 import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Ellipse;
 import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Line;
 import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Lines;
+import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Path;
 import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Polygon;
 import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Polyline;
 import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Rectangle;
 import mara.mybox.data.DoubleCircle;
+import mara.mybox.data.DoubleEllipse;
+import mara.mybox.data.DoubleLine;
+import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.SVG;
 import mara.mybox.db.table.TableStringValues;
 import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.HelpTools;
 import mara.mybox.fxml.PopTools;
+import mara.mybox.tools.DoubleTools;
 import mara.mybox.tools.StringTools;
-import mara.mybox.tools.SvgTools;
 import mara.mybox.tools.XmlTools;
 import static mara.mybox.value.Languages.message;
 import mara.mybox.value.UserConfig;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 /**
  * @Author Mara
@@ -43,11 +48,13 @@ public class ControlSvgShape extends ControlShapeOptions {
     protected SvgEditorController editor;
     protected SVG svg;
     protected Document doc;
-    protected Node parentNode;
+    protected Element element;
     protected WebEngine webEngine;
 
     @FXML
     protected Label parentLabel;
+    @FXML
+    protected FlowPane typePane;
     @FXML
     protected Tab shapeTab, styleTab, xmlTab;
     @FXML
@@ -71,23 +78,6 @@ public class ControlSvgShape extends ControlShapeOptions {
             initXML();
             initSvgOptions();
 
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
-
-    public void setParameters(SvgEditorController editorController, String hierarchyNumber) {
-        try {
-            editor = editorController;
-            doc = (Document) editor.treeController.doc.cloneNode(true);
-            parentNode = XmlTools.find(doc, hierarchyNumber);
-            svg = new SVG(doc);
-            optionsController.loadDoc(doc, null);
-
-            super.setParameters(showController);
-
-            switchShape();
-            addListener();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -119,21 +109,59 @@ public class ControlSvgShape extends ControlShapeOptions {
         }
     }
 
-    public void newDoc() {
+    public void editShape(SvgEditorController editor, Element node) {
         try {
-            doc = SvgTools.blankDoc();
+            super.setParameters(showController);
+
+            this.editor = editor;
+            doc = (Document) editor.treeController.doc.cloneNode(true);
             svg = new SVG(doc);
-            parentNode = svg.getSvgNode();
             optionsController.loadDoc(doc, null);
-            showShape();
+
+            loadElement(node);
+            addListener();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
+    public void loadElement(Element node) {
+        try {
+            if (node != null) {
+                typePane.setDisable(true);
+                element = node;
+                loadShape(node);
+                loadStyle(node);
+                pickStyle();
+                super.switchShape();
+                loadXml(element);
+            } else {
+                switchShape();
+            }
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
+    public String scaleValue(double d) {
+        return DoubleTools.scale2(d) + "";
+    }
+
     /*
         shape
      */
+    @Override
+    public void switchShape() {
+        if (isSettingValues) {
+            return;
+        }
+        element = null;
+        super.switchShape();
+        if (shape2Element() && style2Element()) {
+            loadXml(element);
+        }
+    }
+
     @Override
     public void setShapeControls() {
         try {
@@ -142,6 +170,7 @@ public class ControlSvgShape extends ControlShapeOptions {
             if (imageController == null || imageController.shapeType == null) {
                 return;
             }
+            isSettingValues = true;
             switch (imageController.shapeType) {
                 case Circle:
                 case Rectangle:
@@ -158,86 +187,83 @@ public class ControlSvgShape extends ControlShapeOptions {
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
+        isSettingValues = false;
     }
 
-    public void loadShape(Element element) {
+    @Override
+    public void shapeDataChanged() {
+        setShapeControls();
+        shape2Element();
+    }
+
+    public void loadShape(Element node) {
         try {
-            if (element == null) {
+            if (node == null) {
                 return;
             }
             isSettingValues = true;
-            switch (element.getNodeName().toLowerCase()) {
+            switch (node.getNodeName().toLowerCase()) {
                 case "rect":
-                    if (loadRect(element)) {
+                    if (loadRect(node)) {
                         rectangleRadio.setSelected(true);
                     }
                     break;
                 case "circle":
-                    if (loadRect(element)) {
+                    if (loadRect(node)) {
                         circleRadio.setSelected(true);
                     }
                     break;
                 case "ellipse":
-                    ellipseRadio.setSelected(true);
-                    shapeBox.getChildren().add(ellipseBox);
-                    ellipseXInput.setText(element.getAttribute("cx"));
-                    ellipseYInput.setText(element.getAttribute("cy"));
-                    ellipseXRadiusInput.setText(element.getAttribute("rx"));
-                    ellipseYRadiusInput.setText(element.getAttribute("ry"));
+                    if (loadEllipse(node)) {
+                        ellipseRadio.setSelected(true);
+                    }
                     break;
                 case "line":
-                    lineRadio.setSelected(true);
-                    shapeBox.getChildren().add(lineBox);
-                    lineX1Input.setText(element.getAttribute("x1"));
-                    lineY1Input.setText(element.getAttribute("y1"));
-                    lineX2Input.setText(element.getAttribute("x2"));
-                    lineY2Input.setText(element.getAttribute("y2"));
+                    if (loadLine(node)) {
+                        lineRadio.setSelected(true);
+                    }
                     break;
                 case "polyline":
-                    polylineRadio.setSelected(true);
-                    shapeBox.getChildren().add(pointsBox);
-                    polylinePointsController.loadText(element.getAttribute("points"));
+                    if (loadPolyline(node)) {
+                        polylineRadio.setSelected(true);
+                    }
                     break;
                 case "polygon":
-                    polygonRadio.setSelected(true);
-                    shapeBox.getChildren().add(pointsBox);
-                    polygonPointsController.loadText(element.getAttribute("points"));
+                    if (loadPolygon(node)) {
+                        polygonRadio.setSelected(true);
+                    }
                     break;
                 case "path":
-                    pathRadio.setSelected(true);
-                    shapeBox.getChildren().add(pathBox);
-                    pathArea.setText(element.getAttribute("d"));
+                    if (loadPath(node)) {
+                        pathRadio.setSelected(true);
+                    }
                     break;
                 default:
                     popError(message("InvalidData"));
-                    return;
             }
-            isSettingValues = true;
-
-            switchShape();
-
+            isSettingValues = false;
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
 
-    public boolean loadRect(Element element) {
+    public boolean loadRect(Element node) {
         try {
             float x, y, w, h;
             try {
-                x = Float.parseFloat(element.getAttribute("x"));
+                x = Float.parseFloat(node.getAttribute("x"));
             } catch (Exception e) {
                 popError(message("InvalidParameter") + ": x");
                 return false;
             }
             try {
-                y = Float.parseFloat(element.getAttribute("y"));
+                y = Float.parseFloat(node.getAttribute("y"));
             } catch (Exception e) {
                 popError(message("InvalidParameter") + ": y");
                 return false;
             }
             try {
-                w = Float.parseFloat(element.getAttribute("width"));
+                w = Float.parseFloat(node.getAttribute("width"));
             } catch (Exception e) {
                 w = -1f;
             }
@@ -246,7 +272,7 @@ public class ControlSvgShape extends ControlShapeOptions {
                 return false;
             }
             try {
-                h = Float.parseFloat(element.getAttribute("height"));
+                h = Float.parseFloat(node.getAttribute("height"));
             } catch (Exception e) {
                 h = -1f;
             }
@@ -262,23 +288,23 @@ public class ControlSvgShape extends ControlShapeOptions {
         }
     }
 
-    public boolean loadCircle(Element element) {
+    public boolean loadCircle(Element node) {
         try {
             float x, y, r;
             try {
-                x = Float.parseFloat(element.getAttribute("cx"));
+                x = Float.parseFloat(node.getAttribute("cx"));
             } catch (Exception e) {
                 popError(message("InvalidParameter") + ": x");
                 return false;
             }
             try {
-                y = Float.parseFloat(element.getAttribute("cy"));
+                y = Float.parseFloat(node.getAttribute("cy"));
             } catch (Exception e) {
                 popError(message("InvalidParameter") + ": y");
                 return false;
             }
             try {
-                r = Float.parseFloat(element.getAttribute("r"));
+                r = Float.parseFloat(node.getAttribute("r"));
             } catch (Exception e) {
                 r = -1f;
             }
@@ -294,9 +320,202 @@ public class ControlSvgShape extends ControlShapeOptions {
         }
     }
 
+    public boolean loadEllipse(Element node) {
+        try {
+            float x, y, rx, ry;
+            try {
+                x = Float.parseFloat(node.getAttribute("cx"));
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": x");
+                return false;
+            }
+            try {
+                y = Float.parseFloat(node.getAttribute("cy"));
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": y");
+                return false;
+            }
+            try {
+                rx = Float.parseFloat(node.getAttribute("rx"));
+            } catch (Exception e) {
+                rx = -1f;
+            }
+            if (rx <= 0) {
+                popError(message("InvalidParameter") + ": " + message("Radius"));
+                return false;
+            }
+            try {
+                ry = Float.parseFloat(node.getAttribute("ry"));
+            } catch (Exception e) {
+                ry = -1f;
+            }
+            if (ry <= 0) {
+                popError(message("InvalidParameter") + ": " + message("Radius"));
+                return false;
+            }
+            imageController.maskEllipseData = new DoubleEllipse(x, y, x + rx * 2 - 1, y + ry * 2 - 1);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public boolean loadLine(Element node) {
+        try {
+            float x1, y1, x2, y2;
+            try {
+                x1 = Float.parseFloat(node.getAttribute("x1"));
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": x1");
+                return false;
+            }
+            try {
+                y1 = Float.parseFloat(node.getAttribute("y1"));
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": y1");
+                return false;
+            }
+            try {
+                x2 = Float.parseFloat(node.getAttribute("x2"));
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": x2");
+                return false;
+            }
+            try {
+                y2 = Float.parseFloat(node.getAttribute("y2"));
+            } catch (Exception e) {
+                popError(message("InvalidParameter") + ": y2");
+                return false;
+            }
+            imageController.maskLineData = new DoubleLine(x1, y1, x2, y2);
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public boolean loadPolyline(Element node) {
+        try {
+            List<DoublePoint> list = DoublePoint.parseList(node.getAttribute("points"));
+            if (list != null && !list.isEmpty()) {
+                imageController.maskPolylineData.setAll(list);
+            } else {
+                imageController.maskPolylineData.clear();
+            }
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public boolean loadPolygon(Element node) {
+        try {
+            List<DoublePoint> list = DoublePoint.parseList(node.getAttribute("points"));
+            if (list != null && !list.isEmpty()) {
+                imageController.maskPolygonData.setAll(list);
+            } else {
+                imageController.maskPolygonData.clear();
+            }
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public boolean loadPath(Element node) {
+        try {
+            imageController.setPath(node.getAttribute("d"));
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+            return false;
+        }
+    }
+
+    public boolean shape2Element() {
+        try {
+            if (imageController == null || imageController.shapeType == null) {
+                popError(message("InvalidData"));
+                return false;
+            }
+            switch (imageController.shapeType) {
+                case Rectangle:
+                    if (element == null) {
+                        element = doc.createElement("rect");
+                    }
+                    element.setAttribute("x", scaleValue(imageController.maskRectangleData.getSmallX()));
+                    element.setAttribute("y", scaleValue(imageController.maskRectangleData.getSmallY()));
+                    element.setAttribute("width", scaleValue(imageController.maskRectangleData.getWidth()));
+                    element.setAttribute("height", scaleValue(imageController.maskRectangleData.getHeight()));
+                    return true;
+                case Circle:
+                    if (element == null) {
+                        element = doc.createElement("circle");
+                    }
+                    element.setAttribute("cx", scaleValue(imageController.maskCircleData.getCenterX()));
+                    element.setAttribute("cy", scaleValue(imageController.maskCircleData.getCenterY()));
+                    element.setAttribute("r", scaleValue(imageController.maskCircleData.getRadius()));
+                    return true;
+                case Ellipse:
+                    if (element == null) {
+                        element = doc.createElement("ellipse");
+                    }
+                    element.setAttribute("cx", scaleValue(imageController.maskEllipseData.getCenterX()));
+                    element.setAttribute("cy", scaleValue(imageController.maskEllipseData.getCenterY()));
+                    element.setAttribute("rx", scaleValue(imageController.maskEllipseData.getRadiusX()));
+                    element.setAttribute("ry", scaleValue(imageController.maskEllipseData.getRadiusY()));
+                    return true;
+                case Line:
+                    if (element == null) {
+                        element = doc.createElement("line");
+                    }
+                    element.setAttribute("x1", scaleValue(imageController.maskLineData.getStartX()));
+                    element.setAttribute("y1", scaleValue(imageController.maskLineData.getStartY()));
+                    element.setAttribute("x2", scaleValue(imageController.maskLineData.getEndX()));
+                    element.setAttribute("y2", scaleValue(imageController.maskLineData.getEndY()));
+                    return true;
+                case Polyline:
+                    if (element == null) {
+                        element = doc.createElement("polyline");
+                    }
+                    element.setAttribute("points", DoublePoint.toText(imageController.maskPolylineData.getPoints(), 2));
+                    return true;
+                case Polygon:
+                    if (element == null) {
+                        element = doc.createElement("polygon");
+                    }
+                    element.setAttribute("points", DoublePoint.toText(imageController.maskPolygonData.getPoints(), 2));
+                    return true;
+                case Path:
+                    if (element == null) {
+                        element = doc.createElement("path");
+                    }
+                    element.setAttribute("d", imageController.svgPath.getContent());
+                    return true;
+            }
+            popError(message("InvalidData"));
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean pickShape() {
+        if (!super.pickShape()) {
+            return false;
+        }
+        return shape2Element();
+    }
+
     @FXML
     public void goShape() {
         if (pickShape()) {
+            loadXml(element);
             redrawShape();
         }
     }
@@ -304,52 +523,25 @@ public class ControlSvgShape extends ControlShapeOptions {
     /*
         style
      */
-    public void pickStyle(Element element) {
+    public void loadStyle(Element node) {
         try {
-            if (element == null) {
+            if (node == null) {
                 return;
             }
-            element.setAttribute("stroke", strokeColorController.css());
-            element.setAttribute("stroke-width", style.getStrokeWidth() + "");
-            String dash = dashInput.getText();
-            if (dash != null && !dash.isBlank()) {
-                element.setAttribute("stroke-dasharray", dash);
-            }
-            if (linecapSquareRadio.isSelected()) {
-                element.setAttribute("stroke-linecap", "square");
-            } else if (linecapRoundRadio.isSelected()) {
-                element.setAttribute("stroke-linecap", "round");
-            } else {
-                element.removeAttribute("stroke-linecap");
-            }
-            if (fillCheck.isSelected()) {
-                element.setAttribute("fill", fillColorController.css());
-                element.setAttribute("fill-opacity", style.getFillOpacity() + "");
-            } else {
-                element.setAttribute("fill", "none");
-            }
-        } catch (Exception e) {
-            MyBoxLog.error(e);
-        }
-    }
 
-    public void loadStyle(Element element) {
-        try {
-            if (element == null) {
-                return;
-            }
+            isSettingValues = true;
             try {
-                strokeColorController.setColor(Color.web(element.getAttribute("stroke")));
+                strokeColorController.setColor(Color.web(node.getAttribute("stroke")));
             } catch (Exception e) {
                 strokeColorController.setColor(Color.BLACK);
             }
             try {
-                strokeWidthSelector.setValue(Float.valueOf(element.getAttribute("stroke-width")) + "");
+                strokeWidthSelector.setValue(Float.valueOf(node.getAttribute("stroke-width")) + "");
             } catch (Exception e) {
-                strokeWidthSelector.setValue("1px");
+                strokeWidthSelector.setValue("1");
             }
-            dashInput.setText(element.getAttribute("stroke-dasharray"));
-            String v = element.getAttribute("stroke-linecap");
+            dashInput.setText(node.getAttribute("stroke-dasharray"));
+            String v = node.getAttribute("stroke-linecap");
             if ("square".equalsIgnoreCase(v)) {
                 linecapSquareRadio.setSelected(true);
             } else if ("round".equalsIgnoreCase(v)) {
@@ -357,7 +549,7 @@ public class ControlSvgShape extends ControlShapeOptions {
             } else {
                 linecapButtRadio.setSelected(true);
             }
-            v = element.getAttribute("fill");
+            v = node.getAttribute("fill");
             if (v == null || "none".equalsIgnoreCase(v)) {
                 fillCheck.setSelected(false);
             } else {
@@ -368,7 +560,8 @@ public class ControlSvgShape extends ControlShapeOptions {
                     fillColorController.setColor(Color.TRANSPARENT);
                 }
             }
-
+            styleArea.setText(node.getAttribute("style"));
+            isSettingValues = false;
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -377,7 +570,9 @@ public class ControlSvgShape extends ControlShapeOptions {
     @Override
     public boolean pickStyle() {
         try {
-            super.pickStyle();
+            if (!super.pickStyle()) {
+                return false;
+            }
             String v = styleArea.getText();
             if (v != null && !v.isBlank()) {
                 v = StringTools.trimBlanks(v);
@@ -386,16 +581,58 @@ public class ControlSvgShape extends ControlShapeOptions {
             } else {
                 style.setMore(null);
             }
-            return true;
+            return style2Element();
         } catch (Exception e) {
             MyBoxLog.error(e);
             return false;
         }
     }
 
+    public boolean style2Element() {
+        try {
+            if (style == null || element == null) {
+                popError(message("InvalidData"));
+                return false;
+            }
+            element.setAttribute("stroke", style.getStrokeColorCss());
+            element.setAttribute("stroke-width", style.getStrokeWidth() + "");
+            if (style.isIsStrokeDash()) {
+                String dash = style.getStrokeDashText();
+                if (dash != null && !dash.isBlank()) {
+                    element.setAttribute("stroke-dasharray", dash);
+                } else {
+                    element.removeAttribute("stroke-dasharray");
+                }
+            } else {
+                element.removeAttribute("stroke-dasharray");
+            }
+
+            if (style.isIsFillColor()) {
+                element.setAttribute("fill", style.getFilleColorCss());
+                element.setAttribute("fill-opacity", style.getFillOpacity() + "");
+            } else {
+                element.setAttribute("fill", "none");
+            }
+
+            element.setAttribute("stroke-linecap", style.getLineCapText());
+
+            String more = style.getMore();
+            if (more != null && !more.isBlank()) {
+                element.setAttribute("style", more);
+            } else {
+                element.removeAttribute("style");
+            }
+            return true;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+        return false;
+    }
+
     @FXML
     public void goStyle() {
         if (pickStyle()) {
+            loadXml(element);
             redrawShape();
         }
     }
@@ -450,14 +687,22 @@ public class ControlSvgShape extends ControlShapeOptions {
         }
     }
 
+    public void loadXml(Element element) {
+        try {
+            isSettingValues = true;
+            xmlArea.setText(XmlTools.transform(element, true));
+            isSettingValues = false;
+        } catch (Exception e) {
+            MyBoxLog.error(e);
+        }
+    }
+
     @FXML
     public void goXml() {
         try {
-            Element element = XmlTools.toElement(this, xmlArea.getText());
+            element = XmlTools.toElement(this, xmlArea.getText());
             element = (Element) doc.importNode(element, true);
-            loadShape(element);
-            loadStyle(element);
-            showController.loadShape(element);
+            loadElement(element);
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -468,17 +713,34 @@ public class ControlSvgShape extends ControlShapeOptions {
         TextPopController.openInput(this, xmlArea);
     }
 
-    public void loadXml(Element element) {
+    /*
+        buttons
+     */
+    @FXML
+    @Override
+    public boolean synchronizeAction() {
         try {
-            xmlArea.setText(XmlTools.transform(element, true));
+            Tab tab = tabPane.getSelectionModel().getSelectedItem();
+
+            if (tab == shapeTab) {
+                goShape();
+                return true;
+
+            } else if (tab == styleTab) {
+                goStyle();
+                return true;
+
+            } else if (tab == xmlTab) {
+                goXml();
+                return true;
+
+            }
         } catch (Exception e) {
-            MyBoxLog.error(e);
+            MyBoxLog.debug(e);
         }
+        return false;
     }
 
-    /*
-        helps
-     */
     @FXML
     protected void popHelps(Event event) {
         if (UserConfig.getBoolean("SvgHelpsPopWhenMouseHovering", false)) {

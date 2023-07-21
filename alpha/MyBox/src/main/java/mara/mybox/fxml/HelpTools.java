@@ -1166,11 +1166,12 @@ public class HelpTools {
             LinkedHashMap<String, String> values = new LinkedHashMap<>();
             values.put("fill: #CCCCCC; ", message("FilledColor") + " - " + message("ColorCode"));
             values.put("fill: skyblue; ", message("FilledColor") + " - " + message("Name"));
-            values.put("fill: hsb(0,50,100); ", message("FilledColor") + " - HSB");
+            values.put("fill: rgba(0,50,100,0.5); ", message("FilledColor") + " - RGBA");
             values.put("fill: none; ", message("FilledColor") + " - " + message("None"));
             values.put("fill-opacity: 0.3; ", message("FillOpacity"));
             values.put("stroke: black; ", message("StrokeColor") + " - " + message("ColorCode"));
             values.put("stroke: rgb(0,128,0); ", message("StrokeColor") + " - RGB");
+            values.put("stroke: hsla(60,80%,90%,0.6); ", message("StrokeColor") + " - HSLA");
             values.put("stroke-opacity: 0.3; ", message("StrokeOpacity"));
             values.put("stroke-width: 2; ", message("StrokeWidth"));
             values.put("stroke-linecap: butt; ", message("StrokeLinecap") + " - " + message("Butt"));

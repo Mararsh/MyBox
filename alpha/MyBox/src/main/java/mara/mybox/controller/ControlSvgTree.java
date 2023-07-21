@@ -70,7 +70,14 @@ public class ControlSvgTree extends ControlXmlTree {
         }
         List<MenuItem> items = new ArrayList<>();
 
-        MenuItem menu = new MenuItem(message("SvgAddShape"), StyleTools.getIconImageView("iconNewItem.png"));
+        MenuItem menu = new MenuItem(message("Draw"), StyleTools.getIconImageView("iconDraw.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            drawShape(treeItem);
+        });
+        menu.setDisable(treeItem.getValue() == null || !treeItem.getValue().isSvgShape());
+        items.add(menu);
+
+        menu = new MenuItem(message("SvgAddShape"), StyleTools.getIconImageView("iconNewItem.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             addShape(treeItem);
         });
@@ -93,6 +100,14 @@ public class ControlSvgTree extends ControlXmlTree {
             return;
         }
         SvgAddShapeController.open(editorController, treeItem);
+    }
+
+    public void drawShape(TreeItem<XmlTreeNode> treeItem) {
+        if (treeItem == null) {
+            popInformation(message("SelectToHandle"));
+            return;
+        }
+        SvgEditShapeController.open(editorController, treeItem);
     }
 
 }

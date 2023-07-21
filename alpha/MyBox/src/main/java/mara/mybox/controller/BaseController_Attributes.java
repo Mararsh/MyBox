@@ -370,6 +370,10 @@ public abstract class BaseController_Attributes {
 
     }
 
+    public SingletonTask<Void> getBackgroundTask() {
+        return backgroundTask;
+    }
+
     public void setBackgroundTask(SingletonTask<Void> backgroundTask) {
         this.backgroundTask = backgroundTask;
     }

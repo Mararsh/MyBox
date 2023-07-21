@@ -13,4 +13,12 @@ public class SingletonCurrentTask<Void> extends SingletonTask<Void> {
         this.controller = controller;
     }
 
+    @Override
+    protected void taskQuit() {
+        if (controller != null && controller.getTask() == self) {
+            controller.setTask(null);
+        }
+        super.taskQuit();
+    }
+
 }

@@ -1,18 +1,18 @@
 package mara.mybox.tools;
 
 import java.awt.Rectangle;
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import javafx.scene.paint.Color;
 import mara.mybox.controller.BaseController;
 import mara.mybox.dev.MyBoxLog;
+import mara.mybox.fximage.FxColorTools;
 import mara.mybox.fxml.PopTools;
 import org.apache.batik.anim.dom.SVGDOMImplementation;
 import org.apache.batik.dom.GenericDOMImplementation;
@@ -47,7 +47,8 @@ public class SvgTools {
         if (svg == null || svg.isBlank()) {
             return null;
         }
-        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(svg.getBytes("utf-8"))) {
+        String handled = handleAlpha(controller, svg); // Looks batik does not supper color formats with alpha
+        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(handled.getBytes("utf-8"))) {
             return toImage(controller, inputStream, width, height, area);
         } catch (Exception e) {
             PopTools.showError(controller, e.toString());
@@ -60,12 +61,7 @@ public class SvgTools {
         if (file == null || !file.exists()) {
             return null;
         }
-        try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
-            return toImage(controller, inputStream, width, height, area);
-        } catch (Exception e) {
-            PopTools.showError(controller, e.toString());
-            return null;
-        }
+        return textToImage(controller, TextFileTools.readTexts(file), width, height, area);
     }
 
     public static File toImage(BaseController controller, InputStream inputStream,
@@ -116,7 +112,8 @@ public class SvgTools {
         if (svg == null || svg.isBlank()) {
             return null;
         }
-        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(svg.getBytes("utf-8"))) {
+        String handled = handleAlpha(controller, svg); // Looks batik does not supper color formats with alpha
+        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(handled.getBytes("utf-8"))) {
             return toPDF(controller, inputStream, width, height, area);
         } catch (Exception e) {
             PopTools.showError(controller, e.toString());
@@ -129,12 +126,7 @@ public class SvgTools {
         if (file == null || !file.exists()) {
             return null;
         }
-        try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
-            return toPDF(controller, inputStream, width, height, area);
-        } catch (Exception e) {
-            PopTools.showError(controller, e.toString());
-            return null;
-        }
+        return textToPDF(controller, TextFileTools.readTexts(file), width, height, area);
     }
 
     public static File toPDF(BaseController controller, InputStream inputStream,
@@ -167,6 +159,81 @@ public class SvgTools {
         }
         FileDeleteTools.delete(tmpFile);
         return null;
+    }
+
+    /*
+        color
+     */
+    public static String handleAlpha(BaseController controller, String svg) {
+        if (svg == null || svg.isBlank()) {
+            return svg;
+        }
+        try {
+            Document doc = XmlTools.textToDoc(controller, svg);
+            if (doc == null) {
+                return svg;
+            }
+            handleAlpha(controller, doc);
+            return XmlTools.transform(doc);
+        } catch (Exception e) {
+            PopTools.showError(controller, e.toString());
+            return null;
+        }
+    }
+
+    public static boolean handleAlpha(BaseController controller, Node node) {
+        if (node == null) {
+            return false;
+        }
+        try {
+            if (node instanceof Element) {
+                Element element = (Element) node;
+                try {
+                    Color c = Color.web(element.getAttribute("stroke"));
+                    String opacity = element.getAttribute("stroke-opacity");
+                    if (c != null) {
+                        element.setAttribute("stroke", FxColorTools.color2rgb(c));
+                        if (c.getOpacity() < 1 && (opacity == null || opacity.isBlank())) {
+                            element.setAttribute("stroke-opacity", c.getOpacity() + "");
+                        }
+                    }
+                } catch (Exception e) {
+                }
+                try {
+                    Color c = Color.web(element.getAttribute("fill"));
+                    String opacity = element.getAttribute("fill-opacity");
+                    if (c != null) {
+                        element.setAttribute("fill", FxColorTools.color2rgb(c));
+                        if (c.getOpacity() < 1 && (opacity == null || opacity.isBlank())) {
+                            element.setAttribute("fill-opacity", c.getOpacity() + "");
+                        }
+                    }
+                } catch (Exception e) {
+                }
+                try {
+                    Color c = Color.web(element.getAttribute("color"));
+                    String opacity = element.getAttribute("opacity");
+                    if (c != null) {
+                        element.setAttribute("color", FxColorTools.color2rgb(c));
+                        if (c.getOpacity() < 1 && (opacity == null || opacity.isBlank())) {
+                            element.setAttribute("opacity", c.getOpacity() + "");
+                        }
+                    }
+                } catch (Exception e) {
+                }
+            }
+            NodeList children = node.getChildNodes();
+            if (children != null) {
+                for (int i = 0; i < children.getLength(); i++) {
+                    Node child = children.item(i);
+                    handleAlpha(controller, child);
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            PopTools.showError(controller, e.toString());
+            return false;
+        }
     }
 
     /*

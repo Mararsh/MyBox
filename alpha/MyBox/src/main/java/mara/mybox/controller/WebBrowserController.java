@@ -162,6 +162,30 @@ public class WebBrowserController extends BaseController {
                     }
                 });
                 items.add(menu);
+
+                int index = tabPane.getTabs().indexOf(tab);
+                MyBoxLog.console(index);
+
+                if (index > 2) {
+                    menu = new MenuItem(message("CloseAllInLeft"), StyleTools.getIconImageView("iconClose.png"));
+                    menu.setOnAction((ActionEvent menuItemEvent) -> {
+                        for (int i = index - 1; i > 1; i--) {
+                            tabPane.getTabs().remove(i);
+                        }
+                    });
+                    items.add(menu);
+                }
+
+                if (index < tabPane.getTabs().size() - 1) {
+                    menu = new MenuItem(message("CloseAllInRight"), StyleTools.getIconImageView("iconClose.png"));
+                    menu.setOnAction((ActionEvent menuItemEvent) -> {
+                        for (int i = tabPane.getTabs().size() - 1; i > index; i--) {
+                            tabPane.getTabs().remove(i);
+                        }
+                    });
+                    items.add(menu);
+                }
+
             }
 
             menu = new MenuItem(message("CloseAll"), StyleTools.getIconImageView("iconClose.png"));
@@ -174,6 +198,7 @@ public class WebBrowserController extends BaseController {
                     }
                 }
             });
+            menu.setDisable(tabPane.getTabs().size() < 2);
             items.add(menu);
 
             items.add(new SeparatorMenuItem());

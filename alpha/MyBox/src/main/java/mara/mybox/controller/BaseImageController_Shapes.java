@@ -121,16 +121,10 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         setShapeStyle(maskCircle);
         setShapeStyle(maskEllipse);
         setShapeStyle(maskLine);
-        setShapeStyle(maskPolygon);
-        setShapeStyle(maskPolyline);
+        setMasklinesStyle();
+        setMaskPolylineStyle();
+        setMaskPolygonStyle();
         setShapeStyle(svgPath);
-        if (maskLines != null && !maskLines.isEmpty()) {
-            for (List<Line> lines : maskLines) {
-                for (Line line : lines) {
-                    setShapeStyle(line);
-                }
-            }
-        }
     }
 
     public void setShapeStyle(Shape shape) {
@@ -176,9 +170,9 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
 
     public void setMaskAnchorsStyle() {
         if (shapeStyle == null) {
-            setMaskAnchorsStyle(shapeStyle.getAnchorColor(), shapeStyle.getAnchorSize());
-        } else {
             setMaskAnchorsStyle(anchorColor(), anchorSize());
+        } else {
+            setMaskAnchorsStyle(shapeStyle.getAnchorColor(), shapeStyle.getAnchorSize());
         }
     }
 
@@ -237,6 +231,20 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             }
         } catch (Exception e) {
             MyBoxLog.error(e);
+        }
+    }
+
+    public void setTextStyle(Text text) {
+        if (text == null) {
+            return;
+        }
+        if (shapeStyle == null) {
+            text.setFill(anchorColor());
+            text.setFont(new Font(anchorSize()));
+
+        } else {
+            text.setFill(shapeStyle.getAnchorColor());
+            text.setFont(new Font(shapeStyle.getAnchorSize()));
         }
     }
 
@@ -304,6 +312,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             if (drawPath()) {
                 return;
             }
+            setMasklinesStyle();
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
@@ -739,7 +748,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                 addMaskPolylinePoint(i + 1, p, x, y, color, font);
             }
 
-            setShapeStyle(maskPolyline);
+            setMaskPolylineStyle();
 
             shapeType = ShapeType.Polyline;
 
@@ -849,6 +858,18 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         }
     }
 
+    public void setMaskPolylineStyle() {
+        setShapeStyle(maskPolyline);
+        for (Node node : maskPane.getChildren()) {
+            if (node == null || !(node instanceof Text) || node.getId() == null) {
+                continue;
+            }
+            if (node.getId().startsWith("PolylinePoint")) {
+                setTextStyle((Text) node);
+            }
+        }
+    }
+
     /*
         polygon
      */
@@ -902,7 +923,7 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
                 addMaskPolygonPoint(i + 1, p, x, y, color, font);
             }
 
-            setShapeStyle(maskPolygon);
+            setMaskPolygonStyle();
 
             shapeType = ShapeType.Polygon;
 
@@ -1011,6 +1032,18 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         }
     }
 
+    public void setMaskPolygonStyle() {
+        setShapeStyle(maskPolygon);
+        for (Node node : maskPane.getChildren()) {
+            if (node == null || !(node instanceof Text) || node.getId() == null) {
+                continue;
+            }
+            if (node.getId().startsWith("PolygonPoint")) {
+                setTextStyle((Text) node);
+            }
+        }
+    }
+
     /*
         lines
      */
@@ -1074,19 +1107,35 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         }
     }
 
+    public void setMasklinesStyle() {
+        if (maskLines != null && !maskLines.isEmpty()) {
+            for (List<Line> lines : maskLines) {
+                for (Line line : lines) {
+                    setShapeStyle(line);
+                }
+            }
+        }
+    }
+
     /*
         path
      */
     public void setPathDefaultValues() {
-        if (imageView == null || maskPane == null) {
-            return;
-        }
-        svgPath = new SVGPath();
-        svgPath.setContent("M 10,30\n"
+        setPath("M 10,30\n"
                 + "           A 20,20 0,0,1 50,30\n"
                 + "           A 20,20 0,0,1 90,30\n"
                 + "           Q 90,60 50,90\n"
                 + "           Q 10,60 10,30 z");
+    }
+
+    public void setPath(String d) {
+        if (imageView == null || maskPane == null) {
+            return;
+        }
+        svgPath = new SVGPath();
+        if (d != null && !d.isBlank()) {
+            svgPath.setContent(d);
+        }
         pathData = new DoublePath();
     }
 

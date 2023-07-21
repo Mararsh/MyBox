@@ -149,6 +149,7 @@ public class Fxmls {
 
     public static final String SvgEditorFxml = "/fxml/SvgEditor.fxml";
     public static final String SvgAddShapeFxml = "/fxml/SvgAddShape.fxml";
+    public static final String SvgEditShapeFxml = "/fxml/SvgEditShape.fxml";
     public static final String SvgTypesettingFxml = "/fxml/SvgTypesetting.fxml";
     public static final String SvgToImageFxml = "/fxml/SvgToImage.fxml";
     public static final String SvgToPDFFxml = "/fxml/SvgToPDF.fxml";

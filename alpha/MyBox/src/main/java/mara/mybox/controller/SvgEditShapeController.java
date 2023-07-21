@@ -9,6 +9,7 @@ import mara.mybox.dev.MyBoxLog;
 import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
@@ -16,7 +17,7 @@ import org.w3c.dom.Node;
  * @CreateDate 2023-6-29
  * @License Apache License Version 2.0
  */
-public class SvgAddShapeController extends BaseChildController {
+public class SvgEditShapeController extends BaseChildController {
 
     protected SvgEditorController editor;
     protected TreeItem<XmlTreeNode> treeItem;
@@ -27,7 +28,7 @@ public class SvgAddShapeController extends BaseChildController {
     @FXML
     protected ControlSvgShape shapeController;
 
-    public SvgAddShapeController() {
+    public SvgEditShapeController() {
         baseTitle = message("SvgAddShape");
     }
 
@@ -42,7 +43,7 @@ public class SvgAddShapeController extends BaseChildController {
                     ? editorController.sourceFile.getAbsolutePath() + "   " : "";
             parentLabel.setText(message("AddInto") + ": " + info + hierarchyNumber);
 
-            shapeController.editShape(editor, null);
+            shapeController.editShape(editor, (Element) item.getValue().getNode());
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -57,6 +58,7 @@ public class SvgAddShapeController extends BaseChildController {
                 close();
                 return;
             }
+            shapeController.synchronizeAction();
             if (shapeController.element == null) {
                 popError(message("NoData"));
                 return;
@@ -80,8 +82,8 @@ public class SvgAddShapeController extends BaseChildController {
     /*
         static methods
      */
-    public static SvgAddShapeController open(SvgEditorController editorController, TreeItem<XmlTreeNode> item) {
-        SvgAddShapeController controller = (SvgAddShapeController) WindowTools.openStage(Fxmls.SvgAddShapeFxml);
+    public static SvgEditShapeController open(SvgEditorController editorController, TreeItem<XmlTreeNode> item) {
+        SvgEditShapeController controller = (SvgEditShapeController) WindowTools.openStage(Fxmls.SvgEditShapeFxml);
         if (controller != null) {
             controller.setParameters(editorController, item);
             controller.requestMouse();

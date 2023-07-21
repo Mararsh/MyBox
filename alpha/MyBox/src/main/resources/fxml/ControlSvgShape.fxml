@@ -38,17 +38,17 @@ License:    Apache License Version 2.0
                             <children>
                                 <HBox spacing="2.0">
                                     <children>
-                                        <FlowPane alignment="CENTER_LEFT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="200.0" vgap="2.0" HBox.hgrow="ALWAYS">
-                                            <children>
-                                                <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showHelps" onMouseEntered="#popHelps">
-                                                    <graphic>
-                                                        <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
-                                                            <image>
-                                                                <Image url="@../buttons/iconClaw.png" />
-                                                            </image>
-                                                        </ImageView>
-                                                    </graphic>
-                                                </Button> 
+                                          <Button fx:id="helpButton" mnemonicParsing="false" onAction="#showHelps" onMouseEntered="#popHelps">
+                                              <graphic>
+                                                  <ImageView fitHeight="20" fitWidth="20" pickOnBounds="true" preserveRatio="true">
+                                                      <image>
+                                                          <Image url="@../buttons/iconClaw.png" />
+                                                      </image>
+                                                  </ImageView>
+                                              </graphic>
+                                          </Button>
+                                        <FlowPane fx:id="typePane" alignment="CENTER_LEFT" hgap="2.0" maxWidth="1.7976931348623157E308" prefWrapLength="200.0" vgap="2.0" HBox.hgrow="ALWAYS">
+                                            <children> 
                                                 <RadioButton fx:id="rectangleRadio" mnemonicParsing="false" selected="true" text="%Rectangle">
                                                     <toggleGroup>
                                                         <ToggleGroup fx:id="typeGroup" />
@@ -254,7 +254,7 @@ License:    Apache License Version 2.0
                                                                   </Button>
                                                                </children>
                                                             </HBox>
-                                                                                <TextArea fx:id="pathArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" wrapText="true" VBox.vgrow="ALWAYS" />
+                                                                                <TextArea fx:id="pathArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" wrapText="true" VBox.vgrow="ALWAYS" />
                                                                             </children>
                                                                         </VBox>
                                                                     </content>
@@ -320,12 +320,6 @@ License:    Apache License Version 2.0
                                                                         <fx:include fx:id="fillColor" source="ControlColorSet.fxml" />
                                                                         <Label minHeight="-Infinity" text="%FillOpacity" wrapText="true" />
                                                                         <ComboBox fx:id="fillOpacitySelector" editable="true" prefWidth="120.0" />
-                                                                    </children>
-                                                                </FlowPane>
-                                                                <FlowPane fx:id="rectArcPane" hgap="2.0" prefWrapLength="200.0" vgap="2.0">
-                                                                    <children>
-                                                                        <Label text="%Arc" />
-                                                                        <ComboBox fx:id="arcSizeSelector" editable="true" prefWidth="90.0" />
                                                                     </children>
                                                                 </FlowPane>
                                                                 <FlowPane hgap="2.0" prefWrapLength="0.0" vgap="2.0">

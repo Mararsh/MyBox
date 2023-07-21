@@ -31,13 +31,13 @@ import org.w3c.dom.Node;
  * @License Apache License Version 2.0
  */
 public class ControlSvgOptions extends BaseController {
-    
+
     protected Document doc;
     protected Node focusedNode;
     protected float width, height, bgOpacity;
     protected Rectangle viewBox;
     protected SimpleBooleanProperty sizeNotify, bgColorNotify, opacityNotify;
-    
+
     @FXML
     protected TextField widthInput, heightInput, viewBoxInput;
     @FXML
@@ -50,12 +50,12 @@ public class ControlSvgOptions extends BaseController {
     protected FlowPane pane2;
     @FXML
     protected HBox bgColorBox;
-    
+
     @Override
     public void setControlsStyle() {
         try {
             super.setControlsStyle();
-            
+
             NodeStyleTools.setTooltip(widthInput, new Tooltip(message("BlankInvalidtoUseDefault")));
             NodeStyleTools.setTooltip(heightInput, new Tooltip(message("BlankInvalidtoUseDefault")));
             NodeStyleTools.setTooltip(viewBoxInput, new Tooltip(message("BlankInvalidtoUseDefault")));
@@ -64,16 +64,16 @@ public class ControlSvgOptions extends BaseController {
             MyBoxLog.debug(e);
         }
     }
-    
+
     @Override
     public void initControls() {
         try {
             super.initControls();
-            
+
             sizeNotify = new SimpleBooleanProperty(false);
             bgColorNotify = new SimpleBooleanProperty(false);
             opacityNotify = new SimpleBooleanProperty(false);
-            
+
             bgColorController.init(this, baseName + "BackgroundColor", Color.TRANSPARENT);
             bgColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
@@ -83,14 +83,14 @@ public class ControlSvgOptions extends BaseController {
                     }
                 }
             });
-            
+
             bgColorCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
                 @Override
                 public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
                     bgColorChanged();
                 }
             });
-            
+
             bgOpacity = UserConfig.getFloat(baseName + "BackgroundOpacity", 0.3f);
             opacitySelector.getItems().addAll(
                     "0.3", "0", "1.0", "0.05", "0.02", "0.1", "0.2", "0.5", "0.8", "0.6", "0.4", "0.7", "0.9"
@@ -111,16 +111,16 @@ public class ControlSvgOptions extends BaseController {
                     }
                 }
             });
-            
+
         } catch (Exception e) {
             MyBoxLog.error(e);
         }
     }
-    
+
     public void noBgColor() {
         pane2.getChildren().remove(bgColorBox);
     }
-    
+
     public void loadDoc(Document doc, Node focus) {
         try {
             if (doc == null) {
@@ -154,19 +154,19 @@ public class ControlSvgOptions extends BaseController {
             MyBoxLog.error(e);
         }
     }
-    
+
     public void sizeChanged() {
         sizeNotify.set(!sizeNotify.get());
     }
-    
+
     public void bgColorChanged() {
         bgColorNotify.set(!bgColorNotify.get());
     }
-    
+
     public void opacityChanged() {
         opacityNotify.set(!opacityNotify.get());
     }
-    
+
     @FXML
     public void goSize() {
         width = -1;
@@ -186,15 +186,15 @@ public class ControlSvgOptions extends BaseController {
         } catch (Exception e) {
         }
         viewBox = SvgTools.viewBox(viewBoxInput.getText());
-        
+
         sizeChanged();
     }
-    
+
     @FXML
     public void defaultSize() {
         loadDoc(doc, focusedNode);
     }
-    
+
     public Document toSVG(boolean bgColor) {
         try {
             if (doc == null) {
@@ -221,7 +221,7 @@ public class ControlSvgOptions extends BaseController {
                 String style = svgNode.getAttribute("style");
                 svgNode.setAttribute("style",
                         (style == null || style.isBlank() ? "" : style + ";")
-                        + "background-color: " + bgColorController.css() + "; ");
+                        + "background-color: " + bgColorController.rgb() + "; ");
             }
             return svgDoc;
         } catch (Exception e) {
@@ -229,17 +229,17 @@ public class ControlSvgOptions extends BaseController {
             return null;
         }
     }
-    
+
     public String toXML() {
         return XmlTools.transform(toSVG(true));
     }
-    
+
     public File toImage() {
         return SvgTools.docToImage(this, toSVG(true), width, height, viewBox);
     }
-    
+
     public File toPDF() {
         return SvgTools.docToPDF(this, toSVG(true), width, height, viewBox);
     }
-    
+
 }
