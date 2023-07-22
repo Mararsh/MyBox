@@ -355,7 +355,7 @@ public class ShapeStyle {
     }
 
     public String getLineCapText() {
-        return getLineCap().name();
+        return lineCap != null ? lineCap.name() : null;
     }
 
     public String getMore() {

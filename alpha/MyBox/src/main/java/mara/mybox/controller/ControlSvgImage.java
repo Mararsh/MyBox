@@ -53,4 +53,8 @@ public class ControlSvgImage extends BaseImageController {
         imageView.setOpacity(svgShapeControl.optionsController.bgOpacity);
     }
 
+    @Override
+    protected void checkSelect() {
+    }
+
 }

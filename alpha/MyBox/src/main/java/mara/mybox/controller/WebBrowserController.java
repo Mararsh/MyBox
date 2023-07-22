@@ -114,19 +114,19 @@ public class WebBrowserController extends BaseController {
         showFunctionsMenu(fevent, initTab, null);
     }
 
-    public void popFunctionsMenu(Event event, Tab tab, String text) {
+    public void popFunctionsMenu(Event event, Tab tab, String title) {
         if (UserConfig.getBoolean("WebBrowserFunctionsPopWhenMouseHovering", true)) {
-            showFunctionsMenu(event, tab, text);
+            showFunctionsMenu(event, tab, title);
         }
     }
 
-    public void showFunctionsMenu(Event fevent, Tab tab, String text) {
+    public void showFunctionsMenu(Event fevent, Tab tab, String title) {
         try {
             List<MenuItem> items = new ArrayList<>();
 
             MenuItem menu;
-            if (text != null && !text.isBlank()) {
-                menu = new MenuItem(StringTools.menuPrefix(text));
+            if (title != null && !title.isBlank()) {
+                menu = new MenuItem(StringTools.menuPrefix(title));
                 menu.setStyle("-fx-text-fill: #2e598a;");
                 items.add(menu);
                 items.add(new SeparatorMenuItem());
@@ -164,12 +164,11 @@ public class WebBrowserController extends BaseController {
                 items.add(menu);
 
                 int index = tabPane.getTabs().indexOf(tab);
-                MyBoxLog.console(index);
 
-                if (index > 2) {
+                if (index > 1) {
                     menu = new MenuItem(message("CloseAllInLeft"), StyleTools.getIconImageView("iconClose.png"));
                     menu.setOnAction((ActionEvent menuItemEvent) -> {
-                        for (int i = index - 1; i > 1; i--) {
+                        for (int i = index - 1; i > 0; i--) {
                             tabPane.getTabs().remove(i);
                         }
                     });

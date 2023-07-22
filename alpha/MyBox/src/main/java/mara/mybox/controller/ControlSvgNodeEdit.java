@@ -2,7 +2,6 @@ package mara.mybox.controller;
 
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.VBox;
@@ -31,13 +30,10 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
     protected VBox pathBox, styleBox;
     @FXML
     protected TextArea pathArea, styleArea;
-    @FXML
-    protected Button drawButton;
 
     @Override
     public void editNode(TreeItem<XmlTreeNode> item) {
         super.editNode(item);
-        drawButton.setVisible(false);
         if (treeItem != null) {
             XmlTreeNode currentTreeNode = treeItem.getValue();
             if (currentTreeNode != null && currentTreeNode.getType() == Element) {
@@ -50,9 +46,6 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
                         setBox.getChildren().add(0, styleBox);
                     }
                     refreshStyle(setBox);
-                }
-                if (currentTreeNode.isSvgShape()) {
-                    drawButton.setVisible(true);
                 }
             }
         }
@@ -131,12 +124,6 @@ public class ControlSvgNodeEdit extends ControlXmlNodeEdit {
         pathArea.clear();
         styleArea.clear();
     }
-
-    @FXML
-    public void drawShape() {
-        SvgEditShapeController.open(editor, treeItem);
-    }
-
 
     /*
         path

@@ -7,7 +7,28 @@ package mara.mybox.data;
  */
 public class DoublePath extends DoubleRectangle {
 
+    protected String content;
+
     public DoublePath() {
+        content = null;
+    }
+
+    public DoublePath(String content) {
+        this.content = content;
+    }
+
+    /*
+        set
+     */
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    /*
+    get
+     */
+    public String getContent() {
+        return content;
     }
 
 }

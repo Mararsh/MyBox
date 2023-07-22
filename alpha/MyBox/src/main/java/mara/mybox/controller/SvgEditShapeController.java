@@ -10,7 +10,6 @@ import mara.mybox.fxml.WindowTools;
 import mara.mybox.value.Fxmls;
 import static mara.mybox.value.Languages.message;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 /**
  * @Author Mara
@@ -22,6 +21,7 @@ public class SvgEditShapeController extends BaseChildController {
     protected SvgEditorController editor;
     protected TreeItem<XmlTreeNode> treeItem;
     protected SVG svg;
+    protected Element element;
 
     @FXML
     protected Label parentLabel;
@@ -29,7 +29,7 @@ public class SvgEditShapeController extends BaseChildController {
     protected ControlSvgShape shapeController;
 
     public SvgEditShapeController() {
-        baseTitle = message("SvgAddShape");
+        baseTitle = message("SvgEditShape");
     }
 
     public void setParameters(SvgEditorController editorController, TreeItem<XmlTreeNode> item) {
@@ -41,9 +41,11 @@ public class SvgEditShapeController extends BaseChildController {
             String hierarchyNumber = treeItem.getValue().hierarchyNumber();
             String info = editorController.sourceFile != null
                     ? editorController.sourceFile.getAbsolutePath() + "   " : "";
-            parentLabel.setText(message("AddInto") + ": " + info + hierarchyNumber);
+            parentLabel.setText(message("Edit") + ": " + info + " - "
+                    + message("HierarchyNumber") + ": " + hierarchyNumber);
 
-            shapeController.editShape(editor, (Element) item.getValue().getNode());
+            element = (Element) item.getValue().getNode();
+            shapeController.editShape(editor, element);
 
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -63,16 +65,17 @@ public class SvgEditShapeController extends BaseChildController {
                 popError(message("NoData"));
                 return;
             }
-            Node newNode = editor.treeController.doc.importNode(shapeController.element, true);
-            treeItem.getValue().getNode().appendChild(newNode);
-            TreeItem<XmlTreeNode> newItem = new TreeItem(new XmlTreeNode(newNode));
-            treeItem.getChildren().add(newItem);
+            if (treeItem.getParent() == null) {
+                editor.treeController.loadNode(shapeController.element);
+            } else {
+                treeItem.getParent().getValue().getNode().replaceChild(shapeController.element, element);
+                treeItem.setValue(new XmlTreeNode(shapeController.element));
+                editor.treeController.focusItem(treeItem);
+                editor.domChanged(true);
+            }
 
             close();
-
-            editor.treeController.focusItem(newItem);
-            editor.domChanged(true);
-            editor.popInformation(message("CreatedSuccessfully"));
+            editor.popInformation(message("UpdateSuccessfully"));
 
         } catch (Exception e) {
             MyBoxLog.error(e);

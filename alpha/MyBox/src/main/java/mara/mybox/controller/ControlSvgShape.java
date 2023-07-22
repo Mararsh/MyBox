@@ -12,17 +12,10 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.scene.web.WebEngine;
-import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Circle;
-import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Ellipse;
-import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Line;
-import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Lines;
-import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Path;
-import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Polygon;
-import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Polyline;
-import static mara.mybox.controller.BaseImageController_Shapes.ShapeType.Rectangle;
 import mara.mybox.data.DoubleCircle;
 import mara.mybox.data.DoubleEllipse;
 import mara.mybox.data.DoubleLine;
+import mara.mybox.data.DoublePath;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleRectangle;
 import mara.mybox.data.SVG;
@@ -129,9 +122,9 @@ public class ControlSvgShape extends ControlShapeOptions {
         try {
             if (node != null) {
                 typePane.setDisable(true);
-                element = node;
-                loadShape(node);
-                loadStyle(node);
+                element = (Element) node.cloneNode(false);
+                loadShape(element);
+                loadStyle(element);
                 pickStyle();
                 super.switchShape();
                 loadXml(element);
@@ -167,11 +160,11 @@ public class ControlSvgShape extends ControlShapeOptions {
         try {
             super.setShapeControls();
             showController.infoLabel.setText("");
-            if (imageController == null || imageController.shapeType == null) {
+            if (imageController == null || shapeType == null) {
                 return;
             }
             isSettingValues = true;
-            switch (imageController.shapeType) {
+            switch (shapeType) {
                 case Circle:
                 case Rectangle:
                 case Ellipse:
@@ -209,7 +202,7 @@ public class ControlSvgShape extends ControlShapeOptions {
                     }
                     break;
                 case "circle":
-                    if (loadRect(node)) {
+                    if (loadCircle(node)) {
                         circleRadio.setSelected(true);
                     }
                     break;
@@ -428,7 +421,7 @@ public class ControlSvgShape extends ControlShapeOptions {
 
     public boolean loadPath(Element node) {
         try {
-            imageController.setPath(node.getAttribute("d"));
+            imageController.pathData = new DoublePath(node.getAttribute("d"));
             return true;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -438,11 +431,11 @@ public class ControlSvgShape extends ControlShapeOptions {
 
     public boolean shape2Element() {
         try {
-            if (imageController == null || imageController.shapeType == null) {
+            if (imageController == null || shapeType == null) {
                 popError(message("InvalidData"));
                 return false;
             }
-            switch (imageController.shapeType) {
+            switch (shapeType) {
                 case Rectangle:
                     if (element == null) {
                         element = doc.createElement("rect");
@@ -494,7 +487,7 @@ public class ControlSvgShape extends ControlShapeOptions {
                     if (element == null) {
                         element = doc.createElement("path");
                     }
-                    element.setAttribute("d", imageController.svgPath.getContent());
+                    element.setAttribute("d", imageController.pathData.getContent());
                     return true;
             }
             popError(message("InvalidData"));
@@ -533,24 +526,35 @@ public class ControlSvgShape extends ControlShapeOptions {
             try {
                 strokeColorController.setColor(Color.web(node.getAttribute("stroke")));
             } catch (Exception e) {
-                strokeColorController.setColor(Color.BLACK);
+                strokeWidthSelector.setValue("-1");
             }
             try {
                 strokeWidthSelector.setValue(Float.valueOf(node.getAttribute("stroke-width")) + "");
             } catch (Exception e) {
-                strokeWidthSelector.setValue("1");
+                strokeWidthSelector.setValue("-1");
             }
-            dashInput.setText(node.getAttribute("stroke-dasharray"));
-            String v = node.getAttribute("stroke-linecap");
-            if ("square".equalsIgnoreCase(v)) {
-                linecapSquareRadio.setSelected(true);
-            } else if ("round".equalsIgnoreCase(v)) {
-                linecapRoundRadio.setSelected(true);
+
+            String v = node.getAttribute("stroke-dasharray");
+            dashCheck.setSelected(v != null && !v.isBlank());
+            dashInput.setText(v);
+
+            v = node.getAttribute("stroke-linecap");
+            if (v == null || v.isBlank()) {
+                linecapSquareRadio.setSelected(false);
+                linecapRoundRadio.setSelected(false);
+                linecapButtRadio.setSelected(false);
             } else {
-                linecapButtRadio.setSelected(true);
+                if ("square".equalsIgnoreCase(v)) {
+                    linecapSquareRadio.setSelected(true);
+                } else if ("round".equalsIgnoreCase(v)) {
+                    linecapRoundRadio.setSelected(true);
+                } else {
+                    linecapButtRadio.setSelected(true);
+                }
             }
+
             v = node.getAttribute("fill");
-            if (v == null || "none".equalsIgnoreCase(v)) {
+            if (v == null || v.isBlank() || "none".equalsIgnoreCase(v)) {
                 fillCheck.setSelected(false);
             } else {
                 fillCheck.setSelected(true);
@@ -560,6 +564,13 @@ public class ControlSvgShape extends ControlShapeOptions {
                     fillColorController.setColor(Color.TRANSPARENT);
                 }
             }
+            v = node.getAttribute("fill-opacity");
+            try {
+                fillOpacitySelector.setValue(Float.valueOf(v) + "");
+            } catch (Exception e) {
+                fillOpacitySelector.setValue("-1");
+            }
+
             styleArea.setText(node.getAttribute("style"));
             isSettingValues = false;
         } catch (Exception e) {
@@ -594,8 +605,25 @@ public class ControlSvgShape extends ControlShapeOptions {
                 popError(message("InvalidData"));
                 return false;
             }
-            element.setAttribute("stroke", style.getStrokeColorCss());
-            element.setAttribute("stroke-width", style.getStrokeWidth() + "");
+            if (style.getStrokeWidth() <= 0) {
+                element.removeAttribute("stroke");
+                element.removeAttribute("stroke-width");
+            } else {
+                element.setAttribute("stroke", style.getStrokeColorCss());
+                element.setAttribute("stroke-width", style.getStrokeWidth() + "");
+            }
+
+            if (style.isIsFillColor()) {
+                element.setAttribute("fill", style.getFilleColorCss());
+            } else {
+                element.removeAttribute("fill");
+            }
+            if (style.getFillOpacity() > 0) {
+                element.setAttribute("fill-opacity", style.getFillOpacity() + "");
+            } else {
+                element.removeAttribute("fill-opacity");
+            }
+
             if (style.isIsStrokeDash()) {
                 String dash = style.getStrokeDashText();
                 if (dash != null && !dash.isBlank()) {
@@ -607,14 +635,12 @@ public class ControlSvgShape extends ControlShapeOptions {
                 element.removeAttribute("stroke-dasharray");
             }
 
-            if (style.isIsFillColor()) {
-                element.setAttribute("fill", style.getFilleColorCss());
-                element.setAttribute("fill-opacity", style.getFillOpacity() + "");
+            String v = style.getLineCapText();
+            if (v != null) {
+                element.setAttribute("stroke-linecap", v);
             } else {
-                element.setAttribute("fill", "none");
+                element.removeAttribute("stroke-linecap");
             }
-
-            element.setAttribute("stroke-linecap", style.getLineCapText());
 
             String more = style.getMore();
             if (more != null && !more.isBlank()) {

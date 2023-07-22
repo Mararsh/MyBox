@@ -218,6 +218,10 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
         return node == null ? null : node.getValue();
     }
 
+    public String xml(XmlTreeNode node) {
+        return XmlTools.transform(node.getNode());
+    }
+
     @Override
     public String copyTitleMessage() {
         return message("CopyName");
@@ -301,6 +305,20 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
 
         items.add(new SeparatorMenuItem());
 
+        menu = new MenuItem(message("CopyNodeXmlCodes"), StyleTools.getIconImageView("iconCopySystem.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            TextClipboardTools.copyToSystemClipboard(this, xml(treeItem.getValue()));
+        });
+        menu.setDisable(treeItem.getValue() == null);
+        items.add(menu);
+
+        menu = new MenuItem(message("CopyNodeTextContent"), StyleTools.getIconImageView("iconCopySystem.png"));
+        menu.setOnAction((ActionEvent menuItemEvent) -> {
+            TextClipboardTools.copyToSystemClipboard(this, treeItem.getValue().getNode().getTextContent());
+        });
+        menu.setDisable(treeItem.getValue() == null);
+        items.add(menu);
+
         menu = new MenuItem(copyValueMessage(), StyleTools.getIconImageView("iconCopySystem.png"));
         menu.setOnAction((ActionEvent menuItemEvent) -> {
             TextClipboardTools.copyToSystemClipboard(this, value(treeItem.getValue()));
@@ -317,7 +335,7 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
 
         if (xmlEditor != null && xmlEditor.sourceFile != null && xmlEditor.sourceFile.exists()) {
             items.add(new SeparatorMenuItem());
-            menu = new MenuItem(message("Recover"), StyleTools.getIconImageView("iconRecover.png"));
+            menu = new MenuItem(message("RecoverFile"), StyleTools.getIconImageView("iconRecover.png"));
             menu.setOnAction((ActionEvent menuItemEvent) -> {
                 recoverAction();
             });
@@ -332,7 +350,7 @@ public class ControlXmlTree extends BaseTreeTableViewController<XmlTreeNode> {
             if (treeItem == null) {
                 return;
             }
-            String xml = XmlTools.transform(treeItem.getValue().getNode());
+            String xml = xml(treeItem.getValue());
             if (xml == null || xml.isBlank()) {
                 popInformation(message("NoData"));
             } else {

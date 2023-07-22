@@ -53,14 +53,10 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
     protected DoublePath pathData;
     protected SVGPath svgPath;
     public boolean maskPointDragged;
-    public ShapeType shapeType = null;
+
     protected ShapeStyle shapeStyle = null;
     public SimpleBooleanProperty maskShapeChanged = new SimpleBooleanProperty(false);
     public SimpleBooleanProperty maskShapeDataChanged = new SimpleBooleanProperty(false);
-
-    public enum ShapeType {
-        Rectangle, Circle, Ellipse, Line, Polygon, Polyline, Lines, Path, Text;
-    }
 
     @FXML
     protected Rectangle maskRectangle, leftCenterHandler, topLeftHandler, topCenterHandler, topRightHandler,
@@ -264,7 +260,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             clearMaskPolygon();
             clearMaskLines();
             clearPath();
-            shapeType = null;
             shapeStyle = null;
         } catch (Exception e) {
             MyBoxLog.error(e);
@@ -408,8 +403,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             setShapeStyle(maskRectangle);
             setMaskAnchorsStyle();
 
-            shapeType = ShapeType.Rectangle;
-
             maskShapeChanged();
 
             updateLabelsTitle();
@@ -498,8 +491,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             setShapeStyle(maskCircle);
             setMaskAnchorsStyle();
 
-            shapeType = ShapeType.Circle;
-
             maskShapeChanged();
 
             return true;
@@ -584,8 +575,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             setShapeStyle(maskEllipse);
             setMaskAnchorsStyle();
 
-            shapeType = ShapeType.Ellipse;
-
             maskShapeChanged();
 
             return true;
@@ -668,8 +657,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             setShapeStyle(maskLine);
             setMaskAnchorsStyle();
 
-            shapeType = ShapeType.Line;
-
             maskShapeChanged();
 
             return true;
@@ -749,8 +736,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             }
 
             setMaskPolylineStyle();
-
-            shapeType = ShapeType.Polyline;
 
             maskShapeChanged();
 
@@ -925,8 +910,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
 
             setMaskPolygonStyle();
 
-            shapeType = ShapeType.Polygon;
-
             maskShapeChanged();
 
             return true;
@@ -1060,7 +1043,6 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         if (maskLinesData == null) {
             maskLinesData = new DoubleLines();
         }
-        shapeType = ShapeType.Lines;
         return true;
     }
 
@@ -1121,22 +1103,22 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         path
      */
     public void setPathDefaultValues() {
-        setPath("M 10,30\n"
+        pathData = new DoublePath("M 10,30\n"
                 + "           A 20,20 0,0,1 50,30\n"
                 + "           A 20,20 0,0,1 90,30\n"
                 + "           Q 90,60 50,90\n"
                 + "           Q 10,60 10,30 z");
     }
 
-    public void setPath(String d) {
+    public boolean showPath() {
         if (imageView == null || maskPane == null) {
-            return;
+            return false;
         }
         svgPath = new SVGPath();
-        if (d != null && !d.isBlank()) {
-            svgPath.setContent(d);
-        }
-        pathData = new DoublePath();
+        maskPane.getChildren().add(svgPath);
+        svgPath.setOpacity(1);
+        svgPath.setVisible(true);
+        return drawPath();
     }
 
     public boolean drawPath() {
@@ -1144,16 +1126,16 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             if (imageView == null || maskPane == null || svgPath == null) {
                 return false;
             }
+            if (pathData == null) {
+                setPathDefaultValues();
+            }
+            svgPath.setContent(pathData.getContent());
+
             svgPath.setLayoutX(imageView.getLayoutX());
             svgPath.setLayoutY(imageView.getLayoutY());
             setShapeStyle(svgPath);
-            if (!maskPane.getChildren().contains(svgPath)) {
-                maskPane.getChildren().add(svgPath);
-            }
+
             svgPath.setVisible(true);
-
-            shapeType = ShapeType.Path;
-
             maskShapeChanged();
             return true;
         } catch (Exception e) {

@@ -40,7 +40,8 @@ public class SvgAddShapeController extends BaseChildController {
             String hierarchyNumber = treeItem.getValue().hierarchyNumber();
             String info = editorController.sourceFile != null
                     ? editorController.sourceFile.getAbsolutePath() + "   " : "";
-            parentLabel.setText(message("AddInto") + ": " + info + hierarchyNumber);
+            parentLabel.setText(message("AddInto") + ": " + info + " - "
+                    + message("HierarchyNumber") + ": " + hierarchyNumber);
 
             shapeController.editShape(editor, null);
 

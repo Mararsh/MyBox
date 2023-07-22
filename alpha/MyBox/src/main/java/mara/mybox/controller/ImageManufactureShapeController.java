@@ -6,6 +6,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import mara.mybox.controller.ControlShapeOptions.ShapeType;
 import mara.mybox.data.DoubleLines;
 import mara.mybox.data.DoublePoint;
 import mara.mybox.data.DoubleShape;
@@ -69,7 +70,7 @@ public class ImageManufactureShapeController extends ImageManufactureOperationCo
             return;
         }
         if (event.getButton() != MouseButton.SECONDARY
-                || editor.shapeType != ShapeType.Lines
+                || optionsController.shapeType != ShapeType.Lines
                 || editor.maskLinesData == null) {
             return;
         }
@@ -101,7 +102,7 @@ public class ImageManufactureShapeController extends ImageManufactureOperationCo
             editor.showXY(event, p);
         }
         if (event.getButton() == MouseButton.SECONDARY || p == null
-                || editor.shapeType != ShapeType.Lines
+                || optionsController.shapeType != ShapeType.Lines
                 || editor.maskLinesData == null) {
             return;
         }
@@ -131,7 +132,7 @@ public class ImageManufactureShapeController extends ImageManufactureOperationCo
         }
 
         if (event.getButton() == MouseButton.SECONDARY || p == null
-                || editor.shapeType != ShapeType.Lines
+                || optionsController.shapeType != ShapeType.Lines
                 || editor.maskLinesData == null) {
             return;
         }

@@ -352,10 +352,10 @@ public class ImageManufactureShapeOptionsController extends ControlShapeOptions 
     @FXML
     @Override
     public void withdrawAction() {
-        if (null == imageController.shapeType || imageView == null || imageView.getImage() == null) {
+        if (null == shapeType || imageView == null || imageView.getImage() == null) {
             return;
         }
-        switch (imageController.shapeType) {
+        switch (shapeType) {
             case Polyline:
                 imageController.removeMaskPolylineLastPoint();
                 drawPolyline();
@@ -396,11 +396,11 @@ public class ImageManufactureShapeOptionsController extends ControlShapeOptions 
     @FXML
     @Override
     public void okAction() {
-        if (okButton.isDisabled() || editor.shapeType == null) {
+        if (okButton.isDisabled() || shapeType == null) {
             return;
         }
         editor.popSuccessful();
-        editor.updateImage(ImageOperation.Shape, editor.shapeType.name(), null, maskView.getImage(), 0);
+        editor.updateImage(ImageOperation.Shape, shapeType.name(), null, maskView.getImage(), 0);
     }
 
 }
