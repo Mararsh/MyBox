@@ -121,7 +121,7 @@ Composition of JSON:
   - Load all data, so it is not suitable for XML file which holds large amount of data.
   - User can edit XML in 2 modes:
          - "Tree". XML Nodes can be added, modified, and deleted.
-         - "Texts". XML data can be changed and parsed in string.
+         - "XML". XML data can be changed and parsed in texts.
   - The mode in current tab is called as "current edit mode".
   - Following buttons work for current edit mode:
        - Click button "Synchronize"(F10) to apply updates in current edit mode to other modes.
@@ -237,9 +237,7 @@ assume maximum length of matched string is less than 1/16 of current JVM availab
       - Check "Select Area"(CTRL/ALT+t) to enter "Selection Mode". 
          A rectangle is displayed upon image to have user select the region to handle.
       - Drag the anchors on rectangle line to adjust the area's margins.
-      - Double click mouse primary button to set the Left-Top of the area. 
-      - Double click mouse secondary button to set Right-Bottom of the area.
-      - Drag the rectangle area to move it. 
+      - Right click to move the rectangle area. 
 - Some shortcuts:
       - Check "Pick Color"(CTRL/ALT+k) to get colors in image.
       - Click button "Pop"(CTRL/ALT+p) to display current image in popped window.
@@ -259,6 +257,20 @@ assume maximum length of matched string is less than 1/16 of current JVM availab
 - "Pop", "Menu", and zooming are against image in current tab.
    Example, when current tab is "Scope", press key F12 to pop buttons menu for the scope image.
    When current tab is "Histories" or "Backup", press key "p" to display the selected image in popped window.</PRE>
+    <H3>Edit SVG(Scalable Vector Graphics)</H3>
+    <PRE>This tool helps to edit SVG(Scalable Vector Graphics):
+  - Parse and handle SVG data, based on Apache Batik.
+  - Load all data, so it is not suitable for SVG file which holds large amount of data.
+  - User can edit SVG in 2 modes:
+         - "Tree". SVG Nodes can be added, modified, and deleted.
+         - "XML". SVG data can be changed and parsed in texts.
+  - The mode in current tab is called as "current edit mode".
+  - Following buttons work for current edit mode:
+       - Click button "Synchronize"(F10) to apply updates in current edit mode to other modes.
+       - Click button "Save"(F2) to save updates in current edit mode and do "Synchronize" automatically.
+       - Click button "Menu"(F12) or right click edit area to pop context menu.
+
+Known issue: MyBox may crash when the SVG data contains invalid format or contents.</PRE>
     <H3>Analyse Image</H3>
     <PRE>This tool helps to analyse pixels in image:
 -  Set scope of image to analyse part of it.
@@ -314,11 +326,12 @@ Thus, the processed image can only contain the following colors:
     cyan (red = 0, green = 255, blue = 255)</PRE>
     <H3>Repeat/Tile Image</H3>
     <PRE>This tool helps to make background/texture image:
-- Select an image, and set part or whole of it as source cell.
-- Set width and height to scale the source cell.
+- Select an image, set part or whole of it as input of scaling.
+- Scale the selected image part as the cell of repeating.
 - Make the target image:
-      - Repeat the cell with horizontal number and vertical number.
-      - Tile the cell into width and height of canvas.
+      - Select the repeating type:
+            - Repeat the cell with horizontal number and vertical number.
+            - Tile the cell into width and height of canvas.
       - Set interval between cells. Negative value may make effect of interleave.
       - Set margins of target image.</PRE>
     <H3>Sample Image</H3>
@@ -337,7 +350,7 @@ this function handles the original image in file instead of the loaded image in 
     <PRE>This tool is to view multiple images under same directory:
 - Number of opened files can be changed.
 - Grid mode, thumb list mode, and file list mode can be choiced.
-- Click an image to view it in right pane. Double click to view it in new  stage.
+- Click an image to view it in right pane. Double click to view it in new stage.
 - Press CTRL and click images to select multiple files.
 
 Notice: Rotation can not be saved for multi-frames image.</PRE>

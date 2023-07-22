@@ -353,6 +353,14 @@ public abstract class MainMenuController_Development extends MainMenuController_
     }
 
     @FXML
+    public void makeSomeLinks() {
+        openHtml(HelpTools.usefulLinks("en"));
+        File zh = HelpTools.usefulLinks("zh");
+        openHtml(zh);
+        browse(zh.getParentFile());
+    }
+
+    @FXML
     public void autoTesting() {
         loadScene(Fxmls.AutoTestingCasesFxml);
     }

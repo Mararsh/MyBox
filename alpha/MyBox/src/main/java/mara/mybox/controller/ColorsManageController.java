@@ -13,14 +13,16 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
@@ -81,7 +83,9 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
     @FXML
     protected Button addColorsButton, trimButton;
     @FXML
-    protected CheckBox mergeCheck, allColumnsCheck;
+    protected ToggleGroup showGroup;
+    @FXML
+    protected RadioButton colorsRadio, valuesRadio, allRadio, simpleMergedRadio, allMergedRadio;
     @FXML
     protected Label paletteLabel;
     @FXML
@@ -265,21 +269,9 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
 
             exportButton.disableProperty().bind(Bindings.isEmpty(tableData));
 
-            allColumnsCheck.setSelected(UserConfig.getBoolean("ColorsDisplayAllColumns", false));
-            allColumnsCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            showGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
                 @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    UserConfig.setBoolean("ColorsDisplayAllColumns", allColumnsCheck.isSelected());
-                    checkColumns();
-                    loadTableData();
-                }
-            });
-
-            mergeCheck.setSelected(UserConfig.getBoolean("ColorsDisplayMerge", false));
-            mergeCheck.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> v, Boolean ov, Boolean nv) {
-                    UserConfig.setBoolean("ColorsDisplayMerge", mergeCheck.isSelected());
+                public void changed(ObservableValue<? extends Toggle> v, Toggle ov, Toggle nv) {
                     checkColumns();
                     loadTableData();
                 }
@@ -296,32 +288,45 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
         try {
             isSettingValues = true;
             tableView.getColumns().clear();
-            tableView.getColumns().addAll(rowsSelectionColumn, colorNameColumn,
-                    colorColumn);
+            tableView.getColumns().addAll(rowsSelectionColumn, colorColumn, colorNameColumn);
             if (!palettesController.isAllColors()) {
                 tableView.getColumns().add(orderColumn);
             }
-            tableView.getColumns().addAll(rgbaColumn, rgbColumn);
-            if (mergeCheck.isSelected()) {
-                if (allColumnsCheck.isSelected()) {
-                    dataColumn.setCellValueFactory(new PropertyValueFactory<>("colorDisplay"));
-                } else {
-                    dataColumn.setCellValueFactory(new PropertyValueFactory<>("colorSimpleDisplay"));
-                }
-                tableView.getColumns().addAll(dataColumn);
+
+            if (simpleMergedRadio.isSelected()) {
+                dataColumn.setCellValueFactory(new PropertyValueFactory<>("colorSimpleDisplay"));
+                tableView.getColumns().addAll(rgbaColumn, rgbColumn, dataColumn,
+                        invertColumn, invertRGBColumn, complementaryColumn, complementaryRGBColumn);
+
+            } else if (allMergedRadio.isSelected()) {
+                dataColumn.setCellValueFactory(new PropertyValueFactory<>("colorDisplay"));
+                tableView.getColumns().addAll(rgbaColumn, rgbColumn, dataColumn,
+                        invertColumn, invertRGBColumn, complementaryColumn, complementaryRGBColumn);
+
+            } else if (valuesRadio.isSelected()) {
+                tableView.getColumns().addAll(rgbaColumn, rgbColumn,
+                        rybColumn, hueColumn, saturationColumn, brightnessColumn, opacityColumn,
+                        HSBColumn, sRGBColumn, CalculatedCMYKColumn,
+                        invertColumn, invertRGBColumn, complementaryColumn, complementaryRGBColumn,
+                        colorValueColumn);
+
+            } else if (allRadio.isSelected()) {
+                tableView.getColumns().addAll(rgbaColumn, rgbColumn,
+                        rybColumn, hueColumn, saturationColumn, brightnessColumn, opacityColumn,
+                        HSBColumn, sRGBColumn, CalculatedCMYKColumn,
+                        invertColumn, invertRGBColumn, complementaryColumn, complementaryRGBColumn,
+                        AdobeRGBColumn, AppleRGBColumn, ECIRGBColumn, sRGBLinearColumn, AdobeRGBLinearColumn,
+                        AppleRGBLinearColumn, ECICMYKColumn, AdobeCMYKColumn, XYZColumn, CIELabColumn,
+                        LCHabColumn, CIELuvColumn, LCHuvColumn,
+                        colorValueColumn);
+
             } else {
-                tableView.getColumns().addAll(sRGBColumn, HSBColumn, hueColumn, saturationColumn,
-                        brightnessColumn, rybColumn, opacityColumn, CalculatedCMYKColumn);
-                if (allColumnsCheck.isSelected()) {
-                    tableView.getColumns().addAll(AdobeRGBColumn, AppleRGBColumn, ECIRGBColumn,
-                            sRGBLinearColumn, AdobeRGBLinearColumn, AppleRGBLinearColumn,
-                            ECICMYKColumn, AdobeCMYKColumn,
-                            XYZColumn, CIELabColumn, LCHabColumn, CIELuvColumn, LCHuvColumn);
-                }
-                tableView.getColumns().add(colorValueColumn);
+                tableView.getColumns().addAll(HSBColumn,
+                        invertColumn, invertRGBColumn, complementaryColumn, complementaryRGBColumn,
+                        rgbaColumn, rgbColumn,
+                        rybColumn, hueColumn, saturationColumn, brightnessColumn, opacityColumn);
             }
-            tableView.getColumns().addAll(invertColumn, invertRGBColumn,
-                    complementaryColumn, complementaryRGBColumn);
+
             isSettingValues = false;
 
         } catch (Exception e) {
@@ -625,7 +630,7 @@ public class ColorsManageController extends BaseSysTableController<ColorData> {
                     } else if (column.equals(LCHuvColumn)) {
                         row.add(data.getLchuv());
                     } else if (column.equals(dataColumn)) {
-                        if (allColumnsCheck.isSelected()) {
+                        if (allMergedRadio.isSelected()) {
                             row.add(ColorData.htmlValue(data));
                         } else {
                             row.add(ColorData.htmlSimpleValue(data));

@@ -266,39 +266,43 @@ public class HelpTools {
         controller.start(task);
     }
 
-    public static File usefulLinks() {
+    public static File usefulLinks(String lang) {
         try {
-            StringTable table = new StringTable(null, message("Links"));
-            table.newLinkRow(message("DecimalFormat"), decimalFormatLink());
-            table.newLinkRow(message("DateFormat"), simpleDateFormatLink());
-            table.newLinkRow(message("HtmlTutorial") + " - " + message("Chinese"), htmlZhLink());
-            table.newLinkRow(message("HtmlTutorial") + " - " + message("English"), htmlEnLink());
-            table.newLinkRow(message("JavaScriptTutorial") + " - " + message("Chinese"), javaScriptZhLink());
-            table.newLinkRow(message("JavaScriptTutorial") + " - " + message("English"), javaScriptEnLink());
+            StringTable table = new StringTable(null, message(lang, "Links"));
+            table.newLinkRow(message(lang, "DecimalFormat"), decimalFormatLink());
+            table.newLinkRow(message(lang, "DateFormat"), simpleDateFormatLink());
+            table.newLinkRow(message(lang, "HtmlTutorial") + " - " + message(lang, "Chinese"), htmlZhLink());
+            table.newLinkRow(message(lang, "HtmlTutorial") + " - " + message(lang, "English"), htmlEnLink());
+            table.newLinkRow(message(lang, "JavaScriptTutorial") + " - " + message(lang, "Chinese"), javaScriptZhLink());
+            table.newLinkRow(message(lang, "JavaScriptTutorial") + " - " + message(lang, "English"), javaScriptEnLink());
             table.newLinkRow("JavaScript language specification", javaScriptSpecification());
             table.newLinkRow("Nashorn User's Guide", nashornLink());
-            table.newLinkRow(message("CssTutorial") + " - " + message("Chinese"), cssZhLink());
-            table.newLinkRow(message("CssTutorial") + " - " + message("English"), cssEnLink());
-            table.newLinkRow(message("CssReference"), cssSpecificationLink());
-            table.newLinkRow(message("JavafxCssGuide"), javaFxCssLink());
+            table.newLinkRow(message(lang, "CssTutorial") + " - " + message(lang, "Chinese"), cssZhLink());
+            table.newLinkRow(message(lang, "CssTutorial") + " - " + message(lang, "English"), cssEnLink());
+            table.newLinkRow(message(lang, "CssReference"), cssSpecificationLink());
+            table.newLinkRow(message(lang, "JavafxCssGuide"), javaFxCssLink());
             table.newLinkRow("Full list of Math functions", javaMathLink());
             table.newLinkRow("Learning the Java Language", javaLink());
             table.newLinkRow("Java Development Kit (JDK) APIs", javaAPILink());
-            table.newLinkRow(message("DerbyReferenceManual"), derbyLink());
-            table.newLinkRow(message("SqlIdentifier"), sqlLink());
+            table.newLinkRow(message(lang, "DerbyReferenceManual"), derbyLink());
+            table.newLinkRow(message(lang, "SqlIdentifier"), sqlLink());
             table.newLinkRow("RenderingHints", renderingHintsLink());
-            table.newLinkRow(message("JsonTutorial") + " - " + message("Chinese"), jsonZhLink());
-            table.newLinkRow(message("JsonTutorial") + " - " + message("English"), jsonEnLink());
-            table.newLinkRow(message("JsonSpecification"), jsonSpecification());
-            table.newLinkRow(message("XmlTutorial") + " - " + message("Chinese"), xmlZhLink());
-            table.newLinkRow(message("XmlTutorial") + " - " + message("English"), xmlEnLink());
-            table.newLinkRow(message("DomSpecification"), domSpecification());
-            table.newLinkRow(message("Charset"), "https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/nio/charset/Charset.html");
+            table.newLinkRow(message(lang, "JsonTutorial") + " - " + message(lang, "Chinese"), jsonZhLink());
+            table.newLinkRow(message(lang, "JsonTutorial") + " - " + message(lang, "English"), jsonEnLink());
+            table.newLinkRow(message(lang, "JsonSpecification"), jsonSpecification());
+            table.newLinkRow(message(lang, "XmlTutorial") + " - " + message(lang, "Chinese"), xmlZhLink());
+            table.newLinkRow(message(lang, "XmlTutorial") + " - " + message(lang, "English"), xmlEnLink());
+            table.newLinkRow(message(lang, "DomSpecification"), domSpecification());
+            table.newLinkRow(message(lang, "Charset"), "https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/nio/charset/Charset.html");
             table.newLinkRow("URI", "https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/net/URI.html");
             table.newLinkRow("URL", "https://docs.oracle.com/en/java/javase/20/docs/api/java.base/java/net/URL.html");
 
-            File htmFile = HtmlWriteTools.writeHtml(table.html());
-            return htmFile;
+            String html = HtmlWriteTools.html(message(lang, "Links"), HtmlStyles.DefaultStyle, table.div());
+
+            File file = new File(FileTmpTools.generatePath("html")
+                    + "/mybox_useful_link_" + lang + ".html");
+
+            return TextFileTools.writeFile(file, html);
         } catch (Exception e) {
             MyBoxLog.error(e);
             return null;

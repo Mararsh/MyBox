@@ -618,7 +618,7 @@ public class ControlSvgShape extends ControlShapeOptions {
             } else {
                 element.removeAttribute("fill");
             }
-            if (style.getFillOpacity() > 0) {
+            if (style.getFillOpacity() >= 0) {
                 element.setAttribute("fill-opacity", style.getFillOpacity() + "");
             } else {
                 element.removeAttribute("fill-opacity");
@@ -636,7 +636,7 @@ public class ControlSvgShape extends ControlShapeOptions {
             }
 
             String v = style.getLineCapText();
-            if (v != null) {
+            if (v != null && !v.isBlank()) {
                 element.setAttribute("stroke-linecap", v);
             } else {
                 element.removeAttribute("stroke-linecap");

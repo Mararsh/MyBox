@@ -23,7 +23,7 @@ import mara.mybox.value.UserConfig;
 public class ControlImageRulerOptions extends BaseController {
 
     @FXML
-    protected ControlColorSet strokeColorSetController, anchorColorSetController, gridColorSetController;
+    protected ControlColorSet strokeColorController, anchorColorController, rulerColorController, gridColorController;
     @FXML
     protected ComboBox<String> strokeWidthSelector, anchorWidthSelector, gridWidthSelector,
             gridIntervalSelector, gridOpacitySelector;
@@ -73,8 +73,8 @@ public class ControlImageRulerOptions extends BaseController {
                 }
             });
 
-            strokeColorSetController.init(this, "StrokeColor", Color.web(ShapeStyle.DefaultStrokeColor));
-            strokeColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            strokeColorController.init(this, "StrokeColor", Color.web(ShapeStyle.DefaultStrokeColor));
+            strokeColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue v, Paint oldValue, Paint newValue) {
                     if (isSettingValues) {
@@ -106,8 +106,8 @@ public class ControlImageRulerOptions extends BaseController {
                 }
             });
 
-            anchorColorSetController.init(this, "AnchorColor", Color.web(ShapeStyle.DefaultAnchorColor));
-            anchorColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            anchorColorController.init(this, "AnchorColor", Color.web(ShapeStyle.DefaultAnchorColor));
+            anchorColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue v, Paint oldValue, Paint newValue) {
                     if (isSettingValues) {
@@ -117,8 +117,19 @@ public class ControlImageRulerOptions extends BaseController {
                 }
             });
 
-            gridColorSetController.init(this, "GridLinesColor", Color.LIGHTGRAY);
-            gridColorSetController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+            rulerColorController.init(this, "RulerColor", Color.RED);
+            rulerColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
+                @Override
+                public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
+                    if (isSettingValues) {
+                        return;
+                    }
+                    BaseImageController.updateMaskRulerXY();
+                }
+            });
+
+            gridColorController.init(this, "GridLinesColor", Color.LIGHTGRAY);
+            gridColorController.rect.fillProperty().addListener(new ChangeListener<Paint>() {
                 @Override
                 public void changed(ObservableValue<? extends Paint> v, Paint ov, Paint nv) {
                     if (isSettingValues) {
@@ -202,9 +213,9 @@ public class ControlImageRulerOptions extends BaseController {
             gridIntervalSelector.setValue(gi <= 0 ? message("Automatic") : gi + "");
             gridOpacitySelector.setValue(UserConfig.getFloat("GridLinesOpacity", 0.1f) + "");
 
-            strokeColorSetController.asSaved();
-            anchorColorSetController.asSaved();
-            gridColorSetController.asSaved();
+            strokeColorController.asSaved();
+            anchorColorController.asSaved();
+            gridColorController.asSaved();
 
             isSettingValues = false;
         } catch (Exception e) {

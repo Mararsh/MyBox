@@ -113,6 +113,8 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
         all shapes
      */
     public void setMaskShapesStyle() {
+        drawMaskRulers();
+        checkCoordinate();
         setShapeStyle(maskRectangle);
         setShapeStyle(maskCircle);
         setShapeStyle(maskEllipse);
@@ -143,20 +145,26 @@ public abstract class BaseImageController_Shapes extends BaseImageController_Mas
             shape.getStrokeDashArray().addAll(strokeWidth, strokeWidth * 3);
 
         } else {
-            shape.setStroke(shapeStyle.getStrokeColor());
-            shape.setStrokeWidth(shapeStyle.getStrokeWidth());
+            if (shapeStyle.getStrokeWidth() > 0) {
+                shape.setStroke(shapeStyle.getStrokeColor());
+                shape.setStrokeWidth(shapeStyle.getStrokeWidth());
+            }
 
             if (shapeStyle.isIsFillColor()) {
                 shape.setFill(shapeStyle.getFillColor());
-                shape.setOpacity(shapeStyle.getFillOpacity());
+                if (shapeStyle.getFillOpacity() >= 0) {
+                    shape.setOpacity(shapeStyle.getFillOpacity());
+                }
             } else {
                 shape.setFill(Color.TRANSPARENT);
                 shape.setOpacity(1);
             }
 
-            shape.setStrokeLineCap(shapeStyle.getLineCap());
-            shape.getStrokeDashArray().clear();
+            if (shapeStyle.getLineCap() != null) {
+                shape.setStrokeLineCap(shapeStyle.getLineCap());
+            }
 
+            shape.getStrokeDashArray().clear();
             if (shapeStyle.isIsStrokeDash() && shapeStyle.getStrokeDash() != null) {
                 shape.getStrokeDashArray().addAll(shapeStyle.getStrokeDash());
             }

@@ -281,7 +281,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
         }
         clearMaskRulerX();
         if (UserConfig.getBoolean("ImageRulerXY", false)) {
-            Color strokeColor = Color.web(UserConfig.getString("StrokeColor", "#FF0000"));
+            Color strokeColor = Color.web(UserConfig.getString("RulerColor", "#FF0000"));
             double imageWidth = imageWidth() / widthRatio();
             double ratio = viewWidth() / imageWidth;
             int step = getRulerStep(imageWidth);
@@ -337,7 +337,7 @@ public abstract class BaseImageController_Mask extends BaseImageController_Image
         }
         clearMaskRulerY();
         if (UserConfig.getBoolean("ImageRulerXY", false)) {
-            Color strokeColor = Color.web(UserConfig.getString("StrokeColor", "#FF0000"));
+            Color strokeColor = Color.web(UserConfig.getString("RulerColor", "#FF0000"));
             double imageHeight = imageHeight() / heightRatio();
             double ratio = viewHeight() / imageHeight;
             int step = getRulerStep(imageHeight);

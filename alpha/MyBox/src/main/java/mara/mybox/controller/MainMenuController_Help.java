@@ -88,7 +88,7 @@ public abstract class MainMenuController_Help extends MainMenuController_Develop
 
     @FXML
     protected void SomeLinks(ActionEvent event) {
-        openHtml(HelpTools.usefulLinks());
+        openHtml(HelpTools.usefulLinks(Languages.getLangName()));
     }
 
 }
